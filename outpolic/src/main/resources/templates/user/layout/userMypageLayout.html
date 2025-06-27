@@ -64,7 +64,10 @@
     <script src="/user/assets/js/plugins/jquery.theia.sticky.js"></script>
     <script src="/user/assets/js/plugins/jquery.elevatezoom.js"></script>
     <!-- Template  JS -->
-    <script src="./assets/js/main.js?v=5.6"></script>
-    <script src="./assets/js/shop.js?v=5.6"></script>
+	<script th:src="@{/user/assets/js/main.js?v=5.6}"></script>
+	<script th:src="@{/user/assets/js/shop.js?v=5.6}"></script>
+	<!--자바스크립트 코드 삽입부위-->
+	<th:block layout:replace="~{::jsScript}"></th:block>
+	<th:block layout:replace="~{::jsFile}"></th:block>
 </body>
 </html>

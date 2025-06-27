@@ -10,23 +10,22 @@
 	<th:block layout:fragment="contents">
 		<div class="tab-content">
 			<!-- 마이페이지 기본 페이지 -->
-			<div class="tab-pane fade show active" id="userOverview">
+			<div class="tab-pane fade show active" id="userOverview" th:object="${userInfo}">
 				<h4>기본 정보</h4>
-				<p>
-					<strong>이름:</strong>
-				</p>
-				<p>
-					<strong>이메일:</strong>
-				</p>
-				<p>
-					<strong>가입일:</strong>
-				</p>
-				<p>
-					<strong>내 마일리지:</strong>
-				</p>
-				<p>
-					<strong>보유상품</strong>
-				</p>
+				<label>이름:</label>
+				<input type="text" th:value="*{memberName}" />
+				<label>닉네임:</label>
+				<input type="text" th:value="*{memberNickName}" />
+				<label>이메일:</label>
+				<input type="email" th:value="*{memberEmail}" />
+
+				<label>전화번호:</label>
+				<input type="text" th:value="*{memberTelNo}" />
+				<label>가입일:</label>
+				<input type="text" th:value="*{memberJoinDate}" />
+				<label>내 마일리지:</label>
+<!--				<input type="text" th:value="*{userInfo.phone}" />-->
+				<label>보유상품:</label>
 				<p>
 					<strong>이용권 : 3장</strong>
 				</p>
@@ -37,7 +36,7 @@
 			</div>
 			<!-- 내 정보 수정을 위한 비밀번호를 받는 페이지 -->
 			<div class="tab-pane fade " id="userEdit">
-				<form action="/userEdit" method="post"
+				<form action="/userEditView" method="post"
 					class="d-flex flex-column align-items-center">
 					<h3>내 정보 수정</h3>
 					<input type="password" id="passwordInput" name="password"
