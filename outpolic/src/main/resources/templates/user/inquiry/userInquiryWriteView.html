@@ -7,8 +7,84 @@
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 	</head>
 	
-	<!-- 추가할 js file -->
-	<!-- 타이틀 추가 -->
+	<th:block layout:fragment="jsScript">
+		<script>
+		$(document).ready(function() {
+		    // 초기 로드 시 etcExpln 필드 비활성화
+		    $('#etcExpln').prop('disabled', true);
+
+		    $('#addInquiryBtn').click(e => {
+		        e.preventDefault(); // ✅ 기본 폼 제출 동작을 막습니다.
+
+		        const title = $('#inquiryTitle').val().trim();
+		        const typeCode = $('#inquiryTypeCode').val();
+		        const content = $('#inquiryCn').val().trim();
+		        const etcExpln = $('#etcExpln').val().trim();
+
+		        // 1. 제목 유효성 검사
+		        if (!title) {
+		            alert('제목을 입력해주세요.');
+		            $('#inquiryTitle').focus();
+		            return; // ✅ 여기서 함수 실행을 멈춰야 다음 코드로 넘어가지 않습니다.
+		        }
+
+		        // 2. 문의 유형 유효성 검사
+		        if (!typeCode) {
+		            alert('문의유형을 선택해주세요.');
+		            $('#inquiryTypeCode').focus();
+		            return; // ✅ 여기서 함수 실행을 멈춰야 다음 코드로 넘어가지 않습니다.
+		        }
+
+		        // 3. 문의 내용 유효성 검사
+		        if (!content) {
+		            alert('문의내용을 입력해주세요.');
+		            $('#inquiryCn').focus();
+		            return; // ✅ 여기서 함수 실행을 멈춰야 다음 코드로 넘어가지 않습니다.
+		        }
+
+		        // 4. '기타 문의' (IQT_OTHER) 선택 시 기타 설명 필드 유효성 검사
+		        if (typeCode === 'IQT_OTHER' && !etcExpln) { 
+		            alert('기타 문의 설명을 입력해주세요.');
+		            $('#etcExpln').focus();
+		            return; // ✅ 여기서 함수 실행을 멈춰야 다음 코드로 넘어가지 않습니다.
+		        }
+
+		        // ✅ 유효성 검사를 모두 통과했을 때 AJAX 요청
+		        $.ajax({
+		            type: 'POST', // HTTP 메서드 POST
+		            url: '/user/userInquiryWrite', // 서버 URL (서버에서 이 URL을 처리해야 함)
+		            data: {
+		                inquiryTitle: title,
+		                inquiryTypeCode: typeCode,
+		                inquiryCn: content,
+		                etcExpln: etcExpln
+		            },
+		            success: function(response) {
+		                // 서버 응답 성공 시 처리
+		                alert('문의가 등록되었습니다.');
+		                $('#addInquiryForm')[0].reset();  // 폼 초기화
+		            },
+		            error: function(xhr, status, error) {
+		                // 서버 응답 실패 시 처리
+		                alert('문의 등록에 실패했습니다. 다시 시도해 주세요.');
+		            }
+		        });
+		    });
+
+		    // 문의 유형 변경 시 '기타 설명' 필드 활성화/비활성화
+		    $('#inquiryTypeCode').change(function() {
+		        if ($(this).val() === 'IQT_OTHER') { 
+		            $('#etcExpln').prop('disabled', false);
+		        } else {
+		            $('#etcExpln').val(''); // '기타 문의'가 아닐 경우 내용 초기화
+		            $('#etcExpln').prop('disabled', true);
+		        }
+		    });
+		});
+
+		</script>
+	</th:block>
+	
 	<th:block layout:fragment="title">
 		<div class="row">
 			<div class="col-md-2">
@@ -19,50 +95,33 @@
 		</div>
 	</th:block>
 	
-	<!-- 컨텐츠 추가 -->
 	<th:block layout:fragment="contents">
 		<div class="row">
-			<form method="post">
+			<form id="addInquiryForm" method="post" th:action="@{/user/userInquiryWrite}">
 				<div class="row">
 					<div class="form-group">
-						<input type="text" required="" name="fname" placeholder="제목을 입력하세요">
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-lg-6">
-						<input type="text" name="billing_address" required="" placeholder="작성자명">
-					</div>
-					<div class="form-group col-lg-6">
-						<input type="text" name="billing_address2" required="" placeholder="뭐 넣을지도?">
+						<input type="text" placeholder="제목을 입력하세요"
+							   id="inquiryTitle" name="inquiryTitle">
 					</div>
 				</div>
 				<div class="row shipping_calculator">
 					<div class="form-group col-lg-6">
 						<div class="custom_select">
-							<select class="form-control select-active">
+							<select class="form-control select-active" id="inquiryTypeCode" name="inquiryTypeCode">
 								<option value="">Inquiry Type</option>
-								<option value="AX">서비스 이용 문의</option>
-								<option value="AF">결제 문의</option>
-								<option value="AL">콘텐츠 문의</option>
-								<option value="DZ">사용자 신고 문의</option>
-								<option value="AD">계정 관련 문의</option>
-								<option value="AD">보안 관련 문의</option>
-								<option value="AD">제휴 및 협업 문의</option>
-								<option value="AD">법적 문의</option>
-								<option value="AD">오류 제보</option>
-								<option value="AD">기능 제안</option>
-								<option value="AD">이벤트 문의</option>
-								<option value="AD">기타 문의</option>
-								<option value="AD">오류 제보</option>
+								<th:block th:unless="${#lists.isEmpty(inquiryTypeList)}"
+										  th:each="i : ${inquiryTypeList}">
+									<option th:value="${i.inquiryTypeCode}" th:text="${i.inquiryTypeName}">문의타입명</option>
+								</th:block>
 							</select>
 						</div>
 					</div>
 					<div class="form-group col-lg-6">
-						<input required="" type="text" name="city" placeholder="기타 설명">
+						<input type="text" placeholder="기타 설명" id="etcExpln" name="etcExpln">
 					</div>
 				</div>
 				<div class="form-group mb-30">
-					<textarea rows="5" placeholder="문의내용을 입력하시오."></textarea>
+					<textarea rows="5" placeholder="문의내용을 입력하시오." id="inquiryCn" name="inquiryCn"></textarea>
 				</div>
 				<div class="form-group">
 					<div class="checkbox">
@@ -81,9 +140,7 @@
 					</div>
 				</div>
 				<div>
-					<div class="form-group" >
-	                    <button type="submit" class="btn btn-heading btn-block hover-up" name="login">문의 등록</button>
-	                </div>
+                     <button id="addInquiryBtn" type="submit" class="btn btn-success text-white">문의 등록</button>
 				</div>
 			</form>
 		</div>

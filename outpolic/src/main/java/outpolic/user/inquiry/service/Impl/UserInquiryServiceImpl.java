@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.user.inquiry.domain.UserInquiry;
+import outpolic.user.inquiry.domain.UserInquiryType;
 import outpolic.user.inquiry.mapper.UserInquiryMapper;
 import outpolic.user.inquiry.service.UserInquiryService;
 
@@ -16,6 +17,19 @@ import outpolic.user.inquiry.service.UserInquiryService;
 public class UserInquiryServiceImpl implements UserInquiryService {
 	
 	private final UserInquiryMapper inquiryMapper;
+	
+	@Override
+	public void adduserInquiryWrite(UserInquiry inquiry) {
+		// 문의 등록
+		inquiryMapper.adduserInquiryWrite(inquiry);
+	}
+	
+	@Override
+	public List<UserInquiry> getUserInquiryTypeByCode(String inquiryTypeCode) {
+		// 문의 타입 조회
+		return inquiryMapper.getUserInquiryTypeByCode(inquiryTypeCode);
+	}
+	
 	
 	@Override
 	public UserInquiry getUserInquiryByCode(String inquiryCode) {
@@ -28,9 +42,15 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 	@Override
 	public List<UserInquiry> getUserInquiryList() {
 		
-		// 회원 목록 조회
+		// 문의 목록 조회 (주석은 '회원 목록 조회'로 되어있으니, '문의 목록 조회'로 수정하는 게 좋습니다.)
 		List<UserInquiry> inquiryList = inquiryMapper.getUserInquiryList();
 		return inquiryList;
+	}
+
+	@Override
+	public List<UserInquiryType> getAllInquiryTypes() {
+		// ✅ 수정: inquiryMapper를 통해 문의 유형 목록을 조회하여 반환합니다.
+		return inquiryMapper.getAllInquiryTypes();
 	}
 
 }
