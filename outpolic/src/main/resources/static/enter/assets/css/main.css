@@ -13747,4 +13747,351 @@ footer .hotline img {
             }
         }       
         
-        
+        /* 김주완 */
+        /* 포트폴리오 등록(addPortfolio) */
+                body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* 더 밝고 부드러운 배경색 */
+            line-height: 1.6;
+            color: #334155; /* Slate-700, 기본 텍스트 색상 */
+        }
+
+        /* 메인 컨테이너 - 여유로운 공간 확보 */
+        .page-container {
+            max-width: 1280px; /* 더 넓은 컨테이너 */
+            margin: 0 auto;
+            padding: 3rem 2rem; /* 전체적인 패딩 증가 */
+        }
+
+        /* 카드 기본 스타일 - 더욱 세련되게 */
+        .card {
+            background-color: white;
+            border-radius: 1.25rem; /* 더 둥근 모서리 */
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 6px 12px -2px rgba(0, 0, 0, 0.05); /* 더 깊고 부드러운 그림자 */
+            padding: 3rem; /* 더 여유 있는 패딩 */
+            border: 1px solid #e2e8f0; /* 은은한 회색 테두리 */
+        }
+
+        /* 섹션 제목 스타일 - 명확하고 깔끔하게 */
+        .section-title {
+            font-size: 2.25rem; /* text-4xl, 더 큼 */
+            font-weight: 700; /* font-bold */
+            color: #1a202c; /* Gray-900, 더 진한 제목 */
+            margin-bottom: 3rem; /* 여유로운 하단 마진 */
+            border-left: 6px solid #3BB77E; /* Nest 테마 강조색, 더 두꺼운 라인 */
+            padding-left: 1.5rem; /* 좌측 패딩 증가 */
+            display: inline-block; /* 수평 정렬을 위해 */
+        }
+
+        /* Nest 테마 색상과 매칭 유지 */
+        .bg-nest-green { background-color: #3BB77E; }
+        .text-nest-green { color: #3BB77E; }
+        .border-nest-green { border-color: #3BB77E; }
+
+        /* '새 포트폴리오 등록하기' 버튼 스타일 - 전문적인 느낌 */
+        .btn-action {
+            background-color: #4361ee; /* Professional blue */
+            color: white;
+            padding: 12px 25px;
+            border-radius: 0.75rem; /* Rounded */
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3); /* Blue shadow */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            font-size: 1.05rem;
+        }
+        .btn-action:hover {
+            background-color: #3a53ce; /* Darker blue on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
+        }
+        .btn-action:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(67, 97, 238, 0.2);
+        }
+        .btn-action i {
+            margin-right: 0.6rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* 포트폴리오 없을 때 메시지 컨테이너 - 세련된 재현 */
+        .no-portfolio-container {
+            background-color: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 5rem 3rem; /* 더 많은 패딩 */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 550px; /* 더 높은 최소 높이 */
+            border: 1px solid #e2e8f0;
+        }
+        .no-portfolio-text {
+            color: #64748b; /* Slate-600, 부드러운 회색 텍스트 */
+            font-size: 1.25rem; /* text-xl, 더 큼 */
+            line-height: 1.8; /* 더 여유로운 줄 간격 */
+            margin-bottom: 2.5rem; /* 마진 증가 */
+            max-width: 700px; /* 텍스트 너비 제한 */
+        }
+        .no-portfolio-text strong {
+            font-weight: 700;
+            color: #1e293b; /* Slate-900, 더 진한 강조 텍스트 */
+        }
+        .no-portfolio-image {
+            width: 180px; /* 이미지 크기 증가 */
+            height: auto;
+            margin-bottom: 2.5rem;
+            opacity: 0.7; /* 약간 투명하게 */
+        }
+
+        /* 포트폴리오 항목 카드 스타일 - Grid 및 Flex를 활용한 반응형 */
+        .portfolio-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* 유연한 그리드 */
+            gap: 2rem; /* 그리드 간격 증가 */
+        }
+        .portfolio-item-card {
+            display: flex;
+            flex-direction: column; /* 세로 정렬 */
+            background-color: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 20px -3px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.03); /* 부드러운 그림자 */
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .portfolio-item-card:hover {
+            transform: translateY(-8px); /* 더 드라마틱한 호버 효과 */
+            box-shadow: 0 18px 35px -5px rgba(0, 0, 0, 0.15), 0 8px 15px -2px rgba(0, 0, 0, 0.08);
+        }
+        .portfolio-thumbnail-wrapper {
+            width: 100%;
+            height: 200px; /* 고정된 썸네일 높이 */
+            overflow: hidden;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .portfolio-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: #eef2f6; /* Light background for placeholders */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8; /* Slate-400 */
+            font-size: 1rem;
+        }
+        .portfolio-content {
+            flex-grow: 1;
+            padding: 2rem; /* 더 여유로운 내부 패딩 */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .portfolio-title {
+            font-size: 1.75rem; /* text-3xl, 더 큼 */
+            font-weight: 700;
+            color: #1e293b; /* Slate-900 */
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+        .portfolio-category {
+            font-size: 0.95rem; /* Slightly larger */
+            color: #64748b; /* Slate-600 */
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        .portfolio-description {
+            font-size: 1rem;
+            color: #475569; /* Slate-700 */
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 4; /* 4줄로 제한 */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .portfolio-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            border-top: 1px dashed #e2e8f0; /* 구분선 */
+            padding-top: 1rem;
+        }
+        .portfolio-actions button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-edit {
+            background-color: #eef2ff; /* Indigo-50 */
+            color: #4f46e5; /* Indigo-600 */
+            border: 1px solid #c7d2fe; /* Indigo-300 */
+        }
+        .btn-edit:hover {
+            background-color: #dbeafe; /* Indigo-100 */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(79, 70, 229, 0.1);
+        }
+        .btn-delete {
+            background-color: #ffeaea; /* Red-50 */
+            color: #ef4444; /* Red-500 */
+            border: 1px solid #fecaca; /* Red-300 */
+        }
+        .btn-delete:hover {
+            background-color: #fecaca; /* Red-100 */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.1);
+        }
+        .portfolio-actions button i {
+            margin-right: 0.5rem;
+        }
+
+        /* 필터 및 정렬 컨트롤 - 깔끔하게 정돈 */
+        .filter-sort-controls {
+            background-color: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2rem; /* 패딩 증가 */
+            margin-bottom: 3rem; /* 마진 증가 */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem; /* 간격 증가 */
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #e2e8f0;
+        }
+        .filter-sort-controls .control-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-grow: 1; /* 유연하게 확장 */
+            min-width: 250px; /* 최소 너비 */
+        }
+        .filter-sort-controls label {
+            font-weight: 600;
+            color: #334155; /* Slate-700 */
+            font-size: 1.05rem;
+        }
+        .filter-sort-controls select {
+            padding: 0.75rem 1.25rem; /* 더 여유 있는 패딩 */
+            border: 1px solid #cbd5e1; /* Slate-300 */
+            border-radius: 0.75rem; /* 더 둥근 모서리 */
+            font-size: 1rem;
+            color: #475569; /* Slate-700 */
+            background-color: #f8fafc; /* Slate-50 */
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            flex-grow: 1;
+        }
+        .filter-sort-controls select:focus {
+            border-color: #4361ee; /* Professional blue */
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        /* 반응형 조정 */
+        @media (max-width: 1024px) {
+            .page-container {
+                padding: 2rem 1.5rem;
+            }
+            .section-title {
+                font-size: 2rem; /* text-3xl */
+                margin-bottom: 2.5rem;
+                padding-left: 1.25rem;
+            }
+            .filter-sort-controls {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+                gap: 1.5rem;
+            }
+            .filter-sort-controls .control-group {
+                width: 100%;
+                flex-direction: column; /* 세로로 쌓기 */
+                align-items: flex-start;
+            }
+            .filter-sort-controls select {
+                width: 100%; /* 전체 너비 */
+            }
+            .no-portfolio-container {
+                padding: 4rem 2rem;
+                min-height: 450px;
+            }
+            .no-portfolio-text {
+                font-size: 1.1rem;
+                margin-bottom: 2rem;
+            }
+            .no-portfolio-image {
+                width: 150px;
+                margin-bottom: 2rem;
+            }
+            .btn-action {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+            .portfolio-items-grid {
+                grid-template-columns: 1fr; /* 한 열로 변경 */
+                gap: 1.5rem;
+            }
+            .portfolio-item-card {
+                padding: 1.5rem;
+            }
+            .portfolio-content {
+                padding: 1.5rem;
+            }
+            .portfolio-title {
+                font-size: 1.5rem;
+            }
+            .portfolio-description {
+                -webkit-line-clamp: 5; /* 5줄로 제한 */
+            }
+            .portfolio-actions {
+                flex-direction: column;
+                gap: 0.75rem;
+                padding-top: 0.75rem;
+            }
+            .portfolio-actions button {
+                width: 100%;
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                padding: 1.5rem 1rem;
+            }
+            .section-title {
+                font-size: 1.75rem; /* text-2xl */
+                margin-bottom: 2rem;
+                padding-left: 1rem;
+            }
+            .card {
+                padding: 2rem 1.5rem;
+            }
+            .filter-sort-controls {
+                padding: 1.25rem;
+                gap: 1rem;
+            }
+            .filter-sort-controls label {
+                font-size: 0.95rem;
+            }
+            .filter-sort-controls select {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
