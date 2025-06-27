@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="outpolic.enter.portfolio.mapper.PortfolioMapper">
+ 	<resultMap 	type="EnterPortfolio" 		   	id="PortfolioResultMap">
+		<id 	column="prtf_cd" 			property="prtfCd" />
+		<result column="ent_cd" 			property="entCd" />
+		<result column="prtf_ttl" 			property="prtfTtl" />
+		<result column="prtf_cn" 			property="prtfCn" />
+		<result column="prtf_dwnld_cnt" 	property="prtfDwnldCnt" />
+		<result column="prtf_reg_ymdt" 		property="prtfRegYmdt" />
+		<result column="adm_cd" 			property="admCd" />
+		<result column="prtf_mdfcn_ymdt" 	property="prtfMdfcnYmdt" />
+		<result column="stc_cd" 			property="stcCd" />
+	</resultMap>
+	
+	<select id="getEnterPortfolioByCode" parameterType="String" resultMap="PortfolioResultMap">
+		<!--  포트폴리오 조회 -->
+		select
+			p.prtf_cd, 
+			e.ent_cd,
+			p.prtf_ttl,
+			p.prtf_cn,
+			sum(p.prtf_dwnld_cnt) as dwnld,
+			p.prtf_reg_ymdt,
+			a.adm_cd,
+			p.prtf_mdfcn_ymdt,
+			sc.stc_cd
+		from
+			admin a left join status_code sc
+			using(stc_cd)
+			left join enterprise e
+			using(stc_cd)
+			inner join portfolio p using(stc_cd)
+			group by p.prtf_cd ;
+	</select>
+
+ </mapper>
