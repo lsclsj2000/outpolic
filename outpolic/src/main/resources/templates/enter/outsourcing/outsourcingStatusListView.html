@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{enter/layout/enterLayoutMain}">
+	<head>
+		<meta name="description" content="한국스마트정보교육원 ksmybatis" />
+		     <link rel="shortcut icon" type="image/x-icon" th:href="@{/enter/assets/imgs/theme/favicon.svg}" />
+    <link href="/enter/assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+	</head>
+	
+	<!-- 추가할 js file -->
+	<th:block layout:fragment="jsFile">
+		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	</th:block>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+		<th:block layout:fragment="contents">
+		        <div class="main-container">
+            <h1 class="section-title">프로젝트 진행 현황</h1>
+            
+            <div class="card">
+                <!-- 프로젝트 제목 -->
+                <div class="form-group mb-8">
+                    <label for="project_title" class="text-2xl mb-4 text-gray-800">진행 중인 프로젝트</label>
+                    <input type="text" id="project_title" class="form-control bg-gray-50 cursor-not-allowed text-xl font-semibold" value="반응형 웹사이트 개발 (프로젝트 ID: OUT-1234)" readonly>
+                    <p class="form-instruction">현재 진행 중인 외주 프로젝트의 주요 정보입니다.</p>
+                </div>
+
+                <!-- 진행 단계 -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">프로젝트 진행 단계</h2>
+                    <div class="progress-steps">
+                        <!-- Example Stages (replace with dynamic data from DB) -->
+                        <div class="step-item completed">
+                            <div class="step-circle">1</div>
+                            <span class="step-label">계약 체결</span>
+                        </div>
+                        <div class="step-item current">
+                            <div class="step-circle">2</div>
+                            <span class="step-label">기획/요구사항 정의</span>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-circle">3</div>
+                            <span class="step-label">디자인/설계</span>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-circle">4</div>
+                            <span class="step-label">개발 착수</span>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-circle">5</div>
+                            <span class="step-label">테스트/수정</span>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-circle">6</div>
+                            <span class="step-label">최종 완료</span>
+                        </div>
+                    </div>
+                    <p class="form-instruction text-center mt-4 text-gray-600">
+                        현재 프로젝트는 <span class="font-semibold text-indigo-600">"기획/요구사항 정의"</span> 단계에 있습니다.
+                    </p>
+                </div>
+
+                <!-- 보고서 및 피드백 섹션 -->
+                <div class="report-feedback-section">
+                    <div class="report-box">
+                        <h3><i class="fas fa-clipboard-list text-blue-500"></i> 작업 보고서</h3>
+                        <div class="report-list" id="reportList">
+                            <!-- Example Reports (dynamically loaded) -->
+                            <div class="list-item">
+                                <span>1차 보고서 - 초기 기획 진행 상황 (2025.06.20)</span>
+                                <button type="button" class="btn-detail view-report-btn" data-report-id="report1">자세히 보기</button>
+                            </div>
+                            <div class="list-item">
+                                <span>2차 보고서 - UI/UX 설계 진행 상황 (2025.06.25)</span>
+                                <button type="button" class="btn-detail view-report-btn" data-report-id="report2">자세히 보기</button>
+                            </div>
+                            <p class="no-items-message hidden">등록된 보고서가 없습니다.</p>
+                        </div>
+                        <button type="button" class="btn-primary mt-auto" id="writeReportBtn">
+                            <i class="fas fa-plus mr-2"></i> 새 보고서 작성
+                        </button>
+                    </div>
+
+                    <div class="feedback-box">
+                        <h3><i class="fas fa-comment-dots text-purple-500"></i> 피드백</h3>
+                        <div class="feedback-list" id="feedbackList">
+                            <!-- Example Feedback (dynamically loaded) -->
+                            <div class="list-item">
+                                <span>피드백 #1 - 초기 기획 방향 (2025.06.21)</span>
+                                <button type="button" class="btn-detail view-feedback-btn" data-feedback-id="feedback1">자세히 보기</button>
+                            </div>
+                             <p class="no-items-message hidden">등록된 피드백이 없습니다.</p>
+                        </div>
+                        <button type="button" class="btn-primary mt-auto" id="writeFeedbackBtn">
+                            <i class="fas fa-plus mr-2"></i> 새 피드백 작성
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+
+    <!-- Report Write Modal -->
+    <div class="modal-overlay" id="reportWriteModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" data-modal-id="reportWriteModal"><i class="fas fa-times"></i></button>
+            <h2>새 보고서 작성</h2>
+            <div class="form-group">
+                <label for="report_title">보고서 제목 <span class="required-star">*</span></label>
+                <input type="text" id="report_title" class="form-control" placeholder="보고서 제목을 입력하세요." required>
+            </div>
+            <div class="form-group">
+                <label for="report_content">보고서 내용 <span class="required-star">*</span></label>
+                <textarea id="report_content" class="form-control" rows="8" placeholder="작업 진행 상황을 상세하게 작성해주세요." required></textarea>
+            </div>
+            <button type="button" class="btn-primary w-full" id="submitReportBtn">보고서 제출</button>
+        </div>
+    </div>
+
+    <!-- Feedback Write Modal -->
+    <div class="modal-overlay" id="feedbackWriteModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" data-modal-id="feedbackWriteModal"><i class="fas fa-times"></i></button>
+            <h2>새 피드백 작성</h2>
+            <div class="form-group">
+                <label for="feedback_title">피드백 제목 <span class="required-star">*</span></label>
+                <input type="text" id="feedback_title" class="form-control" placeholder="피드백 제목을 입력하세요." required>
+            </div>
+            <div class="form-group">
+                <label for="feedback_content">피드백 내용 <span class="required-star">*</span></label>
+                <textarea id="feedback_content" class="form-control" rows="8" placeholder="작업물에 대한 피드백을 상세하게 작성해주세요." required></textarea>
+            </div>
+            <button type="button" class="btn-primary w-full" id="submitFeedbackBtn">피드백 제출</button>
+        </div>
+    </div>
+
+    <!-- Report View Modal -->
+    <div class="modal-overlay" id="reportViewModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" data-modal-id="reportViewModal"><i class="fas fa-times"></i></button>
+            <h2 id="viewReportTitle"></h2>
+            <p class="text-sm text-gray-500 mb-4" id="viewReportDate"></p>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <p class="text-gray-700 leading-relaxed" id="viewReportContent"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback View Modal -->
+    <div class="modal-overlay" id="feedbackViewModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" data-modal-id="feedbackViewModal"><i class="fas fa-times"></i></button>
+            <h2 id="viewFeedbackTitle"></h2>
+            <p class="text-sm text-gray-500 mb-4" id="viewFeedbackDate"></p>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <p class="text-gray-700 leading-relaxed" id="viewFeedbackContent"></p>
+            </div>
+        </div>
+    </div>
+		</th:block>
+		</html>

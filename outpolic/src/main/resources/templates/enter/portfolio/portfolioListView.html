@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{enter/layout/enterLayoutMain}">
+	<head>
+		<meta name="description" content="한국스마트정보교육원 ksmybatis" />
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/enter/assets/imgs/theme/favicon.svg}" />
+    <link href="/enter/assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />	</head>
+	
+	<!-- 추가할 js file -->
+	<th:block layout:fragment="jsFile">
+		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	</th:block>
+</head>
+		<th:block layout:fragment="contents">
+	        <div class="main-container">
+            <h1 class="section-title">새 포트폴리오 등록</h1>
+            
+            <div class="card">
+                <form id="portfolioRegistrationForm">
+                    <!-- 포트폴리오 제목 (prtf_ttl) -->
+                    <div class="form-group">
+                        <label for="prtf_ttl">포트폴리오 제목 <span class="required-star">*</span></label>
+                        <input type="text" id="prtf_ttl" name="prtf_ttl" class="form-control" placeholder="프로젝트의 제목을 입력하세요." required>
+                        <p class="form-instruction">사용자가 포트폴리오를 이해할 수 있도록 명확하고 간결하게 작성해주세요. (예: 반응형 웹사이트 개발, 모바일 앱 UI/UX 디자인)</p>
+                    </div>
+
+                    <!-- 포트폴리오 카테고리 (다중 선택 가능) -->
+                    <div class="form-group">
+                        <label>카테고리 <span class="required-star">*</span></label>
+                        <div id="categorySelectionContainer">
+                            <!-- Dynamic category dropdowns will be inserted here by JS -->
+                        </div>
+                        <button type="button" id="addCategoryBtn" class="btn-add-category mt-3">
+                            <i class="fas fa-plus"></i> 카테고리 추가
+                        </button>
+                        <p class="form-instruction mt-2">이 포트폴리오가 속하는 주된 분야를 선택해주세요. (최대 3개)</p>
+                    </div>
+
+                    <!-- 포트폴리오 내용 (prtf_cn) -->
+                    <div class="form-group">
+                        <label for="prtf_cn">포트폴리오 내용 <span class="required-star">*</span></label>
+                        <textarea id="prtf_cn" name="prtf_cn" class="form-control" rows="8" placeholder="프로젝트의 목표, 진행 과정, 사용된 기술, 본인의 역할, 결과 및 성과 등을 상세하게 작성해 주세요." required></textarea>
+                        <p class="form-instruction">상세한 설명은 포트폴리오의 가치를 높입니다. 구체적인 내용과 성과를 위주로 작성해주세요.</p>
+                    </div>
+
+                    <!-- 태그 (쉼표 구분) -->
+                    <div class="form-group">
+                        <label for="prtf_tags">태그 (쉼표로 구분) <span class="optional-tag">(선택 사항)</span></label>
+                        <input type="text" id="prtf_tags" name="prtf_tags" class="form-control" placeholder="예: 웹디자인, 반응형, React, UI/UX">
+                        <p class="form-instruction">포트폴리오와 관련된 키워드를 쉼표(,)로 구분하여 입력해주세요. (예: 디자인, React, 백엔드)</p>
+                    </div>
+
+                    <!-- 시작일 및 종료일 -->
+                    <div class="flex-row">
+                        <div class="form-group">
+                            <label for="project-start-date">프로젝트 시작일</label>
+                            <input type="date" id="project-start-date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="project-end-date">프로젝트 종료일</label>
+                            <input type="date" id="project-end-date" class="form-control">
+                        </div>
+                    </div>
+
+                    <!-- 프로젝트 링크 -->
+                    <div class="form-group">
+                        <label for="project-link">프로젝트 링크 (URL)</label>
+                        <input type="url" id="project-link" name="project_link" class="form-control" placeholder="관련 웹사이트, 깃허브, 비핸스 등 (선택 사항)">
+                        <p class="form-instruction">프로젝트 결과물을 직접 확인할 수 있는 링크를 제공하여 전문성을 더욱 효과적으로 보여줄 수 있습니다.</p>
+                    </div>
+
+                    <!-- 이미지/파일 첨부 -->
+                    <div class="form-group">
+                        <label for="project-images">이미지/파일 첨부</label>
+                        <input type="file" id="project-images" name="project_images" accept="image/*" multiple class="form-control p-2">
+                        <p class="form-instruction">프로젝트를 대표하는 스크린샷, 디자인 시안, 작업 결과물 사진 등을 최대 5개까지 첨부할 수 있습니다. (JPG, PNG 권장)</p>
+                        <div class="image-preview-container mt-3" id="image-preview-container">
+                            <!-- Image previews will appear here -->
+                        </div>
+                    </div>
+                    
+                    <!-- 포트폴리오 등록 버튼 -->
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-upload mr-2"></i> 포트폴리오 등록하기
+                    </button>
+                </form>
+            </div>
+        </div>
+       </th:block> 
+       
+</html>

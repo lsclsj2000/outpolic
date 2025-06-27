@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="utf-8" />
+    <title>user 문의 화면</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="@{/user/assets/imgs/theme/favicon.svg}" />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/user/assets/css/plugins/slider-range.css" />
+    <link rel="stylesheet" href="/user/assets/css/main.css?v=5.6" />
+    
+</head>
+
+<body>
+	<!-- header start -->
+	<header th:replace="~{user/fragments/userHeader :: userHeaderFragment}"></header>
+	<!-- header end -->
+	
+	<main class="main">
+		<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+		
+		<th:block layout:fragment="contents"></th:block>
+    </main>
+    
+    <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
+	
+	
+	<!-- Vendor JS-->
+    <script src="/user/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/user/assets/js/vendor/jquery-3.6.0.min.js"></script>
+    <script src="/user/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="/user/assets/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/user/assets/js/plugins/slick.js"></script>
+    <script src="/user/assets/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="/user/assets/js/plugins/wow.js"></script>
+    <script src="/user/assets/js/plugins/slider-range.js"></script>
+    <script src="/user/assets/js/plugins/perfect-scrollbar.js"></script>
+    <script src="/user/assets/js/plugins/magnific-popup.js"></script>
+    <script src="/user/assets/js/plugins/select2.min.js"></script>
+    <script src="/user/assets/js/plugins/waypoints.js"></script>
+    <script src="/user/assets/js/plugins/counterup.js"></script>
+    <script src="/user/assets/js/plugins/jquery.countdown.min.js"></script>
+    <script src="/user/assets/js/plugins/images-loaded.js"></script>
+    <script src="/user/assets/js/plugins/isotope.js"></script>
+    <script src="/user/assets/js/plugins/scrollup.js"></script>
+    <script src="/user/assets/js/plugins/jquery.vticker-min.js"></script>
+    <script src="/user/assets/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="/user/assets/js/plugins/jquery.elevatezoom.js"></script>
+    <!-- Template  JS -->
+    <script src="./assets/js/main.js?v=5.6"></script>
+    <script src="./assets/js/shop.js?v=5.6"></script>
+    
+    
+    <script src="/admin/assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/admin/assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/admin/assets/js/vendors/select2.min.js"></script>
+    <script src="/admin/assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/admin/assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="./admin/assets/js/main.js?v=1.1" type="text/javascript"></script>
+    
+    
+    <script th:src="@{/user/assets/js/plugins/jquery-ui.js}"></script>
+    
+    <script>
+    const faqItems = document.querySelectorAll('.faq-item');
+
+    document.querySelectorAll('.faq-question').forEach(question => {
+      question.addEventListener('click', () => {
+        const clickedItem = question.parentElement;
+        const clickedAnswer = clickedItem.querySelector('.faq-answer');
+        const isOpen = clickedItem.classList.contains('faq-active');
+
+        // 모두 닫기
+        faqItems.forEach(item => {
+          const answer = item.querySelector('.faq-answer');
+          answer.style.height = '0px';
+          item.classList.remove('faq-active');
+        });
+
+        if (!isOpen) {
+          // 열기
+          clickedAnswer.style.height = 'auto';
+          const fullHeight = clickedAnswer.scrollHeight + 'px';
+          clickedAnswer.style.height = '0px';
+          clickedItem.classList.add('faq-active');
+          requestAnimationFrame(() => {
+            clickedAnswer.style.height = fullHeight;
+          });
+
+          clickedAnswer.addEventListener('transitionend', () => {
+            if (clickedItem.classList.contains('faq-active')) {
+              clickedAnswer.style.height = 'auto';
+            }
+          }, { once: true });
+        }
+      });
+    });
+	</script>
+    
+</body>
+</html>

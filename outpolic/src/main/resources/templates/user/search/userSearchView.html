@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{user/layout/userLayoutMain}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+	
+	<th:block layout:fragment="contents">
+		<section class="product-tabs section-padding position-relative">
+	        <div class="container">
+	            <div class="section-title style-2 wow animate__animated animate__fadeIn">
+					
+					<!-- =================  [수정 1] 검색어 표시 제목  ================= -->
+					<!-- 컨트롤러에서 받은 initialKeyword 값에 따라 제목을 동적으로 변경합니다. -->
+	                <h3>
+						<span th:if="${initialKeyword == null || initialKeyword == ''}">전체 콘텐츠</span>
+						<span th:unless="${initialKeyword == null || initialKeyword == ''}">
+							'<th:block th:text="${initialKeyword}"/>' 검색 결과
+						</span>
+					</h3>
+					<ul class="nav nav-tabs links" id="myTab" role="tablist">
+					    <li class="nav-item" role="presentation">
+					        <!-- [수정] data-filter 속성 추가 -->
+					        <button class="nav-link active" data-filter="All" type="button">All</button>
+					    </li>
+					    <li class="nav-item" role="presentation">
+					        <button class="nav-link" data-filter="Portfolio" type="button">포트폴리오</button>
+					    </li>
+					    <li class="nav-item" role="presentation">
+					        <button class="nav-link" data-filter="Outsourcing" type="button">외주</button>
+					    </li>
+					</ul>
+				</div>
+				<!--End nav-tabs-->
+				<div class="tab-content" id="myTabContent" style="border: none;">
+				    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+						<!-- AJAX로 결과가 채워질 컨테이너에 id="contentsListContainer" 부여 -->
+						<div class="row product-grid-4" id="contentsListContainer">
+						
+							<!-- 이 부분은 페이지가 처음 로딩될 때만 Thymeleaf가 렌더링합니다. -->
+							<div th:if="${not #lists.isEmpty(contentsList)}" 
+								 th:each="content, iterStat : ${contentsList}"
+								 class="col-lg-1-5 col-md-4 col-12 col-sm-6">
+						        <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
+						            <div class="product-img-action-wrap">
+						                <div class="product-img product-img-zoom">
+						                    <a href="shop-product-right.html">
+						                    	<img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
+   	                             				<img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
+						                    </a>
+						                </div>
+						                <div class="product-action-1">
+						                    <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+						                    <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+						                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+						                </div>
+						            </div>
+						            <div class="product-content-wrap" style="margin-top: 15px;">
+						                <h2><a th:text="${content.contentsTitle}" href="shop-product-right.html">콘텐츠 제목</a></h2>
+									    <div>
+									    	<span class="font-small text-muted">By <a th:text="${content.enterName}" href="vendor-details-1.html">회원닉네임</a></span>
+									    </div>
+					            	</div>
+					        	</div>
+					        	<br>
+					        	<br>
+					   		</div>
+							<!-- 검색 결과가 없을 때 (초기 로딩 시) -->
+							<div th:if="${#lists.isEmpty(contentsList)}" class="col-12">
+								<p class="text-center">표시할 콘텐츠가 없습니다.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</th:block>
+
+	<!-- =================  [수정 2] JavaScript 코드 전체 추가  ================= -->
+	<!-- 이 스크립트 블록이 페이지 내 재검색(AJAX) 기능을 담당합니다. -->
+	<th:block layout:fragment="add-script">
+		<script th:inline="javascript">
+			/*<![CDATA[*/
+
+			// 페이지의 모든 HTML 요소가 로드되면 이 함수를 실행합니다.
+			document.addEventListener('DOMContentLoaded', function() {
+
+				// 헤더에 있는 검색 폼과 검색창을 선택합니다.
+				// 헤더의 form과 input에 각각 id="headerSearchForm", id="headerSearchInput"이 있다고 가정합니다.
+				// 만약 없다면, document.querySelector('form[action="/user/userSearch"]') 와 같이 더 구체적으로 선택해야 합니다.
+				const headerSearchForm = document.querySelector('form[action="/user/userSearch"]');
+				const headerSearchInput = headerSearchForm.querySelector('input[name="keyword"]');
+
+				// 검색 결과가 표시될 컨테이너
+				const contentsContainer = document.getElementById('contentsListContainer');
+				
+				// 컨트롤러에서 전달받은 초기 검색어
+				const initialKeyword = /*[[${initialKeyword}]]*/ '';
+				
+				// 페이지 내에서 AJAX 검색을 처리하는 함수
+				const performAjaxSearch = (keyword) => {
+					// 로딩 중임을 표시
+					contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 중...</p></div>';
+
+					// 서버에 AJAX 요청
+					fetch(`/user/search/api?keyword=${encodeURIComponent(keyword)}`)
+						.then(response => response.json())
+						.then(data => {
+							updateContentsList(data, keyword);
+						})
+						.catch(error => {
+							console.error('Fetch 에러:', error);
+							contentsContainer.innerHTML = '<div class="col-12 text-center"><p>오류가 발생했습니다.</p></div>';
+						});
+				};
+				
+				// 헤더 검색창에서 submit 이벤트가 발생했을 때 (페이지 이동 전에 가로채기)
+				headerSearchForm.addEventListener('submit', function(event) {
+					// 현재 페이지가 검색 결과 페이지일 때만 AJAX로 처리하고, 아니면 그냥 페이지 이동하도록 둡니다.
+					if (window.location.pathname.includes('/user/userSearch')) {
+						event.preventDefault(); // 페이지 이동(새로고침) 막기
+						const keyword = headerSearchInput.value;
+						performAjaxSearch(keyword);
+					}
+				});
+
+				// 데이터를 받아서 화면을 다시 그리는 함수
+				function updateContentsList(contentsList, keyword) {
+					const titleElement = document.querySelector('.section-title h3');
+					
+					// 제목 업데이트
+					if (keyword && keyword.trim() !== '') {
+						titleElement.innerHTML = `'${keyword}' 검색 결과`;
+					} else {
+						titleElement.innerHTML = '전체 콘텐츠';
+					}
+
+					// 기존 목록 지우기
+					contentsContainer.innerHTML = '';
+
+					// 결과가 없을 때
+					if (!contentsList || contentsList.length === 0) {
+						contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
+						return;
+					}
+					
+					// 결과가 있을 때, 목록 생성
+					contentsList.forEach((content, index) => {
+						const contentHtml = `
+							<div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
+								<div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
+									<div class="product-img-action-wrap">
+										<div class="product-img product-img-zoom">
+											<a href="#">
+												<img class="default-img" src="https://picsum.photos/id/${index + 20}/300/200" alt="">
+												<img class="hover-img" src="https://picsum.photos/id/${index + 120}/300/200" alt="">
+											</a>
+										</div>
+										<div class="product-action-1">
+											<a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+											<a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+											<a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+										</div>
+									</div>
+									<div class="product-content-wrap" style="margin-top: 15px;">
+										<h2><a href="#">${content.contentTitle}</a></h2>
+										<div>
+											<span class="font-small text-muted">By <a href="#">${content.enterName}</a></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						`;
+						contentsContainer.insertAdjacentHTML('beforeend', contentHtml);
+					});
+				}
+			});
+
+			/*]]>*/
+		</script>
+	</th:block>
+
+</html>

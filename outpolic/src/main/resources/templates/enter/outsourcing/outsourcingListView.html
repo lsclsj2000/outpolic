@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{enter/layout/enterLayoutMain}">
+
+    <!-- 이 th:block은 상위 레이아웃의 <head> 태그 내부에 삽입될 것입니다. -->
+
+<!--         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>새 외주 등록</title> 페이지 제목
+        <meta name="description" content="한국스마트정보교육원 ksmybatis" />
+        <link rel="shortcut icon" type="image/x-icon" th:href="@{/enter/assets/imgs/theme/favicon.svg}" />
+        <link href="/enter/assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.tailwindcss.com"></script> -->
+
+
+   <th:block layout:fragment="contents">
+        <div class="main-container">
+            <h1 class="section-title">새 외주 등록</h1>
+            
+            <div class="card">
+                <form id="outsourcingRegistrationForm">
+                    <!-- 외주 제목 (out_ttl) -->
+                    <div class="form-group">
+                        <label for="out_ttl">외주 프로젝트 제목 <span class="required-star">*</span></label>
+                        <input type="text" id="out_ttl" name="out_ttl" class="form-control" placeholder="외주 프로젝트의 제목을 입력하세요." required>
+                        <p class="form-instruction">수요자가 프로젝트를 이해할 수 있도록 명확하게 작성해주세요.</p>
+                    </div>
+
+                    <!-- 외주 카테고리 (다중 선택 가능) -->
+                    <div class="form-group">
+                        <label>카테고리 <span class="required-star">*</span></label>
+                        <div id="categorySelectionContainer">
+                            <!-- Dynamic category dropdowns will be inserted here by JS -->
+                        </div>
+                        <button type="button" id="addCategoryBtn" class="btn-add-category mt-3">
+                            <i class="fas fa-plus"></i> 카테고리 추가
+                        </button>
+                        <p class="form-instruction mt-2">이 외주 프로젝트가 속하는 주된 분야를 선택해주세요. (최대 3개)</p>
+                    </div>
+
+                    <!-- 외주 내용 (out_cn) -->
+                    <div class="form-group">
+                        <label for="out_cn">외주 프로젝트 내용 <span class="required-star">*</span></label>
+                        <textarea id="out_cn" name="out_cn" class="form-control" rows="8" placeholder="프로젝트의 상세 목표, 요구사항, 참고 자료 등을 구체적으로 작성해 주세요." required></textarea>
+                        <p class="form-instruction">공급자가 프로젝트를 정확히 이해하고 제안할 수 있도록 상세한 설명을 부탁드립니다.</p>
+                    </div>
+
+                    <!-- 태그 (쉼표 구분) -->
+                    <div class="form-group">
+                        <label for="out_tags">태그 (쉼표로 구분) <span class="optional-tag">(선택 사항)</span></label>
+                        <input type="text" id="out_tags" name="out_tags" class="form-control" placeholder="예: 웹개발, 앱개발, 디자인, 기획">
+                        <p class="form-instruction">외주 프로젝트와 관련된 키워드를 쉼표(,)로 구분하여 입력해주세요.</p>
+                    </div>
+
+                    <!-- 희망 작업 기간 (시작일 및 종료일) -->
+                    <div class="flex-row">
+                        <div class="form-group">
+                            <label for="work-start-date">희망 작업 시작일</label>
+                            <input type="date" id="work-start-date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="work-end-date">희망 작업 종료일</label>
+                            <input type="date" id="work-end-date" class="form-control">
+                        </div>
+                    </div>
+
+                    <!-- 희망 금액 (out_hope_amnt) -->
+                    <div class="form-group">
+                        <label for="out_hope_amnt">희망 금액 (세전 기준) <span class="required-star">*</span></label>
+                        <div class="input-with-unit">
+                            <input type="number" id="out_hope_amnt" name="out_hope_amnt" class="form-control" placeholder="최소 100,000원" min="100000" required>
+                            <span>원</span>
+                        </div>
+                        <p class="form-instruction">프로젝트 예상 비용을 정확히 입력해주세요. (최소 10만원 이상)</p>
+                    </div>
+
+                    <!-- 수행 인원 -->
+                    <div class="form-group">
+                        <label for="required_personnel">필요 수행 인원 <span class="required-star">*</span></label>
+                        <div class="input-with-unit">
+                            <input type="number" id="required_personnel" name="required_personnel" class="form-control" placeholder="최소 1명" min="1" value="1" required>
+                            <span>명</span>
+                        </div>
+                        <p class="form-instruction">이 프로젝트를 완료하는 데 필요한 최소 인원을 입력해주세요.</p>
+                    </div>
+
+                    <!-- 참고 자료 (파일 첨부) -->
+                    <div class="form-group">
+                        <label for="reference_files">참고 자료 첨부</label>
+                        <input type="file" id="reference_files" name="reference_files" accept="image/*, .pdf, .doc, .docx, .ppt, .pptx" multiple class="form-control p-2">
+                        <p class="form-instruction">프로젝트 기획서, 상세 가이드라인, 레퍼런스 이미지 등 필요한 자료를 첨부해주세요. (최대 5개)</p>
+                        <div class="image-preview-container mt-3" id="file-preview-container">
+                            <!-- File previews (images directly, others as icons) will appear here -->
+                        </div>
+                    </div>
+                    
+                    <!-- 외주 등록 버튼 -->
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane mr-2"></i> 외주 등록하기
+                    </button>
+                </form>
+            </div>
+        </div>
+    </th:block>
+
+        
+        </html>

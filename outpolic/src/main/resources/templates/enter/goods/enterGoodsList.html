@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{enter/layout/enterLayoutMain}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+	<body>
+	<th:block layout:fragment="contents">
+	<div class="d-flex justify-content-center">
+            <div class="row w-75">
+                <div class="col-lg-7">
+                    <div class="table-responsive shopping-summery">
+                        <table class="table table-wishlist">
+                            <thead>
+                                <tr style="border: 0px;" class="main-heading">
+                                    <th class="custome-checkbox start pl-30" style="text-align:center;" scope="col">
+                                    	상품
+                                    </th>
+                                    <th style="text-align: center;">가격</th>
+                                    <th scope="col" style="text-align: center;">개수</th>
+                                    <th style="text-align:center;" scope="col">일 / 회</th>
+                                    <th  style="text-align: center;" scope="col" class="end">합계</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border: 0px;">
+                                    <td class="product-des product-name">
+                                        <h6 class="mb-5" style="text-align: center;">기업용 구독권 (30일)</h6>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        <h4 class="text-body" style="text-align: center;">₩49,900 </h4>
+                                    </td>
+                                    <td class="text-center detail-info" data-title="Stock">
+                                        <div class="detail-extralink mr-15">
+                                            <div class="detail-qty border radius">
+                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                                <input type="text" name="quantity" class="qty-val" value="0" min="0">
+                                                <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        <h4 style="text-align: center;">0 일</h4>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        <h4 class="text-body" style="text-align: center;">₩39,900 </h4>
+                                    </td>
+                                </tr>
+                                <tr style="border: 0px;">
+                                    <td class="product-des product-name">
+                                        <h6 class="mb-5" style="text-align: center;">이용권 (3회)</h6>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        <h4 class="text-body" style="text-align: center;">₩22,900 </h4>
+                                    </td>
+                                    <td class="text-center detail-info" data-title="Stock">
+                                        <div class="detail-extralink mr-15">
+                                            <div class="detail-qty border radius">
+                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                                <input type="text" name="quantity" class="qty-val" value="0" min="0">
+                                                <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        <h4 style="text-align: center;">0 회</h4>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        <h4 class="text-body" style="text-align: center;">₩22,900 </h4>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- <div class="divider-2 mb-30"></div> -->
+                    <div class="cart-action d-flex justify-content-between">
+                        <a class="btn ">뒤로가기</a>
+                        <!-- <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-refresh mr-10"></i>Update Cart</a> -->
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="border p-md-4 cart-totals ml-30">
+                        <div class="table-responsive">
+                            <table class="table no-border">
+                                <tbody>
+                                    <tr style="border: 0px;">
+                                        <td class="cart_total_label">
+                                            <h6 class="text-muted">결제상품 금액</h6>
+                                        </td>
+                                        <td class="cart_total_amount">
+                                            <h4 class="text-brand text-end">₩49,900</h4>
+                                        </td>
+                                    </tr>
+                                    <tr style="border: 0px;">
+                                        <td scope="col" colspan="2">
+                                            <div class="divider-2 mt-10 mb-10"></div>
+                                        </td>
+                                    </tr>
+                                    <tr style="border: 0px;">
+                                        <td class="cart_total_label">
+                                            <h6 class="text-muted">보유 마일리지</h6>
+                                        </td>
+                                        <td class="cart_total_amount">
+                                            <h5 class="text-heading text-end">2,300</h5></td> 
+                                    </tr>
+                                    <tr style="border: 0px;">
+                                        <td class="cart_total_label" colspan="2">
+                                            <div style="display:flex; justify-content: space-between; align-items: center; width:100%;">
+                                            	<span><h6>사용</h6></span>
+	                                            <input type="text" style="padding-bottom:3px; width:87%; height:40px; border: none; outline: none; 
+	                                            text-align:right;" inputmode="numeric" placeholder="0">
+	                                            <span><h6>원</h6></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr style="border: 0px;">
+                                        <td scope="col" colspan="2">
+                                            <div class="divider-2 mt-10 mb-10"></div>
+                                        </td>
+                                    </tr>
+                                    <tr style="border: 0px;">
+                                        <td style=" box-sizing:content-box;" scope="col" colspan="2">
+                                        	<select>
+                                        		<option>결제 방법을 선택하세요</option>
+                                        		<option>무통장 입금</option>
+                                        		<option>카드 결제</option>
+                                        	</select>
+                                        	<input type="text" style="margin-top: 20px; height:40px;" placeholder="계좌 번호를 입력해주세요">
+                                        	<div style="display: flex; justify-content: flex-end; align-items: center; gap:10px;">
+                                        		<p style="font-size:13px;">자동 결제 확인</p>
+                                        		<input type="checkbox" style="width: 15px;">
+                                        	</div>
+                                        	<input type="text" style="margin-top: 20px; height:40px;" placeholder="카드 번호를 입력해주세요">
+                                        </td>
+                                    </tr>
+                                    <tr style="border: 0px;">
+                                        <td scope="col" colspan="2">
+                                            <div class="divider-2 mt-10 mb-10"></div>
+                                        </td>
+                                    </tr>
+                                    <tr style="border: 0px;">
+                                        <td class="cart_total_label">
+                                            <h6 class="text-muted">최종 결제 금액</h6>
+                                        </td>
+                                        <td class="cart_total_amount">
+                                            <h4 class="text-brand text-end">₩49,900</h4>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <a href="#" class="btn mb-20 w-100">결제하기</a>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+  
+
+    <!-- Vendor JS-->
+    <script src="/user/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/user/assets/js/vendor/jquery-3.6.0.min.js"></script>
+    <script src="/user/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="/user/assets/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/user/assets/js/plugins/slick.js"></script>
+    <script src="/user/assets/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="/user/assets/js/plugins/wow.js"></script>
+    <script src="/user/assets/js/plugins/jquery-ui.js"></script>
+    <script src="/user/assets/js/plugins/perfect-scrollbar.js"></script>
+    <script src="/user/assets/js/plugins/magnific-popup.js"></script>
+    <script src="/user/assets/js/plugins/select2.min.js"></script>
+    <script src="/user/assets/js/plugins/waypoints.js"></script>
+    <script src="/user/assets/js/plugins/counterup.js"></script>
+    <script src="/user/assets/js/plugins/jquery.countdown.min.js"></script>
+    <script src="/user/assets/js/plugins/images-loaded.js"></script>
+    <script src="/user/assets/js/plugins/isotope.js"></script>
+    <script src="/user/assets/js/plugins/scrollup.js"></script>
+    <script src="/user/assets/js/plugins/jquery.vticker-min.js"></script>
+    <script src="/user/assets/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="/user/assets/js/plugins/jquery.elevatezoom.js"></script>
+    <!-- Template  JS -->
+    <script src="./user/assets/js/main.js?v=5.6"></script>
+    <script src="./user/assets/js/shop.js?v=5.6"></script>
+
+		
+	</th:block>
+	</body>
+	<!-- 추가할 js file -->
+	
+</html>

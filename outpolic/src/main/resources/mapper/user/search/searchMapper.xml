@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="outpolic.user.search.mapper.SearchMapper">
+ 	<resultMap type="Contents" id="contentResultMap">
+ 		<id column="content_id" 				property="contentsId"/>
+ 		<result column="content_type" 			property="contentsType"/>
+ 		<result column="content_title" 			property="contentsTitle"/>
+ 		<result column="registrant_name" 		property="enterName"/>
+ 		<result column="registration_date" 		property="registrationDate"/>
+ 	</resultMap>
+ 	<select id="getContentsList" resultMap="contentResultMap">
+ 		WITH UnifiedContents AS (
+	    -- ===== 1. 포트폴리오(PO) 데이터 조회 =====
+	    SELECT
+	        p.prtf_cd            AS content_id,
+	        'Portfolio'          AS content_type,
+	        p.prtf_ttl           AS content_title,
+	        e.ent_nm             AS registrant_name,
+	        p.prtf_reg_ymdt 	 AS registration_date -- [수정] cl.reg_dt 대신 p 테이블에서 날짜를 가져옵니다.
+	    FROM
+	        content_list cl
+	    JOIN
+	        portfolio p ON cl.cntd_cd = p.prtf_cd
+	    JOIN
+	        enterprise e ON p.ent_cd = e.ent_cd
+	    WHERE
+	        cl.cl_cd LIKE 'LIST_PO_%'
+	
+	    UNION ALL
+	
+	    -- ===== 2. 외주(OS) 데이터 조회 =====
+	    SELECT
+	        o.os_cd              AS content_id,
+	        'Outsourcing'        AS content_type,
+	        o.os_ttl             AS content_title,
+	        e.ent_nm             AS registrant_name,
+	        o.os_reg_ymdt   	 AS registration_date -- [수정] cl.reg_dt 대신 o 테이블에서 날짜를 가져옵니다.
+	    FROM
+	        content_list cl
+	    JOIN
+	        outsourcing o ON cl.cntd_cd = o.os_cd
+	    JOIN
+	        enterprise e ON o.ent_cd = e.ent_cd
+	    WHERE
+	        cl.cl_cd LIKE 'LIST_OS_%'
+		)
+		-- ===== 3. 합쳐진 결과에서 최종 검색 및 정렬 =====
+		SELECT
+		    content_id,
+		    content_type,
+		    content_title,
+		    registrant_name,
+		    registration_date
+		FROM
+		    UnifiedContents
+		WHERE
+		    content_title LIKE CONCAT('%', #{keyword}, '%')
+		ORDER BY
+		    registration_date DESC
+ 	</select>
+ </mapper>

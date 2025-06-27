@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{user/layout/userRegisterLayout}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<title>회원가입</title>
+	</head>
+	<th:block layout:fragment="contents">
+		        <!-- 수정 신세영 -->
+        <div class="page-content pt-50 pb-150">
+		    <div class="container">
+		        <div class="row justify-content-center">
+		            <div class="col-xl-6 col-lg-6 col-md-8">
+		                <div class="login_wrap widget-taber-content background-white mx-auto">
+		                    <div class="padding_eight_all bg-white">
+		                        <div class="heading_s1 text-center">
+		                            <h1 class="mb-5 reg-ttl-ssy">회원 가입</h1>
+		                            <p class="mb-30">
+		                                이미 계정이 있으신가요? <a class="a-lgn-ssy" th:href="@{/pageLogin}">Login</a>
+		                            </p>
+		                        </div>
+		                        <div class="card-login mt-20 d-flex flex-column gap-3">
+		                            <a href="#" class="social-login naver-login d-flex align-items-center justify-content-center">
+		                                <img th:src="@{/user/assets/imgs/theme/icons/naver-logo.png}" alt="" />
+		                                <span class="ms-2">네이버로 시작하기</span>
+		                            </a>
+		                            <a href="#" class="social-login kakao-login text-white d-flex align-items-center justify-content-center">
+		                                <img th:src="@{/user/assets/imgs/theme/icons/kakao-logo.png}" alt="" />
+		                                <span class="ms-2">카카오로 시작하기</span>
+		                            </a>
+		                            <a th:href="@{/choiceRegister}" class="social-login apple-login d-flex align-items-center justify-content-center">
+		                                <img th:src="@{/user/assets/imgs/theme/icons/logo-apple.svg}" alt="" />
+		                                <span class="ms-2">이메일로 시작하기</span>
+		                            </a>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	</th:block>        
+	<!-- 추가할 js file -->
+	<!-- class="col-lg-6 pr-30 d-none d-lg-block" -->
+</html>

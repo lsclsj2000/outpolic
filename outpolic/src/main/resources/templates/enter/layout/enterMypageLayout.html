@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+	<meta charset="UTF-8">
+	<title>마이페이지</title>
+	<meta http-equiv="x-ua-compatible" content="ie=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<!-- Favicon -->
+	<link rel="shortcut icon" type="image/x-icon" href="user/assets/imgs/theme/favicon.svg" />
+	<!-- Template CSS -->
+	<link rel="stylesheet" href="user/assets/css/plugins/slider-range.css" />
+	<link rel="stylesheet" href="user/assets/css/main.css?v=5.6" />
+</head>
+<body>
+	<!-- header start -->
+	<header th:replace="~{user/fragments/userHeader :: userHeaderFragment}"></header>
+	<!-- header end -->
+	<div class="main">
+		<div class="page-content pt-100 pb-150" >
+		    <div class="container">
+		        <div class="row">
+		            <div class="col-lg-10 m-auto">
+		                <div class="row"> 
+							<aside th:replace ="~{user/fragments/userMypageAside :: userMypageAside}"></aside>
+							<div class="col-md-9">
+		                        <div class="tab-content account dashboard-content pl-50">
+		                        	<!-- 여기 메인 콘텐츠가 들어올 자리 -->
+								    <main layout:fragment="contents">
+								        <!-- 기본 콘텐츠 (없으면 비어있을 수 있음) -->
+								    </main>
+									
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+    </div>
+    
+    <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
+	
+	
+	<!-- Vendor JS-->
+    <script src="/user/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/user/assets/js/vendor/jquery-3.6.0.min.js"></script>
+    <script src="/user/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="/user/assets/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/user/assets/js/plugins/slick.js"></script>
+    <script src="/user/assets/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="/user/assets/js/plugins/wow.js"></script>
+    <script src="/user/assets/js/plugins/slider-range.js"></script>
+    <script src="/user/assets/js/plugins/perfect-scrollbar.js"></script>
+    <script src="/user/assets/js/plugins/magnific-popup.js"></script>
+    <script src="/user/assets/js/plugins/select2.min.js"></script>
+    <script src="/user/assets/js/plugins/waypoints.js"></script>
+    <script src="/user/assets/js/plugins/counterup.js"></script>
+    <script src="/user/assets/js/plugins/jquery.countdown.min.js"></script>
+    <script src="/user/assets/js/plugins/images-loaded.js"></script>
+    <script src="/user/assets/js/plugins/isotope.js"></script>
+    <script src="/user/assets/js/plugins/scrollup.js"></script>
+    <script src="/user/assets/js/plugins/jquery.vticker-min.js"></script>
+    <script src="/user/assets/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="/user/assets/js/plugins/jquery.elevatezoom.js"></script>
+    <!-- Template  JS -->
+    <script src="./assets/js/main.js?v=5.6"></script>
+    <script src="./assets/js/shop.js?v=5.6"></script>
+</body>
+</html>

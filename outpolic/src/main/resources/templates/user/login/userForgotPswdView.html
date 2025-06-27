@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{user/layout/userLayoutMain}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<title>비밀번호 찾기</title>
+	</head>
+	<th:block layout:fragment="contents">
+    	        <!-- 수정할 부분 신세영 -->
+        <div class="page-contentw-100">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-6 col-md-12 m-auto w-100">
+                        <div class="login_wrap widget-taber-content background-white">
+                            <div class="padding_eight_all bg-white">
+                                <div class="heading_s1">
+                                    <img class="border-radius-15" th:src="@{/user/assets/imgs/page/forgot_password.svg}" alt="" />
+                                    <h2 class="mb-15 mt-15">비밀번호를 잊으셨나요?</h2>
+                                    <p class="mb-30">이메일로 인증번호를 받아 입력한 후 비밀번호를 재설정 할 수 있습니다.</p>
+                                </div>
+                                <div class="w-75">
+	                                <form method="post">
+	                                	<div class="form-group">
+	                                        <input class="w-75" type="text" required="" name="userid" placeholder="아이디를 입력해주세요." />
+	                                    </div>
+	                                    <div class="form-group">
+	                                        <input type="text" required="" name="email" placeholder="이메일을 입력해주세요." />
+	                                         <button type="button" class="btn-send-code text-white">인증번호 발송</button>
+	                                    </div>
+	                                    <div class="form-group">
+									        <input class="w-75" type="text" id="code" name="code" placeholder="인증번호 입력" required />
+									    </div>
+	                                    <div class="login_footer form-group mb-50">
+	                                        <div class="chek-form">
+	                                            <div class="custome-checkbox">
+	                                                <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="" />
+	                                                <label class="form-check-label" for="exampleCheckbox1"><span>이용 약관 및 개인정보 처리방침에 동의합니다.</span></label>
+	                                            </div>
+	                                        </div>
+	                                        <a class="text-muted" href="#">자세히 보기</a>
+	                                    </div>
+	                                    <div class="form-group">
+	                                        <button type="submit" class="btn btn-heading btn-block hover-up" name="resetPassword">비밀번호 재설정</button>
+	                                    </div>
+	                                </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    	
+	</th:block>        
+	<!-- 추가할 js file -->
+	
+</html>
