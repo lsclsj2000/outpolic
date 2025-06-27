@@ -1,83 +1,143 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{user/layout/userLayoutMain}">
+	  layout:decorate="~{user/layout/userMypageLayout}">
 
 	<head>
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 	</head>
 	<body>
+		
+		<!-- 여기부터 본문 -->
+		<!-- 회원 정보 수정 페이지 시작 -->
+		<th:block layout:fragment="contents">
+			<form class="register edit" th:action="@{/userEdit}" method="post" th:object="${userInfo}">
+				<div class="form-group">
+				    <label for="memberId">아이디</label>
+				    <input type="text" id="memberId" name="memberId"  th:value = "*{memberId}" readonly />
+				</div>
+				<div class="form-group">
+				    <label for="memberName">이름</label>
+				    <input type="text" id="memberName" name="memberName" th:value = "*{memberName}"/>
+				</div>
+				<div class="form-group">
+				    <label for="memberNickName">닉네임</label>
+				    <input type="text" id="memberNickName" name="memberNickName" th:value = "*{memberNickName}" />
+				</div>
+				<div class="form-group">
+				    <label for="memberTelNo">전화번호</label>
+				    <input type="text" id="memberTelNo" name="memberTelNo" th:value = "*{memberTelNo}" required />
+				    <button type="button" class="btn-send-code text-white">인증번호 발송</button>
+				</div>
+				
+				<div class="form-group">
+				    <label for="code">인증번호 입력</label>
+				    <input type="text" id="code" name="code" placeholder="인증번호 입력"/>
+				    <button type="button" class="btn-verify-code text-white">인증</button>
+				</div>
+				
+				<div class="form-group">
+				    <label for="memberEmail">이메일</label>
+				    <input type="email" id="memberEmail" name="memberEmail" th:value ="*{memberEmail}"  required />
+				</div>
+				<div class="form-group">
+				    <label for="memberBirth">생일</label>
+				    <input type="date" id="memberBirth" name="memberBirth" class="form-control" th:value ="*{memberBirth}"  required/>
+				</div>
+				<!-- 주소 섹션 -->
+				<h4 style="color: #6c757d;" class="mb-10">주소</h4>
+				<div class="form-group">
+				    <label for="sample4_postcode">우편번호</label>
+			        <input type="text" id="sample4_postcode" name="memberZip" class="form-control" th:value ="*{memberZip}" readonly />
+			        <button type="button" class="btn btn-outline-secondary">우편번호 찾기</button>
+				</div>
+				<div class="form-group">
+				    <label for="sample4_roadAddress">도로명 주소</label>
+				    <input type="text" id="sample4_roadAddress" name="memberAddress" class="form-control" th:value = "*{memberAddress}" readonly />
+				</div>
+				<div class="form-group">
+				    <label for="sample4_jibunAddress">지번 주소</label>
+				    <input type="text" id="sample4_jibunAddress" name="jibunAddress" class="form-control" placeholder="지번 주소" readonly />
+				</div>
+				<div class="form-group">
+				    <label for="sample4_detailAddress">상세 주소</label>
+				    <input type="text" id="sample4_detailAddress" name="memberDAddress" class="form-control" th:value ="*{memberDAddress}"  />
+				</div>
+				<span id="guide" style="color:#999; display:none"></span>
 	
-	<!-- 추가할 js 파일 -->
-	<th:block layout:fragment="jsFile">
-		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	</th:block>
-	
-<!-- 추가할 script -->
-	<th:block layout:fragment="jsScript">
-	</th:block>
-	
-	
-	<!-- 여기부터 본문 -->
-	<!-- 회원 정보 수정 페이지 시작 -->
-	<th:block layout:fragment="contents">
-		<form class="register edit" method="post">
-			<div class="form-group">
-			    <label for="userid">아이디</label>
-			    <input type="text" id="userid" name="userid"  th:value = "ksmartid1" readonly />
-			</div>
-			<div class="form-group">
-			    <label for="username">이름</label>
-			    <input type="text" id="username" name="username"/>
-			</div>
-			<div class="form-group">
-			    <label for="phone">전화번호</label>
-			    <input type="text" id="phone" name="phone" placeholder="010-1234-5678" required />
-			    <button type="submit" class="btn-send-code text-white">인증번호 발송</button>
-			</div>
-			
-			<div class="form-group">
-			    <label for="code">인증번호 입력</label>
-			    <input type="text" id="code" name="code" placeholder="인증번호 입력"/>
-			    <button type="submit" class="btn-verify-code text-white">인증</button>
-			</div>
-			
-			<div class="form-group">
-			    <label for="email">이메일</label>
-			    <input type="email" id="email" name="email" placeholder="example@email.com" required />
-			</div>
-			<div class="form-group">
-			    <label for="birth">생일</label>
-			    <input type="date" id="birth" name="birth" class="form-control" readonly/>
-			</div>
-			<!-- 주소 섹션 -->
-			<h4 style="color: #6c757d;" class="mb-10">주소</h4>
-			<div class="form-group">
-			    <label for="sample4_postcode">우편번호</label>
-		        <input type="text" id="sample4_postcode" name="postcode" class="form-control" placeholder="우편번호" readonly />
-		        <button type="button" class="btn btn-outline-secondary" onclick="sample4_execDaumPostcode()">우편번호 찾기</button>
-			</div>
-			<div class="form-group">
-			    <label for="sample4_roadAddress">도로명 주소</label>
-			    <input type="text" id="sample4_roadAddress" name="roadAddress" class="form-control" placeholder="도로명 주소" readonly />
-			</div>
-			<div class="form-group">
-			    <label for="sample4_jibunAddress">지번 주소</label>
-			    <input type="text" id="sample4_jibunAddress" name="jibunAddress" class="form-control" placeholder="지번 주소" readonly />
-			</div>
-			<div class="form-group">
-			    <label for="sample4_detailAddress">상세 주소</label>
-			    <input type="text" id="sample4_detailAddress" name="detailAddress" class="form-control" placeholder="상세 주소" />
-			</div>
-			<span id="guide" style="color:#999; display:none"></span>
-
-			<!-- 제출 버튼 -->
-			<div class="form-group">
-			    <button type="submit" class="btn btn-primary w-70 fw-bold">정보 수정</button>
-			</div>
-		</form>
-	</th:block>
+			 	<div class="form-group btnSave">
+	                <button type="button" id="btnSave" class="btn btn-primary w-70 fw-bold">정보 수정</button>
+	            </div>
+	        </form>
+						
+			<th:block layout:fragment="jsScript">
+			    <!-- JS 라이브러리 -->
+			    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+			    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		
+			    <script>
+			        $(document).ready(function () {
+			            console.log("JS Fragment 동작 중");
+		
+			            // 1) 정보 불러오기
+			            $.ajax({
+			                url: '/userEdit/info',
+			                method: 'GET',
+			                success: function (data) {
+			                    console.log('회원 정보:', data);
+			                    $('#memberName').val(data.memberName);
+			                    $('#memberNickName').val(data.memberNickName);
+			                    $('#memberTelNo').val(data.memberTelNo);
+			                    $('#sample4_roadAddress').val(data.memberAddress);
+			                    $('#sample4_detailAddress').val(data.memberDAddress);
+			                    $('#sample4_postcode').val(data.memberZip);
+			                    $('#memberEmail').val(data.memberEmail);
+			                    $('#memberBirth').val(data.memberBirth);
+			                    $('#memberJoinDate').val(data.memberJoinDate);
+			                },
+			                error: function () {
+			                    alert('회원 정보 조회 실패');
+			                }
+			            });
+		
+			            // 2) 수정 요청
+			            $('#btnSave').on('click', function () {
+			                console.log('저장 버튼 클릭됨');
+			                const userInfo = {
+			                    memberId: $('#memberId').val(), 
+			                    memberName: $('#memberName').val(),
+			                    memberNickName: $('#memberNickName').val(),
+			                    memberTelNo: $('#memberTelNo').val(),
+			                    memberAddress: $('#sample4_roadAddress').val(),
+			                    memberDAddress: $('#sample4_detailAddress').val(),
+			                    memberZip: $('#sample4_postcode').val(),
+			                    memberEmail: $('#memberEmail').val(),
+			                    memberBirth: $('#memberBirth').val(),
+			                    memberJoinDate: $('#memberJoinDate').val()
+			                };
+		
+			                $.ajax({
+			                    url: '/userEdit/update',
+			                    method: 'POST',
+			                    contentType: 'application/json',
+			                    data: JSON.stringify(userInfo),
+			                    success: function (res) {
+			                        console.log('✅ 서버 응답:', res);
+			                        if (res === 'success') {
+			                            alert('정보가 성공적으로 수정되었습니다.');
+										window.location.href = '/mypage';
+			                        } else {
+			                            alert('수정에 실패했습니다.');
+			                        }
+			                    },
+			                    error: function () {
+			                        alert('서버와 통신 중 오류가 발생했습니다.');
+			                    }
+			                });
+			            });
+			        });
+			    </script>
+			</th:block>
+		</th:block>
 	</body>
-	<!-- 추가할 js file -->
-	
 </html>
