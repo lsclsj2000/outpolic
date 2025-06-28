@@ -40,7 +40,7 @@ public class userLoginController {
         return "user/login/userForgotPswdView"; // templates/page-forgot-password.html
     }
     
-    @GetMapping("goodsList")
+    @GetMapping("/goodsList")
     public String userShopPage() {
         return "user/goods/goodsList";
     }

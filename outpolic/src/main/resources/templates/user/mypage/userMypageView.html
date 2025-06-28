@@ -13,16 +13,16 @@
 			<div class="tab-pane fade show active" id="userOverview" th:object="${userInfo}">
 				<h4>기본 정보</h4>
 				<label>이름:</label>
-				<input type="text" th:value="*{memberName}" />
+				<input type="text" th:value="*{memberName}" readonly />
 				<label>닉네임:</label>
-				<input type="text" th:value="*{memberNickName}" />
+				<input type="text" th:value="*{memberNickName}" readonly/>
 				<label>이메일:</label>
-				<input type="email" th:value="*{memberEmail}" />
+				<input type="email" th:value="*{memberEmail}" readonly/>
 
 				<label>전화번호:</label>
-				<input type="text" th:value="*{memberTelNo}" />
+				<input type="text" th:value="*{memberTelNo}" readonly/>
 				<label>가입일:</label>
-				<input type="text" th:value="*{memberJoinDate}" />
+				<input type="text" th:value="*{memberJoinDate}" readonly/>
 				<label>내 마일리지:</label>
 <!--				<input type="text" th:value="*{userInfo.phone}" />-->
 				<label>보유상품:</label>
@@ -66,7 +66,7 @@
 			</div>
 			<div class="tab-pane fade " id="mySettList">
 				<h3>결제내역</h3>
-				<table class="table">
+				<table class="table mt-30">
 					<thead>
 						<tr>
 							<th style="text-align: center;">결제번호</th>
@@ -117,6 +117,7 @@
 						</tr>
 					</tbody>
 				</table>
+				<h3>마일리지 적립 내역</h3>
 				<table class="table">
 					<thead>
 						<tr>
