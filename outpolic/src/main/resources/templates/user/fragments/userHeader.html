@@ -113,15 +113,15 @@
 									<a href="page-account.html">
 									    <img class="svgInject" alt="Nest" src="/user/assets/imgs/theme/icons/icon-user.svg" />
 									</a>
-									<a href="page-account.html"><span class="lable ml-0">Account</span></a>
+									<a th:href="@{/mypage}"><span class="lable ml-0">Account</span></a>
 									<div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
 										<ul>
-										    <li><a href="page-account.html"><i class="fi fi-rs-user mr-10"></i>My Account</a></li>
+										    <li><a th:href="@{/mypage}"><i class="fi fi-rs-user mr-10"></i>My Account</a></li>
 										    <li><a href="page-account.html"><i class="fi fi-rs-location-alt mr-10"></i>Order Tracking</a></li>
 										    <li><a href="page-account.html"><i class="fi fi-rs-label mr-10"></i>My Voucher</a></li>
 										    <li><a href="shop-wishlist.html"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a></li>
 										    <li><a href="page-account.html"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a></li>
-										    <li><a href="page-login.html"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a></li>
+										    <li><a th:href="@{/pageLogin}"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a></li>
 										</ul>
 									</div>
 								</div>
@@ -351,10 +351,10 @@
 									    <ul class="sub-menu">
 									        <li><a href="page-about.html">About Us</a></li>
 									        <li><a href="page-contact.html">Contact</a></li>
-									        <li><a href="page-account.html">My Account</a></li>
-									        <li><a href="page-login.html">Login</a></li>
-									        <li><a href="page-register.html">Register</a></li>
-									        <li><a href="page-forgot-password.html">Forgot password</a></li>
+									        <li><a th:href="@{/mypage}">My Account</a></li>
+									        <li><a th:href="@{/pageLogin}">Login</a></li>
+									        <li><a th:href="@{/pageRegister}">Register</a></li>
+									        <li><a th:href="@{/forgotPswd}">Forgot password</a></li>
 									        <li><a href="page-reset-password.html">Reset password</a></li>
 									        <li><a href="page-purchase-guide.html">Purchase Guide</a></li>
 									        <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
