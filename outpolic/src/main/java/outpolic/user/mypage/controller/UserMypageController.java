@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import outpolic.user.mypage.dto.userInfoDTO;
+import outpolic.user.mypage.domain.UserInfoDTO;
 import outpolic.user.mypage.service.UserMypageEditService;
 
 @Controller
-public class userMypageController {
+public class UserMypageController {
 
 	// 홈 페이지 요청 처리
     @GetMapping("/")
@@ -23,7 +23,7 @@ public class userMypageController {
  // 유저 마이페이지
  	@GetMapping("/mypage")
  	public String myPage(Model model) {
- 		userInfoDTO userInfo = userMypageEditService.getUserInfoById("user002");
+ 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById("user002");
  		model.addAttribute("userInfo", userInfo);
  		return "user/mypage/userMypageView";
  	}
@@ -93,14 +93,14 @@ public class userMypageController {
  	@PostMapping("/userEditView")
  	public String usreProfileEditView(Model model) {
 
- 		userInfoDTO userInfo = userMypageEditService.getUserInfoById("user002");
+ 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById("user002");
  		model.addAttribute("userInfo", userInfo);
 
  		return "user/mypage/userProfileEditView";
  	}
 
  	 @PostMapping("/userEdit") 
- 	 public String userProfileEdit(userInfoDTO userInfo, 
+ 	 public String userProfileEdit(UserInfoDTO userInfo, 
  			 						Model model ) { 
  	 userMypageEditService.editUserInfo(userInfo);
  	 model.addAttribute("title", "개인정보 수정");
@@ -111,14 +111,14 @@ public class userMypageController {
  	 
  	 @GetMapping("/userEdit/info")
  	 @ResponseBody
- 	 public userInfoDTO getUserInfoAjax() {
- 		userInfoDTO userInfo = userMypageEditService.getUserInfoById("user002");
+ 	 public UserInfoDTO getUserInfoAjax() {
+ 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById("user002");
  		 
  		 return userInfo; 
  	 }
  	 @PostMapping("/userEdit/update")
  	 @ResponseBody
-     public String updateUserInfo(@RequestBody userInfoDTO userInfo) {
+     public String updateUserInfo(@RequestBody UserInfoDTO userInfo) {
          userMypageEditService.editUserInfo(userInfo);
          return "success";
      }

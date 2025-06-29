@@ -1,4 +1,4 @@
-package outpolic.user.mypage.dto;
+package outpolic.user.mypage.domain;
 
 import java.time.LocalDate;
 
@@ -6,7 +6,7 @@ import lombok.Data;
 
 // 회원의 개인정보에 대한 dto
 @Data
-public class userInfoDTO {
+public class UserInfoDTO {
 	 public String memberId; 
 	 public String memberName; 
 	 public String memberNickName; 

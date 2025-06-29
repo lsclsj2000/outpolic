@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import outpolic.user.mypage.dto.userInfoDTO;
+import outpolic.user.mypage.domain.UserInfoDTO;
 import outpolic.user.mypage.mapper.UserMypageEditMapper;
 import outpolic.user.mypage.service.UserMypageEditService;
 
@@ -21,20 +21,20 @@ public class UserMypageEditServiceImpl implements UserMypageEditService {
 	private UserMypageEditMapper userMypageEditMapper;
 	
 	@Override
-	public userInfoDTO getUserInfoById(String memberId) {
+	public UserInfoDTO getUserInfoById(String memberId) {
 		
 		return userMypageEditMapper.getUserInfoById("user002");
 	}
 
 	@Override
-	public void editUserInfo(userInfoDTO userInfo) {
+	public void editUserInfo(UserInfoDTO userInfo) {
 		 log.info("📝 수정 요청 들어온 데이터: {}", userInfo);
 		    int result = userMypageEditMapper.updateUserInfo(userInfo);
 		    log.info("🧾 수정 쿼리 실행 결과: {}건 반영됨", result);
 	}
 
 	@Override
-	public List<userInfoDTO> getMemberList() {
+	public List<UserInfoDTO> getMemberList() {
 
 		return null;
 	}
