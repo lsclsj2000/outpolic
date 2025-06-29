@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class userLoginController {
+public class UserLoginController {
 
     // 로그인 페이지 GET 요청
     @GetMapping("/pageLogin")

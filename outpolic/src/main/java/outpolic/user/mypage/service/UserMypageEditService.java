@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import outpolic.user.mypage.domain.UserInfoDTO;
+import outpolic.user.mypage.dto.UserInfoDTO;
 
 @Service
 public interface UserMypageEditService {
