@@ -1,4 +1,4 @@
-package outpolic.user.mypage.domain;
+package outpolic.user.mypage.dto;
 
 import java.time.LocalDate;
 

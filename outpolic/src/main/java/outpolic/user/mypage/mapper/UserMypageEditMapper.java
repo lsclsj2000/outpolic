@@ -2,7 +2,7 @@ package outpolic.user.mypage.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import outpolic.user.mypage.domain.UserInfoDTO;
+import outpolic.user.mypage.dto.UserInfoDTO;
 
 @Mapper
 public interface UserMypageEditMapper {
