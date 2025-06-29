@@ -1,4 +1,4 @@
-package outpolic.user.mypage.dto;
+package outpolic.user.mypage.domain;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import lombok.Data;
 
 
 @Data
-public class mypageDTO {
+public class MypageDTO {
 	// 마이페이지 구현에 필요한 여러 dto의 집합
 	// 마이페이지의 메인 화면에 노출시킬 몇 개인정보
 	private String memberId;
@@ -20,10 +20,10 @@ public class mypageDTO {
     private int mileageAmount;   // 또는 누적 포인트
 	
 	// user 개인정보 dto
-	private List<userInfoDTO> userInfo;
+	private List<UserInfoDTO> userInfo;
 	
 	// user 외주 dto
-	private List<userOsInfoDTO> userOsInfo;
+	private List<UserOsInfoDTO> userOsInfo;
 	
 	//USER 리뷰 DTO
 	
