@@ -70,7 +70,7 @@
 	<script th:src="@{/user/assets/js/shop.js}"></script>
 
 	<!--자바스크립트 코드 삽입부위-->
-	<th:block layout:replace="~{::jsFile}"></th:block>
-	<th:block layout:replace="~{::jsScript}"></th:block>
+	<th:block layout:fragment="jsFile"></th:block>
+	<th:block layout:fragment="jsScript"></th:block>
 </body>
 </html>
