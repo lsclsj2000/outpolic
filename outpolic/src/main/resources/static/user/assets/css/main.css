@@ -12656,7 +12656,13 @@ p.mb-30-ssy{
 }
 
 
-
+/* 이성재 CSS 추가 영역 */
+.blur-block {
+	opacity: 0.5;
+	pointer-events: none;
+	transition: all 0.3s;
+}
+/* 이성재 CSS 추가 영역 끝*/
 
 
 
