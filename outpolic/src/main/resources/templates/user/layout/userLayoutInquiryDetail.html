@@ -25,8 +25,8 @@
             <div class="container">
 				<div class="col-lg-9 m-auto">
 					<th:block layout:fragment="title"></th:block>
-				   	<div class="row">
-						<div th:replace="~{user/fragments/userInquirySidebar :: userInquirySidebarFragment}"></div>
+				   	<div class="row justify-content-around">
+						<div th:replace="~{user/fragments/userInquiryDetailSidebar :: userInquiryDetailSidebarFragment}"></div>
 						<div class="col-md-9">
 							<!-- 새로 추가할 콘텐츠 박스 -->
 				        	<th:block layout:fragment="contents"></th:block>
