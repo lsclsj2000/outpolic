@@ -14,9 +14,7 @@ public class UserInquiry {
 	private String subAttSrvrName;
 	private String subAttPath;
 	private String inquiryProcessCn;
-	private String inquiryProcessRegDate;
 	private String adminCode;
-	private String adminName;
 	private String inquiryTypeCode;
 	private String memberCode;
 	
@@ -26,5 +24,8 @@ public class UserInquiry {
 	private String inquiryTypeRegDate;
 	private String inquiryTypeMdfcnAdm; 
 	private String inquiryTypeMdfcnDate;
+	
 	private String inquiryProcessAnsCn;
+    private String inquiryProcessRegDate;
+    private String adminName;
 }
