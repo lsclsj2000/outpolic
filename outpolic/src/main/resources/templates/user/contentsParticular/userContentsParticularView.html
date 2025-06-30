@@ -8,39 +8,10 @@
 	</head>
 	
 	<!-- 추가할 js file -->
-	<!-- 타이틀 추가 -->
-	<!-- <th:block layout:fragment="title">
-		<div class="row">
-			<div class="col-md-2">
-			</div>
-			<div class="col-md-9">
-				<div class="single-header style-2">
-					<div class="row">
-						<div class="col-xl-10 col-lg-12 m-auto">
-							<h6 class="mb-10">
-							  <a href="#" th:text="${inquiry.inquiryTypeName}">문의 타입</a>
-							</h6>
-							<h2 class="mb-10" th:text="${inquiry.inquiryTitle}">문의 제목</h2>
-							<div class="single-header-meta">
-								<div class="entry-meta meta-1 font-xs mt-15 mb-15">
-									<a class="author-avatar" href="#">
-										<img class="img-circle" src="/user/assets/imgs/blog/author-1.png" alt="">
-									</a>
-									<span class="post-by">By <a href="#" th:text="${inquiry.memberName}">작성자</a></span>
-									<span class="post-on has-dot" th:text="${inquiry.inquiryRegDate}">작성일자</span>
-									<span class="time-reading has-dot">00 views</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>       
-			</div>
-			<div class="entry-bottom mb-30"></div>
-		</div>
-	</th:block> -->
+	 <th:block layout:fragment="title"></th:block>
 	
 	<!-- 컨텐츠 추가 -->
-	<!-- <th:block layout:fragment="contents">
+<th:block layout:fragment="contents">
 		<div class="single-page pr-30">
 			<div class="single-content">
 				<div class="row">
@@ -51,8 +22,7 @@
 					    <ul class="att-file-list">
 					      <li>
 					        <a th:href="@{${inquiry.subAttPath + '/' + inquiry.subAttSrvrName}}" 
-					           th:text="${inquiry.subAttOrgnlName}" 
-					           download>첨부파일</a>
+					           th:text="${inquiry.subAttOrgnlName}">첨부파일</a>
 					      </li>
 					    </ul>
 					  </div>
@@ -80,5 +50,5 @@
 				</div>
 			</div>
 		</div>
-	</th:block> -->
+	</th:block>
 </html>
