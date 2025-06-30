@@ -9,157 +9,236 @@
 	
 	<th:block layout:fragment="jsScript">
 		<script>
+			/*Product Details*/
+		    var productDetails = function () {
+		        $('.product-image-slider').slick({
+		            slidesToShow: 1,
+		            slidesToScroll: 1,
+		            arrows: false,
+		            fade: false,
+		            asNavFor: '.slider-nav-thumbnails',
+		        });
+	
+		        $('.slider-nav-thumbnails').slick({
+		            slidesToShow: 4,
+		            slidesToScroll: 1,
+		            asNavFor: '.product-image-slider',
+		            dots: false,
+		            focusOnSelect: true,
+	
+		            prevArrow: '<button type="button" class="slick-prev"><i class="fi-rs-arrow-small-left"></i></button>',
+		            nextArrow: '<button type="button" class="slick-next"><i class="fi-rs-arrow-small-right"></i></button>'
+		        });
+	
+		        // Remove active class from all thumbnail slides
+		        $('.slider-nav-thumbnails .slick-slide').removeClass('slick-active');
+	
+		        // Set active class to first thumbnail slides
+		        $('.slider-nav-thumbnails .slick-slide').eq(0).addClass('slick-active');
+	
+		        // On before slide change match active thumbnail to current slide
+		        $('.product-image-slider').on('beforeChange', function (event, slick, currentSlide, nextSlide) {
+		            var mySlideNumber = nextSlide;
+		            $('.slider-nav-thumbnails .slick-slide').removeClass('slick-active');
+		            $('.slider-nav-thumbnails .slick-slide').eq(mySlideNumber).addClass('slick-active');
+		        });
+	
+		        $('.product-image-slider').on('beforeChange', function (event, slick, currentSlide, nextSlide) {
+		            var img = $(slick.$slides[nextSlide]).find("img");
+		            $('.zoomWindowContainer,.zoomContainer').remove();
+		            if ($(window).width() > 768) {
+		                $(img).elevateZoom({
+		                    zoomType: "inner",
+		                    cursor: "crosshair",
+		                    zoomWindowFadeIn: 500,
+		                    zoomWindowFadeOut: 750
+		                });
+		            }
+		        });
+		        //Elevate Zoom
+		        if ( $(".product-image-slider").length ) {
+		            if ($(window).width() > 768) {
+		                $('.product-image-slider .slick-active img').elevateZoom({
+		                    zoomType: "inner",
+		                    cursor: "crosshair",
+		                    zoomWindowFadeIn: 500,
+		                    zoomWindowFadeOut: 750
+		                });
+		            }
+		        }
+		        //Filter color/Size
+		        $('.list-filter').each(function () {
+		            $(this).find('a').on('click', function (event) {
+		                event.preventDefault();
+		                $(this).parent().siblings().removeClass('active');
+		                $(this).parent().toggleClass('active');
+		                $(this).parents('.attr-detail').find('.current-size').text($(this).text());
+		                $(this).parents('.attr-detail').find('.current-color').text($(this).attr('data-color'));
+		            });
+		        });
+	
+		        //Qty Up-Down
+		        $('.detail-qty').each(function () {
+		            var qtyval = parseInt($(this).find(".qty-val").val(), 10);
+		            var $qtyInput = $(this).find(".qty-val");
+	
+		            $(this).find('.qty-up').on('click', function (event) {
+		                event.preventDefault();
+		                qtyval = qtyval + 1;
+		                $qtyInput.val(qtyval);
+		            });
+	
+		            $(this).find(".qty-down").on("click", function (event) {
+		                event.preventDefault();/*  */
+		                qtyval = Math.max(1, qtyval - 1);
+		                $qtyInput.val(qtyval);
+		            });
+		        });
+	
+		        $('.dropdown-menu .cart_list').on('click', function (event) {
+		            event.stopPropagation();
+		        });
+		    };
+		
+		
+		
 			/*<![CDATA[*/
-	
-		     document.addEventListener('DOMContentLoaded', function() {
+			document.addEventListener('DOMContentLoaded', function() {
+			
+				// -변수에 담아두기 (성능 최적화)
+				const contentsContainer = document.getElementById('contentsListContainer');
+				const filterButtons = document.querySelectorAll('#myTab .nav-link');
+				const headerSearchForm = document.querySelector('form[action="/user/userSearch"]');
+				const headerSearchInput = headerSearchForm ? headerSearchForm.querySelector('input[name="keyword"]') : null;
+				const resultTitle = document.querySelector('.section-title h3');
+				
+				
+				
+				function performAjaxSearch(keyword) {
+				    // 1-1. History API를 사용해 브라우저 주소창의 URL을 변경 (페이지 이동은 없음)
+				    const newUrl = `/user/userSearch?keyword=${encodeURIComponent(keyword)}`;
+				    history.pushState(null, '', newUrl);
+				
+				    // 1-2. 사용자에게 로딩 중임을 시각적으로 표시
+				    contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 중...</p></div>';
+				
+				    // 1-3. 서버의 API에 데이터 요청
+				    fetch(`/user/search/api?keyword=${encodeURIComponent(keyword)}`)
+				        .then(response => {
+				            if (!response.ok) throw new Error('서버 응답 오류');
+				            return response.json();
+				        })
+				        .then(data => {
+				            // 1-4. AJAX 성공 시 화면 업데이트
+				            
+				            // 검색 결과 제목 변경
+				            if (keyword && keyword.trim() !== '') {
+				                resultTitle.innerHTML = `'<span class="text-brand">${keyword}</span>' 검색 결과`;
+				            } else {
+				                resultTitle.innerHTML = '전체 콘텐츠';
+				            }
+				
+				            // 받은 데이터로 목록을 완전히 새로 그림
+				            contentsContainer.innerHTML = ''; // 컨테이너 초기화
+				            if (!data || data.length === 0) {
+				                contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
+				                return;
+				            }
+				
+				            // 데이터 목록을 순회하며 각 아이템의 HTML을 생성
+				            data.forEach((content, index) => {
+				                const contentHtml = `
+				                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="${content.contentsType}">
+				                        <div class="product-cart-wrap mb-30">
+				                            <div class="product-img-action-wrap">
+				                                <div class="product-img product-img-zoom">
+				                                    <a href="#">
+				                                        <img class="default-img" src="https://picsum.photos/id/${index + 40}/300/200" alt="콘텐츠 이미지">
+				                                        <img class="hover-img" src="https://picsum.photos/id/${index + 140}/300/200" alt="콘텐츠 이미지">
+				                                    </a>
+				                                </div>
+				                                <div class="product-action-1">
+								                    <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+								                    <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+								                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+								                </div>
+				                            </div>
+				                            <div class="product-content-wrap" style="margin-top: 15px;">
+				                                <h2><a href="#">${content.contentsTitle}</a></h2>
+				                                <div>
+				                                    <span class="font-small text-muted">By <a href="#">${content.enterName}</a></span>
+				                                </div>
+				                            </div>
+				                        </div>
+				                    </div>
+				                `;
+				                contentsContainer.insertAdjacentHTML('beforeend', contentHtml);
+				            });
+				
+				            // 새 검색을 했으므로 필터 버튼을 'All'로 초기화
+				            setActiveButton(document.querySelector('.nav-link[data-filter="All"]'));
+				            productDetails();
+				        })
+				        .catch(error => {
+				            console.error("AJAX Search Error:", error);
+				            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 중 오류가 발생했습니다.</p></div>';
+				        });
+				}
+				
+				/**
+				 * 필터링할 타입 ('All', 'Portfolio', 'Outsourcing')
+				 */
+				function applyFilter(filter) {
+				    const items = contentsContainer.querySelectorAll('.product-item');
+				    let visibleCount = 0;
+				
+				    items.forEach(item => {
+				        // 'All' 필터이거나 아이템의 data-type이 필터와 일치하면 보여줌
+				        if (filter === 'All' || item.dataset.type === filter) {
+				            item.style.display = ''; // 보이기 (CSS display 속성을 기본값으로 복원)
+				            visibleCount++;
+				        } else {
+				            item.style.display = 'none'; // 숨기기
+				        }
+				    });
+				
+				    // 필터링 결과 아무것도 보이지 않을 경우 메시지 처리
+				    const noResultMessage = contentsContainer.querySelector('.no-filter-result');
+				    if (noResultMessage) noResultMessage.remove(); // 기존 메시지 삭제
+				    if (visibleCount === 0) {
+				        contentsContainer.insertAdjacentHTML('beforeend', '<div class="col-12 text-center no-filter-result"><p>선택하신 필터에 해당하는 결과가 없습니다.</p></div>');
+				    }
+				}
+				
+				function setActiveButton(clickedButton) {
+				    if (!clickedButton) return;
+				    filterButtons.forEach(button => button.classList.remove('active'));
+				    clickedButton.classList.add('active');
+				}
+				
+				
 
-        // --- 1. 필요한 HTML 요소들을 미리 변수에 담아두기 (성능 최적화) ---
-        const contentsContainer = document.getElementById('contentsListContainer');
-        const filterButtons = document.querySelectorAll('#myTab .nav-link');
-        const headerSearchForm = document.querySelector('form[action="/user/userSearch"]');
-        const headerSearchInput = headerSearchForm ? headerSearchForm.querySelector('input[name="keyword"]') : null;
-        const resultTitle = document.querySelector('.section-title h3');
-
-
-        // --- 2. 함수 정의 ---
-
-        /**
-         * [기능 1] 재검색: AJAX로 서버에 새로운 검색 요청
-         * - 서버에서 새 데이터를 받아와 화면 목록 전체를 새로 그립니다.
-         * - 브라우저의 URL을 업데이트하여 북마크/공유가 가능하게 합니다.
-         * @param {string} keyword - 새로 검색할 키워드
-         */
-        function performAjaxSearch(keyword) {
-            // 1-1. History API를 사용해 브라우저 주소창의 URL을 변경 (페이지 이동은 없음)
-            const newUrl = `/user/userSearch?keyword=${encodeURIComponent(keyword)}`;
-            history.pushState(null, '', newUrl);
-
-            // 1-2. 사용자에게 로딩 중임을 시각적으로 표시
-            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 중...</p></div>';
-
-            // 1-3. 서버의 API에 데이터 요청
-            fetch(`/user/search/api?keyword=${encodeURIComponent(keyword)}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('서버 응답 오류');
-                    return response.json();
-                })
-                .then(data => {
-                    // 1-4. AJAX 성공 시 화면 업데이트
-                    
-                    // 검색 결과 제목 변경
-                    if (keyword && keyword.trim() !== '') {
-                        resultTitle.innerHTML = `'<span class="text-brand">${keyword}</span>' 검색 결과`;
-                    } else {
-                        resultTitle.innerHTML = '전체 콘텐츠';
-                    }
-
-                    // 받은 데이터로 목록을 완전히 새로 그림
-                    contentsContainer.innerHTML = ''; // 컨테이너 초기화
-                    if (!data || data.length === 0) {
-                        contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
-                        return;
-                    }
-
-                    // 데이터 목록을 순회하며 각 아이템의 HTML을 생성
-                    data.forEach((content, index) => {
-                        // 아래 HTML 구조는 실제 프로젝트에 맞게 수정하세요. (특히 이미지 경로)
-                        const contentHtml = `
-                            <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="${content.contentsType}">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="#">
-                                                <img class="default-img" src="https://picsum.photos/id/${index + 40}/300/200" alt="콘텐츠 이미지">
-                                                <img class="hover-img" src="https://picsum.photos/id/${index + 140}/300/200" alt="콘텐츠 이미지">
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap" style="margin-top: 15px;">
-                                        <h2><a href="#">${content.contentsTitle}</a></h2>
-                                        <div>
-                                            <span class="font-small text-muted">By <a href="#">${content.enterName}</a></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        contentsContainer.insertAdjacentHTML('beforeend', contentHtml);
-                    });
-
-                    // 새 검색을 했으므로 필터 버튼을 'All'로 초기화
-                    setActiveButton(document.querySelector('.nav-link[data-filter="All"]')); 
-                })
-                .catch(error => {
-                    console.error("AJAX Search Error:", error);
-                    contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 중 오류가 발생했습니다.</p></div>';
-                });
-        }
-
-        /**
-         * [기능 2] 필터링: 현재 화면의 아이템들을 CSS로 숨기거나 보여줌
-         * - 서버에 별도의 요청을 보내지 않아 매우 빠릅니다.
-         * @param {string} filter - 필터링할 타입 ('All', 'Portfolio', 'Outsourcing')
-         */
-        function applyFilter(filter) {
-            const items = contentsContainer.querySelectorAll('.product-item');
-            let visibleCount = 0;
-
-            items.forEach(item => {
-                // 'All' 필터이거나 아이템의 data-type이 필터와 일치하면 보여줌
-                if (filter === 'All' || item.dataset.type === filter) {
-                    item.style.display = ''; // 보이기 (CSS display 속성을 기본값으로 복원)
-                    visibleCount++;
-                } else {
-                    item.style.display = 'none'; // 숨기기
-                }
-            });
-
-            // 필터링 결과 아무것도 보이지 않을 경우 메시지 처리
-            const noResultMessage = contentsContainer.querySelector('.no-filter-result');
-            if (noResultMessage) noResultMessage.remove(); // 기존 메시지 삭제
-            if (visibleCount === 0) {
-                contentsContainer.insertAdjacentHTML('beforeend', '<div class="col-12 text-center no-filter-result"><p>선택하신 필터에 해당하는 결과가 없습니다.</p></div>');
-            }
-        }
-
-        /**
-         * [헬퍼 함수] 클릭된 버튼에 'active' 클래스를 부여하여 활성화 상태를 표시
-         * @param {Element} clickedButton - 클릭된 버튼 요소
-         */
-        function setActiveButton(clickedButton) {
-            if (!clickedButton) return;
-            // 모든 버튼에서 'active' 클래스를 먼저 제거
-            filterButtons.forEach(button => button.classList.remove('active'));
-            // 클릭된 버튼에만 'active' 클래스 추가
-            clickedButton.classList.add('active');
-        }
-
-
-        // --- 3. 이벤트 리스너(Event Listener) 등록 ---
-        
-        // [이벤트 1] 필터 버튼들을 클릭했을 때
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                setActiveButton(this);            // 클릭된 버튼을 활성화
-                applyFilter(this.dataset.filter); // 현재 화면을 필터링
-            });
-        });
-
-        // [이벤트 2] 헤더 검색 폼을 제출(submit)했을 때
-        if (headerSearchForm) {
-            headerSearchForm.addEventListener('submit', function(event) {
-                // 현재 페이지가 검색 결과 페이지일 때만 AJAX로 동작하도록 처리
-                if (window.location.pathname.includes('/user/userSearch')) {
-                    event.preventDefault(); // 기본 form 제출(페이지 이동)을 막음
-                    const newKeyword = headerSearchInput.value;
-                    performAjaxSearch(newKeyword); // AJAX 검색 함수 호출
-                }
-            });
-        }
-
-    });
-	
-		    /*]]>*/
+				filterButtons.forEach(button => {
+				    button.addEventListener('click', function() {
+				        setActiveButton(this);            // 클릭된 버튼을 활성화
+				        applyFilter(this.dataset.filter); // 현재 화면을 필터링
+				    });
+				});
+				
+				// 헤더 검색 폼을 제출(submit)했을 때
+				if (headerSearchForm) {
+				    headerSearchForm.addEventListener('submit', function(event) {
+				        // 현재 페이지가 검색 결과 페이지일 때만 AJAX로 동작하도록 처리
+				        if (window.location.pathname.includes('/user/userSearch')) {
+				            event.preventDefault(); // 기본 form 제출(페이지 이동)을 막음
+				            const newKeyword = headerSearchInput.value;
+				            performAjaxSearch(newKeyword); // AJAX 검색 함수 호출
+				        }
+				    });
+				}
+			});
+			
+			/*]]>*/
 		</script>
 	</th:block>
 	
@@ -167,7 +246,6 @@
 		<section class="product-tabs section-padding position-relative">
 	        <div class="container">
 	            <div class="section-title style-2 wow animate__animated animate__fadeIn">
-					
 					<!-- 컨트롤러에서 받은 initialKeyword 값에 따라 제목을 동적으로 변경합니다. -->
 	                <h3>
 						<span th:if="${initialKeyword == null || initialKeyword == ''}">전체 콘텐츠</span>
@@ -175,19 +253,21 @@
 							'<th:block th:text="${initialKeyword}"/>' 검색 결과
 						</span>
 					</h3>
-					<ul class="nav nav-tabs links" id="myTab" role="tablist">
-					    <li class="nav-item" role="presentation">
-					        <!-- [수정] data-filter 속성 추가 -->
-					        <button class="nav-link active" data-filter="All" type="button">All</button>
-					    </li>
-					    <li class="nav-item" role="presentation">
-					        <button class="nav-link" data-filter="Portfolio" type="button">포트폴리오</button>
-					    </li>
-					    <li class="nav-item" role="presentation">
-					        <button class="nav-link" data-filter="Outsourcing" type="button">외주</button>
-					    </li>
-					</ul>
+					
 				</div>
+				<ul class="nav nav-tabs links" id="myTab" role="tablist">
+				    <li class="nav-item" role="presentation">
+				        <!-- [수정] data-filter 속성 추가 -->
+				        <button class="nav-link active" data-filter="All" type="button">All</button>
+				    </li>
+				    <li class="nav-item" role="presentation">
+				        <button class="nav-link" data-filter="Portfolio" type="button">포트폴리오</button>
+				    </li>
+				    <li class="nav-item" role="presentation">
+				        <button class="nav-link" data-filter="Outsourcing" type="button">외주</button>
+				    </li>
+				</ul>
+				<br>
 				<!--End nav-tabs-->
 				<div class="tab-content" id="myTabContent" style="border: none;">
 				    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
@@ -233,9 +313,5 @@
 			</div>
 		</section>
 	</th:block>
-
-	<!-- =================  [수정 2] JavaScript 코드 전체 추가  ================= -->
-	<!-- 이 스크립트 블록이 페이지 내 재검색(AJAX) 기능을 담당합니다. -->
 	
-
 </html>

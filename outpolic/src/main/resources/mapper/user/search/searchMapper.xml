@@ -12,13 +12,13 @@
  	</resultMap>
  	<select id="getContentsList" resultMap="contentResultMap">
  		WITH UnifiedContents AS (
-	    -- ===== 1. 포트폴리오(PO) 데이터 조회 =====
+	    -- 포트폴리오(PO) 데이터 조회 
 	    SELECT
 	        p.prtf_cd            AS content_id,
 	        'Portfolio'          AS content_type,
 	        p.prtf_ttl           AS content_title,
 	        e.ent_nm             AS registrant_name,
-	        p.prtf_reg_ymdt 	 AS registration_date -- [수정] cl.reg_dt 대신 p 테이블에서 날짜를 가져옵니다.
+	        p.prtf_reg_ymdt 	 AS registration_date
 	    FROM
 	        content_list cl
 	    JOIN
@@ -30,13 +30,13 @@
 	
 	    UNION ALL
 	
-	    -- ===== 2. 외주(OS) 데이터 조회 =====
+	    -- 외주(OS) 데이터 조회 
 	    SELECT
 	        o.os_cd              AS content_id,
 	        'Outsourcing'        AS content_type,
 	        o.os_ttl             AS content_title,
 	        e.ent_nm             AS registrant_name,
-	        o.os_reg_ymdt   	 AS registration_date -- [수정] cl.reg_dt 대신 o 테이블에서 날짜를 가져옵니다.
+	        o.os_reg_ymdt   	 AS registration_date
 	    FROM
 	        content_list cl
 	    JOIN
@@ -46,7 +46,7 @@
 	    WHERE
 	        cl.cl_cd LIKE 'LIST_OS_%'
 		)
-		-- ===== 3. 합쳐진 결과에서 최종 검색 및 정렬 =====
+		-- 합쳐진 결과에서 최종 검색 및 정렬 
 		SELECT
 		    content_id,
 		    content_type,
