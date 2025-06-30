@@ -98,7 +98,7 @@
 			                    alert('회원 정보 조회 실패');
 			                }
 			            });
-			            let isVerified = true; 
+			            let isVerified = false; 
 			            // 회원 휴대폰 인증번호 발송
 			         $('#sendCodeBtn').click(function () {
 			          const phone = $('#memberTelNo').val();
@@ -134,7 +134,7 @@
 						    },
 						    error: function (xhr) {
 						      alert('인증 실패: ' + xhr.responseText);
-						   //   isVerified = false;
+						      isVerified = false;
 						    }
 						  });
 						});
