@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>결제 성공</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const params = new URLSearchParams(location.search);
+    console.log(params);
+			
+    /* const payload = {
+      stlm_cd: params.get("orderId"),
+      paymentKey: params.get("paymentKey"),
+      stlm_final_amt: Number(params.get("amount")),
+      mbr_cd: localStorage.getItem("memberId"),
+      gds_cd: localStorage.getItem("gdsCd"),
+      stlm_cnt: localStorage.getItem("stlmCnt"),
+      stlm_used_points: localStorage.getItem("usedPoints") || 0,
+      stlm_account_nm: localStorage.getItem("memberName"),
+      stlm_pay_type: "카드",
+      stc_cd: "S001",
+      stlm_agre_yn: true
+    };
+
+    fetch("/settlement/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("✅ 결제 정보 저장 완료!");
+        location.href = "/userGoodsList";
+      } else {
+        alert("❌ 결제 저장 실패!");
+        location.href = "/userGoodsList";
+      }
+    }); */
+  });
+</script>
+<body>
+  <h2>결제 완료 처리 중입니다. 잠시만 기다려주세요...</h2>
+</body>
+</html>
