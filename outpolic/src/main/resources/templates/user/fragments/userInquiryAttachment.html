@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<div class="SR_file-upload-container" th:fragment="userInquiryAttachmentFragment">
+        <div class="SR_checkbox-container">
+            <input type="checkbox" id="SR_attachFileCheckbox" checked>
+            <label for="SR_attachFileCheckbox">첨부파일을 추가하시겠습니까?</label>
+        </div>
+
+        <div class="SR_file-input-area SR_active" id="SR_fileInputArea">
+            <div class="SR_file-drop-zone" id="SR_fileDropZone">
+                <p>여기에 파일을 드롭하거나</p>
+                <label for="SR_fileInput" class="SR_custom-file-button">파일 선택</label>
+                <!-- multiple 속성 제거 -->
+                <input type="file" id="SR_fileInput" style="display: none;">
+                <div id="SR_selectedFiles" class="SR_selected-files"></div>
+            </div>
+        </div>
+    </div>
+</html>
