@@ -12891,6 +12891,19 @@ p.mb-30-ssy{
 }
 /* 이성재 CSS 추가 영역 끝*/
 
+/* 김한별 CSS 추가 영역 */
+.stretched-link::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1; /* 다른 요소들 위로 올라와서 클릭을 받을 수 있도록 함 */
+    content: "";
+    background-color: rgba(0, 0, 0, 0); /* 완전 투명 */
+}
+/* 김한별 CSS 추가 영역 끝 */
+
 
 
 
