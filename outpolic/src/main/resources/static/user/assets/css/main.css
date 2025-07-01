@@ -12871,6 +12871,17 @@ p.mb-30-ssy{
 	}
 }
 
+/* 유사랑 첨부파일 이미지 추가 */
+.SR_inquiry-attached-image {
+    max-width: 100%; /* 부모 요소의 너비를 넘지 않도록 */
+    height: auto;    /* 이미지 비율 유지 */
+    display: block;  /* 이미지를 블록 요소로 만들어 줄바꿈 및 여백 제어 용이 */
+    margin: 20px 0;  /* 위아래 여백 추가 */
+    border: 1px solid #e0e0e0; /* 테두리 추가 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+
 
 /* 이성재 CSS 추가 영역 */
 .blur-block {

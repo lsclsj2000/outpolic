@@ -71,12 +71,19 @@
 						    <div class="att-label">첨부파일</div>
 						    <ul class="att-file-list">
 						      <li>
-						        <a th:href="@{${inquiry.subAttPath + '/' + inquiry.subAttSrvrName}}" 
-						           th:text="${inquiry.subAttOrgnlName}" 
+						        <a th:href="@{${inquiry.subAttPath + '/' + inquiry.subAttSrvrName}}"
+						           th:text="${inquiry.subAttOrgnlName}"
 						           download>첨부파일</a>
 						      </li>
 						    </ul>
 						  </div>
+						</div>
+						
+						<div th:if="${inquiry.subAttOrgnlName != null and (inquiry.saExtn == 'jpg' or inquiry.saExtn == 'jpeg' or inquiry.saExtn == 'png' or inquiry.saExtn == 'gif')}">
+						    <h5 class="mb-15">첨부 이미지</h5>
+						    <img th:src="@{${inquiry.subAttPath + '/' + inquiry.subAttSrvrName}}"
+						         th:alt="${inquiry.subAttOrgnlName}"
+						         class="inquiry-attached-image" />
 						</div>
 						<p  class="pl-30" th:utext="${#strings.replace(inquiry.inquiryCn, '. ', '.<br/>')}">문의내용</p>
 						<br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> 
