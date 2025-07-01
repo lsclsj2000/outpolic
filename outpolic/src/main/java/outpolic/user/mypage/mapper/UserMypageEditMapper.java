@@ -14,4 +14,6 @@ public interface UserMypageEditMapper {
 	 // 회원의 수정된 행 값을 리턴하기때문에 int를 사용한당
 //	 int userEditInfo(UserMypage user);
 	 int updateUserInfo(UserInfoDTO userInfo);
+	 
+	 int countByNickname(String memberNickName);
 }

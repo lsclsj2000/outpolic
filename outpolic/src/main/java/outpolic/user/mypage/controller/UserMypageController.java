@@ -1,11 +1,13 @@
 package outpolic.user.mypage.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import outpolic.user.mypage.dto.UserInfoDTO;
@@ -31,7 +33,13 @@ public class UserMypageController {
  // 유저 개인정보
  	@Autowired
  	private UserMypageEditService userMypageEditService;
-
+ 	
+    @PostMapping("/check-nickname")
+    public ResponseEntity<Boolean> checkNickName(@RequestParam String memberNickName) {
+        boolean duplicated = userMypageEditService.isNickNameDuplicated(memberNickName);
+        return ResponseEntity.ok(duplicated);
+    }
+ 	
  	@PostMapping("/userEditView")
  	public String usreProfileEditView(Model model) {
 

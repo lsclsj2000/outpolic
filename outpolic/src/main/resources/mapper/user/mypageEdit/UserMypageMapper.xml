@@ -44,4 +44,8 @@
 		where
 			mbr_id= #{memberId};
  	</update>
+ 	
+ 	<select id="countByNickname" resultType="int">
+ 		select count(*) from member where mbr_nicknm = #{memberNickName};
+ 	</select>
  </mapper>
