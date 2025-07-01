@@ -48,29 +48,37 @@
 		            const imageId2 = content.id ? content.id + 100 : index + 140;
 
 		            return `
-		                <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="${content.contentsType}">
-		                    <div class="product-cart-wrap mb-30">
-		                        <div class="product-img-action-wrap">
-		                            <div class="product-img product-img-zoom">
-		                                <a href="#">
-		                                    <img class="default-img" src="https://picsum.photos/id/${imageId1}/300/200" alt="콘텐츠 이미지">
-		                                    <img class="hover-img" src="https://picsum.photos/id/${imageId2}/300/200" alt="콘텐츠 이미지">
-		                                </a>
-		                            </div>
-		                            <div class="product-action-1">
-		                                <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-		                                <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-		                                <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-		                            </div>
+			            <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="${content.contentsType}">
+		                <!-- ▼▼▼ 이 div에 position-relative 클래스만 추가합니다 ▼▼▼ -->
+		                <div class="product-cart-wrap mb-30 position-relative">
+		                    
+		                    <!-- [복원] 이미지 관련 부분은 원래 구조와 동일하게 -->
+		                    <div class="product-img-action-wrap">
+		                        <div class="product-img product-img-zoom">
+		                            <a href="javascript:void(0);">
+		                                <img class="default-img" src="https://picsum.photos/id/${index + 40}/300/200" alt="콘텐츠 이미지">
+		                                <img class="hover-img" src="https://picsum.photos/id/${index + 140}/300/200" alt="콘텐츠 이미지">
+		                            </a>
 		                        </div>
-		                        <div class="product-content-wrap" style="margin-top: 15px;">
-		                            <h2><a href="#">${content.contentsTitle}</a></h2>
-		                            <div>
-		                                <span class="font-small text-muted">By <a href="#">${content.enterName}</a></span>
-		                            </div>
+		                        <div class="product-action-1">
+		                            <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+		                            <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+		                            <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+		                        </div>
+		                    </div>
+		                    
+		                    <!-- [복원] 콘텐츠 제목 부분도 원래 구조와 동일하게 -->
+		                    <div class="product-content-wrap" style="margin-top: 15px;">
+		                        <!-- ▼▼▼ h2 안에 실제 링크를 넣고 'stretched-link' 클래스 추가 ▼▼▼ -->
+		                        <h2>
+		                            <a href="/user/contents/${content.contentsId}" class="stretched-link">${content.contentsTitle}</a>
+		                        </h2>
+		                        <div>
+		                            <span class="font-small text-muted">By <a href="#">${content.enterName}</a></span>
 		                        </div>
 		                    </div>
 		                </div>
+		            </div>
 		            `;
 		        }).join('');
 
@@ -113,7 +121,7 @@
 		            // 받아온 데이터로 목록을 다시 그립니다.
 		            renderContents(data);
 
-		            // 새로운 검색을 했으니, 필터는 '전체'로 초기화해주는 것이 자연스럽습니다.
+
 		            setActiveFilterButton(document.querySelector('.nav-link[data-filter="All"]'));
 
 		        } catch (error) {
@@ -247,30 +255,41 @@
 							     th:each="content, iterStat : ${contentsList}"
 							     class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item"
 							     th:attr="data-type=${content.contentsType}">
-						        <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
-						            <div class="product-img-action-wrap">
-						                <div class="product-img product-img-zoom">
-						                    <a href="shop-product-right.html">
-						                    	<img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
-   	                             				<img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
-						                    </a>
-						                </div>
-						                <div class="product-action-1">
-						                    <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-						                    <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-						                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-						                </div>
-						            </div>
-						            <div class="product-content-wrap" style="margin-top: 15px;">
-						                <h2><a th:text="${content.contentsTitle}" href="shop-product-right.html">콘텐츠 제목</a></h2>
-									    <div>
-									    	<span class="font-small text-muted">By <a th:text="${content.enterName}" href="vendor-details-1.html">회원닉네임</a></span>
-									    </div>
-					            	</div>
-					        	</div>
-					        	<br>
-					        	<br>
-					   		</div>
+							    
+							    <!-- ▼▼▼ 이 div에 position-relative 클래스만 추가합니다 ▼▼▼ -->
+							    <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn position-relative" data-wow-delay=".1s">
+							        
+							        <!-- [복원] 이미지 관련 부분은 원래 템플릿 구조 그대로 둡니다. -->
+							        <div class="product-img-action-wrap">
+							            <div class="product-img product-img-zoom">
+							                <!-- a 태그가 이미지들을 직접 감싸는 구조로 복원 -->
+							                <a href="javascript:void(0);">
+							                    <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
+							                    <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
+							                </a>
+							            </div>
+							            <div class="product-action-1">
+							                <!-- 이 버튼들은 링크와 무관하므로 원래대로 둡니다. -->
+							                <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+							                <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+							                <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+							            </div>
+							        </div>
+							        
+							        <!-- [복원] 콘텐츠 제목 부분도 원래 구조 그대로 둡니다. -->
+							        <div class="product-content-wrap" style="margin-top: 15px;">
+							            <!-- ▼▼▼ h2 안에 실제 상세 페이지로 가는 링크를 넣고, 'stretched-link' 클래스를 추가합니다 ▼▼▼ -->
+							            <h2>
+							                <a th:href="@{/user/contents/{id}(id=${content.contentsId})}" 
+							                   th:text="${content.contentsTitle}"
+							                   class="stretched-link">콘텐츠 제목</a>
+							            </h2>
+							            <div>
+							                <span class="font-small text-muted">By <a th:text="${content.enterName}" href="#">회원닉네임</a></span>
+							            </div>
+							        </div>
+							    </div>
+							</div>
 							<!-- 검색 결과가 없을 때 (초기 로딩 시) -->
 							<div th:if="${#lists.isEmpty(contentsList)}" class="col-12">
 								<p class="text-center">표시할 콘텐츠가 없습니다.</p>

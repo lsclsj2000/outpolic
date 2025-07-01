@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="outpolic.user.search.mapper.SearchMapper">
- 	<resultMap type="Contents" id="contentResultMap">
+ 	<resultMap type="outpolic.user.search.domain.Contents" id="contentResultMap">
  		<id column="content_id" 				property="contentsId"/>
  		<result column="content_type" 			property="contentsType"/>
  		<result column="content_title" 			property="contentsTitle"/>
@@ -60,4 +60,76 @@
 		ORDER BY
 		    registration_date DESC
  	</select>
+ 	<!-- ============================================================== -->
+	<!-- ▼▼▼ 콘텐츠 상세 조회를 위한 resultMap과 select 쿼리 추가 ▼▼▼ -->
+	<!-- ============================================================== -->
+	
+	<!-- 1. 상세 정보 DTO(ContentsDetailDTO)를 위한 resultMap -->
+	<resultMap type="outpolic.user.search.domain.ContentsDetailDTO" id="contentsDetailResultMap">
+	    <!-- 공통 정보 -->
+	    <id     column="content_id"         property="contentsId"/>
+	    <result column="content_type"       property="contentsType"/>
+	    <result column="content_title"      property="contentsTitle"/>
+	    <result column="registrant_name"    property="enterName"/>
+	    <result column="registration_date"  property="registrationDate"/>
+	    
+	    <!-- 상세 정보 -->
+	    <result column="content_body"       property="contentsBody"/>
+	    <result column="price"              property="price"/>
+	    
+	    <!-- 필요하다면 추가할 정보 (DTO에도 필드가 있어야 함) -->
+	    <!-- 
+	    <result column="star_rating"        property="starRating"/>
+	    <result column="review_count"       property="reviewCount"/>
+	    <result column="profile_image_url"  property="enterProfileImg"/> 
+	    -->
+	</resultMap>
+	
+	
+	<!-- 2. ID로 특정 콘텐츠의 상세 정보를 조회하는 select 쿼리 -->
+	<select id="getContentsDetailById" parameterType="string" resultMap="contentsDetailResultMap">
+	    -- ID가 'PO'로 시작하면 포트폴리오 테이블에서 조회
+	    SELECT
+	        p.prtf_cd               AS content_id,
+	        'Portfolio'             AS content_type,
+	        p.prtf_ttl              AS content_title,
+	        e.ent_nm                AS registrant_name,
+	        p.prtf_reg_ymdt         AS registration_date,
+	        
+	        -- 상세 설명: 포트폴리오 테이블의 prtf_cn 컬럼 사용
+	        p.prtf_cn               AS content_body,
+	        
+	        -- 가격: 포트폴리오 테이블에는 가격 정보가 없으므로 0으로 설정
+	        0                       AS price
+	
+	    FROM
+	        portfolio p
+	    LEFT JOIN -- 기업 정보가 없을 수도 있으니 LEFT JOIN이 더 안전
+	        enterprise e ON p.ent_cd = e.ent_cd
+	    WHERE
+	        p.prtf_cd = #{contentsId} AND #{contentsId} LIKE 'PO_%'
+	
+	    UNION ALL
+	
+	    -- ID가 'OS'로 시작하면 외주 테이블에서 조회
+	    SELECT
+	        o.os_cd                 AS content_id,
+	        'Outsourcing'           AS content_type,
+	        o.os_ttl                AS content_title,
+	        e.ent_nm                AS registrant_name,
+	        o.os_reg_ymdt           AS registration_date,
+	        
+	        -- 상세 설명: 외주 테이블의 os_expln 컬럼 사용
+	        o.os_expln              AS content_body,
+	        
+	        -- 가격: 외주 테이블의 os_amt 컬럼 사용
+	        o.os_amt                AS price
+	        
+	    FROM
+	        outsourcing o
+	    LEFT JOIN -- 기업 정보가 없을 수도 있으니 LEFT JOIN이 더 안전
+	        enterprise e ON o.ent_cd = e.ent_cd
+	    WHERE
+	        o.os_cd = #{contentsId} AND #{contentsId} LIKE 'OS_%'
+	</select>
  </mapper>
