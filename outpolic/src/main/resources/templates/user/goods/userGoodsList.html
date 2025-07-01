@@ -8,14 +8,6 @@
 <script src="https://js.tosspayments.com/v1"></script>
 
 </head>
-<style>
-.blur-block {
-	opacity: 0.5;
-	filter: blur(1px) grayscale(0.7);
-	pointer-events: none;
-	transition: all 0.3s;
-}
-</style>
 <body>
 	<th:block layout:fragment="contents">
 		<script th:inline="javascript">
@@ -38,8 +30,8 @@
 						orderId: "ORDER_" + Date.now(),
 						orderName: "개인용 구독권 + 이용권",
 						customerName: "홍길동",
-						successUrl: "http://localhost:8080/payment-success",
-						failUrl: "http://localhost:8080/payment-fail"
+						successUrl: "http://localhost/paymentSuccess",
+						failUrl: "http://localhost/paymentFail"
 					});
 				});
 			});

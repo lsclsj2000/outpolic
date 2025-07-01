@@ -12608,51 +12608,267 @@ p.mb-30-ssy{
 }
 
 /* 유사랑 첨부파일 추가. */
-.att-list-wrapper {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 30px;
+.SR_content-input-box {
+	width: 100%;
+	max-width: 800px; /* 모든 박스의 최대 너비 통일 */
+	background-color: #ffffff;
+	border-radius: 12px;
+	padding: 30px; /* 박스 내부 패딩 */
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+	border: 1px solid #e0e0e0;
+	margin-bottom: 20px; /* 박스들 사이의 아래쪽 간격 */
+	box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
 }
 
-.att-label {
-  min-width: 100px;
-  font-weight: 600;
-  font-size: 12px;
-  color: #333;
-  padding-top: 5px;
+/* 입력 필드 자체의 스타일 (SR_content-input-box 내부) */
+.SR_content-input-box input[type="text"],
+.SR_content-input-box textarea,
+.SR_content-input-box .custom_select select {
+	width: 100%;
+	padding: 12px 18px; /* 입력 필드 내부 패딩 */
+	border: 1px solid #e0e0e0;
+	border-radius: 8px; /* 모서리 둥글게 */
+	font-size: 1rem;
+	box-sizing: border-box;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	outline: none; /* 포커스 시 기본 아웃라인 제거 */
+	-webkit-appearance: none; /* Safari/Chrome 기본 스타일 제거 */
+	-moz-appearance: none; /* Firefox 기본 스타일 제거 */
+	appearance: none; /* 기본 스타일 제거 */
 }
 
-.att-file-list {
-  list-style: none;
-  margin: 0;
-  margin-left: 20px;
-  padding: 0;
-  font-size: 12px;
+.SR_content-input-box input[type="text"]:focus,
+.SR_content-input-box textarea:focus,
+.SR_content-input-box .custom_select select:focus {
+	border-color: #264796; /* 포커스 시 테두리 색상 변경 */
+	box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); /* 포커스 시 그림자 추가 */
 }
 
-.att-file-list li {
-  margin-bottom: 6px;
-  position: relative;
-  padding-left: 18px;
+/* 텍스트 영역의 높이 조절 */
+.SR_content-input-box textarea {
+	resize: vertical; /* 수직으로만 크기 조절 가능 */
+	min-height: 120px; /* 최소 높이 설정 */
 }
 
-.att-file-list li::before {
-  content: "📎";
-  position: absolute;
-  left: 0;
-  top: 0;
-  font-size: 14px;
+/* select 박스 아이콘 추가 (커스텀 드롭다운 화살표) */
+.SR_content-input-box .custom_select {
+	position: relative;
+}
+.SR_content-input-box .custom_select::after {
+	content: '▼'; /* 드롭다운 화살표 유니코드 */
+	position: absolute;
+	top: 50%;
+	right: 15px;
+	transform: translateY(-50%);
+	pointer-events: none; /* 클릭 이벤트 방지 */
+	color: #666;
+	font-size: 0.8rem;
 }
 
-.att-file-list a {
-  text-decoration: none;
-  color: #007bff;
-  transition: color 0.3s ease;
+/* 기존 form-group의 하단 마진 제거 (SR_content-input-box가 마진을 담당) */
+.SR_content-input-box .form-group {
+	margin-bottom: 0;
 }
 
-.att-file-list a:hover {
-  color: #28a745;
-  text-decoration: underline;
+/* 파일 업로드 컨테이너 스타일 (SR_content-input-box와 동일한 너비를 가짐) */
+.SR_file-upload-container {
+	width: 100%;
+	max-width: 800px; /* 모든 박스의 최대 너비 통일 */
+	background-color: #ffffff;
+	border-radius: 12px;
+	padding: 30px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+	border: 1px solid #e0e0e0;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	box-sizing: border-box;
+}
+
+/* 체크박스 컨테이너 */
+.SR_checkbox-container {
+	display: flex;
+	align-items: center;
+}
+
+.SR_checkbox-container input[type="checkbox"] {
+	margin-right: 12px;
+	accent-color: #264796;
+	width: 22px;
+	height: 22px;
+	border-radius: 4px;
+}
+
+.SR_checkbox-container label {
+	font-size: 0.9rem;
+	color: #333333;
+	font-weight: 500;
+	margin-bottom: 0px;
+}
+
+/* 파일 입력 영역 (초기 숨김) */
+.SR_file-input-area {
+	display: none;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.SR_file-input-area.SR_active {
+	display: flex !important;
+}
+
+/* 파일 드롭존 */
+.SR_file-drop-zone {
+	border: 2px dashed #b0e0d0;
+	border-radius: 10px;
+	padding: 40px 20px;
+	text-align: center;
+	color: #666666;
+	font-size: 1.05rem;
+	transition: background-color 0.3s ease, border-color 0.3s ease;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 180px;
+}
+
+.SR_file-drop-zone.SR_hover {
+	background-color: #e6ffee;
+	border-color: #264796;
+}
+
+.SR_file-drop-zone p {
+	margin-bottom: 18px;
+	font-weight: 500;
+	color: #555555;
+	line-height: 1.5;
+}
+
+/* 사용자 정의 파일 선택 버튼 */
+.SR_custom-file-button {
+	display: inline-block;
+	background-color: #264796;
+	color: white;
+	padding: 12px 28px;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 1rem;
+	font-weight: 600;
+	transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.2s ease;
+	box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.SR_custom-file-button:hover {
+	background-color: #4BAEA0;
+	transform: translateY(-2px);
+	box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.SR_custom-file-button:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* 선택된 파일 목록 */
+.SR_selected-files {
+	margin-top: 25px;
+	text-align: left;
+	max-height: 200px;
+	overflow-y: auto;
+	padding-right: 15px;
+}
+
+.SR_selected-files::-webkit-scrollbar {
+	width: 8px;
+}
+.SR_selected-files::-webkit-scrollbar-thumb {
+	background-color: #d1d5db;
+	border-radius: 4px;
+}
+.SR_selected-files::-webkit-scrollbar-track {
+	background-color: #f3f4f6;
+}
+
+.SR_selected-file-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: #f8f9fa;
+	padding: 12px 18px;
+	border-radius: 8px;
+	margin-bottom: 12px;
+	font-size: 0.95rem;
+	color: #333333;
+	border: 1px solid #eceff1;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+ 
+.SR_file-info {
+	display: flex;
+	align-items: center;
+	flex-grow: 1;
+	overflow: hidden;
+}
+
+.SR_file-preview-img,
+.SR_file-placeholder {
+	width: 40px;
+	height: 40px;
+	object-fit: cover;
+	border-radius: 4px;
+	margin-right: 15px;
+	border: 1px solid #eee;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #e0e0e0;
+	color: #777;
+}
+.SR_file-placeholder svg {
+	width: 24px;
+	height: 24px;
+	stroke: currentColor;
+}
+
+.SR_file-info span {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-weight: 500;
+}
+
+.SR_selected-file-item .SR_remove-file {
+	background: none;
+	border: none;
+	color: #ff4d4d;
+	font-size: 1.5rem;
+	cursor: pointer;
+	padding: 0 8px;
+	transition: color 0.2s ease, transform 0.1s ease;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.SR_selected-file-item .SR_remove-file:hover {
+	color: #cc0000;
+	transform: scale(1.1);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+	.SR_file-upload-container,
+	.SR_content-input-box {
+		padding: 20px;
+		margin: 20px 0;
+}
+	.SR_file-drop-zone {
+		padding: 30px 15px;
+	}
+	.SR_custom-file-button {
+		padding: 10px 20px;
+	}
 }
 
 
