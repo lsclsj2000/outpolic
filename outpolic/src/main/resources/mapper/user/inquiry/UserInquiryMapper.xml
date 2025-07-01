@@ -1,176 +1,175 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 
 <mapper namespace="outpolic.user.inquiry.mapper.UserInquiryMapper">
 	<!-- UserInquiry.DTO -->
 	<resultMap id="userInquiryResultMap" type="outpolic.user.inquiry.domain.UserInquiry">
-        <id 	column="iq_cd" 				property="inquiryCode"/>
-        <result column="iqt_cd" 			property="inquiryTypeCode"/>
-        <result column="iqt_nm" 			property="inquiryTypeName"/> 
-        <result column="mbr_cd" 			property="memberCode"/>
-        <result column="mbr_nm" 			property="memberName"/> 
-        <result column="iq_ttl" 			property="inquiryTitle"/>
-        <result column="iq_cn" 				property="inquiryCn"/>
-        <result column="iq_reg_ymdt" 		property="inquiryRegDate"/>
-        <result column="sa_orgnl_nm" 		property="subAttOrgnlName"/>
-        <result column="sa_srvr_nm" 		property="subAttSrvrName"/>
-        <result column="sa_path" 			property="subAttPath"/>
-        <result column="iqt_reg_ymdt" 		property="inquiryTypeRegDate"/>
-        <result column="adm_cd" 			property="adminCode"/>
-        <result column="adm_nm" 			property="adminName"/> 
-        <result column="iqt_expln" 			property="inquiryTypeExpln"/>
-        <result column="stc_cd"				property="statusCode"/>
-        <result column="iqt_reg_adm_cd"	 	property="inquiryTypeRegAdm"/>
-        <result column="iqt_mdfcn_adm_cd" 	property="inquiryTypeMdfcnAdm"/>
-        <result column="iqt_mdfcn_ymdt"		property="inquiryTypeMdfcnDate"/>
-        <result column="iqp_ans_cn"			property="inquiryProcessAnsCn"/>
-        <result column="iqp_reg_ymdt"		property="inquiryProcessRegDate"/>
-    </resultMap>
-    <!-- UserInquiryType.DTO -->
-    <resultMap id="inquiryTypeResultMap" type="outpolic.user.inquiry.domain.UserInquiryType">
-        <id column="iqt_cd"					property="inquiryTypeCode"/>
-        <result column="iqt_nm" 			property="inquiryTypeName"/>
-        <result column="iqt_expln" 			property="inquiryTypeExpln"/>
-        <result column="stc_cd" 			property="statusCode"/>
-        <result column="iqt_reg_adm_cd" 	property="inquiryTypeRegAdm"/>
-        <result column="iqt_reg_ymdt" 		property="inquiryTypeRegDate"/>
-        <result column="iqt_mdfcn_adm_cd" 	property="inquiryTypeMdfcnAdm"/>
-        <result column="iqt_mdfcn_ymdt"	 	property="inquiryTypeMdfcnDate"/>
-    </resultMap>
-
-    <insert id="adduserInquiryWrite" parameterType="outpolic.user.inquiry.domain.UserInquiry">
-        INSERT INTO inquiry (
-            iq_cd, mbr_cd, iqt_cd, iq_ttl, iq_cn, iq_reg_ymdt
-        ) VALUES (
-            #{inquiryCode}, #{memberCode}, #{inquiryTypeCode}, #{inquiryTitle}, #{inquiryCn}, NOW()
-        )
-    </insert>
-
-    
-    <select id="getAllInquiryTypes" resultMap="inquiryTypeResultMap">
-        SELECT
-            iqt_cd,
-            iqt_nm,
-            iqt_expln,
-            stc_cd,
-            iqt_reg_adm_cd,
-            iqt_reg_ymdt,
-            iqt_mdfcn_adm_cd,
-            iqt_mdfcn_ymdt
-        FROM
-            inquiry_type
-        ORDER BY
-            iqt_cd ASC;
-    </select>
-
-    <select id="getUserInquiryTypeByCode" parameterType="String" resultMap="userInquiryResultMap">
-         SELECT
-		    i.iq_cd as iq_cd,
-		    i.iqt_cd as iqt_cd,
-		    it.iqt_nm as iqt_nm,
-		    i.mbr_cd as mbr_cd,
-		    m.mbr_nm as mbr_nm,
-		    i.iq_ttl as iq_ttl,
-		    i.iq_cn as iq_cn,
-		    i.iq_reg_ymdt as iq_reg_ymdt,
-		    sa.sa_orgnl_nm as sa_orgnl_nm,
-		    sa.sa_srvr_nm as sa_srvr_nm,
-		    sa.sa_path as sa_path,
-		    it.iqt_expln as iqt_expln,
-		    it.iqt_reg_ymdt as iqt_reg_ymdt
-		FROM
-		    inquiry i
-		JOIN
-		    inquiry_type it ON i.iqt_cd = it.iqt_cd
-		LEFT JOIN
-		    member m ON i.mbr_cd = m.mbr_cd
-		LEFT JOIN
-		    submission_attachment sa ON i.sa_cd = sa.sa_cd
-        WHERE
-            i.iqt_cd = #{inquiryTypeCode}
-        ORDER BY
-            i.iq_reg_ymdt DESC;
-    </select>
+		<id column="iq_cd" property="inquiryCode"/>
+		<result column="iqt_cd" property="inquiryTypeCode"/>
+		<result column="iqt_nm" property="inquiryTypeName"/>
+		<result column="mbr_cd" property="memberCode"/>
+		<result column="mbr_nm" property="memberName"/>
+		<result column="iq_ttl" property="inquiryTitle"/>
+		<result column="iq_cn" property="inquiryCn"/>
+		<result column="iq_reg_ymdt" property="inquiryRegDate"/>
+		<result column="sa_orgnl_nm" property="subAttOrgnlName"/>
+		<result column="sa_srvr_nm" property="subAttSrvrName"/>
+		<result column="sa_path" property="subAttPath"/>
+		<result column="iqt_reg_ymdt" property="inquiryTypeRegDate"/>
+		<result column="adm_cd" property="adminCode"/>
+		<result column="adm_nm" property="adminName"/>
+		<result column="iqt_expln" property="inquiryTypeExpln"/>
+		<result column="stc_cd" property="statusCode"/>
+		<result column="iqt_reg_adm_cd" property="inquiryTypeRegAdm"/>
+		<result column="iqt_mdfcn_adm_cd" property="inquiryTypeMdfcnAdm"/>
+		<result column="iqt_mdfcn_ymdt" property="inquiryTypeMdfcnDate"/>
+		<result column="iqp_ans_cn" property="inquiryProcessAnsCn"/>
+		<result column="iqp_reg_ymdt" property="inquiryProcessRegDate"/>
+	</resultMap>
+	
+	<!-- UserInquiryType.DTO -->
+	<resultMap id="inquiryTypeResultMap" type="outpolic.user.inquiry.domain.UserInquiryType">
+		<id column="iqt_cd" property="inquiryTypeCode"/>
+		<result column="iqt_nm" property="inquiryTypeName"/>
+		<result column="iqt_expln" property="inquiryTypeExpln"/>
+		<result column="stc_cd" property="statusCode"/>
+		<result column="iqt_reg_adm_cd" property="inquiryTypeRegAdm"/>
+		<result column="iqt_reg_ymdt" property="inquiryTypeRegDate"/>
+		<result column="iqt_mdfcn_adm_cd" property="inquiryTypeMdfcnAdm"/>
+		<result column="iqt_mdfcn_ymdt" property="inquiryTypeMdfcnDate"/>
+	</resultMap>
+	
+	<resultMap id="inquiryAttachmentResultMap" type="outpolic.user.inquiry.domain.UserInquiryAttachment">
+		<id column="sa_cd" property="saCode"/>
+		<result column="sa_refer_cd" property="saReferCode"/>
+		<result column="sa_orgnl_nm" property="saOrgnlName"/>
+		<result column="sa_srvr_nm" property="saSrvrName"/>
+		<result column="sa_path" property="saPath"/>
+		<result column="sa_extn" property="saExtn"/>
+		<result column="sa_size" property="saSize"/>
+		<result column="mbr_cd" property="mbrCode"/>
+		<result column="sa_reg_ymdt" property="saRegYmdt"/>
+	</resultMap>
+	
+	
+	
+	
+	<!-- 문의 첨부파일 등록 -->
+	<insert id="adduserInquiryAttachment" parameterType="outpolic.user.inquiry.domain.UserInquiryAttachment">
+		INSERT INTO submission_attachment (
+			sa_cd, sa_refer_cd, sa_orgnl_nm, sa_srvr_nm, sa_path, sa_extn, sa_size, mbr_cd, sa_reg_ymdt
+		) VALUES (
+			#{saCode}, #{saReferCode}, #{saOrgnlName}, #{saSrvrName}, #{saPath}, #{saExtn}, #{saSize}, #{mbrCode}, NOW() 
+		)
+		
+	</insert>
+	
+	<!-- 문의 등록 -->
+	<insert id="adduserInquiryWrite" parameterType="outpolic.user.inquiry.domain.UserInquiry">
+		INSERT INTO inquiry (
+			iq_cd, mbr_cd, iqt_cd, iq_ttl, iq_cn, iq_reg_ymdt
+		) VALUES (
+			#{inquiryCode}, #{memberCode}, #{inquiryTypeCode}, #{inquiryTitle}, #{inquiryCn}, NOW()
+		)
+	</insert>
 
 
-	<select id="getUserInquiryByCode" parameterType="String" resultMap="userInquiryResultMap"> 
-		select 
-			i.iq_cd as iq_cd, 
-			m.mbr_nm as mbr_nm, 
-			iqt.iqt_nm as iqt_nm, 
-			i.iq_ttl as iq_ttl, 
-			i.iq_cn as iq_cn, 
-			i.iq_reg_ymdt as iq_reg_ymdt, 
-			sa.sa_orgnl_nm as sa_orgnl_nm, 
-			sa.sa_srvr_nm as sa_srvr_nm,
-			sa.sa_path as sa_path, 
-			ip.iqp_ans_cn as iqp_ans_cn, 
-			ip.iqp_reg_ymdt as iqp_reg_ymdt, 
-			a.adm_cd as adm_cd, 
-			m2.mbr_nm as adm_nm 
-		from 
-			inquiry i 
-			left join submission_attachment sa using (sa_cd) 
-			inner join member m on i.mbr_cd = m.mbr_cd 
-			inner join inquiry_type iqt using (iqt_cd) 
-			left join inquiry_process ip using (iq_cd) 
-			left join admin a using (adm_cd) 
-			left join member m2 on a.mbr_cd = m2.mbr_cd 
-		where 
-			i.iq_cd = #{inquiryCode} 
-		order by 
-			m.mbr_nm desc; 
-	</select>
-
-	<select id="getUserInquiryList" resultMap="userInquiryResultMap">
-        SELECT
-		    i.iq_cd as iq_cd,
-		    i.iqt_cd as iqt_cd,
-		    it.iqt_nm as inquiryTypeName,         i.mbr_cd as mbr_cd,
-		    m.mbr_nm as memberName,               i.iq_ttl as iq_ttl,
-		    i.iq_cn as iq_cn,
-		    i.iq_reg_ymdt as iq_reg_ymdt,
-		    sa.sa_orgnl_nm as subAttOrgnlName,    sa.sa_srvr_nm as subAttSrvrName,      sa.sa_path as subAttPath,             it.iqt_expln as inquiryTypeExpln,     it.iqt_reg_ymdt as inquiryTypeRegDate FROM
-		    inquiry i
-		JOIN
-		    inquiry_type it ON i.iqt_cd = it.iqt_cd
-		LEFT JOIN
-		    member m ON i.mbr_cd = m.mbr_cd
-		LEFT JOIN
-		    admin a ON i.iq_mdfcn_adm_cd = a.adm_cd
-		LEFT JOIN
-		    submission_attachment sa ON i.sa_cd = sa.sa_cd
-        ORDER BY
-            i.iq_reg_ymdt DESC;
-    </select>
-    
-    <!-- <select id="getUserInquiryList" resultMap="userInquiryResultMap">
+	<!-- 문의 타입 조회 -->
+	<select id="getAllInquiryTypes" resultMap="inquiryTypeResultMap">
 		SELECT
-		    i.iq_cd as iq_cd,
-		    i.iqt_cd as iqt_cd,
-		    it.iqt_nm as iqt_nm,
-		    i.mbr_cd as mbr_cd,
-		    m.mbr_nm as mbr_nm,
-		    i.iq_ttl as iq_ttl,
-		    i.iq_cn as iq_cn,
-		    i.iq_reg_ymdt as iq_reg_ymdt,
-		    sa.sa_orgnl_nm as sa_orgnl_nm,
-		    sa.sa_srvr_nm as sa_srvr_nm,
-		    sa.sa_path as sa_path,
-		    it.iqt_expln as iqt_expln,
-		    it.iqt_reg_ymdt as iqt_reg_ymdt
+			iqt_cd,
+			iqt_nm,
+			iqt_expln,
+			stc_cd,
+			iqt_reg_adm_cd,
+			iqt_reg_ymdt,
+			iqt_mdfcn_adm_cd,
+			iqt_mdfcn_ymdt
 		FROM
-		    inquiry i
-		JOIN
-		    inquiry_type it ON i.iqt_cd = it.iqt_cd
-		LEFT JOIN
-		    member m ON i.mbr_cd = m.mbr_cd
-		LEFT JOIN
-		    submission_attachment sa ON i.sa_cd = sa.sa_cd
-        ORDER BY
-            i.iq_reg_ymdt DESC;
-    </select> -->
-
+			inquiry_type
+		ORDER BY
+			iqt_cd ASC;
+	</select>
+	
+	<!-- 문의 타입 조회 -->
+	<select id="getUserInquiryTypeByCode" parameterType="String" resultMap="userInquiryResultMap">
+		select
+			i.iq_cd as iq_cd,
+			m.mbr_nm as mbr_nm,
+			sa.sa_orgnl_nm,
+			sa.sa_srvr_nm,
+			sa.sa_path,
+			iqt.iqt_nm as iqt_nm,
+			i.iq_ttl as iq_ttl,
+			i.iq_cn as iq_cn,
+			i.iq_reg_ymdt as iq_reg_ymdt,
+			ip.iqp_ans_cn as iqp_ans_cn,
+			ip.iqp_reg_ymdt as iqp_reg_ymdt,
+			a.adm_cd as adm_cd,
+			m2.mbr_nm as adm_nm
+		from
+			inquiry i
+			left join submission_attachment sa on i.iq_cd = sa.sa_refer_cd
+			inner join member m on i.mbr_cd = m.mbr_cd
+			inner join inquiry_type iqt using (iqt_cd)
+			left join inquiry_process ip using (iq_cd)
+			left join admin a using (adm_cd)
+			left join member m2 on a.mbr_cd = m2.mbr_cd
+		WHERE
+			i.iqt_cd = #{inquiryTypeCode}
+		ORDER BY
+			i.iq_reg_ymdt DESC;
+	</select>
+	
+	<!-- 문의 상세내용 조회 -->
+	<select id="getUserInquiryByCode" parameterType="String" resultMap="userInquiryResultMap">
+		select
+			i.iq_cd,
+			m.mbr_nm,
+			sa.sa_orgnl_nm,
+			sa.sa_srvr_nm,
+			sa.sa_path,
+			iqt.iqt_nm,
+			i.iq_ttl,
+			i.iq_cn,
+			DATE_FORMAT(i.iq_reg_ymdt, '%Y-%m-%d %H:%i:%s') as iq_reg_ymdt, ip.iqp_ans_cn,
+			DATE_FORMAT(ip.iqp_reg_ymdt, '%Y-%m-%d %H:%i:%s') as iqp_reg_ymdt, a.adm_cd,
+			m2.mbr_nm as adm_nm from
+			inquiry i
+			left join submission_attachment sa on i.iq_cd = sa.sa_refer_cd
+			inner join member m on i.mbr_cd = m.mbr_cd
+			inner join inquiry_type iqt using (iqt_cd)
+			left join inquiry_process ip using (iq_cd)
+			left join admin a using (adm_cd)
+			left join member m2 on a.mbr_cd = m2.mbr_cd
+		where
+			i.iq_cd = #{inquiryCode}
+		order by
+			m.mbr_nm desc;
+	</select>
+	
+	<!-- 문의 목록 조회 -->
+	<select id="getUserInquiryList" resultMap="userInquiryResultMap">
+		SELECT
+			i.iq_cd as iq_cd,
+			i.iqt_cd as iqt_cd,
+			it.iqt_nm, 
+			i.mbr_cd as mbr_cd,
+			m.mbr_nm, 
+			i.iq_ttl as iq_ttl,
+			i.iq_cn as iq_cn,
+			i.iq_reg_ymdt as iq_reg_ymdt,
+			it.iqt_expln as inquiryTypeExpln, 
+			it.iqt_reg_ymdt as inquiryTypeRegDate 
+		FROM
+			inquiry i
+			JOIN inquiry_type it ON i.iqt_cd = it.iqt_cd
+			LEFT JOIN member m ON i.mbr_cd = m.mbr_cd
+			LEFT JOIN admin a ON i.iq_mdfcn_adm_cd = a.adm_cd
+		ORDER BY
+			i.iq_reg_ymdt DESC;
+	</select>
 </mapper>

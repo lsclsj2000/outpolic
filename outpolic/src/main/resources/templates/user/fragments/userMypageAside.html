@@ -21,11 +21,7 @@
 	                        <div class="dashboard-menu">
 	                            <ul class="nav flex-column" role="tablist">
 	                            	<li>
-	                            		<div class="userprofileTitle d-flex flex-column align-items-center">
-											<img class="userProfileImg me-3 mb-5" th:src="@{/user/assets/imgs/outpolic/cutecat.jpg}" />
-											<h4>화내는 하얀 기린</h4>
-											
-										</div>
+										<div th:replace="~{user/fragments/userProfile :: userProfileFragment}"></div>
 	                            	</li>
 	                            	<li class="nav-item">
 								    	<a class="nav-link active" data-bs-toggle="tab" href="#userOverview">마이페이지</a>
