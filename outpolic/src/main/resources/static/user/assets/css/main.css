@@ -297,7 +297,7 @@ input[type=number]:focus,
 }
 
 .text-brand-2 {
-  color: #4BAEA0 !important;
+  color: #264796 !important;
 }
 
 .text-primary {
@@ -882,7 +882,7 @@ strong,
   position: absolute;
   bottom: 0;
   left: 0;
-  background-color: #BCE3C9;
+  background-color: #Bdcff3;
 }
 
 .section-title span {
@@ -1248,7 +1248,7 @@ input {
 
 input:focus {
   background: transparent;
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
 }
 
 input.square {
@@ -1290,7 +1290,7 @@ textarea {
 
 textarea:focus {
   background: transparent;
-  border: 1px solid #BCE3C9;
+  border: 1px solid #264796;
 }
 
 .select2-container--default .select2-selection--single {
@@ -1367,7 +1367,7 @@ textarea:focus {
 }
 
 .select2-dropdown .select2-search--dropdown .select2-search__field {
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
   margin-bottom: 15px;
   border-radius: 5px;
   height: 40px;
@@ -1414,7 +1414,7 @@ textarea:focus {
 
 .select2-container--default .select2-results__option[aria-selected="true"] {
   background-color: #ececec;
-  color: unset;
+  color: gray;
 }
 
 .select2-container {
@@ -1474,7 +1474,7 @@ form.register .form-group input{
 
 .form-group input:focus {
   background: transparent;
-  border-color: #BCE3C9;
+  border-color: #Bdcff3;
 }
 
 label {
@@ -1499,7 +1499,7 @@ input[type="date"].form-control:focus {
   padding: 0 40px;
   font-size: 24px;
   font-weight: bold;
-  background: #BCE3C9;
+  background: #Bdcff3;
 }
 
 .security-code b {
@@ -1748,7 +1748,7 @@ input[type="date"].form-control:focus {
   outline: none !important;
   -webkit-box-shadow: none;
   box-shadow: none;
-  border-color: #BCE3C9;
+  border-color: #Bdcff3;
 }
 
 .form-control:focus {
@@ -2024,7 +2024,7 @@ input.qty-val {
 }
 
 .dot-style-1 ul li button:hover {
-  background: #BCE3C9;
+  background: #Bdcff3;
 }
 
 .dot-style-1 ul li.slick-active button {
@@ -2333,7 +2333,7 @@ input.qty-val {
 
 .card-1:hover {
   background: #fff;
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
   -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
           box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
   -webkit-transition: 0.2s;
@@ -2378,7 +2378,7 @@ input.qty-val {
 
 .card-2:hover {
   background: #fff;
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
   -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
           box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
   -webkit-transition: 0.2s;
@@ -3393,7 +3393,7 @@ table .product-thumbnail img {
 .custom-modal .modal-dialog .modal-content {
   border-radius: 25px;
   padding: 40px;
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
 }
 
 .custom-modal .modal-dialog .btn-close {
@@ -3960,7 +3960,7 @@ table .product-thumbnail img {
 .product-cart-wrap:hover {
   -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
           box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
   transition: .2s;
   -moz-transition: .2s;
   -webkit-transition: .2s;
@@ -3978,7 +3978,7 @@ table .product-thumbnail img {
 .product-cart-wrap .product-img-action-wrap .product-action-1 {
   background-color: #fff;
   border-radius: 5px;
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
 }
 
 .product-cart-wrap .product-img-action-wrap .product-img {
@@ -4046,7 +4046,7 @@ table .product-thumbnail img {
   text-align: center;
   position: relative;
   display: inline-block;
-  border-right: 1px solid #BCE3C9;
+  border-right: 1px solid #Bdcff3;
 }
 
 .product-cart-wrap .product-action-1 button:last-child, .product-cart-wrap .product-action-1 a.action-btn:last-child {
@@ -6733,7 +6733,7 @@ h6.post-title {
 
 .invoice-6 .invoice-info {
   border-radius: 10px;
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
   -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
           box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
 }
@@ -6812,7 +6812,7 @@ h6.post-title {
 .vendor-wrap:hover {
   -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
           box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
   transition: .2s;
   -moz-transition: .2s;
   -webkit-transition: .2s;
@@ -7720,7 +7720,7 @@ h6.post-title {
 }
 
 .search-style-3 form input:focus {
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
 }
 
 .search-style-3 form button {
@@ -8905,7 +8905,7 @@ span.fi-rs-apps {
   margin: 0;
   padding: 30px;
   background: #fff;
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
   border-radius: 10px;
   font-size: 16px;
   min-width: 270px;
@@ -8955,7 +8955,7 @@ span.fi-rs-apps {
 }
 
 .categories-dropdown-wrap ul li:hover {
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
   -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
           box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
   transition: .3s;
@@ -9125,7 +9125,7 @@ span.fi-rs-apps {
 }
 
 .categories-dropdown-wrap.style-2 {
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
   border-radius: 10px;
   padding: 30px;
 }
@@ -9285,7 +9285,7 @@ span.fi-rs-apps {
 }
 
 .widget-category-2 ul li:hover {
-  border: 1px solid #BCE3C9;
+  border: 1px solid #Bdcff3;
   -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
           box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
   transition: .3s;
@@ -9404,7 +9404,7 @@ span.fi-rs-apps {
 
 .widget-category-2 .count {
   display: inline-block;
-  background-color: #BCE3C9;
+  background-color: #Bdcff3;
   width: 24px;
   height: 24px;
   line-height: 24px;
@@ -9725,7 +9725,7 @@ footer .hotline img {
 }
 
 .footer-bottom {
-  border-top: 1px solid #BCE3C9;
+  border-top: 1px solid #Bdcff3;
 }
 
 #scrollUp {
@@ -12641,7 +12641,7 @@ p.mb-30-ssy{
 .SR_content-input-box textarea:focus,
 .SR_content-input-box .custom_select select:focus {
 	border-color: #264796; /* 포커스 시 테두리 색상 변경 */
-	box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); /* 포커스 시 그림자 추가 */
+	box-shadow: 0 0 5px 2px   #bdcff3; /* 포커스 시 그림자 추가 */
 }
 
 /* 텍스트 영역의 높이 조절 */
@@ -12718,7 +12718,7 @@ p.mb-30-ssy{
 
 /* 파일 드롭존 */
 .SR_file-drop-zone {
-	border: 2px dashed #b0e0d0;
+	border: 2px dashed #bdcff3;
 	border-radius: 10px;
 	padding: 40px 20px;
 	text-align: center;
