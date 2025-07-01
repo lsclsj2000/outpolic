@@ -8373,7 +8373,7 @@ h6.post-title {
 }
 
 .header-style-1 .search-style-2 form {
-  border: 2px solid #BCE3C9;
+  border: 2px solid #90AADC;
   border-radius: 4px;
   max-width: 700px;
   background-color: #fff;
@@ -12640,7 +12640,7 @@ p.mb-30-ssy{
 .SR_content-input-box input[type="text"]:focus,
 .SR_content-input-box textarea:focus,
 .SR_content-input-box .custom_select select:focus {
-	border-color: #4CAF50; /* 포커스 시 테두리 색상 변경 */
+	border-color: #264796; /* 포커스 시 테두리 색상 변경 */
 	box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); /* 포커스 시 그림자 추가 */
 }
 
@@ -12692,7 +12692,7 @@ p.mb-30-ssy{
 
 .SR_checkbox-container input[type="checkbox"] {
 	margin-right: 12px;
-	accent-color: #4CAF50;
+	accent-color: #264796;
 	width: 22px;
 	height: 22px;
 	border-radius: 4px;
@@ -12735,7 +12735,7 @@ p.mb-30-ssy{
 
 .SR_file-drop-zone.SR_hover {
 	background-color: #e6ffee;
-	border-color: #4CAF50;
+	border-color: #264796;
 }
 
 .SR_file-drop-zone p {
@@ -12748,7 +12748,7 @@ p.mb-30-ssy{
 /* 사용자 정의 파일 선택 버튼 */
 .SR_custom-file-button {
 	display: inline-block;
-	background-color: #4CAF50;
+	background-color: #264796;
 	color: white;
 	padding: 12px 28px;
 	border-radius: 8px;
@@ -12760,7 +12760,7 @@ p.mb-30-ssy{
 }
 
 .SR_custom-file-button:hover {
-	background-color: #45a049;
+	background-color: #4BAEA0;
 	transform: translateY(-2px);
 	box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
@@ -12879,7 +12879,6 @@ p.mb-30-ssy{
 	transition: all 0.3s;
 }
 /* 이성재 CSS 추가 영역 끝*/
-
 
 
 
