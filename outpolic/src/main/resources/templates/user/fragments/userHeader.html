@@ -8,26 +8,14 @@
 			<div class="container">
 				<div class="header-wrap">
 				    <div class="logo logo-width-1">
-				        <a href="index.html"><img src="/user/assets/imgs/theme/logo.svg" alt="logo" /></a>
+				        <a href="/"><img class="d-flex align-items-center" src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
 				    </div>
 					<div class="header-right">
 						<div class="search-style-2">
-							<form action="#">
-								<select class="select-active">
-									<option>All Categories</option>
-									<option>Milks and Dairies</option>
-									<option>Wines & Alcohol</option>
-									<option>Clothing & Beauty</option>
-									<option>Pet Foods & Toy</option>
-									<option>Fast food</option>
-									<option>Baking material</option>
-									<option>Vegetables</option>
-									<option>Fresh Seafood</option>
-									<option>Noodles & Rice</option>
-									<option>Ice cream</option>
-								</select>
-								<input type="text" placeholder="Search for items..." />
-							</form>
+                            <form class="outpolicTopSearch" th:action="@{/user/userSearch}" method="get">
+                                <input  type="text" name="keyword" placeholder="Search for items..." required />
+                                <button type="submit">검색</button>
+                            </form>
 						</div>
 						<div class="header-action-right">
 							<div class="header-action-2">
@@ -121,7 +109,7 @@
 										    <li><a href="page-account.html"><i class="fi fi-rs-label mr-10"></i>My Voucher</a></li>
 										    <li><a href="shop-wishlist.html"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a></li>
 										    <li><a href="page-account.html"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a></li>
-										    <li><a th:href="@{/pageLogin}"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a></li>
+										    <li><a th:href="@{/login}"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a></li>
 										</ul>
 									</div>
 								</div>
@@ -352,7 +340,7 @@
 									        <li><a href="page-about.html">About Us</a></li>
 									        <li><a href="page-contact.html">Contact</a></li>
 									        <li><a th:href="@{/mypage}">My Account</a></li>
-									        <li><a th:href="@{/pageLogin}">Login</a></li>
+									        <li><a th:href="@{/login}">Login</a></li>
 									        <li><a th:href="@{/pageRegister}">Register</a></li>
 									        <li><a th:href="@{/forgotPswd}">Forgot password</a></li>
 									        <li><a href="page-reset-password.html">Reset password</a></li>

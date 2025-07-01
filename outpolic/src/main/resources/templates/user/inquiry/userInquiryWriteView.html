@@ -1,146 +1,397 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{user/layout/userLayoutInquiryWrite}">
+	  layout:decorate="~{user/layout/userLayoutInquiryDetail}">
 
 	<head>
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 	</head>
+
 	
-	<th:block layout:fragment="jsScript">
+	<!-- 파일 스크립트 추가 -->
+	<th:block layout:fragment="jsScript_file">
 		<script>
-		$(document).ready(function() {
-		    // 초기 로드 시 etcExpln 필드 비활성화
-		    $('#etcExpln').prop('disabled', true);
+	    $(function() {
+	        const $faqItems = $('.faq-item');
 
-		    $('#addInquiryBtn').click(e => {
-		        e.preventDefault(); // ✅ 기본 폼 제출 동작을 막습니다.
+	        $('.faq-question').on('click', function() {
+	            const $clickedItem = $(this).parent('.faq-item');
+	            const $clickedAnswer = $clickedItem.find('.faq-answer');
+	            const isOpen = $clickedItem.hasClass('faq-active');
 
-		        const title = $('#inquiryTitle').val().trim();
-		        const typeCode = $('#inquiryTypeCode').val();
-		        const content = $('#inquiryCn').val().trim();
-		        const etcExpln = $('#etcExpln').val().trim();
+	            // 모든 FAQ 항목 닫기
+	            $faqItems.each(function() { 
+	                const $item = $(this);
+	                const $answer = $item.find('.faq-answer');
+	                if ($item.hasClass('faq-active') && !$item.is($clickedItem)) { // 클릭된 항목이 아니면서 열려있는 항목만 닫기
+	                    $answer.slideUp();
+	                    $item.removeClass('faq-active');
+	                }
+	            });
 
-		        // 1. 제목 유효성 검사
-		        if (!title) {
-		            alert('제목을 입력해주세요.');
-		            $('#inquiryTitle').focus();
-		            return; // ✅ 여기서 함수 실행을 멈춰야 다음 코드로 넘어가지 않습니다.
-		        }
+	            // 클릭된 항목 토글
+	            if (!isOpen) {
+	                $clickedAnswer.slideDown();
+	                $clickedItem.addClass('faq-active');
+	            } else {
+	                $clickedAnswer.slideUp();
+	                $clickedItem.removeClass('faq-active');
+	            }
+	        });
 
-		        // 2. 문의 유형 유효성 검사
-		        if (!typeCode) {
-		            alert('문의유형을 선택해주세요.');
-		            $('#inquiryTypeCode').focus();
-		            return; // ✅ 여기서 함수 실행을 멈춰야 다음 코드로 넘어가지 않습니다.
-		        }
 
-		        // 3. 문의 내용 유효성 검사
-		        if (!content) {
-		            alert('문의내용을 입력해주세요.');
-		            $('#inquiryCn').focus();
-		            return; // ✅ 여기서 함수 실행을 멈춰야 다음 코드로 넘어가지 않습니다.
-		        }
+	        $('#etcExpln').prop('disabled', true);
 
-		        // 4. '기타 문의' (IQT_OTHER) 선택 시 기타 설명 필드 유효성 검사
-		        if (typeCode === 'IQT_OTHER' && !etcExpln) { 
-		            alert('기타 문의 설명을 입력해주세요.');
-		            $('#etcExpln').focus();
-		            return; // ✅ 여기서 함수 실행을 멈춰야 다음 코드로 넘어가지 않습니다.
-		        }
+	        let attachedFiles = [];
 
-		        // ✅ 유효성 검사를 모두 통과했을 때 AJAX 요청
-		        $.ajax({
-		            type: 'POST', // HTTP 메서드 POST
-		            url: '/user/userInquiryWrite', // 서버 URL (서버에서 이 URL을 처리해야 함)
-		            data: {
-		                inquiryTitle: title,
-		                inquiryTypeCode: typeCode,
-		                inquiryCn: content,
-		                etcExpln: etcExpln
-		            },
-		            success: function(response) {
-		                // 서버 응답 성공 시 처리
-		                alert('문의가 등록되었습니다.');
-		                $('#addInquiryForm')[0].reset();  // 폼 초기화
-		            },
-		            error: function(xhr, status, error) {
-		                // 서버 응답 실패 시 처리
-		                alert('문의 등록에 실패했습니다. 다시 시도해 주세요.');
-		            }
-		        });
-		    });
+	        $('#addInquiryBtn').click(e => {
+	            e.preventDefault();
 
-		    // 문의 유형 변경 시 '기타 설명' 필드 활성화/비활성화
-		    $('#inquiryTypeCode').change(function() {
-		        if ($(this).val() === 'IQT_OTHER') { 
-		            $('#etcExpln').prop('disabled', false);
-		        } else {
-		            $('#etcExpln').val(''); // '기타 문의'가 아닐 경우 내용 초기화
-		            $('#etcExpln').prop('disabled', true);
-		        }
-		    });
-		});
+	            const title = $('#inquiryTitle').val().trim();
+	            const typeCode = $('#inquiryTypeCode').val();
+	            const content = $('#inquiryCn').val().trim();
+	            const etcExpln = $('#etcExpln').val().trim();
 
+	            // 1. 제목 유효성 검사
+	            if (!title) {
+	                alert('제목을 입력해주세요.');
+	                $('#inquiryTitle').focus();
+	                return;
+	            }
+
+	            // 2. 문의 타입 유효성 검사
+	            if (!typeCode) {
+	                alert('문의유형을 선택해주세요.');
+	                $('#inquiryTypeCode').focus();
+	                return;
+	            }
+
+	            // 3. 문의 내용 유효성 검사
+	            if (!content) {
+	                alert('문의내용을 입력해주세요.');
+	                $('#inquiryCn').focus();
+	                return;
+	            }
+
+	            // 4. '기타 문의' (IQT_OTHER) 선택 시 기타 설명 필드 유효성 검사
+	            if (typeCode === 'IQT_OTHER' && !etcExpln) { 
+	                alert('기타 문의 설명을 입력해주세요.');
+	                $('#etcExpln').focus();
+	                return;
+	            }
+
+	            // 5. 파일 첨부 유효성 검사 (새로운 로직과 연동)
+	            const SR_attachFileCheckbox = document.getElementById('SR_attachFileCheckbox');
+	            if (SR_attachFileCheckbox && SR_attachFileCheckbox.checked && attachedFiles.length === 0) {
+	                alert('파일 첨부를 선택하셨습니다. 파일을 드롭하거나 선택해주세요.');
+	                return;
+	            }
+
+	            const formData = new FormData();
+	            formData.append('inquiryTitle', title);
+	            formData.append('inquiryTypeCode', typeCode);
+	            formData.append('inquiryCn', content);
+	            formData.append('etcExpln', etcExpln);
+
+	            // 첨부 파일 추가 (단일 파일만 전송)
+	            if (SR_attachFileCheckbox.checked && attachedFiles.length > 0) {
+	                formData.append('attachment', attachedFiles[0].file);
+	            }
+
+	            // 디버깅을 위해 FormData 내용 로깅
+	            console.log("FormData being sent:");
+	            for (let [key, value] of formData.entries()) {
+	                console.log(`${key}:`, value);
+	            }
+
+	            
+	            $.ajax({
+	                type: 'POST',
+	                url: '/user/userInquiryWrite', // 실제 서버 URL로 변경해야 합니다.
+	                data: formData,
+	                processData: false,
+	                contentType: false,
+	                success: function(response) {
+	                    alert('문의가 등록되었습니다.');
+	                    $('#addInquiryForm')[0].reset();
+	                    if (SR_attachFileCheckbox) {
+	                        SR_attachFileCheckbox.checked = true;
+	                    }
+	                    attachedFiles.forEach(fileData => {
+	                        if (fileData.previewURL) {
+	                            URL.revokeObjectURL(fileData.previewURL);
+	                        }
+	                    });
+	                    attachedFiles = [];
+	                    renderSelectedFiles();
+	                    const SR_fileInputArea = document.getElementById('SR_fileInputArea');
+	                    if (SR_fileInputArea) {
+	                        SR_fileInputArea.classList.add('SR_active');
+	                    }
+	                },
+	                error: function(xhr, status, error) {
+	                    alert('문의 등록에 실패했습니다. 다시 시도해 주세요.');
+	                    console.error("AJAX Error: ", status, error, xhr.responseText);
+	                }
+	            });
+	        });
+
+	        // 문의 유형 변경 시 '기타 설명' 필드 활성화/비활성화
+	        $('#inquiryTypeCode').change(function() {
+	            if ($(this).val() === 'IQT_OTHER') { 
+	                $('#etcExpln').prop('disabled', false);
+	            } else {
+	                $('#etcExpln').val('');
+	                $('#etcExpln').prop('disabled', true);
+	            }
+	        });
+
+	        // 새로운 파일 첨부 JS 시작
+	        const SR_attachFileCheckbox = document.getElementById('SR_attachFileCheckbox');
+	        const SR_fileInputArea = document.getElementById('SR_fileInputArea');
+	        const SR_fileInput = document.getElementById('SR_fileInput');
+	        const SR_fileDropZone = document.getElementById('SR_fileDropZone');
+	        const SR_selectedFilesContainer = document.getElementById('SR_selectedFiles');
+
+	        // 체크박스 상태에 따라 파일 첨부 영역 표시/숨김
+	        if (SR_attachFileCheckbox && SR_fileInputArea) {
+	            if (SR_attachFileCheckbox.checked) {
+	                SR_fileInputArea.classList.add('SR_active');
+	            } else {
+	                SR_fileInputArea.classList.remove('SR_active');
+	            }
+
+	            SR_attachFileCheckbox.addEventListener('change', () => {
+	                if (SR_attachFileCheckbox.checked) {
+	                    SR_fileInputArea.classList.add('SR_active');
+	                } else {
+	                    SR_fileInputArea.classList.remove('SR_active');
+	                    attachedFiles.forEach(fileData => {
+	                        if (fileData.previewURL) {
+	                            URL.revokeObjectURL(fileData.previewURL);
+	                        }
+	                    });
+	                    attachedFiles = [];
+	                    renderSelectedFiles();
+	                }
+	            });
+	        }
+
+	        // 파일 선택 버튼 클릭 시 파일 인풋 활성화
+	        const customFileButton = document.querySelector('.SR_custom-file-button');
+	        if (customFileButton && SR_fileInput) {
+	            customFileButton.addEventListener('click', (event) => {
+	                event.preventDefault();
+	                SR_fileInput.click();
+	            });
+	        }
+
+	        // 파일 인풋 변경 시 (파일 선택)
+	        if (SR_fileInput) {
+	            SR_fileInput.addEventListener('change', (event) => {
+	                handleFiles(event.target.files);
+	                event.target.value = '';
+	            });
+	        }
+
+	        // 드래그 앤 드롭 이벤트 리스너
+	        if (SR_fileDropZone) {
+	            SR_fileDropZone.addEventListener('dragover', (event) => {
+	                event.preventDefault();
+	                SR_fileDropZone.classList.add('SR_hover');
+	            });
+
+	            SR_fileDropZone.addEventListener('dragleave', () => {
+	                SR_fileDropZone.classList.remove('SR_hover');
+	            });
+
+	            SR_fileDropZone.addEventListener('drop', (event) => {
+	                event.preventDefault();
+	                SR_fileDropZone.classList.remove('SR_hover');
+	                handleFiles(event.dataTransfer.files);
+	            });
+	        }
+
+	        // 파일 처리 함수
+	        function handleFiles(files) {
+	            if (files.length === 0) {
+	                return;
+	            }
+
+	            const file = files[0];
+
+	            const maxSize = 10 * 1024 * 1024; // 10MB
+	            const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+
+	            if (file.size > maxSize) {
+	                alert(`${file.name}은(는) 10MB를 초과합니다.`);
+	                return;
+	            }
+
+	            if (!allowedTypes.includes(file.type)) {
+	                alert(`${file.name}은(는) 허용되지 않은 파일 형식입니다. (허용: JPG, PNG, PDF)`);
+	                return;
+	            }
+
+	            if (attachedFiles.length > 0 && attachedFiles[0].previewURL) {
+	                URL.revokeObjectURL(attachedFiles[0].previewURL);
+	            }
+	            attachedFiles = [];
+
+	            const fileData = {
+	                file: file,
+	                previewURL: null
+	            };
+
+	            if (file.type.startsWith('image/')) {
+	                fileData.previewURL = URL.createObjectURL(file);
+	            }
+	            attachedFiles.push(fileData);
+
+	            renderSelectedFiles();
+	        }
+
+	        // 선택된 파일 목록 렌더링
+	        function renderSelectedFiles() {
+	            if (!SR_selectedFilesContainer) {
+	                return;
+	            }
+	            SR_selectedFilesContainer.innerHTML = '';
+
+	            if (attachedFiles.length === 0) {
+	                SR_selectedFilesContainer.innerHTML = '<p class="text-gray-400 italic text-center p-5">선택된 파일 없음</p>';
+	                return;
+	            }
+
+	            attachedFiles.forEach((fileData, index) => {
+	                const file = fileData.file;
+	                const previewURL = fileData.previewURL;
+
+	                const fileDiv = document.createElement('div');
+	                fileDiv.className = 'SR_selected-file-item';
+	                
+	                let previewHtml = '';
+	                if (previewURL) {
+	                    previewHtml = `<img src="${previewURL}" alt="File preview" class="SR_file-preview-img">`;
+	                } else {
+	                    previewHtml = `
+	                        <div class="SR_file-placeholder">
+	                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+	                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+	                            </svg>
+	                        </div>
+	                    `;
+	                }
+
+	                fileDiv.innerHTML = `
+	                    <div class="SR_file-info">
+	                        ${previewHtml}
+	                        <span>${file.name} (${formatBytes(file.size)})</span>
+	                    </div>
+	                    <button type="button" class="SR_remove-file" data-index="${index}">&times;</button>
+	                `;
+	                SR_selectedFilesContainer.appendChild(fileDiv);
+	            });
+
+	            SR_selectedFilesContainer.querySelectorAll('.SR_remove-file').forEach(button => {
+	                button.addEventListener('click', (event) => {
+	                    const indexToRemove = parseInt(event.target.dataset.index);
+	                    const fileRemoved = attachedFiles[indexToRemove];
+
+	                    if (fileRemoved.previewURL) {
+	                        URL.revokeObjectURL(fileRemoved.previewURL);
+	                    }
+
+	                    attachedFiles.splice(indexToRemove, 1);
+	                    renderSelectedFiles();
+	                });
+	            });
+	        }
+
+	        function formatBytes(bytes, decimals = 2) {
+	            if (bytes === 0) return '0 Bytes';
+	            const k = 1024;
+	            const dm = decimals < 0 ? 0 : decimals;
+	            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+	            const i = Math.floor(Math.log(bytes) / Math.log(k));
+	            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+	        }
+
+	        renderSelectedFiles();
+	    });
 		</script>
 	</th:block>
 	
+	<!-- 제목 
 	<th:block layout:fragment="title">
 		<div class="row">
-			<div class="col-md-2">
+			<div class="col-md-3">
 			</div>
 			<div class="col-md-9">
 				<h3 class="mb-30">문의 작성</h3>
 			</div>
 		</div>
-	</th:block>
+	</th:block> -->
 	
+	<!-- 추가된 콘텐츠 -->
 	<th:block layout:fragment="contents">
+		<h3 class="mb-30">문의 작성</h3>			
 		<div class="row">
-			<form id="addInquiryForm" method="post" th:action="@{/user/userInquiryWrite}">
-				<div class="row">
+			<form id="addInquiryForm" method="post" action="#" enctype="multipart/form-data" style="padding-left:0px;">
+			    <!-- 제목 입력 필드 -->
+				<div class="SR_content-input-box">
 					<div class="form-group">
 						<input type="text" placeholder="제목을 입력하세요"
 							   id="inquiryTitle" name="inquiryTitle">
 					</div>
 				</div>
-				<div class="row shipping_calculator">
-					<div class="form-group col-lg-6">
-						<div class="custom_select">
-							<select class="form-control select-active" id="inquiryTypeCode" name="inquiryTypeCode">
-								<option value="">Inquiry Type</option>
-								<th:block th:unless="${#lists.isEmpty(inquiryTypeList)}"
-										  th:each="i : ${inquiryTypeList}">
-									<option th:value="${i.inquiryTypeCode}" th:text="${i.inquiryTypeName}">문의타입명</option>
-								</th:block>
-							</select>
+			
+				<!-- 문의 유형 및 기타 설명 필드 (SR_content-input-box 안에 row로 감싸 한 줄에 나란히) -->
+				<div class="SR_content-input-box">
+					<div class="row shipping_calculator" style="display: flex; flex-wrap: wrap; margin: 0 -15px;">
+						<div class="form-group col-lg-6" style="flex: 0 0 50%; max-width: 50%; padding: 0 15px;">
+							<div class="custom_select">
+								<select class="form-control select-active" id="inquiryTypeCode" name="inquiryTypeCode">
+									<option value="">Inquiry Type</option>
+									<th:block th:unless="${#lists.isEmpty(inquiryTypeList)}"
+											  th:each="i : ${inquiryTypeList}">
+										<option th:value="${i.inquiryTypeCode}" th:text="${i.inquiryTypeName}">문의타입명</option>
+									</th:block>
+								</select>
+							</div>
 						</div>
-					</div>
-					<div class="form-group col-lg-6">
-						<input type="text" placeholder="기타 설명" id="etcExpln" name="etcExpln">
-					</div>
-				</div>
-				<div class="form-group mb-30">
-					<textarea rows="5" placeholder="문의내용을 입력하시오." id="inquiryCn" name="inquiryCn"></textarea>
-				</div>
-				<div class="form-group">
-					<div class="checkbox">
-						<div class="custome-checkbox">
-							<input class="form-check-input" type="checkbox" name="checkbox" id="createaccount">
-							<label class="form-check-label label_info" data-bs-toggle="collapse" href="#collapsePassword" data-target="#collapsePassword" aria-controls="collapsePassword" for="createaccount"><span>첨부파일을 추가하시겠습니까?</span></label>
+						<div class="form-group col-lg-6" style="flex: 0 0 50%; max-width: 50%; padding: 0 15px;">
+							<input type="text" placeholder="기타 설명" id="etcExpln" name="etcExpln">
 						</div>
 					</div>
 				</div>
-				<div id="collapsePassword" class="form-group create-account collapse in">
-					<div class="row">
-						<div class="form-group col-lg-12">
-							<label for="fileUpload">첨부파일</label>
-							<input type="file" name="attachment" id="fileUpload" class="form-control">
+				
+				<!-- 문의 내용 필드 -->
+				<div class="SR_content-input-box">
+					<div class="form-group">
+						<textarea rows="5" placeholder="문의내용을 입력하시오." id="inquiryCn" name="inquiryCn"></textarea>
+					</div>
+				</div>
+				 
+				<!-- 새로운 파일 첨부 UI 삽입 (SR_content-input-box와 동일한 너비를 가짐) -->
+				<div class="SR_file-upload-container">
+					<div class="SR_checkbox-container">
+						<input type="checkbox" id="SR_attachFileCheckbox">
+						<label for="SR_attachFileCheckbox">첨부파일을 추가하시겠습니까?</label>
+					</div>
+				
+					<div class="SR_file-input-area SR_active mt-15" id="SR_fileInputArea">
+						<div class="SR_file-drop-zone" id="SR_fileDropZone">
+							<p>여기에 파일을 드롭하거나</p>
+							<label for="SR_fileInput" class="SR_custom-file-button">파일 선택</label>
+							<input type="file" id="SR_fileInput" name="attachment" style="display: none;">
+							<div id="SR_selectedFiles" class="SR_selected-files"></div>
 						</div>
 					</div>
 				</div>
+			
 				<div>
-                     <button id="addInquiryBtn" type="submit" class="btn btn-success text-white">문의 등록</button>
+					<button id="addInquiryBtn" type="submit" class="btn btn-success text-white">문의 등록</button>
 				</div>
 			</form>
 		</div>

@@ -385,7 +385,7 @@
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
-	background-color: #9ddbc9;
+	background-color: #Bdcff3;
 	color: $color-heading
 }
 

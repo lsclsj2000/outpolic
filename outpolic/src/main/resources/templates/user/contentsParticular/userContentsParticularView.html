@@ -4,81 +4,135 @@
 	  layout:decorate="~{user/layout/userLayoutContentsParticular}">
 
 	<head>
-		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	    <!-- 1. 브라우저 탭에 표시될 페이지 제목 -->
+	    <title th:text="|${detail.contentsTitle} - outpolic|">콘텐츠 상세 정보</title>
+	    <meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 	</head>
 	
-	<!-- 추가할 js file -->
-	<!-- 타이틀 추가 -->
-	<!-- <th:block layout:fragment="title">
-		<div class="row">
-			<div class="col-md-2">
-			</div>
-			<div class="col-md-9">
-				<div class="single-header style-2">
-					<div class="row">
-						<div class="col-xl-10 col-lg-12 m-auto">
-							<h6 class="mb-10">
-							  <a href="#" th:text="${inquiry.inquiryTypeName}">문의 타입</a>
-							</h6>
-							<h2 class="mb-10" th:text="${inquiry.inquiryTitle}">문의 제목</h2>
-							<div class="single-header-meta">
-								<div class="entry-meta meta-1 font-xs mt-15 mb-15">
-									<a class="author-avatar" href="#">
-										<img class="img-circle" src="/user/assets/imgs/blog/author-1.png" alt="">
-									</a>
-									<span class="post-by">By <a href="#" th:text="${inquiry.memberName}">작성자</a></span>
-									<span class="post-on has-dot" th:text="${inquiry.inquiryRegDate}">작성일자</span>
-									<span class="time-reading has-dot">00 views</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>       
-			</div>
-			<div class="entry-bottom mb-30"></div>
-		</div>
-	</th:block> -->
+	<!-- 
+	    참고: <th:block layout:fragment="title"> 은 보통 <head> 안으로 이동하여
+	    페이지 제목을 설정하는 데 사용되므로, 여기서는 head 안으로 옮겼습니다.
+	    별도의 JS 파일을 추가할 때는 다른 이름의 fragment (예: jsFile)를 사용하는 것이 좋습니다.
+	-->
 	
-	<!-- 컨텐츠 추가 -->
-	<!-- <th:block layout:fragment="contents">
-		<div class="single-page pr-30">
-			<div class="single-content">
-				<div class="row">
-					<div class="col-xl-10 col-lg-12 m-auto">
-					<div class="attachment-list mb-30" th:if="${inquiry.subAttOrgnlName != null}">
-					  <div class="att-list-wrapper">
-					    <div class="att-label">첨부파일</div>
-					    <ul class="att-file-list">
-					      <li>
-					        <a th:href="@{${inquiry.subAttPath + '/' + inquiry.subAttSrvrName}}" 
-					           th:text="${inquiry.subAttOrgnlName}" 
-					           download>첨부파일</a>
-					      </li>
-					    </ul>
-					  </div>
-					</div>
-						<p th:utext="${#strings.replace(inquiry.inquiryCn, '. ', '.<br/>')}">문의내용</p>
-						<div class="entry-bottom mt-50 mb-30">
-						</div>
-						Author box
-						<div class="author-bio p-30 border-radius-15 bg-white">
-							<div class="author-image mb-30">
-							    <a href="author.html"><img src="/user/assets/imgs/blog/author-1.png" alt="" class="avatar"></a>
-							    <div class="author-infor">
-									<h5 class="mb-5" th:text="${inquiry.adminName}">ADMIN ID</h5>
-									<p class="mb-0 text-muted font-xs">
-										<span class="mr-10" th:text="${inquiry.inquiryProcessRegDate}">YYYY-MM-DD mm:ss</span>
-										<span class="has-dot">답변 완료</span>
-									</p>
-							    </div>
-							</div>
-							<div class="author-des" th:utext="${#strings.replace(inquiry.inquiryProcessCn, '. ', '.<br/>')}">
-								문의내용
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</th:block> -->
+	<!-- 2. 메인 콘텐츠 영역 -->
+	<th:block layout:fragment="contents">
+	
+	    <!-- 페이지 상단 경로 표시 (Breadcrumb) -->
+	    <div class="page-header breadcrumb-wrap">
+	        <div class="container">
+	            <div class="breadcrumb">
+	                <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+	                <span></span> <a th:href="@{/user/userSearch}">콘텐츠</a>
+	                <!-- [수정] <span> 태그를 밖으로 빼서 HTML 태그가 노출되지 않도록 수정 -->
+	                <span></span> <span th:text="${detail.contentsType}">타입</span>
+	                <span></span> <span th:text="${detail.contentsTitle}">제목</span>
+	            </div>
+	        </div>
+	    </div>
+	    
+	    <!-- 메인 콘텐츠 영역 -->
+	    <div class="page-content mb-50">
+	        <div class="container">
+	            <div class="row">
+	                <!-- [수정] 부모 레이아웃에 사이드바가 없다면, 이 클래스가 중앙 정렬과 적절한 너비를 제공합니다. -->
+	                <div class="col-xl-10 col-lg-12 m-auto">
+	                    <div class="product-detail accordion-detail">
+	                        <div class="row mb-50 mt-30">
+	
+	                            <!-- 왼쪽: 이미지 갤러리 -->
+	                            <div class="col-md-6 col-sm-12 col-xs-12 mb-md-0 mb-sm-5">
+	                                <div class="detail-gallery">
+	                                    <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+	                                    <!-- 큰 이미지 (실제로는 detail 객체에 있는 이미지 URL을 사용해야 합니다) -->
+	                                    <div class="product-image-slider">
+	                                        <figure class="border-radius-10">
+	                                            <img src="https://picsum.photos/id/237/800/800" alt="product image" />
+	                                        </figure>
+	                                        <!-- 만약 상세 이미지가 여러 개라면, th:each를 사용해 반복할 수 있습니다. -->
+	                                        <!-- 
+	                                        <figure th:each="img : ${detail.imageList}" class="border-radius-10">
+	                                            <img th:src="${img.url}" alt="product image" />
+	                                        </figure>
+	                                        -->
+	                                    </div>
+	                                    <!-- 작은 썸네일 이미지 (위와 동일하게 동적으로 생성 가능) -->
+	                                    <div class="slider-nav-thumbnails">
+	                                        <div><img src="https://picsum.photos/id/237/100/100" alt="product image" /></div>
+	                                        <div><img src="https://picsum.photos/id/238/100/100" alt="product image" /></div>
+	                                        <div><img src="https://picsum.photos/id/239/100/100" alt="product image" /></div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            
+	                            <!-- 오른쪽: 정보 및 구매/문의 버튼 -->
+	                            <div class="col-md-6 col-sm-12 col-xs-12">
+	                                <div class="detail-info pr-30 pl-30">
+	                                    <!-- 콘텐츠 제목 -->
+	                                    <h2 class="title-detail" th:text="${detail.contentsTitle}">콘텐츠 제목이 여기에 표시됩니다.</h2>
+	                                    
+	                                    <!-- 작성자 정보 -->
+	                                    <div class="product-by">
+	                                        <span>By: <a href="#" th:text="${detail.enterName}">작성자 이름</a></span>
+	                                    </div>
+	                                    
+	                                    <!-- 가격 정보 (0원일 경우 '가격 협의' 표시) -->
+	                                    <div class="product-price mt-10">
+	                                        <span th:if="${detail.price > 0}" th:text="|${#numbers.formatInteger(detail.price, 3, 'COMMA')} 원|">가격</span>
+	                                        <span th:unless="${detail.price > 0}">가격 협의</span>
+	                                    </div>
+	                                    
+	                                    <!-- 간단한 요약 설명 (실제로는 DTO에 필드가 있어야 함) -->
+	                                    <div class="short-desc mb-30">
+	                                        <p class="font-lg">이곳에 간단한 요약 설명이 들어갈 수 있습니다. 이 부분은 `detail.shortDescription` 같은 필드를 만들어서 표시하면 좋습니다.</p>
+	                                    </div>
+	                                    
+	                                    <!-- 구매 또는 문의 버튼 -->
+	                                    <div class="detail-extralink mb-50">
+	                                        <a href="#" class="button button-add-to-cart"><i class="fi-rs-shopping-cart"></i>문의하기</a>
+	                                    </div>
+	                                    
+	                                    <!-- 타입, ID 등 추가 정보 -->
+	                                    <div class="font-xs">
+	                                        <ul class="mr-50 float-start">
+	                                            <li class="mb-5">타입: <span class="text-brand" th:text="${detail.contentsType}"></span></li>
+	                                            <li class="mb-5">ID: <span th:text="${detail.contentsId}"></span></li>
+	                                        </ul>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <!-- 하단: 상세 설명 / 리뷰 등 탭 메뉴 -->
+	                        <div class="product-info">
+	                            <div class="tab-style3">
+	                                <ul class="nav nav-tabs text-uppercase">
+	                                    <li class="nav-item">
+	                                        <a class="nav-link active" id="Description-tab" data-bs-toggle="tab" href="#Description">상세 설명</a>
+	                                    </li>
+	                                    <li class="nav-item">
+	                                        <a class="nav-link" id="Reviews-tab" data-bs-toggle="tab" href="#Reviews">리뷰 (0)</a>
+	                                    </li>
+	                                </ul>
+	                                <div class="tab-content shop_info_tab entry-main-content">
+	                                    <div class="tab-pane fade show active" id="Description">
+	                                        <!-- DB에 저장된 본문 내용을 HTML 태그를 해석하여 보여줌 -->
+	                                        <div th:utext="${detail.contentsBody}">
+	                                            <p>DB에서 가져온 상세 설명이 여기에 표시됩니다.</p>
+	                                        </div>
+	                                    </div>
+	                                    <div class="tab-pane fade" id="Reviews">
+	                                        <!-- 리뷰 목록 표시 영역 (추후 기능 구현) -->
+	                                        <p>아직 리뷰가 없습니다.</p>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</th:block>
 </html>

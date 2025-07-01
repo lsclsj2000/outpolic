@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class userRegisterController {
+public class UserRegisterController {
     // 회원가입 페이지 시작
     @GetMapping("/pageRegister")
     public String mainRegPage() {

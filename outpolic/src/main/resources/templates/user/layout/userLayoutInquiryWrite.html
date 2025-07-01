@@ -12,7 +12,6 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="/user/assets/css/plugins/slider-range.css" />
     <link rel="stylesheet" href="/user/assets/css/main.css?v=5.6" />
-    
 </head>
 
 <body>
@@ -20,27 +19,22 @@
 	<header th:replace="~{user/fragments/userHeader :: userHeaderFragment}"></header>
 	<!-- header end -->
 	
-		<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+	<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
 	<main class="main pages">
 		<div class="page-content pt-100 pb-150">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-10 m-auto">
-                    	<th:block layout:fragment="title"></th:block>
-                        <div class="row">
-                            <div th:replace="~{user/fragments/userInquirySidebar :: userInquirySidebarFragment}"></div>
-                            <div class="col-md-9">
-                            	<th:block layout:fragment="contents"></th:block>
-                            </div>
-                            <!-- 새로 추가할 콘텐츠 박스 -->
-                            
-                        </div>
-                    </div>
-                </div>
+				<div class="col-lg-9 m-auto">
+					<th:block layout:fragment="title"></th:block>
+				   	<div class="row">
+						<div th:replace="~{user/fragments/userInquirySidebar :: userInquirySidebarFragment}"></div>
+						<div class="col-md-9">
+							<!-- 새로 추가할 콘텐츠 박스 -->
+				        	<th:block layout:fragment="contents"></th:block>
+				        </div>
+				    </div>
+				</div>
             </div>
         </div>
-		
-		
     </main>
     
     <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
@@ -72,52 +66,11 @@
     <script src="./assets/js/shop.js?v=5.6"></script>
     
     
-    <script src="/admin/assets/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="/admin/assets/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="/admin/assets/js/vendors/select2.min.js"></script>
-    <script src="/admin/assets/js/vendors/perfect-scrollbar.js"></script>
-    <script src="/admin/assets/js/vendors/jquery.fullscreen.min.js"></script>
+    
     <!-- Main Script -->
-    <script src="./admin/assets/js/main.js?v=1.1" type="text/javascript"></script>
-    
-    
     <script th:src="@{/user/assets/js/plugins/jquery-ui.js}"></script>
     
-    <script>
-    const faqItems = document.querySelectorAll('.faq-item');
-
-    document.querySelectorAll('.faq-question').forEach(question => {
-      question.addEventListener('click', () => {
-        const clickedItem = question.parentElement;
-        const clickedAnswer = clickedItem.querySelector('.faq-answer');
-        const isOpen = clickedItem.classList.contains('faq-active');
-
-        // 모두 닫기
-        faqItems.forEach(item => {
-          const answer = item.querySelector('.faq-answer');
-          answer.style.height = '0px';
-          item.classList.remove('faq-active');
-        });
-
-        if (!isOpen) {
-          // 열기
-          clickedAnswer.style.height = 'auto';
-          const fullHeight = clickedAnswer.scrollHeight + 'px';
-          clickedAnswer.style.height = '0px';
-          clickedItem.classList.add('faq-active');
-          requestAnimationFrame(() => {
-            clickedAnswer.style.height = fullHeight;
-          });
-
-          clickedAnswer.addEventListener('transitionend', () => {
-            if (clickedItem.classList.contains('faq-active')) {
-              clickedAnswer.style.height = 'auto';
-            }
-          }, { once: true });
-        }
-      });
-    });
-	</script>
+    <th:block layout:fragment="jsScript_file"></th:block>	
     
 </body>
 </html>
