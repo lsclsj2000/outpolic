@@ -42,9 +42,10 @@ public class UserMypageEditServiceImpl implements UserMypageEditService {
 
 	// 회원 닉네임 중복검사 -> 0이 아니고 1이 나오면 중복이 존재한다는 뜻.
 	@Override
-	public boolean isNickNameDuplicated(String memberNickName) {
-		return mapper.countByNickname(memberNickName) > 0;
+	public boolean isNickNameDuplicated(String memberNickName, String memberId) {
+		return mapper.countByNickname(memberNickName, memberId) > 0;
 	}
+
 
 
 }

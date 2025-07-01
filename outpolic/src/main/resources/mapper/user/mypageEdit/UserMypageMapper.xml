@@ -46,6 +46,9 @@
  	</update>
  	
  	<select id="countByNickname" resultType="int">
- 		select count(*) from member where mbr_nicknm = #{memberNickName};
+		SELECT COUNT(*) 
+		FROM member 
+		WHERE mbr_nicknm = #{memberNickName}
+  		AND mbr_id != #{memberId}
  	</select>
  </mapper>
