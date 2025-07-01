@@ -16,5 +16,5 @@ public interface UserMypageEditService {
 	List<UserInfoDTO> getMemberList();
 	
 	//회원 닉네임 중복검사
-	boolean isNickNameDuplicated(String memberNickName);
+	boolean isNickNameDuplicated(String memberNickName, String memberId);
 }

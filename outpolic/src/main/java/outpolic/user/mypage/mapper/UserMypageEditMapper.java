@@ -1,6 +1,7 @@
 package outpolic.user.mypage.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import outpolic.user.mypage.dto.UserInfoDTO;
 
@@ -15,5 +16,6 @@ public interface UserMypageEditMapper {
 //	 int userEditInfo(UserMypage user);
 	 int updateUserInfo(UserInfoDTO userInfo);
 	 
-	 int countByNickname(String memberNickName);
+	 int countByNickname(@Param("memberNickName") String memberNickName,
+             			 @Param("memberId") String memberId);
 }

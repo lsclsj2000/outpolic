@@ -35,8 +35,9 @@ public class UserMypageController {
  	private UserMypageEditService userMypageEditService;
  	
     @PostMapping("/check-nickname")
-    public ResponseEntity<Boolean> checkNickName(@RequestParam String memberNickName) {
-        boolean duplicated = userMypageEditService.isNickNameDuplicated(memberNickName);
+    public ResponseEntity<Boolean> checkNickName(@RequestParam String memberNickName, 
+    											 @RequestParam String memberId ) {
+        boolean duplicated = userMypageEditService.isNickNameDuplicated(memberNickName, memberId);
         return ResponseEntity.ok(duplicated);
     }
  	
