@@ -6,6 +6,7 @@
 	<resultMap type="UserInfoDTO" id="UserMypageEditResultMap">
 		<id column="mbr_id" property="memberId"></id>
 		<result column="mbr_nm" property="memberName"/>
+		<result column="mbr_pw" property="memberPw"/>
 		<result column="mbr_nicknm" property="memberNickName"/>
 		<result column="mbr_telno" property="memberTelNo"/>
 		<result column="mbr_addr" property="memberAddress"/>
@@ -20,6 +21,7 @@
 		 SELECT 
 			mbr_id, 
 			mbr_nm, 
+			mbr_pw,
 			mbr_nicknm, 
 			mbr_telno, 
 			mbr_addr, 

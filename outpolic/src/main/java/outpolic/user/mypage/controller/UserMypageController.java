@@ -41,12 +41,19 @@ public class UserMypageController {
     }
  	
  	@PostMapping("/userEditView")
- 	public String usreProfileEditView(Model model) {
-
- 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById("user002");
+ 	public String usreProfileEditView(@RequestParam("password") String memberPw, Model model) {
+ 		
+ 		String memberId = "user002";
+ 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
+ 		
+ 		if(memberPw.equals(userInfo.getMemberPw())) {
  		model.addAttribute("userInfo", userInfo);
-
  		return "user/mypage/userProfileEditView";
+ 		}else {
+ 			model.addAttribute("msg", "비밀번호가 일치하지 않습니다");
+ 			model.addAttribute("url", "/mypage");
+ 			return "user/mypage/alert";
+ 		}
  	}
 
  	 @PostMapping("/userEdit") 

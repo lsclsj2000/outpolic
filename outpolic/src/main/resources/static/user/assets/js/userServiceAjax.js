@@ -12,7 +12,7 @@ function getUserInfo(callback){
 	});
 }
 
-// 닉네임 불러오기
+// 닉네임 중복체크 
 function dupleNicknameCheck(nickname, memberId, callback){
 	$.ajax({
 		url : '/check-nickname',
