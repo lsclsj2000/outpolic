@@ -25,6 +25,7 @@ public class CategoryServiceImpl implements CategoryService{
 
 	private final CategoryMapper categoryMapper;
 	
+	@Override
 	public List<CategoryGroup> getCategoryHierarchy(String mainCategoryCode) {
         
         List<Category> allCategories = categoryMapper.findAll();
@@ -59,6 +60,11 @@ public class CategoryServiceImpl implements CategoryService{
     public Category getMainCategory(String mainCategoryCode) {
         // 3. 이제 CategoryMapper에 findById가 있으므로 이 코드는 정상 동작합니다.
         return categoryMapper.findById(mainCategoryCode);
+    }
+    
+    @Override
+    public List<Category> getMainCategoryList() {
+        return categoryMapper.findMainCategories();
     }
 
 	

@@ -22,6 +22,16 @@
 		where
 			c.ctgry_id = #{categoryId}
  	</select>
+ 	<select id="findMainCategories" resultType="outpolic.user.category.domain.Category">
+	    SELECT 
+	        c.ctgry_id 		as categoryId,
+			c.ctgry_nm 		as categoryName,
+			c.ctgry_up_id 	as parentCategoryId
+	    FROM 
+	        category c
+	    WHERE 
+	        c.ctgry_up_id = '-' OR c.ctgry_up_id IS NULL
+	</select>
 
 	
  </mapper>

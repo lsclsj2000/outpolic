@@ -20,20 +20,28 @@
 	<!-- header end -->
 	
 	<main class="main">
-		<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
-		
-		
-        <div class="container mb-30">
-            <div class="row flex-row-reverse">
-            	<div class="col-lg-4-5 pt-30">
-            		<div th:replace="~{user/fragments/userProductFillter :: userProductFilterFragment}"></div>
-		            <!--/* 삽입할 부분을 선언 */-->
-					<th:block layout:fragment="contents"></th:block>
-            	</div>
-            	<div th:replace="~{user/fragments/userCategorySidebar :: userCategorySidebarFragment}"></div>
-            </div>
-        </div>
-    </main>
+	    <div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+	    <div class="container mb-30">
+	        <div class="row"> <!-- flex-row-reverse 클래스는 필요하다면 유지 -->
+	            
+	            <!-- 1. 사이드바 영역: 전체의 1/5 너비를 차지하는 별도의 div -->
+	            <div class="col-lg-1-5 primary-sidebar sticky-sidebar">
+	                <div th:replace="~{user/fragments/userCategorySidebar :: userCategorySidebarFragment}"></div>
+	            </div>
+	
+	            <!-- 2. 메인 콘텐츠 영역: 전체의 4/5 너비를 차지하는 별도의 div -->
+	            <div class="col-lg-4-5">
+	                <div th:replace="~{user/fragments/userProductFillter :: userProductFilterFragment}"></div>
+	                
+	                <!-- 실제 페이지 내용이 여기에 들어옵니다 -->
+	                <div class="row">
+	                    <th:block layout:fragment="contents"></th:block>
+	                </div>
+	            </div>
+	
+	        </div>
+	    </div>
+	</main>
     
     <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
 	

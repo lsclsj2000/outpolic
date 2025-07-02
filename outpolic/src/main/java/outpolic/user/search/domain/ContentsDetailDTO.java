@@ -16,8 +16,4 @@ public class ContentsDetailDTO {
     private String contentsBody;
     private int price;
     
-    // --- 나중에 추가할 수 있는 필드들 (필요 없다면 지워도 됩니다) ---
-    // private double starRating;
-    // private int reviewCount;
-    // private String enterProfileImg;
 }
