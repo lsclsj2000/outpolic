@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(value="/user/main")
+@RequestMapping(value="/")
 public class UserHomeController {
 	
 	@GetMapping("")
-	public String userMainView() {
+	public String MainView() {
 		
-		return "user/main/userMainView";
+		return "main";
 	}
 	
 	@GetMapping("/userListpage")
