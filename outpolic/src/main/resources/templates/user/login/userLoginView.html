@@ -57,5 +57,12 @@
         </div>
 	</th:block>        
 	<!-- 추가할 js file -->
-	
+	<th:block layout:fragment="jsScript">
+		<script th:if="${success}" th:inline="javascript">
+		    alert([[${success}]]);
+		</script>
+		<script th:if="${error}" th:inline="javascript">
+		    alert([[${error}]]);
+		</script>
+	</th:block>
 </html>
