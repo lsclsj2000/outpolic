@@ -12,7 +12,7 @@ public class SubCategory {
 	public SubCategory (String id, String name) {
 		this.id = id;
 		this.name = name;
-		this.url = "/user/userContents=" + id;
+		this.url = "/user/products?category=" + id;
 	}
 	
 }

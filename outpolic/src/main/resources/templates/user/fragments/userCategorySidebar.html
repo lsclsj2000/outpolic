@@ -1,79 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<div class="col-lg-1-5 primary-sidebar sticky-sidebar pt-30" th:fragment="userCategorySidebarFragment">
-	    <div class="new-category-sidebar">
-	        <h2 class="sidebar-main-title">창업·사업</h2>
-	        <ul class="category-list">
-	            <!-- 그룹 1: 사업계획 -->
-	            <li>
-	                <h5 class="category-group-title">
-	                    <span>사업계획</span>
-	                    <span class="toggle-arrow"></span>
-	                </h5>
-	                <ul class="subcategory-list">
-	                    <li><a href="#">사업계획서·투자제안서</a></li>
-	                    <li><a href="#">리서치</a></li>
-	                </ul>
-	            </li>
-	
-	            <!-- 그룹 2: 스타트업 자료 -->
-	            <li>
-	                <h5 class="category-group-title">
-	                    <span>스타트업 자료</span>
-	                    <span class="toggle-arrow"></span>
-	                </h5>
-	                <ul class="subcategory-list">
-	                    <li><a href="#">비전·미션·초기 브랜딩</a></li>
-	                    <li><a href="#">개인·조직 목표 관리</a></li>
-	                    <li><a href="#">스타트업 인사 자료</a></li>
-	                    <li><a href="#">스타트업 투자 유치</a></li>
-	                </ul>
-	            </li>
-	
-	            <!-- 그룹 3: 기업 자료 -->
-	            <li>
-	                <h5 class="category-group-title">
-	                    <span>기업 자료</span>
-	                    <span class="toggle-arrow"></span>
-	                </h5>
-	                <ul class="subcategory-list">
-	                    <li><a href="#">일반 경영 자료</a></li>
-	                    <li><a href="#">브랜딩</a></li>
-	                    <li><a href="#">영업 전략·관리</a></li>
-	                    <!-- 다른 하위 카테고리들... -->
-	                </ul>
-	            </li>
-	
-	            <!-- 그룹 4: 업종별 창업 (하위 카테고리가 있는 경우) -->
-	            <li>
-	                <h5 class="category-group-title">
-	                    <span>업종별 창업</span>
-	                    <span class="toggle-arrow"></span>
-	                </h5>
-	                <ul class="subcategory-list">
-	                    <li><a href="#">온라인 쇼핑몰 창업</a></li>
-	                    <li><a href="#">카페·요식업</a></li>
-	                    <li><a href="#">병원·약국</a></li>
-	                </ul>
-	            </li>
-	            
-	            <!-- 하위 카테고리가 없는 경우 (예: 프랜차이즈) -->
-	            <li>
-	                <ul class="subcategory-list single-item">
-	                    <li><a href="#">프랜차이즈</a></li>
-	                </ul>
-	            </li>
-	            <li>
-	                <ul class="subcategory-list single-item">
-	                    <li><a href="#">무인점포·공간대여</a></li>
-	                </ul>
-	            </li>
-	             <li>
-	                <ul class="subcategory-list single-item">
-	                    <li><a href="#">반려동물</a></li>
-	                </ul>
-	            </li>
-	        </ul>
-	    </div>
-	</div>
+	<div class="new-category-sidebar" th:fragment="userCategorySidebarFragment"
+         th:if="${mainCategory != null and !categoryGroups.isEmpty()}">
+        
+        <!-- 컨트롤러가 model에 담아준 'mainCategory'를 사용 -->
+        <h2 class="sidebar-main-title" th:text="${mainCategory.categoryName}">카테고리</h2>
+        
+        <ul class="category-list">
+            <!-- 컨트롤러가 model에 담아준 'categoryGroups'를 반복 -->
+            <li th:each="group : ${categoryGroups}">
+                <h5 class="category-group-title">
+                    <span th:text="${group.name}"></span>
+                    <span class="toggle-arrow"></span>
+                </h5>
+                <ul class="subcategory-list" th:if="${group.subCategorys != null and !group.subCategorys.isEmpty()}">
+                    <li th:each="sub : ${group.subCategorys}">
+                        <a th:href="@{${sub.url}}" th:text="${sub.name}"></a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
 </html>

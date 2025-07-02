@@ -12,4 +12,6 @@ public interface CategoryMapper {
 	List<Category> findAll();
 	
 	Category findById(String categoryId);
+	
+	List<Category> findMainCategories();
 }

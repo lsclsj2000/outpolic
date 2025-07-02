@@ -11,4 +11,6 @@ public interface CategoryService {
 	
 	Category getMainCategory(String mainCategoryCode);
 	
+	List<Category> getMainCategoryList();
+	
 }
