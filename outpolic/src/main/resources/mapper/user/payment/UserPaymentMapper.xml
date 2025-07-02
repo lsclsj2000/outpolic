@@ -21,8 +21,6 @@
             stlm_account_info,
             stlm_account_nm,
             stlm_ymdt,
-            stlm_mdfcn_ymdt,
-            stlm_adm_cd,
             stlm_agre_yn
         )
         VALUES (
@@ -41,8 +39,6 @@
             #{stlmAccountInfo},
             #{stlmAccountNm},
             #{stlmYmdt},
-            #{stlmMdfcnYmdt},
-            #{stlmAdmCd},
             #{stlmAgreYn}
         )
     </insert>

@@ -79,7 +79,7 @@ public class UserPaymentController {
             
             // 3. SettlementDTO 생성 및 매핑
             SettlementDTO settlement = new SettlementDTO();
-            settlement.setStlmCd("STLM_C2"); // 결제코드 생성
+            settlement.setStlmCd("STLM_C1"); // 결제코드 생성
             settlement.setMbrCd("MB_C0000035"); // 세션 또는 로그인 정보에서 가져오는게 좋음
             settlement.setGdsCd("PD_C002"); // 프론트에서 상품 선택 정보를 받아오는게 바람직함
             settlement.setStcCd("SD_SUCCESS"); // 상태코드 테이블에 정의된 값
@@ -94,11 +94,11 @@ public class UserPaymentController {
             	String cardCompanyName = getCardAcquirerName(card.getIssuerCode());
                 settlement.setStlmPaymentInfo(card.getNumber());
                 settlement.setStlmCardNm(cardCompanyName);
-                settlement.setStlmAccountNm(userPayment.getOrderName());
+                settlement.setStlmAccountNm("홍길동");	// 프론트에서 결제자 이름을 받아와야함
             } else {
                 settlement.setStlmPaymentInfo("간편결제");
                 settlement.setStlmCardNm("N/A");
-                settlement.setStlmAccountNm(userPayment.getOrderName());
+                settlement.setStlmAccountNm("홍길동");
             }
             settlement.setStlmProviderNm(easy.getProvider());
             settlement.setStlmAccountInfo("N/A");

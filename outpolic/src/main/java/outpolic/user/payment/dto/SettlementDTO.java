@@ -23,7 +23,5 @@ public class SettlementDTO {
     private String stlmAccountInfo;
     private String stlmAccountNm;
     private Timestamp stlmYmdt;
-    private Timestamp stlmMdfcnYmdt;
-    private String stlmAdmCd;
     private boolean stlmAgreYn;
 }
