@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="outpolic.user.category.mapper.CategoryMapper">
+ 	<select id="findAll" resultType="outpolic.user.category.domain.Category">
+ 		select
+			c.ctgry_id 		as categoryId,
+			c.ctgry_nm 		as categoryName,
+			c.ctgry_up_id 	as parentCategoryId
+		from
+			category c 
+ 	</select>
+ 	
+ 	<select id="findById" parameterType="String" resultType="outpolic.user.category.domain.Category">
+ 		select
+			c.ctgry_id 		as categoryId,
+			c.ctgry_nm 		as categoryName,
+			c.ctgry_up_id 	as parentCategoryId
+		from
+			category c 
+		where
+			c.ctgry_id = #{categoryId}
+ 	</select>
+
+	
+ </mapper>

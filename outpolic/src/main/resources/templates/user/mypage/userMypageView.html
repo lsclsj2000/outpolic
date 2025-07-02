@@ -53,6 +53,7 @@
 					<form action="/userEditView" method="post"
 						class="d-flex flex-column">
 						<h3 class="mb-40">내 정보 수정</h3>
+						<div th:if="${msg}" class="alert alert-danger mb-3" role="alert" th:text="${msg}"></div>
 						<input type="password" id="passwordInput" class = "mb-40" name="password"
 							placeholder="비밀번호 입력" required />
 						<button type="submit">수정하기</button>
