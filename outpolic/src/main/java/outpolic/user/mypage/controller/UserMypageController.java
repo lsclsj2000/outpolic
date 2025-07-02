@@ -16,11 +16,6 @@ import outpolic.user.mypage.service.UserMypageEditService;
 @Controller
 public class UserMypageController {
 
-	// 홈 페이지 요청 처리
-    @GetMapping("/")
-    public String index() {
-        return "main"; // templates/index.html
-    }
     
  // 유저 마이페이지
  	@GetMapping("/mypage")
