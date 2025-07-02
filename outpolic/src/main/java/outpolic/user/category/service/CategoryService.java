@@ -6,8 +6,8 @@ import outpolic.user.category.domain.Category;
 import outpolic.user.category.domain.CategoryGroup;
 
 public interface CategoryService {
-
-	List<CategoryGroup> getCategoryGroupList(String mainCategoryCode);
+	
+	List<CategoryGroup> getCategoryHierarchy(String mainCategoryCode);
 	
 	Category getMainCategory(String mainCategoryCode);
 	
