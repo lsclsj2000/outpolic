@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{enter/layout/enterLayoutkjw}">
+<head>
+    <title>새 포트폴리오 등록</title>
+    <link rel="stylesheet" th:href="@{/enter/assets/css/main.css?=5.6}" />
+</head>
+<body>
+<th:block layout:fragment="contents">
+    <div class="portfolio-add-form-container">
+        <h3>새로운 포트폴리오 정보 입력</h3>
+        <form id="portfolioAddForm" enctype="multipart/form-data">
+            <input type="hidden" name="entCd" th:value="${entCd}" />
+            <input type="hidden" name="mbrCd" th:value="${mbrCd}" />
+            <div class="form-group"><label>제목</label><input type="text" name="prtfTtl" required class="form-control"></div>
+            <div class="form-group"><label>카테고리</label><div id="selected-categories-area"></div><div class="category-search-wrapper"><input type="text" id="category-search-input" placeholder="카테고리 검색..."><div id="category-search-results"></div></div></div>
+            <div class="form-group"><label>태그 (쉼표로 구분)</label><input type="text" name="tags" class="form-control"></div>
+            <div class="form-group"><label>상세 내용</label><textarea name="prtfCn" rows="8" class="form-control"></textarea></div>
+            <div class="form-group"><label>대표 이미지</label><input type="file" name="portfolioFiles" multiple></div>
+            <div class="form-actions"><button type="submit">등록하기</button></div>
+        </form>
+    </div>
+</th:block>
+<th:block layout:fragment="jsFile">
+    <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
+    <script>
+        $(document).ready(function() {
+            let searchTimeout;
+            $('#category-search-input').on('input', function() {
+                clearTimeout(searchTimeout);
+                const query = $(this).val();
+                if (query.length < 1) { $('#category-search-results').hide(); return; }
+                searchTimeout = setTimeout(() => {
+                    $.get('/enter/portfolio/api/categories/search', { query: query }, function(data) {
+                        const resultsDiv = $('#category-search-results').empty().show();
+                        data.forEach(cat => resultsDiv.append(`<div class="result-item" data-id="${cat.ctgryId}">${cat.ctgryNm}</div>`));
+                    });
+                }, 300);
+            });
+            $(document).on('click', '.result-item', function() {
+                const catId = $(this).data('id');
+                if ($(`form input[name="categoryCodes"][value="${catId}"]`).length > 0) return;
+                $('#selected-categories-area').append(`<span class="selected-item-badge" data-id="${catId}">${$(this).text()} <button type="button" class="remove-btn">&times;</button></span>`);
+                $('#portfolioAddForm').append(`<input type="hidden" name="categoryCodes" value="${catId}">`);
+                $('#category-search-input').val('');
+                $('#category-search-results').hide();
+            });
+            $(document).on('click', '.remove-btn', function() {
+                const catId = $(this).parent().data('id');
+                $(this).parent().remove();
+                $(`form input[name="categoryCodes"][value="${catId}"]`).remove();
+            });
+            $('#portfolioAddForm').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/enter/portfolio/add-ajax', type: 'POST', data: new FormData(this), processData: false, contentType: false,
+                    success: res => { if (res.success) { alert(res.message); window.location.href = res.redirectUrl; } else { alert('등록 실패: ' + (res.message || '알 수 없는 오류')); } },
+                    error: xhr => alert('오류: ' + (xhr.responseJSON ? xhr.responseJSON.message : '서버 통신 실패'))
+                });
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

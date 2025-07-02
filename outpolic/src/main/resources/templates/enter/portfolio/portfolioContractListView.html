@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{enter/layout/enterLayoutMain}">
+	  layout:decorate="~{enter/layout/enterLayoutkjw}">
 	<head>
 		<meta name="description" content="한국스마트정보교육원 ksmybatis" />
 		     <link rel="shortcut icon" type="image/x-icon" th:href="@{/enter/assets/imgs/theme/favicon.svg}" />
@@ -10,9 +10,11 @@
 	
 	
 	<!-- 추가할 js file -->
-	<th:block layout:fragment="jsFile">
-		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	</th:block>
+<th:block layout:fragment="jsFile">
+        <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+        <script th:src="@{/enter/assets/js/main.js}"></script>
+        </th:block>
 
 		<th:block layout:fragment="contents">
 			<div class="main-container">

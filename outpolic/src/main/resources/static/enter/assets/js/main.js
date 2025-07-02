@@ -1409,7 +1409,90 @@
 		
 		
 		
-		
+		/* 포폴 등록 */
+
+		document.addEventListener('DOMContentLoaded', function() {
+		    console.log('main.js: DOMContentLoaded 이벤트 발생. 모든 HTML 요소가 로드되었습니다.');
+
+		    const portfolioItemsGrid = document.getElementById('portfolioItemsGrid');
+		    const noPortfolioMessage = document.getElementById('noPortfolioMessage');
+		    const addPortfolioTopBtn = document.getElementById('addPortfolioTopBtn');
+		    const addPortfolioBottomBtn = document.getElementById('addPortfolioBottomBtn');
+
+		    /**
+		     * 포트폴리오 목록을 서버로부터 동적으로 불러와 화면에 렌더링하는 함수
+		     */
+		    function loadAndRenderPortfolioList() {
+		        console.log('main.js: 포트폴리오 목록 로드 시작...');
+		        
+		        // ★★★ 이 부분이 가장 중요합니다! (캐시 방지) ★★★
+		        // URL 뒤에 현재 시간을 붙여 매번 새로운 주소로 요청하여 캐시된 데이터를 사용하지 않도록 합니다.
+		        const urlWithCacheBuster = '/enter/portfolio/listData?_=' + new Date().getTime();
+
+		        fetch(urlWithCacheBuster) // 수정된 URL 사용
+		            .then(response => {
+		                if (!response.ok) {
+		                    throw new Error(`HTTP error! status: ${response.status}`);
+		                }
+		                return response.json();
+		            })
+		            .then(portfolios => {
+		                console.log('main.js: 포트폴리오 목록 데이터 수신:', portfolios);
+		                
+		                portfolioItemsGrid.innerHTML = ''; 
+
+		                if (portfolios && portfolios.length > 0) {
+		                    noPortfolioMessage.classList.add('hidden');
+		                    portfolioItemsGrid.classList.remove('hidden');
+
+		                    portfolios.forEach(portfolio => {
+		                        // DB에 저장된 데이터를 기반으로 HTML 카드 생성
+		                        const cardHtml = `
+		                            <div class="portfolio-item-card">
+		                                <div class="portfolio-thumbnail-wrapper">
+		                                    <img src="${portfolio.prtfThumbnailUrl || 'https://via.placeholder.com/300x200?text=No+Image'}" 
+		                                         alt="포트폴리오 썸네일" class="portfolio-thumbnail">
+		                                </div>
+		                                <div class="portfolio-content">
+		                                    <h3 class="portfolio-title">${portfolio.prtfTtl || '제목 없음'}</h3>
+		                                    <p class="portfolio-description">${portfolio.prtfCn || '내용 없음'}</p>
+		                                    <div class="portfolio-actions">
+		                                        <button class="btn-edit" data-prtf-cd="${portfolio.prtfCd || ''}">수정</button>
+		                                        <button class="btn-delete" data-prtf-cd="${portfolio.prtfCd || ''}">삭제</button>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        `;
+		                        portfolioItemsGrid.insertAdjacentHTML('beforeend', cardHtml);
+		                    });
+		                } else {
+		                    noPortfolioMessage.classList.remove('hidden');
+		                    portfolioItemsGrid.classList.add('hidden');
+		                }
+		            })
+		            .catch(error => {
+		                console.error('main.js: 포트폴리오 목록 로드 실패:', error);
+		                portfolioItemsGrid.innerHTML = '<p style="color: red;">포트폴리오 목록을 불러오는 데 실패했습니다.</p>';
+		            });
+		    }
+
+		    /**
+		     * "새 포트폴리오 등록하기" 버튼 클릭 시 등록 페이지로 이동하는 함수
+		     */
+		    function goToAddPage() {
+		        window.location.href = '/enter/portfolio/add';
+		    }
+
+		    if (addPortfolioTopBtn) {
+		        addPortfolioTopBtn.addEventListener('click', goToAddPage);
+		    }
+		    if (addPortfolioBottomBtn) {
+		        addPortfolioBottomBtn.addEventListener('click', goToAddPage);
+		    }
+
+		    // 페이지가 처음 로드될 때 포트폴리오 목록을 불러옵니다.
+		    loadAndRenderPortfolioList();
+		});
 		
 		
 		
