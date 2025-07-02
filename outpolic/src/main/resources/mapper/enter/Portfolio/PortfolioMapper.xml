@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.enter.portfolio.mapper.PortfolioMapper">
+
+    <resultMap id="portfolioResultMap" type="EnterPortfolio">
+        <id property="prtfCd" column="prtf_cd"/>
+        <result property="entCd" column="ent_cd"/>
+        <result property="prtfTtl" column="prtf_ttl"/>
+        <result property="prtfCn" column="prtf_cn"/>
+        <collection property="categories" javaType="java.util.List" ofType="outpolic.enter.portfolio.domain.CategorySearchDto" column="prtf_cd" select="findCategoriesByPrtfCd" />
+        <collection property="tagNames" javaType="java.util.List" ofType="java.lang.String" column="prtf_cd" select="findTagNamesByPrtfCd" />
+    </resultMap>
+    
+    <insert id="insertPortfolio" parameterType="EnterPortfolio"> INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, adm_cd, stc_cd) VALUES (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), #{admCd}, 'SD_ACTIVE') </insert>
+    <insert id="insertContentList"> INSERT INTO content_list (cl_cd, cntd_cd, cl_reg_ymdt) VALUES (#{clCd}, #{cntdCd}, NOW()) </insert>
+    <insert id="insertCategoryMapping"> INSERT INTO category_mapping (ctgry_id, cl_cd, cm_reg_ymdt, mbr_cd) VALUES (#{ctgryCd}, #{clCd}, NOW(), #{mbrCd}) </insert>
+    <insert id="insertTag"> INSERT INTO tag (tag_cd, tag_nm, mbr_cd, tag_reg_ymdt) VALUES (#{tagCd}, #{tagName}, #{mbrCd}, NOW()) </insert>
+    <insert id="insertTagMapping"> INSERT INTO tag_mapping (tag_cd, cl_cd, tm_reg_ymdt, mbr_cd, stc_cd) VALUES (#{tagCd}, #{clCd}, NOW(), #{mbrCd}, 'SD_ACTIVE') </insert>
+
+    <select id="findLatestPrtfCd" resultType="String"> SELECT prtf_cd FROM portfolio WHERE prtf_cd LIKE 'PO_C%' ORDER BY CAST(SUBSTRING(prtf_cd, 5) AS UNSIGNED) DESC LIMIT 1 </select>
+    <select id="findLatestTagCd" resultType="String"> SELECT tag_cd FROM tag WHERE tag_cd LIKE 'T_C%' ORDER BY CAST(SUBSTRING(tag_cd, 5) AS UNSIGNED) DESC LIMIT 1 </select>
+    <select id="findTagCdByName" resultType="String"> SELECT tag_cd FROM tag WHERE tag_nm = #{tagName} </select>
+    <select id="findClCdByPrtfCd" resultType="String"> SELECT cl_cd FROM content_list WHERE cntd_cd = #{prtfCd} LIMIT 1 </select>
+    <select id="findPortfolioDetailsByEntCd" resultMap="portfolioResultMap"> SELECT * FROM portfolio WHERE ent_cd = #{entCd} ORDER BY prtf_reg_ymdt DESC </select>
+    <select id="findPortfolioDetailsByPrtfCd" resultMap="portfolioResultMap"> SELECT * FROM portfolio WHERE prtf_cd = #{prtfCd} </select>
+    <select id="findCategoriesByPrtfCd" resultType="outpolic.enter.portfolio.domain.CategorySearchDto"> SELECT c.ctgry_id as ctgryId, c.ctgry_nm as ctgryNm FROM category c JOIN category_mapping cm ON c.ctgry_id = cm.ctgry_id JOIN content_list cl ON cm.cl_cd = cl.cl_cd WHERE cl.cntd_cd = #{prtfCd} </select>
+    <select id="findTagNamesByPrtfCd" resultType="String"> SELECT t.tag_nm FROM tag t JOIN tag_mapping tm ON t.tag_cd = tm.tag_cd JOIN content_list cl ON tm.cl_cd = cl.cl_cd WHERE cl.cntd_cd = #{prtfCd} </select>
+
+    <delete id="deletePortfolioByPrtfCd"> DELETE FROM portfolio WHERE prtf_cd = #{prtfCd} </delete>
+    <delete id="deleteContentListByClCd"> DELETE FROM content_list WHERE cl_cd = #{clCd} </delete>
+    <delete id="deleteCategoryMappingByClCd"> DELETE FROM category_mapping WHERE cl_cd = #{clCd} </delete>
+    <delete id="deleteTagMappingByClCd"> DELETE FROM tag_mapping WHERE cl_cd = #{clCd} </delete>
+	 <delete id="deleteFileByClCd" parameterType="String">
+        DELETE FROM file
+         WHERE cl_cd = #{clCd}
+    </delete>
+  <delete id="deleteBookmarkByClCd" parameterType="String">
+        DELETE FROM bookmark
+         WHERE cl_cd = #{clCd}
+    </delete>
+    <delete id="deleteOutsourcingContractDetailsByClCd" parameterType="String">
+        DELETE FROM outsourcing_contract_details
+         WHERE cl_cd = #{clCd}
+    </delete>
+    <delete id="deleteTotalViewByClCd" parameterType="String">
+        DELETE FROM total_view
+         WHERE cl_cd = #{clCd}
+    </delete>
+    <delete id="deleteOutsourcingStatusByClCd" parameterType="String">
+        DELETE os
+          FROM outsourcing_status AS os
+          JOIN outsourcing_contract_details AS ocd
+            ON os.ocd_cd = ocd.ocd_cd
+         WHERE ocd.cl_cd = #{clCd}
+    </delete>
+    <delete id="deleteRankingByClCd" parameterType="String">
+        DELETE FROM ranking
+         WHERE cl_cd = #{clCd}
+    </delete>
+     <delete id="deleteOutsourcingPortfolioByPrtfCd" parameterType="String">
+        DELETE FROM outsourcing_portfolio
+         WHERE prtf_cd = #{prtfCd}
+    </delete>
+
+    
+	
+    <update id="updatePortfolio" parameterType="EnterPortfolio"> UPDATE portfolio SET prtf_ttl = #{prtfTtl}, prtf_cn = #{prtfCn}, prtf_mdfcn_ymdt = #{prtfMdfcnYmdt} WHERE prtf_cd = #{prtfCd} </update>
+</mapper>
