@@ -12980,6 +12980,98 @@ height: 70px !important; /* 높이를 70px로 고정 */
 .popular-categories .card-1 figure.img-hover-scale.overflow-hidden {
     overflow: visible !important; 
 }
+/* 새로운 카테고리 사이드바 전체 컨테이너 */
+.new-category-sidebar {
+    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; /* 한글 폰트 지정 */
+}
+
+/* 메인 타이틀 ("창업·사업") */
+.new-category-sidebar .sidebar-main-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #253D4E; /* 기존 템플릿의 텍스트 색상과 유사하게 */
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #333;
+}
+
+/* 전체 카테고리 리스트 */
+.new-category-sidebar .category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.new-category-sidebar .category-list > li {
+    margin-bottom: 20px; /* 각 카테고리 그룹 간의 간격 */
+}
+
+/* 상위 카테고리 그룹 타이틀 (예: "사업계획") */
+.new-category-sidebar .category-group-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #253D4E;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer; /* 클릭 가능함을 표시 */
+}
+
+/* 토글 화살표 (v 모양) */
+.new-category-sidebar .toggle-arrow {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-left: 2px solid #7E7E7E;
+    border-bottom: 2px solid #7E7E7E;
+    transform: rotate(-45deg);
+    transition: transform 0.3s;
+}
+/* 토글 화살표 클릭 시 (JavaScript로 open 클래스 추가) */
+.new-category-sidebar .category-group-title.open .toggle-arrow {
+    transform: rotate(135deg);
+    margin-top: -5px;
+}
+
+
+/* 하위 카테고리 리스트 */
+.new-category-sidebar .subcategory-list {
+    list-style: none;
+    padding-left: 5px; /* 약간의 들여쓰기 */
+    margin: 0;
+    /* 기본적으로 숨김 처리 (JS로 제어) */
+    display: none; 
+}
+/* JS로 open 클래스가 추가되면 보이도록 설정 */
+.new-category-sidebar .subcategory-list.open {
+    display: block;
+}
+
+
+/* 하위 카테고리 단일 항목 (상위 카테고리 제목이 없는 경우) */
+.new-category-sidebar .subcategory-list.single-item {
+    display: block; /* 단일 항목은 항상 보이도록 */
+    padding-left: 0; /* 들여쓰기 없음 */
+}
+
+.new-category-sidebar .subcategory-list li {
+    margin-bottom: 12px;
+}
+
+/* 하위 카테고리 링크 */
+.new-category-sidebar .subcategory-list a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    transition: color 0.2s ease-in-out;
+}
+
+.new-category-sidebar .subcategory-list a:hover {
+    color: #3BB77E; /* 기존 템플릿의 브랜드 색상 */
+    font-weight: 500;
+}
 /* 김한별 CSS 추가 영역 끝 */
 
 
