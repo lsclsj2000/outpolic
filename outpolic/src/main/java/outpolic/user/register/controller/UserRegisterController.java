@@ -2,6 +2,7 @@ package outpolic.user.register.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class UserRegisterController {
@@ -16,11 +17,14 @@ public class UserRegisterController {
     	return "user/register/userRegisterChoiceView";
     }
     // 일반회원 회원가입 페이지
-    @GetMapping("/userRegister")
+    @GetMapping("/user/registerInfo")
     public String userReg() {
     	return "user/register/userRegisterView";
     }
     
-    
+    @PostMapping("/user/register")
+    public String userRegister() {
+    	return null;
+    }
     
 }
