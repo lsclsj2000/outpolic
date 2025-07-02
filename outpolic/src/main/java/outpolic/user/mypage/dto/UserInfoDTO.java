@@ -17,4 +17,5 @@ public class UserInfoDTO {
 	 public String memberEmail; 
 	 public LocalDate memberBirth;
 	 public LocalDate memberJoinDate;
+	 public LocalDate memberModifyDate;
 }    

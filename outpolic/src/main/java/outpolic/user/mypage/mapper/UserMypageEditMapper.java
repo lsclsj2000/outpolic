@@ -16,6 +16,10 @@ public interface UserMypageEditMapper {
 //	 int userEditInfo(UserMypage user);
 	 int updateUserInfo(UserInfoDTO userInfo);
 	 
-	 int countByNickname(@Param("memberNickName") String memberNickName,
+	boolean isNickNameDuplicated(@Param("memberNickName") String memberNickName, @Param("memberId") String memberId);
+    boolean isEmailDuplicated(@Param("memberEmail") String memberEmail, @Param("memberId") String memberId);
+    boolean isTelDuplicated(@Param("memberTelNo") String memberTelNo, @Param("memberId") String memberId);
+	 
+	int countByNickname(@Param("memberNickName") String memberNickName,
              			 @Param("memberId") String memberId);
 }

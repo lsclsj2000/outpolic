@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -30,18 +31,18 @@ public class UserLoginController {
     public String login(@RequestParam String memberId,
                         @RequestParam String memberPw,
                         HttpSession session,
-                        Model model) {
+                        RedirectAttributes redirectAttributes) {
     	
     	  Member loginMember = userLoginService.loginUser(memberId, memberPw);
 
         
         if (loginMember != null) {
         	session.setAttribute("loginMember", loginMember);
-//        	alert("로그인이 완료되었습니다!");
+        	redirectAttributes.addFlashAttribute("success", "로그인에 성공하였습니다");
         	log.info("로그인성공");
-            return "redirect:/main"; 
+            return "redirect:/"; 
         } else {
-            model.addAttribute("error", "이메일 또는 비밀번호가 올바르지 않습니다.");
+        	redirectAttributes.addFlashAttribute("error", "아이디 또는 비밀번호가 올바르지 않습니다.");
             return "redirect:/login";
         }
     }
@@ -52,9 +53,9 @@ public class UserLoginController {
         return "user/login/userForgotPswdView"; // templates/page-forgot-password.html
     }
     
-    @GetMapping("/goodsList")
-    public String userShopPage() {
-        return "user/goods/goodsList";
-    }
+	/*
+	 * @GetMapping("/goodsList") public String userShopPage() { return
+	 * "user/goods/goodsList"; }
+	 */
 
 }

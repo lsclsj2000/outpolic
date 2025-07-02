@@ -21,17 +21,17 @@
 	
 	<main class="main">
 		<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
-		<div th:replace="~{user/fragments/userCategoryContainer :: userCategoryContainerFragment}"></div>
+		
 		
         <div class="container mb-30">
             <div class="row flex-row-reverse">
             	<div class="col-lg-4-5 pt-30">
             		<div th:replace="~{user/fragments/userProductFillter :: userProductFilterFragment}"></div>
+		            <!--/* 삽입할 부분을 선언 */-->
+					<th:block layout:fragment="contents"></th:block>
             	</div>
-            	<div th:replace="~{user/fragments/userSidebar :: userSidebarFragment}"></div>
+            	<div th:replace="~{user/fragments/userCategorySidebar :: userCategorySidebarFragment}"></div>
             </div>
-            <!--/* 삽입할 부분을 선언 */-->
-			<th:block layout:fragment="contents"></th:block>
         </div>
     </main>
     

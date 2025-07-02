@@ -14,6 +14,7 @@
 		<result column="mbr_eml" property="memberEmail"/>
 		<result column="mbr_birth" property="memberBirth"/>
 		<result column="mbr_join_ymdt" property="memberJoinDate"/>
+		<result column="mbr_mdfcn_ymdt" property="memberModifyDate"/>
 	</resultMap>
 	<select id="getUserInfoById" parameterType="String" resultMap="UserMypageEditResultMap"> 
 		 SELECT 
@@ -26,7 +27,8 @@
 			mbr_zip, 
 			mbr_eml, 
 			mbr_birth,
-			mbr_join_ymdt
+			mbr_join_ymdt,
+			mbr_mdfcn_ymdt
 		FROM member
 		WHERE mbr_id=#{memberId};
 	</select>
@@ -40,15 +42,34 @@
 			mbr_daddr = #{memberDAddress}, 
 			mbr_zip = #{memberZip}, 
 			mbr_eml = #{memberEmail}, 
-			mbr_birth = #{memberBirth}
+			mbr_birth = #{memberBirth},
+			mbr_mdfcn_ymdt = curdate()
 		where
 			mbr_id= #{memberId};
  	</update>
  	
- 	<select id="countByNickname" resultType="int">
+<!--  	<select id="countByNickname" resultType="int">
 		SELECT COUNT(*) 
 		FROM member 
 		WHERE mbr_nicknm = #{memberNickName}
   		AND mbr_id != #{memberId}
- 	</select>
+ 	</select> -->
+ 	<select id="isNickNameDuplicated" resultType="boolean">
+	    SELECT COUNT(*) > 0
+	    FROM member
+	    WHERE mbr_nicknm = #{memberNickName}
+	      AND mbr_id != #{memberId}
+	</select>
+	<select id="isEmailDuplicated" resultType="boolean">
+	    SELECT COUNT(*) > 0
+	    FROM member
+	    WHERE mbr_eml = #{memberEmail}
+	      AND mbr_id != #{memberId}
+	</select>
+	<select id="isTelDuplicated" resultType="boolean">
+	    SELECT COUNT(*) > 0
+	    FROM member
+	    WHERE mbr_telno = #{memberTelNo}
+	      AND mbr_id != #{memberId}
+	</select>
  </mapper>
