@@ -28,6 +28,7 @@ import outpolic.user.payment.mapper.UserPaymentMapper;
 @Slf4j
 public class UserPaymentController {
 
+	// 결제 카드사 매핑
 	private String getCardAcquirerName(String acquirerCode) {
 	    return switch (acquirerCode) {
 	        case "11" -> "국민카드";
@@ -50,7 +51,7 @@ public class UserPaymentController {
 
     @GetMapping("/paymentSuccess")
     public String paymentSuccessPage(String orderId, String paymentKey, String amount, HttpSession session) {
-        log.info("✅ 결제 성공 콜백 수신");
+        log.info("결제 성공 콜백 수신");
         log.info("orderId: {}", orderId);
         log.info("paymentKey: {}", paymentKey);
         log.info("amount: {}", amount);
