@@ -1,5 +1,5 @@
 package outpolic.enter.outsourcing.domain;
-//d
+//dㄴ
 public class EnterOutsourcing {
 
 }
