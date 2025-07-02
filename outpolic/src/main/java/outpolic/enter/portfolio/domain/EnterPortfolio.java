@@ -1,16 +1,16 @@
 package outpolic.enter.portfolio.domain;
 
 import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class EnterPortfolio {
-	private String prtfCd;
-	private String entCd;
-	private String prtfTtl;
-	private String prtfCn;	
-	private String prtfDwnldCnt;
-	private String prtfRegYmdt;
-	private String admCd;
-	private String prtfMdfcnYmdt;
-	private String stcCd;
+    private String prtfCd, entCd, prtfTtl, prtfCn, admCd, stcCd, mbrCd, prtfThumbnailUrl;
+    private int prtfDwnldCnt;
+    private LocalDateTime prtfRegYmdt, prtfMdfcnYmdt;
+    
+    // DB 조회 시 채워질 필드
+    private List<CategorySearchDto> categories;
+    private List<String> tagNames;
 }
