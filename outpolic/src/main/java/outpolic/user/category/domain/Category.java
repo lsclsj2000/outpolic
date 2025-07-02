@@ -7,5 +7,5 @@ public class Category {
 	
 	private String categoryId;
 	private String categoryName;
-	private String categoryUpId;
+	private String parentCategoryId;
 }
