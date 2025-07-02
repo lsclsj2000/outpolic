@@ -2,6 +2,7 @@ package outpolic.user.login.service.Impl;
 
 
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 		if(member != null && member.getMemberPw().equals(memberPw)) {
 			return member;
 		}
-		
-		return null;
+			return null;
+
 	}
 }
