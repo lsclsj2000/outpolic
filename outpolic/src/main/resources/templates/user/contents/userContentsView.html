@@ -15,33 +15,57 @@
 	
 	
 	<th:block layout:fragment="contents">
-		<div class="row product-grid">
-	        <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-	            <div class="product-cart-wrap mb-30">
-	                <div class="product-img-action-wrap">
-	                    <div class="product-img product-img-zoom">
-	                        <a href="/user/userContentsParticular">
-	                            <img class="default-img" src="assets/imgs/shop/product-1-1.jpg" alt="" />
-	                            <img class="hover-img" src="assets/imgs/shop/product-1-2.jpg" alt="" />
-	                        </a>
-	                    </div>
-	                    <div class="product-action-1">
-	                        <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-	                        <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-	                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-	                    </div>
-	                    <div class="product-badges product-badges-position product-badges-mrg">
-	                        <span class="hot">Hot</span>
-	                    </div>
-	                </div>
-	                <div class="product-content-wrap">
-	                    <h2><a href="shop-product-right.html">Seeds of Change Organic Quinoe</a></h2>
-	                    <div>
-	                        <span class="font-small text-muted">By <a href="/user/userContentsParticular">NestFood</a></span>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
+		<div class="tab-content" id="myTabContent" style="border: none;">
+		    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+				<!-- AJAX로 결과가 채워질 컨테이너에 id="contentsListContainer" 부여 -->
+				<div class="row product-grid-4" id="contentsListContainer">
+				
+					<!-- 이 부분은 페이지가 처음 로딩될 때만 Thymeleaf가 렌더링합니다. -->
+					<div th:if="${not #lists.isEmpty(contentsList)}"
+					     th:each="content, iterStat : ${contentsList}"
+					     class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item"
+					     th:attr="data-type=${content.contentsType}">
+					    
+					    <!-- ▼▼▼ 이 div에 position-relative 클래스만 추가합니다 ▼▼▼ -->
+					    <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn position-relative" data-wow-delay=".1s">
+					        
+					        <!-- [복원] 이미지 관련 부분은 원래 템플릿 구조 그대로 둡니다. -->
+					        <div class="product-img-action-wrap">
+					            <div class="product-img product-img-zoom">
+					                <!-- a 태그가 이미지들을 직접 감싸는 구조로 복원 -->
+					                <a href="javascript:void(0);">
+					                    <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
+					                    <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
+					                </a>
+					            </div>
+					            <div class="product-action-1">
+					                <!-- 이 버튼들은 링크와 무관하므로 원래대로 둡니다. -->
+					                <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+					                <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+					                <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+					            </div>
+					        </div>
+					        
+					        <!-- [복원] 콘텐츠 제목 부분도 원래 구조 그대로 둡니다. -->
+					        <div class="product-content-wrap" style="margin-top: 15px;">
+					            <!-- ▼▼▼ h2 안에 실제 상세 페이지로 가는 링크를 넣고, 'stretched-link' 클래스를 추가합니다 ▼▼▼ -->
+					            <h2>
+					                <a th:href="@{/user/contents/{id}(id=${content.contentsId})}" 
+					                   th:text="${content.contentsTitle}"
+					                   class="stretched-link">콘텐츠 제목</a>
+					            </h2>
+					            <div>
+					                <span class="font-small text-muted">By <a th:text="${content.enterName}" href="#">회원닉네임</a></span>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+					<!-- 검색 결과가 없을 때 (초기 로딩 시) -->
+					<div th:if="${#lists.isEmpty(contentsList)}" class="col-12">
+						<p class="text-center">표시할 콘텐츠가 없습니다.</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	</th:block>
 </html>
