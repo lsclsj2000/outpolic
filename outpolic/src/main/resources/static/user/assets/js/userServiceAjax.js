@@ -13,7 +13,6 @@ function getUserInfo(callback){
 }
 
 // 닉네임 불러오기
-
 function dupleNicknameCheck(nickname, memberId, callback){
 	$.ajax({
 		url : '/check-nickname',
@@ -25,6 +24,20 @@ function dupleNicknameCheck(nickname, memberId, callback){
 		error: () => alert("닉네임이 중복입니다. 다른 닉네임을 입력하세요")
 	});
 }
+//중복체크 확장
+function dupleUserInfoCheck(type, value, memberId, callback){
+	$.ajax({
+		url: `/check/${type}`,
+		type:'POST',
+		data:{
+			[type] : value,
+			memberId : memberId
+		},
+		success:callback,
+		error:() => alert("중복 확인 중 에러가 발생했습니다.")
+	})
+}
+
 
 // 회원 휴대폰 인증번호 발송
 function sendAuthCode(phone, callback){

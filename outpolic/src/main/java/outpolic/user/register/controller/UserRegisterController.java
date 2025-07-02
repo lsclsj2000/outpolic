@@ -21,6 +21,6 @@ public class UserRegisterController {
     	return "user/register/userRegisterView";
     }
     
-
+    
     
 }
