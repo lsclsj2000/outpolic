@@ -15,10 +15,11 @@ function fillUserInfoForm(data) {
   $('#memberJoinDate').val(data.memberJoinDate);
 }
 
-// 닉네임 입력안했을때 경고문 띄우기
+//중복확인용
 let isDupleNick = false;
 let isVerified = true;
 let isDupleEmail = false;
+// 닉네임 입력안했을때 경고문 띄우기
 function isNicknameValid(){
 	const nickname = $('#memberNickName').val().trim();
 	if(!nickname){
@@ -105,7 +106,11 @@ function collectUserInfo() {
     memberJoinDate: $('#memberJoinDate').val()
   };
 }
+
+// 클릭 이벤트 시작
 $(document).ready(function () {
+	//사실상 필요없긴한데 혹시몰라서 넣어둔 메소드
+	getUserInfo(fillUserInfoForm);
 	// 닉네임 중복확인 버튼 클릭 
 	$('#nicknmDupleBtn').click(function () {
 	   if (!isNicknameValid()) return;
@@ -141,12 +146,12 @@ $(document).ready(function () {
       });
    
 	//인증번호 확인 버튼 클릭시
-
+	// 상황상 인증번호를 보낼 수 없어서 isVerified를 true로 유지하도록 함
 	$('#sendCodeBtn').click(function() {
 		const phone = $('#memberTelNo').val();
 		if(!phone){
 			alert('휴대폰번호를 입력해주세요');
-			return
+			return;
 		}
 		// ajax요청 가져오기
 		sendAuthCode(phone, () => {alert('인증번호가 발송되었습니다');});
@@ -158,10 +163,10 @@ $(document).ready(function () {
 		const code = $('#authCodeInput').val();
 		if(!code){
 			alert('인증번호를 입력해주세요.');
-			return
+			return;
 		}
 		checkAuthCode(code, ()=> {
-			alert('인증완료되었습니다');
+			alert('인증완료 되었습니다');
 			isVerified = true;
 		});
 	});
@@ -185,18 +190,8 @@ $(document).ready(function () {
 				alert('이메일 형식이 유효하지 않습니다.');
 				return;
 			}
-		const userInfo = {
-			memberId: $('#memberId').val(), 
-			memberName: $('#memberName').val(),
-			memberNickName: $('#memberNickName').val(),
-			memberTelNo: $('#memberTelNo').val(),
-			memberAddress: $('#sample4_roadAddress').val(),
-			memberDAddress: $('#sample4_detailAddress').val(),
-			memberZip: $('#sample4_postcode').val(),
-			memberEmail: $('#memberEmail').val(),
-			memberBirth: $('#memberBirth').val(),
-			memberJoinDate: $('#memberJoinDate').val()
-		}
+			//수정된 info 정보 가져오기
+		const userInfo = collectUserInfo();
 		
 		saveUserInfo('/userEdit/update', userInfo, () => {
 			alert('정보가 성공적으로 수정되었습니다.')

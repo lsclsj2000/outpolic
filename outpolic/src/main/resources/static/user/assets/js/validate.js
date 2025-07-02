@@ -9,7 +9,7 @@ function isValidId(id) {
 
 // 비밀번호 검사 (영문+숫자+특수문자 8~20자)
 function isValidPassword(pw) {
-    const pattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/;
+    const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@^*]).{8,20}$/;
     return pattern.test(pw);
 }
 

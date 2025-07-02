@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpSession;
 import outpolic.user.mypage.service.SmsService;
-import outpolic.user.mypage.service.UserMypageEditService;
 
 @RestController
 public class UserInfoEditController {
