@@ -2,6 +2,7 @@
  * 
  */
 
+//마이페이지 내 정보 수정 시작
 // 회원정보 불러오기
 function fillUserInfoForm(data) {
   $('#memberName').val(data.memberName);
@@ -17,7 +18,7 @@ function fillUserInfoForm(data) {
 
 //중복확인용
 let isDupleNick = false;
-let isVerified = true;
+let isVerified = false;
 let isDupleEmail = false;
 // 닉네임 입력안했을때 경고문 띄우기
 function isNicknameValid(){
@@ -163,6 +164,7 @@ $(document).ready(function () {
 		const code = $('#authCodeInput').val();
 		if(!code){
 			alert('인증번호를 입력해주세요.');
+			isVerified = false;
 			return;
 		}
 		checkAuthCode(code, ()=> {
@@ -181,7 +183,7 @@ $(document).ready(function () {
 	
 	// 회원정보 수정 요청
 	$('#btnSave').click(function(){
-		if(!isDupleNick || !isVerified){
+		if(!isDupleNick || !isVerified || !isDupleEmail){
 			alert('인증을 완료해주세요');
 			return;
 		}
@@ -199,6 +201,75 @@ $(document).ready(function () {
 		});
 	});
 });
+
+// 마이페이지 내 정보 수정 끝
+
+// 회원가입 시작
+
+// 비밀번호 일치 여부
+let pwEqual = false;
+
+// 비밀번호와 비밀번호 확인 일치 여부 안내문
+document.addEventListener('DOMContentLoaded', function () {
+    const pwInput = document.getElementById("memberPw");
+    const pwCheckInput = document.getElementById("userpwcheck");
+    const pwMsg = document.getElementById("pwCheckMsg");
+
+    function checkPasswordMatch() {
+        const pw = pwInput.value;
+        const pwCheck = pwCheckInput.value;
+
+        if (pwCheck === "") {
+            pwMsg.textContent = "";
+            return;
+        }
+
+        if (pw !== pwCheck) {
+            pwMsg.textContent = "비밀번호가 일치하지 않습니다.";
+			pwEqual = false;
+        } else {
+            pwMsg.textContent = "";
+			pwEqual = true;
+        }
+    }
+    pwInput.addEventListener("input", checkPasswordMatch);
+    pwCheckInput.addEventListener("input", checkPasswordMatch);
+});
+
+// 이메일, 전화번호 중복 blur처리
+$(document).ready(function(){
+	let isTelUnique = false;
+	let isEmailUnique = false;
+	
+	$('#memberTelNo').on('blur', function(){
+		const tel = $(this).val().trim();
+		if(tel===''){
+			$('#memberTelNoMsg').text('').removeClass('text-success text-danger');
+		       return;
+		}
+		getUserTelNo(tel);
+	});
+	
+	$('#memberEmail').on('blur', function(){
+		const email = $(this).val().trim();
+		if(email===''){
+			$('#memberEmailMsg').text('').removeClass('text-success text-danger');
+		}
+		getUserEmail(email);
+	});
+	
+})
+
+
+
+
+
+
+
+
+
+
+
 
 
 

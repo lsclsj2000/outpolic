@@ -15,10 +15,10 @@ public interface UserMypageEditMapper {
 	 // 회원의 수정된 행 값을 리턴하기때문에 int를 사용한당
 //	 int userEditInfo(UserMypage user);
 	 int updateUserInfo(UserInfoDTO userInfo);
-	 
-	boolean isNickNameDuplicated(@Param("memberNickName") String memberNickName, @Param("memberId") String memberId);
-    boolean isEmailDuplicated(@Param("memberEmail") String memberEmail, @Param("memberId") String memberId);
-    boolean isTelDuplicated(@Param("memberTelNo") String memberTelNo, @Param("memberId") String memberId);
+	 // 중복확인
+	 boolean isNickNameDuplicated(@Param("memberNickName") String memberNickName, @Param("memberId") String memberId);
+	 boolean isEmailDuplicated(@Param("memberEmail") String memberEmail, @Param("memberId") String memberId);
+	 boolean isTelDuplicated(@Param("memberTelNo") String memberTelNo, @Param("memberId") String memberId);
 	 
 	/*
 	 * int countByNickname(@Param("memberNickName") String memberNickName,

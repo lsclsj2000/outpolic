@@ -33,6 +33,7 @@
 										    <div class="form-group">
 										        <label for="userpwcheck">비밀번호 확인</label>
 										        <input type="password" id="userpwcheck" name="userpwcheck" placeholder="비밀번호 재입력" required />
+										         <small id="pwCheckMsg" class="text-danger"></small>
 										    </div>
 										    <div class="form-group">
 										        <label for="username">이름</label>
@@ -47,18 +48,12 @@
 										    <div class="form-group">
 										        <label for="phone">전화번호</label>
 										        <input type="text" id="memberTelNo" name="memberTelNo" placeholder="010-1234-5678" required />
-										        <button type="button" class="btn-send-code text-white">인증번호 발송</button>
+										         <span id="memberTelNoMsg" class="text-danger small"></span>
 										    </div>
-										
-										    <div class="form-group">
-										        <label for="code">인증번호 입력</label>
-										        <input type="text" id="code" name="code" placeholder="인증번호 입력" required />
-										        <button type="button" class="btn-verify-code text-white">인증</button>
-										    </div>
-										
 										    <div class="form-group">
 										        <label for="email">이메일</label>
 										        <input type="email" id="memberEmail" name="memberEmail" placeholder="example@email.com" required />
+										        <span id="memberEmailMsg" class="text-danger small"></span>
 										    </div>
 										    <div class="form-group">
 										        <label for="birth">생일</label>
@@ -91,7 +86,7 @@
 											
 											<!-- 성별 선택 -->
 											<div class="row mb-3 align-items-center">
-												<label class="col-sm-3 col-form-label">성별</label>
+												<label class="col-sm-3 col-form-label fs-6">성별</label>
 												<div class="col-sm-9 d-flex gap-3">
 											    	<div class="form-check">
 												      <input class="form-check-input" type="radio" name="memberGender" id="male" value="M">
