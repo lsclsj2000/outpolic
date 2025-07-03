@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.user.category.domain.Category;
@@ -25,10 +26,7 @@ public class CategoryController {
     public String showContentsByCategory(@PathVariable String categoryCode, Model model) {
         
         // 1. [메인 컨텐츠용 데이터] 현재 카테고리에 속한 콘텐츠 목록 가져오기
-        // List<Content> contents = contentService.getContentsByCategory(categoryCode);
-        // model.addAttribute("contents", contents);
 
-        // --- 여기서부터 사이드바를 위한 공통 로직 ---
         // 현재 소분류 코드(categoryCode)에서 대분류 코드(예: "010")를 추출
         String mainCategoryCode = categoryCode.substring(0, 3); 
 
@@ -43,6 +41,35 @@ public class CategoryController {
 
         // 콘텐츠 목록을 보여줄 뷰 페이지 반환
         return "/user/contents/userContentsView"; 
+    }
+    
+    // --- 2. 소분류 클릭 시 (새로 추가하는 코드) ---
+    @GetMapping("/products")
+    public String showContentsBySubCategory(@RequestParam("category") String subCategoryCode, Model model) {
+        
+
+        // 소분류 코드에서 대분류 코드를 추출 (0100101 -> 010)
+        String mainCategoryCode = subCategoryCode.substring(0, 3);
+
+        // 공통 메서드 호출
+        addSidebarDataToModel(mainCategoryCode, model);
+
+        // 소분류에 해당하는 카테고리 이름을 페이지 타이틀 등으로 사용하기 위해 조회
+        Category currentCategory = categoryService.getMainCategory(subCategoryCode);
+        model.addAttribute("currentCategory", currentCategory);
+        
+        // 대분류/소분류가 공유하는 동일한 뷰 페이지를 반환
+        return "user/contents/userContentsView";
+    }
+
+
+    // --- 3. 중복 로직을 처리하는 private 헬퍼 메서드 ---
+    private void addSidebarDataToModel(String mainCategoryCode, Model model) {
+        List<CategoryGroup> categoryGroups = categoryService.getCategoryHierarchy(mainCategoryCode);
+        Category mainCategory = categoryService.getMainCategory(mainCategoryCode);
+        
+        model.addAttribute("categoryGroups", categoryGroups);
+        model.addAttribute("mainCategory", mainCategory);
     }
 }
 

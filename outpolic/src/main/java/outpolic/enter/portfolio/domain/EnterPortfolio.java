@@ -10,7 +10,7 @@ public class EnterPortfolio {
     private int prtfDwnldCnt;
     private LocalDateTime prtfRegYmdt, prtfMdfcnYmdt;
     
-    // DB 조회 시 채워질 필드
     private List<CategorySearchDto> categories;
     private List<String> tagNames;
+    private List<FileMetaData> files;
 }

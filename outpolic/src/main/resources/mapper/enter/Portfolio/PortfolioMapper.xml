@@ -17,15 +17,77 @@
     <insert id="insertTag"> INSERT INTO tag (tag_cd, tag_nm, mbr_cd, tag_reg_ymdt) VALUES (#{tagCd}, #{tagName}, #{mbrCd}, NOW()) </insert>
     <insert id="insertTagMapping"> INSERT INTO tag_mapping (tag_cd, cl_cd, tm_reg_ymdt, mbr_cd, stc_cd) VALUES (#{tagCd}, #{clCd}, NOW(), #{mbrCd}, 'SD_ACTIVE') </insert>
 
-    <select id="findLatestPrtfCd" resultType="String"> SELECT prtf_cd FROM portfolio WHERE prtf_cd LIKE 'PO_C%' ORDER BY CAST(SUBSTRING(prtf_cd, 5) AS UNSIGNED) DESC LIMIT 1 </select>
-    <select id="findLatestTagCd" resultType="String"> SELECT tag_cd FROM tag WHERE tag_cd LIKE 'T_C%' ORDER BY CAST(SUBSTRING(tag_cd, 5) AS UNSIGNED) DESC LIMIT 1 </select>
-    <select id="findTagCdByName" resultType="String"> SELECT tag_cd FROM tag WHERE tag_nm = #{tagName} </select>
-    <select id="findClCdByPrtfCd" resultType="String"> SELECT cl_cd FROM content_list WHERE cntd_cd = #{prtfCd} LIMIT 1 </select>
-    <select id="findPortfolioDetailsByEntCd" resultMap="portfolioResultMap"> SELECT * FROM portfolio WHERE ent_cd = #{entCd} ORDER BY prtf_reg_ymdt DESC </select>
-    <select id="findPortfolioDetailsByPrtfCd" resultMap="portfolioResultMap"> SELECT * FROM portfolio WHERE prtf_cd = #{prtfCd} </select>
-    <select id="findCategoriesByPrtfCd" resultType="outpolic.enter.portfolio.domain.CategorySearchDto"> SELECT c.ctgry_id as ctgryId, c.ctgry_nm as ctgryNm FROM category c JOIN category_mapping cm ON c.ctgry_id = cm.ctgry_id JOIN content_list cl ON cm.cl_cd = cl.cl_cd WHERE cl.cntd_cd = #{prtfCd} </select>
-    <select id="findTagNamesByPrtfCd" resultType="String"> SELECT t.tag_nm FROM tag t JOIN tag_mapping tm ON t.tag_cd = tm.tag_cd JOIN content_list cl ON tm.cl_cd = cl.cl_cd WHERE cl.cntd_cd = #{prtfCd} </select>
+    <select id="findPortfolioDetailsByEntCd" resultMap="portfolioResultMap">
+    SELECT * FROM portfolio 
+    WHERE ent_cd = #{entCd} 
+    ORDER BY prtf_reg_ymdt DESC
+</select>
 
+<select id="findPortfolioDetailsByPrtfCd" resultMap="portfolioResultMap">
+    SELECT * FROM portfolio 
+    WHERE prtf_cd = #{prtfCd}
+</select>
+
+<select id="findCategoriesByPrtfCd" resultType="outpolic.enter.portfolio.domain.CategorySearchDto">
+    SELECT 
+        c.ctgry_id as ctgryId, 
+        c.ctgry_nm as ctgryNm 
+    FROM 
+        category c
+    JOIN category_mapping cm ON c.ctgry_id = cm.ctgry_id
+    JOIN content_list cl ON cm.cl_cd = cl.cl_cd
+    WHERE cl.cntd_cd = #{prtfCd}
+</select>
+
+<select id="findTagNamesByPrtfCd" resultType="String">
+    SELECT t.tag_nm 
+    FROM tag t 
+    JOIN tag_mapping tm ON t.tag_cd = tm.tag_cd 
+    JOIN content_list cl ON tm.cl_cd = cl.cl_cd 
+    WHERE cl.cntd_cd = #{prtfCd}
+</select>
+
+<select id="findFilesByPrtfCd" resultType="outpolic.enter.portfolio.domain.FileMetaData">
+    SELECT
+        f.file_cd         as fileIdx,
+        f.file_reg_ymdt   as fileRegYmdt,
+        f.file_mdfcn_ymdt as fileMdfcnYmdt,
+        f.file_extn       as fileExtn,
+        f.file_orgnl_nm   as fileOriginalName,
+        f.file_srvr_nm    as fileNewName,
+        f.file_path       as filePath,
+        f.cl_cd           as clCd,
+        f.mbr_cd          as mbrCd
+    FROM 
+        file f
+    JOIN 
+        content_list cl ON f.cl_cd = cl.cl_cd
+    WHERE 
+        cl.cntd_cd = #{prtfCd}
+    ORDER BY
+        f.file_reg_ymdt ASC
+</select>
+<select id="findClCdByPrtfCd" resultType="String">
+    SELECT cl_cd FROM content_list WHERE cntd_cd = #{prtfCd} LIMIT 1
+</select>
+<select id="findLatestPrtfCd" resultType="String">
+    SELECT prtf_cd 
+    FROM portfolio 
+    WHERE prtf_cd LIKE 'PO_C%' 
+    ORDER BY CAST(SUBSTRING(prtf_cd, 5) AS UNSIGNED) DESC 
+    LIMIT 1
+</select>
+<select id="findLatestTagCd" resultType="String">
+    SELECT tag_cd 
+    FROM tag 
+    WHERE tag_cd LIKE 'T_C%' 
+    ORDER BY CAST(SUBSTRING(tag_cd, 5) AS UNSIGNED) DESC 
+    LIMIT 1
+</select>
+<select id="findTagCdByName" resultType="String">
+    SELECT tag_cd FROM tag WHERE tag_nm = #{tagName}
+</select>
+	
     <delete id="deletePortfolioByPrtfCd"> DELETE FROM portfolio WHERE prtf_cd = #{prtfCd} </delete>
     <delete id="deleteContentListByClCd"> DELETE FROM content_list WHERE cl_cd = #{clCd} </delete>
     <delete id="deleteCategoryMappingByClCd"> DELETE FROM category_mapping WHERE cl_cd = #{clCd} </delete>

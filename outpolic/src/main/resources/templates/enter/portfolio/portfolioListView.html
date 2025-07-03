@@ -2,8 +2,42 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{enter/layout/enterLayoutkjw}">
 <head>
     <title>내 포트폴리오</title>
-    <link rel="stylesheet" th:href="@{/enter/assets/css/main.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .page-container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .mb-10 { margin-bottom: 40px; }
+        .section-title { font-size: 2em; margin-bottom: 0 !important; }
+        .btn-action { background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; display: inline-flex; align-items: center; gap: 5px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background-color 0.2s ease; }
+        .btn-action:hover { background-color: #45a049; }
+        .hidden { display: none !important; }
+        .portfolio-item-card-link { text-decoration: none; color: inherit; display: block; height: 100%; }
+        .portfolio-items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .portfolio-item-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; height: 100%; }
+        .portfolio-thumbnail-wrapper { width: 100%; height: 180px; overflow: hidden; background-color: #f0f0f0; }
+        .portfolio-thumbnail { width: 100%; height: 100%; object-fit: cover; }
+        .portfolio-thumbnail-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0; color: #aaa; font-size: 1rem; font-weight: 500; }
+        .portfolio-content { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+        .portfolio-title { font-size: 1.2em; margin-top: 0; margin-bottom: 10px; color: #333; }
+        .portfolio-meta { margin-bottom: 10px; font-size: 0.9em; color: #555; }
+        .portfolio-meta .badge { display: inline-block; padding: .35em .65em; font-size: .75em; font-weight: 700; line-height: 1; color: #fff; text-align: center; border-radius: .25rem; }
+        .portfolio-meta .bg-primary { background-color: #0d6efd; }
+        .portfolio-meta .bg-secondary { background-color: #6c757d; }
+        .portfolio-meta .me-1 { margin-right: .25rem; }
+        .portfolio-meta .mt-2 { margin-top: .5rem; }
+        .portfolio-actions { display: flex; gap: 10px; margin-top: auto; border-top: 1px solid #eee; padding-top: 15px; }
+        .btn-edit, .btn-delete { padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9em; border: none; color: white; }
+        .btn-edit { background-color: #007bff; }
+        .btn-edit:hover { background-color: #0056b3; }
+        .btn-delete { background-color: #dc3545; }
+        .btn-delete:hover { background-color: #c82333; }
+        .no-portfolio-container { text-align: center; padding: 50px 20px; }
+        .alert { padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: .25rem; }
+        .alert-success { color: #0f5132; background-color: #d1e7dd; border-color: #badbcc; }
+        .alert-danger { color: #842029; background-color: #f8d7da; border-color: #f5c2c7; }
+    </style>
 </head>
 <body>
 <th:block layout:fragment="contents">
@@ -17,10 +51,9 @@
         <div id="portfolioItemsGrid" class="portfolio-items-grid"></div>
         <div id="noPortfolioMessage" class="no-portfolio-container hidden">
              <p class="no-portfolio-text"><strong>아직 등록된 포트폴리오가 없습니다.</strong><br>첫 프로젝트를 등록하고 당신의 전문성을 보여주세요!</p>
-             <button id="addPortfolioBottomBtn" class="btn-action mt-6 py-4 px-10 text-xl"><i class="fas fa-plus"></i> 포트폴리오 등록하기</button>
+             <button id="addPortfolioBottomBtn" class="btn-action" style="font-size: 1.25rem; padding: 1rem 2.5rem; margin-top: 1.5rem;"><i class="fas fa-plus"></i> 포트폴리오 등록하기</button>
         </div>
     </div>
-    <!--  dㅏ-->
 </th:block>
 <th:block layout:fragment="jsFile">
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
@@ -28,39 +61,82 @@
         $(document).ready(function() {
             function loadAndRenderPortfolioList() {
                 $.ajax({
-                    url: '/enter/portfolio/listData', cache: false,
+                    url: '/enter/portfolio/listData',
+                    cache: false,
                     success: function(portfolios) {
                         const grid = $('#portfolioItemsGrid').empty();
                         if (portfolios && portfolios.length > 0) {
                             $('#noPortfolioMessage').hide();
+                            grid.show();
                             portfolios.forEach(p => {
+                                let thumbnailHtml;
+                                if (p.prtfThumbnailUrl) {
+                                    thumbnailHtml = `<img src="${p.prtfThumbnailUrl}" alt="썸네일" class="portfolio-thumbnail">`;
+                                } else {
+                                    thumbnailHtml = `<div class="portfolio-thumbnail-placeholder">이미지 없음</div>`;
+                                }
                                 const categoriesHtml = (p.categories || []).map(cat => `<span class="badge bg-primary me-1">${cat.ctgryNm}</span>`).join('');
                                 const tagsHtml = (p.tagNames || []).map(name => `<span class="badge bg-secondary me-1">#${name}</span>`).join('');
-                                grid.append(`<div class="portfolio-item-card" data-prtf-cd="${p.prtfCd}"><div class="portfolio-thumbnail-wrapper"><img src="${p.prtfThumbnailUrl || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="썸네일"></div><div class="portfolio-content"><h3 class="portfolio-title">${p.prtfTtl}</h3><div class="portfolio-meta"><div>${categoriesHtml}</div><div class="mt-2">${tagsHtml}</div></div><div class="portfolio-actions"><button class="btn-edit">수정</button><button class="btn-delete">삭제</button></div></div></div>`);
+                                
+                                const cardContent = `
+                                    <div class="portfolio-thumbnail-wrapper">${thumbnailHtml}</div>
+                                    <div class="portfolio-content">
+                                        <h3 class="portfolio-title">${p.prtfTtl}</h3>
+                                        <div class="portfolio-meta">
+                                            <div>${categoriesHtml}</div>
+                                            <div class="mt-2">${tagsHtml}</div>
+                                        </div>
+                                        <div class="portfolio-actions">
+                                            <button class="btn-edit">수정</button>
+                                            <button class="btn-delete">삭제</button>
+                                        </div>
+                                    </div>
+                                `;
+                                const card = $(`<div class="portfolio-item-card" data-prtf-cd="${p.prtfCd}">${cardContent}</div>`);
+                                const cardLink = $(`<a href="/enter/portfolio/detail/${p.prtfCd}" class="portfolio-item-card-link"></a>`).append(card);
+                                grid.append(cardLink);
                             });
                         } else {
                             $('#noPortfolioMessage').show();
+                            grid.hide();
                         }
+                    },
+                    error: function() {
+                        $('#portfolioItemsGrid').html('<p style="color: red;">포트폴리오 목록을 불러오는 데 실패했습니다.</p>');
                     }
                 });
             }
 
-            $('#portfolioItemsGrid').on('click', 'button', function() {
+            $('#portfolioItemsGrid').on('click', 'button', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 const prtfCd = $(this).closest('.portfolio-item-card').data('prtf-cd');
+
                 if ($(this).hasClass('btn-edit')) {
                     window.location.href = `/enter/portfolio/edit/${prtfCd}`;
                 } else if ($(this).hasClass('btn-delete')) {
                     if (confirm('정말로 삭제하시겠습니까?')) {
                         $.ajax({
-                            url: `/enter/portfolio/delete/${prtfCd}`, type: 'DELETE',
-                            success: (res) => { if(res.success) { alert('삭제되었습니다.'); loadAndRenderPortfolioList(); } else { alert('삭제 실패: ' + res.message); } },
-                            error: () => alert('삭제 중 오류 발생')
+                            url: `/enter/portfolio/delete/${prtfCd}`,
+                            type: 'DELETE',
+                            success: (res) => {
+                                if(res.success) {
+                                    alert('삭제되었습니다.');
+                                    loadAndRenderPortfolioList();
+                                } else {
+                                    alert('삭제 실패: ' + res.message);
+                                }
+                            },
+                            error: () => alert('삭제 중 오류가 발생했습니다.')
                         });
                     }
                 }
             });
 
-            $('#addPortfolioBtn, #addPortfolioBottomBtn').on('click', () => window.location.href = '/enter/portfolio/add');
+            $('#addPortfolioBtn, #addPortfolioBottomBtn').on('click', () => {
+                window.location.href = '/enter/portfolio/add';
+            });
+
             loadAndRenderPortfolioList();
         });
     </script>

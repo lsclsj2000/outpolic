@@ -12949,7 +12949,7 @@ height: 70px !important; /* 높이를 70px로 고정 */
     color: #333;
 }
 .popular-categories .card-1:hover h6 a {
-    color: #088178; /* 호버 시 색상 변경 (테마 색상) */
+    color: #333; /* 호버 시 색상 변경 (테마 색상) */
 }
 
 /* 5. 태그 스타일 */
@@ -12968,8 +12968,8 @@ height: 70px !important; /* 높이를 70px로 고정 */
 
 .category-tag.quality {
     background-color: #e0f8f0;
-    color: #00a86b;
-    border: 1px solid #00a86b;
+    color: #333;
+    border: 1px solid #333;
 }
 
 .category-tag.new {
@@ -12984,14 +12984,14 @@ height: 70px !important; /* 높이를 70px로 고정 */
 }
 /* 새로운 카테고리 사이드바 전체 컨테이너 */
 .new-category-sidebar {
-    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; /* 한글 폰트 지정 */
+    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
 }
 
-/* 메인 타이틀 ("창업·사업") */
+/* 메인 타이틀 */
 .new-category-sidebar .sidebar-main-title {
     font-size: 24px;
     font-weight: 700;
-    color: #253D4E; /* 기존 템플릿의 텍스트 색상과 유사하게 */
+    color: #253D4E;
     margin-bottom: 25px;
     padding-bottom: 10px;
     border-bottom: 2px solid #333;
@@ -13005,57 +13005,30 @@ height: 70px !important; /* 높이를 70px로 고정 */
 }
 
 .new-category-sidebar .category-list > li {
-    margin-bottom: 20px; /* 각 카테고리 그룹 간의 간격 */
+    margin-bottom: 20px;
 }
 
-/* 상위 카테고리 그룹 타이틀 (예: "사업계획") */
+/* 상위 카테고리 그룹 타이틀 */
 .new-category-sidebar .category-group-title {
     font-size: 16px;
     font-weight: 600;
     color: #253D4E;
     margin-bottom: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer; /* 클릭 가능함을 표시 */
+    /* 클릭 기능이 없으므로 cursor: pointer 제거 */
 }
 
-/* 토글 화살표 (v 모양) */
+/* 토글 화살표 (v 모양) -> 이제 필요 없으므로 숨김 처리 */
 .new-category-sidebar .toggle-arrow {
-    content: '';
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-left: 2px solid #7E7E7E;
-    border-bottom: 2px solid #7E7E7E;
-    transform: rotate(-45deg);
-    transition: transform 0.3s;
+    display: none;
 }
-/* 토글 화살표 클릭 시 (JavaScript로 open 클래스 추가) */
-.new-category-sidebar .category-group-title.open .toggle-arrow {
-    transform: rotate(135deg);
-    margin-top: -5px;
-}
-
 
 /* 하위 카테고리 리스트 */
 .new-category-sidebar .subcategory-list {
     list-style: none;
     padding-left: 5px; /* 약간의 들여쓰기 */
-    margin: 0;
-    /* 기본적으로 숨김 처리 (JS로 제어) */
-    display: none; 
-}
-/* JS로 open 클래스가 추가되면 보이도록 설정 */
-.new-category-sidebar .subcategory-list.open {
-    display: block;
-}
-
-
-/* 하위 카테고리 단일 항목 (상위 카테고리 제목이 없는 경우) */
-.new-category-sidebar .subcategory-list.single-item {
-    display: block; /* 단일 항목은 항상 보이도록 */
-    padding-left: 0; /* 들여쓰기 없음 */
+    margin: 15px 0 0 0; /* 위쪽 여백 추가 */
+    /* 숨기지 않고 항상 보이도록 block으로 변경! */
+    display: block; 
 }
 
 .new-category-sidebar .subcategory-list li {
@@ -13071,7 +13044,7 @@ height: 70px !important; /* 높이를 70px로 고정 */
 }
 
 .new-category-sidebar .subcategory-list a:hover {
-    color: #3BB77E; /* 기존 템플릿의 브랜드 색상 */
+    color: #333;
     font-weight: 500;
 }
 /* 김한별 CSS 추가 영역 끝 */

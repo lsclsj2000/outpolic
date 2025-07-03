@@ -1,4 +1,5 @@
 package outpolic.enter.portfolio.controller;
+
 import outpolic.enter.portfolio.domain.CategorySearchDto;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.enter.portfolio.service.CategorySearchService;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
 @Controller
 @RequestMapping("/enter/portfolio")
 @RequiredArgsConstructor
@@ -41,7 +43,10 @@ public class EnterPortfolioController {
     
     @PostMapping("/add-ajax")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> addPortfolioAjax(@ModelAttribute EnterPortfolio portfolio, @RequestParam("portfolioFiles") List<MultipartFile> portfolioFiles, @RequestParam(value="categoryCodes", required=false) List<String> categoryCodes, @RequestParam(value="tags", required=false) String tags) {
+    public ResponseEntity<Map<String, Object>> addPortfolioAjax(@ModelAttribute EnterPortfolio portfolio, 
+                                                                @RequestParam("portfolioFiles") List<MultipartFile> portfolioFiles, 
+                                                                @RequestParam(value="categoryCodes", required=false) List<String> categoryCodes, 
+                                                                @RequestParam(value="tags", required=false) String tags) {
         portfolio.setAdmCd("ADM_C001");
         try {
             portfolioService.addPortfolio(portfolio, portfolioFiles, categoryCodes, tags);
@@ -77,10 +82,13 @@ public class EnterPortfolioController {
     }
 
     @PostMapping("/edit")
-    public String editPortfolio(@ModelAttribute EnterPortfolio portfolio, @RequestParam("portfolioFiles") List<MultipartFile> portfolioFiles, @RequestParam(value="categoryCodes", required=false) List<String> categoryCodes, @RequestParam(value="tags", required=false) String tags, RedirectAttributes redirectAttributes) {
+    public String editPortfolio(@ModelAttribute EnterPortfolio portfolio, 
+                                @RequestParam("portfolioFiles") List<MultipartFile> portfolioFiles, 
+                                @RequestParam(value="categoryCodes", required=false) List<String> categoryCodes, 
+                                @RequestParam(value="tags", required=false) String tags, 
+                                RedirectAttributes redirectAttributes) {
         try {
-            // 수정 로직에는 admCd가 필요할 수 있습니다. 세션 등에서 가져와 설정합니다.ㄴ
-            portfolio.setAdmCd("ADM_C001");
+            portfolio.setAdmCd("ADM_C001"); // 수정자 정보
             portfolioService.updatePortfolio(portfolio, portfolioFiles, categoryCodes, tags);
             redirectAttributes.addFlashAttribute("successMessage", "수정되었습니다.");
         } catch (IOException e) {
