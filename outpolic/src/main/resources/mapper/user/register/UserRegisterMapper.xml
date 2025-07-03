@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="outpolic.user.register.mapper.UserRegisterMapper">
+	<resultMap type="UserInfoDTO" id="UserRegisterResultMap">
+		<id column="mbr_cd" property="memberCode"/>
+		<result column="mbr_id" property="memberId"/>
+		<result column="mbr_pw" property="memberPw"/>	
+		<result column="grd_cd" property="gradeCode"/>
+		<result column="mbr_nm" property="memberName"/>
+		<result column="mbr_nicknm" property="memberNickName"/>
+		<result column="mbr_telno" property="memberTelNo"/>
+		<result column="mbr_addr" property="memberAddress"/>
+		<result column="mbr_daddr" property="memberDAddress"/>
+		<result column="mbr_zip" property="memberZip"/>
+		<result column="mbr_gender" property="memberGender"/>
+		<result column="mbr_eml" property="memberEmail"/>
+		<result column="stc_cd" property="statusCode"/>
+		<result column="mbr_birth" property="memberBirth"/>
+		<result column="mbr_join_ymdt" property="memberJoinDate"/>
+		<result column="mbr_agre_yn" property="memberAgreeYN"/>
+	</resultMap>
+    <select id="getNextMemberCode" resultType="String">
+    	/* 회원 기본키(mbr_cd) 만드는 쿼리문. */
+        SELECT CONCAT('MB_C', LPAD(SUBSTRING(MAX(mbr_cd), 6) + 1, 7, '0')) AS nextCode
+        FROM member
+        WHERE mbr_cd LIKE 'MB_C%';
+    </select>
+
+	<insert id="UserRegister" parameterType="outpolic.common.domain.Member">
+		INSERT INTO member
+			(mbr_cd, 
+			mbr_id, 
+			mbr_pw, 
+			grd_cd,
+			mbr_nm, 
+			mbr_nicknm, 
+			mbr_telno, 
+			mbr_addr, 
+			mbr_daddr, 
+			mbr_zip, 
+			mbr_eml, 
+			mbr_birth, 
+			stc_cd,
+			mbr_gender, 
+			mbr_join_ymdt,
+			mbr_agre_yn)
+		values
+			(#{memberCode}, 
+			#{memberId}, 
+			#{memberPw}, 
+			'USER',
+			#{memberName}, 
+			#{memberNickName},
+			#{memberTelNo}, 
+			#{memberAddress}, 
+			#{memberDAddress}, 
+			#{memberZip}, 
+			#{memberEmail}, 
+			#{memberBirth}, 
+			'SD_ACTIVE',
+			#{memberGender}, 
+			now(),
+			#{memberAgreeYN});
+	</insert>
+
+	<select id="isNickNameDuplicated" resultType="boolean">
+	    SELECT COUNT(*) > 0
+	    FROM member
+	    WHERE mbr_nicknm = #{memberNickName}
+	</select>
+	<select id="isEmailDuplicated" resultType="boolean">
+	    SELECT COUNT(*) > 0
+	    FROM member
+	    WHERE mbr_eml = #{memberEmail}
+	</select>
+	<select id="isTelDuplicated" resultType="boolean">
+	    SELECT COUNT(*) > 0
+	    FROM member
+	    WHERE mbr_telno = #{memberTelNo}
+	</select>
+	<select id="isIdDuplicated" resultType="boolean">
+	    SELECT COUNT(*) > 0
+	    FROM member
+	    WHERE mbr_id = #{memberId}
+	</select>
+
+</mapper>

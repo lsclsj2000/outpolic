@@ -3,11 +3,11 @@ package outpolic.common.domain;
 import lombok.Data;
 
 @Data
-public class member {
+public class Member {
 	private String memberCode;
     private String gradeCode;
     private String memberId;
-//    private String memberPw;
+    private String memberPw;
     private String memberName;
     private String memberNickname;
     private String memberTelNo;

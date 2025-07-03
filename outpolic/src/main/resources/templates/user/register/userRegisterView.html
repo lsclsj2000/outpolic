@@ -8,7 +8,6 @@
 		<title>회원가입</title>
 	</head>
 	<th:block layout:fragment="contents">
-		        <!-- 수정 신세영 -->
         <div class="page-content pt-50 pb-150">
             <div class="container">
                 <div class="row-userReg">
@@ -18,61 +17,59 @@
                                 <div class="login_wrap widget-taber-content background-white">
                                     <div class="padding_eight_all bg-white">
                                         <div class="heading_s1">
-                                            <h2 class="mb-20 reg-ttl-ssy">회원 가입</h2>
+                                            <h2 class="mb-20 reg-ttl-ssy d-flex justify-content-center">회원 가입</h2>
                                         </div>
-                                        <form class="register" method="post">
+                                        <form class="register" method="post" th:action="@{/user/register}">
 										    <div class="form-group">
 										        <label for="userid">아이디</label>
-										        <input type="text" id="userid" name="userid" placeholder="아이디 (6~12자 영문/숫자)" required />
+										        <input type="text" id="memberId" name="memberId" placeholder="아이디 (6~12자 영문/숫자)" required />
 										        <button type="button" class="btn-check-duplicate text-white">중복확인</button>
 										    </div>
 										    <div class="form-group">
 										        <label for="userpw">비밀번호</label>
-										        <input type="password" id="userpw" name="userpw" placeholder="비밀번호 (문자, 숫자 포함 8자 이상)" required />
+										        <input type="password" id="memberPw" name="memberPw" placeholder="비밀번호 (문자, 숫자 포함 8자 이상)" required />
 										    </div>
 										
 										    <div class="form-group">
 										        <label for="userpwcheck">비밀번호 확인</label>
 										        <input type="password" id="userpwcheck" name="userpwcheck" placeholder="비밀번호 재입력" required />
+										         <small id="pwCheckMsg" class="text-danger"></small>
 										    </div>
 										    <div class="form-group">
 										        <label for="username">이름</label>
-										        <input type="text" id="username" name="username" placeholder="이름" required />
+										        <input type="text" id="memberName" name="memberName" placeholder="이름" required />
+										    </div>
+										    <div class="form-group">
+										        <label for="memberNickName">닉네임</label>
+										        <input type="text" id="memberNickName" name="memberNickName" placeholder="닉네임"/>
+										        <button type="button" class="btn-check-duplicate text-white">중복확인</button>
 										    </div>
 										
 										    <div class="form-group">
 										        <label for="phone">전화번호</label>
-										        <input type="text" id="phone" name="phone" placeholder="010-1234-5678" required />
-										        <button type="button" class="btn-send-code text-white">인증번호 발송</button>
+										        <input type="text" id="memberTelNo" name="memberTelNo" placeholder="010-1234-5678" required />
+										         <span id="memberTelNoMsg" class="text-danger small"></span>
 										    </div>
-										
-										    <div class="form-group">
-										        <label for="code">인증번호 입력</label>
-										        <input type="text" id="code" name="code" placeholder="인증번호 입력" required />
-										        <button type="button" class="btn-verify-code text-white">인증</button>
-										    </div>
-										
 										    <div class="form-group">
 										        <label for="email">이메일</label>
-										        <input type="email" id="email" name="email" placeholder="example@email.com" required />
+										        <input type="email" id="memberEmail" name="memberEmail" placeholder="example@email.com" required />
+										        <span id="memberEmailMsg" class="text-danger small"></span>
 										    </div>
 										    <div class="form-group">
 										        <label for="birth">생일</label>
-										        <input type="date" id="birth" name="birth" class="form-control" required />
+										        <input type="date" id="memberBirth" name="memberBirth" class="form-control" required />
 										    </div>
 											<!-- 주소 섹션 -->
 											<h4 style="color: #6c757d;" class="mb-10">주소</h4>
 											<div class="form-group">
 											    <label for="sample4_postcode">우편번호</label>
-											    
-											        <input type="text" id="sample4_postcode" name="postcode" class="form-control" placeholder="우편번호" readonly />
-											        <button type="button" class="btn btn-outline-secondary" onclick="sample4_execDaumPostcode()">우편번호 찾기</button>
-											    
+										        <input type="text" id="sample4_postcode" name="memberZip" class="form-control" placeholder="우편번호" readonly />
+										        <button type="button" class="btn btn-outline-secondary" onclick="sample4_execDaumPostcode()">우편번호 찾기</button>  
 											</div>
 											
 											<div class="form-group">
 											    <label for="sample4_roadAddress">도로명 주소</label>
-											    <input type="text" id="sample4_roadAddress" name="roadAddress" class="form-control" placeholder="도로명 주소" readonly />
+											    <input type="text" id="sample4_roadAddress" name="memberAddress" class="form-control" placeholder="도로명 주소" readonly />
 											</div>
 											
 											<div class="form-group">
@@ -82,21 +79,21 @@
 											
 											<div class="form-group">
 											    <label for="sample4_detailAddress">상세 주소</label>
-											    <input type="text" id="sample4_detailAddress" name="detailAddress" class="form-control" placeholder="상세 주소" />
+											    <input type="text" id="sample4_detailAddress" name="memberDAddress" class="form-control" placeholder="상세 주소" />
 											</div>
 											
 											<span id="guide" style="color:#999; display:none"></span>
 											
 											<!-- 성별 선택 -->
 											<div class="row mb-3 align-items-center">
-												<label class="col-sm-3 col-form-label">성별</label>
+												<label class="col-sm-3 col-form-label fs-6">성별</label>
 												<div class="col-sm-9 d-flex gap-3">
 											    	<div class="form-check">
-												      <input class="form-check-input" type="radio" name="gender" id="male" value="M">
+												      <input class="form-check-input" type="radio" name="memberGender" id="male" value="M">
 												      <label class="form-check-label" for="male">남</label>
 												    </div>
 											    <div class="form-check">
-											      <input class="form-check-input" type="radio" name="gender" id="female" value="F">
+											      <input class="form-check-input" type="radio" name="memberGender" id="female" value="F">
 											      <label class="form-check-label" for="female">여</label>
 											    </div>
 											  </div>
@@ -117,7 +114,7 @@
 											
 											<!-- 제출 버튼 -->
 											<div class="form-group">
-											    <button type="submit" class="btn btn-primary w-100 fw-bold">가입 완료</button>
+											    <button type="button" id="btnSave" class="btn btn-primary w-100 fw-bold">가입 완료</button>
 											</div>
 											
 											<p class="text-muted small mt-2">
@@ -134,5 +131,12 @@
         </div>	
 	</th:block>        
 	<!-- 추가할 js file -->
+	<th:block layout:fragment="jsScript">
+	    <!-- JS 라이브러리 -->
+	    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	    <script src="/user/assets/js/userServiceAjax.js"></script>
+		<script src="/user/assets/js/userService.js"></script>
+		<script src="/user/assets/js/validate.js"></script>
+	</th:block>
 	
 </html>

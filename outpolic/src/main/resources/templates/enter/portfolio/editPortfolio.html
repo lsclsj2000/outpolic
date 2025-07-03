@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{enter/layout/enterLayoutkjw}">
+<head>
+    <title>포트폴리오 수정</title>
+    <link rel="stylesheet" th:href="@{/enter/assets/css/main.css}" />
+    <style>
+        .category-search-wrapper { position: relative; }
+        .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd; background-color: #fff; z-index: 1000; max-height: 200px; overflow-y: auto; }
+        .search-results-dropdown .result-item { padding: 10px; cursor: pointer; }
+        .search-results-dropdown .result-item:hover { background-color: #f0f0f0; }
+        .selected-items-area { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 38px; padding: 5px; border: 1px solid #ced4da; border-radius: .25rem;}
+        .selected-item-badge { display: flex; align-items: center; background-color: #0d6efd; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
+        .selected-item-badge .remove-btn { margin-left: 8px; background: none; border: none; color: white; font-size: 1.2em; cursor: pointer; padding: 0; line-height: 1; }
+    </style>
+</head>
+<body>
+<th:block layout:fragment="contents">
+    <div class="portfolio-add-form-container">
+        <h3>포트폴리오 수정</h3>
+        <form id="portfolioEditForm" th:action="@{/enter/portfolio/edit}" method="post" th:object="${portfolio}" enctype="multipart/form-data">
+            
+            <input type="hidden" th:field="*{prtfCd}" />
+            <input type="hidden" th:field="*{entCd}" />
+            <input type="hidden" th:field="*{mbrCd}" />
+            
+            <div class="form-group">
+                <label for="prtfTtl">제목</label>
+                <input type="text" id="prtfTtl" th:field="*{prtfTtl}" required class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label>카테고리</label>
+                <div id="selected-categories-area" class="selected-items-area">
+                    <th:block th:each="cat : *{categories}">
+                        <span class="selected-item-badge" th:data-id="${cat.ctgryId}">
+                            <span th:text="${cat.ctgryNm}"></span>
+                            <button type="button" class="remove-btn">&times;</button>
+                        </span>
+                    </th:block>
+                </div>
+                <div class="category-search-wrapper">
+                    <input type="text" id="category-search-input" class="form-control" placeholder="카테고리를 검색하여 더 추가하세요">
+                    <div id="category-search-results" class="search-results-dropdown"></div>
+                </div>
+                <div id="hidden-category-inputs">
+                    <th:block th:each="cat : *{categories}">
+                         <input type="hidden" name="categoryCodes" th:value="${cat.ctgryId}">
+                    </th:block>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">태그 (쉼표로 구분)</label>
+                <input type="text" id="tags" name="tags" class="form-control" th:value="${#strings.listJoin(portfolio.tagNames, ', ')}">
+            </div>
+
+            <div class="form-group">
+                <label for="prtf_cn">상세 내용</label>
+                <textarea id="prtf_cn" th:field="*{prtfCn}" rows="8" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="portfolioFiles">대표 이미지 변경</label>
+                <input type="file" id="portfolioFiles" name="portfolioFiles" multiple>
+                <div style="margin-top: 10px;">
+                    <p>현재 이미지:</p>
+                    <img th:if="*{prtfThumbnailUrl}" th:src="*{prtfThumbnailUrl}" width="150" alt="Current Thumbnail"/>
+                    <span th:if="*{prtfThumbnailUrl == null}">없음</span>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-submit">수정 완료</button>
+            </div>
+        </form>
+    </div>
+</th:block>
+
+<th:block layout:fragment="jsFile">
+    <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
+    <script>
+        $(document).ready(function() {
+            // 카테고리 검색 로직
+            let searchTimeout;
+            $('#category-search-input').on('input', function() {
+                clearTimeout(searchTimeout);
+                const query = $(this).val();
+                if (query.length < 1) { $('#category-search-results').hide(); return; }
+                searchTimeout = setTimeout(() => {
+                    $.get('/enter/portfolio/api/categories/search', { query: query }, function(data) {
+                        const resultsDiv = $('#category-search-results').empty().show();
+                        data.forEach(cat => resultsDiv.append(`<div class="result-item" data-id="${cat.ctgryId}">${cat.ctgryNm}</div>`));
+                    });
+                }, 300);
+            });
+
+            // 검색 결과 항목 클릭 시 카테고리 추가
+            $(document).on('click', '.result-item', function() {
+                const catId = $(this).data('id');
+                const catName = $(this).text();
+                // 이미 추가되었는지 확인
+                if ($(`#hidden-category-inputs input[value="${catId}"]`).length > 0) {
+                    alert('이미 추가된 카테고리입니다.');
+                    return;
+                }
+                // 화면에 뱃지 추가
+                $('#selected-categories-area').append(`<span class="selected-item-badge" data-id="${catId}">${catName} <button type="button" class="remove-btn">&times;</button></span>`);
+                // 폼 전송을 위한 hidden input 추가
+                $('#hidden-category-inputs').append(`<input type="hidden" name="categoryCodes" value="${catId}">`);
+                
+                $('#category-search-input').val('');
+                $('#category-search-results').hide();
+            });
+
+            // 뱃지의 'x' 버튼 클릭 시 카테고리 제거
+            $('#selected-categories-area').on('click', '.remove-btn', function() {
+                const badge = $(this).parent();
+                const catId = badge.data('id');
+                badge.remove();
+                $(`#hidden-category-inputs input[value="${catId}"]`).remove();
+            });
+            
+            // 다른 곳 클릭 시 검색 결과 숨기기
+            $(document).on('click', function(event) {
+                if (!$(event.target).closest('.category-search-wrapper').length) {
+                    $('#category-search-results').hide();
+                }
+            });
+        });
+
+    </script>
+</th:block>
+</body>
+</html>

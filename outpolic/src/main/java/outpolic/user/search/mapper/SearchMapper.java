@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
 
 import outpolic.user.search.domain.Contents;
+import outpolic.user.search.domain.ContentsDetailDTO;
 
 
 @Mapper
@@ -17,4 +18,7 @@ public interface SearchMapper {
 	 * @return 검색결과 리스트
 	 */
 	List<Contents> getContentsList(@Param("keyword") String keyword);
+	
+	// 콘텐츠 상세정보 
+	ContentsDetailDTO getContentsDetailById(String contentsId);
 }

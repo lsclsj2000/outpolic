@@ -8,13 +8,16 @@ import lombok.Data;
 @Data
 public class UserInfoDTO {
 	 public String memberId; 
-	 public String memberName; 
+	 public String memberName;
+	 private String memberPw;
 	 public String memberNickName; 
 	 public String memberTelNo; 
 	 public String memberAddress; 
 	 public String memberDAddress; 
-	 public String memberZip; 
+	 public String memberZip;
+	 private String memberGender;
 	 public String memberEmail; 
 	 public LocalDate memberBirth;
 	 public LocalDate memberJoinDate;
+	 public LocalDate memberModifyDate;
 }    

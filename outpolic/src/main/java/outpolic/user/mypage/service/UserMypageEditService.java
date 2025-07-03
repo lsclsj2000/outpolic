@@ -15,6 +15,6 @@ public interface UserMypageEditService {
 	// 회원목록 조회
 	List<UserInfoDTO> getMemberList();
 	
-	//회원 닉네임 중복검사
-	boolean isNickNameDuplicated(String memberNickName);
+	//회원 개인정보 중복검사
+	boolean isUserInfoDuple(String type, String memberId, String memberNickname, String memberEmail, String memberTelNo);
 }

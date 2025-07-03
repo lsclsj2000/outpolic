@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{enter/layout/enterLayoutMain}">
+	  layout:decorate="~{enter/layout/enterLayoutkjw}">
 	<head>
 		<meta name="description" content="한국스마트정보교육원 ksmybatis" />
 		     <link rel="shortcut icon" type="image/x-icon" th:href="@{/enter/assets/imgs/theme/favicon.svg}" />
@@ -10,9 +10,11 @@
 	
 	
 	<!-- 추가할 js file -->
-	<th:block layout:fragment="jsFile">
-		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	</th:block>
+<th:block layout:fragment="jsFile">
+        <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+        <script th:src="@{/enter/assets/js/main.js}"></script>
+        </th:block>
 
 		<th:block layout:fragment="contents">
 			<div class="main-container">
@@ -27,7 +29,7 @@
                         <!-- Hidden field to pass the portfolio ID -->
                         <input type="hidden" id="portfolio_id" value="[포트폴리오_ID_값]">
                     </div>
-
+				
                     <!-- 의뢰 상세 내용 -->
                     <div class="form-group">
                         <label for="inquiry_description">의뢰 상세 내용 <span class="required-star">*</span></label>
@@ -56,7 +58,7 @@
                         </div>
                         <p class="form-instruction">예산을 미리 제시하시면 전문가가 제안을 준비하는 데 도움이 됩니다.</p>
                     </div>
-
+	
                     <!-- 참고 자료 (파일 첨부) -->
                     <div class="form-group">
                         <label for="inquiry_reference_files">참고 자료 첨부</label>
@@ -74,5 +76,7 @@
                 </form>
             </div>
         </div>
+        
         </th:block>
+        
         </html>

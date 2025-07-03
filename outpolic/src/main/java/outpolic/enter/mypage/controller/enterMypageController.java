@@ -37,14 +37,15 @@ public class enterMypageController {
     public String enterGoodsList() {
     	return "enter/goods/enterGoodsList";
     }
-    @GetMapping("/enterPfList")
-    public String enterPortfolio() {
-    	return "enter/portfolio/portfolioListView";
-    }
-    @GetMapping("/enterPfContract")
-    public String enterPfCntract() {
-    	return "enter/portfolio/portfolioContractListView";
-    }
+
+	/*
+	 * @GetMapping("/enterPfList") public String enterPortfolio() { return
+	 * "enter/portfolio/portfolioListView"; }
+	 * 
+	 * @GetMapping("/enterPfContract") public String enterPfCntract() { return
+	 * "enter/portfolio/portfolioContractListView"; }
+	 */
+    /*
     @GetMapping("/outsourcingContractListView")
 	public String showOutsourcingPage1() {
 		return "/enter/outsourcing/outsourcingContractListView"; // 뷰 이름은 그대로 유지하거나 변경
@@ -57,6 +58,7 @@ public class enterMypageController {
 	public String showOutsourcingPage2() {
 		return "/enter/outsourcing/outsourcingStatusListView"; // 뷰 이름은 그대로 유지하거나 변경
 	}
+	*/
 
     @GetMapping("/bookMarkListView") // URL 경로를 더 구체적으로 변경하여 충돌 방지
 	public String showOutsourcingPage3() {

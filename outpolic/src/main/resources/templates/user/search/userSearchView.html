@@ -9,236 +9,212 @@
 	
 	<th:block layout:fragment="jsScript">
 		<script>
-			/*Product Details*/
-		    var productDetails = function () {
-		        $('.product-image-slider').slick({
-		            slidesToShow: 1,
-		            slidesToScroll: 1,
-		            arrows: false,
-		            fade: false,
-		            asNavFor: '.slider-nav-thumbnails',
-		        });
-	
-		        $('.slider-nav-thumbnails').slick({
-		            slidesToShow: 4,
-		            slidesToScroll: 1,
-		            asNavFor: '.product-image-slider',
-		            dots: false,
-		            focusOnSelect: true,
-	
-		            prevArrow: '<button type="button" class="slick-prev"><i class="fi-rs-arrow-small-left"></i></button>',
-		            nextArrow: '<button type="button" class="slick-next"><i class="fi-rs-arrow-small-right"></i></button>'
-		        });
-	
-		        // Remove active class from all thumbnail slides
-		        $('.slider-nav-thumbnails .slick-slide').removeClass('slick-active');
-	
-		        // Set active class to first thumbnail slides
-		        $('.slider-nav-thumbnails .slick-slide').eq(0).addClass('slick-active');
-	
-		        // On before slide change match active thumbnail to current slide
-		        $('.product-image-slider').on('beforeChange', function (event, slick, currentSlide, nextSlide) {
-		            var mySlideNumber = nextSlide;
-		            $('.slider-nav-thumbnails .slick-slide').removeClass('slick-active');
-		            $('.slider-nav-thumbnails .slick-slide').eq(mySlideNumber).addClass('slick-active');
-		        });
-	
-		        $('.product-image-slider').on('beforeChange', function (event, slick, currentSlide, nextSlide) {
-		            var img = $(slick.$slides[nextSlide]).find("img");
-		            $('.zoomWindowContainer,.zoomContainer').remove();
-		            if ($(window).width() > 768) {
-		                $(img).elevateZoom({
-		                    zoomType: "inner",
-		                    cursor: "crosshair",
-		                    zoomWindowFadeIn: 500,
-		                    zoomWindowFadeOut: 750
-		                });
-		            }
-		        });
-		        //Elevate Zoom
-		        if ( $(".product-image-slider").length ) {
-		            if ($(window).width() > 768) {
-		                $('.product-image-slider .slick-active img').elevateZoom({
-		                    zoomType: "inner",
-		                    cursor: "crosshair",
-		                    zoomWindowFadeIn: 500,
-		                    zoomWindowFadeOut: 750
-		                });
-		            }
-		        }
-		        //Filter color/Size
-		        $('.list-filter').each(function () {
-		            $(this).find('a').on('click', function (event) {
-		                event.preventDefault();
-		                $(this).parent().siblings().removeClass('active');
-		                $(this).parent().toggleClass('active');
-		                $(this).parents('.attr-detail').find('.current-size').text($(this).text());
-		                $(this).parents('.attr-detail').find('.current-color').text($(this).attr('data-color'));
-		            });
-		        });
-	
-		        //Qty Up-Down
-		        $('.detail-qty').each(function () {
-		            var qtyval = parseInt($(this).find(".qty-val").val(), 10);
-		            var $qtyInput = $(this).find(".qty-val");
-	
-		            $(this).find('.qty-up').on('click', function (event) {
-		                event.preventDefault();
-		                qtyval = qtyval + 1;
-		                $qtyInput.val(qtyval);
-		            });
-	
-		            $(this).find(".qty-down").on("click", function (event) {
-		                event.preventDefault();/*  */
-		                qtyval = Math.max(1, qtyval - 1);
-		                $qtyInput.val(qtyval);
-		            });
-		        });
-	
-		        $('.dropdown-menu .cart_list').on('click', function (event) {
-		            event.stopPropagation();
-		        });
-		    };
-		
-		
-		
-			/*<![CDATA[*/
-			document.addEventListener('DOMContentLoaded', function() {
-			
-				// -변수에 담아두기 (성능 최적화)
-				const contentsContainer = document.getElementById('contentsListContainer');
-				const filterButtons = document.querySelectorAll('#myTab .nav-link');
-				const headerSearchForm = document.querySelector('form[action="/user/userSearch"]');
-				const headerSearchInput = headerSearchForm ? headerSearchForm.querySelector('input[name="keyword"]') : null;
-				const resultTitle = document.querySelector('.section-title h3');
-				
-				
-				
-				function performAjaxSearch(keyword) {
-				    // 1-1. History API를 사용해 브라우저 주소창의 URL을 변경 (페이지 이동은 없음)
-				    const newUrl = `/user/userSearch?keyword=${encodeURIComponent(keyword)}`;
-				    history.pushState(null, '', newUrl);
-				
-				    // 1-2. 사용자에게 로딩 중임을 시각적으로 표시
-				    contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 중...</p></div>';
-				
-				    // 1-3. 서버의 API에 데이터 요청
-				    fetch(`/user/search/api?keyword=${encodeURIComponent(keyword)}`)
-				        .then(response => {
-				            if (!response.ok) throw new Error('서버 응답 오류');
-				            return response.json();
-				        })
-				        .then(data => {
-				            // 1-4. AJAX 성공 시 화면 업데이트
-				            
-				            // 검색 결과 제목 변경
-				            if (keyword && keyword.trim() !== '') {
-				                resultTitle.innerHTML = `'<span class="text-brand">${keyword}</span>' 검색 결과`;
-				            } else {
-				                resultTitle.innerHTML = '전체 콘텐츠';
-				            }
-				
-				            // 받은 데이터로 목록을 완전히 새로 그림
-				            contentsContainer.innerHTML = ''; // 컨테이너 초기화
-				            if (!data || data.length === 0) {
-				                contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
-				                return;
-				            }
-				
-				            // 데이터 목록을 순회하며 각 아이템의 HTML을 생성
-				            data.forEach((content, index) => {
-				                const contentHtml = `
-				                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="${content.contentsType}">
-				                        <div class="product-cart-wrap mb-30">
-				                            <div class="product-img-action-wrap">
-				                                <div class="product-img product-img-zoom">
-				                                    <a href="#">
-				                                        <img class="default-img" src="https://picsum.photos/id/${index + 40}/300/200" alt="콘텐츠 이미지">
-				                                        <img class="hover-img" src="https://picsum.photos/id/${index + 140}/300/200" alt="콘텐츠 이미지">
-				                                    </a>
-				                                </div>
-				                                <div class="product-action-1">
-								                    <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-								                    <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-								                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-								                </div>
-				                            </div>
-				                            <div class="product-content-wrap" style="margin-top: 15px;">
-				                                <h2><a href="#">${content.contentsTitle}</a></h2>
-				                                <div>
-				                                    <span class="font-small text-muted">By <a href="#">${content.enterName}</a></span>
-				                                </div>
-				                            </div>
-				                        </div>
-				                    </div>
-				                `;
-				                contentsContainer.insertAdjacentHTML('beforeend', contentHtml);
-				            });
-				
-				            // 새 검색을 했으므로 필터 버튼을 'All'로 초기화
-				            setActiveButton(document.querySelector('.nav-link[data-filter="All"]'));
-				            productDetails();
-				        })
-				        .catch(error => {
-				            console.error("AJAX Search Error:", error);
-				            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 중 오류가 발생했습니다.</p></div>';
-				        });
-				}
-				
-				/**
-				 * 필터링할 타입 ('All', 'Portfolio', 'Outsourcing')
-				 */
-				function applyFilter(filter) {
-				    const items = contentsContainer.querySelectorAll('.product-item');
-				    let visibleCount = 0;
-				
-				    items.forEach(item => {
-				        // 'All' 필터이거나 아이템의 data-type이 필터와 일치하면 보여줌
-				        if (filter === 'All' || item.dataset.type === filter) {
-				            item.style.display = ''; // 보이기 (CSS display 속성을 기본값으로 복원)
-				            visibleCount++;
-				        } else {
-				            item.style.display = 'none'; // 숨기기
-				        }
-				    });
-				
-				    // 필터링 결과 아무것도 보이지 않을 경우 메시지 처리
-				    const noResultMessage = contentsContainer.querySelector('.no-filter-result');
-				    if (noResultMessage) noResultMessage.remove(); // 기존 메시지 삭제
-				    if (visibleCount === 0) {
-				        contentsContainer.insertAdjacentHTML('beforeend', '<div class="col-12 text-center no-filter-result"><p>선택하신 필터에 해당하는 결과가 없습니다.</p></div>');
-				    }
-				}
-				
-				function setActiveButton(clickedButton) {
-				    if (!clickedButton) return;
-				    filterButtons.forEach(button => button.classList.remove('active'));
-				    clickedButton.classList.add('active');
-				}
-				
-				
+		/*
+		 * 이 스크립트는 검색 결과 페이지의 동적인 기능을 관리합니다.
+		 * 주요 기능:
+		 * 1. 헤더 검색창에서 검색 시, 페이지 새로고침 없이 AJAX로 결과를 받아와 화면에 표시합니다.
+		 * 2. 검색 결과 목록을 '포트폴리오', '아웃소싱' 등으로 필터링하는 기능을 제공합니다.
+		 *
+		 */
+		document.addEventListener('DOMContentLoaded', function() {
 
-				filterButtons.forEach(button => {
-				    button.addEventListener('click', function() {
-				        setActiveButton(this);            // 클릭된 버튼을 활성화
-				        applyFilter(this.dataset.filter); // 현재 화면을 필터링
-				    });
-				});
-				
-				// 헤더 검색 폼을 제출(submit)했을 때
-				if (headerSearchForm) {
-				    headerSearchForm.addEventListener('submit', function(event) {
-				        // 현재 페이지가 검색 결과 페이지일 때만 AJAX로 동작하도록 처리
-				        if (window.location.pathname.includes('/user/userSearch')) {
-				            event.preventDefault(); // 기본 form 제출(페이지 이동)을 막음
-				            const newKeyword = headerSearchInput.value;
-				            performAjaxSearch(newKeyword); // AJAX 검색 함수 호출
-				        }
-				    });
-				}
-			});
-			
-			/*]]>*/
+		    // 자주 사용하는 DOM 요소들을 미리 변수에 할당해두면,
+		    // 필요할 때마다 DOM을 탐색하는 비용을 줄여 성능에 도움이 됩니다.
+		    const contentsContainer = document.getElementById('contentsListContainer');
+		    const filterButtons = document.querySelectorAll('#myTab .nav-link');
+		    const headerSearchForm = document.querySelector('form[action="/user/userSearch"]');
+		    const headerSearchInput = headerSearchForm?.querySelector('input[name="keyword"]'); // optional chaining으로 더 간결하게
+		    const resultTitle = document.querySelector('.section-title h3');
+
+
+		    /**
+		     * 서버에서 받은 콘텐츠 데이터 배열을 기반으로 화면에 목록을 그려주는 함수입니다.
+		     * @param {Array} contents - 서버에서 받은 콘텐츠 객체 배열
+		     */
+		    function renderContents(contents) {
+		        // 우선, 기존에 있던 목록이나 '결과 없음' 메시지를 모두 지웁니다.
+		        contentsContainer.innerHTML = '';
+
+		        if (!contents || contents.length === 0) {
+		            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
+		            return; // 데이터가 없으면 여기서 함수를 종료합니다.
+		        }
+
+		        // map을 사용해 각 데이터 조각을 HTML 문자열로 변환하고, join으로 합쳐서 한 번에 삽입합니다.
+		        // 이렇게 하면 여러 번 DOM을 건드리는 것보다 성능상 이점이 있습니다.
+		        const contentsHtml = contents.map((content, index) => {
+		            // 이미지 ID는 예시로, 실제로는 content 객체에 있는 이미지 URL을 사용해야 합니다.
+		            const imageId1 = content.id || index + 40;
+		            const imageId2 = content.id ? content.id + 100 : index + 140;
+
+		            return `
+			            <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="${content.contentsType}">
+		                <!-- ▼▼▼ 이 div에 position-relative 클래스만 추가합니다 ▼▼▼ -->
+		                <div class="product-cart-wrap mb-30 position-relative">
+		                    
+		                    <!-- [복원] 이미지 관련 부분은 원래 구조와 동일하게 -->
+		                    <div class="product-img-action-wrap">
+		                        <div class="product-img product-img-zoom">
+		                            <a href="javascript:void(0);">
+		                                <img class="default-img" src="https://picsum.photos/id/${index + 40}/300/200" alt="콘텐츠 이미지">
+		                                <img class="hover-img" src="https://picsum.photos/id/${index + 140}/300/200" alt="콘텐츠 이미지">
+		                            </a>
+		                        </div>
+		                        <div class="product-action-1">
+		                            <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+		                            <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+		                            <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+		                        </div>
+		                    </div>
+		                    
+		                    <!-- [복원] 콘텐츠 제목 부분도 원래 구조와 동일하게 -->
+		                    <div class="product-content-wrap" style="margin-top: 15px;">
+		                        <!-- ▼▼▼ h2 안에 실제 링크를 넣고 'stretched-link' 클래스 추가 ▼▼▼ -->
+		                        <h2>
+		                            <a href="/user/contents/${content.contentsId}" class="stretched-link">${content.contentsTitle}</a>
+		                        </h2>
+		                        <div>
+		                            <span class="font-small text-muted">By <a href="#">${content.enterName}</a></span>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		            `;
+		        }).join('');
+
+		        contentsContainer.innerHTML = contentsHtml;
+		    }
+
+
+		    /**
+		     * 입력된 키워드로 서버에 AJAX 검색을 요청하고, 그 결과를 화면에 반영합니다.
+		     * @param {string} keyword - 사용자가 입력한 검색어
+		     */
+		    async function performAjaxSearch(keyword) {
+		        // 1. 브라우저 주소창의 URL을 변경하여 사용자 경험을 향상시킵니다. (페이지는 이동하지 않음)
+		        const newUrl = `/user/userSearch?keyword=${encodeURIComponent(keyword)}`;
+		        history.pushState({ keyword }, '', newUrl); // state 객체에 키워드를 넣어두면 나중에 활용할 수 있습니다.
+
+		        // 2. 사용자에게 로딩 중임을 시각적으로 알려줍니다.
+		        resultTitle.innerHTML = '결과를 불러오는 중...';
+		        contentsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
+		        try {
+		            // 3. fetch API를 사용해 서버에 데이터를 비동기적으로 요청합니다.
+		            const response = await fetch(`/user/search/api?keyword=${encodeURIComponent(keyword)}`);
+
+		            if (!response.ok) {
+		                // HTTP 상태 코드가 200-299 범위가 아닐 경우 에러를 발생시킵니다.
+		                throw new Error(`서버 응답 오류: ${response.status}`);
+		            }
+
+		            const data = await response.json();
+
+		            // 4. 요청 성공 시, 화면을 새로운 데이터로 업데이트합니다.
+		            // 검색 결과 제목을 변경합니다.
+		            if (keyword && keyword.trim() !== '') {
+		                resultTitle.innerHTML = `'<span class="text-brand">${keyword}</span>' 검색 결과`;
+		            } else {
+		                resultTitle.innerHTML = '전체 콘텐츠';
+		            }
+
+		            // 받아온 데이터로 목록을 다시 그립니다.
+		            renderContents(data);
+
+
+		            setActiveFilterButton(document.querySelector('.nav-link[data-filter="All"]'));
+
+		        } catch (error) {
+		            // 5. 네트워크 오류나 서버 에러 발생 시 사용자에게 알려줍니다.
+		            console.error("AJAX 검색 중 에러 발생:", error);
+		            resultTitle.innerHTML = '오류';
+		            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.</p></div>';
+		        }
+		    }
+
+
+		    /**
+		     * 클릭된 필터 버튼에 'active' 클래스를 추가하고 나머지 버튼에서는 제거합니다.
+		     * @param {HTMLElement} clickedButton - 사용자가 클릭한 필터 버튼 요소
+		     */
+		    function setActiveFilterButton(clickedButton) {
+		        if (!clickedButton) return;
+
+		        // 모든 버튼을 한 번 순회하면서 'active' 클래스를 지웁니다.
+		        filterButtons.forEach(button => {
+		            button.classList.remove('active');
+		        });
+
+		        // 그리고 클릭된 버튼에만 'active' 클래스를 추가합니다.
+		        clickedButton.classList.add('active');
+		    }
+
+		    /**
+		     * 선택된 필터에 따라 화면에 보이는 콘텐츠 아이템을 조절합니다.
+		     * @param {string} filterType - 필터링할 타입 ('All', 'Portfolio', 'Outsourcing')
+		     */
+		    function applyFilter(filterType) {
+		        const items = contentsContainer.querySelectorAll('.product-item');
+		        let visibleItemCount = 0;
+
+		        items.forEach(item => {
+		            const itemType = item.dataset.type;
+
+		            // 'All'을 선택했거나, 아이템의 타입이 선택한 필터와 일치하면 보여줍니다.
+		            if (filterType === 'All' || itemType === filterType) {
+		                item.style.display = ''; // 'display: none'을 제거하여 원래대로 보이게 함
+		                visibleItemCount++;
+		            } else {
+		                item.style.display = 'none'; // 일치하지 않으면 숨김
+		            }
+		        });
+
+		        // 필터링 결과가 하나도 없을 때를 대비한 처리
+		        const noResultMessage = contentsContainer.querySelector('.no-filter-result');
+		        if (noResultMessage) {
+		            noResultMessage.remove(); // 이전에 생성된 메시지가 있다면 먼저 삭제
+		        }
+
+		        if (visibleItemCount === 0 && items.length > 0) {
+		            const messageHtml = '<div class="col-12 text-center no-filter-result"><p>선택하신 필터에 해당하는 콘텐츠가 없습니다.</p></div>';
+		            contentsContainer.insertAdjacentHTML('beforeend', messageHtml);
+		        }
+		    }
+
+
+		    // --- 이벤트 리스너 설정 ---
+		    // 이 부분에서 위에서 정의한 함수들을 실제 사용자 행동(클릭, 제출 등)에 연결합니다.
+
+		    // 1. 필터 버튼들에 대한 클릭 이벤트
+		    filterButtons.forEach(button => {
+		        button.addEventListener('click', function(event) {
+		            // a 태그의 기본 동작(페이지 이동 등)을 막을 필요는 없지만, 습관적으로 사용하기도 합니다.
+		            event.preventDefault();
+
+		            const filterType = this.dataset.filter;
+		            setActiveFilterButton(this);
+		            applyFilter(filterType);
+		        });
+		    });
+
+
+		    // 2. 헤더 검색 폼 제출(submit) 이벤트
+		    if (headerSearchForm) {
+		        headerSearchForm.addEventListener('submit', function(event) {
+		            // 현재 페이지가 검색 결과 페이지일 때만 AJAX로 처리하고,
+		            // 다른 페이지에서는 원래대로 form의 action 주소로 이동하게 둡니다.
+		            if (window.location.pathname.includes('/user/userSearch')) {
+		                event.preventDefault(); // form의 기본 제출 동작(페이지 새로고침)을 막습니다.
+		                const keyword = headerSearchInput.value;
+		                performAjaxSearch(keyword);
+		            }
+		        });
+		    }
+
+		    // 참고: `productDetails()` 같은 외부 함수 호출은 여기에 그대로 두거나,
+		    // `renderContents` 함수 마지막에 필요하다면 추가할 수 있습니다.
+		    // productDetails();
+		});
 		</script>
 	</th:block>
 	
@@ -279,30 +255,41 @@
 							     th:each="content, iterStat : ${contentsList}"
 							     class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item"
 							     th:attr="data-type=${content.contentsType}">
-						        <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
-						            <div class="product-img-action-wrap">
-						                <div class="product-img product-img-zoom">
-						                    <a href="shop-product-right.html">
-						                    	<img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
-   	                             				<img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
-						                    </a>
-						                </div>
-						                <div class="product-action-1">
-						                    <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-						                    <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-						                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-						                </div>
-						            </div>
-						            <div class="product-content-wrap" style="margin-top: 15px;">
-						                <h2><a th:text="${content.contentsTitle}" href="shop-product-right.html">콘텐츠 제목</a></h2>
-									    <div>
-									    	<span class="font-small text-muted">By <a th:text="${content.enterName}" href="vendor-details-1.html">회원닉네임</a></span>
-									    </div>
-					            	</div>
-					        	</div>
-					        	<br>
-					        	<br>
-					   		</div>
+							    
+							    <!-- ▼▼▼ 이 div에 position-relative 클래스만 추가합니다 ▼▼▼ -->
+							    <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn position-relative" data-wow-delay=".1s">
+							        
+							        <!-- [복원] 이미지 관련 부분은 원래 템플릿 구조 그대로 둡니다. -->
+							        <div class="product-img-action-wrap">
+							            <div class="product-img product-img-zoom">
+							                <!-- a 태그가 이미지들을 직접 감싸는 구조로 복원 -->
+							                <a href="javascript:void(0);">
+							                    <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
+							                    <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
+							                </a>
+							            </div>
+							            <div class="product-action-1">
+							                <!-- 이 버튼들은 링크와 무관하므로 원래대로 둡니다. -->
+							                <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+							                <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+							                <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+							            </div>
+							        </div>
+							        
+							        <!-- [복원] 콘텐츠 제목 부분도 원래 구조 그대로 둡니다. -->
+							        <div class="product-content-wrap" style="margin-top: 15px;">
+							            <!-- ▼▼▼ h2 안에 실제 상세 페이지로 가는 링크를 넣고, 'stretched-link' 클래스를 추가합니다 ▼▼▼ -->
+							            <h2>
+							                <a th:href="@{/user/contents/{id}(id=${content.contentsId})}" 
+							                   th:text="${content.contentsTitle}"
+							                   class="stretched-link">콘텐츠 제목</a>
+							            </h2>
+							            <div>
+							                <span class="font-small text-muted">By <a th:text="${content.enterName}" href="#">회원닉네임</a></span>
+							            </div>
+							        </div>
+							    </div>
+							</div>
 							<!-- 검색 결과가 없을 때 (초기 로딩 시) -->
 							<div th:if="${#lists.isEmpty(contentsList)}" class="col-12">
 								<p class="text-center">표시할 콘텐츠가 없습니다.</p>
