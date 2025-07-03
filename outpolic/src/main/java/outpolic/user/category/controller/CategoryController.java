@@ -9,22 +9,32 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import outpolic.user.category.domain.Category;
 import outpolic.user.category.domain.CategoryGroup;
 import outpolic.user.category.service.CategoryService;
+import outpolic.user.search.domain.ContentItemDTO;
+import outpolic.user.search.service.SearchService;
 
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryController {
 
     private final CategoryService categoryService;
-    // private final ContentService contentService; // 콘텐츠 서비스도 주입
-
-    // URL 예시: /contents/category/0100101 (소분류 '로고 디자인'의 콘텐츠 목록)
+    private final SearchService searchService;
+    
+    
     @GetMapping("/contents/category/{categoryCode}")
     public String showContentsByCategory(@PathVariable String categoryCode, Model model) {
-        
+    	
+    	Category currentCategory = categoryService.getCategoryByCode(categoryCode);
+    	if (currentCategory == null) {
+            return "error/404"; // 혹은 다른 적절한 처리
+        }
+    	model.addAttribute("currentCategory", currentCategory);
+    	
         // 1. [메인 컨텐츠용 데이터] 현재 카테고리에 속한 콘텐츠 목록 가져오기
 
         // 현재 소분류 코드(categoryCode)에서 대분류 코드(예: "010")를 추출
@@ -50,13 +60,15 @@ public class CategoryController {
 
         // 소분류 코드에서 대분류 코드를 추출 (0100101 -> 010)
         String mainCategoryCode = subCategoryCode.substring(0, 3);
-
-        // 공통 메서드 호출
         addSidebarDataToModel(mainCategoryCode, model);
 
         // 소분류에 해당하는 카테고리 이름을 페이지 타이틀 등으로 사용하기 위해 조회
         Category currentCategory = categoryService.getMainCategory(subCategoryCode);
+        
         model.addAttribute("currentCategory", currentCategory);
+        
+        List<ContentItemDTO> contents = searchService.findContentsByCategoryId(subCategoryCode);
+        model.addAttribute("contentsList", contents); // View에서 사용할 이름 "contentsList"
         
         // 대분류/소분류가 공유하는 동일한 뷰 페이지를 반환
         return "user/contents/userContentsView";
