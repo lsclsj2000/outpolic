@@ -1,9 +1,10 @@
-package outpolic.enter.portfolio.mapper;
+package outpolic.enter.outsourcing.mapper;
+/*
 import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
-import outpolic.enter.portfolio.domain.FileMetaData;
-import outpolic.enter.portfolio.domain.FileMetaData; // !!! 이 줄을 추가합니다 !!!
+import outpolic.enter.outsourcing.domain.FileMetaData;
 
 @Mapper
 public interface FileMapper {
@@ -17,3 +18,4 @@ public interface FileMapper {
 	// !!! findFileRoad 메서드 시그니처를 아래와 같이 변경합니다 !!!
 	List<FileMetaData> findFileRoad(String entCd); // 파라미터 이름도 entCd로 변경했습니다.
 }
+*/

@@ -48,4 +48,29 @@
         ORDER BY CAST(SUBSTRING(file_cd, 5) AS UNSIGNED) DESC 
         LIMIT 1
     </select>
+    <select id="findFileRoad" resultType="String">
+    	SELECT
+	p.prtf_cd ,
+	p.mbr_cd ,
+	p.prtf_ttl ,
+	p.prtf_cn ,
+	p.prtf_dwnld_cnt ,
+	p.prtf_cd ,
+    fi.file_cd,
+    fi.file_orgnl_nm,
+    fi.file_srvr_nm,
+    fi.file_path,
+    fi.file_extn
+  FROM portfolio p
+  LEFT JOIN file fi
+    ON fi.cl_cd = CONCAT('LIST_', p.prtf_cd)
+  WHERE p.ent_cd = #{entCd};
+    
+    
+    
+    
+    
+    
+    
+    </select>
 </mapper>
