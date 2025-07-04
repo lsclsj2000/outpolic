@@ -1,4 +1,3 @@
-/*
 package outpolic.enter.outsourcing.controller;
 
 
@@ -18,7 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import outpolic.enter.POAddtional.service.CategorySearchService;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.outsourcing.service.EnterOutsourcingService;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 
 
@@ -29,12 +30,15 @@ import outpolic.enter.portfolio.domain.EnterPortfolio;
 @RequiredArgsConstructor
 public class EnterOutsourcingController {
 	
+	private final EnterOutsourcingService outsourcingService;
+	private final CategorySearchService categorySearchService;
+	
 	 @GetMapping("/list")
 	 public String showPortfolioListView() { 
 		 return "enter/outsourcing/outsourcingListView";
 		 
 	  }
-	 /*
+	
 	 @GetMapping("/listData")
 	 @ResponseBody
 	 public ResponseEntity<List<EnterOutsourcing>> getOutsourcingListData(HttpSession session){
@@ -42,16 +46,14 @@ public class EnterOutsourcingController {
 		 return ResponseEntity.ok(outsourcingService.getOutsourcingListByEntCd(currentEntCd));
 		 
 	 }
-	 *
-	 */
-/*
+
 	 @GetMapping("/add")
 	 public String showAddOutsourcingForm(Model model, HttpSession session) {
 		 model.addAttribute("entCd","EI_C00001");
 		 model.addAttribute("mbrCd", "MB_C0000036");
 		 return "enter/outsourcing/addOutsourcingListView";
-	 }
-	 /*
+	 }}
+	/*
 	 @PostMapping("/add-ajax")
 	 @ResponseBody
 	 public ResponseEntity<Map<String, Object>> addPortfolioAjax(@ModelAttribute EnterPortfolio portfolio,
@@ -59,8 +61,9 @@ public class EnterOutsourcingController {
 			 													 @RequestParam(value="categoryCodes",required=false) List<String> categoryCodes,
 			 													 @RequestParam(value="tags", required=false) String tags) {
 		
-		 
- 		*/											 
+	 }
+*/
+ 										 
 			 												
 
 
