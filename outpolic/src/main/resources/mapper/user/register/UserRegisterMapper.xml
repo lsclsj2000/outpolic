@@ -9,7 +9,7 @@
 		<result column="mbr_pw" property="memberPw"/>	
 		<result column="grd_cd" property="gradeCode"/>
 		<result column="mbr_nm" property="memberName"/>
-		<result column="mbr_nicknm" property="memberNickName"/>
+		<result column="mbr_nicknm" property="memberNickname"/>
 		<result column="mbr_telno" property="memberTelNo"/>
 		<result column="mbr_addr" property="memberAddress"/>
 		<result column="mbr_daddr" property="memberDAddress"/>
@@ -52,7 +52,7 @@
 			#{memberPw}, 
 			'USER',
 			#{memberName}, 
-			#{memberNickName},
+			#{memberNickname},
 			#{memberTelNo}, 
 			#{memberAddress}, 
 			#{memberDAddress}, 
@@ -68,7 +68,7 @@
 	<select id="isNickNameDuplicated" resultType="boolean">
 	    SELECT COUNT(*) > 0
 	    FROM member
-	    WHERE mbr_nicknm = #{memberNickName}
+	    WHERE mbr_nicknm = #{memberNickname}
 	</select>
 	<select id="isEmailDuplicated" resultType="boolean">
 	    SELECT COUNT(*) > 0
