@@ -21,7 +21,7 @@ public class UserMypageController {
  // 유저 마이페이지
  	@GetMapping("/mypage")
  	public String myPage(Model model) {
- 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById("user002");
+ 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById("memberId");
  		model.addAttribute("userInfo", userInfo);
  		return "user/mypage/userMypageView";
  	}
@@ -43,7 +43,7 @@ public class UserMypageController {
  	@PostMapping("/userEditView")
  	public String usreProfileEditView(@RequestParam("password") String memberPw, Model model) {
  		
- 		String memberId = "user002";
+ 		String memberId = "memberId";
  		UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
  		
  		if(memberPw.equals(userInfo.getMemberPw())) {
@@ -69,7 +69,7 @@ public class UserMypageController {
  	 @GetMapping("/userEdit/info")
  	 @ResponseBody
  	 public UserInfoDTO getUserInfoAjax() {
- 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById("user002");
+ 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById("memberId");
  		 
  		 return userInfo; 
  	 }
