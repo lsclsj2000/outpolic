@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface EnterPortfolioService {
     List<EnterPortfolio> getPortfolioListByEntCd(String entCd);
-    void addPortfolio(EnterPortfolio portfolio, List<MultipartFile> portfolioFiles, List<String> categoryCodes, String tags) throws IOException;
+    void addPortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags) throws IOException;
     void deletePortfolio(String prtfCd);
     EnterPortfolio getPortfolioByPrtfCd(String prtfCd);
-    void updatePortfolio(EnterPortfolio portfolio, List<MultipartFile> portfolioFiles, List<String> categoryCodes, String tags) throws IOException;
+    void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags) throws IOException;
 }

@@ -122,4 +122,31 @@
 	    WHERE
 	        o.os_cd = #{contentsId} AND #{contentsId} LIKE 'OS_%'
 	</select>
+	
+	<resultMap type="outpolic.user.search.domain.ContentItemDTO" id="outsourcingContentItemMap">
+        <id     column="os_cd"         property="contentsId"/>
+        <result column="os_ttl"        property="contentsTitle"/>
+        <result column="ent_nm"        property="enterName"/>
+        <result column="os_reg_ymdt"   property="registrationDate"/>
+        <result column="os_amt"        property="price"/>
+    </resultMap>
+
+    <!-- [핵심] 카테고리 ID로 외주(Outsourcing) 콘텐츠 목록을 조회하는 쿼리 -->
+	<select id="findContentsByCategoryId" parameterType="string" resultMap="outsourcingContentItemMap">
+	    SELECT
+	        o.os_cd,
+	        o.os_ttl,
+	        o.os_reg_ymdt,
+	        o.os_amt,
+	        e.ent_nm
+	    FROM
+	        outsourcing o
+	    LEFT JOIN
+	        enterprise e ON o.ent_cd = e.ent_cd
+	    WHERE
+	        o.ctgry_id LIKE CONCAT(#{categoryId}, '%')
+	    ORDER BY
+	        o.os_reg_ymdt DESC
+	</select>
+	
  </mapper>

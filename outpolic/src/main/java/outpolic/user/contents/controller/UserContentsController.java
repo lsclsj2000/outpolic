@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import outpolic.user.category.domain.Category;
 import outpolic.user.category.domain.CategoryGroup;
 import outpolic.user.category.service.CategoryService;
+import outpolic.user.search.domain.ContentItemDTO;
 import outpolic.user.search.domain.ContentsDetailDTO;
 import outpolic.user.search.service.SearchService;
 
@@ -30,16 +31,13 @@ public class UserContentsController {
     
     @GetMapping("/contents/{contentsId}")
     public String contentsDetailView(@PathVariable(value = "contentsId") String contentsId, Model model) {
+    	
         
         log.info("상세 페이지 요청: ID = {}", contentsId);
 
-        // =========================================================================
-        // [최종 수정] 임시 데이터 코드를 삭제하고, 실제 서비스 호출 코드로 교체
-        // =========================================================================
-        
         // 1. 서비스에 contentsId를 넘겨서 상세 정보를 조회합니다.
         ContentsDetailDTO detailData = searchService.getContentsDetailById(contentsId);
-        
+
         // 2. (중요) 조회된 데이터가 없을 경우에 대한 처리
         if (detailData == null) {
             // 예를 들어, 존재하지 않는 ID로 접근했을 경우
@@ -47,24 +45,40 @@ public class UserContentsController {
             model.addAttribute("errorMessage", "해당 콘텐츠를 찾을 수 없습니다.");
             return "error/404"; // templates/error/404.html 같은 에러 페이지
         }
-        
+
         // 3. 조회된 실제 데이터를 "detail" 이라는 이름으로 모델에 담습니다.
         model.addAttribute("detail", detailData);
-        
+
         // 4. 상세 페이지 뷰를 리턴합니다.
         return "user/contentsParticular/userContentsParticularView";
     }
 
-    // --- 이 메서드가 있는지 다시 한번 확인해주세요 ---
     // 최종 경로는 "/user" + "/products" = "/user/products" 가 됩니다.
     @GetMapping("/products") 
     public String showContentsBySubCategory(@RequestParam("category") String subCategoryCode, Model model) {
+    	
+    	log.info("카테고리별 콘텐츠 조회 시작. 요청된 categoryCode: {}", subCategoryCode);
         
         String mainCategoryCode = subCategoryCode.substring(0, 3);
         
         addSidebarDataToModel(mainCategoryCode, model);
 
-        // TODO: 소분류에 해당하는 상품 목록을 가져오는 로직 추가
+        Category currentCategory = categoryService.getCategoryByCode(subCategoryCode);
+        if (currentCategory == null) {
+            // 존재하지 않는 카테고리일 경우 예외 처리
+            log.warn("존재하지 않는 카테고리 코드입니다: {}", subCategoryCode);
+            return "error/404"; 
+        }
+        // "currentCategory" 이름으로 모델에 추가
+        model.addAttribute("currentCategory", currentCategory);
+
+
+        // --- 3. 실제 콘텐츠 목록 조회 ---
+        // 이전에 만드신 SearchService의 메소드를 호출합니다.
+        List<ContentItemDTO> contentsList = searchService.findContentsByCategoryId(subCategoryCode);
+        
+        // "contentsList" 이름으로 모델에 추가
+        model.addAttribute("contentsList", contentsList);
         
         return "user/contents/userContentsView";
     }

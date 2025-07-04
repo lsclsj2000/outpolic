@@ -73,10 +73,7 @@
     <delete id="deleteContentListByClCd"> DELETE FROM content_list WHERE cl_cd = #{clCd} </delete>
     <delete id="deleteCategoryMappingByClCd"> DELETE FROM category_mapping WHERE cl_cd = #{clCd} </delete>
     <delete id="deleteTagMappingByClCd"> DELETE FROM tag_mapping WHERE cl_cd = #{clCd} </delete>
-	 <delete id="deleteFileByClCd" parameterType="String">
-        DELETE FROM file
-         WHERE cl_cd = #{clCd}
-    </delete>
+
   <delete id="deleteBookmarkByClCd" parameterType="String">
         DELETE FROM bookmark
          WHERE cl_cd = #{clCd}
