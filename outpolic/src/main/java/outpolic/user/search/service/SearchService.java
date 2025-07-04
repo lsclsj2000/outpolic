@@ -2,6 +2,7 @@ package outpolic.user.search.service;
 
 import java.util.List;
 
+import outpolic.user.search.domain.ContentItemDTO;
 import outpolic.user.search.domain.Contents;
 import outpolic.user.search.domain.ContentsDetailDTO;
 
@@ -12,4 +13,6 @@ public interface SearchService {
 	
 	// 검색된 콘텐츠의 상세정보 
 	ContentsDetailDTO getContentsDetailById(String contentsId);
+	
+	List<ContentItemDTO> findContentsByCategoryId(String categoryId);
 }

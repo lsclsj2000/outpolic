@@ -16,7 +16,7 @@ import outpolic.user.mypage.service.UserMypageEditService;
 @RequiredArgsConstructor
 public class UserMypageEditServiceImpl implements UserMypageEditService {
 
-//	private final UserMypageEditMapper userMypageEditMapper;
+
 	@Autowired
 	private UserMypageEditMapper userMypageEditMapper;
 	private final UserMypageEditMapper mapper;

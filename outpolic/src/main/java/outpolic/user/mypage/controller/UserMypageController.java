@@ -26,10 +26,10 @@ public class UserMypageController {
  		return "user/mypage/userMypageView";
  	}
 
- // 유저 개인정보
+ 	// 유저 개인정보
  	@Autowired
  	private UserMypageEditService userMypageEditService;
- 	
+ 	// 중복체크
     @PostMapping("/check/{type}")
     public ResponseEntity<Boolean> checkUserInfo(@PathVariable String type,
 									            @RequestParam String memberId,
@@ -39,7 +39,7 @@ public class UserMypageController {
         boolean duplicated = userMypageEditService.isUserInfoDuple(type, memberId, memberNickName, memberEmail, memberTelNo);
         return ResponseEntity.ok(duplicated);
     }
- 	
+ 	// userEditView 이동
  	@PostMapping("/userEditView")
  	public String usreProfileEditView(@RequestParam("password") String memberPw, Model model) {
  		

@@ -7,49 +7,16 @@
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 	</head>
 	
-	<!-- 추가할 js file -->
-	<!--/* 타이틀 추가 
-	<th:block layout:fragment="title">
-		<div class="row">
-			<div class="col-md-2">
-			</div>
-			<div class="col-md-9">
-				<div class="single-header style-2">
-					<div class="row">
-						<div>
-							<h6 class="mb-10">
-							  <a href="#" th:text="${inquiry.inquiryTypeName}">문의 타입</a>
-							</h6>
-							<h2 class="mb-10" th:text="${inquiry.inquiryTitle}">문의 제목</h2>
-							<div class="single-header-meta">
-								<div class="entry-meta meta-1 font-xs mt-15 mb-15">
-									<a class="author-avatar" href="#">
-										<img class="img-circle" src="/user/assets/imgs/blog/author-1.png" alt="">
-									</a>
-									<span class="post-by">By <a href="#" th:text="${inquiry.memberName}">작성자</a></span>
-									<span class="post-on has-dot" th:text="${inquiry.inquiryRegDate}">작성일자</span>
-									<span class="time-reading has-dot">00 views</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>       
-			</div>
-		</div>
-	</th:block>
-	*/-->
 	<!-- 컨텐츠 추가 -->
 	<th:block layout:fragment="contents">
 		
 		<div class="single-page pr-30">
-			<div class="single-content">
+			<div class="SR_single-content">
 				<div class="row">
-					<div class="single-header style-2">
+					<div class="single-header style-2 mb-5">
 						<div class="row">
 							<div>
-								<h6 class="mb-10">
-								  <a href="#" th:text="${inquiry.inquiryTypeName}">문의 타입</a>
-								</h6>
+								<h6 class="mb-10" th:text="${inquiry.inquiryTypeName}">문의 타입</h6>
 								<h2 class="mb-10" th:text="${inquiry.inquiryTitle}">문의 제목</h2>
 								<div class="single-header-meta">
 									<div class="entry-meta meta-1 font-xs mt-15 mb-15">
@@ -64,30 +31,42 @@
 							</div>
 						</div>
 					</div>
-					<div class="entry-bottom mb-30"></div>
+					<div class="entry-bottom mb-1 mt-1"></div>
 					<div>
-						<div class="attachment-list mb-30" th:if="${inquiry.subAttOrgnlName != null}">
-						  <div class="att-list-wrapper">
-						    <div class="att-label">첨부파일</div>
-						    <ul class="att-file-list">
-						      <li>
-						        <a th:href="@{${inquiry.subAttPath + '/' + inquiry.subAttSrvrName}}"
-						           th:text="${inquiry.subAttOrgnlName}"
-						           download>첨부파일</a>
+					 	<!-- 이미지 컨텐츠 -->
+						<div th:each="s : ${inquiry.userInquiryFiles}">
+							<img class="SR_content-image" th:src="@{|${s.saPath}|}" th:alt="${s.saOrgnlName}" />
+						</div>
+						<br />
+						
+						<!-- 문의 내용 -->
+						<p  class="pl-30" th:utext="${#strings.replace(inquiry.inquiryCn, '. ', '.<br/>')}">문의내용</p>
+						<br /> <br /> <br />
+						
+						<!-- 첨부파일 목록 박스 -->
+						<div class="SR_attachment-list mb-3" th:if="${not #lists.isEmpty(inquiry.userInquiryFiles)}">
+						  <div class="SR_att-list-wrapper">
+						    <div class="SR_att-label">첨부파일</div>
+						    <ul class="SR_att-file-list" >
+						      <li th:each="l : ${inquiry.userInquiryFiles}">
+						      	<div class="SR_download-link" aria-label="파일 다운로드">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M12 17V2"/><path d="M7 12L12 17L17 12"/><path d="M2 21H22"/></svg>
+								</div>
+						      	<div class="SR_file-info">
+									<a th:href="@{/user/userInquiry/file/download(saCode=${l.saCode})}"
+									   th:text="${l.saOrgnlName}">첨부파일
+									</a>
+									<!-- 사이즈 -->
+									<span class="SR_file-size"
+										  th:text="${'(' + l.saSize + ')'}"></span>
+						      	</div>
+						      	
 						      </li>
 						    </ul>
 						  </div>
 						</div>
-						
-						<div th:if="${inquiry.subAttOrgnlName != null and (inquiry.saExtn == 'jpg' or inquiry.saExtn == 'jpeg' or inquiry.saExtn == 'png' or inquiry.saExtn == 'gif')}">
-						    <h5 class="mb-15">첨부 이미지</h5>
-						    <img th:src="@{${inquiry.subAttPath + '/' + inquiry.subAttSrvrName}}"
-						         th:alt="${inquiry.subAttOrgnlName}"
-						         class="inquiry-attached-image" />
-						</div>
-						<p  class="pl-30" th:utext="${#strings.replace(inquiry.inquiryCn, '. ', '.<br/>')}">문의내용</p>
-						<br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> 
-						<div class="entry-bottom mt-50 mb-30">
+						 
+						<div class="entry-bottom mb-1 mt-1"></div>
 						</div>
 						<div class="author-bio p-30 border-radius-15 bg-white" th:if="${inquiry.inquiryProcessAnsCn != null and inquiry.inquiryProcessAnsCn != ''}">
 							<div class="author-image mb-30">

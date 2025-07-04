@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.mapper.FileMapper">
+
+	<resultMap type="outpolic.systems.file.domain.FileMetaData" id="fileResultMap">
+		<result property="fileIdx" 			column="file_idx"/>
+		<result property="fileNewName" 		column="file_new_name"/>
+		<result property="fileOriginalName" column="file_original_name"/>
+		<result property="filePath" 		column="file_path"/>
+		<result property="fileSize" 		column="file_size"/>
+	</resultMap>
+
+	<delete id="deleteFileByIdx" parameterType="String">
+		/* 파일 데이터 삭제 */
+		DELETE
+		FROM 
+			files
+		WHERE
+			file_idx = #{fileIdx}
+	</delete>
+
+	<select id="getFileInfoByIdx" parameterType="string" resultMap="fileResultMap">
+		/* 파일 데이터 조회 */
+		SELECT
+			 file_idx,
+			 file_new_name,
+			 file_original_name,
+			 file_path,file_size
+		FROM
+			files
+		WHERE
+			file_idx = #{fileIdx}
+	</select>
+	
+	<select id="getFileList" resultMap="fileResultMap">
+		/* 파일 데이터 목록 조회 */
+		SELECT
+			 file_idx,
+			 file_new_name,
+			 file_original_name,
+			 file_path,
+			 file_size
+		FROM
+			files
+	</select>
+
+	<insert id="addfile" parameterType="outpolic.systems.file.domain.FileMetaData">
+		/* 파일 데이터 등록 */
+		INSERT INTO files
+		(
+			 file_idx,
+			 file_new_name,
+			 file_original_name,
+			 file_path,
+			 file_size,
+			 file_reg_date
+		)VALUES( 
+			 #{file.fileIdx},
+			 #{file.fileNewName},
+			 #{file.fileOriginalName},
+			 #{file.filePath},
+			 #{file.fileSize},
+			 CURDATE()
+		)
+	</insert>
+
+	<insert id="addfiles" parameterType="outpolic.systems.file.domain.FileMetaData">
+		/* 다중 파일 데이터 등록 */
+		INSERT INTO files
+		(
+			 file_idx,
+			 file_new_name,
+			 file_original_name,
+			 file_path,
+			 file_size,
+			 file_reg_date
+		)VALUES
+		<foreach collection="list" item="file" separator=",">
+		( 
+			 #{file.fileIdx},
+			 #{file.fileNewName},
+			 #{file.fileOriginalName},
+			 #{file.filePath},
+			 #{file.fileSize},
+			 CURDATE()
+		)
+		</foreach>
+	</insert>
+</mapper>
+
+
+
+
+
+
+
