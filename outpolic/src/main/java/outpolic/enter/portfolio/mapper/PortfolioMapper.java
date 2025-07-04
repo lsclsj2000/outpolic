@@ -44,4 +44,6 @@ public interface PortfolioMapper {
     // UPDATE
     int updatePortfolio(EnterPortfolio portfolio);
     
+    
+    int countPortfoliosByEntCd(String entCd);
 }

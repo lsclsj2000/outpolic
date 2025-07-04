@@ -1,108 +1,165 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{enter/layout/enterLayoutkjw}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{enter/layout/enterLayoutkjw}">
+<head>
+    <title>새 외주 등록</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { font-family: "Inter", sans-serif; }
+        .main-container { max-width: 960px; margin: 0 auto; padding: 30px 20px; }
+        .section-title { font-size: 2.25rem; font-weight: 700; color: #1f2937; margin-bottom: 2.5rem; text-align: center; border-left: 5px solid #3BB77E; padding-left: 1rem; display: inline-block; }
+        .card { background-color: white; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); padding: 2.5rem; border: 1px solid #e5e7eb; }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 10px; color: #253D4E; font-size: 1.05rem; }
+        .form-control { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; color: #4b5563; transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+        .form-control:focus { outline: none; border-color: #3BB77E; box-shadow: 0 0 0 3px rgba(59, 183, 126, 0.2); }
+        textarea.form-control { min-height: 180px; resize: vertical; }
+        .form-instruction { font-size: 0.875rem; color: #718096; margin-top: 8px; line-height: 1.5; }
+        .required-star { color: #ef4444; font-weight: 700; margin-left: 4px; }
+        .optional-tag { color: #4f46e5; font-weight: 500; margin-left: 8px; font-size: 0.875rem; }
+        .btn-submit { background-color: #3BB77E; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.15rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease-in-out; box-shadow: 0 4px 10px rgba(59, 183, 126, 0.3); width: 100%; margin-top: 30px; }
+        .btn-submit:hover { background-color: #29A56C; transform: translateY(-2px); }
+        .flex-row { display: flex; gap: 20px; flex-wrap: wrap; }
+        .flex-row > .form-group { flex: 1; min-width: 250px; }
+        .category-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .category-item select { flex-grow: 1; }
+        .btn-remove-category { background-color: white; color: #4a5568; border: 1px solid #cbd5e0; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: all 0.2s ease-in-out; flex-shrink: 0; box-shadow: none; }
+        .btn-remove-category:hover { background-color: #f0f4f8; border-color: #a0aec0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .btn-add-category { background-color: #6366f1; color: white; padding: 10px 15px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease-in-out; display: inline-flex; align-items: center; }
+        .btn-add-category:hover { background-color: #4f46e5; }
+        .input-with-unit { display: flex; align-items: center; width : 100%; }
+        .input-with-unit input { flex-grow: 1; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+        .input-with-unit span { background-color: #f3f4f6; border: 1px solid #d1d5db; border-left: none; border-top-right-radius: 8px; border-bottom-right-radius: 8px; padding: 12px 15px; color: #4b5563; }
+        input[type="number"] { moz-appearance: textfield; }
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+         .category-search-wrapper { position: relative; }
+         .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd; background-color: #fff; z-index: 1000; max-height: 200px; overflow-y: auto; }
+        .search-results-dropdown .result-item { padding: 10px; cursor: pointer; }
+        .search-results-dropdown .result-item:hover { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+<th:block layout:fragment="contents">
+    <div class="main-container">
+        <h1 class="section-title">새 외주 등록</h1>
+        <div class="card">
+            <form id="outsourcingRegistrationForm">
+                <input type="hidden" name="entCd" th:value="${entCd}">
+                <input type="hidden" name="mbrCd" th:value="${mbrCd}">
 
-    <!-- 이 th:block은 상위 레이아웃의 <head> 태그 내부에 삽입될 것입니다. -->
+                <div class="form-group">
+                    <label for="osTtl">외주 프로젝트 제목 <span class="required-star">*</span></label>
+                    <input type="text" id="osTtl" name="osTtl" class="form-control" required>
+                </div>
 
-<!--         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>새 외주 등록</title> 페이지 제목
-        <meta name="description" content="한국스마트정보교육원 ksmybatis" />
-        <link rel="shortcut icon" type="image/x-icon" th:href="@{/enter/assets/imgs/theme/favicon.svg}" />
-        <link href="/enter/assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
-        <script src="https://cdn.tailwindcss.com"></script> -->
-
-
-   <th:block layout:fragment="contents">
-        <div class="main-container">
-            <h1 class="section-title">새 외주 등록</h1>
-            
-            <div class="card">
-                <form id="outsourcingRegistrationForm">
-                    <!-- 외주 제목 (out_ttl) -->
-                    <div class="form-group">
-                        <label for="out_ttl">외주 프로젝트 제목 <span class="required-star">*</span></label>
-                        <input type="text" id="out_ttl" name="out_ttl" class="form-control" placeholder="외주 프로젝트의 제목을 입력하세요." required>
-                        <p class="form-instruction">수요자가 프로젝트를 이해할 수 있도록 명확하게 작성해주세요.</p>
-                    </div>
-
-                    <!-- 외주 카테고리 (다중 선택 가능) -->
-                    <div class="form-group">
-                        <label>카테고리 <span class="required-star">*</span></label>
-                        <div id="categorySelectionContainer">
-                            <!-- Dynamic category dropdowns will be inserted here by JS -->
-                        </div>
-                        <button type="button" id="addCategoryBtn" class="btn-add-category mt-3">
-                            <i class="fas fa-plus"></i> 카테고리 추가
-                        </button>
-                        <p class="form-instruction mt-2">이 외주 프로젝트가 속하는 주된 분야를 선택해주세요. (최대 3개)</p>
-                    </div>
-
-                    <!-- 외주 내용 (out_cn) -->
-                    <div class="form-group">
-                        <label for="out_cn">외주 프로젝트 내용 <span class="required-star">*</span></label>
-                        <textarea id="out_cn" name="out_cn" class="form-control" rows="8" placeholder="프로젝트의 상세 목표, 요구사항, 참고 자료 등을 구체적으로 작성해 주세요." required></textarea>
-                        <p class="form-instruction">공급자가 프로젝트를 정확히 이해하고 제안할 수 있도록 상세한 설명을 부탁드립니다.</p>
-                    </div>
-
-                    <!-- 태그 (쉼표 구분) -->
-                    <div class="form-group">
-                        <label for="out_tags">태그 (쉼표로 구분) <span class="optional-tag">(선택 사항)</span></label>
-                        <input type="text" id="out_tags" name="out_tags" class="form-control" placeholder="예: 웹개발, 앱개발, 디자인, 기획">
-                        <p class="form-instruction">외주 프로젝트와 관련된 키워드를 쉼표(,)로 구분하여 입력해주세요.</p>
-                    </div>
-
-                    <!-- 희망 작업 기간 (시작일 및 종료일) -->
-                    <div class="flex-row">
-                        <div class="form-group">
-                            <label for="work-start-date">희망 작업 시작일</label>
-                            <input type="date" id="work-start-date" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="work-end-date">희망 작업 종료일</label>
-                            <input type="date" id="work-end-date" class="form-control">
-                        </div>
-                    </div>
-
-                    <!-- 희망 금액 (out_hope_amnt) -->
-                    <div class="form-group">
-                        <label for="out_hope_amnt">희망 금액 (세전 기준) <span class="required-star">*</span></label>
-                        <div class="input-with-unit">
-                            <input type="number" id="out_hope_amnt" name="out_hope_amnt" class="form-control" placeholder="최소 100,000원" min="100000" required>
-                            <span>원</span>
-                        </div>
-                        <p class="form-instruction">프로젝트 예상 비용을 정확히 입력해주세요. (최소 10만원 이상)</p>
-                    </div>
-
-                    <!-- 수행 인원 -->
-                    <div class="form-group">
-                        <label for="required_personnel">필요 수행 인원 <span class="required-star">*</span></label>
-                        <div class="input-with-unit">
-                            <input type="number" id="required_personnel" name="required_personnel" class="form-control" placeholder="최소 1명" min="1" value="1" required>
-                            <span>명</span>
-                        </div>
-                        <p class="form-instruction">이 프로젝트를 완료하는 데 필요한 최소 인원을 입력해주세요.</p>
-                    </div>
-
-                    <!-- 참고 자료 (파일 첨부) -->
-                    <div class="form-group">
-                        <label for="reference_files">참고 자료 첨부</label>
-                        <input type="file" id="reference_files" name="reference_files" accept="image/*, .pdf, .doc, .docx, .ppt, .pptx" multiple class="form-control p-2">
-                        <p class="form-instruction">프로젝트 기획서, 상세 가이드라인, 레퍼런스 이미지 등 필요한 자료를 첨부해주세요. (최대 5개)</p>
-                        <div class="image-preview-container mt-3" id="file-preview-container">
-                            <!-- File previews (images directly, others as icons) will appear here -->
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>카테고리 </label>
+                    <div class="category-search-wrapper">
+                    	<input type="text" id="category-search-input" class="form-control" placeholder="카테고리를 검색하여 추가하세요">
+                    	<div id="category-search-results" class="search-results-dropdown"></div>
                     
-                    <!-- 외주 등록 버튼 -->
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-paper-plane mr-2"></i> 외주 등록하기
-                    </button>
-                </form>
-            </div>
-        </div>
-    </th:block>
+                    
+                    </div>
+                
+                </div>
 
-        
-        </html>
+                <div class="form-group">
+                    <label for="osExpln">외주 프로젝트 내용 <span class="required-star">*</span></label>
+                    <textarea id="osExpln" name="osExpln" class="form-control" rows="8" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="tags">태그 (쉼표로 구분)</label>
+                    <input type="text" id="tags" name="tags" class="form-control">
+                </div>
+
+                <div class="flex-row">
+                    <div class="form-group"><label for="osStrtYmdt">희망 작업 시작일</label><input type="date" id="osStrtYmdt" name="osStrtYmdt" class="form-control"></div>
+                    <div class="form-group"><label for="osEndYmdt">희망 작업 종료일</label><input type="date" id="osEndYmdt" name="osEndYmdt" class="form-control"></div>
+                </div>
+
+                <div class="flex-row">
+                    <div class="form-group"><label for="osAmt">희망 금액 <span class="required-star">*</span></label><div class="input-with-unit"><input type="number" id="osAmt" name="osAmt" class="form-control" min="0" required><span>원</span></div></div>
+                    <div class="form-group"><label for="osFlfmtCnt">필요 수행 인원 <span class="required-star">*</span></label><div class="input-with-unit"><input type="number" id="osFlfmtCnt" name="osFlfmtCnt" class="form-control" min="1" value="1" required><span>명</span></div></div>
+                </div>
+                
+                <button type="submit" class="btn-submit"><i class="fas fa-paper-plane mr-2"></i> 외주 등록하기</button>
+            </form>
+        </div>
+    </div>
+    
+</th:block>
+<th:block layout:fragment="jsFile">
+    <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
+    <script>
+        $(document).ready(function() {
+			let searchTimeout;
+            // 카테고리 추가
+            $('#category-search-input').on('input', function() {
+             	clearTimeout(searchTimeout);
+             	const query = $(this).val();
+             	if(query.length<1){
+					$('#category-search-results').hide();
+					return;
+             	}
+             	searchTimeout = setTimeout(() => {
+					$.get('/enter/outsourcing/api/categories/search',{query: query}, function(data){
+						const resultsDiv = $('#category-search-results').empty().show();
+						if(data && data.length>0){
+							data.forEach(cat => {
+								resultsDiv.append(`<div class="result-item" data-id="${cat.ctgryId}">${cat.ctgryNm}</div>`);
+								
+							});	
+						}
+					
+					});		
+             	
+             	},300);
+            });
+			/*
+            $(document).on('click','.result-item', function(){
+				const catId = $(this).data('id');
+				const catName = $(this).text();
+				if($(`form input[name="categoryCodes"][value]))
+            */
+            
+            
+            });	
+            // 카테고리 삭제
+            $('#categorySelectionContainer').on('click', '.btn-remove-category', function() {
+                $(this).closest('.category-item').remove();
+            });
+
+            // AJAX 폼 제출
+            $('#outsourcingRegistrationForm').on('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                // 카테고리 코드들을 수집하여 FormData에 추가
+                $('select[name="categoryCodes"]').each(function() {
+                    formData.append('categoryCodes', $(this).val());
+                });
+
+                $.ajax({
+                    url: '/enter/outsourcing/add-ajax',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, contentType: false,
+                    success: function(res) {
+                        if (res.success) {
+                            alert(res.message);
+                            window.location.href = res.redirectUrl;
+                        } else { alert('등록 실패: ' + res.message); }
+                    },
+                    error: () => alert('등록 중 오류 발생')
+                });
+            });
+       
+    </script>
+    
+    
+</th:block>
+
+</body>
+
+</html>
