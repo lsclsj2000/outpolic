@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.outsourcing.mapper.OutsourcingMapper;
 import outpolic.enter.outsourcing.service.EnterOutsourcingService;
-import outpolic.enter.portfolio.domain.FileMetaData;
-import outpolic.enter.portfolio.service.FileService;
 
 /*
 @Service

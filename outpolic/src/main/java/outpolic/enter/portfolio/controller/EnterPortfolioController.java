@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.List;
@@ -43,13 +42,12 @@ public class EnterPortfolioController {
     
     @PostMapping("/add-ajax")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> addPortfolioAjax(@ModelAttribute EnterPortfolio portfolio, 
-                                                                @RequestParam("portfolioFiles") List<MultipartFile> portfolioFiles, 
+    public ResponseEntity<Map<String, Object>> addPortfolioAjax(@ModelAttribute EnterPortfolio portfolio,
                                                                 @RequestParam(value="categoryCodes", required=false) List<String> categoryCodes, 
                                                                 @RequestParam(value="tags", required=false) String tags) {
         portfolio.setAdmCd("ADM_C001");
         try {
-            portfolioService.addPortfolio(portfolio, portfolioFiles, categoryCodes, tags);
+            portfolioService.addPortfolio(portfolio, categoryCodes, tags);
             return ResponseEntity.ok(Map.of("success", true, "message", "등록되었습니다.", "redirectUrl", "/enter/portfolio/list"));
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,14 +80,13 @@ public class EnterPortfolioController {
     }
 
     @PostMapping("/edit")
-    public String editPortfolio(@ModelAttribute EnterPortfolio portfolio, 
-                                @RequestParam("portfolioFiles") List<MultipartFile> portfolioFiles, 
+    public String editPortfolio(@ModelAttribute EnterPortfolio portfolio,
                                 @RequestParam(value="categoryCodes", required=false) List<String> categoryCodes, 
                                 @RequestParam(value="tags", required=false) String tags, 
                                 RedirectAttributes redirectAttributes) {
         try {
             portfolio.setAdmCd("ADM_C001"); // 수정자 정보
-            portfolioService.updatePortfolio(portfolio, portfolioFiles, categoryCodes, tags);
+            portfolioService.updatePortfolio(portfolio, categoryCodes, tags);
             redirectAttributes.addFlashAttribute("successMessage", "수정되었습니다.");
         } catch (IOException e) {
             e.printStackTrace();

@@ -47,26 +47,7 @@
     WHERE cl.cntd_cd = #{prtfCd}
 </select>
 
-<select id="findFilesByPrtfCd" resultType="outpolic.enter.portfolio.domain.FileMetaData">
-    SELECT
-        f.file_cd         as fileIdx,
-        f.file_reg_ymdt   as fileRegYmdt,
-        f.file_mdfcn_ymdt as fileMdfcnYmdt,
-        f.file_extn       as fileExtn,
-        f.file_orgnl_nm   as fileOriginalName,
-        f.file_srvr_nm    as fileNewName,
-        f.file_path       as filePath,
-        f.cl_cd           as clCd,
-        f.mbr_cd          as mbrCd
-    FROM 
-        file f
-    JOIN 
-        content_list cl ON f.cl_cd = cl.cl_cd
-    WHERE 
-        cl.cntd_cd = #{prtfCd}
-    ORDER BY
-        f.file_reg_ymdt ASC
-</select>
+
 <select id="findClCdByPrtfCd" resultType="String">
     SELECT cl_cd FROM content_list WHERE cntd_cd = #{prtfCd} LIMIT 1
 </select>
@@ -92,10 +73,7 @@
     <delete id="deleteContentListByClCd"> DELETE FROM content_list WHERE cl_cd = #{clCd} </delete>
     <delete id="deleteCategoryMappingByClCd"> DELETE FROM category_mapping WHERE cl_cd = #{clCd} </delete>
     <delete id="deleteTagMappingByClCd"> DELETE FROM tag_mapping WHERE cl_cd = #{clCd} </delete>
-	 <delete id="deleteFileByClCd" parameterType="String">
-        DELETE FROM file
-         WHERE cl_cd = #{clCd}
-    </delete>
+
   <delete id="deleteBookmarkByClCd" parameterType="String">
         DELETE FROM bookmark
          WHERE cl_cd = #{clCd}
