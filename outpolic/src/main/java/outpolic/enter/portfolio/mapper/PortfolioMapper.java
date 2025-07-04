@@ -9,8 +9,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import outpolic.enter.portfolio.domain.CategorySearchDto;
-import outpolic.enter.portfolio.domain.EnterPortfolio;
+
 
 @Mapper
 public interface PortfolioMapper {

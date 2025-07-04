@@ -53,7 +53,7 @@
 		    (#{tagCd}, #{clCd}, NOW(), #{mbrCd}, 'SD_ACTIVE')
 	</insert>
 
-	<select id="findFilesByOsCd" resultType="outpolic.enter.POAddtional.domain.FileMetaData">
+	<select id="findFilesByOsCd" resultType="outpolic.systems.file.domain.FileMetaData">
 	SELECT
         f.file_cd         as fileIdx,
         f.file_reg_ymdt   as fileRegYmdt,
