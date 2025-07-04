@@ -15,7 +15,7 @@ public class SettlementDTO {
 	private int stlmCnt;
 	private String stlmPayType;
 	private BigDecimal stlmAmt;
-    private BigDecimal stlmUsedPoints;
+    private Integer stlmUsedPoints;
     private BigDecimal stlmFinalAmt;
     private String stlmPaymentInfo;
     private String stlmCardNm;

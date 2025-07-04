@@ -29,33 +29,48 @@ import outpolic.user.payment.mapper.UserPaymentMapper;
 public class UserPaymentController {
 
 	// 결제 카드사 매핑
-	private String getCardAcquirerName(String acquirerCode) {
-	    return switch (acquirerCode) {
-	        case "11" -> "국민카드";
-	        case "12" -> "하나카드";
-	        case "13" -> "외환카드";
-	        case "14" -> "삼성카드";
-	        case "15" -> "신한카드";
-	        case "16" -> "롯데카드";
-	        case "17" -> "현대카드";
-	        case "18" -> "BC카드";
-	        case "19" -> "NH농협카드";
-	        case "21" -> "우리카드";
-	        case "22" -> "카카오뱅크카드";
-	        default -> "기타카드";
-	    };
-	}
+		private String getCardAcquirerName(String acquirerCode) {
+		    return switch (acquirerCode) {
+		        case "3K" -> "기업비씨";
+		        case "46" -> "광주";
+		        case "71" -> "롯데";
+		        case "30" -> "산업";
+		        case "51" -> "삼성";
+		        case "38" -> "새마을";
+		        case "41" -> "신한";
+		        case "62" -> "신협";
+		        case "36" -> "씨티";
+		        case "33" -> "우리";
+		        case "W1" -> "우리";
+		        case "37" -> "우체국";
+		        case "39" -> "저축";
+		        case "35" -> "전북";
+		        case "42" -> "제주";
+		        case "15" -> "카카오뱅크";
+		        case "3A" -> "케이뱅크";
+		        case "24" -> "토스뱅크";
+		        case "21" -> "하나";
+		        case "61" -> "현대";
+		        case "11" -> "국민";
+		        case "91" -> "농협";
+		        case "34" -> "수협";
+		        default -> "기타카드";
+		    };
+		}
 	
     @Autowired
     private UserPaymentMapper userPaymentmapper;
 
     @GetMapping("/paymentSuccess")
-    public String paymentSuccessPage(String orderId, String paymentKey, String amount, HttpSession session) {
+    public String paymentSuccessPage(String orderId, String paymentKey, String amount, HttpSession session, String grdCd, Integer usedMileage) {
         log.info("결제 성공 콜백 수신");
         log.info("orderId: {}", orderId);
         log.info("paymentKey: {}", paymentKey);
         log.info("amount: {}", amount);
+        log.info("grdCd: {}", grdCd);
+        log.info("usedMileage: {}", usedMileage);
 
+        
         try {
             // 1. TossPayments API에 결제 승인 요청
             HttpRequest request = HttpRequest.newBuilder()
@@ -80,14 +95,14 @@ public class UserPaymentController {
             
             // 3. SettlementDTO 생성 및 매핑
             SettlementDTO settlement = new SettlementDTO();
-            settlement.setStlmCd("STLM_C1"); // 결제코드 생성
+            settlement.setStlmCd("STLM_C2"); // 결제코드 생성
             settlement.setMbrCd("MB_C0000035"); // 세션 또는 로그인 정보에서 가져오는게 좋음
-            settlement.setGdsCd("PD_C002"); // 프론트에서 상품 선택 정보를 받아오는게 바람직함
+            settlement.setGdsCd(grdCd); // 프론트에서 상품 선택 정보를 받아오는게 바람직함
             settlement.setStcCd("SD_SUCCESS"); // 상태코드 테이블에 정의된 값
             settlement.setStlmCnt(1); // 예시: 1개 구매
             settlement.setStlmPayType("카드"); // 또는 userPayment.getCard().getCardType()
             settlement.setStlmAmt(new BigDecimal(amount)); // 원래 금액
-            settlement.setStlmUsedPoints(BigDecimal.ZERO); // 마일리지 사용 안함
+            settlement.setStlmUsedPoints(usedMileage); // 마일리지 사용 안함
             settlement.setStlmFinalAmt(new BigDecimal(amount)); // 최종 금액
             CardDTO card = userPayment.getCard();
             EasyPayDTO easy = userPayment.getEasyPay();
@@ -113,9 +128,11 @@ public class UserPaymentController {
         } catch (IOException | InterruptedException e) {
             log.error("결제 승인 처리 중 오류", e);
         }
-
+        
+        
+        
         // 알림창 표시용 (리다이렉트 후 알림 띄우는 처리 가능)
-        return "user/goods/paymentSuccess"; // 나중에 JS alert 띄우는 방식으로 바꿀 수 있음
+        return "redirect:/userGoodsList"; // 나중에 JS alert 띄우는 방식으로 바꿀 수 있음
     }
 
     @GetMapping("/paymentFail")
