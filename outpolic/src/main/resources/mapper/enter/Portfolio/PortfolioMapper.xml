@@ -68,6 +68,11 @@
 <select id="findTagCdByName" resultType="String">
     SELECT tag_cd FROM tag WHERE tag_nm = #{tagName}
 </select>
+<select id="countPortfoliosByEntCd" resultType="int">
+    SELECT COUNT(*) 
+    FROM portfolio 
+    WHERE ent_cd = #{entCd}
+</select>
 	
     <delete id="deletePortfolioByPrtfCd"> DELETE FROM portfolio WHERE prtf_cd = #{prtfCd} </delete>
     <delete id="deleteContentListByClCd"> DELETE FROM content_list WHERE cl_cd = #{clCd} </delete>
