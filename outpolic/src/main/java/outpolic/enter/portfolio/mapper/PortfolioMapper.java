@@ -1,11 +1,12 @@
 package outpolic.enter.portfolio.mapper;
 
-import outpolic.enter.portfolio.domain.EnterPortfolio;
-import outpolic.enter.portfolio.domain.CategorySearchDto;
-import outpolic.enter.portfolio.domain.FileMetaData; // FileMetaData 임포트
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import java.util.List;
+
+import outpolic.enter.portfolio.domain.CategorySearchDto;
+import outpolic.enter.portfolio.domain.EnterPortfolio;
 
 @Mapper
 public interface PortfolioMapper {
@@ -29,7 +30,6 @@ public interface PortfolioMapper {
     // SELECT (for ResultMap Collections)
     List<CategorySearchDto> findCategoriesByPrtfCd(String prtfCd);
     List<String> findTagNamesByPrtfCd(String prtfCd);
-    List<FileMetaData> findFilesByPrtfCd(String prtfCd);
     
     // DELETE
     int deletePortfolioByPrtfCd(String prtfCd);

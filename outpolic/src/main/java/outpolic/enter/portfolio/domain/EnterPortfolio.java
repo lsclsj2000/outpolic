@@ -12,5 +12,4 @@ public class EnterPortfolio {
     
     private List<CategorySearchDto> categories;
     private List<String> tagNames;
-    private List<FileMetaData> files;
 }
