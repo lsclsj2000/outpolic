@@ -1,19 +1,5 @@
 package outpolic.enter.portfolio.service.impl;
 
-import outpolic.enter.POAddtional.domain.FileMetaData;
-import outpolic.enter.POAddtional.service.FileService;
-import outpolic.enter.portfolio.domain.EnterPortfolio;
-
-import outpolic.enter.portfolio.mapper.PortfolioMapper;
-import outpolic.enter.portfolio.service.EnterPortfolioService;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -81,7 +67,7 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     public void deletePortfolio(String prtfCd) {
         String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
         if (clCd != null) {
-            portfolioMapper.deleteFileByClCd(clCd);
+          
             portfolioMapper.deleteCategoryMappingByClCd(clCd);
             portfolioMapper.deleteTagMappingByClCd(clCd);
             portfolioMapper.deleteContentListByClCd(clCd);
@@ -109,6 +95,6 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
                 portfolioMapper.insertTagMapping(tagCd, clCd, mbrCd);
             }
         }
+    
     }
 }
-*/
