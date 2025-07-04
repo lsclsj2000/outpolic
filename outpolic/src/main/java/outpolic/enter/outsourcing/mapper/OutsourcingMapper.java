@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-
+import outpolic.enter.POAddtional.domain.CategorySearchDto;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 
 
@@ -27,14 +27,14 @@ public interface OutsourcingMapper {
 	// SELECT (Helper)
 	String findLastOsCd();
 	String findLatestTagCd();
-	String TagCdByName(String tagName);
-	/*
+	String findTagCdByName(String tagName);
+	String findClCdByPrtfCd(String osCd);
+
 	
 	// SELECT (for ResultMap Collections)
 	List<CategorySearchDto> findCategoriesByOsCd(String osCd);
 	List<String> findTagNamesByOsCd(String osCd);
-	List<FileMetaData> findFilesByOscd(String osCd);
-	*/
+	
 	// DELETE
 	int deleteOutsourcingByOsCd(String osCd);
 	int deleteContentListByClCd(String clCd);

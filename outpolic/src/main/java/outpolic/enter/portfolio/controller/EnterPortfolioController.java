@@ -1,8 +1,8 @@
 package outpolic.enter.portfolio.controller;
 
-import outpolic.enter.portfolio.domain.CategorySearchDto;
+import outpolic.enter.POAddtional.domain.CategorySearchDto;
+import outpolic.enter.POAddtional.service.CategorySearchService;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
-import outpolic.enter.portfolio.service.CategorySearchService;
 import outpolic.enter.portfolio.service.EnterPortfolioService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
