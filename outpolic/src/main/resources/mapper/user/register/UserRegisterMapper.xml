@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="outpolic.user.register.mapper.UserRegisterMapper">
-	<resultMap type="UserInfoDTO" id="UserRegisterResultMap">
+	<resultMap type="UserRegisterDTO" id="UserRegisterResultMap">
 		<id column="mbr_cd" property="memberCode"/>
 		<result column="mbr_id" property="memberId"/>
 		<result column="mbr_pw" property="memberPw"/>	

@@ -23,7 +23,7 @@
 										    <div class="form-group">
 										        <label for="userid">아이디</label>
 										        <input type="text" id="memberId" name="memberId" placeholder="아이디 (6~12자 영문/숫자)" required />
-										        <button type="button" class="btn-check-duplicate text-white">중복확인</button>
+										        <span id="memberIdMsg" class="text-danger small"></span>
 										    </div>
 										    <div class="form-group">
 										        <label for="userpw">비밀번호</label>
@@ -42,7 +42,7 @@
 										    <div class="form-group">
 										        <label for="memberNickName">닉네임</label>
 										        <input type="text" id="memberNickName" name="memberNickName" placeholder="닉네임"/>
-										        <button type="button" class="btn-check-duplicate text-white">중복확인</button>
+										        <small id="memberNickNmMsg" class="text-danger"></small>
 										    </div>
 										
 										    <div class="form-group">
@@ -103,9 +103,16 @@
 											<div class="row mb-3">
 											  <div class="offset-sm-3 col-sm-9">
 											    <div class="form-check">
-											      <input class="form-check-input" type="checkbox" id="agree" required>
+											      <input class="form-check-input" type="checkbox" id="agree" required/>
 											      <label class="form-check-label" for="agree">
 											        이용약관 및 개인정보처리방침에 동의합니다.
+											        <a href="/privacy-policy" class="ms-2 text-muted small">자세히 보기</a>
+											      </label>
+											    </div>
+											    <div class="form-check">
+											      <input class="form-check-input" type="checkbox" id="memberAgreeYN"/>
+											      <label class="form-check-label" for="agree">
+											       	정보성 sms 수신에 동의합니다. (선택)
 											        <a href="/privacy-policy" class="ms-2 text-muted small">자세히 보기</a>
 											      </label>
 											    </div>
@@ -134,8 +141,7 @@
 	<th:block layout:fragment="jsScript">
 	    <!-- JS 라이브러리 -->
 	    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	    <script src="/user/assets/js/userServiceAjax.js"></script>
-		<script src="/user/assets/js/userService.js"></script>
+		<script src="/user/assets/js/userRegister.js"></script>
 		<script src="/user/assets/js/validate.js"></script>
 	</th:block>
 	
