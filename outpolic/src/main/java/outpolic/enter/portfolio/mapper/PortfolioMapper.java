@@ -1,5 +1,9 @@
 package outpolic.enter.portfolio.mapper;
 
+
+import outpolic.enter.POAddtional.domain.CategorySearchDto;
+import outpolic.enter.portfolio.domain.EnterPortfolio;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -36,7 +40,7 @@ public interface PortfolioMapper {
     int deleteContentListByClCd(String clCd);
     int deleteCategoryMappingByClCd(String clCd);
     int deleteTagMappingByClCd(String clCd);
-    int deleteFileByClCd(String clCd);
+    
 
     // UPDATE
     int updatePortfolio(EnterPortfolio portfolio);

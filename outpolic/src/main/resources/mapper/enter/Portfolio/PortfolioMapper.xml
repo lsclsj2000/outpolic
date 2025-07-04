@@ -7,7 +7,7 @@
         <result property="entCd" column="ent_cd"/>
         <result property="prtfTtl" column="prtf_ttl"/>
         <result property="prtfCn" column="prtf_cn"/>
-        <collection property="categories" javaType="java.util.List" ofType="outpolic.enter.portfolio.domain.CategorySearchDto" column="prtf_cd" select="findCategoriesByPrtfCd" />
+        <collection property="categories" javaType="java.util.List" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto" column="prtf_cd" select="findCategoriesByPrtfCd" />
         <collection property="tagNames" javaType="java.util.List" ofType="java.lang.String" column="prtf_cd" select="findTagNamesByPrtfCd" />
     </resultMap>
     
@@ -28,7 +28,7 @@
     WHERE prtf_cd = #{prtfCd}
 </select>
 
-<select id="findCategoriesByPrtfCd" resultType="outpolic.enter.portfolio.domain.CategorySearchDto">
+<select id="findCategoriesByPrtfCd" resultType="outpolic.enter.POAddtional.domain.CategorySearchDto">
     SELECT 
         c.ctgry_id as ctgryId, 
         c.ctgry_nm as ctgryNm 

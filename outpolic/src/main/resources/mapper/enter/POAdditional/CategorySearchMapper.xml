@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="outpolic.enter.portfolio.mapper.CategorySearchMapper">
-    <select id="searchByName" resultType="outpolic.enter.portfolio.domain.CategorySearchDto">
+<mapper namespace="outpolic.enter.POAddtional.mapper.CategorySearchMapper">
+    <select id="searchByName" resultType="outpolic.enter.POAddtional.domain.CategorySearchDto">
         SELECT ctgry_id as ctgryId, ctgry_nm as ctgryNm
         FROM category
         WHERE ctgry_nm LIKE CONCAT('%', #{query}, '%')

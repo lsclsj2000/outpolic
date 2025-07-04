@@ -1,6 +1,8 @@
 package outpolic.enter.portfolio.domain;
 
 import lombok.Data;
+import outpolic.enter.POAddtional.domain.CategorySearchDto;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,4 +14,5 @@ public class EnterPortfolio {
     
     private List<CategorySearchDto> categories;
     private List<String> tagNames;
+
 }

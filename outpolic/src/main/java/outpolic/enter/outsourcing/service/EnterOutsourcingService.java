@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 
 public interface EnterOutsourcingService {
+	
 	List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd);
 	void addOutsourcing(EnterOutsourcing outsourcing, List<MultipartFile> outsourcingFiles,
 			List<String> categoryCodes, String tags) throws IOException;

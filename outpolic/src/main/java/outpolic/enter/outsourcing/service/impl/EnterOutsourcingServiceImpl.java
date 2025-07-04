@@ -9,17 +9,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.outsourcing.mapper.OutsourcingMapper;
 import outpolic.enter.outsourcing.service.EnterOutsourcingService;
 
-/*
+
+
 @Service
 @RequiredArgsConstructor
 public class EnterOutsourcingServiceImpl implements EnterOutsourcingService{
 	private final OutsourcingMapper outsourcingMapper;
-	private final FileService fileService;
-	
+
+	/*
 	private void setThumbnailFromFiles(EnterOutsourcing o) {
 		if(o == null) return ;
 		List<FileMetaData> files = o.getFiles();
@@ -28,7 +30,7 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService{
 			o.setOsThumbnailUrl("/file/display"+relativePath);
 		}
 	}
-	
+	*/
 	@Override
 	public List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd){
 		List<EnterOutsourcing> outsourcingList = outsourcingMapper.findOutsourcingDetailsByEntCd(entCd);
@@ -48,17 +50,38 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService{
 			
 			String newClCd = "LIST_" + newOsCd;
 			outsourcingMapper.insertContentList(newClCd,newOsCd);
-			
+	}
+
+	@Override
+	public void deleteOutsourcing(String osCd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public EnterOutsourcing getOutsourcingByOscd(String osCd) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateOutsourcing(EnterOutsourcing outsourcing, List<MultipartFile> outsourcingFiles,
+			List<String> categoryCodes, String tags) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}}
+			/*
 			if(outsourcingFiles != null && !outsourcingFiles.isEmpty()) {
 				fileService.addFiles(outsourcingFiles.toArray(new MultipartFile[0]),"outsourcing",newClCd,outsourcing.getMbrCd());
 			}
 			updateMappings(newClCd,outsourcing.getMbrCd(),categoryCodes,tags);
-			
+			*/
 			
 		
 	
 	
-	}
+	
+	/*
 	@Override
 	@Transactional
 	public void updateOutsourcing(EnterOutsourcing outsourcing, List<MultipartFile> outsourcingFiles,List<String> categoryCodes,String tags)
@@ -81,9 +104,31 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService{
 		outsourcingMapper.deleteTagMappingByClCd(clCd);
 		updateMappings(clCd, outsourcing.getMbrCd(), categoryCodes, tags);
 	}
-}
-	
-	
+	 private void updateMappings(String clCd, String mbrCd, List<String> categoryCodes, String tags) {
+	        if (categoryCodes != null) {
+	            for (String ctgryCd : categoryCodes) {
+	                if(ctgryCd != null && !ctgryCd.trim().isEmpty()) outsourcingMapper.insertCategoryMapping(ctgryCd, clCd, mbrCd);
+	            }
+	        }
+	        if (tags != null && !tags.trim().isEmpty()) {
+	            for (String tagName : tags.split(",")) {
+	                String trimmedTagName = tagName.trim();
+	                if (trimmedTagName.isEmpty()) continue;
+	                String tagCd = outsourcingMapper.findTagCdByName(trimmedTagName);
+	                if (tagCd == null) {
+	                    String latestTagCd = outsourcingMapper.findLatestTagCd();
+	                    int nextNum = (latestTagCd == null) ? 1 : Integer.parseInt(latestTagCd.substring(4)) + 1;
+	                    tagCd = String.format("T_C%05d", nextNum);
+	                    outsourcingMapper.insertTag(tagCd, trimmedTagName, mbrCd);
+	                }
+	                outsourcingMapper.insertTagMapping(tagCd, clCd, mbrCd);
+	            }
+	        }
+	    }
+	}
 */
+	
+	
+
 	
 

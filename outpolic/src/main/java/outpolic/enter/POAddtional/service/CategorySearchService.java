@@ -1,8 +1,9 @@
-package outpolic.enter.outsourcing.service;
-/*
-import outpolic.enter.outsourcing.domain.CategorySearchDto;
+package outpolic.enter.POAddtional.service;
+
 import java.util.List;
+
+import outpolic.enter.POAddtional.domain.CategorySearchDto;
+
 public interface CategorySearchService {
     List<CategorySearchDto> searchCategoriesByName(String query);
 }
-*/
