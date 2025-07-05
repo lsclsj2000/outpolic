@@ -35,13 +35,12 @@ public class UserContentsController {
         
         log.info("상세 페이지 요청: ID = {}", contentsId);
 
+
         // 1. 서비스에 contentsId를 넘겨서 상세 정보를 조회합니다.
         ContentsDetailDTO detailData = searchService.getContentsDetailById(contentsId);
 
         // 2. (중요) 조회된 데이터가 없을 경우에 대한 처리
         if (detailData == null) {
-            // 예를 들어, 존재하지 않는 ID로 접근했을 경우
-            // 여기서는 간단히 에러 메시지를 모델에 담아 에러 페이지로 보낼 수 있습니다.
             model.addAttribute("errorMessage", "해당 콘텐츠를 찾을 수 없습니다.");
             return "error/404"; // templates/error/404.html 같은 에러 페이지
         }
@@ -53,7 +52,7 @@ public class UserContentsController {
         return "user/contentsParticular/userContentsParticularView";
     }
 
-    // 최종 경로는 "/user" + "/products" = "/user/products" 가 됩니다.
+
     @GetMapping("/products") 
     public String showContentsBySubCategory(@RequestParam("category") String subCategoryCode, Model model) {
     	

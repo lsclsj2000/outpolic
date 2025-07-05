@@ -3395,41 +3395,21 @@
 		            <div class="slider-arrow slider-arrow-2 flex-right carausel-8-columns-arrow" id="carausel-8-columns-arrows"></div>
 		        </div>
 		        <div class="carausel-8-columns-cover position-relative">
-		            <!-- 
-		                컨트롤러가 전달해준 'mainCategories'가 비어있지 않을 때만 이 슬라이더를 표시합니다.
-		             -->
 		            <div class="carausel-8-columns" id="carausel-8-columns" th:if="${!mainCategories.isEmpty()}">
-		                
-		                <!-- 
-		                    [가장 중요]
-		                    mainCategories 리스트를 반복하면서 각 카테고리('cat')에 대한 카드 div를 생성합니다.
-		                 -->
 		                <div class="card-1" th:each="cat : ${mainCategories}">
 		                    <!-- 필요하다면 특정 조건에 따라 태그를 표시할 수 있습니다. (예: th:if) -->
 		                    <!-- <span class="category-tag quality">품질보장</span> -->
 		                    
 		                    <figure class="img-hover-scale overflow-hidden">
-		                        <!-- 
-		                            링크(href)를 동적으로 생성합니다.
-		                            예: /contents/category/010
-		                         -->
-		                        <a th:href="@{'/contents/category/' + ${cat.categoryId}}">
-		                            <!-- 
-		                                이미지 경로도 동적으로 만들 수 있습니다.
-		                                예: cat-010.png, cat-020.png 와 같이 이미지 파일명을 규칙적으로 만들었다면 아래처럼 사용 가능
-		                                <img th:src="@{'/user/assets/imgs/theme/icons/cat-' + ${cat.categoryId} + '.png'}" th:alt="${cat.categoryName}" />
-		                                
-		                                지금은 일단 정적 이미지 경로를 사용하겠습니다.
-		                             -->
+		                        <a th:href="@{/user/products(category=${cat.categoryId})}">
 		                            <img src="/user/assets/imgs/theme/icons/cat-design.png" th:alt="${cat.categoryName}" />
 		                        </a>
 		                    </figure>
 		                    <h6>
 		                        <!-- 카테고리 이름과 링크를 동적으로 설정합니다. -->
-		                        <a th:href="@{'/contents/category/' + ${cat.categoryId}}" th:text="${cat.categoryName}">디자인</a>
+		                        <a th:href="@{/user/products(category=${cat.categoryId})}" th:text="${cat.categoryName}">디자인</a>
 		                    </h6>
 		                </div>
-		
 		            </div>
 		        </div>
 		    </div>
