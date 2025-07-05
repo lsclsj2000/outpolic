@@ -12,13 +12,13 @@
     <link rel="stylesheet" href="user/assets/css/main.css?v=5.6" />
 </head>
 <body>
-	<div th:fragment="userProfileFragment">
+	<div th:fragment="enterProfileFragment">
 		<div class="dashboard-menu">
 			<ul class="nav flex-column" role="tablist">
 				<li>
 					<div class="userprofileTitle d-flex flex-column align-items-center mt-10 ">
 						<img class="userProfileImg" th:src="@{/user/assets/imgs/outpolic/cutecat.jpg}" />
-						<h4 class="mt-10 mb-10" th:text="${userInfo.memberNickname}">기본닉네임</h4>
+						<h4 class="mt-10 mb-10" value="자갈강">기본닉네임</h4>
 					</div>
 				</li>
 			</ul>

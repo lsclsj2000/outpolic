@@ -7,17 +7,17 @@ import lombok.Data;
 // 회원의 개인정보에 대한 dto
 @Data
 public class UserInfoDTO {
-	 public String memberId; 
-	 public String memberName;
+	private String memberId; 
+	 private String memberName;
 	 private String memberPw;
-	 public String memberNickName; 
-	 public String memberTelNo; 
-	 public String memberAddress; 
-	 public String memberDAddress; 
-	 public String memberZip;
+	 private String memberNickname; 
+	 private String memberTelNo; 
+	 private String memberAddress; 
+	 private String memberDAddress; 
+	 private String memberZip;
 	 private String memberGender;
-	 public String memberEmail; 
-	 public LocalDate memberBirth;
-	 public LocalDate memberJoinDate;
-	 public LocalDate memberModifyDate;
+	 private String memberEmail; 
+	 private LocalDate memberBirth;
+	 private LocalDate memberJoinDate;
+	 private LocalDate memberModifyDate;
 }    

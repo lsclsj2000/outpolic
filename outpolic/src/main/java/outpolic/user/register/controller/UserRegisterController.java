@@ -3,6 +3,7 @@ package outpolic.user.register.controller;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,10 +32,35 @@ public class UserRegisterController {
     }
     
     @PostMapping("/user/register")    
-    public String userRegister(@ModelAttribute Member member) {
+    public String userRegister(@ModelAttribute Member member, Model model) {
+    	if (userRegisterService.isUserInfoDuple("memberId", member.getMemberId())) {
+            model.addAttribute("errorMsg", "이미 사용 중인 아이디입니다.");
+            return "user/register/userRegisterView";
+        }
+
+        if (userRegisterService.isUserInfoDuple("memberEmail", member.getMemberEmail())) {
+            model.addAttribute("errorMsg", "이미 사용 중인 이메일입니다.");
+            return "user/register/userRegisterView";
+        }
+
+        if (userRegisterService.isUserInfoDuple("memberTelNo", member.getMemberTelNo())) {
+            model.addAttribute("errorMsg", "이미 사용 중인 전화번호입니다.");
+            return "user/register/userRegisterView";
+        }
+
+        if (userRegisterService.isUserInfoDuple("memberNickname", member.getMemberNickname())) {
+            model.addAttribute("errorMsg", "이미 사용 중인 닉네임입니다.");
+            return "user/register/userRegisterView";
+        }
 
         String newMemberCode = userRegisterService.getNextMemberCode();
         member.setMemberCode(newMemberCode);
+        
+        if (member.getMemberNickname() == null || member.getMemberNickname().trim().isEmpty()) {
+            String randomNickname = userRegisterService.getRandomNickname();
+            member.setMemberNickname(randomNickname);
+        }
+        
         userRegisterService.registerMember(member);
         return "redirect:/login"; // 또는 가입 완료 페이지
     }

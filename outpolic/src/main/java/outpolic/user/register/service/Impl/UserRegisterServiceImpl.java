@@ -29,17 +29,22 @@ public class UserRegisterServiceImpl implements UserRegisterService {
 	@Override
 	public boolean isUserInfoDuple(String type, String value) {
 		switch (type) {
-        case "memberNickName":
-            return userRegisterMapper.isNickNameDuplicated(value);
+        case "memberNickname":
+            return userRegisterMapper.isNickNameDuplicated(value) >0;
         case "memberEmail":
-            return userRegisterMapper.isEmailDuplicated(value);
+            return userRegisterMapper.isEmailDuplicated(value) >0;
         case "memberTelNo":
-            return userRegisterMapper.isTelDuplicated(value);
+            return userRegisterMapper.isTelDuplicated(value) >0;
         case "memberId":
-            return userRegisterMapper.isIdDuplicated(value);
+            return userRegisterMapper.isIdDuplicated(value) >0;
         default:
 		return false;
 		}
+	}
+	
+	@Override
+	public String getRandomNickname() {
+	    return userRegisterMapper.getRandomNickname();
 	}
 }
 
