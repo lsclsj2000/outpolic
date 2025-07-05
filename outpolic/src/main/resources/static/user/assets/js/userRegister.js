@@ -257,9 +257,12 @@ $(document).ready(function(){
 	
 	$('#memberNickname').on('blur', function(){
 		const nickNm = $(this).val();
-		if(nickNm===''){
-			$('#memberNickNmMsg').text('').removeClass('text-success text-danger');
-			isNickNmUnique = false;
+		if(nickNm === ''){
+			// 빈 닉네임은 유효함 → 랜덤 닉네임이 자동 생성되므로
+			$('#memberNickNmMsg').text('입력하지 않으면 랜덤 닉네임이 부여됩니다.')
+			                     .removeClass('text-danger')
+			                     .addClass('text-info'); 
+			isNickNmUnique = true; 
 			return;
 		}
 		getUserNickNm(nickNm);
@@ -279,31 +282,64 @@ $(document).ready(function(){
 			$('#userpwcheck').prop('disabled', false);
 		}
 	});
-});
-
-
-const isAgreeChecked = document.getElementById('agree').checked;
-
-// 우편번호 찾기 호출    
-	$('#postcodeBtn').click(function () {
-	    sample4_execDaumPostcode();  
+	
+	// 우편번호 찾기 호출    
+		$('#postcodeBtn').click(function () {
+		    sample4_execDaumPostcode();  
+		});
+	
+	
+	$('#btnSave').on('click', function(e){
+		
+		e.preventDefault();
+		
+		if (!isIdUnique) {
+		    $('#memberIdMsg').text('이미 사용 중인 아이디입니다.').removeClass('text-success').addClass('text-danger');
+		    $('#memberId').focus();
+		    return;
+		}
+	
+		if (!isEmailUnique) {
+		    $('#memberEmailMsg').text('이미 사용 중인 이메일입니다.').removeClass('text-success').addClass('text-danger');
+		    $('#memberEmail').focus();
+		    return;
+		}
+	
+		if (!isTelUnique) {
+		    $('#memberTelNoMsg').text('이미 사용 중인 전화번호입니다.').removeClass('text-success').addClass('text-danger');
+		    $('#memberTelNo').focus();
+		    return;
+		}
+	
+		if (!isNickNmUnique) {
+		    $('#memberNickNmMsg').text('이미 사용 중인 닉네임입니다.').removeClass('text-success').addClass('text-danger');
+		    $('#memberNickname').focus();
+		    return;
+		}
+	
+		if (!pwEqual) {
+		    $('#pwCheckMsg').text('비밀번호가 일치하지 않습니다.').addClass('text-danger');
+		    $('#userpwcheck').focus();
+		    return;
+		}
+	
+		const isAgreeChecked = document.getElementById('agree')?.checked;
+		if (!$('#agree').is(':checked')) {
+		    alert("이용약관 및 개인정보처리방침에 동의하셔야 가입이 가능합니다.");
+		    return;
+		}
+		
+		const gender = document.querySelector('input[name="memberGender"]:checked')?.value;
+	
+	   if (!$('#agree').is(':checked')) {
+	       alert("이용약관 및 개인정보처리방침에 동의하셔야 가입이 가능합니다.");
+	       return;
+	   }
+	   
+	   const memberAgreeYN = $('#memberAgreeYN').is(':checked') ? 1 : 0;
+	       $('#hiddenMemberAgreeYN').val(memberAgreeYN);
+	   
+	   $('form.register').submit();
+	
 	});
-
-
-$('#btnSave').on('click', function(){
-	if (!isIdUnique || !isEmailUnique || !isTelUnique || !isNickNmUnique || !pwEqual) {
-        alert("입력하신 정보를 다시 확인해주세요.");
-        return;
-    }
-	const gender = document.querySelector('input[name="memberGender"]:checked')?.value;
-
-   if (!$('#agree').is(':checked')) {
-       alert("이용약관 및 개인정보처리방침에 동의하셔야 가입이 가능합니다.");
-       return;
-   }
-   
-   const memberAgreeYN = $('#memberAgreeYN').is(':checked') ? 1 : 0;
-       $('#hiddenMemberAgreeYN').val(memberAgreeYN);
-   
-   $('form.register').submit();
 });
