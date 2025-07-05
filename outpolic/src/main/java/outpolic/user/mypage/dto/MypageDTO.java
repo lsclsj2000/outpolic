@@ -11,7 +11,7 @@ public class MypageDTO {
 	// 마이페이지의 메인 화면에 노출시킬 몇몇 개인정보
 	private String memberId;
     private String memberName;
-    private String memberNickName;
+    private String memberNickname;
     private String memberTelNo;
     private String memberJoinYmdt;
 

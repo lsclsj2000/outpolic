@@ -39,21 +39,32 @@ public class CategoryServiceImpl implements CategoryService{
 
         // 2. 이 로직은 DTO를 반환하며, 계층 구조를 만드는 가장 효율적인 방법입니다.
         return level2Categories.stream()
-                .map(level2 -> {
-                    CategoryGroup groupDto = new CategoryGroup();
-                    groupDto.setId(level2.getCategoryId());
-                    groupDto.setName(level2.getCategoryName());
+        	    .map(level2 -> {
+        	        CategoryGroup groupDto = new CategoryGroup();
+        	        groupDto.setId(level2.getCategoryId());
+        	        groupDto.setName(level2.getCategoryName());
 
-                    List<Category> level3Categories = childrenMap.getOrDefault(level2.getCategoryId(), new ArrayList<>());
-                    
-                    List<SubCategory> subCategory = level3Categories.stream()
-                            .map(level3 -> new SubCategory(level3.getCategoryId(), level3.getCategoryName()))
-                            .collect(Collectors.toList());
+        	        List<SubCategory> finalSubCategories = new ArrayList<>();
 
-                    groupDto.setSubCategorys(subCategory);
-                    return groupDto;
-                })
-                .collect(Collectors.toList());
+        	        // ★ 수정 포인트 1: "전체 보기" 링크를 만들 때, URL을 보내지 않습니다.
+        	        // new SubCategory(id, name) 생성자만 호출합니다.
+        	        finalSubCategories.add(new SubCategory(level2.getCategoryId(), level2.getCategoryName() + " 전체"));
+
+        	        List<Category> level3Categories = childrenMap.getOrDefault(level2.getCategoryId(), new ArrayList<>());
+        	        
+        	        List<SubCategory> actualSubCategories = level3Categories.stream()
+        	                .map(level3 -> {
+        	                    // ★ 수정 포인트 2: 소분류 링크를 만들 때도 URL을 보내지 않습니다.
+        	                    // SubCategory가 알아서 URL을 생성할 겁니다.
+        	                    return new SubCategory(level3.getCategoryId(), level3.getCategoryName());
+        	                })
+        	                .collect(Collectors.toList());
+
+        	        finalSubCategories.addAll(actualSubCategories);
+        	        groupDto.setSubCategorys(finalSubCategories);
+        	        return groupDto;
+        	    })
+        	    .collect(Collectors.toList());
     }
 
     @Override
@@ -65,6 +76,13 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public List<Category> getMainCategoryList() {
         return categoryMapper.findMainCategories();
+    }
+    
+    @Override
+    public Category getCategoryByCode(String categoryCode) {
+        // 컨트롤러에서 받은 categoryCode를 매퍼의 findById 메소드에 전달하여 DB에서 데이터를 가져옵니다.
+        // 1단계에서 확인한 매퍼의 "findById"를 그대로 호출합니다.
+        return categoryMapper.findById(categoryCode);
     }
 
 	

@@ -13035,34 +13035,35 @@ p.mb-30-ssy{
         .category-item { margin-bottom: 10px; }
         .form-actions { text-align: right; margin-top: 30px; }
         
-      /* 외주 등록 */
+ /*      외주 등록
       
-          /* Custom styles to integrate with Tailwind and enhance existing elements */
+          Custom styles to integrate with Tailwind and enhance existing elements
+      
         body {
-            font-family: "Inter", sans-serif; /* Ensuring Inter font is used */
+            font-family: "Inter", sans-serif; /* Ensuring Inter font is used
 
         }
         .main-container {
-            max-width: 960px; /* Slightly narrower for focused form */
+            max-width: 960px; Slightly narrower for focused form
             margin: 0 auto;
             padding: 30px 20px;
         }
         .section-title {
-            font-size: 2.25rem; /* text-4xl */
+            font-size: 2.25rem; text-4xl
             font-weight: 700;
-            color: #1f2937; /* gray-900 */
-            margin-bottom: 2.5rem; /* More space */
+            color: #1f2937; gray-900
+            margin-bottom: 2.5rem; More space
             text-align: center;
-            border-left: 5px solid #3BB77E; /* Nest theme accent color */
+            border-left: 5px solid #3BB77E; Nest theme accent color
             padding-left: 1rem;
-            display: inline-block; /* For centering */
+            display: inline-block; For centering
         }
         .card {
             background-color: white;
-            border-radius: 1rem; /* Rounded corners */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Deep shadow */
-            padding: 2.5rem; /* Ample padding */
-            border: 1px solid #e5e7eb; /* Subtle border */
+            border-radius: 1rem; Rounded corners
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); Deep shadow
+            padding: 2.5rem; Ample padding
+            border: 1px solid #e5e7eb; Subtle border
         }
         .form-group {
             margin-bottom: 25px;
@@ -13071,61 +13072,61 @@ p.mb-30-ssy{
             display: block;
             font-weight: 600;
             margin-bottom: 10px;
-            color: #253D4E; /* Darker text for labels */
+            color: #253D4E; Darker text for labels
             font-size: 1.05rem;
         }
         .form-control {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #d1d5db; /* Tailwind gray-300 */
+            border: 1px solid #d1d5db; Tailwind gray-300
             border-radius: 8px;
             font-size: 1rem;
-            color: #4b5563; /* Tailwind gray-700 */
+            color: #4b5563; Tailwind gray-700
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
         .form-control:focus {
             outline: none;
-            border-color: #3BB77E; /* Nest brand color */
+            border-color: #3BB77E; Nest brand color
             box-shadow: 0 0 0 3px rgba(59, 183, 126, 0.2);
         }
         textarea.form-control {
-            min-height: 180px; /* Larger textarea for content */
+            min-height: 180px; Larger textarea for content
             resize: vertical;
         }
         .form-instruction {
             font-size: 0.875rem;
-            color: #718096; /* Tailwind gray-500 */
+            color: #718096; Tailwind gray-500
             margin-top: 8px;
             line-height: 1.5;
         }
         .required-star {
-            color: #ef4444; /* Red for required fields */
+            color: #ef4444; Red for required fields
             font-weight: 700;
             margin-left: 4px;
         }
         .optional-tag {
-            color: #4f46e5; /* Indigo for optional fields */
+            color: #4f46e5; Indigo for optional fields
             font-weight: 500;
             margin-left: 8px;
             font-size: 0.875rem;
         }
 
-        /* Image/File Upload and Preview */
+        Image/File Upload and Preview
         .image-preview-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem; /* gap-3 */
-            margin-top: 0.75rem; /* mt-3 */
+            gap: 0.75rem; gap-3
+            margin-top: 0.75rem; mt-3
         }
         .image-preview-container > div {
             position: relative;
-            width: 96px; /* w-24 */
-            height: 96px; /* h-24 */
+            width: 96px; w-24
+            height: 96px; h-24
             overflow: hidden;
-            border-radius: 0.5rem; /* rounded-lg */
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* shadow-sm */
+            border-radius: 0.5rem; rounded-lg
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); shadow-sm
             border: 1px solid #e5e7eb;
-            background-color: #f3f4f6; /* Light background for empty state */
+            background-color: #f3f4f6; Light background for empty state
         }
         .image-preview-container img {
             width: 100%;
@@ -13152,9 +13153,9 @@ p.mb-30-ssy{
             opacity: 1;
         }
 
-        /* Submit Button */
+        Submit Button
         .btn-submit {
-            background-color: #3BB77E; /* Nest brand green */
+            background-color: #3BB77E; Nest brand green
             color: white;
             padding: 15px 30px;
             border: none;
@@ -13164,11 +13165,11 @@ p.mb-30-ssy{
             cursor: pointer;
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
             box-shadow: 0 4px 10px rgba(59, 183, 126, 0.3);
-            width: 100%; /* Full width button */
+            width: 100%; Full width button
             margin-top: 30px;
         }
         .btn-submit:hover {
-            background-color: #29A56C; /* Darker green on hover */
+            background-color: #29A56C; Darker green on hover
             transform: translateY(-2px);
         }
         .btn-submit:active {
@@ -13187,39 +13188,39 @@ p.mb-30-ssy{
             min-width: 250px;
         }
 
-        /* Dynamic Category Selection Styles */
+        Dynamic Category Selection Styles
         .category-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 10px; /* Space between dynamic category rows */
+            margin-bottom: 10px; Space between dynamic category rows
         }
         .category-item select {
             flex-grow: 1;
         }
         .btn-remove-category {
-            background-color: white; /* Changed to white background */
-            color: #4a5568; /* Tailwind gray-700 for the minus icon */
-            border: 1px solid #cbd5e0; /* Tailwind gray-300 for the border */
-            border-radius: 50%; /* Make it round */
-            width: 32px; /* fixed width for icon button */
-            height: 32px; /* fixed height */
+            background-color: white; Changed to white background
+            color: #4a5568; Tailwind gray-700 for the minus icon
+            border: 1px solid #cbd5e0; Tailwind gray-300 for the border
+            border-radius: 50%; Make it round
+            width: 32px; fixed width for icon button
+            height: 32px; fixed height
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem; /* Adjusted for minus sign */
+            font-size: 1.2rem; Adjusted for minus sign
             cursor: pointer;
             transition: all 0.2s ease-in-out;
             flex-shrink: 0;
-            box-shadow: none; /* Removed box shadow for simpler look */
+            box-shadow: none; Removed box shadow for simpler look
         }
         .btn-remove-category:hover {
-            background-color: #f0f4f8; /* Light gray on hover for subtle feedback */
-            border-color: #a0aec0; /* Darker border on hover */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow on hover */
+            background-color: #f0f4f8; Light gray on hover for subtle feedback
+            border-color: #a0aec0; Darker border on hover
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); Subtle shadow on hover
         }
         .btn-add-category {
-            background-color: #6366f1; /* Tailwind indigo-500 for add button */
+            background-color: #6366f1; Tailwind indigo-500 for add button
             color: white;
             padding: 10px 15px;
             border: none;
@@ -13232,13 +13233,13 @@ p.mb-30-ssy{
             align-items: center;
         }
         .btn-add-category:hover {
-            background-color: #4f46e5; /* Tailwind indigo-600 */
+            background-color: #4f46e5; Tailwind indigo-600
         }
         .btn-add-category i {
             margin-right: 8px;
         }
 
-        /* Specific styles for number inputs with currency */
+        Specific styles for number inputs with currency
         .input-with-unit {
             display: flex;
             align-items: center;
@@ -13248,10 +13249,10 @@ p.mb-30-ssy{
             flex-grow: 1;
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
-            padding-right: 0; /* Remove padding from right to make unit snug */
+            padding-right: 0; Remove padding from right to make unit snug
         }
         .input-with-unit span {
-            background-color: #f3f4f6; /* Light gray background for unit */
+            background-color: #f3f4f6; Light gray background for unit
             border: 1px solid #d1d5db;
             border-left: none;
             border-top-right-radius: 8px;
@@ -13268,17 +13269,17 @@ p.mb-30-ssy{
             margin: 0;
         }
         input[type="number"] {
-            -moz-appearance: textfield; /* Firefox */
+            -moz-appearance: textfield; Firefox
         }
 
 
-        /* Responsive adjustments */
+        Responsive adjustments
         @media (max-width: 768px) {
             .main-container {
                 padding: 20px 15px;
             }
             .section-title {
-                font-size: 1.875rem; /* text-3xl */
+                font-size: 1.875rem; text-3xl
                 margin-bottom: 2rem;
                 padding-left: 0.75rem;
             }
@@ -13308,11 +13309,11 @@ p.mb-30-ssy{
                 font-size: 1.05rem;
             }
             .category-item {
-                flex-direction: row; /* Keep row for small screen as well */
+                flex-direction: row; Keep row for small screen as well
                 align-items: center;
             }
             .category-item select {
-                width: calc(100% - 42px); /* Adjust width considering remove button (32px width + 10px gap) */
+                width: calc(100% - 42px); Adjust width considering remove button (32px width + 10px gap)
             }
             .btn-remove-category {
                 width: 32px;
@@ -13320,7 +13321,7 @@ p.mb-30-ssy{
                 font-size: 1rem;
             }
         }   
-        
+        */
        /* 외주 프로젝트 신청 */
                /* Custom styles to integrate with Tailwind and enhance existing elements */
         body {

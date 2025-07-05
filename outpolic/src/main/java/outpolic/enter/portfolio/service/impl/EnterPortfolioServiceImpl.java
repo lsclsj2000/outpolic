@@ -1,52 +1,46 @@
 package outpolic.enter.portfolio.service.impl;
 
-import outpolic.enter.portfolio.domain.EnterPortfolio;
-import outpolic.enter.portfolio.domain.FileMetaData;
-import outpolic.enter.portfolio.mapper.PortfolioMapper;
-import outpolic.enter.portfolio.service.EnterPortfolioService;
-import outpolic.enter.portfolio.service.FileService;
-import outpolic.enter.portfolio.util.FilesUtils;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import outpolic.enter.portfolio.domain.EnterPortfolio;
+import outpolic.enter.portfolio.mapper.PortfolioMapper;
+import outpolic.enter.portfolio.service.EnterPortfolioService;
 
 @Service
 @RequiredArgsConstructor
 public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     
     private final PortfolioMapper portfolioMapper;
-    private final FileService fileService;
+    
+    
 
-    private void setThumbnailFromFiles(EnterPortfolio p) {
-        if (p == null) return;
-        List<FileMetaData> files = p.getFiles();
-        if (files != null && !files.isEmpty()) {
-            String relativePath = files.get(0).getFilePath();
-            p.setPrtfThumbnailUrl("/file/display" + relativePath);
-        }
+    @Override
+    public int countPortfoliosByEntCd(String entCd) {
+    	return portfolioMapper.countPortfoliosByEntCd(entCd);
     }
+    
     
     @Override
     public List<EnterPortfolio> getPortfolioListByEntCd(String entCd) {
         List<EnterPortfolio> portfolioList = portfolioMapper.findPortfolioDetailsByEntCd(entCd);
-        portfolioList.forEach(this::setThumbnailFromFiles);
         return portfolioList;
     }
     
     @Override
     public EnterPortfolio getPortfolioByPrtfCd(String prtfCd) {
         EnterPortfolio portfolio = portfolioMapper.findPortfolioDetailsByPrtfCd(prtfCd);
-        setThumbnailFromFiles(portfolio);
         return portfolio;
     }
 
     @Override
     @Transactional
-    public void addPortfolio(EnterPortfolio portfolio, List<MultipartFile> portfolioFiles, List<String> categoryCodes, String tags) throws IOException {
+    public void addPortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags) throws IOException {
         String latestPrtfCd = portfolioMapper.findLatestPrtfCd();
         int nextNum = (latestPrtfCd == null) ? 1 : Integer.parseInt(latestPrtfCd.substring(4)) + 1;
         String newPrtfCd = String.format("PO_C%05d", nextNum);
@@ -57,52 +51,47 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         String newClCd = "LIST_" + newPrtfCd;
         portfolioMapper.insertContentList(newClCd, newPrtfCd);
         
-        if (portfolioFiles != null && !portfolioFiles.isEmpty()) {
-            fileService.addFiles(portfolioFiles.toArray(new MultipartFile[0]), "portfolio", newClCd, portfolio.getMbrCd());
-        }
         
         updateMappings(newClCd, portfolio.getMbrCd(), categoryCodes, tags);
     }
     
     @Override
     @Transactional
-    public void updatePortfolio(EnterPortfolio portfolio, List<MultipartFile> portfolioFiles, List<String> categoryCodes, String tags) throws IOException {
+    public void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags) throws IOException {
         portfolio.setPrtfMdfcnYmdt(LocalDateTime.now());
         portfolioMapper.updatePortfolio(portfolio);
 
         String clCd = portfolioMapper.findClCdByPrtfCd(portfolio.getPrtfCd());
         
-        // 기존 파일 삭제 및 새 파일 추가 로직 (필요 시 구현)
-        if (portfolioFiles != null && !portfolioFiles.isEmpty() && !portfolioFiles.get(0).isEmpty()) {
-            // 기존 파일 DB 및 실제 파일 삭제
-            List<FileMetaData> oldFiles = portfolioMapper.findFilesByPrtfCd(portfolio.getPrtfCd());
-            oldFiles.forEach(fileService::deleteFile);
-            portfolioMapper.deleteFileByClCd(clCd);
-            
-            // 새 파일 추가
-            fileService.addFiles(portfolioFiles.toArray(new MultipartFile[0]), "portfolio", clCd, portfolio.getMbrCd());
-        }
 
         portfolioMapper.deleteCategoryMappingByClCd(clCd);
         portfolioMapper.deleteTagMappingByClCd(clCd);
         updateMappings(clCd, portfolio.getMbrCd(), categoryCodes, tags);
     }
-
+  
     @Override
     @Transactional
     public void deletePortfolio(String prtfCd) {
         String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
+        // 외래 키 제약 조건 위반을 막기 위해 참조하는 모든 레코드를 먼저 삭제해야 합니다.
         if (clCd != null) {
-            List<FileMetaData> filesToDelete = portfolioMapper.findFilesByPrtfCd(prtfCd);
-            filesToDelete.forEach(fileService::deleteFile);
-            portfolioMapper.deleteFileByClCd(clCd);
+        	// 1. 매핑 테이블 레코드 삭제
             portfolioMapper.deleteCategoryMappingByClCd(clCd);
             portfolioMapper.deleteTagMappingByClCd(clCd);
+            
+            // 2. 다른 주요 테이블에서 이 콘텐츠(cl_cd)를 참조하는 레코드 삭제(예: 북마크 등)
+            // portfolioMapper.deleteBookMarkByCiCd(clCd);
+            
+            // 3. 콘텐츠 리스트 레코드 삭제 
             portfolioMapper.deleteContentListByClCd(clCd);
         }
+        // 4. 이 포트폴리오를 참조하는 외주-포폴 연결 레코드 삭제(순서 중요!)
+       // 아직 추가하지 않음 portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd);
+        
+        // 5. 마지막으로 포트폴리오 자체를 삭제 
         portfolioMapper.deletePortfolioByPrtfCd(prtfCd);
     }
-    
+ 
     private void updateMappings(String clCd, String mbrCd, List<String> categoryCodes, String tags) {
         if (categoryCodes != null) {
             for (String ctgryCd : categoryCodes) {
@@ -123,5 +112,15 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
                 portfolioMapper.insertTagMapping(tagCd, clCd, mbrCd);
             }
         }
+    
+    }
+    
+    @Override
+    public List<EnterPortfolio> searchPortfoliosByTitle(String query){
+    	// PortfolioMapper에 제목으로 포트폴리오를 검색하는 메서드가 필요합니다.
+    	// 예를 들어: portfolioMapper.findPortfoliosByTitle(query);
+    	// 또는 간단하게 findPortfoliioDetailsByEntCd를 응용하거나 새로운 Mapper 메서드 정의.
+    	return portfolioMapper.findPortfoliosByTitle(query);
+    	
     }
 }

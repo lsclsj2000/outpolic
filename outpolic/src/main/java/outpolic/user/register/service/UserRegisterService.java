@@ -15,4 +15,6 @@ public interface UserRegisterService {
 	
 	// 회원가입 처리
 	int registerMember(Member member);
+	
+	String getRandomNickname();
 }

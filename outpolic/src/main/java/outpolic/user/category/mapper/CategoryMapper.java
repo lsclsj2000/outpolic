@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import outpolic.user.category.domain.Category;
+import outpolic.user.search.domain.ContentItemDTO;
 
 @Mapper
 public interface CategoryMapper {
@@ -14,4 +15,6 @@ public interface CategoryMapper {
 	Category findById(String categoryId);
 	
 	List<Category> findMainCategories();
+	
+	List<ContentItemDTO> findContentsByCategoryId(String categoryId);
 }

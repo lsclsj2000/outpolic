@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
 
+import outpolic.user.search.domain.ContentItemDTO;
 import outpolic.user.search.domain.Contents;
 import outpolic.user.search.domain.ContentsDetailDTO;
 
@@ -21,4 +22,6 @@ public interface SearchMapper {
 	
 	// 콘텐츠 상세정보 
 	ContentsDetailDTO getContentsDetailById(String contentsId);
+	
+	List<ContentItemDTO> findContentsByCategoryId(String categoryId);
 }

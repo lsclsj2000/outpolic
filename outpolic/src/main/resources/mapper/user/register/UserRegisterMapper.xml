@@ -3,13 +3,13 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="outpolic.user.register.mapper.UserRegisterMapper">
-	<resultMap type="UserInfoDTO" id="UserRegisterResultMap">
+	<resultMap type="UserRegisterDTO" id="UserRegisterResultMap">
 		<id column="mbr_cd" property="memberCode"/>
 		<result column="mbr_id" property="memberId"/>
 		<result column="mbr_pw" property="memberPw"/>	
 		<result column="grd_cd" property="gradeCode"/>
 		<result column="mbr_nm" property="memberName"/>
-		<result column="mbr_nicknm" property="memberNickName"/>
+		<result column="mbr_nicknm" property="memberNickname"/>
 		<result column="mbr_telno" property="memberTelNo"/>
 		<result column="mbr_addr" property="memberAddress"/>
 		<result column="mbr_daddr" property="memberDAddress"/>
@@ -52,7 +52,7 @@
 			#{memberPw}, 
 			'USER',
 			#{memberName}, 
-			#{memberNickName},
+			#{memberNickname},
 			#{memberTelNo}, 
 			#{memberAddress}, 
 			#{memberDAddress}, 
@@ -65,25 +65,36 @@
 			#{memberAgreeYN});
 	</insert>
 
-	<select id="isNickNameDuplicated" resultType="boolean">
+	<select id="isNickNameDuplicated" resultType="int">
 	    SELECT COUNT(*) > 0
 	    FROM member
-	    WHERE mbr_nicknm = #{memberNickName}
+	    WHERE mbr_nicknm = #{memberNickname}
 	</select>
-	<select id="isEmailDuplicated" resultType="boolean">
+	<select id="isEmailDuplicated" resultType="int">
 	    SELECT COUNT(*) > 0
 	    FROM member
 	    WHERE mbr_eml = #{memberEmail}
 	</select>
-	<select id="isTelDuplicated" resultType="boolean">
+	<select id="isTelDuplicated" resultType="int">
 	    SELECT COUNT(*) > 0
 	    FROM member
 	    WHERE mbr_telno = #{memberTelNo}
 	</select>
-	<select id="isIdDuplicated" resultType="boolean">
+	<select id="isIdDuplicated" resultType="int">
 	    SELECT COUNT(*) > 0
 	    FROM member
 	    WHERE mbr_id = #{memberId}
+	</select>
+	
+	<select id="getRandomNickname" resultType="String">
+    SELECT 
+	        CONCAT(a.na_adjtv, ' ', b.nc_colrs, ' ', c.nka_animals) AS random_nickname
+	    FROM 
+	        (SELECT na_adjtv FROM nickname_adjectives ORDER BY RAND() LIMIT 1) a,
+	        (SELECT nc_colrs FROM nickname_colors ORDER BY RAND() LIMIT 1) b,
+	        (SELECT nka_animals FROM nickname_animals ORDER BY RAND() LIMIT 1) c
+	    WHERE CONCAT(a.na_adjtv, ' ', b.nc_colrs, ' ', c.nka_animals)
+	        NOT IN (SELECT mbr_nicknm FROM member)
 	</select>
 
 </mapper>

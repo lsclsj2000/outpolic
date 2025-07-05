@@ -1,5 +1,7 @@
 package outpolic.user.inquiry.domain;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -9,10 +11,8 @@ public class UserInquiry {
 	private String inquiryTypeName;
 	private String inquiryTitle;
 	private String inquiryCn;
+	private int inquirySecret;
 	private String inquiryRegDate;
-	private String subAttOrgnlName;
-	private String subAttSrvrName;
-	private String subAttPath;
 	private String inquiryProcessCn;
 	private String adminCode;
 	private String inquiryTypeCode;
@@ -28,4 +28,6 @@ public class UserInquiry {
 	private String inquiryProcessAnsCn;
     private String inquiryProcessRegDate;
     private String adminName;
+    
+    private List<UserInquiryFile> userInquiryFiles;
 }
