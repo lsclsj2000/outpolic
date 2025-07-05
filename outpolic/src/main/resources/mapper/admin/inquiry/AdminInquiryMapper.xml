@@ -8,15 +8,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- AdminInquiry.DTO -->
 	<resultMap id="AdminInquiryResultMap" type="outpolic.admin.inquiry.domain.AdminInquiry">
 		<id 	column="iq_cd" 			property="inquiryCode"/>
-		<result column="mbr_nm" 		property="memberName"/>
+		<result column="iq_ttl" 		property="inquiryTitle"/>
+		<result column="iq_cn" 			property="inquiryCn"/>
+		<result column="iq_reg_ymdt" 	property="inquiryRegYmdt"/>
+		<result column="iq_mdfcn_adm_cd" property="inquiryMdfcnAdmCode"/>
+		<result column="iq_mdfcn_ymdt" 	property="inquiryMdfcnYmdt"/>
+		
 		<result column="iqt_cd" 		property="inquiryTypeCode"/>
 		<result column="iqt_nm" 		property="inquiryTypeName"/>
-		<result column="iq_ttl" 		property="inquiryTitle"/>
-		<result column="iq_reg_ymdt" 	property="inquiryRegYmdt"/>
+		
+		<result column="mbr_cd" 		property="memberCode"/>
+		<result column="mbr_nm" 		property="memberName"/>
+		
 		<result column="iqp_cd" 		property="inquiryProcessCode"/>
 		<result column="stc_cd" 		property="statusCode"/>
 		<result column="stc_nm" 		property="statusName"/>
+		<result column="sa_orgnl_nm" 	property="subAttchOrgnlName"/>
 	</resultMap>
+
+	
+	<select id="getAdminInquiryMdfcnList" resultMap="AdminInquiryResultMap">
+		/* 문의 내역 수정 팝업 조회 */
+		select
+			i.mbr_cd as mbr_cd,
+			m.mbr_nm  as mbr_nm,
+			i.iq_cd as iq_cd,
+			i.iq_ttl as iq_ttl,
+			i.iqt_cd as iqt_cd,
+			iqt.iqt_nm as iqt_nm,
+			i.iq_cn as iq_cn,
+			i.iq_reg_ymdt as iq_reg_ymdt,
+			i.iq_mdfcn_adm_cd as iq_mdfcn_adm_cd,
+			i.iq_mdfcn_ymdt as iq_mdfcn_ymdt,
+			ip.iqp_cd as iqp_cd,
+			sc.stc_nm as stc_nm,
+			sa.sa_orgnl_nm as sa_orgnl_nm
+		from
+			inquiry i
+			left join member m on i.mbr_cd = m.mbr_cd
+			left join inquiry_type iqt on i.iqt_cd = iqt.iqt_cd
+			left join inquiry_process ip on i.iq_cd = ip.iq_cd
+			left join status_code sc on ip.stc_cd = sc.stc_cd
+			left join submission_attachment sa on i.iq_cd = sa.sa_refer_cd;
+	</select>
 	
 	<select id="getAdminInquiryList" resultMap="AdminInquiryResultMap">
 		/* 문의 리스트 조회 */
