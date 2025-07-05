@@ -33,9 +33,11 @@ public class AdminInquiryController {
 	public String adminInquiryView(Model model) {
 		// 문의내역 조회 페이지
 		var inquiryList = adminInquiryService.getAdminInquiryList();
+		var adminInquiryMdfcn = adminInquiryService.getAdminInquiryMdfcnList();
 		
 		model.addAttribute("title", "관리자 문의 내역");
 		model.addAttribute("inquiryList", inquiryList);
+		model.addAttribute("adminInquiryMdfcn", adminInquiryMdfcn);
 		
 		return "admin/inquiry/adminInquiryView";
 	}

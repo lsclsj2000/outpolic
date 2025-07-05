@@ -23,6 +23,13 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 	private final AdminInquiryMapper adminInquiryMapper;
 	
 	@Override
+	public List<AdminInquiry> getAdminInquiryMdfcnList() {
+		// 문의 내역 수정 팝업 조회
+		List<AdminInquiry> adminInquiryMdfcn = adminInquiryMapper.getAdminInquiryMdfcnList();
+		return adminInquiryMdfcn;
+	}
+	
+	@Override
 	public List<AdminInquiry> getAdminInquiryList() {
 		// 문의 목록 조회
 		List<AdminInquiry> adminInquiryList = adminInquiryMapper.getAdminInquiryList();
