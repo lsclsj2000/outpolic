@@ -27,4 +27,12 @@ public interface OutsourcingMapper {
     
     int deleteContentListByClCd(String clCd);
     int deleteOutsourcingByOsCd(String osCd);
+    int deleteBookmarkByClCd(String clCd); // 추가
+    int deleteOutsourcingContractDetailsByClCd(String clCd); // 추가
+    int deleteOutsourcingStatusByOcdCd(String ocdCd);
+    int deleteOutsourcingStatusByClCd(String clCd); // <-- 이 줄을 추가합니다.
+    int deleteRankingByClCd(String clCd);
+    int deleteTodayViewByClCd(String clCd); 
+    int deleteTotalViewByClCd(String clCd);
+
 }

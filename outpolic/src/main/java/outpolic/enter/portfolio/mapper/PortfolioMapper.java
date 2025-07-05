@@ -13,6 +13,9 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface PortfolioMapper {
+	
+	List<EnterPortfolio> findPortfoliosByTitle(@Param("query") String query);
+	
     // INSERT
     int insertPortfolio(EnterPortfolio portfolio);
     int insertContentList(@Param("clCd") String clCd, @Param("cntdCd") String cntdCd);
