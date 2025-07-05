@@ -4300,4 +4300,116 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
     display: none;
   }
 }
+
+/* 유사랑 css 추가 시작 */
+/* 모달 오버레이 (뒷 배경을 어둡게 하는 부분) */
+.SR_modal {
+	display: none;
+	position: fixed;
+	z-index: 1000; /* 다른 요소 위에 표시 */
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto; /* 내용이 넘칠 경우 스크롤 */
+	background-color: rgba(0,0,0,0.4); /* 반투명 검정 배경 */
+	justify-content: center; /* 가로 중앙 정렬 */
+	align-items: center; /* 세로 중앙 정렬 */
+	animation: SR_fadeIn 0.3s ease-out; /* 부드러운 등장 효과 */
+}
+
+/* 팝업 컨테이너 */
+.SR_modal-content-wrapper {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	width: 90%;
+	max-width: 800px;
+	position: relative;
+	animation: SR_slideIn 0.3s ease-out; /* 부드러운 슬라이드 인 효과 */
+}
+
+/* 팝업 헤더 */
+.SR_popup-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #eee;
+	padding-bottom: 10px;
+	margin-bottom: 15px;
+}
+
+.SR_popup-header h2 {
+	margin: 0;
+	font-size: 1.5em;
+	color: #333;
+}
+
+.SR_close-button {
+	background: none;
+	border: none;
+	font-size: 1.8em;
+	cursor: pointer;
+	color: #888;
+}
+
+.SR_close-button:hover {
+	color: #333;
+}
+
+/* 폼 그룹 스타일 */
+.SR_form-group {
+	margin-bottom: 15px;
+}
+.SR_form-group label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: bold;
+	color: #555;
+}
+.SR_form-control {
+	width: calc(100% - 16px);
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+textarea.SR_form-control {
+	resize: vertical;
+}
+
+.SR_popup-footer {
+	margin-top: 20px;
+	text-align: right;
+}
+
+.SR_popup-footer button {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	background-color: #007bff;
+	color: white;
+	font-size: 1em;
+	transition: background-color 0.2s ease;
+}
+
+.SR_popup-footer button:hover {
+	background-color: #0056b3;
+}
+
+/* 애니메이션 키프레임 */
+@keyframes SR_fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes SR_slideIn {
+	from { transform: translateY(-50px); opacity: 0; }
+	to { transform: translateY(0); opacity: 1; }
+}
+/* 유사랑 css 추가 끝 */
+
+
 /*# sourceMappingURL=main.css.map */
