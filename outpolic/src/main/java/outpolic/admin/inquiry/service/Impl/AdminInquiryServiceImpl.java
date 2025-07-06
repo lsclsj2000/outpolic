@@ -21,12 +21,12 @@ import outpolic.admin.inquiry.service.AdminInquiryService;
 public class AdminInquiryServiceImpl implements AdminInquiryService {
 	
 	private final AdminInquiryMapper adminInquiryMapper;
-	
+
 	@Override
-	public List<AdminInquiry> getAdminInquiryMdfcnList() {
-		// 문의 내역 수정 팝업 조회
-		List<AdminInquiry> adminInquiryMdfcn = adminInquiryMapper.getAdminInquiryMdfcnList();
-		return adminInquiryMdfcn;
+	public AdminInquiry getAdminInquiryMdfcnList(String inquiryCode) {
+		// 문의 상세 수정 팝업창
+		AdminInquiry admininquiry = adminInquiryMapper.getAdminInquiryMdfcnList(inquiryCode);
+		return admininquiry;
 	}
 	
 	@Override
@@ -35,4 +35,5 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 		List<AdminInquiry> adminInquiryList = adminInquiryMapper.getAdminInquiryList();
 		return adminInquiryList;
 	}
+
 }

@@ -196,24 +196,26 @@
 
 						const inquiryCode = this.dataset.inquiryCode;
 						
-						// TODO: 실제 문의 상세 정보를 서버에서 가져와 팝업 필드에 채우는 AJAX 로직 구현
-						// 예시: fetch('/api/inquiry/' + inquiryCode)
-						// .then(response => response.json())
-						// .then(data => {
-						//     inquiryCodeDisplay.value = data.inquiryCode;
-						//     inquiryTitleEdit.value = data.inquiryTitle;
-						//     inquiryTypeCodeDisplay.value = data.inquiryTypeCode; // 실제 데이터
-						//     inquiryTypeEdit.value = data.inquiryType; // 실제 데이터 (select box의 value에 해당)
-						//     inquiryContentEdit.value = data.inquiryContent;
-						//     inquiryStatusEdit.value = data.status; // 실제 데이터 (select box의 value에 해당)
-						//     SR_writerCode.textContent = data.writerCode;
-						//     SR_writerName.textContent = data.writerName;
-						//     SR_writeDate.textContent = data.writeDate;
-						//     SR_fileList.innerHTML = data.fileListHtml; // HTML 문자열로 파일 목록 직접 삽입
-						//     SR_updaterName.textContent = data.updaterName;
-						//     SR_updateDate.textContent = data.updateDate;
-						// })
-						// .catch(error => console.error('Error fetching inquiry details:', error));
+						fetch('/admin/adminInquiryMdfcn?inquiryCode=' + inquiryCode)
+					    .then(response => response.json())
+					    .then(data => {
+					        inquiryCodeDisplay.value = data.inquiryCode;
+					        inquiryTitleEdit.value = data.inquiryTitle;
+					        inquiryTypeCodeDisplay.value = data.inquiryTypeCode;
+					        inquiryTypeEdit.value = data.inquiryTypeCode; // 또는 이름에 따라 조정
+					        inquiryContentEdit.value = data.inquiryCn;
+					        inquiryStatusEdit.value = data.statusCode;
+
+					        SR_writerCode.textContent = data.memberCode;
+					        SR_writerName.textContent = data.memberName;
+					        SR_writeDate.textContent = data.inquiryRegYmdt;
+
+					        SR_fileList.innerHTML = data.subAttchOrgnlName || '첨부파일 없음';
+
+					        SR_updaterName.textContent = data.inquiryMdfcnAdmCode || '-';
+					        SR_updateDate.textContent = data.inquiryMdfcnYmdt || '-';
+					    })
+					    .catch(error => console.error('Error fetching inquiry details:', error));
 
 						// 현재는 예시 값으로 채워 넣습니다.
 						inquiryCodeDisplay.value = inquiryCode;

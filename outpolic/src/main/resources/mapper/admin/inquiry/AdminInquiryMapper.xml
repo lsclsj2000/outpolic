@@ -49,7 +49,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			left join inquiry_type iqt on i.iqt_cd = iqt.iqt_cd
 			left join inquiry_process ip on i.iq_cd = ip.iq_cd
 			left join status_code sc on ip.stc_cd = sc.stc_cd
-			left join submission_attachment sa on i.iq_cd = sa.sa_refer_cd;
+			left join submission_attachment sa on i.iq_cd = sa.sa_refer_cd
+		where
+			i.iq_cd = #{inquiryCode};
 	</select>
 	
 	<select id="getAdminInquiryList" resultMap="AdminInquiryResultMap">

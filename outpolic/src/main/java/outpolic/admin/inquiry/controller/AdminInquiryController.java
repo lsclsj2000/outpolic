@@ -4,8 +4,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
+import outpolic.admin.inquiry.domain.AdminInquiry;
 import outpolic.admin.inquiry.service.AdminInquiryService;
 
 @Controller
@@ -15,29 +18,33 @@ public class AdminInquiryController {
 	
 	private final AdminInquiryService adminInquiryService; 
 	
-	@GetMapping("/adminInquiryManage")
-	public String adminInquiryManageView() {
-		// 문의 프로세스 관리
-		
-		return "admin/inquiry/adminInquiryManageView";
-	}
+	/*
+	 * @GetMapping("/adminInquiryManage") public String adminInquiryManageView() {
+	 * // 문의 프로세스 관리
+	 * 
+	 * return "admin/inquiry/adminInquiryManageView"; }
+	 * 
+	 * @GetMapping("/adminInquiryProcess") public String adminInquiryProcessView() {
+	 * // 문의 처리 페이지
+	 * 
+	 * return "admin/inquiry/adminInquiryProcessView"; }
+	 */
 	
-	@GetMapping("/adminInquiryProcess")
-	public String adminInquiryProcessView() {
-		// 문의 처리 페이지
+	@GetMapping("/adminInquiryMdfcn")
+	@ResponseBody
+	public AdminInquiry adminInquiryMdfcn(@RequestParam("inquiryCode") String inquiryCode) {
+		// 문의 상세 수정 팝업창
 		
-		return "admin/inquiry/adminInquiryProcessView";
+		return adminInquiryService.getAdminInquiryMdfcnList(inquiryCode);
 	}
 	
 	@GetMapping("/adminInquiryList")
 	public String adminInquiryView(Model model) {
 		// 문의내역 조회 페이지
 		var inquiryList = adminInquiryService.getAdminInquiryList();
-		var adminInquiryMdfcn = adminInquiryService.getAdminInquiryMdfcnList();
 		
 		model.addAttribute("title", "관리자 문의 내역");
 		model.addAttribute("inquiryList", inquiryList);
-		model.addAttribute("adminInquiryMdfcn", adminInquiryMdfcn);
 		
 		return "admin/inquiry/adminInquiryView";
 	}
