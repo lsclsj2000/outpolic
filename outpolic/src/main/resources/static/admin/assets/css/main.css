@@ -4321,14 +4321,16 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
 /* 팝업 컨테이너 */
 .SR_modal-content-wrapper {
 	background-color: #fff;
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-	width: 90%;
-	max-width: 700px; /* 너비 조절 */
-	position: relative;
-	animation: SR_slideIn 0.3s ease-out; /* 부드러운 슬라이드 인 효과 */
-	box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 700px;
+    position: relative;
+    animation: SR_slideIn 0.3s ease-out;
+    box-sizing: border-box;
+    height: 660px;
+    overflow-y: auto;
 }
 
 /* 팝업 헤더 */
@@ -4363,8 +4365,7 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
 .SR_form-group {
 	margin-bottom: 15px;
     display: flex;
-    /* align-items: center; -> 이미지에 맞게 라벨 상단 정렬을 위해 flex-start로 변경 */
-    align-items: flex-start; /* 라벨과 입력 필드의 상단을 맞춥니다. */
+    align-items: flex-start;
     flex-wrap: wrap;
 }
             
@@ -4379,16 +4380,13 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
     margin-bottom: 5px;
     font-weight: bold;
     color: #555;
-    min-width: 90px; /* 라벨 최소 너비 유지 */
+    min-width: 90px;
 }
 .SR_form-control {
-	/* flex-grow: 1; -> 이 속성은 .SR_input-half input/select에서 width: 100%로 대체됩니다. */
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-    /* margin-right: 10px; -> 이 부분은 아래의 SR_input-half 내부 input/select 규칙에 의해 오버라이드됩니다. */
-
 }
             
 /* readonly 필드 스타일 */
@@ -4399,12 +4397,13 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
 }
 
 textarea.SR_form-control {
-	resize: vertical; /* 세로 방향으로만 크기 조절 가능 */
-    min-height: 120px; /* 최소 높이 유지 */
-    overflow-y: hidden; /* 스크롤바 숨김 */
-    width: 100%; /* 너비를 100%로 설정하여 부모 요소에 꽉 차게 */
+	resize: vertical;
+    min-height: 120px;
+    overflow-y: hidden;
+    width: 100%;
     box-sizing: border-box;
     margin-right: 0;
+    height: auto;
 }
             
 /* 특정 요소들의 너비 조정 */
