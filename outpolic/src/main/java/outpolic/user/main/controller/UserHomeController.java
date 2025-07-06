@@ -33,7 +33,7 @@ public class UserHomeController {
      */
     @GetMapping("/")
     public String mainPage(Model model) {
-        List<Category> mainPageCategories = categoryService.getMainCategoryList();
+        List<Category> mainPageCategories = categoryService.getMainCategoryList(); 
         model.addAttribute("mainCategories", mainPageCategories);
         return "main"; 
     }
