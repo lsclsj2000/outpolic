@@ -2347,6 +2347,7 @@ input.qty-val {
   border-radius: 10px;
   display: inline-block;
   max-width: 80px;
+  padding-top: 20px;
 }
 
 .card-1 h6 {
