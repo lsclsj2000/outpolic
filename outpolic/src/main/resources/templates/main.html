@@ -3397,19 +3397,56 @@
 		        <div class="carausel-8-columns-cover position-relative">
 		            <div class="carausel-8-columns" id="carausel-8-columns" th:if="${!mainCategories.isEmpty()}">
 		                <div class="card-1" th:each="cat : ${mainCategories}">
-		                    <!-- 필요하다면 특정 조건에 따라 태그를 표시할 수 있습니다. (예: th:if) -->
-		                    <!-- <span class="category-tag quality">품질보장</span> -->
-		                    
-		                    <figure class="img-hover-scale overflow-hidden">
-		                        <a th:href="@{/user/products(category=${cat.categoryId})}">
-		                            <img src="/user/assets/imgs/theme/icons/cat-design.png" th:alt="${cat.categoryName}" />
-		                        </a>
-		                    </figure>
-		                    <h6>
-		                        <!-- 카테고리 이름과 링크를 동적으로 설정합니다. -->
-		                        <a th:href="@{/user/products(category=${cat.categoryId})}" th:text="${cat.categoryName}">디자인</a>
-		                    </h6>
-		                </div>
+						    <figure class="img-hover-scale overflow-hidden">
+						        <a th:href="@{/user/products(category=${cat.categoryId})}">
+						            <!-- th:switch를 사용하여 cat.categoryName 값에 따라 분기합니다. -->
+						            <th:block th:switch="${cat.categoryName}">
+						                <!-- case 1: 카테고리 이름이 '디자인'일 경우 -->
+						                <img th:case="'디자인'" 
+						                     src="/user/assets/imgs/icon/graphic-designer.png" 
+						                     th:alt="${cat.categoryName}" />
+						                
+						                <!-- case 2: 카테고리 이름이 'IT·프로그래밍'일 경우 -->
+						                <img th:case="'IT·프로그래밍'" 
+						                     src="/user/assets/imgs/icon/technical-support.png" 
+						                     th:alt="${cat.categoryName}" />
+						
+						                <!-- case 3: 카테고리 이름이 '영상·사진·음향'일 경우 -->
+						                <img th:case="'영상·사진·음향'" 
+						                     src="/user/assets/imgs/icon/picture.png"  
+						                     th:alt="${cat.categoryName}" />
+						                <!-- case 4: 카테고리 이름이 '마케팅'일 경우 -->
+						                <img th:case="'마케팅'" 
+						                     src="/user/assets/imgs/icon/social-media.png" 
+						                     th:alt="${cat.categoryName}" />
+						                <!-- case 5: 카테고리 이름이 '번역·통역'일 경우 -->
+						                <img th:case="'번역·통역'" 
+						                     src="/user/assets/imgs/icon/translate.png" 
+						                     th:alt="${cat.categoryName}" />
+						                <!-- case 6: 카테고리 이름이 '문서·글쓰기'일 경우 -->
+						                <img th:case="'문서·글쓰기'" 
+						                     src="/user/assets/imgs/icon/documentation.png" 
+						                     th:alt="${cat.categoryName}" />
+						                <!-- case 7: 카테고리 이름이 '창업·사업'일 경우 -->
+						                <img th:case="'창업·사업'" 
+						                     src="/user/assets/imgs/icon/business.png" 
+						                     th:alt="${cat.categoryName}" />
+						                <!-- case 8: 카테고리 이름이 '주문제작'일 경우 -->
+						                <img th:case="'주문제작'" 
+						                     src="/user/assets/imgs/icon/color-selection.png" 
+						                     th:alt="${cat.categoryName}" />
+						                <!-- case 9: 카테고리 이름이 '세무·법무·노무'일 경우 -->
+						                <img th:case="'세무·법무·노무'" 
+						                     src="/user/assets/imgs/icon/law-scale.png" 
+						                     th:alt="${cat.categoryName}" />
+
+						            </th:block>
+						        </a>
+						    </figure>
+						    <h6>
+						        <a th:href="@{/user/products(category=${cat.categoryId})}" th:text="${cat.categoryName}">카테고리명</a>
+						    </h6>
+						</div>
 		            </div>
 		        </div>
 		    </div>

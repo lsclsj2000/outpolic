@@ -84,6 +84,11 @@ public class CategoryServiceImpl implements CategoryService{
         // 1단계에서 확인한 매퍼의 "findById"를 그대로 호출합니다.
         return categoryMapper.findById(categoryCode);
     }
-
+    
+    @Override
+    public List<Category> getMegaMenuData() {
+        // XML에서 모든 계층 구조 조립이 끝나므로, Java에서는 호출만 하면 끝!
+        return categoryMapper.findTopLevelCategoriesWithChildren();
+    }
 	
 }
