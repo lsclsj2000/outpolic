@@ -7,7 +7,7 @@
 		<id column="mbr_id" property="memberId"></id>
 		<result column="mbr_nm" property="memberName"/>
 		<result column="mbr_pw" property="memberPw"/>
-		<result column="mbr_nicknm" property="memberNickName"/>
+		<result column="mbr_nicknm" property="memberNickname"/>
 		<result column="mbr_telno" property="memberTelNo"/>
 		<result column="mbr_addr" property="memberAddress"/>
 		<result column="mbr_daddr" property="memberDAddress"/>
@@ -38,7 +38,7 @@
  		UPDATE member
  		set
 			mbr_nm = #{memberName},
-			mbr_nicknm = #{memberNickName}, 
+			mbr_nicknm = #{memberNickname}, 
 			mbr_telno = #{memberTelNo}, 
 			mbr_addr = #{memberAddress}, 
 			mbr_daddr = #{memberDAddress}, 
@@ -59,7 +59,7 @@
  	<select id="isNickNameDuplicated" resultType="boolean">
 	    SELECT COUNT(*) > 0
 	    FROM member
-	    WHERE mbr_nicknm = #{memberNickName}
+	    WHERE mbr_nicknm = #{memberNickname}
 	      AND mbr_id != #{memberId}
 	</select>
 	<select id="isEmailDuplicated" resultType="boolean">

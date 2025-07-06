@@ -4,32 +4,284 @@
 	  layout:decorate="~{admin/layout/adminLayoutMain}">
 
 	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<title>문의 내역 조회</title>
 	</head>
 	
-	<!-- 추가할 js file -->
-	<!-- 추가할 페이지 contents -->
+	
 	<th:block layout:fragment="contents">
-		<div class="content-header">
-            <div>
-                <h2 class="content-title card-title">문의내역 조회 페이지</h2>
-                <p>화면 설명</p>
-            </div>
-        </div>
-        
-        <div class="row">
-	         <div class="col-lg-12">
-	             <div class="card card-body mb-4">
-	                 <article class="icontext">
-	                     <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
-	                     <div class="text">
-	                         <h6 class="mb-1 card-title">Revenue</h6>
-	                         <span>$13,456.5</span>
-	                         <span class="text-sm"> Shipping fees are not included </span>
-	                     </div>
-	                 </article>
-	             </div>
-	         </div>
-         </div>
+		<section class="content-main">
+	        <div class="content-header">
+	            <div>
+	                <h2 class="content-title card-title">문의 내역 조회</h2>
+	                <p>사용자 문의 내역 조회</p>
+	            </div>
+	            <div>
+	                <input type="text" placeholder="Search order ID" class="form-control bg-white" />
+	            </div>
+	        </div>
+	        <div class="card mb-4">
+	            <header class="card-header">
+	                <div class="row gx-3">
+	                    <div class="col-lg-4 col-md-6 me-auto">
+	                        <input type="text" placeholder="Search..." class="form-control" />
+	                    </div>
+	                    <div class="col-lg-2 col-6 col-md-3">
+	                        <select class="form-select">
+	                            <option>Status</option>
+	                            <option>Active</option>
+	                            <option>Disabled</option>
+	                            <option>Show all</option>
+	                        </select>
+	                    </div>
+	                    <div class="col-lg-2 col-6 col-md-3">
+	                        <select class="form-select">
+	                            <option>Show 20</option>
+	                            <option>Show 30</option>
+	                            <option>Show 40</option>
+	                        </select>
+	                    </div>
+	                </div>
+	            </header>
+	            <div class="card-body">
+	                <div class="table-responsive">
+	                    <table class="table table-hover">
+	                        <thead>
+	                            <tr>
+	                                <th scope="col" class="start text-center col-1">No.</th>
+	                                <th scope="col" class="col-4">제목</th>
+	                                <th scope="col" class="text-center col-1">문의타입</th>
+	                                <th scope="col" class="text-center col-1">작성자</th>
+	                                <th scope="col" class="text-center col-1">처리상태</th>
+	                                <th scope="col" class="text-center col-2">작성일자</th>
+	                                <th scope="col" class="end text-center col-2">Action</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+								<tr class="start pt-30"
+								    style="border:0px; border-bottom: solid 1px #ececec;"
+								    th:each="l : ${inquiryList}">
+								    
+								    <td class="start text-center">
+								        <span th:text="${l.inquiryCode}">No.</span>
+								    </td>
+								    <td scope="col">
+								        <span th:text="${l.inquiryTitle}"
+											   style="color: black; text-decoration: none;"
+											   onmouseout="this.style.color='black'">
+											   제목
+								        </span>
+								    </td>
+								    <td scope="col" class="text-center" th:text="${l.inquiryTypeName}">문의타입</td>
+								    <td scope="col" class="text-center" th:text="${l.memberName}">작성자</td>
+								    <td scope="col" class="text-center" th:switch="${l.statusName}">
+	                                	<span th:case="${'처리완료'}" class="badge rounded-pill alert-success">처리완료</span>
+	                                	<span th:case="${'처리중'}" class="badge rounded-pill alert-info">처리중</span>
+	                                	<span th:case="${'확인전'}" class="badge rounded-pill alert-warning">확인전</span>
+	                                </td>
+								    <td scope="col" class="text-center" th:text="${l.inquiryRegYmdt}">작성일자</td>
+								    <td scope="col" class="text-center">
+										<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${l.inquiryCode}">수정</a>
+										<a href="#" class="btn btn-md rounded font-sm">답변</a>
+									</td>
+								</tr>
+							</tbody>
+	                    </table>
+	                </div>
+	            </div>
+	        </div>
+	    </section>
+
+		<div id="inquiryModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>문의 내역 수정</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+                <div class="SR_popup-info">
+                    <div class="SR_writer-info">
+                        <span id="SR_writerCode">작성자 코드</span> | <span id="SR_writerName">작성자명</span> | <span id="SR_writeDate">작성일자</span>
+                    </div>
+                    <select id="inquiryStatusEdit" name="status" class="SR_form-control SR_status-dropdown">
+                        <option value="CONFIRMED">확인전</option>
+                        <option value="PROCESSING">처리중</option>
+                        <option value="COMPLETED">처리완료</option>
+                    </select>
+                </div>
+
+				<form id="inquiryForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label for="inquiryCodeDisplay">문의코드</label>
+                            <input type="text" id="inquiryCodeDisplay" name="inquiryCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label for="inquiryTitleEdit">제목</label>
+                            <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label for="inquiryTypeCodeDisplay">문의타입 코드</label>
+                            <input type="text" id="inquiryTypeCodeDisplay" name="inquiryTypeCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label for="inquiryTypeEdit">문의타입 이름</label>
+                            <select id="inquiryTypeEdit" name="inquiryType" class="SR_form-control">
+                                <option value="1">상품 문의</option>
+                                <option value="2">배송 문의</option>
+                                <option value="3">기술 지원</option>
+                                <option value="4">기타</option>
+                            </select>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label for="inquiryContentEdit">문의 내용</label>
+						<textarea id="inquiryContentEdit" name="inquiryContent" class="SR_form-control" rows="5" readonly></textarea>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+                        <label>첨부파일 목록</label>
+                        <div id="SR_fileList" class="SR_form-control SR_file-list">
+                            파일1.jpg (1.2MB) <br>
+                            파일2.pdf (3.5MB)
+                        </div>
+                    </div>
+                    
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                            <span id="SR_updaterName">수정자</span> | <span id="SR_updateDate">수정일시</span>
+                        </div>
+						<button type="submit" id="saveButton" class="SR_btn-primary">저장</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		</th:block>
+
+    <th:block layout:fragment="jsScript">
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				// 팝업 관련 요소 가져오기
+				const modal = document.getElementById('inquiryModal');
+				const closeButton = document.querySelector('#inquiryModal .SR_close-button');
+				const saveButton = document.getElementById('saveButton');
+				const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+
+				// 팝업 내 폼 필드 (ID는 변경 없음)
+				const inquiryCodeDisplay = document.getElementById('inquiryCodeDisplay');
+				const inquiryTitleEdit = document.getElementById('inquiryTitleEdit');
+				const inquiryTypeCodeDisplay = document.getElementById('inquiryTypeCodeDisplay'); // 추가
+				const inquiryTypeEdit = document.getElementById('inquiryTypeEdit');
+				const inquiryContentEdit = document.getElementById('inquiryContentEdit');
+				const inquiryStatusEdit = document.getElementById('inquiryStatusEdit');
+                const SR_writerCode = document.getElementById('SR_writerCode'); // 추가
+                const SR_writerName = document.getElementById('SR_writerName'); // 추가
+                const SR_writeDate = document.getElementById('SR_writeDate'); // 추가
+                const SR_fileList = document.getElementById('SR_fileList'); // 추가
+                const SR_updaterName = document.getElementById('SR_updaterName'); // 추가
+                const SR_updateDate = document.getElementById('SR_updateDate'); // 추가
+				const inquiryForm = document.getElementById('inquiryForm');
+
+				// '수정' 버튼 클릭 시 팝업 열기
+				openPopupButtons.forEach(button => {
+					button.addEventListener('click', function(event) {
+						event.preventDefault(); // 기본 동작(페이지 이동) 방지
+						modal.style.display = 'flex'; // 팝업 보이기 및 중앙 정렬
+						document.body.style.overflow = 'hidden'; // 뒤 배경 스크롤 방지
+
+						const inquiryCode = this.dataset.inquiryCode;
+						
+						// TODO: 실제 문의 상세 정보를 서버에서 가져와 팝업 필드에 채우는 AJAX 로직 구현
+						// 예시: fetch('/api/inquiry/' + inquiryCode)
+						// .then(response => response.json())
+						// .then(data => {
+						//     inquiryCodeDisplay.value = data.inquiryCode;
+						//     inquiryTitleEdit.value = data.inquiryTitle;
+						//     inquiryTypeCodeDisplay.value = data.inquiryTypeCode; // 실제 데이터
+						//     inquiryTypeEdit.value = data.inquiryType; // 실제 데이터 (select box의 value에 해당)
+						//     inquiryContentEdit.value = data.inquiryContent;
+						//     inquiryStatusEdit.value = data.status; // 실제 데이터 (select box의 value에 해당)
+						//     SR_writerCode.textContent = data.writerCode;
+						//     SR_writerName.textContent = data.writerName;
+						//     SR_writeDate.textContent = data.writeDate;
+						//     SR_fileList.innerHTML = data.fileListHtml; // HTML 문자열로 파일 목록 직접 삽입
+						//     SR_updaterName.textContent = data.updaterName;
+						//     SR_updateDate.textContent = data.updateDate;
+						// })
+						// .catch(error => console.error('Error fetching inquiry details:', error));
+
+						// 현재는 예시 값으로 채워 넣습니다.
+						inquiryCodeDisplay.value = inquiryCode;
+						inquiryTitleEdit.value = "이것은 예시 문의 제목입니다.";
+						inquiryTypeCodeDisplay.value = "TP001"; // 예시 문의타입 코드
+						inquiryTypeEdit.value = "1"; // '상품 문의' (실제 DB 값에 맞게)
+						inquiryContentEdit.value = "이것은 예시 문의 내용입니다. 실제 데이터는 서버에서 가져와야 합니다. 더 많은 내용을 추가하여 높이 조절이 되는지 확인해보세요. 내용이 길어질 경우 자동으로 스크롤이 생기거나 높이가 늘어납니다.";
+						inquiryStatusEdit.value = "CONFIRMED"; // '확인전' (실제 DB 값에 맞게)
+                        SR_writerCode.textContent = "U001";
+                        SR_writerName.textContent = "홍길동";
+                        SR_writeDate.textContent = "2024-06-25 10:00:00";
+                        SR_fileList.innerHTML = "첨부파일1.png (123KB)<br>첨부파일2.pdf (456KB)";
+                        SR_updaterName.textContent = "관리자";
+                        SR_updateDate.textContent = "2024-06-25 11:30:00";
+					});
+				});
+
+				// 팝업 내 닫기 버튼 클릭 시 팝업 닫기
+				closeButton.addEventListener('click', function() {
+					modal.style.display = 'none'; // 팝업 숨기기
+					document.body.style.overflow = 'auto'; // 뒤 배경 스크롤 허용
+				});
+
+				// 팝업 바깥 영역 클릭 시 팝업 닫기
+				window.addEventListener('click', function(event) {
+					if (event.target == modal) {
+						modal.style.display = 'none';
+						document.body.style.overflow = 'auto';
+					}
+				});
+
+				// 폼 제출 이벤트 (수정 내용 저장)
+				inquiryForm.addEventListener('submit', function(event) {
+					event.preventDefault(); // 폼의 기본 제출 동작 방지
+
+					// TODO: 폼 데이터를 수집하여 서버로 전송하는 AJAX 로직 구현
+					const formData = new FormData(inquiryForm);
+					const data = Object.fromEntries(formData.entries());
+					console.log('수정할 데이터:', data);
+
+					// 예시:
+					// fetch('/api/inquiry/update', {
+					//     method: 'POST',
+					//     headers: { 'Content-Type': 'application/json' },
+					//     body: JSON.stringify(data),
+					// })
+					// .then(response => response.json())
+					// .then(result => {
+					//     if (result.success) {
+					//         alert('문의 내역이 성공적으로 수정되었습니다!');
+					//         modal.style.display = 'none';
+					//         document.body.style.overflow = 'auto';
+					//         location.reload(); // 페이지 새로고침
+					//     } else {
+					//         alert('문의 내역 수정에 실패했습니다: ' + result.message);
+					//     }
+					// })
+					// .catch(error => {
+					//     console.error('Error updating inquiry:', error);
+					//     alert('문의 내역 수정 중 오류가 발생했습니다.');
+					// });
+
+					alert('문의 내역이 저장되었습니다! (실제 저장 로직은 추가 필요)');
+					modal.style.display = 'none';
+					document.body.style.overflow = 'auto';
+					// location.reload(); // 실제 저장 후, 테이블을 업데이트하기 위해 페이지 새로고침 (필요하다면)
+				});
+			});
+		</script>
 	</th:block>
 </html>

@@ -13,7 +13,7 @@
                 <div class="row-userReg">
                     <div class="col-xl-10 col-lg-10 col-md-12 m-auto">
                         <div class="row-userReg">
-                            <div class="col-lg-6 col-md-8">
+                            <div class="col-lg-7 col-md-8">
                                 <div class="login_wrap widget-taber-content background-white">
                                     <div class="padding_eight_all bg-white">
                                         <div class="heading_s1">
@@ -23,37 +23,39 @@
 										    <div class="form-group">
 										        <label for="userid">아이디</label>
 										        <input type="text" id="memberId" name="memberId" placeholder="아이디 (6~12자 영문/숫자)" required />
-										        <button type="button" class="btn-check-duplicate text-white">중복확인</button>
+										        <small id="memberIdMsg" class="text-danger small"></small>
 										    </div>
 										    <div class="form-group">
 										        <label for="userpw">비밀번호</label>
 										        <input type="password" id="memberPw" name="memberPw" placeholder="비밀번호 (문자, 숫자 포함 8자 이상)" required />
+										        <small id="memberPwMsg" class="text-danger w-30"></small>
 										    </div>
 										
 										    <div class="form-group">
 										        <label for="userpwcheck">비밀번호 확인</label>
-										        <input type="password" id="userpwcheck" name="userpwcheck" placeholder="비밀번호 재입력" required />
-										         <small id="pwCheckMsg" class="text-danger"></small>
+										        <input type="password" id="userpwcheck" name="userpwcheck" placeholder="비밀번호 재입력" disabled />
+										         <small id="pwCheckMsg" class="text-danger small" ></small>
 										    </div>
 										    <div class="form-group">
 										        <label for="username">이름</label>
 										        <input type="text" id="memberName" name="memberName" placeholder="이름" required />
+										        <small id="memberNameMsg" class="text-danger small"></small>
 										    </div>
 										    <div class="form-group">
-										        <label for="memberNickName">닉네임</label>
-										        <input type="text" id="memberNickName" name="memberNickName" placeholder="닉네임"/>
-										        <button type="button" class="btn-check-duplicate text-white">중복확인</button>
+										        <label for="memberNickname">닉네임</label>
+										        <input type="text" id="memberNickname" name="memberNickname" placeholder="닉네임"/>
+										        <small id="memberNickNmMsg" class="text-danger small"></small>
 										    </div>
 										
 										    <div class="form-group">
 										        <label for="phone">전화번호</label>
 										        <input type="text" id="memberTelNo" name="memberTelNo" placeholder="010-1234-5678" required />
-										         <span id="memberTelNoMsg" class="text-danger small"></span>
+										         <small id="memberTelNoMsg" class="text-danger small"></small>
 										    </div>
 										    <div class="form-group">
 										        <label for="email">이메일</label>
 										        <input type="email" id="memberEmail" name="memberEmail" placeholder="example@email.com" required />
-										        <span id="memberEmailMsg" class="text-danger small"></span>
+										        <small id="memberEmailMsg" class="text-danger small"></small>
 										    </div>
 										    <div class="form-group">
 										        <label for="birth">생일</label>
@@ -89,11 +91,11 @@
 												<label class="col-sm-3 col-form-label fs-6">성별</label>
 												<div class="col-sm-9 d-flex gap-3">
 											    	<div class="form-check">
-												      <input class="form-check-input" type="radio" name="memberGender" id="male" value="M">
+												      <input class="form-check-input" type="radio" name="memberGender" id="male" value="남">
 												      <label class="form-check-label" for="male">남</label>
 												    </div>
 											    <div class="form-check">
-											      <input class="form-check-input" type="radio" name="memberGender" id="female" value="F">
+											      <input class="form-check-input" type="radio" name="memberGender" id="female" value="여">
 											      <label class="form-check-label" for="female">여</label>
 											    </div>
 											  </div>
@@ -103,9 +105,17 @@
 											<div class="row mb-3">
 											  <div class="offset-sm-3 col-sm-9">
 											    <div class="form-check">
-											      <input class="form-check-input" type="checkbox" id="agree" required>
+											      <input class="form-check-input" type="checkbox" id="agree" required/>
 											      <label class="form-check-label" for="agree">
-											        이용약관 및 개인정보처리방침에 동의합니다.
+											        이용약관 및 개인정보처리방침에 동의합니다.(필수)
+											        <a href="/privacy-policy" class="ms-2 text-muted small">자세히 보기</a>
+											      </label>
+											    </div>
+											    <div class="form-check">
+											    <input type="checkbox" id="memberAgreeYN" />
+											      <input type="hidden" id="hiddenMemberAgreeYN" name="memberAgreeYN" value="0"/>
+											      <label class="form-check-label" for="memberAgreeYN">
+											       	정보성 sms 수신에 동의합니다. (선택)
 											        <a href="/privacy-policy" class="ms-2 text-muted small">자세히 보기</a>
 											      </label>
 											    </div>
@@ -134,8 +144,7 @@
 	<th:block layout:fragment="jsScript">
 	    <!-- JS 라이브러리 -->
 	    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	    <script src="/user/assets/js/userServiceAjax.js"></script>
-		<script src="/user/assets/js/userService.js"></script>
+		<script src="/user/assets/js/userRegister.js"></script>
 		<script src="/user/assets/js/validate.js"></script>
 	</th:block>
 	
