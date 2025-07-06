@@ -55,6 +55,14 @@ public class UserLoginController {
         }
         return redirectUri;
     }
+    
+    //로그아웃
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();  // 세션 전체 제거
+        return "redirect:/main";  // 로그인 페이지 등으로 리다이렉트
+    }
+    
 
     // 비밀번호 재설정 페이지
     @GetMapping("/forgotPswd")
