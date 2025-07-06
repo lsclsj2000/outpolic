@@ -6,11 +6,13 @@
 <resultMap type="outpolic.common.domain.Member" id="UserLoginResultMap">
 		<id column="mbr_id" property="memberId"></id>
  		<result column="mbr_pw" property="memberPw"/>
+ 		<result column="grd_cd" property="gradeCode"/>
 	</resultMap>
 
 	<select id="findMemberById" resultMap="UserLoginResultMap">
 	    SELECT mbr_id, mbr_pw
 	    FROM member 
 	    WHERE mbr_id = #{memberId}
+	    AND grd_cd = 'USER'
 	</select>
 </mapper>

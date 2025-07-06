@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpSession;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.service.UserMypageEditService;
 
@@ -20,9 +21,10 @@ public class UserMypageController {
 
  // 유저 마이페이지
  	@GetMapping("/mypage")
- 	public String myPage(Model model) {
- 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById("memberId");
- 		model.addAttribute("userInfo", userInfo);
+ 	public String myPage(HttpSession session, Model model) {
+ 		String memberId = (String) session.getAttribute("SID");
+ 	    UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
+ 	    model.addAttribute("userInfo", userInfo);
  		return "user/mypage/userMypageView";
  	}
 
