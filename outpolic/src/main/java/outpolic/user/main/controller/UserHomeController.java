@@ -39,7 +39,7 @@ public class UserHomeController {
     }
 
     /**
-     * "/userListpage" 페이지 요청 처리
+     * "/userListpage" 페이지 요청 처리 
      */
     @GetMapping("/userListpage")
     public String userListpageView() {
