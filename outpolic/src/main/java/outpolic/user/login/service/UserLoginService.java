@@ -1,10 +1,10 @@
 package outpolic.user.login.service;
 
-import org.springframework.stereotype.Service;
+import java.util.Map;
 
-import outpolic.common.domain.Member;
+import org.springframework.stereotype.Service;
 
 @Service
 public interface UserLoginService {
-	Member loginUser(String memberId, String memberPw);
+	Map<String, Object> loginUser(String memberId, String memberPw);
 }
