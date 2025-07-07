@@ -16,15 +16,13 @@ import outpolic.user.mypage.service.UserMypageEditService;
 @RequiredArgsConstructor
 public class UserMypageEditServiceImpl implements UserMypageEditService {
 
-
-	@Autowired
-	private UserMypageEditMapper userMypageEditMapper;
+	private final UserMypageEditMapper userMypageEditMapper;
 	private final UserMypageEditMapper mapper;
 	
 	@Override
 	public UserInfoDTO getUserInfoById(String memberId) {
 		
-		return userMypageEditMapper.getUserInfoById("user002");
+		return userMypageEditMapper.getUserInfoById(memberId);
 	}
 
 	@Override
@@ -43,8 +41,8 @@ public class UserMypageEditServiceImpl implements UserMypageEditService {
 	// 회원 닉네임 중복검사 -> 0이 아니고 1이 나오면 중복이 존재한다는 뜻.
 	@Override
 	public boolean isUserInfoDuple(String type, String memberId, String memberNickname, String memberEmail, String memberTelNo) {
-		switch (type) {
-        case "memberNickName":
+		switch (type) { 
+        case "memberNickname":
             return userMypageEditMapper.isNickNameDuplicated(memberNickname, memberId);
         case "memberEmail":
             return userMypageEditMapper.isEmailDuplicated(memberEmail, memberId);
@@ -52,7 +50,7 @@ public class UserMypageEditServiceImpl implements UserMypageEditService {
             return userMypageEditMapper.isTelDuplicated(memberTelNo, memberId);
         default:
             return false;
-    }
+		}
 	}
 
 

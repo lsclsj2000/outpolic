@@ -4321,14 +4321,16 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
 /* 팝업 컨테이너 */
 .SR_modal-content-wrapper {
 	background-color: #fff;
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-	width: 90%;
-	max-width: 700px; /* 너비 조절 */
-	position: relative;
-	animation: SR_slideIn 0.3s ease-out; /* 부드러운 슬라이드 인 효과 */
-	box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 700px;
+    position: relative;
+    animation: SR_slideIn 0.3s ease-out;
+    box-sizing: border-box;
+    height: 660px;
+    overflow-y: auto;
 }
 
 /* 팝업 헤더 */
@@ -4362,9 +4364,9 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
 /* 폼 그룹 스타일 */
 .SR_form-group {
 	margin-bottom: 15px;
-	display: flex; /* 내부 요소들을 가로로 배치하기 위해 추가 */
-	align-items: center; /* 세로 중앙 정렬 */
-	flex-wrap: wrap; /* 내용이 길어지면 줄 바꿈 */
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }
             
 /* 새로운 줄에 배치될 그룹의 마진 조정 */
@@ -4375,48 +4377,59 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
 /* 라벨과 입력 필드의 기본 스타일 */
 .SR_form-group label {
 	display: block;
-	margin-bottom: 5px;
-	font-weight: bold;
-	color: #555;
-	min-width: 90px; /* 라벨 최소 너비 */
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    min-width: 90px;
 }
 .SR_form-control {
-	flex-grow: 1; /* 남은 공간을 채우도록 */
-	padding: 8px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-sizing: border-box;
-	margin-right: 10px; /* 각 필드 간 간격 */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
             
 /* readonly 필드 스타일 */
 .SR_form-control[readonly] {
 	background-color: #e9ecef;
-	opacity: 1; /* Safari에서 readonly 필드의 불투명도 문제 해결 */
-	cursor: default; /* 마우스 커서 변경 */
+    opacity: 1;
+    cursor: default;
 }
 
 textarea.SR_form-control {
 	resize: vertical;
-	min-height: 120px; /* 문의 내용 박스 최소 높이 */
-	flex-grow: 1; /* 남은 공간 채우기 */
-	margin-right: 0; /* textarea는 단독으로 사용되므로 우측 마진 제거 */
+    min-height: 120px;
+    overflow-y: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 0;
+    height: auto;
 }
             
 /* 특정 요소들의 너비 조정 */
 .SR_form-group .SR_input-half {
-	flex: 1 1 calc(50% - 20px); /* 라벨 포함 50% 너비, 마진 고려 */
-	max-width: calc(50% - 20px);
-	margin-right: 20px; /* 두 요소 사이 간격 */
+	display: flex; /* 라벨과 입력 필드를 세로로 쌓기 위함 */
+    flex-direction: column; /* 라벨 아래에 입력 필드가 오도록 */
+    box-sizing: border-box; /* 패딩과 보더를 너비 계산에 포함 */
+    margin-bottom: 0; /* 부모 SR_form-group의 margin-bottom으로 충분 */
 }
-.SR_form-group .SR_input-half:nth-child(even) { /* 두 번째 요소는 오른쪽 마진 제거 */
-	margin-right: 0;
+
+.SR_form-group .SR_input-half:first-child {
+    width: calc(28% - 10px); /* 전체 공간의 약 28% 정도 차지, 간격 고려 */
+    margin-right: 20px; /* 두 요소 사이의 간격 */
+    flex-shrink: 0; /* 공간이 부족해도 이 너비를 유지하려고 시도 */
 }
-.SR_form-group .SR_input-half label,
+
+.SR_form-group .SR_input-half:last-child {
+    width: calc(72% - 10px); /* 남은 공간의 약 72% 정도 차지, 간격 고려 */
+    flex-grow: 1; /* 남은 공간을 유연하게 채웁니다. */
+    margin-right: 0; /* 오른쪽 여백 없음 */
+}
+
 .SR_form-group .SR_input-half input,
 .SR_form-group .SR_input-half select {
-	width: 100%;
-	margin-right: 0;
+    width: 100%; /* 부모 .SR_input-half의 너비를 꽉 채움 */
+    margin-right: 0; /* 중복 마진 방지 */
 }
 
 
@@ -4428,13 +4441,13 @@ textarea.SR_form-control {
 	margin-bottom: 15px;
 }
 .SR_status-dropdown {
-	flex-basis: 150px; /* 처리 상태 드롭박스 너비 */
-	margin-left: auto; /* 오른쪽 정렬 */
+	flex-basis: 120px; /* 처리 상태 드롭박스 너비 */
+	margin-left: auto;
+	text-align: center;
 }
 .SR_writer-info {
 	font-size: 0.9em;
 	color: #666;
-	text-align: right; /* 작성자 정보 오른쪽 정렬 */
 	flex-grow: 1; /* 남은 공간 채우기 */
 	padding-right: 10px;
 }
@@ -4442,13 +4455,16 @@ textarea.SR_form-control {
 /* 첨부파일 목록 스타일 */
 .SR_file-list {
 	border: 1px solid #ccc;
-	border-radius: 4px;
-	padding: 10px;
-	min-height: 80px; /* 최소 높이 */
-	background-color: #f9f9f9;
-	color: #555;
-	font-size: 0.95em;
-	line-height: 1.5;
+    border-radius: 4px;
+    padding: 10px;
+    min-height: 80px;
+    background-color: #f9f9f9;
+    color: #555;
+    font-size: 0.95em;
+    line-height: 1.5;
+    width: 100%; /* 너비를 100%로 설정하여 부모 요소에 꽉 차게 */
+    box-sizing: border-box;
+    margin-right: 0;
 }
 
 .SR_popup-footer {

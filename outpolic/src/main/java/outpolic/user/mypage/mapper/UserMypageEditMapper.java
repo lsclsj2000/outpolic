@@ -16,7 +16,7 @@ public interface UserMypageEditMapper {
 //	 int userEditInfo(UserMypage user);
 	 int updateUserInfo(UserInfoDTO userInfo);
 	 // 중복확인
-	 boolean isNickNameDuplicated(@Param("memberNickName") String memberNickName, @Param("memberId") String memberId);
+	 boolean isNickNameDuplicated(@Param("memberNickname") String memberNickname, @Param("memberId") String memberId);
 	 boolean isEmailDuplicated(@Param("memberEmail") String memberEmail, @Param("memberId") String memberId);
 	 boolean isTelDuplicated(@Param("memberTelNo") String memberTelNo, @Param("memberId") String memberId);
 	 

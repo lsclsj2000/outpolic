@@ -14,6 +14,7 @@ public interface OutsourcingMapper {
     int insertTagMapping(@Param("tagCd") String tagCd, @Param("clCd") String clCd, @Param("mbrCd") String mbrCd);
     
     List<EnterOutsourcing> findOutsourcingDetailsByEntCd(String entCd);
+    List<String> searchTagsByName(@Param("query") String query);
     
     String findLatestOsCd();
     String findLatestTagCd();
@@ -34,5 +35,10 @@ public interface OutsourcingMapper {
     int deleteRankingByClCd(String clCd);
     int deleteTodayViewByClCd(String clCd); 
     int deleteTotalViewByClCd(String clCd);
+    
+    // outsourcing_portfolio 테이블 관련
+    String findLatestOpCd();
+    int insertOutsourcingPortfolio(@Param("opCd") String opCd, @Param("osCd") String osCd,@Param("prtfCd") String prtfCd, @Param("entCd") String entCd);
+    int deleteOutsourcingPortfolioByOsCd(String osCd);
 
 }

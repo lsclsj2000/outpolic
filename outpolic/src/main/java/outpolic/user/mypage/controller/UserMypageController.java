@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
+import outpolic.common.domain.Member;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.service.UserMypageEditService;
 
@@ -22,6 +23,7 @@ public class UserMypageController {
  // 유저 마이페이지
  	@GetMapping("/mypage")
  	public String myPage(HttpSession session, Model model) {
+
  		String memberId = (String) session.getAttribute("SID");
  	    UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
  	    model.addAttribute("userInfo", userInfo);
@@ -34,18 +36,19 @@ public class UserMypageController {
  	// 중복체크
     @PostMapping("/check/{type}")
     public ResponseEntity<Boolean> checkUserInfo(@PathVariable String type,
-									            @RequestParam String memberId,
-									            @RequestParam(required = false) String memberNickName,
+    											HttpSession session,
+									            @RequestParam(required = false) String memberNickname,
 									            @RequestParam(required = false) String memberEmail,
 									            @RequestParam(required = false) String memberTelNo) {
-        boolean duplicated = userMypageEditService.isUserInfoDuple(type, memberId, memberNickName, memberEmail, memberTelNo);
+    	String memberId = (String) session.getAttribute("SID");
+        boolean duplicated = userMypageEditService.isUserInfoDuple(type, memberId, memberNickname, memberEmail, memberTelNo);
         return ResponseEntity.ok(duplicated);
     }
  	// userEditView 이동
  	@PostMapping("/userEditView")
- 	public String usreProfileEditView(@RequestParam("password") String memberPw, Model model) {
+ 	public String usreProfileEditView(@RequestParam("password") String memberPw, HttpSession session, Model model) {
  		
- 		String memberId = "memberId";
+ 		String memberId = (String) session.getAttribute("SID");
  		UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
  		
  		if(memberPw.equals(userInfo.getMemberPw())) {
@@ -70,10 +73,10 @@ public class UserMypageController {
  	 
  	 @GetMapping("/userEdit/info")
  	 @ResponseBody
- 	 public UserInfoDTO getUserInfoAjax() {
- 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById("memberId");
+ 	 public UserInfoDTO getUserInfoAjax(HttpSession session) {
+ 		String memberId = (String) session.getAttribute("SID");
  		 
- 		 return userInfo; 
+ 		 return userMypageEditService.getUserInfoById(memberId); 
  	 }
  	 @PostMapping("/userEdit/update")
  	 @ResponseBody
