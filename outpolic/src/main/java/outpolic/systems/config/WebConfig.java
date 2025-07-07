@@ -47,25 +47,6 @@ public class WebConfig implements WebMvcConfigurer{
 		 */
 	}
 
-	/*
-	 * private final LoginInterceptor loginInterceptor;
-	 * 
-	 * @Override public void addInterceptors(InterceptorRegistry registry) {
-	 * 
-	 * registry.addInterceptor(loginInterceptor) .addPathPatterns("/**") // 인터셉터로
-	 * 로그인 안한사람 막음 .excludePathPatterns("/", "/main") // 메인화면 제외
-	 * .excludePathPatterns("/login") //로그인화면 제외 .excludePathPatterns("/forgotPswd")
-	 * // 비밀번호 찾기 제외 .excludePathPatterns("/userGoodsList") // 상품리스트 제외
-	 * .excludePathPatterns("/user/userInquiryList", "/user/userInqueryList/**",
-	 * "/user/userInqueryList**")// 문의글 .excludePathPatterns("/favicon*")
-	 * .excludePathPatterns("/user/assets/**"); // 정적 리소스
-	 * 
-	 * WebMvcConfigurer.super.addInterceptors(registry); }
-	 */
-
-	
-	
-
 	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
