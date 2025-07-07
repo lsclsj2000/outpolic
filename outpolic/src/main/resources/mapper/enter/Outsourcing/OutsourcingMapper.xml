@@ -37,8 +37,9 @@
         <collection property="tagNames" ofType="java.lang.String" javaType="java.util.ArrayList">
             <result column="tag_tag_nm"/>
         </collection>
-        <collection property="relatedPortfolios" javaType="java.util.ArrayList" ofType="outpolic.enter.portfoliio.domain.EnterPortfolio"
-    				column="os_cd" select="findRelatedPortfoliosByOsCd" />
+        <collection property="relatedPortfolios" javaType="java.util.ArrayList" 
+                ofType="outpolic.enter.portfolio.domain.EnterPortfolio"
+    			column="os_cd" select="findRelatedPortfoliosByOsCd" />
   
  
     </resultMap>
@@ -152,6 +153,30 @@
     <select id="findClCdByOsCd" resultType="String">
     SELECT cl_cd FROM content_list WHERE cntd_cd = #{osCd} LIMIT 1
 </select>
+	<select id="searchTagsByName" resultType="String">
+		SELECT
+			tag_nm
+		FROM
+			tag
+		WHERE
+			tag_nm LIKE CONCAT('%',#{query},'%')
+		LIMIT 10		
+		 
+	
+	</select>
+	<select id="findLatestOpCd" resultType="String">
+		SELECT
+			op_cd
+		FROM
+			outsourcing_portfolio
+		ORDER BY op_cd DESC LIMIT 1		
+	</select>	
+	
+	<insert id="insertOutsourcingPortfolio">
+		INSERT INTO outsourcing_portfolio (op_cd,os_cd,prtf_cd,op_reg_ymdt,ent_cd)
+		VALUES(#{opCd},#{osCd},#{prtfCd},NOW(),#{entCd})
+		
+	</insert>
 
 <update id="updateOutsourcing" parameterType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
     UPDATE outsourcing
@@ -217,6 +242,13 @@
 	where
 		os_cd=#{osCd}	
 
+</delete>
+<delete id="deleteOutsourcingPortfolioByOsCd">
+	DELETE
+	FROM
+		outsourcing_portfolio
+	WHERE
+		os_cd =#{osCd}	
 </delete>
 
 </mapper>

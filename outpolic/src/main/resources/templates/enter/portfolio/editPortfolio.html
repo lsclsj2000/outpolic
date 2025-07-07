@@ -18,7 +18,7 @@
         .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd; background-color: #fff; z-index: 1000; max-height: 200px; overflow-y: auto; }
         .search-results-dropdown .result-item { padding: 10px; cursor: pointer; }
         .search-results-dropdown .result-item:hover { background-color: #f0f0f0; }
-        .selected-items-area { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 38px; padding: 5px; border: 1px solid #ced4da; border-radius: .25rem;}
+        .selected-items-area {display:flex; flex-wrap: wrap; padding:5px; border:1px solid #ced4da; border-radius: .25rem; }
         .selected-item-badge { display: flex; align-items: center; background-color: #0d6efd; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
         .selected-item-badge .remove-btn { margin-left: 8px; background: none; border: none; color: white; font-size: 1.2em; cursor: pointer; padding: 0; line-height: 1; }
         .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 5px; }
@@ -33,6 +33,25 @@
             <input type="hidden" th:field="*{prtfCd}" />
             <input type="hidden" th:field="*{entCd}" />
             <input type="hidden" th:field="*{mbrCd}" />
+            <div class="form-group">
+			    <hr style="margin: 40px 0;">
+			    <label style="font-size: 1.5em; margin-bottom: 20px;">관련 외주 관리</label>
+			    
+			    <div style="display: flex; gap: 20px;">
+			        <div style="flex: 1;">
+			            <h4>현재 연결된 외주</h4>
+			            <div id="linked-outsourcing-list" style="border: 1px solid #eee; padding: 10px; min-height: 150px;">
+			                </div>
+			        </div>
+			
+			        <div style="flex: 1;">
+			            <h4>연결할 외주 검색</h4>
+			            <input type="text" id="outsourcing-search-input" class="form-control" placeholder="연결할 외주 프로젝트명을 검색하세요">
+			            <div id="outsourcing-search-results" style="border: 1px solid #eee; padding: 10px; margin-top: 10px; min-height: 100px;">
+			                </div>
+			        </div>
+			    </div>
+			</div>
             
             <div class="form-group">
                 <label for="prtfTtl">제목</label>
@@ -62,10 +81,11 @@
                  <div id="categoryCodesError" class="error-message"></div>
             </div>
 
-            <div class="form-group">
-                <label for="tags">태그 (쉼표로 구분)</label>
-                <input type="text" id="tags" name="tags" class="form-control" th:value="${#strings.listJoin(portfolio.tagNames, ', ')}">
-            </div>
+			<div class="form-group">
+			    <label for="tags">태그 (쉼표로 구분)</label>
+			    <div class="tag-search-wrapper" style="position: relative;"> <input type="text" id="tags" name="tags" class="form-control">
+			        <div id="tag-search-results" class="search-results-dropdown"></div> </div>
+			</div>
 
             <div class="form-group">
                 <label for="prtfCn">상세 내용</label>
@@ -90,17 +110,63 @@
     </div>
 </th:block>
 
+
+
+
 <th:block layout:fragment="jsFile">
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
     <script>
         $(document).ready(function() {
-            // 카테고리 검색 및 추가/삭제 로직 (기존과 동일)
-            let searchTimeout;
+            // --- 전역 변수 및 초기화 ---
+            const prtfCd = $('input[name="prtfCd"]').val(); // 현재 포트폴리오의 고유 코드
+
+            // 검색용 타임아웃 변수들
+            let categorySearchTimeout;
+            let tagSearchTimeout;
+            let outsourcingSearchTimeout;
+
+
+            // --- 1. 메인 폼(포트폴리오 수정) 제출 로직 ---
+            $('#portfolioEditForm').on('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                // 해결책 2: 카테고리 코드를 쉼표로 구분된 문자열로 만들어 전송
+                const categoryIds = [];
+                $('#hidden-category-inputs input[name="categoryCodes"]').each(function() {
+                    categoryIds.push($(this).val());
+                });
+                formData.set('categoryCodes', categoryIds.join(',')); // 기존 'categoryCodes'를 덮어쓰거나 새로 추가
+
+                $.ajax({
+                    url: '/enter/portfolio/edit-ajax',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(res) {
+                        if (res.success) {
+                            alert(res.message);
+                            window.location.href = res.redirectUrl;
+                        } else {
+                            // 상세 오류 처리 로직 (필요시 구현)
+                            alert('수정 실패: ' + (res.message || '알 수 없는 오류'));
+                        }
+                    },
+                    error: function(xhr) {
+                        const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : '서버 통신에 실패했습니다.';
+                        alert('오류가 발생했습니다: ' + errorMsg);
+                    }
+                });
+            });
+
+
+            // --- 2. 카테고리 검색 및 관리 로직 ---
             $('#category-search-input').on('input', function() {
-                clearTimeout(searchTimeout);
+                clearTimeout(categorySearchTimeout);
                 const query = $(this).val();
                 if (query.length < 1) { $('#category-search-results').hide(); return; }
-                searchTimeout = setTimeout(() => {
+                categorySearchTimeout = setTimeout(() => {
                     $.get('/enter/portfolio/api/categories/search', { query: query }, function(data) {
                         const resultsDiv = $('#category-search-results').empty().show();
                         data.forEach(cat => resultsDiv.append(`<div class="result-item" data-id="${cat.ctgryId}">${cat.ctgryNm}</div>`));
@@ -108,7 +174,7 @@
                 }, 300);
             });
 
-            $(document).on('click', '.result-item', function() {
+            $(document).on('click', '#category-search-results .result-item', function() {
                 const catId = $(this).data('id');
                 const catName = $(this).text();
                 if ($(`#hidden-category-inputs input[value="${catId}"]`).length > 0) {
@@ -127,51 +193,91 @@
                 badge.remove();
                 $(`#hidden-category-inputs input[value="${catId}"]`).remove();
             });
-            
-            $(document).on('click', function(event) {
-                if (!$(event.target).closest('.category-search-wrapper').length) {
-                    $('#category-search-results').hide();
-                }
-            });
-            
-            // ✅ AJAX 폼 제출 로직으로 수정
-            $('#portfolioEditForm').on('submit', function(e) {
-                e.preventDefault();
-                $('.error-message').text(''); // 이전 오류 메시지 초기화
-                const formData = new FormData(this);
 
-                $.ajax({
-                    url: '/enter/portfolio/edit-ajax', // ✅ AJAX 처리용 URL로 변경
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(res) {
-                        if (res.success) {
-                            alert(res.message);
-                            window.location.href = res.redirectUrl;
-                        } else {
-                            // 서버에서 유효성 검사 오류가 반환된 경우
-                            if (res.errors) {
-                                res.errors.forEach(errorString => {
-                                    const parts = errorString.split(':');
-                                    if (parts.length >= 2) {
-                                        const fieldName = parts[0].trim();
-                                        const errorMessage = parts.slice(1).join(':').trim();
-                                        $(`#${fieldName}Error`).text(errorMessage);
-                                    }
-                                });
-                            } else {
-                                 alert('수정 실패: ' + (res.message || '알 수 없는 오류'));
-                            }
-                        }
-                    },
-                    error: function(xhr) {
-                        const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : '서버 통신에 실패했습니다.';
-                        alert('오류가 발생했습니다: ' + errorMsg);
+
+            // --- 3. 관련 외주 관리 로직 ---
+
+            // A. 페이지 로딩 시, 현재 연결된 외주 목록을 불러오는 함수
+            function loadLinkedOutsourcings() {
+                const listDiv = $('#linked-outsourcing-list').empty();
+                $.get(`/enter/portfolio/${prtfCd}/linked-outsourcings`, function(data) {
+                    if (data && data.length > 0) {
+                        data.forEach(os => {
+                            listDiv.append(`
+                                <div class="linked-item" style="display:flex; justify-content:space-between; align-items:center; padding: 5px 0;">
+                                    <span>${os.osTtl}</span>
+                                    <button type="button" class="btn-unlink" data-os-cd="${os.osCd}">연결 해제</button>
+                                </div>`);
+                        });
+                    } else {
+                        listDiv.append('<p style="color:#888;">연결된 외주가 없습니다.</p>');
                     }
                 });
+            }
+
+            // B. 외주 검색 로직
+            $('#outsourcing-search-input').on('input', function() {
+                clearTimeout(outsourcingSearchTimeout);
+                const query = $(this).val();
+                if (query.length < 1) { $('#outsourcing-search-results').empty(); return; }
+
+                outsourcingSearchTimeout = setTimeout(() => {
+                    $.get(`/enter/portfolio/${prtfCd}/unlinked-outsourcings`, { query: query }, function(data) {
+                        const resultsDiv = $('#outsourcing-search-results').empty();
+                        if (data && data.length > 0) {
+                            data.forEach(os => {
+                                resultsDiv.append(`
+                                    <div class="search-result-item" style="display:flex; justify-content:space-between; align-items:center; padding: 5px 0;">
+                                        <span>${os.osTtl}</span>
+                                        <button type="button" class="btn-link" data-os-cd="${os.osCd}">+ 연결하기</button>
+                                    </div>`);
+                            });
+                        } else {
+                            resultsDiv.append('<p style="color:#888;">검색 결과가 없습니다.</p>');
+                        }
+                    });
+                }, 300);
             });
+
+            // C. '연결하기' 버튼 클릭 이벤트
+            $(document).on('click', '.btn-link', function() {
+                const osCd = $(this).parent().data('os-cd');
+                const payload = { prtfCd: prtfCd, osCd: osCd };
+
+                $.ajax({
+                    url: '/enter/portfolio/link-outsourcing',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    success: function() {
+                        loadLinkedOutsourcings(); // 연결된 목록 새로고침
+                        $('#outsourcing-search-input').val('').trigger('input'); // 검색창 초기화
+                    },
+                    error: () => alert('연결에 실패했습니다.')
+                });
+            });
+
+            // D. '연결 해제' 버튼 클릭 이벤트
+            $(document).on('click', '.btn-unlink', function() {
+                const osCd = $(this).parent().data('os-cd');
+                const payload = { prtfCd: prtfCd, osCd: osCd };
+
+                if (confirm('정말로 연결을 해제하시겠습니까?')) {
+                    $.ajax({
+                        url: '/enter/portfolio/unlink-outsourcing',
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        data: JSON.stringify(payload),
+                        success: function() {
+                            loadLinkedOutsourcings(); // 연결된 목록 새로고침
+                        },
+                        error: () => alert('연결 해제에 실패했습니다.')
+                    });
+                }
+            });
+
+            // 최초 로딩 시 연결된 외주 목록 불러오기
+            loadLinkedOutsourcings();
         });
     </script>
 </th:block>

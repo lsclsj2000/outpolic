@@ -21,6 +21,11 @@
         </collection>
     </resultMap>
 
+    <resultMap id="simplePortfolioResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
+        <id property="prtfCd" column="prtf_cd"/>
+        <result property="prtfTtl" column="prtf_ttl"/>
+    </resultMap>
+
     <select id="findPortfolioDetailsByEntCd" resultMap="portfolioDetailResultMap">
         SELECT
             p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd,
@@ -57,19 +62,19 @@
             p.prtf_cd = #{prtfCd}
     </select>
 
-    <select id="findPortfoliosByTitle" resultType="EnterPortfolio">
+    <select id="findPortfoliosByTitle" resultMap="simplePortfolioResultMap">
         SELECT
             prtf_cd,
             prtf_ttl
         FROM
             portfolio
         WHERE
-            prtf_ttl LIKE CONCAT('%',#{query},'%')
+            prtf_ttl LIKE CONCAT('%', #{query}, '%')
         ORDER BY
             prtf_reg_ymdt DESC
         LIMIT 10
     </select>
-	
+
     <select id="countPortfoliosByEntCd" resultType="int">
         SELECT COUNT(*) FROM portfolio WHERE ent_cd = #{entCd}
     </select>
@@ -134,7 +139,6 @@
         DELETE FROM portfolio WHERE prtf_cd = #{prtfCd}
     </delete>
 
-
     <select id="findLatestPrtfCd" resultType="String">
         SELECT prtf_cd FROM portfolio WHERE prtf_cd LIKE 'PO_C%'
         ORDER BY CAST(SUBSTRING(prtf_cd, 5) AS UNSIGNED) DESC LIMIT 1
@@ -152,5 +156,51 @@
     <select id="findClCdByPrtfCd" resultType="String">
         SELECT cl_cd FROM content_list WHERE cntd_cd = #{prtfCd} LIMIT 1
     </select>
+    
+    <select id="searchTagsByName" resultType="String">
+        SELECT tag_nm 
+        FROM tag
+        WHERE tag_nm LIKE CONCAT('%', #{query},'%')
+        LIMIT 10
+    </select>
+
+    <select id="findLinkedOutsourcingsByPrtfCd" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+        SELECT
+            o.os_cd,
+            o.os_ttl
+        FROM
+            outsourcing o
+        JOIN
+            outsourcing_portfolio op ON o.os_cd = op.os_cd
+        WHERE
+            op.prtf_cd = #{prtfCd}
+    </select>
+
+    <select id="findUnlinkedOutsourcings" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+        SELECT
+            o.os_cd,
+            o.os_ttl
+        FROM
+            outsourcing o
+        WHERE
+            o.ent_cd = #{entCd}
+            AND o.os_ttl LIKE CONCAT('%', #{query}, '%')
+            AND NOT EXISTS (
+                SELECT 1
+                FROM outsourcing_portfolio op
+                WHERE op.prtf_cd = #{prtfCd} AND op.os_cd = o.os_cd
+            )
+        LIMIT 10
+    </select>
+
+    <insert id="linkOutsourcingToPortfolio">
+        INSERT INTO outsourcing_portfolio (op_cd, os_cd, prtf_cd, op_reg_ymdt, ent_cd)
+        VALUES (#{opCd}, #{osCd}, #{prtfCd}, NOW(), #{entCd})
+    </insert>
+
+    <delete id="unlinkOutsourcingFromPortfolio">
+        DELETE FROM outsourcing_portfolio
+        WHERE os_cd = #{osCd} AND prtf_cd = #{prtfCd}
+    </delete>
 
 </mapper>

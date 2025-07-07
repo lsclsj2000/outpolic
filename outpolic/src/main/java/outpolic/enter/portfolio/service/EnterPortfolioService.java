@@ -1,4 +1,5 @@
 package outpolic.enter.portfolio.service;
+import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -26,4 +27,11 @@ public interface EnterPortfolioService {
      * 
      */
     List<EnterPortfolio> searchPortfoliosByTitle(String query);
+    List<String> searchTags(String query);
+    
+    // 외주 연결 기능을 위해 아래 4개 메서드 추가
+    List<EnterOutsourcing> getLinkedOutsourcings(String prtfCd);
+    List<EnterOutsourcing> searchUnlinkedOutsourcings(String prtfCd, String entCd, String query);
+    void linkOutsourcing(String prtfCd, String osCd, String entCd);
+    void unlinkOutsourcing(String prtfCd, String osCd);
 }
