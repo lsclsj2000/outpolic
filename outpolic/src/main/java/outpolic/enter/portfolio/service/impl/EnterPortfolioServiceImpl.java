@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.outsourcing.mapper.OutsourcingMapper;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.enter.portfolio.mapper.PortfolioMapper;
 import outpolic.enter.portfolio.service.EnterPortfolioService;
@@ -17,6 +19,7 @@ import outpolic.enter.portfolio.service.EnterPortfolioService;
 public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     
     private final PortfolioMapper portfolioMapper;
+    private final OutsourcingMapper outsourcingMapper;
     
     
 
@@ -123,4 +126,38 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     	return portfolioMapper.findPortfoliosByTitle(query);
     	
     }
+    
+    
+   @Override
+   public List<String> searchTags(String query){
+	   return portfolioMapper.searchTagsByName(query);
+   }
+   
+   // 외주 연결 기능을 위한 로직 구현
+   @Override
+   public List<EnterOutsourcing> getLinkedOutsourcings(String prtfCd){
+	   return portfolioMapper.findLinkedOutsourcingsByPrtfCd(prtfCd);
+   }
+   
+   @Override
+   public List<EnterOutsourcing> searchUnlinkedOutsourcings(String prtfCd,String entCd,String query){
+	   return portfolioMapper.findUnlinkedOutsourcings(prtfCd,entCd,query);
+   }
+   
+   @Override
+   @Transactional
+   public void linkOutsourcing(String prtfCd, String osCd, String entCd) {
+	   // 새로운 외주-포폴 연결 코드(PK) 생성
+	   String latestOpCd = outsourcingMapper.findLatestOpCd();
+	   int nextNum = (latestOpCd == null) ? 1 : Integer.parseInt(latestOpCd.substring(4))+1;
+	   String newOpCd = String.format("OP_C%05d", nextNum);
+	   	
+	   portfolioMapper.linkOutsourcingToPortfolio(newOpCd,osCd,prtfCd,entCd);
+   }
+   
+   @Override
+   @Transactional
+   public void unlinkOutsourcing(String prtfCd, String osCd) {
+	   portfolioMapper.unlinkOutsourcingFromPortfolio(osCd,prtfCd);
+   }
 }
