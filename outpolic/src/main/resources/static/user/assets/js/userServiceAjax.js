@@ -15,12 +15,11 @@ function getUserInfo(callback){
 }
 
 // 닉네임 중복체크 
-function dupleNicknameCheck(nickname, memberId, callback){
+function dupleNicknameCheck(nickname, callback){
 	$.ajax({
 		url : '/check-nickname',
 		type : 'POST',
-		data : { memberNickName : nickname, 
-				 memberId : memberId
+		data : { memberNickname : nickname
 				},
 		success: callback,
 		error: () => alert("닉네임이 중복입니다. 다른 닉네임을 입력하세요")
@@ -33,7 +32,7 @@ function dupleUserInfoCheck(type, value, memberId, callback){
 		type:'POST',
 		data:{
 			[type] : value,
-			memberId : memberId
+			memberId: memberId
 		},
 		success:callback,
 		error:() => alert("중복 확인 중 에러가 발생했습니다.")
