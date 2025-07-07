@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/user")
 public class UserOsstController {
+	
+	@GetMapping("/userOutsourcingStatusList")
+	public String userOutsourcingStatusList() {
+		
+		return "user/osst/userOutsourcingStatusList";
+	}
 
 	@GetMapping("/userOutsourcingStatus")
 	public String userOutsourcingStatus() {
