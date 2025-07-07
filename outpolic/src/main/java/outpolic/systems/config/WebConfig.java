@@ -9,6 +9,7 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.user.login.interceptor.LoginInterceptor;
+import outpolic.user.login.interceptor.LoginUserBlockInterceptor;
 
 @Configuration
 @RequiredArgsConstructor
@@ -19,9 +20,12 @@ public class WebConfig implements WebMvcConfigurer{
 	
 	private final LoginInterceptor loginInterceptor;
 	
+	private final LoginUserBlockInterceptor loginUserBlockInterceptor;
+	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		
+		// 로그인 안한 이용자 접근 차단
 		registry.addInterceptor(loginInterceptor)
 				.addPathPatterns("/**") // 인터셉터로 로그인 안한사람 막음
 				.excludePathPatterns("/", "/main") // 메인화면 제외
@@ -31,9 +35,17 @@ public class WebConfig implements WebMvcConfigurer{
 				.excludePathPatterns("/user/userInquiryList", "/user/userInqueryList/**", "/user/userInqueryList**")// 문의글
 				.excludePathPatterns("/favicon*")
 				.excludePathPatterns("/user/assets/**"); // 정적 리소스
-
+		//로그인 한 이용자 접근 차단
+		registry.addInterceptor(loginUserBlockInterceptor)
+				.addPathPatterns("/login")// 로그인 경로
+				.addPathPatterns("/forgotPswd")// 비밀번호 찾기 경로
+				.addPathPatterns("/choiceRegister", "/user/registerInfo");// 회원가입 경로
+		
 		WebMvcConfigurer.super.addInterceptors(registry);
 	}
+	
+	
+
 	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
