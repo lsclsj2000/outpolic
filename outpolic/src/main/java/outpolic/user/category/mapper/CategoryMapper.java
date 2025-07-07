@@ -17,4 +17,6 @@ public interface CategoryMapper {
 	List<Category> findMainCategories();
 	
 	List<ContentItemDTO> findContentsByCategoryId(String categoryId);
+	
+	List<Category> findTopLevelCategoriesWithChildren();
 }

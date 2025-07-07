@@ -23,12 +23,10 @@ public class UserMypageController {
  // 유저 마이페이지
  	@GetMapping("/mypage")
  	public String myPage(HttpSession session, Model model) {
- 		
-		Member loginMember = (Member) session.getAttribute("loginMember");
-		String memberId = loginMember.getMemberId();
- 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
- 		model.addAttribute("userInfo", userInfo);
- 		
+
+ 		String memberId = (String) session.getAttribute("SID");
+ 	    UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
+ 	    model.addAttribute("userInfo", userInfo);
  		return "user/mypage/userMypageView";
  	}
 
@@ -42,8 +40,7 @@ public class UserMypageController {
 									            @RequestParam(required = false) String memberNickname,
 									            @RequestParam(required = false) String memberEmail,
 									            @RequestParam(required = false) String memberTelNo) {
-    	Member loginMember = (Member) session.getAttribute("loginMember");
-    	String memberId = loginMember.getMemberId();
+    	String memberId = (String) session.getAttribute("SID");
         boolean duplicated = userMypageEditService.isUserInfoDuple(type, memberId, memberNickname, memberEmail, memberTelNo);
         return ResponseEntity.ok(duplicated);
     }
@@ -51,8 +48,7 @@ public class UserMypageController {
  	@PostMapping("/userEditView")
  	public String usreProfileEditView(@RequestParam("password") String memberPw, HttpSession session, Model model) {
  		
- 		Member loginMember = (Member) session.getAttribute("loginMember");	
- 		String memberId = loginMember.getMemberId();
+ 		String memberId = (String) session.getAttribute("SID");
  		UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
  		
  		if(memberPw.equals(userInfo.getMemberPw())) {
@@ -78,8 +74,7 @@ public class UserMypageController {
  	 @GetMapping("/userEdit/info")
  	 @ResponseBody
  	 public UserInfoDTO getUserInfoAjax(HttpSession session) {
- 		Member loginMember = (Member) session.getAttribute("loginMember");
- 		 String memberId = loginMember.getMemberId();
+ 		String memberId = (String) session.getAttribute("SID");
  		 
  		 return userMypageEditService.getUserInfoById(memberId); 
  	 }

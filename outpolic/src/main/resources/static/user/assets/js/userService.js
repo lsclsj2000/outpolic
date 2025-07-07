@@ -121,6 +121,7 @@ $(document).ready(function () {
 	   console.log('입력된 닉네임:', nickname);
 	   const memberId = $('#memberId').val();
 	   console.log('현재 memberId:', memberId);
+
 	   dupleUserInfoCheck("memberNickname", nickname, memberId, function(data){
 			if (data === true || data === 'true') {
 			    alert('닉네임이 중복입니다. 다른 닉네임을 입력하세요');

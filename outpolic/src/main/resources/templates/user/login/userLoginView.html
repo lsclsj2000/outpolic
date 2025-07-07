@@ -24,23 +24,18 @@
                                             <h1 class="mb-5 mb-5-ssy">Login</h1>
                                             <p class="mb-30 mb-30-ssy">아직 회원이 아니신가요? <a th:href="@{/choiceRegister}">회원가입</a></p>
                                         </div>
-                                        <form method="post" th:action="@{/login}">
+                                        <form id="loginForm" method="post" th:action="@{/login}">
                                             <div class="form-group">
-                                                <input type="text" required name="memberId" placeholder="아이디를 입력해주세요" />
-                                            </div>
-                                            <div class="form-group">
-                                                <input required type="password" name="memberPw" placeholder="비밀번호를 입력해주세요" />
-                                            </div>
-                                            <div class="login_footer form-group">
-                                             
-                                            </div>
-                                            <div class="login_footer form-group mb-50 login_footer_ssy">
-                                                <a class="text-muted" th:href="@{/forgotPswd}">비밀번호를 잊어버리셨나요?</a>
+                                                <input class="form-control" type="text" required name="memberId" id="memberId" placeholder="아이디를 입력해주세요" />
                                             </div>
                                             <div class="form-group">
-                                                <button type="submit" class="btn btn-heading btn-block hover-up" name="login">Log in</button>
+                                                <input class="form-control" required type="password" name="memberPw" id="memberPw" placeholder="비밀번호를 입력해주세요" />
+                                            </div>
+                                            <div class="form-group mt-20">
+                                                <button type="submit" class="btn btn-heading btn-block hover-up" name="login">로그인</button>
                                             </div>
                                         </form>
+                                                <a class="text-muted" th:href="@{/forgotPswd}">비밀번호를 잊어버리셨나요?</a>
                                     </div>
                                 </div>
                             </div>
@@ -53,10 +48,10 @@
 	<!-- 추가할 js file -->
 	<th:block layout:fragment="jsScript">
 		<script th:if="${success}" th:inline="javascript">
-		    alert([[${success}]]);
+		<!--    alert([[${success}]]);-->
 		</script>
 		<script th:if="${error}" th:inline="javascript">
-		    alert([[${error}]]);
+		  <!--  alert([[${error}]]);-->
 		</script>
 	</th:block>
 </html>

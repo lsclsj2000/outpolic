@@ -14,5 +14,6 @@ public interface CategoryService {
 	List<Category> getMainCategoryList();
 	
 	Category getCategoryByCode(String categoryCode);
-	
+		
+	List<Category> getMegaMenuData();
 }

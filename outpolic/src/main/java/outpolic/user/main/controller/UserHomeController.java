@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.servlet.http.HttpSession;
@@ -18,8 +19,7 @@ import outpolic.user.category.service.CategoryService;
 @RequestMapping(value="/")
 @RequiredArgsConstructor
 public class UserHomeController {
-	
-	private final CategoryService categoryService;
+	 private final CategoryService categoryService;
 
     @GetMapping("/") // 메인 페이지 URL
     public String mainPage(HttpSession session, Model model) {
@@ -34,10 +34,14 @@ public class UserHomeController {
 
         return "main";
     }
-	
-	@GetMapping("/userListpage")
-	public String userListpageView() {
-		
-		return "user/main/userListpageView";
-	}
+
+    /**
+     * "/userListpage" 페이지 요청 처리 
+     */
+    @GetMapping("/userListpage")
+    public String userListpageView() {
+        // 이 메소드 안에는 model.addAttribute가 없지만,
+        // @ModelAttribute 덕분에 헤더는 이미 'megaMenuCategories' 데이터를 받은 상태입니다.
+        return "user/main/userListpageView";
+    }
 }
