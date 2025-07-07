@@ -1,0 +1,153 @@
+/* 기본 SR_ 클래스 */
+.SR_header-bg {
+	background-color: #3b82f6; /* Blue header */
+}
+.SR_footer-bg {
+	background-color: #3b82f6; /* Blue footer */
+}
+.SR_container-bg {
+	background-color: #ffffff; /* White content area */
+}
+.SR_progress-bar-bg {
+	background-color: #e0e7ff; /* Light blue for progress bar background */
+}
+.SR_progress-bar-fill {
+	background-color: #6366f1; /* Deeper blue for progress fill */
+}
+.SR_toggle-item {
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+.SR_toggle-content {
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.5s ease-out;
+}
+.SR_toggle-content.active {
+	max-height: 500px; /* Adjust as needed for content height */
+	transition: max-height 0.5s ease-in;
+}
+.SR_btn-primary {
+	background-color: #3b82f6;
+	color: white;
+	padding: 0.75rem 1.5rem;
+	border-radius: 0.5rem;
+	transition: background-color 0.2s;
+}
+.SR_btn-primary:hover {
+	background-color: #2563eb;
+}
+.SR_btn-secondary {
+	background-color: #e0e7ff;
+	color: #3b82f6;
+	padding: 0.75rem 1.5rem;
+	border-radius: 0.5rem;
+	transition: background-color 0.2s;
+}
+.SR_btn-secondary:hover {
+	background-color: #c7d2fe;
+}
+.SR_box-shadow {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Flexbox 및 레이아웃 관련 SR_ 클래스 */
+.SR_flex { display: flex; }
+.SR_flex-col { flex-direction: column; }
+.SR_min-h-screen { min-height: 100vh; }
+.SR_flex-grow { flex-grow: 1; }
+.SR_gap-8 { gap: 2rem; /* 32px */ }
+.SR_items-center { align-items: center; }
+.SR_justify-center { justify-content: center; }
+.SR_justify-end { justify-content: flex-end; } /* 추가된 클래스 */
+
+/* 간격 (Padding/Margin) 관련 SR_ 클래스 */
+.SR_p-8 { padding: 2rem; /* 32px */ }
+.SR_p-6 { padding: 1.5rem; /* 24px */ }
+.SR_p-3 { padding: 0.75rem; /* 12px */ }
+.SR_pr-4 { padding-right: 1rem; /* 16px */ }
+.SR_mb-8 { margin-bottom: 2rem; /* 32px */ }
+.SR_mb-4 { margin-bottom: 1rem; /* 16px */ }
+.SR_mb-2 { margin-bottom: 0.5rem; /* 8px */ }
+.SR_mr-3 { margin-right: 0.75rem; /* 12px */ }
+.SR_mx-auto { margin-left: auto; margin-right: auto; }
+
+/* 텍스트 관련 SR_ 클래스 */
+.SR_text-3xl { font-size: 1.875rem; /* 30px */; line-height: 2.25rem; /* 36px */ }
+.SR_text-xl { font-size: 1.25rem; /* 20px */; line-height: 1.75rem; /* 28px */ }
+.SR_font-bold { font-weight: 700; }
+.SR_font-semibold { font-weight: 600; }
+.SR_leading-8 { line-height: 2rem; /* 32px */ }
+.SR_text-right { text-align: right; }
+.SR_text-center { text-align: center; }
+
+/* 색상 관련 SR_ 클래스 */
+.SR_text-gray-800 { color: #1f2937; }
+.SR_text-gray-700 { color: #374151; }
+.SR_text-gray-600 { color: #4b5563; }
+.SR_text-white { color: #ffffff; }
+.SR_text-blue-700 { color: #1d4ed8; }
+.SR_bg-gray-50 { background-color: #f9fafb; }
+.SR_bg-white { background-color: #ffffff; }
+.SR_bg-blue-100 { background-color: #dbeafe; }
+.SR_bg-blue-500 { background-color: #3b82f6; }
+.SR_bg-gray-300 { background-color: #d1d5db; }
+.SR_bg-blue-50 { background-color: #eff6ff; }
+.SR_bg-green-50 { background-color: #ecfdf5; }
+.SR_bg-yellow-50 { background-color: #fffbeb; }
+.SR_bg-gray-600 { background-color: #4b5563; }
+.SR_bg-opacity-50 { background-color: rgba(75, 85, 99, 0.5); /* #4b5563 with 50% opacity */ }
+
+/* 크기 및 모양 관련 SR_ 클래스 */
+.SR_w-full { width: 100%; }
+.SR_h-8 { height: 2rem; /* 32px */ }
+.SR_h-full { height: 100%; }
+.SR_w-6 { width: 1.5rem; /* 24px */ }
+.SR_h-6 { height: 1.5rem; /* 24px */ }
+.SR_rounded-full { border-radius: 9999px; }
+.SR_rounded-lg { border-radius: 0.5rem; /* 8px */ }
+.SR_rounded-md { border-radius: 0.375rem; /* 6px */ }
+.SR_overflow-hidden { overflow: hidden; }
+.SR_block { display: block; }
+.SR_border { border-width: 1px; border-style: solid; }
+.SR_border-gray-200 { border-color: #e5e7eb; }
+.SR_border-blue-200 { border-color: #bfdbfe; }
+.SR_border-green-200 { border-color: #a7f3d0; }
+.SR_border-yellow-200 { border-color: #fde68a; }
+
+/* 위치 및 가시성 관련 SR_ 클래스 */
+.SR_fixed { position: fixed; }
+.SR_inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.SR_hidden { display: none; }
+.SR_z-50 { z-index: 50; }
+
+/* 그림자 관련 SR_ 클래스 */
+.SR_shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.SR_box-shadow { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* 중복될 수 있으나 사용자 제공 코드에 있으므로 유지 */
+
+/* 커스텀 너비 (Tailwind의 w-11/12, md:w-1/2, lg:w-1/3 등) */
+.SR_w-11\/12 { width: 91.666667%; } /* 11/12 */
+.SR_max-w-sm { max-width: 24rem; /* 384px */ }
+
+/* 호버 상태 */
+.SR_hover\:bg-gray-100:hover { background-color: #f3f4f6; } /* gray-100 */
+
+/* 반응형 클래스 (md:, lg:) */
+@media (min-width: 768px) { /* md breakpoint */
+    .SR_md\:w-1\/2 { width: 50%; }
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+    .SR_lg\:flex-row { flex-direction: row; }
+    .SR_lg\:w-1\/4 { width: 25%; }
+    .SR_lg\:w-3\/4 { width: 75%; }
+    .SR_lg\:w-1\/3 { width: 33.333333%; }
+}
+
+/* Inter 폰트 정의 (userLayoutMain.html의 main.css에 추가하는 것을 권장) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* body 기본 스타일 (userLayoutMain.html의 main.css에 추가하는 것을 권장) */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f2f5; /* Light gray background */
+}
