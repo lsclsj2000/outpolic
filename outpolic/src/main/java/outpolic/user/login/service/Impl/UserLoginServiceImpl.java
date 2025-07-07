@@ -1,8 +1,9 @@
 package outpolic.user.login.service.Impl;
 
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,15 @@ public class UserLoginServiceImpl implements UserLoginService {
 	    resultMap.put("isMatched", isMatched);
 	    return resultMap;
 	}
+
+	//member테이블에 마지막 로그인 일시 update
+	@Override
+	public void updateLoginDate(Member member) {
+		userLoginMapper.updateMemberLoginDate(member);
+		
+	}
+
+
 	
 	
 	

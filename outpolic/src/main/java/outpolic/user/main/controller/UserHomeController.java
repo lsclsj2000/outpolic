@@ -30,7 +30,7 @@ public class UserHomeController {
         // 2. Model에 담기: "mainCategories" 라는 이름으로 HTML에 전달합니다.
         model.addAttribute("mainCategories", mainCategories);
         
-        log.info("메인 페이지 세션 확인: {}", session.getAttribute("loginMember"));
+        log.info("메인 페이지 세션 확인: {}", session.getAttribute("SID"));
 
         return "main";
     }
