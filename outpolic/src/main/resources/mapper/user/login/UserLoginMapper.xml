@@ -13,10 +13,9 @@
 	</resultMap>
 
 	<select id="findMemberById" resultMap="UserLoginResultMap">
-	    SELECT mbr_id, mbr_pw
+	    SELECT mbr_id, mbr_pw, grd_cd
 	    FROM member 
 	    WHERE mbr_id = #{memberId}
-	    AND grd_cd = 'USER'
 	    AND stc_cd = 'SD_ACTIVE';
 	</select>
 	
