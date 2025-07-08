@@ -4,24 +4,337 @@
 	  layout:decorate="~{user/layout/userLayoutInquiryWrite}">
 
 	<head>
-		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<meta charset="UTF-8">
+	    <meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	    <title>신고하기 페이지</title>
+	    <!-- Bootstrap CSS v5.0.0-beta2 --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	    <style>
+	        body {
+	            font-family: 'Inter', sans-serif;
+	            color: #333;
+	        }
+	        .SR_container-custom { /* Custom class for specific width */
+	            max-width: 960px;
+	            margin: 40px auto;
+	            padding: 20px;
+	            background-color: #fff;
+	            border-radius: 10px;
+	            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	        }
+	        .SR_header-section, .SR_footer-section {
+	            background-color: #e0e7ff; /* Light blue from the first image's header */
+	            padding: 20px 0;
+	            text-align: center;
+	            margin-bottom: 20px;
+	        }
+	        .SR_header-section {
+	            border-top-left-radius: 10px;
+	            border-top-right-radius: 10px;
+	        }
+	        .SR_footer-section {
+	            border-bottom-left-radius: 10px;
+	            border-bottom-right-radius: 10px;
+	            margin-top: 20px;
+	        }
+	        .SR_form-label {
+	            font-weight: 500;
+	            color: #555;
+	            margin-bottom: 8px;
+	            display: block;
+	        }
+	        .form-control:focus,
+	        .form-select:focus {
+	            border-color: #264796; /* Main Blue for focus */
+	            box-shadow: 0 0 0 0.25rem rgba(38, 71, 150, 0.25); /* Main Blue with opacity for shadow */
+	        }
+	        .SR_form-control-textarea {
+	            min-height: 150px;
+	            resize: vertical;
+	        }
+	        .SR_btn-custom {
+	            padding: 12px 25px;
+	            border-radius: 8px;
+	            font-weight: 600;
+	            cursor: pointer;
+	            transition: background-color 0.2s, transform 0.1s;
+	        }
+	        .SR_btn-custom:hover {
+	            transform: translateY(-1px);
+	        }
+	        .SR_btn-custom:active {
+	            transform: translateY(0);
+	        }
+	        .SR_btn-primary-custom {
+	            background-color: #264796; /* Main Blue */
+	            color: #fff;
+	            border: none;
+	        }
+	        .SR_btn-primary-custom:hover {
+	            background-color: #4BAEA0; /* Hover Color */
+	        }
+	        .SR_btn-secondary-custom {
+	            background-color: #cbd5e1; /* Slate-300 */
+	            color: #333;
+	            border: none;
+	        }
+	        .SR_btn-secondary-custom:hover {
+	            background-color: #a7b7c9; /* Slate-400 */
+	        }
+	        .SR_disabled-input {
+	            background-color: #f0f0f0;
+	            color: #777;
+	            cursor: not-allowed;
+	        }
+	        /* Custom style for clickable input */
+	        .SR_clickable-input {
+	            cursor: pointer;
+	        }
+	    </style>
 	</head>
-	
-	<!-- 추가할 js file -->
-	<!-- 타이틀 추가 -->
-	<th:block layout:fragment="title">
-		<div class="row">
-			<div class="col-md-2">
-			</div>
-			<div class="col-md-9">
-				<h3 class="mb-30">신고 작성 페이지</h3>
-			</div>
-		</div>
-	</th:block>
 	
 	<!-- 컨텐츠 추가 -->
 	<th:block layout:fragment="contents">
-		
-	</th:block>
+		<h2 class="h4 fw-bold text-center text-dark mb-4">신고하기</h2>
+	    <div class="SR_container-custom">
+	        
 	
+	        <div class="row g-3 mb-4">
+	            <div class="col-md-6">
+	                <label for="reporter" class="SR_form-label">작성자 :</label>
+	                <input type="text" id="reporter" class="form-control SR_disabled-input" readonly>
+	            </div>
+	            <div class="col-md-6">
+	                <label for="reportDate" class="SR_form-label">작성일자 :</label>
+	                <input type="text" id="reportDate" class="form-control SR_disabled-input" readonly>
+	            </div>
+	        </div>
+	
+	        <div class="row g-3 mb-4">
+	            <div class="col-md-6">
+	                <label for="reportType" class="SR_form-label">신고타입 :</label>
+	                <select id="reportType" class="form-select">
+	                    <option value="">선택하세요</option>
+	                    <option value="chat">채팅 신고</option>
+	                    <option value="malicious">악의적 신고</option>
+	                    <option value="etc">기타 신고</option>
+	                    <option value="outsourcing">외주 신고</option>
+	                    <option value="portfolio">포트폴리오 신고</option>
+	                    <option value="profile">프로필 신고</option>
+	                    <option value="review">리뷰 신고</option>
+	                </select>
+	            </div>
+	            <div class="col-md-6">
+	                <label for="reportReason" class="SR_form-label">신고 사유 :</label>
+	                <select id="reportReason" class="form-select" disabled>
+	                    <option value="">신고 타입을 먼저 선택하세요</option>
+	                </select>
+	            </div>
+	        </div>
+	
+	        <div class="mb-4">
+	            <label for="reportTarget" class="SR_form-label">신고 대상 :</label>
+	            <!-- 신고 대상 입력 필드에 모달 트리거 추가 -->
+	            <input type="text" id="reportTarget" class="form-control SR_clickable-input" placeholder="신고 대상을 검색하여 선택하세요" data-bs-toggle="modal" data-bs-target="#searchTargetModal" readonly>
+	        </div>
+	
+	        <div class="mb-4">
+	            <label for="reportContent" class="SR_form-label">신고 내용 입력 :</label>
+	            <textarea id="reportContent" class="form-control SR_form-control-textarea" placeholder="신고 내용을 상세히 입력해주세요"></textarea>
+	        </div>
+	
+	        <div class="mb-5">
+	            <label for="fileUpload" class="SR_form-label">첨부파일 선택 :</label>
+	            <input type="file" id="fileUpload" class="form-control">
+	        </div>
+	
+	        <div class="d-flex justify-content-end gap-3">
+	            <button type="button" class="btn btn-secondary SR_btn-custom SR_btn-secondary-custom">취소</button>
+	            <button type="submit" class="btn btn-primary SR_btn-custom SR_btn-primary-custom">제출</button>
+	        </div>
+	    </div>
+	
+	
+	    <!-- 신고 대상 검색 모달 -->
+	    <div class="modal fade" id="searchTargetModal" tabindex="-1" aria-labelledby="searchTargetModalLabel" aria-hidden="true">
+	        <div class="modal-dialog modal-dialog-centered">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h5 class="modal-title" id="searchTargetModalLabel">신고 대상 검색</h5>
+	                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="input-group mb-3">
+	                        <input type="text" class="form-control" id="targetSearchInput" placeholder="이름 또는 ID로 검색">
+	                        <button class="btn btn-primary SR_btn-custom SR_btn-primary-custom" type="button" id="searchTargetBtn">검색</button>
+	                    </div>
+	                    <div id="searchResults" class="list-group">
+	                        <!-- 검색 결과가 여기에 표시됩니다. -->
+	                        <p class="text-muted text-center mt-3">검색어를 입력하고 검색 버튼을 눌러주세요.</p>
+	                    </div>
+	                </div>
+	                <div class="modal-footer">
+	                    <button type="button" class="btn btn-secondary SR_btn-custom SR_btn-secondary-custom" data-bs-dismiss="modal">닫기</button>
+	                    <button type="button" class="btn btn-primary SR_btn-custom SR_btn-primary-custom" id="selectTargetBtn" disabled>선택</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</th:block>
+	<th:block layout:fragment="jsScript">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+	    <script>
+	        document.addEventListener('DOMContentLoaded', function() {
+	            // 작성자와 작성일자 자동 입력
+	            const reporterInput = document.getElementById('reporter');
+	            const reportDateInput = document.getElementById('reportDate');
+	            const reportTypeSelect = document.getElementById('reportType');
+	            const reportReasonSelect = document.getElementById('reportReason');
+	            const reportTargetInput = document.getElementById('reportTarget');
+	            const targetSearchInput = document.getElementById('targetSearchInput');
+	            const searchTargetBtn = document.getElementById('searchTargetBtn');
+	            const searchResultsDiv = document.getElementById('searchResults');
+	            const selectTargetBtn = document.getElementById('selectTargetBtn');
+	            let selectedTarget = null; // 선택된 대상 저장
+	
+	            // 실제 사용자 이름 또는 ID를 여기에 설정
+	            reporterInput.value = '현재 사용자'; // 예시: 로그인된 사용자 이름
+	            // 현재 날짜 자동 입력
+	            const today = new Date();
+	            const year = today.getFullYear();
+	            const month = String(today.getMonth() + 1).padStart(2, '0');
+	            const day = String(today.getDate()).padStart(2, '0');
+	            reportDateInput.value = `${year}-${month}-${day}`;
+	
+	            // 신고 타입에 따른 신고 사유 동적 변경
+	            const reportReasons = {
+	                chat: [
+	                    { text: '욕설/비하 발언', value: 'chat_insult' },
+	                    { text: '성희롱/불쾌한 발언', value: 'chat_sexual_harassment' },
+	                    { text: '외부 유도', value: 'chat_external_inducement' },
+	                    { text: '도배/스팸', value: 'chat_spam' },
+	                    { text: '부적절한 요청', value: 'chat_inappropriate_request' }
+	                ],
+	                malicious: [
+	                    { text: '악의적 신고', value: 'malicious_report' }
+	                ],
+	                etc: [
+	                    { text: '기타 신고', value: 'etc_report' }
+	                ],
+	                outsourcing: [
+	                    { text: '허위 외주 게시글', value: 'outsourcing_false_post' },
+	                    { text: '조건/내용 불명확', value: 'outsourcing_unclear' },
+	                    { text: '일방적인 계약 파기', value: 'outsourcing_breach_contract' },
+	                    { text: '외부 유도', value: 'outsourcing_external_inducement' },
+	                    { text: '불법적 외주', value: 'outsourcing_illegal' },
+	                    { text: '반복 도배 외주글', value: 'outsourcing_spam_post' }
+	                ],
+	                portfolio: [
+	                    { text: '도용된 포트폴리오', value: 'portfolio_plagiarized' },
+	                    { text: '허위 이력/경력', value: 'portfolio_false_history' },
+	                    { text: '부적절한 이미지', value: 'portfolio_inappropriate_image' },
+	                    { text: '광고성/스팸 포트폴리오', value: 'portfolio_ad_spam' },
+	                    { text: '타인 비방 내용 포함', value: 'portfolio_slander' }
+	                ],
+	                profile: [
+	                    { text: '부적절한 닉네임', value: 'profile_inappropriate_nickname' },
+	                    { text: '도용된 사진', value: 'profile_plagiarized_photo' },
+	                    { text: '광고/홍보성 내용', value: 'profile_ad_promo' },
+	                    { text: '허위 정보 기재', value: 'profile_false_info' }
+	                ],
+	                review: [
+	                    { text: '욕설/비방', value: 'review_insult' },
+	                    { text: '악의리뷰', value: 'review_malicious' },
+	                    { text: '거래 유도', value: 'review_transaction_inducement' }
+	                ]
+	            };
+	
+	            reportTypeSelect.addEventListener('change', function() {
+	                const selectedType = this.value;
+	                reportReasonSelect.innerHTML = '<option value="">선택하세요</option>'; // 초기화
+	                reportReasonSelect.disabled = true;
+	
+	                if (selectedType && reportReasons[selectedType]) {
+	                    reportReasons[selectedType].forEach(reason => {
+	                        const option = document.createElement('option');
+	                        option.value = reason.value;
+	                        option.textContent = reason.text;
+	                        reportReasonSelect.appendChild(option);
+	                    });
+	                    reportReasonSelect.disabled = false;
+	                }
+	            });
+	
+	            // 모달 검색 기능
+	            searchTargetBtn.addEventListener('click', function() {
+	                const query = targetSearchInput.value.trim();
+	                searchResultsDiv.innerHTML = ''; // 이전 검색 결과 초기화
+	                selectTargetBtn.disabled = true; // 선택 버튼 비활성화
+	                selectedTarget = null; // 선택된 대상 초기화
+	
+	                if (query.length === 0) {
+	                    searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">검색어를 입력해주세요.</p>';
+	                    return;
+	                }
+	
+	                // 실제 검색 로직 (예시 데이터 사용)
+	                // 이 부분은 실제 백엔드 API 호출 등으로 대체되어야 합니다.
+	                const dummyUsers = [
+	                    { id: 'user1', name: '김철수' },
+	                    { id: 'user2', name: '이영희' },
+	                    { id: 'user3', name: '박민수' },
+	                    { id: 'user4', name: '최지영' },
+	                    { id: 'user5', name: '정현우' }
+	                ];
+	
+	                const results = dummyUsers.filter(user =>
+	                    user.name.includes(query) || user.id.includes(query)
+	                );
+	
+	                if (results.length > 0) {
+	                    results.forEach(user => {
+	                        const listItem = document.createElement('a');
+	                        listItem.href = '#';
+	                        listItem.classList.add('list-group-item', 'list-group-item-action');
+	                        listItem.textContent = `${user.name} (${user.id})`;
+	                        listItem.dataset.id = user.id;
+	                        listItem.dataset.name = user.name;
+	                        listItem.addEventListener('click', function(e) {
+	                            e.preventDefault();
+	                            // 모든 항목에서 active 클래스 제거
+	                            document.querySelectorAll('#searchResults .list-group-item').forEach(item => {
+	                                item.classList.remove('active');
+	                            });
+	                            // 클릭된 항목에 active 클래스 추가
+	                            this.classList.add('active');
+	                            selectedTarget = { id: this.dataset.id, name: this.dataset.name };
+	                            selectTargetBtn.disabled = false; // 선택 버튼 활성화
+	                        });
+	                        searchResultsDiv.appendChild(listItem);
+	                    });
+	                } else {
+	                    searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">검색 결과가 없습니다.</p>';
+	                }
+	            });
+	
+	            // 선택 버튼 클릭 시 신고 대상 입력 필드에 값 설정
+	            selectTargetBtn.addEventListener('click', function() {
+	                if (selectedTarget) {
+	                    reportTargetInput.value = `${selectedTarget.name} (${selectedTarget.id})`;
+	                    const searchTargetModal = bootstrap.Modal.getInstance(document.getElementById('searchTargetModal'));
+	                    searchTargetModal.hide(); // 모달 닫기
+	                }
+	            });
+	
+	            // 모달이 닫힐 때 검색 결과 및 선택 초기화
+	            const searchTargetModalElement = document.getElementById('searchTargetModal');
+	            searchTargetModalElement.addEventListener('hidden.bs.modal', function () {
+	                targetSearchInput.value = '';
+	                searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">검색어를 입력하고 검색 버튼을 눌러주세요.</p>';
+	                selectTargetBtn.disabled = true;
+	                selectedTarget = null;
+	            });
+	        });
+	    </script>
+	
+	</th:block>
 </html>
