@@ -11,6 +11,7 @@
         <result property="osTtl" column="os_ttl" />
         <result property="osExpln" column="os_expln" />
         <result property="reviewScore" column="avg_review_score" />
+        <result property="osAtm" column="os_amt" />
         
     </resultMap>
 	<select id="getUserRankingOsContents" resultMap="ContentsRankingMap">
@@ -21,7 +22,8 @@
 		    c.ctgry_nm,
 		    o.os_ttl,
 		    o.os_expln,
-		    IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score
+		    IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score,
+		    o.os_amt
 		FROM
 		    -- ▼▼▼ 핵심 변경점 1: 그냥 ranking 테이블 대신, 서브쿼리를 사용합니다 ▼▼▼
 		    (

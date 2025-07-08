@@ -3,9 +3,9 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{user/layout/userLayoutMain}">
 <head>
-<meta charset="utf-8" />
-<title>Nest - Multipurpose eCommerce HTML Template</title>
-<meta name="description" content="" />
+	<meta charset="utf-8" />
+	<title>Nest - Multipurpose eCommerce HTML Template</title>
+	<meta name="description" content="" />
 </head>
 <style>
 	.review-slider-active {
@@ -46,258 +46,170 @@
 			</ul>
 		</section>
 		<!--End hero-->
-		<section class="popular-categories section-padding">
-			<div class="container" style="width: 1300px">
-				<div class="section-title">
-					<div class="title">
-						<h3>카테고리</h3>
-						<!-- 모든 카테고리를 삭제할지는 선택하시면 됩니다. -->
-						<a class="show-all" href="#"> 모든 카테고리 <i
-							class="fi-rs-angle-right"></i>
-						</a>
-					</div>
-					<div
-						class="slider-arrow slider-arrow-2 flex-right carausel-8-columns-arrow"
-						id="carausel-8-columns-arrows"></div>
-				</div>
-				<div class="carausel-8-columns-cover position-relative">
-					<div class="carausel-8-columns" id="carausel-8-columns"
-						th:if="${!mainCategories.isEmpty()}">
-						<div class="card-1" th:each="cat : ${mainCategories}">
-							<figure class="img-hover-scale overflow-hidden">
-								<a th:href="@{/user/products(category=${cat.categoryId})}">
-									<!-- th:switch를 사용하여 cat.categoryName 값에 따라 분기합니다. --> <th:block
-										th:switch="${cat.categoryName}">
-										<!-- case 1: 카테고리 이름이 '디자인'일 경우 -->
-										<img th:case="'디자인'"
-											src="/user/assets/imgs/icon/graphic-designer.png"
-											th:alt="${cat.categoryName}" />
-
-										<!-- case 2: 카테고리 이름이 'IT·프로그래밍'일 경우 -->
-										<img th:case="'IT·프로그래밍'"
-											src="/user/assets/imgs/icon/technical-support.png"
-											th:alt="${cat.categoryName}" />
-
-										<!-- case 3: 카테고리 이름이 '영상·사진·음향'일 경우 -->
-										<img th:case="'영상·사진·음향'"
-											src="/user/assets/imgs/icon/picture.png"
-											th:alt="${cat.categoryName}" />
-										<!-- case 4: 카테고리 이름이 '마케팅'일 경우 -->
-										<img th:case="'마케팅'"
-											src="/user/assets/imgs/icon/social-media.png"
-											th:alt="${cat.categoryName}" />
-										<!-- case 5: 카테고리 이름이 '번역·통역'일 경우 -->
-										<img th:case="'번역·통역'"
-											src="/user/assets/imgs/icon/translate.png"
-											th:alt="${cat.categoryName}" />
-										<!-- case 6: 카테고리 이름이 '문서·글쓰기'일 경우 -->
-										<img th:case="'문서·글쓰기'"
-											src="/user/assets/imgs/icon/documentation.png"
-											th:alt="${cat.categoryName}" />
-										<!-- case 7: 카테고리 이름이 '창업·사업'일 경우 -->
-										<img th:case="'창업·사업'"
-											src="/user/assets/imgs/icon/business.png"
-											th:alt="${cat.categoryName}" />
-										<!-- case 8: 카테고리 이름이 '주문제작'일 경우 -->
-										<img th:case="'주문제작'"
-											src="/user/assets/imgs/icon/color-selection.png"
-											th:alt="${cat.categoryName}" />
-										<!-- case 9: 카테고리 이름이 '세무·법무·노무'일 경우 -->
-										<img th:case="'세무·법무·노무'"
-											src="/user/assets/imgs/icon/law-scale.png"
-											th:alt="${cat.categoryName}" />
-
-									</th:block>
-								</a>
-							</figure>
-							<h6>
-								<a th:href="@{/user/products(category=${cat.categoryId})}"
-									th:text="${cat.categoryName}">카테고리명</a>
-							</h6>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
+		
 		<div class="container mb-30">
 			<div class="row d-flex justify-content-center">
 				<div class="col-lg-4-5">
-					<section class="product-tabs section-padding position-relative">
-						<div class="section-title style-2">
-							<h3>인기있는 외주</h3>
-							<!-- '인기있는 외주' 섹션의 탭 ID를 고유하게 변경했습니다. -->
-							<ul class="nav nav-tabs links" id="outsourcingTab" role="tablist">
+					<section class="popular-categories section-padding">
+						<div class="section-title">
+							<div class="title">
+								<h3>카테고리</h3>
+								<!-- 모든 카테고리를 삭제할지는 선택하시면 됩니다. -->
+								<a class="show-all" href="#"> 모든 카테고리 <i
+									class="fi-rs-angle-right"></i>
+								</a>
+							</div>
+							<div
+								class="slider-arrow slider-arrow-2 flex-right carausel-8-columns-arrow"
+								id="carausel-8-columns-arrows"></div>
+						</div>
+						<div class="carausel-8-columns-cover position-relative">
+							<div class="carausel-8-columns" id="carausel-8-columns"
+								th:if="${!mainCategories.isEmpty()}">
+								<div class="card-1" th:each="cat : ${mainCategories}">
+									<figure class="img-hover-scale overflow-hidden">
+										<a th:href="@{/user/products(category=${cat.categoryId})}">
+											<!-- th:switch를 사용하여 cat.categoryName 값에 따라 분기합니다. --> <th:block
+												th:switch="${cat.categoryName}">
+												<!-- case 1: 카테고리 이름이 '디자인'일 경우 -->
+												<img th:case="'디자인'"
+													src="/user/assets/imgs/icon/graphic-designer.png"
+													th:alt="${cat.categoryName}" />
+		
+												<!-- case 2: 카테고리 이름이 'IT·프로그래밍'일 경우 -->
+												<img th:case="'IT·프로그래밍'"
+													src="/user/assets/imgs/icon/technical-support.png"
+													th:alt="${cat.categoryName}" />
+		
+												<!-- case 3: 카테고리 이름이 '영상·사진·음향'일 경우 -->
+												<img th:case="'영상·사진·음향'"
+													src="/user/assets/imgs/icon/picture.png"
+													th:alt="${cat.categoryName}" />
+												<!-- case 4: 카테고리 이름이 '마케팅'일 경우 -->
+												<img th:case="'마케팅'"
+													src="/user/assets/imgs/icon/social-media.png"
+													th:alt="${cat.categoryName}" />
+												<!-- case 5: 카테고리 이름이 '번역·통역'일 경우 -->
+												<img th:case="'번역·통역'"
+													src="/user/assets/imgs/icon/translate.png"
+													th:alt="${cat.categoryName}" />
+												<!-- case 6: 카테고리 이름이 '문서·글쓰기'일 경우 -->
+												<img th:case="'문서·글쓰기'"
+													src="/user/assets/imgs/icon/documentation.png"
+													th:alt="${cat.categoryName}" />
+												<!-- case 7: 카테고리 이름이 '창업·사업'일 경우 -->
+												<img th:case="'창업·사업'"
+													src="/user/assets/imgs/icon/business.png"
+													th:alt="${cat.categoryName}" />
+												<!-- case 8: 카테고리 이름이 '주문제작'일 경우 -->
+												<img th:case="'주문제작'"
+													src="/user/assets/imgs/icon/color-selection.png"
+													th:alt="${cat.categoryName}" />
+												<!-- case 9: 카테고리 이름이 '세무·법무·노무'일 경우 -->
+												<img th:case="'세무·법무·노무'"
+													src="/user/assets/imgs/icon/law-scale.png"
+													th:alt="${cat.categoryName}" />
+		
+											</th:block>
+										</a>
+									</figure>
+									<h6>
+										<a th:href="@{/user/products(category=${cat.categoryId})}"
+											th:text="${cat.categoryName}">카테고리명</a>
+									</h6>
+								</div>
+							</div>
+						</div>
+					</section>
+					
+					<!-- 외주 랭킹 시작 -->
+					<section class="section-padding">
+						<!-- 섹션 제목 부분 -->
+				        <div class="section-title style-2 wow animate__animated animate__fadeIn">
+				            <h3>인기있는 외주</h3>
+				            <ul class="nav nav-tabs links" style="font-size: 14px;">
 								<li class="nav-item" role="presentation">
-									<button class="nav-link active" id="outsourcing-nav-tab-one"
-										data-bs-toggle="tab" data-bs-target="#outsourcing-tab-one"
-										type="button" role="tab" aria-controls="outsourcing-tab-one"
+									<button class="nav-link active" id="portfolio-nav-tab-one"
+										data-bs-toggle="tab" data-bs-target="#portfolio-tab-one"
+										type="button" role="tab" aria-controls="portfolio-tab-one"
 										aria-selected="true">전체보기</button>
 								</li>
 								<li class="nav-item" role="presentation">
-									<button class="nav-link" id="outsourcing-nav-tab-two"
-										data-bs-toggle="tab" data-bs-target="#outsourcing-tab-two"
-										type="button" role="tab" aria-controls="outsourcing-tab-two"
+									<button class="nav-link" id="portfolio-nav-tab-two"
+										data-bs-toggle="tab" data-bs-target="#portfolio-tab-two"
+										type="button" role="tab" aria-controls="portfolio-tab-two"
 										aria-selected="false">가장 최신순</button>
 								</li>
 								<li class="nav-item" role="presentation">
-									<button class="nav-link" id="outsourcing-nav-tab-three"
-										data-bs-toggle="tab" data-bs-target="#outsourcing-tab-three"
-										type="button" role="tab" aria-controls="outsourcing-tab-three"
+									<button class="nav-link" id="portfolio-nav-tab-three"
+										data-bs-toggle="tab" data-bs-target="#portfolio-tab-three"
+										type="button" role="tab" aria-controls="portfolio-tab-three"
 										aria-selected="false">가장 오래된순</button>
 								</li>
-							</ul>
-						</div>
-						<!--End nav-tabs-->
-						<!-- 인기있는 외주 컨텐츠 시작 -->
-						<!-- tab-one = 전체보기 / tab-two = 가장 최신순 / tab-three = 가장 오래된순 -->
-						<!-- '인기있는 외주' 섹션의 탭 콘텐츠 ID를 고유하게 변경했습니다. -->
-						<div class="tab-content" id="outsourcingTabContent">
-							<div class="tab-pane fade show active" id="outsourcing-tab-one"
-								role="tabpanel" aria-labelledby="outsourcing-nav-tab-one">
-								<div class="row product-grid-4">
-									<!--end product card-->
-									<div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-										<div class="product-cart-wrap">
-											<div class="product-img-action-wrap">
-												<div class="product-img product-img-zoom">
-													<a href="#"> <img class="default-img"
-														src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-													</a>
-												</div>
-											</div>
-											<div class="product-content-wrap">
-												<div class="product-category">
-													<!-- 외주 카테고리 -->
-													<a href="#">카테고리 입니다</a>
-												</div>
-												<!-- 외주글 제목 -->
-												<h2>
-													<!-- 'outsourcing-title' 클래스를 추가하여 JavaScript에서 이 제목을 자를 수 있도록 합니다. -->
-													<a href="#" class="outsourcing-title">외주글 제목 입니다
-														테스트입니다.</a>
-												</h2>
-												<div class="product-rate-cover">
-													<div class="product-rate d-inline-block">
-														<!-- 평점 별 / width값에 따라 별 색이 채워집니다 -->
-														<div class="product-rating" style="width: 50%"></div>
-													</div>
-													<!-- 평점 개수 또는 평점을 기입하면 됩니다 -->
-													<span class="font-small ml-5 text-muted"> (4.0)</span>
-												</div>
-												<div>
-													<!-- 외주 희망 가격입니다 -->
-													2,500,000원~
-												</div>
-												<div>
-													<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-													<span class="font-small text-muted"><a href="#">회사
-															이름입니다</a></span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<!--end product card-->
-								</div>
-								<!--End product-grid-4-->
-							</div>
-							<!--En tab one-->
-							<div class="tab-pane fade" id="outsourcing-tab-two"
-								role="tabpanel" aria-labelledby="outsourcing-nav-tab-two">
-								<div class="row product-grid-4">
-									<!--end product card-->
-									<div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-										<div class="product-cart-wrap">
-											<div class="product-img-action-wrap">
-												<div class="product-img product-img-zoom">
-													<a href="#"> <img class="default-img"
-														src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-													</a>
-												</div>
-											</div>
-											<div class="product-content-wrap">
-												<div class="product-category">
-													<!-- 외주 카테고리 -->
-													<a href="#">카테고리 입니다</a>
-												</div>
-												<!-- 외주글 제목 -->
-												<h2>
-													<a href="#" class="outsourcing-title">외주글 제목 입니다</a>
-												</h2>
-												<div class="product-rate-cover">
-													<div class="product-rate d-inline-block">
-														<!-- 평점 별 / width값에 따라 별 색이 채워집니다 -->
-														<div class="product-rating" style="width: 50%"></div>
-													</div>
-													<!-- 평점 개수 또는 평점을 기입하면 됩니다 -->
-													<span class="font-small ml-5 text-muted"> (4.0)</span>
-												</div>
-												<div>
-													<!-- 외주 희망 가격입니다 -->
-													2,500,000원~
-												</div>
-												<div>
-													<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-													<span class="font-small text-muted"><a href="#">회사
-															이름입니다</a></span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<!--end product card-->
-								</div>
-								<!--End product-grid-4-->
-							</div>
-							<!--En tab two-->
-							<div class="tab-pane fade" id="outsourcing-tab-three"
-								role="tabpanel" aria-labelledby="outsourcing-nav-tab-three">
-								<div class="row product-grid-4">
-									<!--end product card-->
-									<div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-										<div class="product-cart-wrap">
-											<div class="product-img-action-wrap">
-												<div class="product-img product-img-zoom">
-													<a href="#"> <img class="default-img"
-														src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-													</a>
-												</div>
-											</div>
-											<div class="product-content-wrap">
-												<div class="product-category">
-													<!-- 외주 카테고리 -->
-													<a href="#">카테고리 입니다</a>
-												</div>
-												<!-- 외주글 제목 -->
-												<h2>
-													<a href="#" class="outsourcing-title">외주글 제목 입니다</a>
-												</h2>
-												<div class="product-rate-cover">
-													<div class="product-rate d-inline-block">
-														<!-- 평점 별 / width값에 따라 별 색이 채워집니다 -->
-														<div class="product-rating" style="width: 50%"></div>
-													</div>
-													<!-- 평점 개수 또는 평점을 기입하면 됩니다 -->
-													<span class="font-small ml-5 text-muted"> (4.0)</span>
-												</div>
-												<div>
-													<!-- 외주 희망 가격입니다 -->
-													2,500,000원~
-												</div>
-												<div>
-													<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-													<span class="font-small text-muted"><a href="#">회사
-															이름입니다</a></span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<!--end product card-->
-								</div>
-								<!--End product-grid-4-->
-							</div>
-							<!--En tab three-->
-						</div>
-						<!--End tab-content-->
+				            </ul>
+				        </div>
+				        
+				     
+				        <div th:if="${not #lists.isEmpty(findOSList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
+				            
+				            <!-- ▼▼▼ th:each로 popularList 데이터를 반복하여 아이템 카드를 생성합니다 ▼▼▼ -->
+				            <div th:each="content : ${findOSList}" class="slider-item">
+				            
+				                <!-- 개별 아이템 카드 (이전에 만들었던 카드 구조를 재활용) -->
+				                <div class="product-cart-wrap mb-30 position-relative">
+				                    
+				                    <!-- 이미지 영역 -->
+				                    <div class="product-img-action-wrap">
+				                        <div class="product-img product-img-zoom">
+				                            <!-- stretched-link와 함께 사용할 a 태그는 비워둡니다 -->
+				                            <a href="javascript:void(0);">
+				                                <!-- 썸네일 이미지가 있다면 DTO에 추가해서 사용하세요 -->
+				                                <img class="default-img" th:src="@{/imgs/placeholder.png}" alt="콘텐츠 이미지" />
+				                            </a>
+				                        </div>
+				                        <!-- PRIME, 품질보증 등 뱃지 (데이터가 있을 경우 표시) -->
+				                        <div class="product-badges product-badges-position product-badges-mrg">
+				                           <span class="hot" th:if="${#strings.contains(content.osTtl, 'PRIME')}">PRIME</span>
+				                           <span class="sale" th:if="${#strings.contains(content.osTtl, '보증')}">품질보증</span>
+				                        </div>
+				                    </div>
+				                    
+				                    <!-- 콘텐츠 내용 영역 -->
+				                    <div class="product-content-wrap" style="padding: 15px;">
+				                        <!-- 카테고리 + 기업명 -->
+				                        <div class="product-category">
+				                            <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" href="#">카테고리 | 기업명</a>
+				                        </div>
+				                        <!-- 제목 (h2 안에 stretched-link를 가진 a 태그) -->
+				                        <h2>
+				                            <a th:href="@{/user/contents/{id}(id=${content.osCode})}" 
+				                               th:text="${content.osTtl}"
+				                               class="stretched-link">콘텐츠 제목</a>
+				                        </h2>
+				                        <!-- 별점 -->
+				                        <div class="product-rate-cover">
+				                           <div class="product-rate d-inline-block">
+				                              <!-- 예: 평점이 3.5점이면 70% 채워짐 -->
+				                              <div class="product-rating" th:style="'width:' + (${content.reviewScore} * 20) + '%'"></div>
+				                           </div>
+				                           <span class="font-small ml-5 text-muted" th:text="' (' + ${#numbers.formatDecimal(content.reviewScore, 1, 1)} + ')'"> (4.5)</span>
+				                        </div>
+				                        <!-- 가격 (가격 정보가 DTO에 있다면 추가) -->
+				                        <div class="product-price">
+				                           <span th:text="${content.osAtm}">가격 정보~</span>
+				                        </div>
+				                    </div>
+				                </div> <!-- product-cart-wrap 끝 -->
+				                
+				            </div> <!-- th:each 루프 끝 -->
+				        </div> <!-- popular-outsourcing-slider 끝 -->
+				
+				        <!-- 데이터가 없을 경우 표시할 메시지 -->
+				        <div th:if="${#lists.isEmpty(findOSList)}" class="text-center py-5">
+				            <p>표시할 인기 콘텐츠가 없습니다.</p>
+				        </div>
 					</section>
+					<!-- 외주 랭킹 끝 -->
 					<!--Products Tabs-->
 				</div>
 			</div>
