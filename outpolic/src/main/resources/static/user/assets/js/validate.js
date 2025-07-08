@@ -9,7 +9,7 @@ function isValidId(id) {
 
 // 비밀번호 검사 (영문+숫자+특수문자 8~20자)
 function isValidPassword(pw) {
-    const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@^*]).{8,20}$/;
+    const pattern = /^(?=.*[a-z])(?=.*\d)(?=.*[!@^*]).{8,20}$/;
     return pattern.test(pw);
 }
 
@@ -20,7 +20,13 @@ function isValidEmail(email) {
 }
 
 // 전화번호 검사 (숫자만, 010 포함 10~11자리)
-function isValidPhone(phone) {
-    const pattern = /^01[016789][0-9]{7,8}$/;
-    return pattern.test(phone);
+function isValidTelNo(TelNo) {
+    const pattern = /^01[016789]-[0-9]{3,4}-[0-9]{4}$/
+    return pattern.test(TelNo);
+}
+
+//이름 검사(한글만)
+function isValidName(name) {
+    const pattern = /^[가-힣]{2,20}$/;
+    return pattern.test(name);
 }

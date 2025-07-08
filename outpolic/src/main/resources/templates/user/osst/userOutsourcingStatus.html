@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/userLayoutMain}">
+<head>
+    <meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>외주 진행 현황</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/user/assets/css/userOutsourcingStatus.css}">
+</head>
+
+<body>
+	<div layout:fragment="contents">
+	    <div class="SR_flex SR_flex-col SR_min-h-screen">
+	        <!-- Main Content -->
+	        <main class="SR_flex-grow SR_p-8">
+	            <!-- 1. 레이블: [외주명] 진행 현황 (박스 바깥) -->
+	            <div class="SR_label-container">
+                    <div class="SR_blue-bar"></div>
+	                <h2 class="SR_text-3xl SR_font-bold SR_text-gray-800">[외주명] 진행 현황</h2>
+	            </div>
+	
+	            <!-- 첫 번째 큰 박스: 관련 외주 게시글, 최근 활동, 주요 담당자, 진행 퍼센테이지 바 -->
+	            <div class="SR_max-w-6xl SR_mx-auto SR_container-bg SR_p-8 SR_rounded-lg SR_box-shadow SR_mb-8">
+	                <!-- 2. 관련 외주 게시글, 3. 주요 담당자, 4. 최근 활동 내역 (가로 정렬) -->
+	                <div class="SR_flex SR_flex-col SR_lg:flex-row SR_gap-8 SR_mb-8">
+	                    <!-- 관련 외주 게시글 -->
+	                    <div class="SR_w-full SR_lg:w-1/3 SR_section-card SR_mb-0">
+	                        <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">관련 외주 게시글</h3>
+	                        <div class="SR_p-3 SR_bg-gray-50 SR_rounded-md SR_border SR_border-gray-200">
+	                            <p class="SR_text-base SR_font-semibold SR_text-blue-700 SR_mb-2">
+	                                <a href="#" class="SR_underline">원룸 인테리어 디자인 외주 프로젝트 (게시글 링크)</a>
+	                            </p>
+	                            <p class="SR_text-sm SR_text-gray-600">게시일: 2025-06-20 | 작성자: 홍길동</p>
+	                            <p class="SR_text-sm SR_text-gray-600 SR_mt-1">
+	                                작은 원룸 공간을 효율적이고 감각적으로 디자인해 줄 전문가를 찾습니다.
+	                                모던하고 미니멀한 스타일을 선호하며, 수납 공간 확보가 중요합니다.
+	                            </p>
+	                        </div>
+	                    </div>
+	
+	                    <!-- 최근 활동 내역 -->
+	                    <div class="SR_w-full SR_lg:w-1/3 SR_section-card SR_mb-0">
+	                        <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">최근 활동</h3>
+	                        <div id="recent-activities-list" class="SR_scrollable-activity-list">
+	                            <!-- Activities will be dynamically loaded here -->
+	                        </div>
+	                    </div>
+	
+	                    <!-- 주요 담당자 -->
+	                    <div class="SR_w-full SR_lg:w-1/3 SR_section-card SR_mb-0">
+	                        <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">주요 담당자</h3>
+	                        <div id="key-contacts-list">
+	                            <!-- Contacts will be dynamically loaded here -->
+	                        </div>
+	                    </div>
+	                </div>
+	
+	                <!-- 5. 진행 퍼센테이지 바 (세그먼트형) -->
+	                <div class="SR_mb-8 SR_text-center">
+	                    <div class="SR_segmented-progress-container" id="segmented-progress-bar">
+	                        <!-- Segments will be dynamically loaded here -->
+	                    </div>
+	                    <p id="progress-percentage-text" class="SR_progress-percentage-text">20%</p>
+	                    <p id="progress-status-message" class="SR_text-center SR_text-gray-600 SR_mt-2">초기 계약이 진행 중입니다.</p>
+	                </div>
+	            </div>
+	
+	            <!-- 두 번째 큰 박스: 진행 단계, 공급자 보고, 수요자 피드백, 최종 결과물 목록 -->
+	            <div class="SR_max-w-6xl SR_mx-auto SR_container-bg SR_p-8 SR_rounded-lg SR_box-shadow">
+	                <div class="SR_flex SR_flex-col SR_lg:flex-row SR_gap-8">
+	                    <!-- 6. 단계별 타임라인 (왼쪽 부분 - 1/3 너비로 조정) -->
+	                    <div class="SR_w-full SR_lg:w-1/3 SR_bg-gray-50 SR_p-6 SR_rounded-lg SR_box-shadow">
+	                        <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">진행 단계</h3>
+	                        <ul id="progress-steps" class="SR_progress-steps-list">
+	                            <!-- Steps will be dynamically loaded here -->
+	                        </ul>
+	                    </div>
+	
+	                    <!-- Right Section: Content Area (오른쪽 부분 - 2/3 너비로 조정) -->
+	                    <div class="SR_w-full SR_lg:w-2\/3 SR_flex SR_flex-col SR_gap-8">
+	                        <!-- 8. 공급자: 보고서 제출 -->
+	                        <div id="provider-report-box" class="SR_bg-white SR_p-6 SR_rounded-lg SR_box-shadow SR_border SR_border-gray-200">
+	                            <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">공급자 보고</h3>
+	                            <div id="provider-results-list" class="SR_mb-4">
+	                                <p class="SR_text-gray-600">제출된 결과물이 없습니다.</p>
+	                            </div>
+	                            <div id="provider-report-buttons" class="SR_flex SR_justify-end">
+	                                <button class="SR_btn-primary" onclick="openModal('submitReportModal')">결과물 제출</button>
+	                            </div>
+	                        </div>
+	
+	                        <!-- 9. 수요자: 피드백 -->
+	                        <div id="requester-feedback-box" class="SR_bg-white SR_p-6 SR_rounded-lg SR_box-shadow SR_border SR_border-gray-200">
+	                            <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">수요자 피드백</h3>
+	                            <div id="requester-feedback-list" class="SR_mb-4">
+	                                <p class="SR_text-gray-600">피드백 내용이 없습니다.</p>
+	                            </div>
+	                            <div id="requester-feedback-buttons" class="SR_flex SR_gap-4 SR_justify-end">
+	                                <button class="SR_btn-primary" onclick="openModal('giveFeedbackModal')">피드백 하기</button>
+	                            </div>
+	                        </div>
+
+                            
+	
+	                        <!-- 10. 단계 최종 결과물 -->
+	                        <div id="final-results-box" class="SR_bg-white SR_p-6 SR_rounded-lg SR_box-shadow SR_border SR_border-gray-200">
+	                            <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">최종 결과물 목록</h3>
+	                            <div id="final-results-list" class="SR_text-gray-600">
+	                                <p class="SR_text-gray-600">최종 결과물이 없습니다.</p>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            <!-- 11. 단계 승인 버튼 (수요자 피드백 박스 바깥) -->
+                <div id="step-approval-button-container" class="SR_flex SR_justify-end SR_mt-4 mt-30">
+                    <button class="SR_btn-secondary" onclick="approveStep()">단계 승인</button>
+                </div>
+	            </div>
+	        </main>
+	
+	        <!-- Modals -->
+	        <!-- Submit Report Modal -->
+	        <div id="submitReportModal" class="SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_hidden SR_z-50">
+	            <div class="SR_bg-white SR_p-8 SR_rounded-lg SR_box-shadow SR_w-11\/12 SR_md\:w-1\/2 SR_lg\:w-1\/3">
+	                <h3 class="SR_text-xl SR_font-bold SR_mb-4">결과물 제출</h3>
+	                <input type="text" id="reportTitle" placeholder="보고서 제목을 입력하세요." class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
+	                <label for="feedbackCodeSelect" class="SR_block SR_text-sm SR_font-semibold SR_text-gray-700 SR_mb-2">관련 피드백 선택 (선택 사항):</label>
+	                <select id="feedbackCodeSelect" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
+	                    <option value="">피드백을 선택하세요</option>
+	                    <!-- Options will be dynamically loaded here -->
+	                </select>
+	                <textarea id="reportContent" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4" rows="5" placeholder="보고서 내용을 입력하세요."></textarea>
+	                <input type="file" id="reportFile" class="SR_mb-4">
+	                <div class="SR_flex SR_justify-end SR_gap-4">
+	                    <button class="SR_btn-secondary" onclick="closeModal('submitReportModal')">취소</button>
+	                    <button class="SR_btn-primary" onclick="submitReport()">제출</button>
+	                </div>
+	            </div>
+	        </div>
+	
+	        <!-- Give Feedback Modal -->
+	        <div id="giveFeedbackModal" class="SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_hidden SR_z-50">
+	            <div class="SR_bg-white SR_p-8 SR_rounded-lg SR_box-shadow SR_w-11\/12 SR_md\:w-1\/2 SR_lg\:w-1\/3">
+	                <h3 class="SR_text-xl SR_font-bold SR_mb-4">피드백 하기</h3>
+	                <input type="text" id="feedbackTitle" placeholder="피드백 제목을 입력하세요." class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
+	                <label for="reportCodeSelect" class="SR_block SR_text-sm SR_font-semibold SR_text-gray-700 SR_mb-2">관련 보고서 선택 (선택 사항):</label>
+	                <select id="reportCodeSelect" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
+	                    <option value="">보고서를 선택하세요</option>
+	                    <!-- Options will be dynamically loaded here -->
+	                </select>
+	                <textarea id="feedbackContent" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4" rows="5" placeholder="피드백 내용을 입력하세요."></textarea>
+	                <input type="file" id="feedbackFile" class="SR_mb-4"> <!-- Added file input for feedback -->
+	                <div class="SR_flex SR_justify-end SR_gap-4">
+	                    <button class="SR_btn-secondary" onclick="closeModal('giveFeedbackModal')">취소</button>
+	                    <button class="SR_btn-primary" onclick="submitFeedback()">피드백 제출</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <th:block layout:fragment="jsScript">
+	    <script>
+	        // Updated progress steps data with content arrays
+	        const progressStepsData = [
+	            { id: 1, name: "계약 체결", status: "진행 중", reports: [], feedbacks: [], finalResults: [] },
+	            { id: 2, name: "초기 기획", status: "예정", reports: [], feedbacks: [], finalResults: [] },
+	            { id: 3, name: "작업 진행", status: "예정", reports: [], feedbacks: [], finalResults: [] },
+	            { id: 4, name: "최종 완료", status: "예정", reports: [], feedbacks: [], finalResults: [] }
+	        ];
+	
+	        const recentActivitiesData = [
+	            { date: "2025-07-07", description: "프로젝트 시작 및 계약 체결" },
+	            { date: "2025-07-06", description: "외주 담당자 배정 완료" },
+	            { date: "2025-07-05", description: "프로젝트 초기 설정 완료" },
+	            { date: "2025-07-04", description: "초기 미팅 준비" },
+	            { date: "2025-07-03", description: "프로젝트 문서 검토" },
+	            { date: "2025-07-02", description: "내부 팀 구성" },
+	            { date: "2025-07-01", description: "외주 공고 게시" }
+	        ];
+	
+	        const keyContactsData = [
+	            { name: "김철수", role: "프로젝트 매니저", email: "kim.cs@example.com", avatar: "PM" },
+	            { name: "이영희", role: "외주 담당자", email: "lee.yh@example.com", avatar: "OD" }
+	        ];
+	
+	        let currentStep = 1; // 현재 활성화된 단계
+	        let progressPercentage = 0; // 세그먼트 바 진행률
+	        let activeContentStepId = 1; // 현재 오른쪽에 내용이 표시되는 단계 ID
+	
+	        document.addEventListener('DOMContentLoaded', () => {
+	            renderRecentActivities();
+	            renderKeyContacts();
+	            renderProgressSteps();
+	            updateProgressDisplay();
+	            displayStepDetails(currentStep); // 초기 로드 시 현재 단계 내용 표시
+	        });
+	
+	        function renderProgressSteps() {
+	            const stepsContainer = document.getElementById('progress-steps');
+	            stepsContainer.innerHTML = ''; // 기존 단계 초기화
+	
+	            progressStepsData.forEach(step => {
+	                const li = document.createElement('li');
+	                let stepClass = '';
+	                if (step.id < currentStep) {
+	                    stepClass = 'SR_completed-step';
+	                } else if (step.id === currentStep) {
+	                    stepClass = 'SR_current-step';
+	                }
+	                li.className = `${stepClass}`;
+	                li.setAttribute('data-step-id', step.id);
+	                li.onclick = () => displayStepDetails(step.id); // 클릭 시 해당 단계 내용 표시
+	
+	                li.innerHTML = `
+	                    <div class="SR_step-icon">
+	                        ${step.id}
+	                    </div>
+	                    <span class="SR_step-name">${step.name}</span>
+	                    <span class="SR_step-status">${step.status}</span>
+	                `;
+	                stepsContainer.appendChild(li);
+	            });
+	        }
+	
+	        function activateStep(stepId) {
+	            currentStep = stepId;
+	            renderProgressSteps(); // 색상 업데이트를 위해 다시 렌더링
+	            updateProgressDisplay();
+	            displayStepDetails(stepId); // 다음 단계로 이동 시 해당 단계 내용 표시
+	        }
+	
+	        function updateProgressDisplay() {
+	            const segmentedProgressBar = document.getElementById('segmented-progress-bar');
+	            const progressPercentageText = document.getElementById('progress-percentage-text');
+	            const progressStatusMessage = document.getElementById('progress-status-message');
+	
+	            segmentedProgressBar.innerHTML = ''; // Clear existing segments
+	
+	            progressStepsData.forEach(step => {
+	                const segment = document.createElement('div');
+	                segment.classList.add('SR_progress-segment');
+	                if (step.id < currentStep) {
+	                    segment.classList.add('completed');
+	                } else if (step.id === currentStep) {
+	                    segment.classList.add('current');
+	                }
+	                segment.textContent = step.id; // Display step number in segment
+	                segmentedProgressBar.appendChild(segment);
+	            });
+	
+	            progressPercentage = (currentStep / progressStepsData.length) * 100;
+	            progressPercentageText.textContent = `${Math.round(progressPercentage)}%`;
+	
+	            // 진행 상태 메시지 업데이트
+	            const currentStepData = progressStepsData.find(step => step.id === currentStep);
+	            if (currentStepData) {
+	                progressStatusMessage.textContent = `${currentStepData.name} 단계 (${currentStepData.status})`;
+	            }
+	        }
+	
+	        // Function to display content for a specific step
+	        function displayStepDetails(stepId) {
+	            activeContentStepId = stepId; // Update the active content step ID
+	            const selectedStep = progressStepsData.find(step => step.id === stepId);
+	
+	            if (!selectedStep) {
+	                console.error("Selected step not found:", stepId);
+	                return;
+	            }
+
+	            // Remove 'SR_selected-step' from all list items
+	            document.querySelectorAll('#progress-steps li').forEach(item => {
+	                item.classList.remove('SR_selected-step');
+	            });
+	            // Add 'SR_selected-step' to the clicked list item
+	            document.querySelector(`#progress-steps li[data-step-id="${stepId}"]`).classList.add('SR_selected-step');
+	
+	            // Render Provider Reports
+	            renderProviderResults(selectedStep.reports);
+	
+	            // Render Requester Feedbacks
+	            renderRequesterFeedback(selectedStep.feedbacks);
+	
+	            // Render Final Results
+	            renderFinalResults(selectedStep.finalResults);
+	
+	            // Control button visibility
+	            const providerReportButtons = document.getElementById('provider-report-buttons');
+	            const requesterFeedbackButtons = document.getElementById('requester-feedback-buttons');
+	            const finalResultsBox = document.getElementById('final-results-box');
+	            const providerReportBox = document.getElementById('provider-report-box');
+	            const requesterFeedbackBox = document.getElementById('requester-feedback-box');
+                const stepApprovalButtonContainer = document.getElementById('step-approval-button-container');
+	
+	            // Hide buttons if the selected step is not the current step OR if the current step is "완료"
+	            if (stepId === currentStep && selectedStep.status !== "완료") {
+	                providerReportButtons.classList.remove('SR_hidden');
+	                requesterFeedbackButtons.classList.remove('SR_hidden');
+                    stepApprovalButtonContainer.classList.remove('SR_hidden'); // Show approval button for current active step
+	            } else {
+	                providerReportButtons.classList.add('SR_hidden');
+	                requesterFeedbackButtons.classList.add('SR_hidden');
+                    stepApprovalButtonContainer.classList.add('SR_hidden'); // Hide approval button for other steps or completed steps
+	            }
+
+	            // Control visibility of final results box and adjust flex-grow for other boxes
+	            if (selectedStep.status === "완료") {
+	                finalResultsBox.classList.remove('SR_hidden');
+	                providerReportBox.classList.remove('SR_flex-grow-content');
+	                requesterFeedbackBox.classList.remove('SR_flex-grow-content');
+	            } else {
+	                finalResultsBox.classList.add('SR_hidden');
+	                providerReportBox.classList.add('SR_flex-grow-content');
+	                requesterFeedbackBox.classList.add('SR_flex-grow-content');
+	            }
+	        }
+	
+	        function renderProviderResults(reports) {
+	            const providerResultsList = document.getElementById('provider-results-list');
+	            providerResultsList.innerHTML = ''; // Clear existing content
+	
+	            if (reports.length === 0) {
+	                providerResultsList.innerHTML = `<p class="SR_text-gray-600">제출된 결과물이 없습니다.</p>`;
+	                return;
+	            }
+	
+	            reports.forEach(report => {
+	                const newReportItem = document.createElement('div');
+	                newReportItem.className = 'SR_bg-blue-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-200';
+	                let reportText = `<strong>제목: ${report.title}</strong><br>`;
+	                if (report.feedbackCode) {
+	                    // Find the feedback across all steps
+	                    const relatedFeedback = progressStepsData.flatMap(step => step.feedbacks).find(f => f.id === report.feedbackCode);
+	                    if (relatedFeedback) {
+	                        reportText += `관련 피드백: ${relatedFeedback.title} (${report.feedbackCode.substring(0, 8)})<br>`;
+	                    }
+	                }
+	                reportText += `내용: ${report.content}<br>`;
+	                if (report.file) {
+	                    reportText += `첨부 파일: ${report.file}<br>`;
+	                }
+	                reportText += `제출일: ${report.date}`;
+	                newReportItem.innerHTML = reportText;
+	                providerResultsList.appendChild(newReportItem);
+	            });
+	        }
+	
+	        function renderRequesterFeedback(feedbacks) {
+	            const requesterFeedbackList = document.getElementById('requester-feedback-list');
+	            requesterFeedbackList.innerHTML = ''; // Clear existing content
+	
+	            if (feedbacks.length === 0) {
+	                requesterFeedbackList.innerHTML = `<p class="SR_text-gray-600">피드백 내용이 없습니다.</p>`;
+	                return;
+	            }
+	
+	            feedbacks.forEach(feedback => {
+	                const newFeedbackItem = document.createElement('div');
+	                newFeedbackItem.className = 'SR_bg-green-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-green-200';
+	                let feedbackText = `<strong>제목: ${feedback.title}</strong><br>`;
+	                if (feedback.reportCode) {
+	                    // Find the report across all steps
+	                    const relatedReport = progressStepsData.flatMap(step => step.reports).find(r => r.id === feedback.reportCode);
+	                    if (relatedReport) {
+	                        feedbackText += `관련 보고서: ${relatedReport.title} (${feedback.reportCode.substring(0, 8)})<br>`;
+	                    }
+	                }
+	                feedbackText += `내용: ${feedback.content}<br>`;
+	                if (feedback.file) {
+	                    feedbackText += `첨부 파일: ${feedback.file}<br>`;
+	                }
+	                feedbackText += `피드백일: ${feedback.date}`;
+	                newFeedbackItem.innerHTML = feedbackText;
+	                requesterFeedbackList.appendChild(newFeedbackItem);
+	            });
+	        }
+	
+	        function renderFinalResults(finalResults) {
+	            const finalResultsList = document.getElementById('final-results-list');
+	            finalResultsList.innerHTML = ''; // Clear existing content
+	
+	            if (finalResults.length === 0) {
+	                finalResultsList.innerHTML = `<p class="SR_text-gray-600">최종 결과물이 없습니다.</p>`;
+	                return;
+	            }
+	
+	            finalResults.forEach(result => {
+	                const newFinalResult = document.createElement('div');
+	                newFinalResult.className = 'SR_bg-yellow-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-yellow-200';
+	                newFinalResult.innerHTML = `<strong>최종 결과물 (${result.stepName} 단계):</strong> <br>${result.content}<br>제출일: ${result.date}`;
+	                finalResultsList.appendChild(newFinalResult);
+	            });
+	        }
+	
+	
+	        function openModal(modalId) {
+	            document.getElementById(modalId).classList.remove('SR_hidden');
+	            if (modalId === 'submitReportModal') {
+	                populateFeedbackCodeDropdown();
+	            } else if (modalId === 'giveFeedbackModal') {
+	                populateReportCodeDropdown();
+	            }
+	        }
+	
+	        function closeModal(modalId) {
+	            document.getElementById(modalId).classList.add('SR_hidden');
+	            // Clear modal inputs when closing
+	            if (modalId === 'submitReportModal') {
+	                document.getElementById('reportTitle').value = '';
+	                document.getElementById('feedbackCodeSelect').value = '';
+	                document.getElementById('reportContent').value = '';
+	                document.getElementById('reportFile').value = '';
+	            } else if (modalId === 'giveFeedbackModal') {
+	                document.getElementById('feedbackTitle').value = '';
+	                document.getElementById('reportCodeSelect').value = '';
+	                document.getElementById('feedbackContent').value = '';
+	                document.getElementById('feedbackFile').value = '';
+	            }
+	        }
+	
+	        function populateFeedbackCodeDropdown() {
+	            const dropdown = document.getElementById('feedbackCodeSelect');
+	            dropdown.innerHTML = '<option value="">피드백을 선택하세요</option>'; // Reset options
+	
+	            // Collect all feedbacks from all steps
+	            const allFeedbacks = progressStepsData.flatMap(step => step.feedbacks);
+	
+	            allFeedbacks.forEach(feedback => {
+	                const option = document.createElement('option');
+	                option.value = feedback.id;
+	                option.textContent = `피드백 [${feedback.id.substring(0, 8)}]: ${feedback.title}`;
+	                dropdown.appendChild(option);
+	            });
+	        }
+	
+	        function populateReportCodeDropdown() {
+	            const dropdown = document.getElementById('reportCodeSelect');
+	            dropdown.innerHTML = '<option value="">보고서를 선택하세요</option>'; // Reset options
+	
+	            // Collect all reports from all steps
+	            const allReports = progressStepsData.flatMap(step => step.reports);
+	
+	            allReports.forEach(report => {
+	                const option = document.createElement('option');
+	                option.value = report.id;
+	                option.textContent = `보고서 [${report.id.substring(0, 8)}]: ${report.title}`;
+	                dropdown.appendChild(option);
+	            });
+	        }
+	
+	        function submitReport() {
+	            const reportTitle = document.getElementById('reportTitle').value;
+	            const feedbackCode = document.getElementById('feedbackCodeSelect').value;
+	            const reportContent = document.getElementById('reportContent').value;
+	            const reportFile = document.getElementById('reportFile').files[0];
+	            
+	            if (!reportTitle || !reportContent) {
+	                showMessageBox('보고서 제목과 내용을 입력해주세요.');
+	                return;
+	            }
+	
+	            const reportId = `RPT-${Date.now()}`;
+	            const newReport = {
+	                id: reportId,
+	                title: reportTitle,
+	                feedbackCode: feedbackCode,
+	                content: reportContent,
+	                file: reportFile ? reportFile.name : null,
+	                date: new Date().toLocaleDateString()
+	            };
+	            
+	            // Add report to the current step's reports array
+	            progressStepsData[currentStep - 1].reports.unshift(newReport);
+	
+	            closeModal('submitReportModal');
+	            addActivity(`새로운 보고서 제출: "${newReport.title}"`);
+	            displayStepDetails(activeContentStepId); // Refresh content display for the active step
+	        }
+	
+	        function submitFeedback() {
+	            const feedbackTitle = document.getElementById('feedbackTitle').value;
+	            const reportCode = document.getElementById('reportCodeSelect').value;
+	            const feedbackContent = document.getElementById('feedbackContent').value;
+	            const feedbackFile = document.getElementById('feedbackFile').files[0];
+	            
+	            if (!feedbackTitle || !feedbackContent) {
+	                showMessageBox('피드백 제목과 내용을 입력해주세요.');
+	                return;
+	            }
+	
+	            const feedbackId = `FBK-${Date.now()}`;
+	            const newFeedback = {
+	                id: feedbackId,
+	                title: feedbackTitle,
+	                reportCode: reportCode,
+	                content: feedbackContent,
+	                file: feedbackFile ? feedbackFile.name : null,
+	                date: new Date().toLocaleDateString()
+	            };
+	            
+	            // Add feedback to the current step's feedbacks array
+	            progressStepsData[currentStep - 1].feedbacks.unshift(newFeedback);
+	
+	            closeModal('giveFeedbackModal');
+	            addActivity(`새로운 피드백 제공: "${newFeedback.title}"`);
+	            displayStepDetails(activeContentStepId); // Refresh content display for the active step
+	        }
+	
+	        function approveStep() {
+	            if (currentStep <= progressStepsData.length) {
+	                const approvedStepIndex = currentStep - 1;
+	                const approvedStepName = progressStepsData[approvedStepIndex].name;
+
+	                // Mark the current step as completed
+	                progressStepsData[approvedStepIndex].status = "완료";
+
+	                // Simulate final result submission for the approved step
+	                const finalResultContent = `이 단계(${approvedStepName})의 최종 결과물이 여기에 자동으로 생성됩니다.`;
+	                const newFinalResult = {
+	                    content: finalResultContent,
+	                    stepName: approvedStepName,
+	                    date: new Date().toLocaleDateString()
+	                };
+	                progressStepsData[approvedStepIndex].finalResults.unshift(newFinalResult);
+
+
+	                showMessageBox(`'${approvedStepName}' 단계가 승인되었습니다.`);
+	                addActivity(`'${approvedStepName}' 단계 승인`);
+	
+	                if (currentStep < progressStepsData.length) {
+	                    activateStep(currentStep + 1); // Move to the next step
+	                } else {
+	                    // All steps completed
+	                    updateProgressDisplay(); // Just update display for final state
+	                    displayStepDetails(currentStep); // Show content for the now-completed final step
+	                }
+	            } else {
+	                showMessageBox('이미 모든 단계가 완료되었습니다.');
+	            }
+	        }
+	
+	        // Custom Message Box functions (replaces alert())
+	        function showMessageBox(message) {
+	            let messageBox = document.getElementById('SR_messageBox');
+	            if (!messageBox) {
+	                messageBox = document.createElement('div');
+	                messageBox.id = 'SR_messageBox';
+	                messageBox.className = 'SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_z-50';
+	                messageBox.innerHTML = `
+	                    <div class="SR_bg-white SR_p-6 SR_rounded-lg SR_shadow-lg SR_max-w-sm SR_w-full SR_text-center">
+	                        <p class="SR_mb-4">${message}</p>
+	                        <button class="SR_btn-primary" onclick="closeMessageBox()">확인</button>
+	                    </div>
+	                `;
+	                document.body.appendChild(messageBox);
+	            } else {
+	                messageBox.querySelector('p').textContent = message;
+	                messageBox.classList.remove('SR_hidden');
+	            }
+	        }
+	
+	        function closeMessageBox() {
+	            const messageBox = document.getElementById('SR_messageBox');
+	            if (messageBox) {
+	                messageBox.classList.add('SR_hidden');
+	            }
+	        }
+	
+	        // New: Render Recent Activities
+	        function renderRecentActivities() {
+	            const activitiesListContainer = document.getElementById('recent-activities-list');
+	            activitiesListContainer.innerHTML = '';
+	            if (recentActivitiesData.length === 0) {
+	                activitiesListContainer.innerHTML = `<p class="SR_text-gray-600">최근 활동 내역이 없습니다.</p>`;
+	                return;
+	            }
+	            recentActivitiesData.forEach(activity => {
+	                const activityItem = document.createElement('div');
+	                activityItem.className = 'SR_activity-item';
+	                activityItem.innerHTML = `
+	                    <div class="SR_activity-icon">!</div>
+	                    <div class="SR_activity-content">
+	                        <div class="SR_activity-date">${activity.date}</div>
+	                        <div class="SR_activity-description">${activity.description}</div>
+	                    </div>
+	                `;
+	                activitiesListContainer.appendChild(activityItem);
+	            });
+	        }
+	
+	        // New: Add Activity to Recent Activities
+	        function addActivity(description) {
+	            const today = new Date().toISOString().slice(0, 10);
+	            recentActivitiesData.unshift({ date: today, description: description }); // 최신 활동을 맨 앞에 추가
+	            renderRecentActivities();
+	        }
+	
+	        // New: Render Key Contacts
+	        function renderKeyContacts() {
+	            const contactsListContainer = document.getElementById('key-contacts-list');
+	            contactsListContainer.innerHTML = '';
+	            if (keyContactsData.length === 0) {
+	                contactsListContainer.innerHTML = `<p class="SR_text-gray-600">등록된 담당자가 없습니다.</p>`;
+	                return;
+	            }
+	            keyContactsData.forEach(contact => {
+	                const contactCard = document.createElement('div');
+	                contactCard.className = 'SR_contact-card';
+	                contactCard.innerHTML = `
+	                    <div class="SR_contact-avatar">${contact.avatar}</div>
+	                    <div class="SR_contact-details">
+	                        <div class="SR_contact-name">${contact.name}</div>
+	                        <div class="SR_contact-role">${contact.role}</div>
+	                        <a href="mailto:${contact.email}" class="SR_contact-email">${contact.email}</a>
+	                    </div>
+	                `;
+	                contactsListContainer.appendChild(contactCard);
+	            });
+	        }
+	    </script>
+	</th:block>
+</body>
+</html>

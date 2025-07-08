@@ -41,7 +41,7 @@
                     <input type="text" id="category-search-input" class="form-control" placeholder="카테고리를 검색하여 추가하세요">
                     <div id="category-search-results" class="search-results-dropdown"></div>
                 </div>
-            </div>
+                </div>
             <div class="form-group">
                 <label for="tags">태그 (쉼표로 구분)</label>
                 <input type="text" id="tags" name="tags" class="form-control">
@@ -51,7 +51,7 @@
                 <textarea id="prtfCn" name="prtfCn" rows="8" class="form-control"></textarea>
             </div>
             <div class="form-group">
-                <label for="File">대표 이미지 및 첨부파일</label>
+                <label for="portfolioFiles">대표 이미지 및 첨부파일</label>
                 <input type="file" id="portfolioFiles" name="portfolioFiles" multiple>
             </div>
             <div class="form-actions">
@@ -66,6 +66,8 @@
     <script>
         $(document).ready(function() {
             let searchTimeout;
+            let tagSearchTimeout;
+            
             $('#category-search-input').on('input', function() {
                 clearTimeout(searchTimeout);
                 const query = $(this).val();
@@ -84,6 +86,52 @@
                     });
                 }, 300);
             });
+            $('#tags').on('input',function(){
+				clearTimeout(tagSearchTimeout);
+				const tagInput = $(this);
+				const currentVal = tagInput.val();
+				const parts = currentVal.split(',');
+				const query = parts[parts.length - 1].trim(); 
+				
+				if(query.length <1){
+					$('#tag-search-results').hide();
+					return;
+				}
+				tagSearchTimeout = setTimeout(() => {
+		            $.get('/enter/portfolio/api/tags/search', { query: query }, function(data) {
+		                const resultsDiv = $('#tag-search-results').empty().show();
+		                if (data && data.length > 0) {
+		                    data.forEach(tag => {
+		                        resultsDiv.append(`<div class="result-item-tag" data-tag="${tag}">${tag}</div>`);
+		                    });
+		                }
+		            });
+		        }, 300);
+		    });
+
+		    // 추천 태그 클릭 시
+		    $(document).on('click', '.result-item-tag', function() {
+		        const selectedTag = $(this).data('tag');
+		        const tagInput = $('#tags');
+		        const currentVal = tagInput.val();
+		        const parts = currentVal.split(',');
+		        
+		        parts[parts.length - 1] = ' ' + selectedTag; // 마지막 조각을 선택한 태그로 교체 (앞에 공백 추가)
+		        
+		        tagInput.val(parts.join(',') + ', '); // 쉼표와 공백을 추가하여 다음 태그 입력을 준비
+		        
+		        $('#tag-search-results').hide().empty();
+		        tagInput.focus();
+		    });
+
+		    // 다른 곳 클릭 시 태그 추천 창 숨기기
+		    $(document).on('click', function(event) {
+		        if (!$(event.target).closest('.tag-search-wrapper').length) {
+		            $('#tag-search-results').hide();
+		        }
+		    });
+            	
+            
 
             $(document).on('click', '.result-item', function() {
                 const catId = $(this).data('id');
@@ -114,6 +162,22 @@
             $('#portfolioAddForm').on('submit', function(e) {
                 e.preventDefault();
                 const formData = new FormData(this);
+
+                // --- ▼▼▼ 핵심 수정 내용 ▼▼▼ ---
+                // 1. 화면에 표시된 선택된 카테고리 뱃지에서 ID를 모두 가져와 배열로 만듭니다.
+                const categoryIds = [];
+                $('#selected-categories-area .selected-item-badge').each(function() {
+                    categoryIds.push($(this).data('id'));
+                });
+
+                // 2. ID 배열을 쉼표로 구분된 하나의 문자열로 합칩니다.
+                const categoryCodesString = categoryIds.join(',');
+
+                // 3. 합쳐진 문자열을 'categoryCodes'라는 이름의 단일 데이터로 FormData에 추가합니다.
+                if (categoryCodesString) {
+                    formData.append('categoryCodes', categoryCodesString);
+                }
+                // --- ▲▲▲ 여기까지 수정 ▲▲▲ ---
 
                 $.ajax({
                     url: '/enter/portfolio/add-ajax',

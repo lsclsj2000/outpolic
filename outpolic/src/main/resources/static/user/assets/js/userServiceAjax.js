@@ -15,12 +15,11 @@ function getUserInfo(callback){
 }
 
 // 닉네임 중복체크 
-function dupleNicknameCheck(nickname, memberId, callback){
+function dupleNicknameCheck(nickname, callback){
 	$.ajax({
 		url : '/check-nickname',
 		type : 'POST',
-		data : { memberNickName : nickname, 
-				 memberId : memberId
+		data : { memberNickname : nickname
 				},
 		success: callback,
 		error: () => alert("닉네임이 중복입니다. 다른 닉네임을 입력하세요")
@@ -33,7 +32,7 @@ function dupleUserInfoCheck(type, value, memberId, callback){
 		type:'POST',
 		data:{
 			[type] : value,
-			memberId : memberId
+			memberId: memberId
 		},
 		success:callback,
 		error:() => alert("중복 확인 중 에러가 발생했습니다.")
@@ -78,56 +77,6 @@ function saveUserInfo(url, userInfo, callback) {
 
 
 // 마이페이지 내 정보 수정 끝
-
-//회원가입 시작
-
-// 전화번호 중복확인
-function getUserTelNo(memberTelNo){
-	$.ajax({
-		url: '/user/checkDuplicate',
-		method: 'GET',
-		data:{type: 'memberTelNo',   
-		      value: memberTelNo},
-		  success: function (data) {
-              if (data.duplicate) {
-                  $('#memberTelNoMsg').text('이미 사용 중인 전화번호입니다.').removeClass('text-success').addClass('text-danger');
-                  isTelUnique = false;
-              } else {
-                  $('#memberTelNoMsg').text('사용 가능한 전화번호입니다.').removeClass('text-danger').addClass('text-success');
-                  isTelUnique = true;
-              }
-          },
-          error: function () {
-              $('#memberTelNoMsg').text('서버 오류로 확인에 실패했습니다.').removeClass('text-success').addClass('text-danger');
-              isTelUnique = false;
-          }	  
-	});
-	
-}
-// 이메일 중복확인
-function getUserEmail(memberEmail){
-	$.ajax({
-        url: '/user/checkDuplicate',
-        method: 'GET',
-        data: {
-            type: 'memberEmail',
-            value: memberEmail
-        },
-        success: function (data) {
-            if (data.duplicate) {
-                $('#memberEmailMsg').text('이미 사용 중인 이메일입니다.').removeClass('text-success').addClass('text-danger');
-                isEmailUnique = false;
-            } else {
-                $('#memberEmailMsg').text('사용 가능한 이메일입니다.').removeClass('text-danger').addClass('text-success');
-                isEmailUnique = true;
-            }
-        },
-        error: function () {
-            $('#memberEmailMsg').text('서버 오류로 확인에 실패했습니다.').removeClass('text-success').addClass('text-danger');
-            isEmailUnique = false;
-        }
-    });
-}
 
 
 

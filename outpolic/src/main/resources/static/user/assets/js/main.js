@@ -728,6 +728,8 @@
         mousePause: false,
         showItems: 1
     });
+	
+	
 })(jQuery);
 
 

@@ -3,14 +3,32 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.user.login.mapper.UserLoginMapper">
-<resultMap type="outpolic.common.domain.Member" id="UserLoginResultMap">
-		<id column="mbr_id" property="memberId"></id>
+	<resultMap type="outpolic.common.domain.Member" id="UserLoginResultMap">
+		<id column="mbr_id" property="memberId"/>
  		<result column="mbr_pw" property="memberPw"/>
+ 		<result column="grd_cd" property="gradeCode"/>
+ 		<result column="mbr_cd" property="memberCode"/>
+ 		<result column="stc_cd" property="statusCode"/>
+ 		<result column="mbr_last_lgn_ymdt" property="memberLastLoginYmdt"/>
 	</resultMap>
 
 	<select id="findMemberById" resultMap="UserLoginResultMap">
-	    SELECT mbr_id, mbr_pw
+	    SELECT mbr_id, mbr_pw, grd_cd
 	    FROM member 
 	    WHERE mbr_id = #{memberId}
+	    AND stc_cd = 'SD_ACTIVE';
 	</select>
+	
+	<update id="updateMemberLoginDate" parameterType="Member">
+		UPDATE member
+		set mbr_last_lgn_ymdt = NOW()
+		where mbr_id = #{memberId};
+	</update>
+	
+<!-- 	<insert id="insertFailHistory" parameterType="LoginFailHistoryDTO">
+		INSERT INTO 
+			login_fail_history
+			(lfh_cd, lfh_ip, lfh_attemp_ymdt, lfh_cnt, lfh_in_ymdt, lfh_out_ymdt, lfr_cd)
+		VALUES('', '', '', , '', '', '');
+	</insert> -->
 </mapper>

@@ -6,7 +6,7 @@
 // 회원정보 불러오기
 function fillUserInfoForm(data) {
   $('#memberName').val(data.memberName);
-  $('#memberNickName').val(data.memberNickName);
+  $('#memberNickname').val(data.memberNickname);
   $('#memberTelNo').val(data.memberTelNo);
   $('#sample4_roadAddress').val(data.memberAddress);
   $('#sample4_detailAddress').val(data.memberDAddress);
@@ -22,7 +22,7 @@ let isVerified = false;
 let isDupleEmail = false;
 // 닉네임 입력안했을때 경고문 띄우기
 function isNicknameValid(){
-	const nickname = $('#memberNickName').val().trim();
+	const nickname = $('#memberNickname').val().trim();
 	if(!nickname){
 		alert("닉네임을 입력해주세요");
 		return false;
@@ -97,7 +97,7 @@ function collectUserInfo() {
   return {
     memberId: $('#memberId').val(),
     memberName: $('#memberName').val(),
-    memberNickName: $('#memberNickName').val(),
+    memberNickname: $('#memberNickname').val(),
     memberTelNo: $('#memberTelNo').val(),
     memberAddress: $('#sample4_roadAddress').val(),
     memberDAddress: $('#sample4_detailAddress').val(),
@@ -114,11 +114,15 @@ $(document).ready(function () {
 	getUserInfo(fillUserInfoForm);
 	// 닉네임 중복확인 버튼 클릭 
 	$('#nicknmDupleBtn').click(function () {
+		console.log("닉네임 중복확인 버튼 눌림"); 
 	   if (!isNicknameValid()) return;
 
-	   const nickname = $('#memberNickName').val();
+	   const nickname = $('#memberNickname').val();
+	   console.log('입력된 닉네임:', nickname);
 	   const memberId = $('#memberId').val();
-	   dupleUserInfoCheck("memberNickName", nickname, memberId, function(data){
+	   console.log('현재 memberId:', memberId);
+
+	   dupleUserInfoCheck("memberNickname", nickname, memberId, function(data){
 			if (data === true || data === 'true') {
 			    alert('닉네임이 중복입니다. 다른 닉네임을 입력하세요');
 			    isDupleNick = false;
@@ -160,7 +164,7 @@ $(document).ready(function () {
 	
 	//인증번호 검토
 	$('.btn-verify-code').click(function(){
-		//사용자가 입력한 인ㅇ증번호를 가져온다
+		//사용자가 입력한 인증번호를 가져온다
 		const code = $('#authCodeInput').val();
 		if(!code){
 			alert('인증번호를 입력해주세요.');
@@ -203,63 +207,6 @@ $(document).ready(function () {
 });
 
 // 마이페이지 내 정보 수정 끝
-
-// 회원가입 시작
-
-// 비밀번호 일치 여부
-let pwEqual = false;
-
-// 비밀번호와 비밀번호 확인 일치 여부 안내문
-document.addEventListener('DOMContentLoaded', function () {
-    const pwInput = document.getElementById("memberPw");
-    const pwCheckInput = document.getElementById("userpwcheck");
-    const pwMsg = document.getElementById("pwCheckMsg");
-
-    function checkPasswordMatch() {
-        const pw = pwInput.value;
-        const pwCheck = pwCheckInput.value;
-
-        if (pwCheck === "") {
-            pwMsg.textContent = "";
-            return;
-        }
-
-        if (pw !== pwCheck) {
-            pwMsg.textContent = "비밀번호가 일치하지 않습니다.";
-			pwEqual = false;
-        } else {
-            pwMsg.textContent = "";
-			pwEqual = true;
-        }
-    }
-    pwInput.addEventListener("input", checkPasswordMatch);
-    pwCheckInput.addEventListener("input", checkPasswordMatch);
-});
-
-// 이메일, 전화번호 중복 blur처리
-$(document).ready(function(){
-	let isTelUnique = false;
-	let isEmailUnique = false;
-	
-	$('#memberTelNo').on('blur', function(){
-		const tel = $(this).val().trim();
-		if(tel===''){
-			$('#memberTelNoMsg').text('').removeClass('text-success text-danger');
-		       return;
-		}
-		getUserTelNo(tel);
-	});
-	
-	$('#memberEmail').on('blur', function(){
-		const email = $(this).val().trim();
-		if(email===''){
-			$('#memberEmailMsg').text('').removeClass('text-success text-danger');
-		}
-		getUserEmail(email);
-	});
-	
-})
-
 
 
 

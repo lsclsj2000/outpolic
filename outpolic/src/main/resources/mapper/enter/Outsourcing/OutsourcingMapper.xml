@@ -1,175 +1,254 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.enter.outsourcing.mapper.OutsourcingMapper">
-	<resultMap id="outsourcingResultMap" type="EnterOutsourcing">
-		<id property = "osCd" column="os_cd"/>
-		<result property="entCd" column="ent_cd"/>
-		<result property="ctgryId" column="ctgry_id" />
-		<result property="osTtl" column="os_ttl"/>
-		<result property="osExpln" column="os_expln"/>
-		<collection property="tagNames" javaType="java.util.List" ofType="java.lang.String" column="os_cd" select="findTagNamesByOsCd"/>
-	</resultMap>
 
-    <!-- 수정된 부분 -->
-	<insert id="insertOutsourcing" parameterType="EnterOutsourcing">
-		/* 외주 등록 insert 구문 */
-		insert into outsourcing(
-			os_cd, ent_cd, ctgry_id, os_ttl, os_expln, os_reg_ymdt, mbr_cd, stc_cd, os_strt_ymdt, os_end_ymdt, os_amt, os_flfmt_cnt)
-		VALUES
-			(#{osCd}, #{entCd}, #{ctgryId}, #{osTtl}, #{osExpln}, NOW(), #{mbrCd}, #{stcCd}, #{osStrtYmdt}, #{osEndYmdt}, #{osAmt}, #{osFlfmtCnt})
-	</insert>
+    <insert id="insertOutsourcing" parameterType="EnterOutsourcing">
+        INSERT INTO outsourcing (os_cd, ent_cd, ctgry_id, os_ttl, os_expln, os_reg_ymdt, mbr_cd, stc_cd, os_strt_ymdt, os_end_ymdt, os_amt, os_flfmt_cnt)
+        VALUES (#{osCd}, #{entCd}, #{ctgryId}, #{osTtl}, #{osExpln}, NOW(), #{mbrCd}, 'SD_ACTIVE', #{osStrtYmdt}, #{osEndYmdt}, #{osAmt}, #{osFlfmtCnt})
+    </insert>
 
-	<insert id="insertContentList">
-		/* 콘텐츠 목록 코드 insert 구문 */
-		insert into content_list
-		    (cl_cd, cntd_cd, cl_reg_ymdt) 
-		values 
-		    (#{clCd}, #{cntdCd}, NOW())
-	</insert>
-
-    <!-- 수정된 부분 -->
-	<insert id="insertCategoryMapping">
-		/* 카테고리 매핑 insert 구문 */
-		insert into category_mapping
-			(ctgry_id, cl_cd, cm_reg_ymdt, mbr_cd) 
-		values 
-		    (#{ctgryId}, #{clCd}, NOW(), #{mbrCd})
-	</insert>
-	
-    <!-- 수정된 부분 -->
-	<insert id="insertTag">
-		/* 태그 insert 구문 */
-		insert into tag 
-		    (tag_cd, tag_nm, mbr_cd, tag_reg_ymdt) 
-		values 
-		    (#{tagCd}, #{tagName}, #{mbrCd}, NOW())
-	</insert>
-
-	<insert id="insertTagMapping">
-		/* 태그매핑 insert 구문 */
-		insert into tag_mapping 
-		    (tag_cd, cl_cd, tm_reg_ymdt, mbr_cd, stc_cd) 
-		values 
-		    (#{tagCd}, #{clCd}, NOW(), #{mbrCd}, 'SD_ACTIVE')
-	</insert>
-
-	<select id="findFilesByOsCd" resultType="outpolic.systems.file.domain.FileMetaData">
-	SELECT
-        f.file_cd         as fileIdx,
-        f.file_reg_ymdt   as fileRegYmdt,
-        f.file_mdfcn_ymdt as fileMdfcnYmdt,
-        f.file_extn       as fileExtn,
-        f.file_orgnl_nm   as fileOriginalName,
-        f.file_srvr_nm    as fileNewName,
-        f.file_path       as filePath,
-        f.cl_cd           as clCd,
-        f.mbr_cd          as mbrCd
-    FROM
-        file f
-    JOIN
-        content_list cl ON f.cl_cd = cl.cl_cd
-    WHERE
-    	cl.cntd_cd = #{osCd}
-    order by
-    	f.file_reg_ymdt asc
-	</select>
-	
+    <insert id="insertContentList"> INSERT INTO content_list (cl_cd, cntd_cd, cl_reg_ymdt) VALUES (#{clCd}, #{cntdCd}, NOW()) </insert>
+    <insert id="insertCategoryMapping"> INSERT INTO category_mapping (ctgry_id, cl_cd, cm_reg_ymdt, mbr_cd) VALUES (#{ctgryCd}, #{clCd}, NOW(), #{mbrCd}) </insert>
+    <insert id="insertTag"> INSERT INTO tag (tag_cd, tag_nm, mbr_cd, tag_reg_ymdt) VALUES (#{tagCd}, #{tagName}, #{mbrCd}, NOW()) </insert>
     
-	<select id="findTagNamesByOsCd" resultType="String">
-        SELECT 
-            t.tag_nm
+    <insert id="insertTagMapping"> 
+        INSERT INTO tag_mapping (tag_cd, cl_cd, tm_reg_ymdt, mbr_cd, stc_cd) 
+        VALUES (#{tagCd}, #{clCd}, NOW(), #{mbrCd}, 'SD_ACTIVE') 
+    </insert>
+
+    <resultMap id="OutsourcingDetailResultMap" type="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+        <id property="osCd" column="os_cd"/>
+        <result property="entCd" column="ent_cd"/>
+        <result property="ctgryId" column="ctgry_id"/>
+        <result property="osTtl" column="os_ttl"/>
+        <result property="osExpln" column="os_expln"/>
+        <result property="osRegYmdt" column="os_reg_ymdt"/>
+        <result property="mbrCd" column="mbr_cd"/>
+        <result property="stcCd" column="stc_cd"/>
+        <result property="osStrtYmdt" column="os_strt_ymdt"/>
+        <result property="osEndYmdt" column="os_end_ymdt"/>
+        <result property="osAmt" column="os_amt"/>
+        <result property="osFlfmtCnt" column="os_flfmt_cnt"/>
+        <result property="admCd" column="adm_cd"/>
+        <collection property="categories" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto" javaType="java.util.ArrayList">
+            <id property="ctgryId" column="category_ctgry_id"/>
+            <result property="ctgryNm" column="category_ctgry_nm"/>
+        </collection>
+        <collection property="tagNames" ofType="java.lang.String" javaType="java.util.ArrayList">
+            <result column="tag_tag_nm"/>
+        </collection>
+        <collection property="relatedPortfolios" javaType="java.util.ArrayList" 
+                ofType="outpolic.enter.portfolio.domain.EnterPortfolio"
+    			column="os_cd" select="findRelatedPortfoliosByOsCd" />
+  
+ 
+    </resultMap>
+	<select id="findRelatedPortfoliosByOsCd" resultType="outpolic.enter.portfolio.domain.EnterPortfolio">
+		SELECT
+			p.prtf_cd,
+			p.prtf_ttl
+			-- 필요하다면 다른 포트폴리오 컬럼도 추가
+		FROM
+			portfolio p
+		join 
+			outsourcing_portfolio op on p.prtf_cd= op.prtf_cd
+		where
+			op.os_cd = #{osCd}			
+	
+	
+	</select>
+    <select id="findOutsourcingDetailsByEntCd" resultMap="OutsourcingDetailResultMap">
+        SELECT
+            o.os_cd,
+            o.ent_cd,
+            o.ctgry_id,
+            o.os_ttl,
+            o.os_expln,
+            o.os_reg_ymdt,
+            o.mbr_cd,
+            o.stc_cd,
+            o.os_strt_ymdt,
+            o.os_end_ymdt,
+            o.os_amt,
+            o.os_flfmt_cnt,
+            -- DB에 adm_cd 컬럼이 있다면 아래 줄을 주석 해제하세요.
+            -- o.adm_cd,
+            -- DB에 os_rcrmt_end_ymdt 컬럼이 있다면 아래 줄을 주석 해제하세요.
+            -- o.os_rcrmt_end_ymdt,
+            
+            c.ctgry_id AS category_ctgry_id,
+            c.ctgry_nm AS category_ctgry_nm,
+            
+            t.tag_nm AS tag_tag_nm
         FROM
-            tag t
-        JOIN
-            tag_mapping tm ON t.tag_cd = tm.tag_cd
-        JOIN
-            content_list cl ON tm.cl_cd = cl.cl_cd
+            outsourcing o
+        LEFT JOIN
+            content_list cl ON o.os_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_OS_C%'
+        LEFT JOIN
+            category_mapping cm ON cl.cl_cd = cm.cl_cd
+        LEFT JOIN
+            category c ON cm.ctgry_id = c.ctgry_id
+        LEFT JOIN
+            tag_mapping tm ON cl.cl_cd = tm.cl_cd
+        LEFT JOIN
+            tag t ON tm.tag_cd = t.tag_cd
         WHERE
-            cl.cntd_cd = #{osCd}
+            o.ent_cd = #{entCd}
+        ORDER BY
+            o.os_reg_ymdt DESC
+    </select>
+    
+    <select id="findLatestOsCd" resultType="String">
+        SELECT os_cd FROM outsourcing WHERE os_cd LIKE 'OS_C%' ORDER BY CAST(SUBSTRING(os_cd, 5) AS UNSIGNED) DESC LIMIT 1
+    </select>
+    
+    <select id="findLatestTagCd" resultType="String">
+        SELECT tag_cd FROM tag WHERE tag_cd LIKE 'T_C%' ORDER BY CAST(SUBSTRING(tag_cd, 5) AS UNSIGNED) DESC LIMIT 1
+    </select>
+    
+    <select id="findTagCdByName" resultType="String">
+        SELECT tag_cd FROM tag WHERE tag_nm = #{tagName}
     </select>
 
-	<select id="findOutsourcingDetailsByEntCd" resultMap = "outsourcingResultMap">
-		select
-		*
-		from
-			outsourcing
-		where
-			ent_cd = #{entCd}
-		order by
-			os_reg_ymdt desc;
-	</select>
-	<select id="findOutsourcingDetailsByOsCd" resultMap="outsourcingResultMap">
-		select
-		*
-		from
-			outsourcing
-		where
-			os_cd = #{osCd};
-	</select>
-	<select id="findLatestOsCd" resultType="String">
-		/* 외주 테이블 'OS_C'로 시작하는 코드중, 뒤에 붙는 숫자가 가장 큰 코드 하나를 찾는 구문 */
-		select
-			os_cd
-		from
-			outsourcing
-		where
-			os_cd like 'OS_C%'
-		order by
-			cast(substring(os_cd,5) as unsigned) desc
-		limit 1
-	</select>
-	<select id="findLatestTagCd" resultType="String">
-		/* 태그 테이블에서 'T_C'로 시작하는 태그 코드 중,뒤에 붙는 숫자가 가장 큰 코드 하나를 찾는 구문입니다. */
-		select
-			tag_cd
+    <select id="findOutsourcingDetailsByOsCd" resultMap="OutsourcingDetailResultMap">
+        SELECT
+            o.os_cd,
+            o.ent_cd,
+            o.ctgry_id,
+            o.os_ttl,
+            o.os_expln,
+            o.os_reg_ymdt,
+            o.mbr_cd,
+            o.stc_cd,
+            o.os_strt_ymdt,
+            o.os_end_ymdt,
+            o.os_amt,
+            o.os_flfmt_cnt,
+            -- DB에 adm_cd 컬럼이 있다면 아래 줄을 주석 해제하세요. (아직 없다면 그대로 주석 상태 유지)
+            -- o.adm_cd,
+            -- DB에 os_rcrmt_end_ymdt 컬럼이 있다면 아래 줄을 주석 해제하세요. (아직 없다면 그대로 주석 상태 유지)
+            -- o.os_rcrmt_end_ymdt,
+            
+            -- 카테고리 매핑을 위한 컬럼들을 조회합니다. (category_ctgry_id, category_ctgry_nm)
+            c.ctgry_id AS category_ctgry_id,
+            c.ctgry_nm AS category_ctgry_nm,
+            
+            -- 태그 매핑을 위한 컬럼을 조회합니다. (tag_tag_nm)
+            t.tag_nm AS tag_tag_nm
+        FROM
+            outsourcing o
+        LEFT JOIN
+            content_list cl ON o.os_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_OS_C%'
+        LEFT JOIN
+            category_mapping cm ON cl.cl_cd = cm.cl_cd
+        LEFT JOIN
+            category c ON cm.ctgry_id = c.ctgry_id
+        LEFT JOIN
+            tag_mapping tm ON cl.cl_cd = tm.cl_cd
+        LEFT JOIN
+            tag t ON tm.tag_cd = t.tag_cd
+        WHERE
+            o.os_cd = #{osCd}
+    </select>
+    <select id="findClCdByOsCd" resultType="String">
+    SELECT cl_cd FROM content_list WHERE cntd_cd = #{osCd} LIMIT 1
+</select>
+	<select id="searchTagsByName" resultType="String">
+		SELECT
+			tag_nm
 		FROM
 			tag
-		where tag_cd LIKE 'T_C%'
-		order by cast(substring(tag_cd,5) as unsigned) desc
-		limit 1
+		WHERE
+			tag_nm LIKE CONCAT('%',#{query},'%')
+		LIMIT 10		
+		 
+	
 	</select>
-	<select id="findTagCdByName" resultType="String">
-	 /*  'T_C00127'인 데이터의 tag_cd (태그 코드)를 찾아달라는 의미입니다. */
-	select
-		tag_cd
-	from
-		tag
+	<select id="findLatestOpCd" resultType="String">
+		SELECT
+			op_cd
+		FROM
+			outsourcing_portfolio
+		ORDER BY op_cd DESC LIMIT 1		
+	</select>	
+	
+	<insert id="insertOutsourcingPortfolio">
+		INSERT INTO outsourcing_portfolio (op_cd,os_cd,prtf_cd,op_reg_ymdt,ent_cd)
+		VALUES(#{opCd},#{osCd},#{prtfCd},NOW(),#{entCd})
+		
+	</insert>
+
+<update id="updateOutsourcing" parameterType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+    UPDATE outsourcing
+    SET
+        ctgry_id = #{ctgryId},
+        os_ttl = #{osTtl},
+        os_expln = #{osExpln},
+        os_mdfcn_ymdt = NOW(),
+        os_strt_ymdt = #{osStrtYmdt},
+        os_end_ymdt = #{osEndYmdt},
+        os_amt = #{osAmt},
+        os_flfmt_cnt = #{osFlfmtCnt}
+        -- DB에 os_rcrmt_end_ymdt 컬럼이 있다면 아래 줄을 주석 해제하세요.
+        -- , os_rcrmt_end_ymdt = #{osRcrmtEndYmdt}
+    WHERE
+        os_cd = #{osCd}
+</update>
+
+<delete id="deleteOutsourcingByOsCd">
+    DELETE FROM outsourcing WHERE os_cd = #{osCd}
+</delete>
+<delete id="deleteContentListByClCd">
+    DELETE FROM content_list WHERE cl_cd = #{clCd}
+</delete>
+<delete id="deleteCategoryMappingByClCd">
+    DELETE FROM category_mapping WHERE cl_cd = #{clCd}
+</delete>
+<delete id="deleteTagMappingByClCd">
+    DELETE FROM tag_mapping WHERE cl_cd = #{clCd}
+</delete>
+<delete id="deleteBookmarkByClCd">
+    DELETE FROM bookmark WHERE cl_cd = #{clCd}
+</delete>
+<delete id="deleteOutsourcingContractDetailsByClCd">
+	DELETE FROM outsourcing_contract_details WHERE cl_cd = #{clCd}
+</delete>
+<delete id="deleteOutsourcingStatusByClCd">
+    DELETE os
+      FROM outsourcing_status AS os
+      JOIN outsourcing_contract_details AS ocd  ON os.ocd_cd = ocd.ocd_cd
+     WHERE ocd.cl_cd = #{clCd}
+</delete>
+
+<delete id="deleteRankingByClCd">
+	DELETE FROM ranking where cl_cd = #{clCd}
+</delete>
+
+<delete id="deleteTodayViewByClCd">
+	DELETE FROM today_view WHERE cl_cd = #{clCd}
+
+</delete>
+
+<delete id="deleteTotalViewByClCd">
+	DELETE FROM total_view WHERE cl_cd = #{clCd}
+
+
+</delete>
+
+<delete id="deleteOutsourcingPortfolioLinksByOsCd">
+	DELETE
+	FROM
+		outsourcing_ortfolio
+	where
+		os_cd=#{osCd}	
+
+</delete>
+<delete id="deleteOutsourcingPortfolioByOsCd">
+	DELETE
+	FROM
+		outsourcing_portfolio
 	WHERE
-		tag_nm = #{tagNm};
-	</select>
-
-	<delete id="deleteOutsourcingByOsCd">
-		/* 특정 외주 코드 삭제 구문 */
-		delete
-		from
-			outsourcing
-		where
-			os_cd = #{osCd}
-	</delete>
-	<delete id="deleteContentListByClCd">
-		delete
-		from
-			content_list
-		where
-			cl_cd = #{clCd}
-	</delete>
-	<delete id="deleteCategoryMappingByClCd">
-		delete
-		from
-			category_mapping
-		where
-			cl_cd = #{clCd}
-	</delete>
-
-	<update id="updateOutsourcing" parameterType="EnterOutsourcing">
-		update
-			outsourcing
-		set
-			os_ttl = #{osTtl},
-			os_expln=#{osExpln},
-			os_mdfcn_ymdt = NOW() <!-- 수정 시각은 NOW() 함수를 사용하는 것이 일반적입니다 -->
-		where
-			os_cd = #{osCd}
-	</update>
+		os_cd =#{osCd}	
+</delete>
 
 </mapper>

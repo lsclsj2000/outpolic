@@ -4300,4 +4300,212 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
     display: none;
   }
 }
+
+/* 유사랑 css 추가 시작 */
+/* 모달 오버레이 (뒷 배경을 어둡게 하는 부분) */
+.SR_modal {
+	display: none; /* 기본적으로 숨김 */
+	position: fixed; /* 화면에 고정 */
+	z-index: 1000; /* 다른 요소 위에 표시 */
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto; /* 내용이 넘칠 경우 스크롤 */
+	background-color: rgba(0,0,0,0.4); /* 반투명 검정 배경 */
+	justify-content: center; /* 가로 중앙 정렬 */
+	align-items: center; /* 세로 중앙 정렬 */
+	animation: SR_fadeIn 0.3s ease-out; /* 부드러운 등장 효과 */
+}
+
+/* 팝업 컨테이너 */
+.SR_modal-content-wrapper {
+	background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 700px;
+    position: relative;
+    animation: SR_slideIn 0.3s ease-out;
+    box-sizing: border-box;
+    height: 660px;
+    overflow-y: auto;
+}
+
+/* 팝업 헤더 */
+.SR_popup-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #eee;
+	padding-bottom: 10px;
+	margin-bottom: 15px;
+}
+
+.SR_popup-header h2 {
+	margin: 0;
+	font-size: 1.5em;
+	color: #333;
+}
+
+.SR_close-button {
+	background: none;
+	border: none;
+	font-size: 1.8em;
+	cursor: pointer;
+	color: #888;
+}
+
+.SR_close-button:hover {
+	color: #333;
+}
+
+/* 폼 그룹 스타일 */
+.SR_form-group {
+	margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+            
+/* 새로운 줄에 배치될 그룹의 마진 조정 */
+.SR_form-group.SR_full-width {
+	display: block;
+}
+
+/* 라벨과 입력 필드의 기본 스타일 */
+.SR_form-group label {
+	display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    min-width: 90px;
+}
+.SR_form-control {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+            
+/* readonly 필드 스타일 */
+.SR_form-control[readonly] {
+	background-color: #e9ecef;
+    opacity: 1;
+    cursor: default;
+}
+
+textarea.SR_form-control {
+	resize: vertical;
+    min-height: 120px;
+    overflow-y: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 0;
+    height: auto;
+}
+            
+/* 특정 요소들의 너비 조정 */
+.SR_form-group .SR_input-half {
+	display: flex; /* 라벨과 입력 필드를 세로로 쌓기 위함 */
+    flex-direction: column; /* 라벨 아래에 입력 필드가 오도록 */
+    box-sizing: border-box; /* 패딩과 보더를 너비 계산에 포함 */
+    margin-bottom: 0; /* 부모 SR_form-group의 margin-bottom으로 충분 */
+}
+
+.SR_form-group .SR_input-half:first-child {
+    width: calc(28% - 10px); /* 전체 공간의 약 28% 정도 차지, 간격 고려 */
+    margin-right: 20px; /* 두 요소 사이의 간격 */
+    flex-shrink: 0; /* 공간이 부족해도 이 너비를 유지하려고 시도 */
+}
+
+.SR_form-group .SR_input-half:last-child {
+    width: calc(72% - 10px); /* 남은 공간의 약 72% 정도 차지, 간격 고려 */
+    flex-grow: 1; /* 남은 공간을 유연하게 채웁니다. */
+    margin-right: 0; /* 오른쪽 여백 없음 */
+}
+
+.SR_form-group .SR_input-half input,
+.SR_form-group .SR_input-half select {
+    width: 100%; /* 부모 .SR_input-half의 너비를 꽉 채움 */
+    margin-right: 0; /* 중복 마진 방지 */
+}
+
+
+/* 팝업 상단 정보 */
+.SR_popup-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+.SR_status-dropdown {
+	flex-basis: 120px; /* 처리 상태 드롭박스 너비 */
+	margin-left: auto;
+	text-align: center;
+}
+.SR_writer-info {
+	font-size: 0.9em;
+	color: #666;
+	flex-grow: 1; /* 남은 공간 채우기 */
+	padding-right: 10px;
+}
+
+/* 첨부파일 목록 스타일 */
+.SR_file-list {
+	border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    min-height: 80px;
+    background-color: #f9f9f9;
+    color: #555;
+    font-size: 0.95em;
+    line-height: 1.5;
+    width: 100%; /* 너비를 100%로 설정하여 부모 요소에 꽉 차게 */
+    box-sizing: border-box;
+    margin-right: 0;
+}
+
+.SR_popup-footer {
+	margin-top: 20px;
+	text-align: right;
+	display: flex; /* 요소들을 가로로 정렬 */
+	justify-content: space-between; /* 양 끝 정렬 */
+	align-items: center; /* 세로 중앙 정렬 */
+}
+            
+.SR_update-info {
+	font-size: 0.9em;
+	color: #666;
+}
+
+.SR_popup-footer button {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	background-color: #007bff;
+	color: white;
+	font-size: 1em;
+	transition: background-color 0.2s ease;
+}
+
+.SR_popup-footer button:hover {
+	background-color: #0056b3;
+}
+
+/* 애니메이션 키프레임 */
+@keyframes SR_fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes SR_slideIn {
+	from { transform: translateY(-50px); opacity: 0; }
+	to { transform: translateY(0); opacity: 1; }
+}
+/* 유사랑 css 추가 끝 */
+
+
 /*# sourceMappingURL=main.css.map */
