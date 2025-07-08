@@ -79,6 +79,10 @@
                 // Check if Firebase config is missing
                 if (Object.keys(firebaseConfig).length === 0) {
                     console.error("Firebase config is missing. Cannot initialize Firebase.");
+					loadDummyChatRooms();
+    				isAuthReady = true;
+    				render();
+    				return;
                 } else {
                     app = initializeApp(firebaseConfig);
                     db = getFirestore(app);

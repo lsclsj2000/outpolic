@@ -7,14 +7,19 @@
 
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-	
+
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" th:href="@{/user/assets/imgs/theme/favicon.svg}" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="/user/assets/css/plugins/slider-range.css" />
     <link rel="stylesheet" href="/user/assets/css/main.css?v=5.6" />
-    <link rel="stylesheet" href="/user/assets/css/userChatRoom.css" />
+    <!-- 라이브러리 CSS (Slick Slider) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+	
+	<!-- 커스텀 CSS (만든거) -->
+    <link rel="stylesheet" th:href="@{/user/assets/css/userChatRoom.css}" />
+    <link rel="stylesheet" th:href="@{/user/assets/css/userRanking.css}" />
 </head>
 
 <body>
@@ -30,10 +35,11 @@
 		    </div>
 		</div>
     </div>
-    
     <div th:replace="~{user/fragments/userChatRoom :: userChatRoomFragment}"></div>
     <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
 	
+	<!-- jQuery + Slick 라이브러리 추가 -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	
 	<!-- Vendor JS-->
 	<script th:src="@{/user/assets/js/vendor/modernizr-3.6.0.min.js}"></script>
@@ -59,10 +65,14 @@
 	<script th:src="@{/user/assets/js/plugins/jquery.elevatezoom.js}"></script>
 	<script th:src="@{/user/assets/js/main.js}"></script>
 	<script th:src="@{/user/assets/js/shop.js}"></script>
-	<script th:src="@{/user/assets/js/userRanking.js}"></script>
 
+	<!-- jQuery + Slick 라이브러리 추가 -->
+	<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 	<!--자바스크립트 코드 삽입부위-->
 	<th:block layout:fragment="jsFile"></th:block>
 	<th:block layout:fragment="jsScript"></th:block>
+	
+	<!-- 커스텀 JS -->
+	<script th:src="@{/user/assets/js/userRanking.js}"></script>
 </body>
 </html>

@@ -64,7 +64,8 @@
 		    o.os_ttl,
 		    o.os_expln
 		ORDER BY
-		    r.rk_view DESC;
+		    r.rk_view DESC
+		LIMIT 10;
 				
 	</select>
  </mapper>
