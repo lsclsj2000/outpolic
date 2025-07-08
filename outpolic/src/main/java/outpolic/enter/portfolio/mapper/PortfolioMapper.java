@@ -1,15 +1,13 @@
 package outpolic.enter.portfolio.mapper;
 
-
 import outpolic.enter.POAddtional.domain.CategorySearchDto;
-import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.outsourcing.domain.EnterOutsourcing; // EnterOutsourcing import 유지
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
 
 
 @Mapper
@@ -43,7 +41,8 @@ public interface PortfolioMapper {
     int deleteContentListByClCd(String clCd);
     int deleteCategoryMappingByClCd(String clCd);
     int deleteTagMappingByClCd(String clCd);
-    
+    // int deleteOutsourcingPortfolioByPrtfCd(String prtfCd); // OutsourcingMapper로 이동되었음.
+    int deleteBookmarkByClCd(String clCd); 
 
     // UPDATE
     int updatePortfolio(EnterPortfolio portfolio);
@@ -53,29 +52,15 @@ public interface PortfolioMapper {
     
     List<String> searchTagsByName(@Param("query") String query);
     
-    /**
-     * 특정 포트폴리오에 이미 연결된 외주 목록을 조회하는 메서드
-     */
-    List<EnterOutsourcing> findLinkedOutsourcingsByPrtfCd(String prtfCd);
+    // --- ADDED/CONFIRMED: 특정 포트폴리오에 연결된 외주 목록을 조회하는 메서드 ---
+    // (EnterPortfolio DTO의 linkedOutsourcings 컬렉션 매핑에 사용됩니다.)
+    List<EnterOutsourcing> findLinkedOutsourcingsByPrtfCd(@Param("prtfCd") String prtfCd);
     
-    /**
-     * 특정 포트폴리오에 아직 연결되지 않은 외주들을 검색하는 메서드
-     */
-    List<EnterOutsourcing> findUnlinkedOutsourcings(@Param("prtfCd") String prtfCd, @Param("entCd") String entCd,@Param("query") String query);
+    // 특정 포트폴리오에 아직 연결되지 않은 외주를 검색하는 메서드
+    List<EnterOutsourcing> findUnlinkedOutsourcings(@Param("prtfCd") String prtfCd, @Param("entCd") String entCd, @Param("query") String query);
+
+    // 특정 외주에 아직 연결되지 않은 포트폴리오를 검색하는 메서드 (반환 EnterPortfolio)
+    List<EnterPortfolio> findUnlinkedPortfolios(@Param("osCd") String osCd, @Param("entCd") String entCd, @Param("query") String query);
     
-    /**
-     * 포트폴리오와 외주를 연결하는 메서드(INSERT)
-     */
-    int linkOutsourcingToPortfolio(@Param("opCd") String opCd, @Param("osCd") String osCd,@Param("prtfCd") String prtfCd,@Param("entCd") String entCd);
-    
-    /**
-     * 포트폴리오와 외주의 연결을 해체하는 메서드(DELETE)
-     */
-    int unlinkOutsourcingFromPortfolio(@Param("osCd") String osCd, @Param("prtfCd") String prtfCd);
-    
-    
-    
-    
-    
-    
+    List<EnterPortfolio> findLinkedPortfoliosByOsCd(@Param("osCd") String osCd);
 }

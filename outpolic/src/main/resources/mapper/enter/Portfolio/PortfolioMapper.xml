@@ -19,6 +19,9 @@
         <collection property="tagNames" ofType="java.lang.String">
             <result column="tag_name"/>
         </collection>
+        <collection property="linkedOutsourcings" javaType="java.util.ArrayList"
+                    ofType="outpolic.enter.outsourcing.domain.EnterOutsourcing"
+                    column="prtf_cd" select="findLinkedOutsourcingsByPrtfCd" />
     </resultMap>
 
     <resultMap id="simplePortfolioResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
@@ -158,13 +161,13 @@
     </select>
     
     <select id="searchTagsByName" resultType="String">
-        SELECT tag_nm 
+        SELECT tag_nm
         FROM tag
         WHERE tag_nm LIKE CONCAT('%', #{query},'%')
         LIMIT 10
     </select>
 
-    <select id="findLinkedOutsourcingsByPrtfCd" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+    <select id="findLinkedOutsourcingsByPrtfCd" resultMap="outpolic.enter.outsourcing.mapper.OutsourcingMapper.OutsourcingSimpleResultMap">
         SELECT
             o.os_cd,
             o.os_ttl
@@ -176,7 +179,7 @@
             op.prtf_cd = #{prtfCd}
     </select>
 
-    <select id="findUnlinkedOutsourcings" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+    <select id="findUnlinkedOutsourcings" resultMap="outpolic.enter.outsourcing.mapper.OutsourcingMapper.OutsourcingSimpleResultMap">
         SELECT
             o.os_cd,
             o.os_ttl
@@ -193,14 +196,21 @@
         LIMIT 10
     </select>
 
-    <insert id="linkOutsourcingToPortfolio">
-        INSERT INTO outsourcing_portfolio (op_cd, os_cd, prtf_cd, op_reg_ymdt, ent_cd)
-        VALUES (#{opCd}, #{osCd}, #{prtfCd}, NOW(), #{entCd})
-    </insert>
-
-    <delete id="unlinkOutsourcingFromPortfolio">
-        DELETE FROM outsourcing_portfolio
-        WHERE os_cd = #{osCd} AND prtf_cd = #{prtfCd}
-    </delete>
+    <select id="findUnlinkedPortfolios" resultMap="simplePortfolioResultMap">
+        SELECT
+            p.prtf_cd,
+            p.prtf_ttl
+        FROM
+            portfolio p
+        WHERE
+            p.ent_cd = #{entCd}
+            AND p.prtf_ttl LIKE CONCAT('%', #{query}, '%')
+            AND NOT EXISTS (
+                SELECT 1
+                FROM outsourcing_portfolio op
+                WHERE op.os_cd = #{osCd} AND op.prtf_cd = p.prtf_cd
+            )
+        LIMIT 10
+    </select>
 
 </mapper>

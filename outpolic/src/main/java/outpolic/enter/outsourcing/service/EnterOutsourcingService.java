@@ -3,37 +3,22 @@ package outpolic.enter.outsourcing.service;
 import java.io.IOException;
 import java.util.List;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.portfolio.domain.EnterPortfolio; // EnterPortfolio import 추가
 
 public interface EnterOutsourcingService {
-    
-    /**
-     * 특정 기업의 외주 목록 조회
-     */
+
     List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd);
-    
-    /**
-     * 특정 외주 상세 정보 조회
-     */
     EnterOutsourcing getOutsourcingByOsCd(String osCd);
-
-    /**
-     * 태그 이름으로 태그 검색 (추천 기능용)
-     */
     List<String> searchTags(String query);
-    
-    /**
-     * 새로운 외주 등록 (관련 포트폴리오 포함)
-     */
-    void addOutsourcing(EnterOutsourcing outsourcing, List<String> categoryCodes, String tags, List<String> portfolioCds) throws IOException;
-    
-    /**
-     * 기존 외주 정보 수정 (관련 포트폴리오 포함)
-     */
-    void updateOutsourcing(EnterOutsourcing outsourcing, List<String> categoryCodes, String tags, List<String> portfolioCds) throws IOException;
-
-    /**
-     * 외주 삭제
-     */
+    // addOutsourcing 메서드 시그니처 변경: portfolioCds 파라미터 제거
+    void addOutsourcing(EnterOutsourcing outsourcing, List<String> categoryCodes, String tags) throws IOException;
+    // updateOutsourcing 메서드 시그니처 변경: portfolioCds 파라미터 제거
+    void updateOutsourcing(EnterOutsourcing outsourcing, List<String> categoryCodes, String tags) throws IOException;
     void deleteOutsourcing(String osCd);
-    
+
+    // --- 외주-포트폴리오 연결을 위한 새로운 서비스 메서드들 (추가) ---
+    List<EnterPortfolio> getLinkedPortfoliosByOsCd(String osCd);
+    List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query);
+    void linkPortfolioToOutsourcing(String osCd, String prtfCd, String entCd);
+    void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd);
 }

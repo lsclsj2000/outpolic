@@ -1,765 +1,183 @@
-/*-- 외주 등록(outsourcing) --*/
 document.addEventListener('DOMContentLoaded', function () {
-               const form = document.getElementById('outsourcingRegistrationForm');
-               const referenceFilesInput = document.getElementById('reference_files');
-               const filePreviewContainer = document.getElementById('file-preview-container');
-               const MAX_FILE_COUNT = 5;
-
-               const categorySelectionContainer = document.getElementById('categorySelectionContainer');
-               const addCategoryBtn = document.getElementById('addCategoryBtn');
-               const MAX_CATEGORIES = 3; // Maximum 3 categories can be selected
-
-               const availableCategoryOptions = [
-                   { value: 'design', text: '디자인' },
-                   { value: 'it', text: 'IT·프로그래밍' },
-                   { value: 'video-audio', text: '영상·사진·음향' },
-                   { value: 'marketing', text: '마케팅' },
-                   { value: 'translation', text: '번역·통역' },
-                   { value: 'writing', text: '기획·글쓰기' },
-                   { value: 'etc', text: '기타' }
-               ];
-               
-               let selectedCategories = new Set(); // Tracks currently selected category values
-
-               // Function to render all category dropdowns
-               function renderCategoryDropdowns() {
-                   categorySelectionContainer.innerHTML = ''; // Clear existing dropdowns
-
-                   // Add existing selected categories first
-                   selectedCategories.forEach(categoryValue => {
-                       addCategoryDropdown(categoryValue);
-                   });
-
-                   // If fewer than max categories and no empty dropdowns, add one more empty
-                   if (selectedCategories.size < MAX_CATEGORIES && !categorySelectionContainer.querySelector('select[value=""]')) {
-                        addCategoryDropdown(''); // Add an empty one for new selection
-                   }
-                   
-                   // Update add button state
-                   addCategoryBtn.disabled = selectedCategories.size >= MAX_CATEGORIES && !categorySelectionContainer.querySelector('select[value=""]');
-                   addCategoryBtn.style.opacity = addCategoryBtn.disabled ? '0.6' : '1';
-               }
-
-               // Function to add a single category dropdown
-               function addCategoryDropdown(selectedValue = '') {
-                   const categoryItemDiv = document.createElement('div');
-                   categoryItemDiv.classList.add('category-item');
-
-                   const selectElement = document.createElement('select');
-                   selectElement.classList.add('form-control', 'out_category_select'); // Add a class for easier selection later
-                   selectElement.name = 'out_category'; // Use array-like name if needed for backend, or handle in JS
-                   selectElement.required = true;
-
-                   const defaultOption = document.createElement('option');
-                   defaultOption.value = '';
-                   defaultOption.textContent = '카테고리를 선택하세요';
-                   defaultOption.disabled = true;
-                   defaultOption.selected = true;
-                   selectElement.appendChild(defaultOption);
-
-                   availableCategoryOptions.forEach(option => {
-                       const opt = document.createElement('option');
-                       opt.value = option.value;
-                       opt.textContent = option.text;
-                       // Disable if already selected in another dropdown, unless it's the current selected value
-                       if (selectedCategories.has(option.value) && option.value !== selectedValue) {
-                           opt.disabled = true;
-                       }
-                       selectElement.appendChild(opt);
-                   });
-
-                   if (selectedValue) {
-                       selectElement.value = selectedValue;
-                       defaultOption.selected = false; // Deselect default if a value is set
-                   }
-
-                   selectElement.addEventListener('change', function() {
-                       // Remove old value from set if it existed
-                       if (this.dataset.oldValue && selectedCategories.has(this.dataset.oldValue)) {
-                           selectedCategories.delete(this.dataset.oldValue);
-                       }
-                       // Add new value to set
-                       if (this.value) {
-                           selectedCategories.add(this.value);
-                           this.dataset.oldValue = this.value; // Store current value as old value
-                       }
-                       renderCategoryDropdowns(); // Re-render all to update disabled options
-                   });
-                   
-                   categoryItemDiv.appendChild(selectElement);
-
-                   // Add remove button if not the initial empty one or if there are multiple
-                   const removeBtn = document.createElement('button');
-                   removeBtn.type = 'button';
-                   removeBtn.classList.add('btn-remove-category');
-                   removeBtn.innerHTML = '<i class="fas fa-minus"></i>'; // Changed icon to minus
-                   removeBtn.addEventListener('click', function() {
-                       if (selectElement.value) { // Remove the value from the set if it was selected
-                           selectedCategories.delete(selectElement.value);
-                       }
-                       categoryItemDiv.remove(); // Remove the div
-                       renderCategoryDropdowns(); // Re-render to update options
-                   });
-                   categoryItemDiv.appendChild(removeBtn);
-                   
-
-                   categorySelectionContainer.appendChild(categoryItemDiv);
-               }
-
-               // Initial render of categories when page loads
-               renderCategoryDropdowns();
-
-
-               // Add Category Button Event Listener
-               addCategoryBtn.addEventListener('click', function() {
-                   if (selectedCategories.size < MAX_CATEGORIES) {
-                       addCategoryDropdown();
-                   } else {
-                       alert(`카테고리는 최대 ${MAX_CATEGORIES}개까지 선택할 수 있습니다.`);
-                   }
-               });
-
-
-               // Handle form submission
-               if (form) {
-                   form.addEventListener('submit', function(e) {
-                       e.preventDefault(); // Prevent default form submission
-
-                       const outTitle = document.getElementById('out_ttl').value.trim();
-                       // Get all selected categories from the DOM
-                       const finalSelectedCategories = Array.from(categorySelectionContainer.querySelectorAll('.out_category_select'))
-                                                               .map(select => select.value)
-                                                               .filter(value => value !== ''); // Filter out empty selections
-
-                       const outContent = document.getElementById('out_cn').value.trim();
-                       const outTags = document.getElementById('out_tags').value.trim();
-                       const workStartDate = document.getElementById('work-start-date').value;
-                       const workEndDate = document.getElementById('work-end-date').value;
-                       const outHopeAmount = document.getElementById('out_hope_amnt').value;
-                       const requiredPersonnel = document.getElementById('required_personnel').value;
-                       const files = referenceFilesInput.files;
-
-                       // Basic validation
-                       if (!outTitle) {
-                           alert('외주 프로젝트 제목을 입력해주세요.');
-                           document.getElementById('out_ttl').focus();
-                           return;
-                       }
-                       if (finalSelectedCategories.length === 0) {
-                           alert('카테고리를 최소 하나 이상 선택해주세요.');
-                           const firstEmptyCategorySelect = categorySelectionContainer.querySelector('select[value=""]');
-                           if(firstEmptyCategorySelect) firstEmptyCategorySelect.focus();
-                           return;
-                       }
-                       if (!outContent) {
-                           alert('외주 프로젝트 내용을 입력해주세요.');
-                           document.getElementById('out_cn').focus();
-                           return;
-                       }
-                       if (!outHopeAmount || parseInt(outHopeAmount) < 100000) {
-                           alert('희망 금액을 10만원 이상으로 입력해주세요.');
-                           document.getElementById('out_hope_amnt').focus();
-                           return;
-                       }
-                       if (!requiredPersonnel || parseInt(requiredPersonnel) < 1) {
-                           alert('필요 수행 인원을 1명 이상으로 입력해주세요.');
-                           document.getElementById('required_personnel').focus();
-                           return;
-                       }
-
-
-                       // Parse tags (comma-separated)
-                       const parsedTags = outTags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
-
-                       // Collect form data (for demonstration)
-                       const formData = {
-                           out_ttl: outTitle,
-                           out_category: finalSelectedCategories, // Array of categories
-                           out_cn: outContent,
-                           out_tags: parsedTags, // Array of tags
-                           work_start_date: workStartDate,
-                           work_end_date: workEndDate,
-                           out_hope_amnt: outHopeAmount,
-                           required_personnel: requiredPersonnel,
-                           // In a real application, you would handle file uploads to a backend API
-                           reference_files_count: files.length
-                       };
-
-                       console.log('외주 등록 데이터:', formData);
-                       alert('외주 프로젝트가 성공적으로 등록되었습니다! (실제 저장 로직은 백엔드 구현 필요)');
-                       form.reset(); // Clear form after submission
-                       filePreviewContainer.innerHTML = ''; // Clear file previews
-                       selectedCategories.clear(); // Clear selected categories set
-                       renderCategoryDropdowns(); // Re-render category dropdowns to initial state
-                       // Optionally redirect to outsourcing list page
-                       // window.location.href = '/my-outsourcing-list'; 
-                   });
-               }
-
-               // File preview logic
-               if (referenceFilesInput && filePreviewContainer) {
-                   referenceFilesInput.addEventListener('change', function(event) {
-                       filePreviewContainer.innerHTML = ''; // Clear previous previews
-                       const files = event.target.files;
-                       
-                       if (files.length > MAX_FILE_COUNT) {
-                           alert(`파일은 최대 ${MAX_FILE_COUNT}개까지 첨부할 수 있습니다.`);
-                           this.value = ''; // Clear selected files
-                           return;
-                       }
-
-                       for (let i = 0; i < files.length; i++) {
-                           const file = files[i];
-                           const fileType = file.type;
-                           const fileName = file.name;
-
-                           const fileDiv = document.createElement('div');
-                           fileDiv.classList.add('relative', 'w-24', 'h-24', 'overflow-hidden', 'rounded-lg', 'shadow-sm', 'group', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'bg-gray-100', 'text-center', 'break-all', 'p-1'); // Added classes for non-image files
-
-                           let fileContent = '';
-                           if (fileType.startsWith('image/')) {
-                               const reader = new FileReader();
-                               reader.onload = (e) => {
-                                   fileDiv.innerHTML = `
-                                       <img src="${e.target.result}" alt="Reference File" class="w-full h-full object-cover">
-                                       <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-image-btn" data-file-index="${i}">
-                                           <i class="fas fa-times-circle"></i>
-                                       </button>
-                                   `;
-                               };
-                               reader.readAsDataURL(file);
-                           } else {
-                               // For non-image files, display an icon and filename
-                               let iconClass = 'fas fa-file'; // Default icon
-                               if (fileType.includes('pdf')) iconClass = 'fas fa-file-pdf';
-                               else if (fileType.includes('word')) iconClass = 'fas fa-file-word';
-                               else if (fileType.includes('powerpoint')) iconClass = 'fas fa-file-powerpoint';
-                               else if (fileType.includes('text')) iconClass = 'fas fa-file-alt';
-
-                               fileDiv.innerHTML = `
-                                   <div class="flex flex-col items-center justify-center p-1">
-                                       <i class="${iconClass} text-3xl mb-1 text-gray-400"></i>
-                                       <span class="text-xs font-medium">${fileName}</span>
-                                   </div>
-                                   <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-image-btn" data-file-index="${i}">
-                                       <i class="fas fa-times-circle"></i>
-                                   </button>
-                               `;
-                           }
-                           filePreviewContainer.appendChild(fileDiv);
-
-                           fileDiv.querySelector('.remove-image-btn').addEventListener('click', function() {
-                               fileDiv.remove();
-                               // In a real application, you'd manage the file list in the input element or a separate array.
-                           });
-                       }
-                   });
-               }
-           });
-		   
-		/*-- 외주 신청(outsourcingContract) --*/			   
-		document.addEventListener('DOMContentLoaded', function () {
-		               const form = document.getElementById('outsourcingApplicationForm');
-		               const referenceFilesInput = document.getElementById('application_reference_files');
-		               const filePreviewContainer = document.getElementById('application-file-preview-container');
-		               const MAX_FILE_COUNT = 5;
-
-		               // Handle form submission
-		               if (form) {
-		                   form.addEventListener('submit', function(e) {
-		                       e.preventDefault(); // Prevent default form submission
-
-		                       const outsourcingId = document.getElementById('outsourcing_id').value;
-		                       const proposalDescription = document.getElementById('proposal_description').value.trim();
-		                       const desiredWorkStartDate = document.getElementById('desired_work_start_date').value;
-		                       const desiredWorkEndDate = document.getElementById('desired_work_end_date').value;
-		                       const proposedAmount = document.getElementById('proposed_amount').value;
-		                       const files = referenceFilesInput.files;
-
-		                       // Basic validation
-		                       if (!proposalDescription) {
-		                           alert('제안 상세 설명을 입력해주세요.');
-		                           document.getElementById('proposal_description').focus();
-		                           return;
-		                       }
-		                       if (!proposedAmount || parseFloat(proposedAmount) <= 0) {
-		                           alert('제안 금액을 올바르게 입력해주세요.');
-		                           document.getElementById('proposed_amount').focus();
-		                           return;
-		                       }
-
-		                       // Collect form data (for demonstration)
-		                       const formData = {
-		                           outsourcing_id: outsourcingId,
-		                           proposal_description: proposalDescription,
-		                           desired_work_start_date: desiredWorkStartDate,
-		                           desired_work_end_date: desiredWorkEndDate,
-		                           proposed_amount: parseFloat(proposedAmount),
-		                           reference_files_count: files.length
-		                       };
-
-		                       console.log('외주 프로젝트 신청 데이터:', formData);
-		                       alert('외주 프로젝트 신청이 성공적으로 접수되었습니다! (실제 저장 로직은 백엔드 구현 필요)');
-		                       form.reset(); // Clear form after submission
-		                       filePreviewContainer.innerHTML = ''; // Clear file previews
-		                       // Optionally redirect or show success message
-		                   });
-		               }
-
-		               // File preview logic
-		               if (referenceFilesInput && filePreviewContainer) {
-		                   referenceFilesInput.addEventListener('change', function(event) {
-		                       filePreviewContainer.innerHTML = ''; // Clear previous previews
-		                       const files = event.target.files;
-		                       
-		                       if (files.length > MAX_FILE_COUNT) {
-		                           alert(`파일은 최대 ${MAX_FILE_COUNT}개까지 첨부할 수 있습니다.`);
-		                           this.value = ''; // Clear selected files
-		                           return;
-		                       }
-
-		                       for (let i = 0; i < files.length; i++) {
-		                           const file = files[i];
-		                           const fileType = file.type;
-		                           const fileName = file.name;
-
-		                           const fileDiv = document.createElement('div');
-		                           fileDiv.classList.add('relative', 'w-24', 'h-24', 'overflow-hidden', 'rounded-lg', 'shadow-sm', 'group', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'bg-gray-100', 'text-center', 'break-all', 'p-1');
-
-		                           if (fileType.startsWith('image/')) {
-		                               const reader = new FileReader();
-		                               reader.onload = (e) => {
-		                                   fileDiv.innerHTML = `
-		                                       <img src="${e.target.result}" alt="Reference File" class="w-full h-full object-cover">
-		                                       <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-image-btn" data-file-index="${i}">
-		                                           <i class="fas fa-times-circle"></i>
-		                                       </button>
-		                                   `;
-		                               };
-		                               reader.readAsDataURL(file);
-		                           } else {
-		                               let iconClass = 'fas fa-file';
-		                               if (fileType.includes('pdf')) iconClass = 'fas fa-file-pdf';
-		                               else if (fileType.includes('word')) iconClass = 'fas fa-file-word';
-		                               else if (fileType.includes('powerpoint')) iconClass = 'fas fa-file-powerpoint';
-		                               else if (fileType.includes('text')) iconClass = 'fas fa-file-alt';
-
-		                               fileDiv.innerHTML = `
-		                                   <div class="flex flex-col items-center justify-center p-1">
-		                                       <i class="${iconClass} text-3xl mb-1 text-gray-400"></i>
-		                                       <span class="text-xs font-medium">${fileName}</span>
-		                                   </div>
-		                                   <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-image-btn" data-file-index="${i}">
-		                                       <i class="fas fa-times-circle"></i>
-		                                   </button>
-		                               `;
-		                           }
-		                           filePreviewContainer.appendChild(fileDiv);
-
-		                           fileDiv.querySelector('.remove-image-btn').addEventListener('click', function() {
-		                               fileDiv.remove();
-		                           });
-		                       }
-		                   });
-		               }
-		           });
-				   
-				   			   
-	/*-- 포트폴리오 문의(portfolioContract) --*/	
-	document.addEventListener('DOMContentLoaded', function () {
-	               const form = document.getElementById('portfolioInquiryForm');
-	               const referenceFilesInput = document.getElementById('inquiry_reference_files');
-	               const filePreviewContainer = document.getElementById('inquiry-file-preview-container');
-	               const MAX_FILE_COUNT = 5;
-
-	               // Handle form submission
-	               if (form) {
-	                   form.addEventListener('submit', function(e) {
-	                       e.preventDefault(); // Prevent default form submission
-
-	                       const portfolioId = document.getElementById('portfolio_id').value;
-	                       const inquiryDescription = document.getElementById('inquiry_description').value.trim();
-	                       const desiredProjectStartDate = document.getElementById('desired_project_start_date').value;
-	                       const desiredProjectEndDate = document.getElementById('desired_project_end_date').value;
-	                       const desiredBudget = document.getElementById('desired_budget').value;
-	                       const files = referenceFilesInput.files;
-
-	                       // Basic validation
-	                       if (!inquiryDescription) {
-	                           alert('의뢰 상세 내용을 입력해주세요.');
-	                           document.getElementById('inquiry_description').focus();
-	                           return;
-	                       }
-	                       if (desiredBudget && parseFloat(desiredBudget) < 0) {
-	                           alert('희망 예산을 올바르게 입력해주세요.');
-	                           document.getElementById('desired_budget').focus();
-	                           return;
-	                       }
-
-	                       // Collect form data (for demonstration)
-	                       const formData = {
-	                           portfolio_id: portfolioId,
-	                           inquiry_description: inquiryDescription,
-	                           desired_project_start_date: desiredProjectStartDate,
-	                           desired_project_end_date: desiredProjectEndDate,
-	                           desired_budget: desiredBudget ? parseFloat(desiredBudget) : null,
-	                           reference_files_count: files.length
-	                       };
-
-	                       console.log('포트폴리오 문의 데이터:', formData);
-	                       alert('포트폴리오 문의 (새 외주 의뢰)가 성공적으로 접수되었습니다! (실제 저장 로직은 백엔드 구현 필요)');
-	                       form.reset(); // Clear form after submission
-	                       filePreviewContainer.innerHTML = ''; // Clear file previews
-	                       // Optionally redirect or show success message
-	                   });
-	               }
-
-	               // File preview logic (reusable from outsourcing form)
-	               if (referenceFilesInput && filePreviewContainer) {
-	                   referenceFilesInput.addEventListener('change', function(event) {
-	                       filePreviewContainer.innerHTML = ''; // Clear previous previews
-	                       const files = event.target.files;
-	                       
-	                       if (files.length > MAX_FILE_COUNT) {
-	                           alert(`파일은 최대 ${MAX_FILE_COUNT}개까지 첨부할 수 있습니다.`);
-	                           this.value = ''; // Clear selected files
-	                           return;
-	                       }
-
-	                       for (let i = 0; i < files.length; i++) {
-	                           const file = files[i];
-	                           const fileType = file.type;
-	                           const fileName = file.name;
-
-	                           const fileDiv = document.createElement('div');
-	                           fileDiv.classList.add('relative', 'w-24', 'h-24', 'overflow-hidden', 'rounded-lg', 'shadow-sm', 'group', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'bg-gray-100', 'text-center', 'break-all', 'p-1');
-
-	                           if (fileType.startsWith('image/')) {
-	                               const reader = new FileReader();
-	                               reader.onload = (e) => {
-	                                   fileDiv.innerHTML = `
-	                                       <img src="${e.target.result}" alt="Reference File" class="w-full h-full object-cover">
-	                                       <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-image-btn" data-file-index="${i}">
-	                                           <i class="fas fa-times-circle"></i>
-	                                       </button>
-	                                   `;
-	                               };
-	                               reader.readAsDataURL(file);
-	                           } else {
-	                               let iconClass = 'fas fa-file';
-	                               if (fileType.includes('pdf')) iconClass = 'fas fa-file-pdf';
-	                               else if (fileType.includes('word')) iconClass = 'fas fa-file-word';
-	                               else if (fileType.includes('powerpoint')) iconClass = 'fas fa-file-powerpoint';
-	                               else if (fileType.includes('text')) iconClass = 'fas fa-file-alt';
-
-	                               fileDiv.innerHTML = `
-	                                   <div class="flex flex-col items-center justify-center p-1">
-	                                       <i class="${iconClass} text-3xl mb-1 text-gray-400"></i>
-	                                       <span class="text-xs font-medium">${fileName}</span>
-	                                   </div>
-	                                   <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity:0 group-hover:opacity-100 transition-opacity remove-image-btn" data-file-index="${i}">
-	                                       <i class="fas fa-times-circle"></i>
-	                                   </button>
-	                               `;
-	                           }
-	                           filePreviewContainer.appendChild(fileDiv);
-
-	                           fileDiv.querySelector('.remove-image-btn').addEventListener('click', function() {
-	                               fileDiv.remove();
-	                           });
-	                       }
-	                   });
-	               }
-	           });
-			   
-			   /*-- 프로젝트 진행 현황 페이지(outsourcingStatus) --*/
-			   document.addEventListener('DOMContentLoaded', function () {
-			       // --- Modal Logic (Reusable) ---
-			       function openModal(modalId) {
-			           document.getElementById(modalId).classList.add('active');
-			       }
-
-			       function closeModal(modalId) {
-			           document.getElementById(modalId).classList.remove('active');
-			       }
-
-			       // Attach event listeners to all modal close buttons
-			       document.querySelectorAll('.modal-close-btn').forEach(button => {
-			           button.addEventListener('click', function() {
-			               const modalId = this.dataset.modalId;
-			               closeModal(modalId);
-			           });
-			       });
-
-			       // --- Report Write Modal ---
-			       const writeReportBtn = document.getElementById('writeReportBtn');
-			       const reportWriteModal = document.getElementById('reportWriteModal');
-			       const submitReportBtn = document.getElementById('submitReportBtn');
-			       const reportTitleInput = document.getElementById('report_title');
-			       const reportContentInput = document.getElementById('report_content');
-			       const reportListContainer = document.getElementById('reportList');
-
-			       writeReportBtn.addEventListener('click', () => {
-			           openModal('reportWriteModal');
-			           reportTitleInput.value = ''; // Clear previous input
-			           reportContentInput.value = '';
-			       });
-
-			       submitReportBtn.addEventListener('click', function() {
-			           const title = reportTitleInput.value.trim();
-			           const content = reportContentInput.value.trim();
-			           
-			           if (!title || !content) {
-			               alert('제목과 내용을 모두 입력해주세요.');
-			               return;
-			           }
-
-			           // For demonstration: Add to list (in real app, save to DB)
-			           const now = new Date();
-			           const dateString = `${now.getFullYear()}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getDate().toString().padStart(2, '0')}`;
-			           const newReportId = `report-${Date.now()}`; // Unique ID
-
-			           const newReportItem = document.createElement('div');
-			           newReportItem.classList.add('list-item');
-			           newReportItem.innerHTML = `
-			               <span>${title} (${dateString})</span>
-			               <button type="button" class="btn-detail view-report-btn" data-report-id="${newReportId}">자세히 보기</button>
-			           `;
-			           reportListContainer.prepend(newReportItem); // Add to top of list
-
-			           // Store report data for viewing (in real app, retrieve from DB)
-			           // This is a simple in-memory storage for demo purposes
-			           if (!window.mockReports) window.mockReports = {};
-			           window.mockReports[newReportId] = { title: title, content: content, date: dateString };
-
-			           // Attach event listener to the new "자세히 보기" button
-			           newReportItem.querySelector('.view-report-btn').addEventListener('click', function() {
-			               viewReportDetails(this.dataset.reportId);
-			           });
-
-			           // Hide "no items" message if present
-			           reportListContainer.querySelector('.no-items-message')?.classList.add('hidden');
-
-
-			           alert('보고서가 성공적으로 제출되었습니다!');
-			           closeModal('reportWriteModal');
-			       });
-
-
-			       // --- Feedback Write Modal ---
-			       const writeFeedbackBtn = document.getElementById('writeFeedbackBtn');
-			       const feedbackWriteModal = document.getElementById('feedbackWriteModal');
-			       const submitFeedbackBtn = document.getElementById('submitFeedbackBtn');
-			       const feedbackTitleInput = document.getElementById('feedback_title');
-			       const feedbackContentInput = document.getElementById('feedback_content');
-			       const feedbackListContainer = document.getElementById('feedbackList');
-
-			       writeFeedbackBtn.addEventListener('click', () => {
-			           openModal('feedbackWriteModal');
-			           feedbackTitleInput.value = ''; // Clear previous input
-			           feedbackContentInput.value = '';
-			       });
-
-			       submitFeedbackBtn.addEventListener('click', function() {
-			           const title = feedbackTitleInput.value.trim();
-			           const content = feedbackContentInput.value.trim();
-			           
-			           if (!title || !content) {
-			               alert('제목과 내용을 모두 입력해주세요.');
-			               return;
-			           }
-
-			           // For demonstration: Add to list (in real app, save to DB)
-			           const now = new Date();
-			           const dateString = `${now.getFullYear()}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getDate().toString().padStart(2, '0')}`;
-			           const newFeedbackId = `feedback-${Date.now()}`; // Unique ID
-
-			           const newFeedbackItem = document.createElement('div');
-			           newFeedbackItem.classList.add('list-item');
-			           newFeedbackItem.innerHTML = `
-			               <span>${title} (${dateString})</span>
-			               <button type="button" class="btn-detail view-feedback-btn" data-feedback-id="${newFeedbackId}">자세히 보기</button>
-			           `;
-			           feedbackListContainer.prepend(newFeedbackItem); // Add to top of list
-
-			           // Store feedback data for viewing (in real app, retrieve from DB)
-			           // This is a simple in-memory storage for demo purposes
-			           if (!window.mockFeedback) window.mockFeedback = {};
-			           window.mockFeedback[newFeedbackId] = { title: title, content: content, date: dateString };
-
-			           // Attach event listener to the new "자세히 보기" button
-			           newFeedbackItem.querySelector('.view-feedback-btn').addEventListener('click', function() {
-			               viewFeedbackDetails(this.dataset.feedbackId);
-			           });
-
-			           // Hide "no items" message if present
-			           feedbackListContainer.querySelector('.no-items-message')?.classList.add('hidden');
-
-			           alert('피드백이 성공적으로 제출되었습니다!');
-			           closeModal('feedbackWriteModal');
-			       });
-
-
-			       // --- Report View Modal ---
-			       const reportViewModal = document.getElementById('reportViewModal');
-			       const viewReportTitle = document.getElementById('viewReportTitle');
-			       const viewReportDate = document.getElementById('viewReportDate');
-			       const viewReportContent = document.getElementById('viewReportContent');
-
-			       function viewReportDetails(reportId) {
-			           // In a real application, fetch report data from DB using reportId
-			           const report = window.mockReports[reportId]; // Using mock data for demo
-			           if (report) {
-			               viewReportTitle.textContent = report.title;
-			               viewReportDate.textContent = `작성일: ${report.date}`;
-			               viewReportContent.textContent = report.content;
-			               openModal('reportViewModal');
-			           } else {
-			               alert('보고서 내용을 불러올 수 없습니다.');
-			           }
-			       }
-
-			       // Attach click listeners to existing report "자세히 보기" buttons
-			       document.querySelectorAll('.view-report-btn').forEach(button => {
-			           button.addEventListener('click', function() {
-			               viewReportDetails(this.dataset.reportId);
-			           });
-			       });
-
-			       // Mock data for initial reports (in a real app, this comes from backend)
-			       window.mockReports = {
-			           'report1': { title: '1차 보고서 - 초기 기획 진행 상황', content: '프로젝트 초기 기획 및 요구사항 정의 단계가 80% 완료되었습니다. 주요 기능 목록 확정 및 사용자 플로우 정의를 마쳤습니다. 다음 주까지 세부 기능 명세를 마무리할 예정입니다.', date: '2025.06.20' },
-			           'report2': { title: '2차 보고서 - UI/UX 설계 진행 상황', content: 'UI/UX 디자인 초안이 완료되었으며, 주요 화면의 와이어프레임과 프로토타입을 제작했습니다. 사용자 테스트를 진행하여 피드백을 수렴할 예정입니다.', date: '2025.06.25' }
-			       };
-			       if (Object.keys(window.mockReports).length === 0) {
-			            reportListContainer.querySelector('.no-items-message')?.classList.remove('hidden');
-			       } else {
-			            reportListContainer.querySelector('.no-items-message')?.classList.add('hidden');
-			       }
-
-			       // --- Feedback View Modal ---
-			       const feedbackViewModal = document.getElementById('feedbackViewModal');
-			       const viewFeedbackTitle = document.getElementById('viewFeedbackTitle');
-			       const viewFeedbackDate = document.getElementById('viewFeedbackDate');
-			       const viewFeedbackContent = document.getElementById('viewFeedbackContent');
-
-			       function viewFeedbackDetails(feedbackId) {
-			           // In a real application, fetch feedback data from DB using feedbackId
-			           const feedback = window.mockFeedback[feedbackId]; // Using mock data for demo
-			           if (feedback) {
-			               viewFeedbackTitle.textContent = feedback.title;
-			               viewFeedbackDate.textContent = `작성일: ${feedback.date}`;
-			               viewFeedbackContent.textContent = feedback.content;
-			               openModal('feedbackViewModal');
-			           } else {
-			               alert('피드백 내용을 불러올 수 없습니다.');
-			           }
-			       }
-
-			       // Attach click listeners to existing feedback "자세히 보기" buttons
-			       document.querySelectorAll('.view-feedback-btn').forEach(button => {
-			           button.addEventListener('click', function() {
-			               viewFeedbackDetails(this.dataset.feedbackId);
-			           });
-			       });
-
-			       // Mock data for initial feedback (in a real app, this comes from backend)
-			       window.mockFeedback = {
-			           'feedback1': { title: '피드백 #1 - 초기 기획 방향', content: '초기 기획안 잘 받아보았습니다. 전반적인 방향은 좋습니다만, 로그인 프로세스에서 사용성 개선이 필요해 보입니다. 예를 들어, 소셜 로그인 버튼의 시인성을 높이는 방안을 고려해주시면 좋겠습니다.', date: '2025.06.21' }
-			       };
-			       if (Object.keys(window.mockFeedback).length === 0) {
-			           feedbackListContainer.querySelector('.no-items-message')?.classList.remove('hidden');
-			       } else {
-			           feedbackListContainer.querySelector('.no-items-message')?.classList.add('hidden');
-			       }
-			   });
-	
-	
-	
-	
-	/* 포폴 등록 */
-
-	document.addEventListener('DOMContentLoaded', function() {
-	    console.log('main.js: DOMContentLoaded 이벤트 발생. 모든 HTML 요소가 로드되었습니다.');
-
-	    const portfolioItemsGrid = document.getElementById('portfolioItemsGrid');
-	    const noPortfolioMessage = document.getElementById('noPortfolioMessage');
-	    const addPortfolioTopBtn = document.getElementById('addPortfolioTopBtn');
-	    const addPortfolioBottomBtn = document.getElementById('addPortfolioBottomBtn');
-
-	    /**
-	     * 포트폴리오 목록을 서버로부터 동적으로 불러와 화면에 렌더링하는 함수
-	     */
-	    function loadAndRenderPortfolioList() {
-	        console.log('main.js: 포트폴리오 목록 로드 시작...');
-	        
-	        // ★★★ 이 부분이 가장 중요합니다! (캐시 방지) ★★★
-	        // URL 뒤에 현재 시간을 붙여 매번 새로운 주소로 요청하여 캐시된 데이터를 사용하지 않도록 합니다.
-	        const urlWithCacheBuster = '/enter/portfolio/listData?_=' + new Date().getTime();
-
-	        fetch(urlWithCacheBuster) // 수정된 URL 사용
-	            .then(response => {
-	                if (!response.ok) {
-	                    throw new Error(`HTTP error! status: ${response.status}`);
-	                }
-	                return response.json();
-	            })
-	            .then(portfolios => {
-	                console.log('main.js: 포트폴리오 목록 데이터 수신:', portfolios);
-	                
-	                portfolioItemsGrid.innerHTML = ''; 
-
-	                if (portfolios && portfolios.length > 0) {
-	                    noPortfolioMessage.classList.add('hidden');
-	                    portfolioItemsGrid.classList.remove('hidden');
-
-	                    portfolios.forEach(portfolio => {
-	                        // DB에 저장된 데이터를 기반으로 HTML 카드 생성
-	                        const cardHtml = `
-	                            <div class="portfolio-item-card">
-	                                <div class="portfolio-thumbnail-wrapper">
-	                                    <img src="${portfolio.prtfThumbnailUrl || 'https://via.placeholder.com/300x200?text=No+Image'}" 
-	                                         alt="포트폴리오 썸네일" class="portfolio-thumbnail">
-	                                </div>
-	                                <div class="portfolio-content">
-	                                    <h3 class="portfolio-title">${portfolio.prtfTtl || '제목 없음'}</h3>
-	                                    <p class="portfolio-description">${portfolio.prtfCn || '내용 없음'}</p>
-	                                    <div class="portfolio-actions">
-	                                        <button class="btn-edit" data-prtf-cd="${portfolio.prtfCd || ''}">수정</button>
-	                                        <button class="btn-delete" data-prtf-cd="${portfolio.prtfCd || ''}">삭제</button>
-	                                    </div>
-	                                </div>
-	                            </div>
-	                        `;
-	                        portfolioItemsGrid.insertAdjacentHTML('beforeend', cardHtml);
-	                    });
-	                } else {
-	                    noPortfolioMessage.classList.remove('hidden');
-	                    portfolioItemsGrid.classList.add('hidden');
-	                }
-	            })
-	            .catch(error => {
-	                console.error('main.js: 포트폴리오 목록 로드 실패:', error);
-	                portfolioItemsGrid.innerHTML = '<p style="color: red;">포트폴리오 목록을 불러오는 데 실패했습니다.</p>';
-	            });
-	    }
-
-	    /**
-	     * "새 포트폴리오 등록하기" 버튼 클릭 시 등록 페이지로 이동하는 함수
-	     */
-	    function goToAddPage() {
-	        window.location.href = '/enter/portfolio/add';
-	    }
-
-	    if (addPortfolioTopBtn) {
-	        addPortfolioTopBtn.addEventListener('click', goToAddPage);
-	    }
-	    if (addPortfolioBottomBtn) {
-	        addPortfolioBottomBtn.addEventListener('click', goToAddPage);
-	    }
-
-	    // 페이지가 처음 로드될 때 포트폴리오 목록을 불러옵니다.
-	    loadAndRenderPortfolioList();
-	});
-	
-	
+    const MAX_FILE_COUNT = 5; // 최대 파일 개수
+
+    /**
+     * 파일 입력 필드에 대한 미리보기 기능을 초기화합니다.
+     * @param {string} fileInputId - 파일 입력 필드의 ID
+     * @param {string} previewContainerId - 미리보기 이미지를 표시할 컨테이너의 ID
+     */
+    function initializeFilePreview(fileInputId, previewContainerId) {
+        const fileInput = document.getElementById(fileInputId);
+        const previewContainer = document.getElementById(previewContainerId);
+
+        if (!fileInput || !previewContainer) {
+            console.error(`Element with ID '${fileInputId}' or '${previewContainerId}' not found.`);
+            return;
+        }
+
+        fileInput.addEventListener('change', function (event) {
+            previewContainer.innerHTML = ''; // 이전 미리보기 제거
+            const files = event.target.files;
+            const currentFiles = new DataTransfer(); // 새로운 DataTransfer 객체를 생성하여 유효한 파일만 담습니다.
+
+            if (files.length > MAX_FILE_COUNT) {
+                alert(`파일은 최대 ${MAX_FILE_COUNT}개까지 첨부할 수 있습니다.`);
+                fileInput.value = ''; // 선택된 파일 초기화
+                return;
+            }
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files.item(i);
+                if (file) {
+                    currentFiles.items.add(file); // 유효한 파일만 추가
+                    const fileType = file.type;
+                    const fileName = file.name;
+
+                    const fileDiv = document.createElement('div');
+                    fileDiv.classList.add('relative', 'w-24', 'h-24', 'overflow-hidden', 'rounded-lg', 'shadow-sm', 'group', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'bg-gray-100', 'text-center', 'break-all', 'p-1');
+
+                    if (fileType.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            fileDiv.innerHTML = `
+                                <img src="${e.target.result}" alt="Reference File" class="w-full h-full object-cover">
+                                <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-file-btn" data-file-name="${fileName}">
+                                    <i class="fas fa-times-circle"></i>
+                                </button>
+                            `;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        let iconClass = 'fas fa-file';
+                        if (fileType.includes('pdf')) iconClass = 'fas fa-file-pdf';
+                        else if (fileType.includes('word')) iconClass = 'fas fa-file-word';
+                        else if (fileType.includes('powerpoint')) iconClass = 'fas fa-file-powerpoint';
+                        else if (fileType.includes('text')) iconClass = 'fas fa-file-alt';
+
+                        fileDiv.innerHTML = `
+                            <div class="flex flex-col items-center justify-center p-1">
+                                <i class="${iconClass} text-3xl mb-1 text-gray-400"></i>
+                                <span class="text-xs font-medium">${fileName}</span>
+                            </div>
+                            <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-file-btn" data-file-name="${fileName}">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        `;
+                    }
+                    previewContainer.appendChild(fileDiv);
+                }
+            }
+            fileInput.files = currentFiles.files; // 유효한 파일만 다시 설정
+
+            // 동적으로 추가된 제거 버튼에 이벤트 리스너 추가
+            previewContainer.querySelectorAll('.remove-file-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const fileNameToRemove = this.dataset.fileName;
+                    const dt = new DataTransfer();
+                    const files = fileInput.files;
+
+                    for (let j = 0; j < files.length; j++) {
+                        if (files.item(j).name !== fileNameToRemove) {
+                            dt.items.add(files.item(j));
+                        }
+                    }
+                    fileInput.files = dt.files; // 파일 입력 필드 업데이트
+                    this.closest('div').remove(); // 미리보기 div 제거
+                });
+            });
+        });
+    }
+
+
+    // --- 외주 프로젝트 신청 폼 (outsourcingApplicationForm) ---
+    const outsourcingApplicationForm = document.getElementById('outsourcingApplicationForm');
+    if (outsourcingApplicationForm) {
+        outsourcingApplicationForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // 기본 폼 제출 방지
+
+            // TODO: 실제 백엔드 연동 시 여기에 AJAX 요청 로직을 추가해야 합니다.
+            // 현재는 콘솔 로그와 알림으로 대체합니다.
+
+            const outsourcingId = document.getElementById('outsourcing_id') ? document.getElementById('outsourcing_id').value : 'N/A'; // HTML에서 ID 확인 후 사용
+            const proposalDescription = document.getElementById('proposal_description').value.trim();
+            const desiredWorkStartDate = document.getElementById('desired_work_start_date').value;
+            const desiredWorkEndDate = document.getElementById('desired_work_end_date').value;
+            const proposedAmount = document.getElementById('proposed_amount').value;
+            const files = document.getElementById('application_reference_files').files;
+
+            // 기본 유효성 검사
+            if (!proposalDescription) {
+                alert('제안 상세 설명을 입력해주세요.');
+                document.getElementById('proposal_description').focus();
+                return;
+            }
+            if (!proposedAmount || parseFloat(proposedAmount) <= 0) {
+                alert('제안 금액을 올바르게 입력해주세요.');
+                document.getElementById('proposed_amount').focus();
+                return;
+            }
+
+            console.log('외주 프로젝트 신청 데이터:', {
+                outsourcing_id: outsourcingId,
+                proposal_description: proposalDescription,
+                desired_work_start_date: desiredWorkStartDate,
+                desired_work_end_date: desiredWorkEndDate,
+                proposed_amount: parseFloat(proposedAmount),
+                reference_files_count: files.length
+            });
+            alert('외주 프로젝트 신청이 성공적으로 접수되었습니다! (실제 저장 로직은 백엔드 구현 필요)');
+            
+            outsourcingApplicationForm.reset(); // 폼 초기화
+            document.getElementById('application-file-preview-container').innerHTML = ''; // 파일 미리보기 초기화
+        });
+
+        // 외주 신청 폼의 파일 미리보기 초기화
+        initializeFilePreview('application_reference_files', 'application-file-preview-container');
+    }
+
+    // --- 포트폴리오 문의 폼 (portfolioInquiryForm) ---
+    const portfolioInquiryForm = document.getElementById('portfolioInquiryForm');
+    if (portfolioInquiryForm) {
+        portfolioInquiryForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // 기본 폼 제출 방지
+
+            // TODO: 실제 백엔드 연동 시 여기에 AJAX 요청 로직을 추가해야 합니다.
+            // 현재는 콘솔 로그와 알림으로 대체합니다.
+
+            const portfolioId = document.getElementById('portfolio_id').value;
+            const inquiryDescription = document.getElementById('inquiry_description').value.trim();
+            const desiredProjectStartDate = document.getElementById('desired_project_start_date').value;
+            const desiredProjectEndDate = document.getElementById('desired_project_end_date').value;
+            const desiredBudget = document.getElementById('desired_budget').value;
+            const files = document.getElementById('inquiry_reference_files').files;
+
+            // 기본 유효성 검사
+            if (!inquiryDescription) {
+                alert('의뢰 상세 내용을 입력해주세요.');
+                document.getElementById('inquiry_description').focus();
+                return;
+            }
+            if (desiredBudget && parseFloat(desiredBudget) < 0) {
+                alert('희망 예산을 올바르게 입력해주세요.');
+                document.getElementById('desired_budget').focus();
+                return;
+            }
+
+            console.log('포트폴리오 문의 데이터:', {
+                portfolio_id: portfolioId,
+                inquiry_description: inquiryDescription,
+                desired_project_start_date: desiredProjectStartDate,
+                desired_project_end_date: desiredProjectEndDate,
+                desired_budget: desiredBudget ? parseFloat(desiredBudget) : null,
+                reference_files_count: files.length
+            });
+            alert('포트폴리오 문의 (새 외주 의뢰)가 성공적으로 접수되었습니다! (실제 저장 로직은 백엔드 구현 필요)');
+            
+            portfolioInquiryForm.reset(); // 폼 초기화
+            document.getElementById('inquiry-file-preview-container').innerHTML = ''; // 파일 미리보기 초기화
+        });
+
+        // 포트폴리오 문의 폼의 파일 미리보기 초기화
+        initializeFilePreview('inquiry_reference_files', 'inquiry-file-preview-container');
+    }
+});
