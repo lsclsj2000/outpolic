@@ -8,12 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import lombok.RequiredArgsConstructor;
-
 import outpolic.user.login.interceptor.LoginInterceptor;
 import outpolic.user.login.interceptor.LoginUserBlockInterceptor;
-
-/*import outpolic.user.login.interceptor.LoginInterceptor;*/
-
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,7 +18,6 @@ public class WebConfig implements WebMvcConfigurer{
 	@Value("${file.path}")
 	private String fileRealPath;
 	
-
 	private final LoginInterceptor loginInterceptor;
 	
 	private final LoginUserBlockInterceptor loginUserBlockInterceptor;
@@ -30,6 +25,7 @@ public class WebConfig implements WebMvcConfigurer{
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		
+
 		/*
 		 * // 로그인 안한 이용자 접근 차단 registry.addInterceptor(loginInterceptor)
 		 * .addPathPatterns("/**") // 인터셉터로 로그인 안한사람 막음 .excludePathPatterns("/",
@@ -79,3 +75,6 @@ public class WebConfig implements WebMvcConfigurer{
 	}
 
 }
+
+
+

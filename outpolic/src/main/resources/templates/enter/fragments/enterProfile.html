@@ -18,7 +18,7 @@
 				<li>
 					<div class="userprofileTitle d-flex flex-column align-items-center mt-10 ">
 						<img class="userProfileImg" th:src="@{/user/assets/imgs/outpolic/cutecat.jpg}" />
-						<h4 class="mt-10 mb-10" value="자갈강">기본닉네임</h4>
+						<h4 class="mt-10 mb-10" value="자갈강" th:text="${enterInfo.memberNickname}">기본닉네임</h4>
 					</div>
 				</li>
 			</ul>

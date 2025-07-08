@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="outpolic.enter.mypage.mapper.EnterMypageMapper">
+	<resultMap type="EnterInfo" id="EnterMypageResultMap">
+		<id column="mbr_id" property="memberId"></id>
+		<result column="mbr_nm" property="memberName"/>
+		<result column="mbr_pw" property="memberPw"/>
+		<result column="mbr_nicknm" property="memberNickname"/>
+		<result column="mbr_telno" property="memberTelNo"/>
+		<result column="mbr_addr" property="memberAddress"/>
+		<result column="mbr_daddr" property="memberDAddress"/>
+		<result column="mbr_zip" property="memberZip"/>
+		<result column="mbr_eml" property="memberEmail"/>
+		<result column="mbr_birth" property="memberBirth"/>
+		<result column="mbr_join_ymdt" property="memberJoinDate"/>
+		<result column="mbr_mdfcn_ymdt" property="memberModifyDate"/>
+	</resultMap>
+	<select id="getEnterInfoById" parameterType="String" resultMap="EnterMypageResultMap"> 
+		 SELECT 
+			mbr_id, 
+			mbr_nm, 
+			mbr_pw,
+			mbr_nicknm, 
+			mbr_telno, 
+			mbr_addr, 
+			mbr_daddr, 
+			mbr_zip, 
+			mbr_eml, 
+			mbr_birth,
+			mbr_join_ymdt,
+			mbr_mdfcn_ymdt
+		FROM member
+		WHERE mbr_id=#{memberId};
+	</select>
+	<update id="updateEnterInfo" parameterType="EnterInfo">
+ 		UPDATE member
+ 		set
+			mbr_nm = #{memberName},
+			mbr_nicknm = #{memberNickname}, 
+			mbr_telno = #{memberTelNo}, 
+			mbr_addr = #{memberAddress}, 
+			mbr_daddr = #{memberDAddress}, 
+			mbr_zip = #{memberZip}, 
+			mbr_eml = #{memberEmail}, 
+			mbr_birth = #{memberBirth},
+			mbr_mdfcn_ymdt = curdate()
+		where
+			mbr_id= #{memberId};
+ 	</update>
+ 	
+</mapper>

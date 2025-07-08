@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.enter.outsourcingRequest.mapper.OutsourcingRequestMapper">
+	<select id="findLatestOcdCd" resultType="String">
+		SELECT 
+			ocd_cd
+		FROM
+			outsourcing_contract_details
+		ORDER BY ocd_cd DESC LIMIT 1		
+	</select>
+	
+	<insert id="insertContentListForRequest">
+		INSERT INTO content_list (cl_cd,cntd_cd,cl_reg_ymdt)
+		VALUES (#{clCd}, #{ocdCd},NOW())
+	
+	</insert>
+	
+	<insert id="insertOutsourcingRequest" parameterType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequest">
+		INSERT INTO outsourcing_contract_details
+			(ocd_cd,ocd_req_type,mbr_cd,ent_cd,ocd_ttl,ocd_frctn_cmdty,ocd_dlvgds_mthd,ocd_expln,ocd_dedline,ocd_amt, stc_cd,ocd_dmnd_ymdt, ocd_yn)
+		VALUES
+			(#{ocdCd},#{ocdReqType},#{mbrCd},#{entCd},#{clCd},#{ocdTtl},#{ocdFrctnCmdty},#{ocdExpln},#{ocdDedLine},#{ocdAmt},#{stcCd},NOW(),'N')
+				
+	
+	</insert>
+</mapper>
