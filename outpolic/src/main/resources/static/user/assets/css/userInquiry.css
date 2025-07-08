@@ -311,3 +311,143 @@ h2.mb-30 {
 .mt-15 {
     margin-top: 15px;
 }
+
+/* General body and container styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #ffffff; /* Explicitly white background */
+    color: #333;
+}
+
+.SR_container-custom {
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Header/Footer sections - assuming these are handled by the layout, but keeping the styles for reference if needed */
+.SR_header-section, .SR_footer-section {
+    background-color: #e0e7ff; /* Light blue from the first image's header */
+    padding: 20px 0;
+    text-align: center;
+}
+.SR_header-section {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    margin-bottom: 20px;
+}
+.SR_footer-section {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    margin-top: 20px;
+}
+
+/* Label styles */
+.SR_form-label {
+    font-weight: 600; /* Requested thickness */
+    font-size: 1rem; /* Requested size */
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Input/Textarea/Select styles for consistency */
+/* These should override or complement Bootstrap's form-control */
+.form-control,
+.form-select.select-active {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0; /* Consistent border from userInquiry.css */
+    border-radius: 10px; /* Consistent border-radius from userInquiry.css */
+    font-size: 1rem; /* Consistent font size */
+    color: #253D4E; /* Consistent text color from userInquiry.css */
+    height: 45px; /* Consistent height */
+    line-height: 1.5; /* Default line height */
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.SR_form-control-textarea { /* Specific for textarea */
+    min-height: 150px;
+    resize: vertical;
+    height: auto;
+}
+
+/* Focus styles */
+.form-control:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #264796; /* Main Blue for focus */
+    box-shadow: 0 0 0 0.25rem rgba(38, 71, 150, 0.25); /* Main Blue with opacity for shadow */
+}
+
+/* Disabled input */
+.SR_disabled-input {
+    background-color: #f0f0f0;
+    color: #777;
+    cursor: not-allowed;
+}
+
+/* Clickable input for modal trigger */
+.SR_clickable-input {
+    cursor: pointer;
+}
+
+/* Button styles */
+.SR_btn-primary {
+    background-color: #264796; /* Main Blue */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+    border: none;
+}
+.SR_btn-primary:hover {
+    background-color: #4BAEA0; /* Hover Color */
+}
+.SR_btn-secondary {
+    background-color: #e0e7ff; /* Light blue for secondary button */
+    color: #264796; /* Main blue for text */
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+    border: none;
+}
+.SR_btn-secondary:hover {
+    background-color: #c7d2fe; /* Lighter hover for secondary */
+}
+
+/* Spacing adjustments */
+.form-group {
+    margin-bottom: 15px;
+}
+h2.mt-30 {
+    font-size: 28px;
+    color: #333;
+    font-weight: 600;
+    text-align: center;
+}
+/* For flex container gaps (like d-flex justify-content-end gap-3) */
+.d-flex.justify-content-end.gap-3 > *:not(:last-child) {
+    margin-right: 1rem; /* Equivalent to Bootstrap's gap-3 */
+}
+.modal-footer .SR_btn-secondary {
+    margin-right: 10px; /* Spacing between modal buttons */
+}
+
+/* CKEditor specific styling to match form-control */
+.ck-editor__editable[role="textbox"] {
+    min-height: 300px; /* User's original CKEditor height */
+    border: 1px solid #e0e0e0; /* Match form-control border */
+    border-radius: 10px; /* Match form-control border-radius */
+    padding: 12px 15px; /* Match form-control padding */
+    font-size: 1rem; /* Match form-control font-size */
+    color: #253D4E; /* Match form-control color */
+}
+.ck-editor__editable[role="textbox"]:focus {
+    border-color: #264796; /* Match form-control focus border */
+    box-shadow: 0 0 0 0.25rem rgba(38, 71, 150, 0.25); /* Match form-control focus shadow */
+}
