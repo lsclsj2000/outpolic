@@ -152,7 +152,7 @@ body {
     color: #fff;
     background-color: #6c757d;
     border-color: #6c757d;
-}
+} 
 .SR_position-fixed { position: fixed !important; }
 .SR_top-0 { top: 0 !important; }
 .SR_start-0 { left: 0 !important; }
@@ -291,4 +291,11 @@ body {
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
     border-radius: 0.2rem;
+}
+
+/* Custom CSS for header height */
+.SR_chat-header {
+    min-height: 48px; /* Adjust as needed */
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
 }
