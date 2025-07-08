@@ -19,13 +19,5 @@ public class UserChatController {
 		return "user/chat/userChatMessageView";
 	}
 	
-	@GetMapping("/userChatRoom")
-	public String userChatRoomView() {
-		// 채팅방 목록 페이지
-		
-		return "user/chat/userChatRoomView";
-	}
-	
-	
 	
 }
