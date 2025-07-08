@@ -21,9 +21,12 @@
 	<!-- header end -->
 	
 	<main class="main">
-		<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+		<div class="container">
+			<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+			
+			<th:block layout:fragment="contents"></th:block>
+		</div>
 		
-		<th:block layout:fragment="contents"></th:block>
     </main>
     
     <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
