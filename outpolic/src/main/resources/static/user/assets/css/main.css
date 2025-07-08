@@ -13067,6 +13067,82 @@ p.mb-30-ssy{
     opacity: 0.7;
 }
 
+.SR_container-custom { /* Custom class for specific width */
+            max-width: 960px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .SR_header-section, .SR_footer-section {
+            background-color: #e0e7ff; /* Light blue from the first image's header */
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .SR_header-section {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .SR_footer-section {
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            margin-top: 20px;
+        }
+        .SR_form-label {
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #264796; /* Main Blue for focus */
+            box-shadow: 0 0 0 0.25rem rgba(38, 71, 150, 0.25); /* Main Blue with opacity for shadow */
+        }
+        .SR_form-control-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        .SR_btn-custom {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .SR_btn-custom:hover {
+            transform: translateY(-1px);
+        }
+        .SR_btn-custom:active {
+            transform: translateY(0);
+        }
+        .SR_btn-primary-custom {
+            background-color: #264796; /* Main Blue */
+            color: #fff;
+            border: none;
+        }
+        .SR_btn-primary-custom:hover {
+            background-color: #4BAEA0; /* Hover Color */
+        }
+        .SR_btn-secondary-custom {
+            background-color: #cbd5e1; /* Slate-300 */
+            color: #333;
+            border: none;
+        }
+        .SR_btn-secondary-custom:hover {
+            background-color: #a7b7c9; /* Slate-400 */
+        }
+        .SR_disabled-input {
+            background-color: #f0f0f0;
+            color: #777;
+            cursor: not-allowed;
+        }
+        /* Custom style for clickable input */
+        .SR_clickable-input {
+            cursor: pointer;
+        }
 
 /* 유사랑 CSS 추가 영역 끝*/
 
