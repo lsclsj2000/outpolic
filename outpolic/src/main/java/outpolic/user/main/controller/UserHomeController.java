@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.servlet.http.HttpSession;
@@ -13,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.user.category.domain.Category;
 import outpolic.user.category.service.CategoryService;
+import outpolic.user.ranking.domain.UserRankingContentsDTO;
+import outpolic.user.ranking.service.UserRankingService;
 
 @Controller
 @Slf4j
@@ -20,6 +21,9 @@ import outpolic.user.category.service.CategoryService;
 @RequiredArgsConstructor
 public class UserHomeController {
 	 private final CategoryService categoryService;
+	 private final UserRankingService userRankingService;
+	 
+	 
 
     @GetMapping("/") // 메인 페이지 URL
     public String mainPage(HttpSession session, Model model) {
@@ -30,6 +34,10 @@ public class UserHomeController {
         // 2. Model에 담기: "mainCategories" 라는 이름으로 HTML에 전달합니다.
         model.addAttribute("mainCategories", mainCategories);
         log.info("메인 페이지 세션 확인: {}", session.getAttribute("SID"));
+        
+        // 인기 외주 리스트 불러오기
+        List<UserRankingContentsDTO> popularOutsourcingList = userRankingService.getRankingContentsList();
+        model.addAttribute("findOSList", popularOutsourcingList);
 
         return "main";
     }
