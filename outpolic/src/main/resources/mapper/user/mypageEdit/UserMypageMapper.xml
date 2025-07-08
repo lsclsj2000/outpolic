@@ -5,6 +5,7 @@
  <mapper namespace="outpolic.user.mypage.mapper.UserMypageEditMapper">
 	<resultMap type="UserInfoDTO" id="UserMypageEditResultMap">
 		<id column="mbr_id" property="memberId"></id>
+		<result column="mbr_cd" property="memberCode"/>
 		<result column="mbr_nm" property="memberName"/>
 		<result column="mbr_pw" property="memberPw"/>
 		<result column="mbr_nicknm" property="memberNickname"/>
@@ -20,6 +21,7 @@
 	<select id="getUserInfoById" parameterType="String" resultMap="UserMypageEditResultMap"> 
 		 SELECT 
 			mbr_id, 
+			mbr_cd,
 			mbr_nm, 
 			mbr_pw,
 			mbr_nicknm, 

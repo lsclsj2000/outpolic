@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{enter/layout/enterEditLayout}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+	<body>	
+	<!-- 여기부터 본문 -->
+	<!-- 회원 정보 수정 페이지 시작 -->
+	<div class="row justify-content-center">
+		<th:block layout:fragment="contents">
+			<div class="row justify-content-center">
+                <div class="padding_eight_all bg-white">
+                    <div class="heading_s1 text-center">
+                        <h1 class="mb-5 reg-ttl-ssy mb-50">회원 정보 수정</h1>
+                    </div>
+                    <div class="register-type-box mt-20 mb-50 gap-3">
+                        <a th:href="@{/enterEditView}" class="user-register-type text-white d-flex align-items-center justify-content-around w-100 h-150" style="height: 150px;">
+                            <span class="ms-2 fs-4">개인정보 수정하기</span>
+                        </a>
+                        <a th:href="@{/enterpriseEditView}" class="enter-register-type text-white d-flex align-items-center justify-content-around w-100 h-150" style="height: 150px;">
+                            <span class="ms-2 fs-4">기업정보 수정하기</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+		</th:block>
+	</div>
+		<th:block layout:fragment="jsScript">
+			<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+		
+		    <script src="/enter/assets/js/enterServiceAjax.js"></script>
+			<script src="/enter/assets/js/enterService.js"></script>
+			<script src="/common/assets/js/validate.js"></script>
+		</th:block>
+
+		<th:block layout:fragment="jsFile">
+		</th:block>
+		
+		
+		</body>
+	
+	
+</html>

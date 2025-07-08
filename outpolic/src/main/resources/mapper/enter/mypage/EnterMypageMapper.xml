@@ -6,6 +6,7 @@
 <mapper namespace="outpolic.enter.mypage.mapper.EnterMypageMapper">
 	<resultMap type="EnterInfo" id="EnterMypageResultMap">
 		<id column="mbr_id" property="memberId"></id>
+		<result column="mbr_cd" property="memberCode"/>
 		<result column="mbr_nm" property="memberName"/>
 		<result column="mbr_pw" property="memberPw"/>
 		<result column="mbr_nicknm" property="memberNickname"/>

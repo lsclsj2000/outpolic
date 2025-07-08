@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="utf-8" />
+    <title>enter 메인 화면</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="@{/enter/assets/imgs/theme/favicon.svg}" />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/enter/assets/css/plugins/slider-range.css" />
+    <link rel="stylesheet" href="/enter/assets/css/main.css?v=5.6" />
+</head>
+
+<body>
+	<!-- header start -->
+	<header th:replace="~{enter/fragments/enterHeader :: enterHeaderFragment}"></header>
+	<!-- header end -->
+	
+	<main class="main">
+	<div th:replace="~{enter/fragments/enterNavi :: enterNaviFragment}"></div>
+        <div class="container mb-30 mt-100 d-flex justify-content-center">
+            
+            <!--/* 삽입할 부분을 선언 */-->
+			<th:block layout:fragment="contents">
+
+			</th:block>
+        </div>
+    </main>
+    
+    <footer th:replace="~{enter/fragments/enterFooter :: enterFooterFragment}"></footer>
+	
+	
+	<!-- Vendor JS-->
+    <script src="/enter/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/enter/assets/js/vendor/jquery-3.6.0.min.js"></script>
+    <script src="/enter/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="/enter/assets/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/enter/assets/js/plugins/slick.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="/enter/assets/js/plugins/wow.js"></script>
+    <script src="/enter/assets/js/plugins/slider-range.js"></script>
+    <script src="/enter/assets/js/plugins/perfect-scrollbar.js"></script>
+    <script src="/enter/assets/js/plugins/magnific-popup.js"></script>
+    <script src="/enter/assets/js/plugins/select2.min.js"></script>
+    <script src="/enter/assets/js/plugins/waypoints.js"></script>
+    <script src="/enter/assets/js/plugins/counterup.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.countdown.min.js"></script>
+    <script src="/enter/assets/js/plugins/images-loaded.js"></script>
+    <script src="/enter/assets/js/plugins/isotope.js"></script>
+    <script src="/enter/assets/js/plugins/scrollup.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.vticker-min.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.elevatezoom.js"></script>
+    <!-- Template  JS -->
+    <script src="/enter/assets/js/main.js?v=5.6"></script>
+    <script src="/enter/assets/js/shop.js?v=5.6"></script>
+    
+    <th:block layout:fragment="jsFile"></th:block>
+	<th:block layout:fragment="jsScript"></th:block>
+    
+</body>
+</html>

@@ -1,17 +1,83 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{enter/layout/enterLayoutMain}">
+	  layout:decorate="~{enter/layout/enterEditLayout}">
 
 	<head>
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 	</head>
-	<body>
+	<body>	
+	<!-- 여기부터 본문 -->
+	<!-- 회원 정보 수정 페이지 시작 -->
+	<div class="row justify-content-center">
 	<th:block layout:fragment="contents">
-	  <h2>회사 기업정보 수정 페이지입니다</h2>
-	   
-	</th:block>
-	</body>
-	<!-- 추가할 js file -->
+		<div class="row col-6">
+			<form class="register edit" th:action="@{/enterpriseEdit}" method="post" th:object="${enterpriseInfo}">
+			<h3 class="mb-30">기업 정보 수정</h3>
+				<div class="form-group">
+				    <label for="enterName">기업명</label>
+				    <input type="text" id="enterName" name="enterName"  th:value = "*{enterName}" required/>
+				</div>
+				<div class="form-group">
+				    <label for="enterRprsv">대표자명</label>
+				    <input type="text" id="enterRprsv" name="enterRprsv" th:value = "*{enterRprsv}" required/>
+				</div>
+				<div class="form-group">
+				    <label for="enterTelNo">대표번호</label>
+				    <input type="text" id="enterTelNo" name="enterTelNo" th:value = "*{enterTelNo}" required/>
+				</div>
+				<div class="form-group">
+				    <label for="enterFoundationYmdt">설립일</label>
+				    <input type="date" id="enterFoundationYmdt" name="enterFoundationYmdt" class="form-control" th:value ="*{enterFoundationYmdt}"  required/>
+				</div>
+				<h4 style="color: #6c757d;" class="mb-10">기업 주소</h4>
+				<div class="form-group">
+				    <label for="sample4_postcode">우편번호</label>
+			        <input type="text" id="sample4_postcode" name="enterZip" class="form-control" th:value ="*{enterZip}" readonly />
+			        <button type="button" class="btn btn-outline-secondary" id="postcodeBtn">우편번호 찾기</button>
+				</div>
+				<div class="form-group">
+				    <label for="sample4_roadAddress">도로명 주소</label>
+				    <input type="text" id="sample4_roadAddress" name="enterAddress" class="form-control" th:value = "*{enterAddress}" readonly />
+				</div>
+				<div class="form-group">
+				    <label for="sample4_jibunAddress">지번 주소</label>
+				    <input type="text" id="sample4_jibunAddress" name="jibunAddress" class="form-control" placeholder="지번 주소" readonly />
+				</div>
+				<div class="form-group">
+				    <label for="sample4_detailAddress">상세 주소</label>
+				    <input type="text" id="sample4_detailAddress" name="enterDAddress" class="form-control" th:value ="*{enterDAddress}"  />
+				</div>
+				<span id="guide" style="color:#999; display:none"></span>
+				
+				<div class="form-group">
+				    <label for="enterScale">기업 규모(인원수)</label>
+				    <input type="text" id="enterScale" name="enterScale" th:value = "*{enterScale}"/>
+				</div>
+				<div class="form-group">
+				    <label for="enterExplain">기업 설명</label>
+				    <textarea id="enterExplain" name="enterExplain" placeholder="기업에 대해 자유롭게 소개해주세요.">[[*{enterExplain}]]</textarea>
+				</div>
+			 	<div class="form-group btnSave">
+	                <button type="button" id="btnSave" class="btn btn-primary w-70 fw-bold">정보 수정</button>
+	            </div>
+	        </form>
+		</div>			
+		</th:block>
+	</div>
+		<th:block layout:fragment="jsScript">
+			<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+		
+		    <script src="/enter/assets/js/enterServiceAjax.js"></script>
+			<script src="/enter/assets/js/enterService.js"></script>
+			<script src="/common/assets/js/validate.js"></script>
+		</th:block>
+
+		<th:block layout:fragment="jsFile">
+		</th:block>
+		
+		
+		</body>
+	
 	
 </html>
