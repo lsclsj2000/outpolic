@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.user.category.domain.Category;
 import outpolic.user.category.service.CategoryService;
+import outpolic.user.ranking.domain.UserPortfolioRankingContentsDTO;
 import outpolic.user.ranking.domain.UserRankingContentsDTO;
 import outpolic.user.ranking.service.UserRankingService;
 
@@ -34,6 +35,9 @@ public class UserHomeController {
         // 2. Model에 담기: "mainCategories" 라는 이름으로 HTML에 전달합니다.
         model.addAttribute("mainCategories", mainCategories);
         log.info("메인 페이지 세션 확인: {}", session.getAttribute("SID"));
+        
+        List<UserPortfolioRankingContentsDTO> popularPortfolioList = userRankingService.getUserRankingPoContents();
+        model.addAttribute("findPOList", popularPortfolioList);
         
         // 인기 외주 리스트 불러오기
         List<UserRankingContentsDTO> popularOutsourcingList = userRankingService.getRankingContentsList();

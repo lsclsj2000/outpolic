@@ -203,10 +203,11 @@
 		<div class="container mb-30">
 			<div class="row d-flex justify-content-center">
 				<div class="col-lg-4-5">
-					<section class="product-tabs section-padding position-relative">
-						<div class="section-title style-2">
-							<h3>인기있는 포트폴리오</h3>
-							<ul class="nav nav-tabs links" id="portfolioTab" role="tablist">
+					<section class="section-padding">
+						<!-- 섹션 제목 부분 -->
+				        <div class="section-title style-2 wow animate__animated animate__fadeIn">
+				            <h3>인기있는 포트폴리오</h3>
+				            <ul class="nav nav-tabs links" style="font-size: 14px;">
 								<li class="nav-item" role="presentation">
 									<button class="nav-link active" id="portfolio-nav-tab-one"
 										data-bs-toggle="tab" data-bs-target="#portfolio-tab-one"
@@ -225,119 +226,45 @@
 										type="button" role="tab" aria-controls="portfolio-tab-three"
 										aria-selected="false">가장 오래된순</button>
 								</li>
-							</ul>
-						</div>
-						<!--End nav-tabs-->
-						<!-- 인기있는 포트폴리오 컨텐츠 시작 -->
-						<!-- tab-one = 전체보기 / tab-two = 가장 최신순 / tab-three = 가장 오래된순 -->
-						<div class="tab-content" id="portfolioTabContent">
-							<div class="tab-pane fade show active" id="portfolio-tab-one"
-								role="tabpanel" aria-labelledby="portfolio-nav-tab-one">
-								<div class="row product-grid-4">
-									<!--end product card-->
-									<div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-										<div class="product-cart-wrap">
-											<div class="product-img-action-wrap">
-												<div class="product-img product-img-zoom">
-													<a href="#"> <img class="default-img"
-														src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-													</a>
-												</div>
-											</div>
-											<div class="product-content-wrap">
-												<div class="product-category">
-													<!-- 외주 카테고리 -->
-													<a href="#">카테고리 입니다</a>
-												</div>
-												<!-- 외주글 제목 -->
-												<h2>
-													<a href="#" class="portfolio-title">포트폴리오 제목 입니다 테테스스트트</a>
-												</h2>
-												<div>
-													<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-													<span class="font-small text-muted"><a href="#">회사
-															이름입니다</a></span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<!--end product card-->
-								</div>
-								<!--End product-grid-4-->
-							</div>
-							<!--En tab one-->
-							<div class="tab-pane fade" id="portfolio-tab-two" role="tabpanel"
-								aria-labelledby="portfolio-nav-tab-two">
-								<div class="row product-grid-4">
-									<!--end product card-->
-									<div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-										<div class="product-cart-wrap">
-											<div class="product-img-action-wrap">
-												<div class="product-img product-img-zoom">
-													<a href="#"> <img class="default-img"
-														src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-													</a>
-												</div>
-											</div>
-											<div class="product-content-wrap">
-												<div class="product-category">
-													<!-- 외주 카테고리 -->
-													<a href="#">카테고리 입니다</a>
-												</div>
-												<!-- 외주글 제목 -->
-												<h2>
-													<a href="#" class="portfolio-title">포트폴리오 제목 입니다</a>
-												</h2>
-												<div>
-													<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-													<span class="font-small text-muted"><a href="#">회사
-															이름입니다</a></span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<!--end product card-->
-								</div>
-								<!--End product-grid-4-->
-							</div>
-							<!--En tab two-->
-							<div class="tab-pane fade" id="portfolio-tab-three"
-								role="tabpanel" aria-labelledby="portfolio-nav-tab-three">
-								<div class="row product-grid-4">
-									<!--end product card-->
-									<div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-										<div class="product-cart-wrap">
-											<div class="product-img-action-wrap">
-												<div class="product-img product-img-zoom">
-													<a href="#"> <img class="default-img"
-														src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-													</a>
-												</div>
-											</div>
-											<div class="product-content-wrap">
-												<div class="product-category">
-													<!-- 외주 카테고리 -->
-													<a href="#">카테고리 입니다</a>
-												</div>
-												<!-- 외주글 제목 -->
-												<h2>
-													<a href="#" class="portfolio-title">포트폴리오 제목 입니다</a>
-												</h2>
-												<div>
-													<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-													<span class="font-small text-muted"><a href="#">회사
-															이름입니다</a></span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<!--end product card-->
-								</div>
-								<!--End product-grid-4-->
-							</div>
-							<!--En tab three-->
-						</div>
-						<!--End tab-content-->
+				            </ul>
+				        </div> 
+				        <div th:if="${not #lists.isEmpty(findPOList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
+				            <div th:each="content : ${findPOList}" class="slider-item">
+				            
+				                <!-- 개별 아이템 카드 (이전에 만들었던 카드 구조를 재활용) -->
+				                <div class="product-cart-wrap mb-30 position-relative">
+				                    
+				                    <!-- 이미지 영역 -->
+				                    <div class="product-img-action-wrap">
+				                        <div class="product-img product-img-zoom">
+				                            <!-- stretched-link와 함께 사용할 a 태그는 비워둡니다 -->
+				                            <a href="javascript:void(0);">
+				                                <!-- 썸네일 이미지가 있다면 DTO에 추가해서 사용하세요 -->
+				                                <!-- <img class="default-img" th:src="@{/imgs/placeholder.png}" alt="콘텐츠 이미지" /> -->
+				                            </a>
+				                        </div>
+				                    </div>
+				                    
+				                    <!-- 콘텐츠 내용 영역 -->
+				                    <div class="product-content-wrap" style="padding: 15px;">
+				                        <!-- 카테고리 + 기업명 -->
+				                        <div class="product-category">
+				                            <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" href="#">카테고리 | 기업명</a>
+				                        </div>
+				                        <!-- 제목 (h2 안에 stretched-link를 가진 a 태그) -->
+				                        <h2>
+				                            <a th:href="@{/user/contents/{id}(id=${content.prtfCode})}" 
+				                               th:text="${content.prtfTtl}"
+				                               class="stretched-link">콘텐츠 제목</a>
+				                        </h2>
+				                    </div>
+				                </div>
+				            </div> 
+				        </div>
+				        <!-- 데이터가 없을 경우 표시할 메시지 -->
+				        <div th:if="${#lists.isEmpty(findPOList)}" class="text-center py-5">
+				            <p>표시할 인기 콘텐츠가 없습니다.</p>
+				        </div>
 					</section>
 					<!--Products Tabs-->
 				</div>
