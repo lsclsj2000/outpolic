@@ -57,6 +57,7 @@ public class UserLoginController {
             session.setAttribute("SGrd", memberInfo.getGradeCode());
             //날짜 업데이트
             userLoginService.updateLoginDate(memberInfo);    
+            log.info("로그인 날짜 업데이트 호출: {}", member.getMemberId());
             
             if("USER".equals(grade)) {
             	redirectAttributes.addFlashAttribute("success", "로그인에 성공하였습니다");
@@ -70,7 +71,7 @@ public class UserLoginController {
             	redirectAttributes.addFlashAttribute("success", "로그인에 성공하였습니다");
             	log.info("로그인성공");
                 model.addAttribute("msg", "기업회원 로그인에 성공하였습니다.");
-                model.addAttribute("url", "/");
+                model.addAttribute("url", "/enter");
             	return "user/mypage/alert";
         	}else {
         		model.addAttribute("msg", "올바르지못한 로그인 경로입니다");

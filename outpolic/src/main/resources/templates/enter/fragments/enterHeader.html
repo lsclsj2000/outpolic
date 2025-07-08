@@ -8,26 +8,14 @@
 			<div class="container">
 				<div class="header-wrap">
 				    <div class="logo logo-width-1">
-				        <a href="index.html"><img src="/user/assets/imgs/theme/logo.svg" alt="logo" /></a>
+				        <a href="/"><img class="d-flex align-items-center" src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
 				    </div>
 					<div class="header-right">
 						<div class="search-style-2">
-							<form action="#">
-								<select class="select-active">
-									<option>All Categories</option>
-									<option>Milks and Dairies</option>
-									<option>Wines & Alcohol</option>
-									<option>Clothing & Beauty</option>
-									<option>Pet Foods & Toy</option>
-									<option>Fast food</option>
-									<option>Baking material</option>
-									<option>Vegetables</option>
-									<option>Fresh Seafood</option>
-									<option>Noodles & Rice</option>
-									<option>Ice cream</option>
-								</select>
-								<input type="text" placeholder="Search for items..." />
-							</form>
+                            <form class="outpolicTopSearch" th:action="@{/user/userSearch}" method="get">
+                                <input  type="text" name="keyword" placeholder="Search for items..." required />
+                                <button type="submit">검색</button>
+                            </form>
 						</div>
 						<div class="header-action-right">
 							<div class="header-action-2">
@@ -113,15 +101,16 @@
 									<a href="page-account.html">
 									    <img class="svgInject" alt="Nest" src="/user/assets/imgs/theme/icons/icon-user.svg" />
 									</a>
-									<a href="page-account.html"><span class="lable ml-0">Account</span></a>
+									<a th:href="@{/enterMypage}"><span class="lable ml-0">Account</span></a>
 									<div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
 										<ul>
-										    <li><a href="page-account.html"><i class="fi fi-rs-user mr-10"></i>My Account</a></li>
+										    <li><a th:href="@{/enterMypage}"><i class="fi fi-rs-user mr-10"></i>My Account</a></li>
 										    <li><a href="page-account.html"><i class="fi fi-rs-location-alt mr-10"></i>Order Tracking</a></li>
 										    <li><a href="page-account.html"><i class="fi fi-rs-label mr-10"></i>My Voucher</a></li>
 										    <li><a href="shop-wishlist.html"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a></li>
 										    <li><a href="page-account.html"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a></li>
-										    <li><a href="page-login.html"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a></li>
+										    <li><a th:href="@{/login}"><i class="fi fi-rs-log-in mr-10"></i>login</a></li>
+										    <li><a th:href="@{/logout}"><i class="fi fi-rs-log-out mr-10"></i>logout</a></li>
 										</ul>
 									</div>
 								</div>
@@ -135,74 +124,62 @@
 			  <div class="container">
 				 <div class="header-wrap header-space-between position-relative">
 					<div class="logo logo-width-1 d-block d-lg-none">
-					    <a href="index.html"><img src="/user/assets/imgs/theme/logo.svg" alt="logo" /></a>
+					    <a th:href="@{/}"><img src="/user/assets/imgs/theme/logo.svg" alt="logo" /></a>
 					</div>
 					<div class="header-nav d-none d-lg-flex">
 						<div class="main-categori-wrap d-none d-lg-block">
-							<a class="categories-button-active" href="#">
-							    <span class="fi-rs-apps"></span> <span class="et">Browse</span> All Categories
-							    <i class="fi-rs-angle-down"></i>
-							</a>
-							<div class="categories-dropdown-wrap categories-dropdown-active-large font-heading">
-								<div class="d-flex categori-dropdown-inner">
-									<ul>
-										<li>
-										    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/category-1.svg" alt="" />Milks and Dairies</a>
-										</li>
-										<li>
-										    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/category-2.svg" alt="" />Clothing & beauty</a>
-										</li>
-										<li>
-										    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/category-3.svg" alt="" />Pet Foods & Toy</a>
-										</li>
-										<li>
-										    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/category-4.svg" alt="" />Baking material</a>
-										</li>
-										<li>
-										    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/category-5.svg" alt="" />Fresh Fruit</a>
-										</li>
-									</ul>
-									<ul class="end">
-										<li>
-										    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/category-6.svg" alt="" />Wines & Drinks</a>
-										</li>
-										<li>
-										    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/category-7.svg" alt="" />Fresh Seafood</a>
-										</li>
-										<li>
-										    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/category-8.svg" alt="" />Fast food</a>
-										</li>
-										<li>
-										    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/category-9.svg" alt="" />Vegetables</a>
-										</li>
-										<li>
-										    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/category-10.svg" alt="" />Bread and Juice</a>
-										</li>
-									</ul>
-								</div>
-								<div class="more_slide_open" style="display: none">
-									<div class="d-flex categori-dropdown-inner">
-										<ul>
-											<li>
-											    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/icon-1.svg" alt="" />Milks and Dairies</a>
-											</li>
-											<li>
-											    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/icon-2.svg" alt="" />Clothing & beauty</a>
-											</li>
-										</ul>
-										<ul class="end">
-											<li>
-											    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/icon-3.svg" alt="" />Wines & Drinks</a>
-											</li>
-											<li>
-											    <a href="shop-grid-right.html"> <img src="/user/assets/imgs/theme/icons/icon-4.svg" alt="" />Fresh Seafood</a>
-											</li>
-										</ul>
-									</div>
-								</div>
-								<div class="more_categories"><span class="icon"></span> <span class="heading-sm-1">Show more...</span></div>
-							</div>
-						</div>
+					        <a class="categories-button-active" href="#">
+					            <span class="fi-rs-apps"></span> <span class="et">전체</span> 카테고리
+					            <i class="fi-rs-angle-down"></i>
+					        </a>
+					        <!-- 이 아랫부분을 교체하거나 수정합니다. -->
+					        <div class="categories-dropdown-wrap categories-dropdown-active-large font-heading">
+					            
+					            <div class="mega-menu-container" th:if="${megaMenuCategories != null and !megaMenuCategories.isEmpty()}">
+					                
+					                <!-- 1. 왼쪽: 대분류 사이드바 (mainCat은 Category 객체) -->
+					                <div class="mega-menu-sidebar">
+					                    <ul class="main-category-list">
+					                        <li th:each="mainCat, iterStat : ${megaMenuCategories}">
+					                            <a th:href="@{/user/products(category=${mainCat.categoryId})}"
+					                               th:classappend="${iterStat.index == 0} ? 'active'"
+					                               th:data-target-id="'content-panel-' + ${iterStat.index}">
+					                                <span th:text="${mainCat.categoryName}"></span>
+					                            </a>
+					                        </li>
+					                    </ul>
+					                </div>
+					
+					                <!-- 2. 오른쪽: 중/소분류 콘텐츠 (mainCat, group, sub 모두 Category 객체) -->
+					                <div class="mega-menu-content">
+					                    <div class="sub-category-panel"
+					                         th:each="mainCat, iterStat : ${megaMenuCategories}"
+					                         th:id="'content-panel-' + ${iterStat.index}"
+					                         th:classappend="${iterStat.index == 0} ? 'active'">
+					                        
+					                        <!-- 중분류 그룹 (mainCat의 children 리스트를 순회) -->
+					                        <div class="category-group" th:each="group : ${mainCat.children}">
+					                            <h5 class="category-group-title">
+					                                <a th:href="@{/user/products(category=${group.categoryId})}" th:text="${group.categoryName}"></a>
+					                            </h5>
+					                            
+					                            <!-- 소분류 목록 (group의 children 리스트를 순회) -->
+					                            <ul class="sub-category-list" th:if="${group.children != null and !group.children.isEmpty()}">
+					                                <li th:each="sub : ${group.children}">
+					                                    <a th:href="@{/user/products(category=${sub.categoryId})}" th:text="${sub.categoryName}"></a>
+					                                </li>
+					                            </ul>
+					                        </div>
+					                    </div>
+					                </div>
+					
+					            </div>
+					            <!-- 카테고리가 없을 경우를 대비한 메시지 -->
+					            <div th:if="${megaMenuCategories == null or megaMenuCategories.isEmpty()}">
+					                <p style="padding: 20px;">표시할 카테고리가 없습니다.</p>
+					            </div>
+					        </div>
+					    </div>
 						<div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
 							<nav>
 								<ul>
@@ -351,10 +328,10 @@
 									    <ul class="sub-menu">
 									        <li><a href="page-about.html">About Us</a></li>
 									        <li><a href="page-contact.html">Contact</a></li>
-									        <li><a href="page-account.html">My Account</a></li>
-									        <li><a href="page-login.html">Login</a></li>
-									        <li><a href="page-register.html">Register</a></li>
-									        <li><a href="page-forgot-password.html">Forgot password</a></li>
+									        <li><a th:href="@{/enterMypage}">My Account</a></li>
+									        <li><a th:href="@{/login}">Login</a></li>
+									        <li><a th:href="@{/choiceRegister}">Register</a></li>
+									        <li><a th:href="@{/forgotPswd}">Forgot password</a></li>
 									        <li><a href="page-reset-password.html">Reset password</a></li>
 									        <li><a href="page-purchase-guide.html">Purchase Guide</a></li>
 									        <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
@@ -370,8 +347,8 @@
 						</div>
 					</div>
 					<div class="hotline d-none d-lg-flex">
-					    <img src="/user/assets/imgs/theme/icons/icon-headphone.svg" alt="hotline" />
-					    <p>1900 - 888<span>24/7 Support Center</span></p>
+					    <button class="btn mr-20">포트폴리오 올리기</button>
+					    <button class="btn">외주 올리기</button>
 					</div>
 					<div class="header-action-icon-2 d-block d-lg-none">
 					    <div class="burger-icon burger-icon-white">
