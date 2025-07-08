@@ -46,7 +46,7 @@ body {
         /* Chat window base styling */
         .SR_chat-window {
             position: fixed;
-            bottom: 100px;
+            bottom: 100px; /* Adjust based on button height + margin */
             right: 20px;
             width: 360px; /* Adjusted fixed width for mini window - slightly smaller */
             height: 580px; /* Adjusted fixed height for mini window - slightly smaller */
