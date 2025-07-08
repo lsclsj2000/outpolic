@@ -9,8 +9,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import outpolic.enter.POAddtional.domain.CategorySearchDto;
-
+import outpolic.enter.portfolio.domain.EnterPortfolio;
 import jakarta.validation.constraints.NotBlank; // 추가 임포트
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;     // 추가 임포트
 
 
@@ -48,6 +49,7 @@ public class EnterOutsourcing {
     private LocalDateTime osMdfcnYmdt; // 수정일시는 NULL 허용
 
     @NotNull(message = "희망 작업 시작일은 필수입니다.")
+    @FutureOrPresent(message="시작일은 현재 또는 미래의 날짜여야 합니다.")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime osStrtYmdt;
 
@@ -61,6 +63,8 @@ public class EnterOutsourcing {
 
     private List<CategorySearchDto> categories; // 백엔드에서 가져올 데이터
     private List<String> tagNames; // 백엔드에서 가져올 데이터
+    
+    private List<EnterPortfolio> relatedPortfolios; 
 }
 	
 	

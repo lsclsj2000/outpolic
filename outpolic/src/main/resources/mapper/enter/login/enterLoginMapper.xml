@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.user.login.mapper.UserLoginMapper">
+	<resultMap type="outpolic.common.domain.Member" id="EnterLoginResultMap">
+		<id column="mbr_id" property="memberId"/>
+ 		<result column="mbr_pw" property="memberPw"/>
+ 		<result column="grd_cd" property="gradeCode"/>
+ 		<result column="mbr_cd" property="memberCode"/>
+ 		<result column="stc_cd" property="statusCode"/>
+ 		<result column="mbr_last_lgn_ymdt" property="memberLastLoginYmdt"/>
+	</resultMap>
+
+	<select id="findEnterMemberById" resultMap="EnterLoginResultMap">
+	    SELECT mbr_id, mbr_pw
+	    FROM member 
+	    WHERE mbr_id = #{memberId}
+	    AND grd_cd = 'ENTER'
+	</select>
+</mapper>

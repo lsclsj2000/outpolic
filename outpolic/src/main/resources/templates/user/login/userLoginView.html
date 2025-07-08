@@ -31,6 +31,9 @@
                                             <div class="form-group">
                                                 <input class="form-control" required type="password" name="memberPw" id="memberPw" placeholder="비밀번호를 입력해주세요" />
                                             </div>
+                                            <th:block th:if="${error}">
+											    <p class="text-danger" th:text="${error}"></p>
+											</th:block>
                                             <div class="form-group mt-20">
                                                 <button type="submit" class="btn btn-heading btn-block hover-up" name="login">로그인</button>
                                             </div>

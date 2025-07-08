@@ -6,7 +6,7 @@
 // 회원정보 불러오기
 function fillUserInfoForm(data) {
   $('#memberName').val(data.memberName);
-  $('#memberNickName').val(data.memberNickName);
+  $('#memberNickname').val(data.memberNickname);
   $('#memberTelNo').val(data.memberTelNo);
   $('#sample4_roadAddress').val(data.memberAddress);
   $('#sample4_detailAddress').val(data.memberDAddress);
@@ -114,10 +114,14 @@ $(document).ready(function () {
 	getUserInfo(fillUserInfoForm);
 	// 닉네임 중복확인 버튼 클릭 
 	$('#nicknmDupleBtn').click(function () {
+		console.log("닉네임 중복확인 버튼 눌림"); 
 	   if (!isNicknameValid()) return;
 
 	   const nickname = $('#memberNickname').val();
+	   console.log('입력된 닉네임:', nickname);
 	   const memberId = $('#memberId').val();
+	   console.log('현재 memberId:', memberId);
+
 	   dupleUserInfoCheck("memberNickname", nickname, memberId, function(data){
 			if (data === true || data === 'true') {
 			    alert('닉네임이 중복입니다. 다른 닉네임을 입력하세요');

@@ -2347,6 +2347,7 @@ input.qty-val {
   border-radius: 10px;
   display: inline-block;
   max-width: 80px;
+  padding-top: 20px;
 }
 
 .card-1 h6 {
@@ -2676,7 +2677,6 @@ input.qty-val {
 }
 
 .nav-tabs .nav-link:first-child {
-  margin-left: 0 !important;
   padding-left: 0 !important;
 }
 
@@ -2955,7 +2955,6 @@ input.qty-val {
 .page-header.breadcrumb-wrap {
   padding: 20px;
   background-color: #fff;
-  border-bottom: 1px solid #ececec;
   font-family: "Quicksand", sans-serif;
 }
 
@@ -13068,6 +13067,7 @@ p.mb-30-ssy{
     opacity: 0.7;
 }
 
+
 /* 유사랑 CSS 추가 영역 끝*/
 
 /* 이성재 CSS 추가 영역 */
@@ -13169,17 +13169,17 @@ height: 70px !important; /* 높이를 70px로 고정 */
 }
 /* 새로운 카테고리 사이드바 전체 컨테이너 */
 .new-category-sidebar {
-    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Malgun Gothic', sans-serif; 
 }
 
 /* 메인 타이틀 */
 .new-category-sidebar .sidebar-main-title {
-    font-size: 24px;
+    font-size: 22px;      /* 폰트 크기 줄임 (24px -> 22px) */
     font-weight: 700;
     color: #253D4E;
-    margin-bottom: 25px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #333;
+    margin-bottom: 20px;  /* 하단 여백 줄임 (25px -> 20px) */
+    padding-bottom: 15px; /* 밑줄과의 간격 조정 (10px -> 15px) */
+    border-bottom: 2px solid #222;
 }
 
 /* 전체 카테고리 리스트 */
@@ -13190,16 +13190,20 @@ height: 70px !important; /* 높이를 70px로 고정 */
 }
 
 .new-category-sidebar .category-list > li {
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
 
 /* 상위 카테고리 그룹 타이틀 */
 .new-category-sidebar .category-group-title {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700; /* 좀 더 굵게 (600 -> 700) */
     color: #253D4E;
-    margin-bottom: 15px;
-    /* 클릭 기능이 없으므로 cursor: pointer 제거 */
+    margin-top: 25px;     /* 그룹 간의 상단 여백 (새로 추가) */
+    margin-bottom: 12px;  /* 하위 목록과의 여백 줄임 (15px -> 12px) */
+    display: flex;        /* 화살표 배치를 위해 flex로 변경 */
+    justify-content: space-between;
+    align-items: center;
+    /* 만약 클릭 기능을 추가한다면 cursor: pointer; 를 활성화하세요 */
 }
 
 /* 토글 화살표 (v 모양) -> 이제 필요 없으므로 숨김 처리 */
@@ -13210,28 +13214,34 @@ height: 70px !important; /* 높이를 70px로 고정 */
 /* 하위 카테고리 리스트 */
 .new-category-sidebar .subcategory-list {
     list-style: none;
-    padding-left: 5px; /* 약간의 들여쓰기 */
-    margin: 15px 0 0 0; /* 위쪽 여백 추가 */
-    /* 숨기지 않고 항상 보이도록 block으로 변경! */
+    padding-left: 5px; /* 들여쓰기 유지 */
+    margin: 0;         /* 불필요한 여백 제거 */
     display: block; 
 }
 
 .new-category-sidebar .subcategory-list li {
-    margin-bottom: 12px;
+    margin-bottom: 0;
+}
+
+.new-category-sidebar .category-list > li:first-child .category-group-title {
+    margin-top: 0;
 }
 
 /* 하위 카테고리 링크 */
 .new-category-sidebar .subcategory-list a {
+    display: block;         /* 클릭 영역 확장 (새로 추가) */
     text-decoration: none;
-    color: #555;
-    font-size: 14px;
-    transition: color 0.2s ease-in-out;
+    color: #333;            /* 글자색 약간 진하게 (#555 -> #333) */
+    font-size: 14.5px;      /* 폰트 크기 미세 조정 (14px -> 14.5px) */
+    padding: 7px 0;         /* 상하 여백을 padding으로 제어 (가장 중요!) */
+    transition: color 0.2s, font-weight 0.2s;
 }
 
 .new-category-sidebar .subcategory-list a:hover {
-    color: #333;
+    color: #000;            /* 호버 시 색상 더 진하게 */
     font-weight: 500;
 }
+
 /* 김한별 CSS 추가 영역 끝 */
 
 

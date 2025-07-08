@@ -7,10 +7,13 @@
 
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+	
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="@{/user/assets/imgs/theme/favicon.svg}" />
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/user/assets/imgs/theme/favicon.svg}" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="/user/assets/css/plugins/slider-range.css" />
+	<link rel="stylesheet" th:href="@{/user/assets/css/userRanking.css}" />
     <link rel="stylesheet" href="/user/assets/css/main.css?v=5.6" />
 </head>
 
@@ -22,21 +25,9 @@
 	<div class="main">
 		<div class="page-content pt-30 pb-150 d-flex " >
 		    <div class="container">
-		       <!--  <div class="row ">
-		            <div class="col-lg-10 m-auto">
-		                <div class="row d-flex justify-content-center"> 
-							<div class="col-md-12">
-		                        <div class="tab-content account dashboard-content pl-50"> -->
-		                        	<!-- 여기 메인 콘텐츠가 들어올 자리 -->
-								    <main layout:fragment="contents">
-								        <!-- 기본 콘텐츠 (없으면 비어있을 수 있음) -->
-								    </main>
-									
-<!-- 		                        </div>
-		                    </div>
-		                </div>
-		            </div>
-		        </div> -->
+			    <main layout:fragment="contents">
+			        <!-- 기본 콘텐츠 (없으면 비어있을 수 있음) -->
+				</main>
 		    </div>
 		</div>
     </div>

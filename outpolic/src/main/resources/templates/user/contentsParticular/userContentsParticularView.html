@@ -20,15 +20,12 @@
 	
 	    <!-- 페이지 상단 경로 표시 (Breadcrumb) -->
 	    <div class="page-header breadcrumb-wrap">
-	        <div class="container">
-	            <div class="breadcrumb">
-	                <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-	                <span></span> <a th:href="@{/user/userSearch}">콘텐츠</a>
-	                <!-- [수정] <span> 태그를 밖으로 빼서 HTML 태그가 노출되지 않도록 수정 -->
-	                <span></span> <span th:text="${detail.contentsType}">타입</span>
-	                <span></span> <span th:text="${detail.contentsTitle}">제목</span>
-	            </div>
-	        </div>
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span></span> <a th:href="@{/user/userSearch}">콘텐츠</a>
+                <span></span> <span th:text="${detail.contentsType}">타입</span>
+                <span></span> <span th:text="${detail.contentsTitle}">제목</span>
+            </div>
 	    </div>
 	    
 	    <!-- 메인 콘텐츠 영역 -->

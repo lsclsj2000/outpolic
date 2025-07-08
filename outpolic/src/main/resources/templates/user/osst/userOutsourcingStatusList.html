@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/userLayoutMain}">
+<head>
+    <meta name="description" content="한국스마트정보교육원 팀프로젝트 - 외주 목록" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 외주 진행 목록</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/user/assets/css/userOutsourcingStatus.css}">
+</head>
+
+<body>
+	<div layout:fragment="contents">
+		<div class="row">
+			<div class="col-md-2 row" th:fragment="userInquirySidebarFragment">
+				<div class="dashboard-menu col-md-11 mt-100">
+					<ul class="nav flex-column" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">전체</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">진행중인 외주</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">진행 완료된 외주</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-10">
+			    <div class="SR_flex SR_flex-col SR_min-h-screen">
+			        <!-- Main Content -->
+			        <main class="SR_flex-grow SR_p-8">
+			            <!-- Page Title with Blue Bar -->
+			            <div class="SR_label-container">
+			                <div class="SR_blue-bar"></div>
+			                <h2 class="SR_text-3xl SR_font-bold SR_text-gray-800">내 외주 진행 목록</h2>
+			            </div>
+			
+			            <!-- Project List Container -->
+			            <div class="SR_max-w-6xl SR_mx-auto SR_container-bg SR_p-8 SR_rounded-lg SR_box-shadow">
+			                <div id="project-list" class="SR_project-list-container">
+			                    <!-- Project cards will be dynamically loaded here -->
+			                </div>
+			                <p id="no-projects-message" class="SR_text-center SR_text-gray-600 SR_mt-8 SR_hidden">
+			                    진행 중인 외주 프로젝트가 없습니다.
+			                </p>
+			            </div>
+			        </main>
+			    </div>
+			</div>
+		</div>
+	</div>
+	<th:block layout:fragment="jsScript">
+	    <script>
+	        // Sample data for outsourcing projects
+	        const outsourcingProjectsData = [
+	            {
+	                id: 'proj-001',
+	                title: '원룸 인테리어 디자인 외주 프로젝트',
+	                partner: '홍길동 (수요자)',
+	                progress: 75,
+	                currentStep: '작업 진행',
+	                status: 'in-progress',
+	                lastActivityDate: '2025-07-07'
+	            },
+	            {
+	                id: 'proj-002',
+	                title: '웹사이트 개발 프로젝트',
+	                partner: '김철수 (공급자)',
+	                progress: 20,
+	                currentStep: '계약 체결',
+	                status: 'upcoming',
+	                lastActivityDate: '2025-07-01'
+	            },
+	            {
+	                id: 'proj-003',
+	                title: '모바일 앱 UI/UX 개선',
+	                partner: '이영희 (수요자)',
+	                progress: 100,
+	                currentStep: '최종 완료',
+	                status: 'completed',
+	                lastActivityDate: '2025-06-28'
+	            },
+	            {
+	                id: 'proj-004',
+	                title: '로고 디자인 의뢰',
+	                partner: '박민준 (수요자)',
+	                progress: 50,
+	                currentStep: '초기 기획',
+	                status: 'in-progress',
+	                lastActivityDate: '2025-07-05'
+	            },
+	            {
+	                id: 'proj-005',
+	                title: '데이터 분석 리포트 작성',
+	                partner: '최지우 (공급자)',
+	                progress: 0,
+	                currentStep: '예정',
+	                status: 'upcoming',
+	                lastActivityDate: '2025-07-02'
+	            }
+	        ];
+	
+	        document.addEventListener('DOMContentLoaded', () => {
+	            renderProjectList();
+	        });
+	
+	        function renderProjectList() {
+	            const projectListContainer = document.getElementById('project-list');
+	            const noProjectsMessage = document.getElementById('no-projects-message');
+	            projectListContainer.innerHTML = ''; // Clear existing content
+
+	            if (outsourcingProjectsData.length === 0) {
+	                noProjectsMessage.classList.remove('SR_hidden');
+	                return;
+	            } else {
+	                noProjectsMessage.classList.add('SR_hidden');
+	            }
+	
+	            outsourcingProjectsData.forEach(project => {
+	                const projectCard = document.createElement('div');
+	                projectCard.className = 'SR_project-card';
+	                projectCard.onclick = () => viewProjectDetails(project.id); // Simulate navigation
+	
+	                let statusClass = '';
+	                if (project.status === 'completed') {
+	                    statusClass = 'completed';
+	                } else if (project.status === 'in-progress') {
+	                    statusClass = 'in-progress';
+	                } else if (project.status === 'upcoming') {
+	                    statusClass = 'upcoming';
+	                }
+	
+	                projectCard.innerHTML = `
+	                    <h3 class="SR_project-title">${project.title}</h3>
+	                    <p class="SR_project-meta">담당자: ${project.partner}</p>
+	                    <p class="SR_project-meta">현재 단계: ${project.currentStep}</p>
+	                    <div class="SR_project-progress-bar">
+	                        <div class="SR_project-progress-fill" style="width: ${project.progress}%;"></div>
+	                    </div>
+	                    <p class="SR_project-meta">진행률: ${project.progress}%</p>
+	                    <p class="SR_project-meta">마지막 활동: ${project.lastActivityDate}</p>
+	                    <p class="SR_project-status ${statusClass}">${project.status === 'completed' ? '완료' : project.status === 'in-progress' ? '진행 중' : '예정'}</p>
+	                `;
+	                projectListContainer.appendChild(projectCard);
+	            });
+	        }
+	
+	        function viewProjectDetails(projectId) {
+	            // In a real application, this would navigate to a detailed page
+	            // e.g., window.location.href = `/outsourcing/progress/${projectId}`;
+	            showMessageBox(`프로젝트 상세 보기: ${projectId} (실제 페이지로 이동)`);
+	            console.log(`Viewing details for project: ${projectId}`);
+	        }
+	
+	        // Custom Message Box functions (replaces alert()) - Copied from previous immersive
+	        function showMessageBox(message) {
+	            let messageBox = document.getElementById('SR_messageBox');
+	            if (!messageBox) {
+	                messageBox = document.createElement('div');
+	                messageBox.id = 'SR_messageBox';
+	                messageBox.className = 'SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_z-50';
+	                messageBox.innerHTML = `
+	                    <div class="SR_bg-white SR_p-6 SR_rounded-lg SR_shadow-lg SR_max-w-sm SR_w-full SR_text-center">
+	                        <p class="SR_mb-4">${message}</p>
+	                        <button class="SR_btn-primary" onclick="closeMessageBox()">확인</button>
+	                    </div>
+	                `;
+	                document.body.appendChild(messageBox);
+	            } else {
+	                messageBox.querySelector('p').textContent = message;
+	                messageBox.classList.remove('SR_hidden');
+	            }
+	        }
+	
+	        function closeMessageBox() {
+	            const messageBox = document.getElementById('SR_messageBox');
+	            if (messageBox) {
+	                messageBox.classList.add('SR_hidden');
+	            }
+	        }
+	    </script>
+	</th:block>
+</body>
+</html>

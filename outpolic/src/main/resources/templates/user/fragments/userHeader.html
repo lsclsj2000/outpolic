@@ -13,7 +13,7 @@
 					<div class="header-right">
 						<div class="search-style-2">
                             <form class="outpolicTopSearch" th:action="@{/user/userSearch}" method="get">
-                                <input  type="text" name="keyword" placeholder="Search for items..." required />
+                                <input  type="text" name="keyword" placeholder="Search for items..." required style="margin-bottom: 0px;"/>
                                 <button type="submit">검색</button>
                             </form>
 						</div>
@@ -306,18 +306,17 @@
 									    </ul>
 									</li>
 									<li>
-									    <a href="blog-category-grid.html">Blog <i class="fi-rs-angle-down"></i></a>
+									    <a th:href="@{/user/userOutsourcingStatusList}">유새렁 <i class="fi-rs-angle-down"></i></a>
 									    <ul class="sub-menu">
-									        <li><a href="blog-category-grid.html">Blog Category Grid</a></li>
-									        <li><a href="blog-category-list.html">Blog Category List</a></li>
-									        <li><a href="blog-category-big.html">Blog Category Big</a></li>
-									        <li><a href="blog-category-fullwidth.html">Blog Category Wide</a></li>
+									        <li><a th:href="@{/user/userOutsourcingStatusList}">OutSourcing List</a></li>
+									        <li><a th:href="@{/user/userOutsourcingStatus}">OutSourcing Status</a></li>
+									        <li><a th:href="@{/user/userInquiryTotal}">Inquiry Total</a></li>
+									        <li><a th:href="@{/user/userInquiryWrite}">Inquiry Write</a></li>
 									        <li>
-									            <a href="#">Single Post <i class="fi-rs-angle-right"></i></a>
+									            <a href="#">Admin <i class="fi-rs-angle-right"></i></a>
 									            <ul class="level-menu level-menu-modify">
-									                <li><a href="blog-post-left.html">Left Sidebar</a></li>
-									                <li><a href="blog-post-right.html">Right Sidebar</a></li>
-									                <li><a href="blog-post-fullwidth.html">No Sidebar</a></li>
+									                <li><a th:href="@{/admin/adminInquiryList}">Admin Inquiry</a></li>
+									                <li><a th:href="@{/admin/adminChatRoom}">Admin Chat</a></li>
 									            </ul>
 									        </li>
 									    </ul>
