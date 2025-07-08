@@ -12,6 +12,7 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="/user/assets/css/plugins/slider-range.css" />
     <link rel="stylesheet" href="/user/assets/css/main.css?v=5.6" />
+    <link rel="stylesheet" href="/user/assets/css/userChatRoom.css" />
 </head>
 
 <body>
@@ -19,10 +20,10 @@
 	<header th:replace="~{user/fragments/userHeader :: userHeaderFragment}"></header>
 	<!-- header end -->
 	
-	<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
 	<main class="main pages">
-		<div class="page-content pt-100 pb-150">
-            <div class="container">
+    	<div class="container">
+			<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+			<div class="page-content pt-100 pb-150">
 				<div class="col-lg-9 m-auto">
 					<th:block layout:fragment="title"></th:block>
 				   	<div class="row justify-content-around">
@@ -37,6 +38,7 @@
         </div>
     </main>
     
+    <div th:replace="~{user/fragments/userChatRoom :: userChatRoomFragment}"></div>
     <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
 	
 	

@@ -12,7 +12,7 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="/user/assets/css/plugins/slider-range.css" />
     <link rel="stylesheet" href="/user/assets/css/main.css?v=5.6" />
-    
+    <link rel="stylesheet" href="/user/assets/css/userChatRoom.css" />
 </head>
 
 <body>
@@ -21,11 +21,15 @@
 	<!-- header end -->
 	
 	<main class="main">
-		<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+		<div class="container">
+			<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+			
+			<th:block layout:fragment="contents"></th:block>
+		</div>
 		
-		<th:block layout:fragment="contents"></th:block>
     </main>
     
+    <div th:replace="~{user/fragments/userChatRoom :: userChatRoomFragment}"></div>
     <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
 	
 	

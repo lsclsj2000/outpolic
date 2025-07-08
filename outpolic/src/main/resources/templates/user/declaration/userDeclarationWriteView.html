@@ -1,27 +1,405 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{user/layout/userLayoutInquiryWrite}">
+	  layout:decorate="~{user/layout/userLayoutMain}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신고하기 페이지</title>
+    <!-- Bootstrap CSS는 로컬 또는 번들링되어 있다고 가정합니다. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 사용자 정의 CSS 파일 참조 -->
+    <link rel="stylesheet" th:href="@{/user/assets/css/userOutsourcingStatus.css}" />
+    <link rel="stylesheet" th:href="@{/user/assets/css/userInquiry.css}">
+    <!-- HTML 내에 style 태그는 포함하지 않습니다. 모든 스타일은 외부 CSS 파일을 통해 관리됩니다. -->
+</head>
+<body>
+    <!-- Thymeleaf 레이아웃을 위한 컨텐츠 블록 시작 -->
+    <th:block layout:fragment="contents">
+        <h2 class="mt-30">신고하기</h2>
 
-	<head>
-		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
-	</head>
-	
-	<!-- 추가할 js file -->
-	<!-- 타이틀 추가 -->
-	<th:block layout:fragment="title">
-		<div class="row">
-			<div class="col-md-2">
-			</div>
-			<div class="col-md-9">
-				<h3 class="mb-30">신고 작성 페이지</h3>
-			</div>
-		</div>
-	</th:block>
-	
-	<!-- 컨텐츠 추가 -->
-	<th:block layout:fragment="contents">
-		
-	</th:block>
-	
+        <div class="SR_container-custom">
+            <!-- 작성자 및 작성일자 섹션 -->
+            <div class="row shipping_calculator g-3">
+                <div class="form-group col-lg-6">
+                	<div class="custom_select">
+	                    <label for="reporter" class="SR_form-label">작성자 :</label>
+	                    <input type="text" id="reporter" class="form-control SR_disabled-input" style="height:45px;" readonly>
+                    </div>
+                </div>
+                <div class="form-group col-lg-6">
+                	<div class="custom_select">
+	                    <label for="reportDate" class="SR_form-label">작성일자 :</label>
+	                    <input type="text" id="reportDate" class="form-control SR_disabled-input" style="height:45px;" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 신고 타입 및 신고 사유 드롭다운 섹션 -->
+            <!-- userInquiry.css의 shipping_calculator 및 custom_select 구조를 활용 -->
+            <div class="row shipping_calculator g-3 mb-3">
+                <div class="form-group col-lg-6">
+                    <div class="custom_select">
+                        <label for="reportType" class="SR_form-label" style="font-size: 16px;">신고타입 :</label>
+                        <select class="form-control select-active" id="reportType">
+                            <option value="">선택하세요</option>
+                            <option value="chat">채팅 신고</option>
+                            <option value="malicious">악의적 신고</option>
+                            <option value="etc">기타 신고</option>
+                            <option value="outsourcing">외주 신고</option>
+                            <option value="portfolio">포트폴리오 신고</option>
+                            <option value="profile">프로필 신고</option>
+                            <option value="review">리뷰 신고</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-lg-6">
+                    <div class="custom_select">
+                        <label for="reportReason" class="SR_form-label" style="font-size: 16px;">신고 사유 :</label>
+                        <select class="form-control select-active" id="reportReason" disabled>
+                            <option value="">신고 타입을 먼저 선택하세요</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 신고 대상 입력 필드 -->
+            <div class="mb-4">
+                <label for="reportTarget" class="SR_form-label">신고 대상 :</label>
+                <input type="text" id="reportTarget" class="form-control SR_clickable-input" placeholder="신고 대상을 검색하여 선택하세요" data-bs-toggle="modal" data-bs-target="#searchTargetModal" readonly>
+            </div>
+
+            <!-- 신고 내용 입력 (CKEditor 적용) -->
+            <div class="mb-4">
+                <label for="reportContent" class="SR_form-label">신고 내용 입력 :</label>
+                <textarea id="reportContent" class="form-control SR_form-control-textarea" placeholder="신고 내용을 상세히 입력해주세요"></textarea>
+            </div>
+
+            <!-- 첨부파일 선택 -->
+            <div class="mb-5">
+                <label for="fileUpload" class="SR_form-label">첨부파일 선택 :</label>
+                <input type="file" id="fileUpload" class="form-control">
+            </div>
+
+            <!-- 제출/취소 버튼 -->
+            <div class="d-flex justify-content-end gap-2">
+                <!-- SR_total_btn 클래스 적용 및 Tailwind CSS 클래스 추가 -->
+                <button type="button" class="SR_total_sky_btn">취소</button>
+                <button type="button" class="SR_total_blue_btn">제출</button>
+            </div>
+        </div>
+
+        <!-- 신고 대상 검색 모달 -->
+        <div class="modal fade" id="searchTargetModal" tabindex="-1" aria-labelledby="searchTargetModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="searchTargetModalLabel">신고 대상 검색</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- 신고 대상 유형 선택 드롭다운 추가 -->
+                        <div class="mb-3">
+                            <label for="targetTypeSelect" class="form-label">신고 대상 유형 선택:</label>
+                            <select class="form-select h-10 rounded-md" id="targetTypeSelect">
+                                <option value="">유형을 선택하세요</option>
+                                <option value="portfolio">포트폴리오</option>
+                                <option value="outsourcing">외주</option>
+                                <option value="member">회원</option>
+                            </select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <!-- 검색 입력란과 검색 버튼의 높이를 동일하게 설정 (h-10, rounded-md) -->
+                            <input type="text" class="form-control h-10 rounded-l-md" id="targetSearchInput" placeholder="유형을 먼저 선택하세요" disabled>
+                            <!-- 검색 버튼 텍스트 중앙 정렬을 위해 flex, items-center, justify-center 추가 -->
+                            <button class="SR_btn-primary h-10 rounded-r-md flex items-center justify-center" type="button" id="searchTargetBtn" disabled>검색</button>
+                        </div>
+                        <div id="searchResults" class="list-group">
+                            <p class="text-muted text-center mt-3">유형을 선택하고 검색어를 입력한 후 검색 버튼을 눌러주세요.</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="SR_total_sky_btn" data-bs-dismiss="modal">닫기</button>
+                        <button type="button" class="SR_total_blue_btn" id="selectTargetBtn" disabled>선택</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- Javascript 스크립트 블록 시작 -->
+    <th:block layout:fragment="jsScript">
+        <!-- CKEditor 5 Super Build 스크립트 -->
+        <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/super-build/ckeditor.js"></script>
+        <!-- Bootstrap JavaScript는 로컬 또는 번들링되어 있다고 가정합니다. -->
+        <script>
+            let editorInstance; // CKEditor 인스턴스를 저장할 변수 추가
+
+            document.addEventListener('DOMContentLoaded', function() {
+                // 작성자와 작성일자 자동 입력
+                const reporterInput = document.getElementById('reporter');
+                const reportDateInput = document.getElementById('reportDate');
+                const reportTypeSelect = document.getElementById('reportType');
+                const reportReasonSelect = document.getElementById('reportReason');
+                const reportTargetInput = document.getElementById('reportTarget');
+                
+                // 모달 관련 요소
+                const targetTypeSelect = document.getElementById('targetTypeSelect'); // 새로 추가된 대상 유형 선택 드롭다운
+                const targetSearchInput = document.getElementById('targetSearchInput');
+                const searchTargetBtn = document.getElementById('searchTargetBtn');
+                const searchResultsDiv = document.getElementById('searchResults');
+                const selectTargetBtn = document.getElementById('selectTargetBtn');
+                let selectedTarget = null; // 선택된 대상 저장
+
+                // 실제 사용자 이름 또는 ID를 여기에 설정
+                reporterInput.value = '현재 사용자'; // 예시: 로그인된 사용자 이름
+                // 현재 날짜 자동 입력
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                reportDateInput.value = `${year}-${month}-${day}`;
+
+                // CKEditor 초기화
+                CKEDITOR.ClassicEditor.create(document.getElementById("reportContent"), {
+                    toolbar: {
+                        items: [
+                            'heading', '|',
+                            'bold', 'italic', 'strikethrough', 'underline', '|',
+                            'bulletedList', 'numberedList', '|',
+                            'link', 'insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', '|',
+                            'undo', 'redo', '|',
+                            'sourceEditing'
+                        ],
+                        shouldNotGroupWhenFull: true
+                    },
+                    placeholder: '신고 내용을 상세히 입력해주세요.',
+                    ckfinder : {
+                        uploadUrl: '/user/uploadImage' // 이미지 업로드 URL (필요시 백엔드 구현 필요)
+                    },
+                    // WebSocket Gateway 오류 해결을 위해 불필요한 플러그인 제거
+                    removePlugins: [
+                        'ExportPdf',
+                        'ExportWord',
+                        'CKBox', // CKBox 플러그인 제거
+                        'CKFinder', // CKFinder 플러그인 제거
+                        'EasyImage',
+                        'RealTimeCollaborativeComments',
+                        'RealTimeCollaborativeTrackChanges',
+                        'RealTimeCollaborativeRevisionHistory',
+                        'PresenceList',
+                        'Comments',
+                        'TrackChanges',
+                        'TrackChangesData',
+                        'RevisionHistory',
+                        'Pagination',
+                        'WProofreader',
+                        'MathType'
+                    ]
+                })
+                .then(editor => {
+                    editorInstance = editor;
+                })
+                .catch(error => {
+                    console.error('CKEditor initialization failed:', error);
+                });
+
+
+                // 신고 타입에 따른 신고 사유 동적 변경
+                const reportReasons = {
+                    chat: [
+                        { text: '욕설/비하 발언', value: 'chat_insult' },
+                        { text: '성희롱/불쾌한 발언', value: 'chat_sexual_harassment' },
+                        { text: '외부 유도', value: 'chat_external_inducement' },
+                        { text: '도배/스팸', value: 'chat_spam' },
+                        { text: '부적절한 요청', value: 'chat_inappropriate_request' }
+                    ],
+                    malicious: [
+                        { text: '악의적 신고', value: 'malicious_report' }
+                    ],
+                    etc: [
+                        { text: '기타 신고', value: 'etc_report' }
+                    ],
+                    outsourcing: [
+                        { text: '허위 외주 게시글', value: 'outsourcing_false_post' },
+                        { text: '조건/내용 불명확', value: 'outsourcing_unclear' },
+                        { text: '일방적인 계약 파기', value: 'outsourcing_breach_contract' },
+                        { text: '외부 유도', value: 'outsourcing_external_inducement' },
+                        { text: '불법적 외주', value: 'outsourcing_illegal' },
+                        { text: '반복 도배 외주글', value: 'outsourcing_spam_post' }
+                    ],
+                    portfolio: [
+                        { text: '도용된 포트폴리오', value: 'portfolio_plagiarized' },
+                        { text: '허위 이력/경력', value: 'portfolio_false_history' },
+                        { text: '부적절한 이미지', value: 'portfolio_inappropriate_image' },
+                        { text: '광고성/스팸 포트폴리오', value: 'portfolio_ad_spam' },
+                        { text: '타인 비방 내용 포함', value: 'portfolio_slander' }
+                    ],
+                    profile: [
+                        { text: '부적절한 닉네임', value: 'profile_inappropriate_nickname' },
+                        { text: '도용된 사진', value: 'profile_plagiarized_photo' },
+                        { text: '광고/홍보성 내용', value: 'profile_ad_promo' },
+                        { text: '허위 정보 기재', value: 'profile_false_info' }
+                    ],
+                    review: [
+                        { text: '욕설/비방', value: 'review_insult' },
+                        { text: '악의리뷰', value: 'review_malicious' },
+                        { text: '거래 유도', value: 'review_transaction_inducement' }
+                    ]
+                };
+
+                reportTypeSelect.addEventListener('change', function() {
+                    const selectedType = this.value;
+                    reportReasonSelect.innerHTML = '<option value="">신고 타입을 먼저 선택하세요</option>'; // 초기화
+                    reportReasonSelect.disabled = true;
+
+                    if (selectedType && reportReasons[selectedType]) {
+                        reportReasons[selectedType].forEach(reason => {
+                            const option = document.createElement('option');
+                            option.value = reason.value;
+                            option.textContent = reason.text;
+                            reportReasonSelect.appendChild(option);
+                        });
+                        reportReasonSelect.disabled = false;
+                    }
+                });
+
+                // 신고 대상 유형 선택 시 로직 (모달 내)
+                targetTypeSelect.addEventListener('change', function() {
+                    const selectedType = this.value;
+                    targetSearchInput.value = ''; // 검색 입력 초기화
+                    searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">검색어를 입력하고 검색 버튼을 눌러주세요.</p>';
+                    selectTargetBtn.disabled = true;
+                    selectedTarget = null;
+
+                    if (selectedType) {
+                        targetSearchInput.disabled = false;
+                        searchTargetBtn.disabled = false;
+                        let placeholderText = '';
+                        switch (selectedType) {
+                            case 'portfolio':
+                                placeholderText = '포트폴리오 제목 또는 ID로 검색';
+                                break;
+                            case 'outsourcing':
+                                placeholderText = '외주 제목 또는 ID로 검색';
+                                break;
+                            case 'member':
+                                placeholderText = '회원 이름 또는 ID로 검색';
+                                break;
+                            default:
+                                placeholderText = '검색어를 입력하세요';
+                        }
+                        targetSearchInput.placeholder = placeholderText;
+                    } else {
+                        targetSearchInput.disabled = true;
+                        searchTargetBtn.disabled = true;
+                        targetSearchInput.placeholder = '유형을 먼저 선택하세요';
+                    }
+                });
+
+                // 모달 검색 기능
+                searchTargetBtn.addEventListener('click', function() {
+                    const query = targetSearchInput.value.trim();
+                    const selectedTargetType = targetTypeSelect.value;
+
+                    searchResultsDiv.innerHTML = ''; // 이전 검색 결과 초기화
+                    selectTargetBtn.disabled = true; // 선택 버튼 비활성화
+                    selectedTarget = null; // 선택된 대상 초기화
+
+                    if (!selectedTargetType) {
+                        searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">신고 대상 유형을 먼저 선택해주세요.</p>';
+                        return;
+                    }
+
+                    if (query.length === 0) {
+                        searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">검색어를 입력해주세요.</p>';
+                        return;
+                    }
+
+                    // 실제 검색 로직 (예시 데이터 사용)
+                    // 이 부분은 실제 백엔드 API 호출 등으로 대체되어야 합니다.
+                    const dummyData = {
+                        portfolio: [
+                            { id: 'port1', name: '웹 디자인 포트폴리오 2023', type: '포트폴리오' },
+                            { id: 'port2', name: '모바일 앱 개발 사례', type: '포트폴리오' },
+                            { id: 'port3', name: 'UI/UX 프로젝트 모음', type: '포트폴리오' }
+                        ],
+                        outsourcing: [
+                            { id: 'out1', name: '기업 홈페이지 제작', type: '외주' },
+                            { id: 'out2', name: '쇼핑몰 솔루션 개발', type: '외주' },
+                            { id: 'out3', name: '모바일 게임 그래픽 디자인', type: '외주' }
+                        ],
+                        member: [
+                            { id: 'user1', name: '김철수', type: '회원' },
+                            { id: 'user2', name: '이영희', type: '회원' },
+                            { id: 'user3', name: '박민수', type: '회원' }
+                        ]
+                    };
+
+                    const dataToSearch = dummyData[selectedTargetType] || [];
+                    const results = dataToSearch.filter(item =>
+                        item.name.includes(query) || item.id.includes(query)
+                    );
+
+                    if (results.length > 0) {
+                        results.forEach(item => {
+                            const listItem = document.createElement('a');
+                            listItem.href = '#';
+                            listItem.classList.add('list-group-item', 'list-group-item-action');
+                            listItem.textContent = `${item.name} (${item.id}) [${item.type}]`;
+                            listItem.dataset.id = item.id;
+                            listItem.dataset.name = item.name;
+                            listItem.dataset.type = item.type; // 유형 정보 저장
+                            listItem.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                // 모든 항목에서 active 클래스 제거
+                                document.querySelectorAll('#searchResults .list-group-item').forEach(item => {
+                                    item.classList.remove('active');
+                                });
+                                // 클릭된 항목에 active 클래스 추가
+                                this.classList.add('active');
+                                selectedTarget = { id: this.dataset.id, name: this.dataset.name, type: this.dataset.type };
+                                selectTargetBtn.disabled = false; // 선택 버튼 활성화
+                            });
+                            searchResultsDiv.appendChild(listItem);
+                        });
+                    } else {
+                        searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">검색 결과가 없습니다.</p>';
+                    }
+                });
+
+                // 검색 입력란에서 Enter 키를 눌렀을 때 검색 버튼 클릭 이벤트 트리거
+                targetSearchInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter' && !searchTargetBtn.disabled) {
+                        event.preventDefault(); // 기본 Enter 동작 (폼 제출 등) 방지
+                        searchTargetBtn.click();
+                    }
+                });
+
+                // 선택 버튼 클릭 시 신고 대상 입력 필드에 값 설정
+                selectTargetBtn.addEventListener('click', function() {
+                    if (selectedTarget) {
+                        reportTargetInput.value = `${selectedTarget.name} (${selectedTarget.id}) [${selectedTarget.type}]`;
+                        // Bootstrap 모달 인스턴스를 가져와서 닫기
+                        const searchTargetModal = bootstrap.Modal.getInstance(document.getElementById('searchTargetModal')) || new bootstrap.Modal(document.getElementById('searchTargetModal'));
+                        searchTargetModal.hide(); // 모달 닫기
+                    }
+                });
+
+                // 모달이 닫힐 때 검색 결과 및 선택 초기화
+                const searchTargetModalElement = document.getElementById('searchTargetModal');
+                searchTargetModalElement.addEventListener('hidden.bs.modal', function () {
+                    targetTypeSelect.value = ''; // 유형 선택 초기화
+                    targetSearchInput.value = '';
+                    targetSearchInput.placeholder = '유형을 먼저 선택하세요';
+                    targetSearchInput.disabled = true;
+                    searchTargetBtn.disabled = true;
+                    searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">유형을 선택하고 검색어를 입력한 후 검색 버튼을 눌러주세요.</p>';
+                    selectTargetBtn.disabled = true;
+                    selectedTarget = null;
+                });
+            });
+        </script>
+    </th:block>
+</body>
 </html>

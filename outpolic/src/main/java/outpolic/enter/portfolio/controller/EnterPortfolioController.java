@@ -33,21 +33,19 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EnterPortfolioController {
 	
-
-
     private final EnterPortfolioService portfolioService;
     private final CategorySearchService categorySearchService;
-   
+    
     /**
      * 특정 기업의 포트폴리오 개수를 조회하는 API (UX개선용)
      * @Param session 현재 세션 (기업 코드 가져오기 위함)
      * @return 포트폴리오 개수(정수)
      */
-    @GetMapping("/api/countByEntCd") 
+    @GetMapping("/api/countByEntCd")
     @ResponseBody
     public ResponseEntity<Integer> countPortfolioForEnterprise(HttpSession session) {
     	// TODO: 실제 세션에서 로그인한 기업의 entCd를 가져와야 합니다.
-    	String entCd = "EI_C00001"; 
+    	String entCd = "EI_C00001";
     	
     	int count = portfolioService.countPortfoliosByEntCd(entCd);
     	return ResponseEntity.ok(count);
@@ -81,8 +79,7 @@ public class EnterPortfolioController {
     public ResponseEntity<Map<String, Object>> addPortfolioAjax(
             @Valid @ModelAttribute EnterPortfolio portfolio,
             BindingResult bindingResult,
-            // 1. List<String> 대신 String으로 받도록 변경
-            @RequestParam(value="categoryCodes", required=false) String categoryCodesStr, 
+            @RequestParam(value="categoryCodes", required=false) String categoryCodesStr,
             @RequestParam(value="tags", required=false) String tags) {
         
         if (bindingResult.hasErrors()) {
@@ -93,7 +90,7 @@ public class EnterPortfolioController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        // 2. 쉼표로 구분된 문자열을 다시 List<String>으로 변환
+        // 쉼표로 구분된 문자열을 다시 List<String>으로 변환
         List<String> categoryCodes = new ArrayList<>();
         if (categoryCodesStr != null && !categoryCodesStr.isEmpty()) {
             categoryCodes = Arrays.asList(categoryCodesStr.split(","));
@@ -101,7 +98,7 @@ public class EnterPortfolioController {
         
         portfolio.setAdmCd("ADM_C001"); // TODO: 세션에서 관리자 정보 가져오기
         try {
-            // 3. 서비스에는 변환된 리스트를 전달
+            // 서비스에는 변환된 리스트를 전달
             portfolioService.addPortfolio(portfolio, categoryCodes, tags);
             return ResponseEntity.ok(Map.of("success", true, "message", "등록되었습니다.", "redirectUrl", "/enter/portfolio/list"));
         } catch (Exception e) {
@@ -135,13 +132,13 @@ public class EnterPortfolioController {
         return "enter/portfolio/editPortfolio";
     }
 
-    @PostMapping("/edit-ajax") // URL 변경 및 AJAX용으로 수정 
+    @PostMapping("/edit-ajax") // URL 변경 및 AJAX용으로 수정
     @ResponseBody
     public ResponseEntity<Map<String, Object>> editPortfolioAjax(
-    						    @Valid @ModelAttribute EnterPortfolio portfolio,
-    						    BindingResult bindingResult,
-                                @RequestParam(value="categoryCodes", required=false) List<String> categoryCodes, 
-                                @RequestParam(value="tags", required=false) String tags) {
+    						@Valid @ModelAttribute EnterPortfolio portfolio,
+    						BindingResult bindingResult,
+    						@RequestParam(value="categoryCodes", required=false) String categoryCodesStr, // String으로 받도록 변경
+    						@RequestParam(value="tags", required=false) String tags) {
     	
     	if(bindingResult.hasErrors()) {
         	Map<String, Object> errorResponse = new HashMap<>();
@@ -150,10 +147,17 @@ public class EnterPortfolioController {
         	List<String> fieldErrors = new ArrayList<>();
         	bindingResult.getFieldErrors().forEach(error -> {
         		fieldErrors.add(error.getField()+": "+error.getDefaultMessage());
-        	});        	
+        	});
         	errorResponse.put("errors",fieldErrors);
         	return ResponseEntity.badRequest().body(errorResponse);
         }
+
+        // 쉼표로 구분된 문자열을 다시 List<String>으로 변환
+        List<String> categoryCodes = new ArrayList<>();
+        if (categoryCodesStr != null && !categoryCodesStr.isEmpty()) {
+            categoryCodes = Arrays.asList(categoryCodesStr.split(","));
+        }
+
         try {
             portfolio.setAdmCd("ADM_C001"); // 수정자 정보
             portfolioService.updatePortfolio(portfolio, categoryCodes, tags);
@@ -162,7 +166,6 @@ public class EnterPortfolioController {
             e.printStackTrace();
            return ResponseEntity.status(500).body(Map.of("success",false,"message","수정 중 오류 발생"+e.getMessage()));
         }
-    
     }
     
     @GetMapping("/api/tags/search")
@@ -203,7 +206,7 @@ public class EnterPortfolioController {
     @ResponseBody
     public ResponseEntity<?> unlinkOutsourcing(@RequestBody Map<String, String> payload){
     	String prtfCd = payload.get("prtfCd");
-    	String osCd = payload.get("OsCd");
+    	String osCd = payload.get("osCd"); // payload에서 osCd를 가져오도록 수정
     	portfolioService.unlinkOutsourcing(prtfCd, osCd);
     	return ResponseEntity.ok().build();
     }

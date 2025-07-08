@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class UserDeclarationController {
 	
 	
-	@GetMapping("/userDeclarationWriteNotice")
+	@GetMapping("/userDeclarationWrite")
 	public String userDeclarationWriteView() {
 		// 신고 작성 페이지
 		
