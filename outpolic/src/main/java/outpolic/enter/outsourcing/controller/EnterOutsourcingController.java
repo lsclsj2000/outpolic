@@ -86,7 +86,7 @@ public class EnterOutsourcingController {
     
     @GetMapping("/ContractList")
     public String showOutsourcingContractListView() {
-    	return "enter/outsourcing/outsourcingContractListView";
+    	return "enter/outsourcing/outsourcingRequestListView";
     }
     /**
      * 외주 등록 요청을 처리하는 API (AJAX로 호출됨)
@@ -102,7 +102,7 @@ public class EnterOutsourcingController {
             BindingResult bindingResult, // @Valid의 유효성 검사 결과를 담는 객체 
             @RequestParam(value="categoryCodes", required=false) String categoryCodesStr,
             @RequestParam(value="tags", required=false) String tags,
-            @RequestParam(value="portfolioCds", required=false) String portfolioCdsStr) { // ✅ 문법 오류 수정
+            @RequestParam(value="portfolioCds", required=false) String portfolioCdsStr) {
         
     	// 프론트엔드에서 쉼표로 합쳐 보낸 카테고리 코드를 다시 리스트로 변환
         List<String> categoryCodes = new ArrayList<>();
@@ -181,7 +181,7 @@ public class EnterOutsourcingController {
             outsourcingService.deleteOutsourcing(osCd);
             return ResponseEntity.ok(Map.of("success",true));
         } catch (Exception e) {
-            e.printStackTrace();
+            
             return ResponseEntity.badRequest().body(Map.of("success",false,"message", e.getMessage()));
         }
     }
@@ -209,11 +209,18 @@ public class EnterOutsourcingController {
             BindingResult bindingResult,
             @RequestParam(value="categoryCodes", required=false) String categoryCodesStr,
             @RequestParam(value="tags", required=false) String tags,
-            @RequestParam(value="portfolioCds", required=false) List<String> portfolioCds) { // ✅ 기능 누락 수정
+            // ✅ 파라미터 변수 이름을 'portfolioCdsStr'로 수정하여 '등록' 기능과 통일
+            @RequestParam(value="portfolioCds", required=false) String portfolioCdsStr) { 
         
         List<String> categoryCodes = new ArrayList<>();
         if (categoryCodesStr != null && !categoryCodesStr.isEmpty()) {
             categoryCodes = Arrays.asList(categoryCodesStr.split(","));
+        }
+        
+        // ✅ '등록' 기능과 동일하게 portfolioCds 변환 로직 추가
+        List<String> portfolioCds = new ArrayList<>();
+        if(portfolioCdsStr != null && !portfolioCdsStr.isEmpty()) {
+        	portfolioCds = Arrays.asList(portfolioCdsStr.split(","));
         }
 
         if (bindingResult.hasErrors()) {
@@ -227,10 +234,9 @@ public class EnterOutsourcingController {
             errorResponse.put("errors", fieldErrors);
             return ResponseEntity.badRequest().body(errorResponse);
         }
-        // 등록 로직과 거의 동일하며, 서비스 호출 부분만 다릅니다.
-        // ...(유효성 검사 및 데이터 변환 로직)...
+        
         try {
-            // 수정 로직을 처리하는 서비스 메서드 호출 
+            // ✅ 서비스 호출 시에도 portfolioCds를 전달하도록 수정
             outsourcingService.updateOutsourcing(outsourcing, categoryCodes, tags, portfolioCds);
             return ResponseEntity.ok(Map.of("success", true, "message", "외주 정보가 성공적으로 수정되었습니다.", "redirectUrl", "/enter/outsourcing/list"));
         } catch (Exception e) {
