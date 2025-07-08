@@ -48,8 +48,8 @@ public class UserMypageController {
  	@PostMapping("/userEditView")
  	public String usreProfileEditView(@RequestParam("password") String memberPw, HttpSession session, Model model) {
  		
- 		String memberId = (String) session.getAttribute("SID");
- 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
+ 		String memberCode = (String) session.getAttribute("SCD");
+ 	    UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberCode);
  		
  		if(memberPw.equals(userInfo.getMemberPw())) {
  		model.addAttribute("userInfo", userInfo);
@@ -74,9 +74,10 @@ public class UserMypageController {
  	 @GetMapping("/userEdit/info")
  	 @ResponseBody
  	 public UserInfoDTO getUserInfoAjax(HttpSession session) {
- 		String memberId = (String) session.getAttribute("SID");
+  		String memberCode = (String) session.getAttribute("SCD");
+
  		 
- 		 return userMypageEditService.getUserInfoById(memberId); 
+ 		 return userMypageEditService.getUserInfoById(memberCode); 
  	 }
  	 @PostMapping("/userEdit/update")
  	 @ResponseBody

@@ -55,6 +55,7 @@ public class UserLoginController {
     		session.setAttribute("SID", memberInfo.getMemberId());
             session.setAttribute("SName", memberInfo.getMemberName());
             session.setAttribute("SGrd", memberInfo.getGradeCode());
+            session.setAttribute("SCD", memberInfo.getMemberCode());
             //날짜 업데이트
             userLoginService.updateLoginDate(memberInfo);    
             log.info("로그인 날짜 업데이트 호출: {}", member.getMemberId());

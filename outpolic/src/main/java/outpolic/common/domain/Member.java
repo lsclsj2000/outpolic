@@ -1,5 +1,7 @@
 package outpolic.common.domain;
 
+import java.time.LocalDate;
+
 import lombok.Data;
 
 @Data
@@ -18,11 +20,11 @@ public class Member {
     private String memberBirth;
     private String memberGender;
     private String memberForegn;
-    private String memberJoinYmdt;
-    private String memberMdfcnYmdt;
+    private LocalDate memberJoinYmdt;
+    private LocalDate memberMdfcnYmdt;
     private String statusCode;
     private String memberAgreeYN;
-    private String memberLastLoginYmdt;
+    private LocalDate memberLastLoginYmdt;
     private String memberSocialLoginYN;
 
 }

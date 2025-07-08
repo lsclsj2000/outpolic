@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="outpolic.enter.mypage.mapper.EnterpriseMapper">
+	<resultMap type="EnterpriseInfo" id="EnterpriseResultMap">
+		<id column="ent_cd" property="enterCode"></id>
+		<result column="ent_brno" property="enterBrno"/>
+		<result column="mbr_cd" property="memberCode"/>
+		<result column="ent_nm" property="enterName"/>
+		<result column="ent_rprsv" property="enterRprsv"/>
+		<result column="ent_telno" property="enterTelNo"/>
+		<result column="ent_fndn_ymdt" property="enterFoundationYmdt"/>
+		<result column="ent_addr" property="enterAddress"/>
+		<result column="ent_daddr" property="enterDAddress"/>
+		<result column="ent_zip" property="enterZip"/>
+		<result column="ent_scl" property="enterScale"/>
+		<result column="ent_expln" property="enterExplain"/>
+		<result column="ent_url" property="enterHomepageUrl"/>
+		<result column="ent_mdfcn_ymdt" property="enterModificationYmdt"/>
+		<result column="ent_scr" property="enterScr"/>
+		<result column="ent_prtf_cnt" property="enterPortfolioCount"/>
+		<result column="ent_os_cnt" property="enterOutsourcingCount"/>
+	</resultMap>
+	<select id="getEnterpriseInfoByCode" parameterType="String" resultMap="EnterpriseResultMap"> 
+		SELECT 
+			ent_cd, 
+			ent_brno, 
+			mbr_cd, 
+			ent_nm, 
+			ent_rprsv, 
+			ent_telno, 
+			ent_fndn_ymdt, 
+			ent_addr, 
+			ent_daddr, 
+			ent_zip, 
+			ent_scl, 
+			ent_expln, 
+			ent_url, 
+			ent_mdfcn_ymdt
+		FROM enterprise
+		WHERE mbr_cd=#{memberCode};
+	</select>
+	<update id="updateEnterpriseInfo" parameterType="EnterpriseInfo">
+ 		UPDATE enterprise
+ 		set
+			ent_nm = #{enterName},
+			ent_rprsv = #{enterRprsv},
+			ent_telno = #{enterTelNo}, 
+			ent_fndn_ymdt = #{enterFoundationYmdt},
+			ent_addr = #{enterAddress},
+			ent_daddr = #{enterDAddress},
+			ent_zip = #{enterZip},
+			ent_scl = #{enterScale},
+			ent_expln = #{enterExplain},
+			ent_url = #{enterHomepageUrl},
+			ent_mdfcn_ymdt = now()
+		where
+			mbr_cd= #{memberCode};
+ 	</update>
+ 	
+</mapper>
