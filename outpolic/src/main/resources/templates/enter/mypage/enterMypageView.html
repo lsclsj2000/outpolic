@@ -8,54 +8,46 @@
 	</head>
 	<body>
 	<th:block layout:fragment="contents">
-	  <div class="tab-content">
+	<div class="tab-content">
 			<!-- 마이페이지 기본 페이지 -->
-	<!-- <div class="tab-pane fade show active " id="userOverview" th:object="${userInfo}"> -->		
-			<div class="tab-pane fade show active " id="userOverview">
-				<div class="row text-dark fs-6 gap-3">
-					<h3 class="mb-20">회원 정보</h3>
-				    <div class="col-6 mb-3">
-	   	 				<label class="fw-bold">이름 : </label>
-	   					<div>홍길동</div>
-<!-- 	   					<div th:text="*{memberName}">홍길동</div> -->
-   					 </div>
-					<div class="col-6 mb-3">
-				      <label class="fw-bold">닉네임 : </label>
-				      <div >별명</div>
-<!-- 				      <div th:text="*{memberNickName}">별명</div> -->
-				    </div>
-					<div class="col-6 mb-3">
-				      <label class="fw-bold">이메일 : </label>
-				      <div>example@example.com</div>
-<!-- 				      <div th:text="*{memberEmail}">example@example.com</div> -->
-				    </div>
-					 <div class="col-6 mb-3">
-				     	<label class="fw-bold">전화번호 : </label>
-				     	<div>010-1234-5678</div>
-<!-- 				     	<div th:text="*{memberTelNo}">010-1234-5678</div> -->
-			    	 </div>
-					<div class="col-6 mb-3">
-					    <label class="fw-bold">가입일 : </label>
-					    <div>2024-01-01</div>
-<!-- 					    <div th:text="*{memberJoinDate}">2024-01-01</div> -->
-				    </div>
-					<div class="col-6 mb-3">
-					    <label class="fw-bold">내 마일리지 : </label>
-					    <div></div>
-<!-- 					    <div th:text="*{memberJoinDate}"></div> -->
-				    </div>
-					<label>보유상품:</label>
-					<p>
-						<strong>이용권 : 3장</strong>
-					</p>
-					<p>
-						<strong>구독권(만료일) : ~2025.07.25</strong>
-					</p>
-					<!-- 필요 시 프로필 사진 등 추가 -->
-				</div>
+		<div class="tab-pane fade show active " id="enterOverview" th:object="${enterInfo}">		
+			<div class="row text-dark fs-6 gap-3">
+				<h3 class="mb-20">회원 정보</h3>
+			    <div class="col-6 mb-3">
+   	 				<label class="fw-bold">이름 : </label>
+	   					<div th:text="*{memberName}">홍길동</div>
+  					 </div>
+				<div class="col-6 mb-3">
+			      <label class="fw-bold">닉네임 : </label>
+			      <div th:text="*{memberNickname}">별명</div>
+			    </div>
+				<div class="col-6 mb-3">
+			      <label class="fw-bold">이메일 : </label>
+			      <div th:text="*{memberEmail}">example@example.com</div>
+			    </div>
+				 <div class="col-6 mb-3">
+			     	<label class="fw-bold">전화번호 : </label>
+			     	<div th:text="*{memberTelNo}">010-1234-5678</div>
+		    	 </div>
+				<div class="col-6 mb-3">
+				    <label class="fw-bold">가입일 : </label>
+				    <div th:text="*{memberJoinDate}">2024-01-01</div>
+			    </div>
+				<div class="col-6 mb-3">
+				    <label class="fw-bold">내 마일리지 : </label>
+				    <div th:text="*{memberJoinDate}"></div>
+			    </div>
+				<label>보유상품:</label>
+				<p>
+					<strong>이용권 : 3장</strong>
+				</p>
+				<p>
+					<strong>구독권(만료일) : ~2025.07.25</strong>
+				</p>
+				<!-- 필요 시 프로필 사진 등 추가 -->
 			</div>
 			<!-- 내 정보 수정을 위한 비밀번호를 받는 페이지 -->
-			<div class="tab-pane fade" id="userEdit">
+			<div class="tab-pane fade" id="enterEdit">
 				<div class="row">
 					<form action="/enterEditView" method="post"
 						class="d-flex flex-column">
@@ -67,7 +59,7 @@
 					</form>
 				</div>
 			</div>
-
+	
 			<div class="tab-pane fade" id="myportfolio">
 				<div class="row d-flex flex-column align-items-center">
 					<h3>내 포트폴리오</h3>
@@ -82,7 +74,7 @@
 					<a href="#">내 외주글 자세히 보기</a>
 				</div>
 			</div>
-
+	
 			<div class="tab-pane fade " id="myReqOs">
 				<div class="row d-flex flex-column align-items-center">
 					<h3>내 외주 현황</h3>
@@ -97,7 +89,7 @@
 					<a href="#">내가 작성한 리뷰 자세히 보기</a>
 				</div>
 			</div>
-
+	
 			<div class="tab-pane fade " id="myBookmark">
 				<div class="row d-flex flex-column align-items-center">
 					<h3>즐겨찾기 한 콘텐츠</h3>
@@ -108,105 +100,105 @@
 				</div>
 			</div>
 			<div class="tab-pane fade " id="mySettList">
-			<div class="row d-flex flex-column align-items-center">
-				<h3>결제내역</h3>
-					<table class="table mt-30">
-						<thead>
-							<tr>
-								<th style="text-align: center;">결제번호</th>
-								<th style="text-align: center;">결제일시</th>
-								<th style="text-align: center;">결제 상품</th>
-								<th style="text-align: center;">사용된 마일리지</th>
-								<th style="text-align: center;">결제 금액</th>
-								<th style="text-align: center;">환불</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td style="text-align: center;">123156</td>
-								<td style="text-align: center;">March 45, 2020</td>
-								<td style="text-align: center;">구독권</td>
-								<td style="text-align: right; padding-right: 50px;">0</td>
-								<td style="text-align: center;">39,900<span>원</span></td>
-								<td style="text-align: center;">
-									<button
-										style="background-color: #ffffff; border: 1px solid #cccccc; border-radius: 5px; 
-										padding: 2px 10px; font-size: 14px; cursor: pointer;">
-										환불요청</button>
-								</td>
-							</tr>
-							<tr>
-								<td style="text-align: center;">1454125</td>
-								<td style="text-align: center;">June 29, 2020</td>
-								<td style="text-align: center;">구독권</td>
-								<td style="text-align: right; padding-right: 50px;">0</td>
-								<td style="text-align: center;">39,900<span>원</span></td>
-								<td style="text-align: center;"><button
-										style="background-color: #ffffff; border: 1px solid #cccccc; border-radius: 5px; 
-										padding: 2px 10px; font-size: 14px; cursor: pointer;">
-										환불요청</button>
-								</td>
-							</tr>
-							<tr>
-								<td style="text-align: center;">4891562</td>
-								<td style="text-align: center;">August 02, 2020</td>
-								<td style="text-align: center;">이용권</td>
-								<td style="text-align: right; padding-right: 50px;">2000</td>
-								<td style="text-align: center;">20,900<span>원</span></td>
-								<td style="text-align: center;"><button
-										style="background-color: #ffffff; border: 1px solid #cccccc; border-radius: 5px; 
-										padding: 2px 10px; font-size: 14px; cursor: pointer;">
-										환불요청</button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					<h3>마일리지 적립 내역</h3>
-					<table class="table mt-30">
-						<thead>
-							<tr>
-								<th style="text-align: center;">결제번호</th>
-								<th style="text-align: center;">결제일시</th>
-								<th style="text-align: center;">결제 상품</th>
-								<th style="text-align: center;">사용된 마일리지</th>
-								<th style="text-align: center;">결제 금액</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td style="text-align: center;">123156</td>
-								<td style="text-align: center;">March 45, 2020</td>
-								<td style="text-align: center;">구독권</td>
-								<td style="text-align: right; padding-right: 50px;">0</td>
-								<td style="text-align: center;">39,900<span>원</span></td>
-							</tr>
-							<tr>
-								<td style="text-align: center;">1454125</td>
-								<td style="text-align: center;">June 29, 2020</td>
-								<td style="text-align: center;">구독권</td>
-								<td style="text-align: right; padding-right: 50px;">0</td>
-								<td style="text-align: center;">39,900<span>원</span></td>
-							</tr>
-							<tr>
-								<td style="text-align: center;">4891562</td>
-								<td style="text-align: center;">August 02, 2020</td>
-								<td style="text-align: center;">이용권</td>
-								<td style="text-align: right; padding-right: 50px;">2000</td>
-								<td style="text-align: center;">20,900<span>원</span></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-
-			<div class="tab-pane fade " id="myNotific">
 				<div class="row d-flex flex-column align-items-center">
-					<h3>문의내역</h3>
-					<p>이케이케 열심히 문의를 넣었대요 영차영차</p>
+					<h3>결제내역</h3>
+						<table class="table mt-30">
+							<thead>
+								<tr>
+									<th style="text-align: center;">결제번호</th>
+									<th style="text-align: center;">결제일시</th>
+									<th style="text-align: center;">결제 상품</th>
+									<th style="text-align: center;">사용된 마일리지</th>
+									<th style="text-align: center;">결제 금액</th>
+									<th style="text-align: center;">환불</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td style="text-align: center;">123156</td>
+									<td style="text-align: center;">March 45, 2020</td>
+									<td style="text-align: center;">구독권</td>
+									<td style="text-align: right; padding-right: 50px;">0</td>
+									<td style="text-align: center;">39,900<span>원</span></td>
+									<td style="text-align: center;">
+										<button
+											style="background-color: #ffffff; border: 1px solid #cccccc; border-radius: 5px; 
+											padding: 2px 10px; font-size: 14px; cursor: pointer;">
+											환불요청</button>
+									</td>
+								</tr>
+								<tr>
+									<td style="text-align: center;">1454125</td>
+									<td style="text-align: center;">June 29, 2020</td>
+									<td style="text-align: center;">구독권</td>
+									<td style="text-align: right; padding-right: 50px;">0</td>
+									<td style="text-align: center;">39,900<span>원</span></td>
+									<td style="text-align: center;"><button
+											style="background-color: #ffffff; border: 1px solid #cccccc; border-radius: 5px; 
+											padding: 2px 10px; font-size: 14px; cursor: pointer;">
+											환불요청</button>
+									</td>
+								</tr>
+								<tr>
+									<td style="text-align: center;">4891562</td>
+									<td style="text-align: center;">August 02, 2020</td>
+									<td style="text-align: center;">이용권</td>
+									<td style="text-align: right; padding-right: 50px;">2000</td>
+									<td style="text-align: center;">20,900<span>원</span></td>
+									<td style="text-align: center;"><button
+											style="background-color: #ffffff; border: 1px solid #cccccc; border-radius: 5px; 
+											padding: 2px 10px; font-size: 14px; cursor: pointer;">
+											환불요청</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h3>마일리지 적립 내역</h3>
+						<table class="table mt-30">
+							<thead>
+								<tr>
+									<th style="text-align: center;">결제번호</th>
+									<th style="text-align: center;">결제일시</th>
+									<th style="text-align: center;">결제 상품</th>
+									<th style="text-align: center;">사용된 마일리지</th>
+									<th style="text-align: center;">결제 금액</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td style="text-align: center;">123156</td>
+									<td style="text-align: center;">March 45, 2020</td>
+									<td style="text-align: center;">구독권</td>
+									<td style="text-align: right; padding-right: 50px;">0</td>
+									<td style="text-align: center;">39,900<span>원</span></td>
+								</tr>
+								<tr>
+									<td style="text-align: center;">1454125</td>
+									<td style="text-align: center;">June 29, 2020</td>
+									<td style="text-align: center;">구독권</td>
+									<td style="text-align: right; padding-right: 50px;">0</td>
+									<td style="text-align: center;">39,900<span>원</span></td>
+								</tr>
+								<tr>
+									<td style="text-align: center;">4891562</td>
+									<td style="text-align: center;">August 02, 2020</td>
+									<td style="text-align: center;">이용권</td>
+									<td style="text-align: right; padding-right: 50px;">2000</td>
+									<td style="text-align: center;">20,900<span>원</span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+	
+				<div class="tab-pane fade " id="myNotific">
+					<div class="row d-flex flex-column align-items-center">
+						<h3>문의내역</h3>
+						<p>이케이케 열심히 문의를 넣었대요 영차영차</p>
+					</div>
 				</div>
 			</div>
-		</div>
-	   
+		</div> 
 	</th:block>
 	</body>
 	<!-- 추가할 js file -->

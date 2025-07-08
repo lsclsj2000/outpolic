@@ -1,13 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>채팅창</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-white flex items-center justify-center min-h-screen">
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="bg-white flex items-center justify-center min-h-screen" th:fragment="userChatRoomFragment">
 
     <!-- Floating chat button container -->
     <div id="chat-float-button-container" class="SR_chat-float-button"></div>
@@ -1323,5 +1316,5 @@
             render(); // Initial button render
         };
     </script>
-</body>
+</div>
 </html>

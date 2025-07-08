@@ -269,14 +269,16 @@
 
         // --- 4. 최종 폼 제출 로직 ---
         $('#outsourcingRegistrationForm').on('submit', function(e) {
-            e.preventDefault();
-            clearErrors();
-            const formData = new FormData(this);
-
-            if ($('input[name="categoryCodes"]').length === 0) {
-                $('#categoryCodesError').text('최소 하나 이상의 카테고리를 선택해야 합니다.');
-                return;
-            }
+           e.preventDefault();
+           const formData = new FormData(this);
+           
+           // 1. 기존의 여러 개로 나뉜 데이터를 지웁니다.
+           formData.delete('categoryCodes');
+           formData.delete('portfolioCds');
+           
+           // 2. 카테고리/포트폴리오 ID들을 각각 배열에 담습니다.
+           const categoryIds = [];
+           $('input[name="categoryCodes"]').each
 
             $.ajax({
                 url: '/enter/outsourcing/add-ajax',
