@@ -15,4 +15,5 @@ public class UserRankingContentsDTO {
 	private String osExpln;
 	private BigDecimal reviewScore;
 	private int osAtm;
+	
 }
