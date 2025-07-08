@@ -20,12 +20,11 @@ public interface EnterPortfolioService {
     EnterPortfolio getPortfolioByPrtfCd(String prtfCd);
     void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags) throws IOException;
     
-    /** 
+    /**
      * 포트폴리오 제목으로 포트폴리오를 검색합니다. (외주-포트폴리오 연결 기능용)
      * @Param query 검색어(포트폴리오 제목)
      * @return 검색된 포트폴리오 목록 (간단한 정보만 포함할 수도 있음)
-     * 
-     */
+     * */
     List<EnterPortfolio> searchPortfoliosByTitle(String query);
     List<String> searchTags(String query);
     
