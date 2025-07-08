@@ -71,7 +71,7 @@
 	            <!-- 두 번째 큰 박스: 진행 단계, 공급자 보고, 수요자 피드백, 최종 결과물 목록 -->
 	            <div class="SR_max-w-6xl SR_mx-auto SR_container-bg SR_p-8 SR_rounded-lg SR_box-shadow">
 	                <div class="SR_flex SR_flex-col SR_lg:flex-row SR_gap-8">
-	                    <!-- 6. 단계별 타임라인 (왼쪽 부분 - 1/3 너비로 조정) -->
+	                    <!-- 6. 단계별 타임라인 (왼쪽 부분 - 1/4 너비로 조정) -->
 	                    <div class="SR_w-full SR_lg:w-1/3 SR_bg-gray-50 SR_p-6 SR_rounded-lg SR_box-shadow">
 	                        <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">진행 단계</h3>
 	                        <ul id="progress-steps" class="SR_progress-steps-list">
@@ -79,7 +79,7 @@
 	                        </ul>
 	                    </div>
 	
-	                    <!-- Right Section: Content Area (오른쪽 부분 - 2/3 너비로 조정) -->
+	                    <!-- Right Section: Content Area (오른쪽 부분 - 3/4 너비로 조정) -->
 	                    <div class="SR_w-full SR_lg:w-2\/3 SR_flex SR_flex-col SR_gap-8">
 	                        <!-- 8. 공급자: 보고서 제출 -->
 	                        <div id="provider-report-box" class="SR_bg-white SR_p-6 SR_rounded-lg SR_box-shadow SR_border SR_border-gray-200">
@@ -136,7 +136,7 @@
 	                <input type="file" id="reportFile" class="SR_mb-4">
 	                <div class="SR_flex SR_justify-end SR_gap-4">
 	                    <button class="SR_btn-secondary" onclick="closeModal('submitReportModal')">취소</button>
-	                    <button class="SR_btn-primary" onclick="submitReport()">제출</button>
+	                    <button class="SR_btn-primary ml-10" onclick="submitReport()">제출</button>
 	                </div>
 	            </div>
 	        </div>
@@ -155,7 +155,7 @@
 	                <input type="file" id="feedbackFile" class="SR_mb-4"> <!-- Added file input for feedback -->
 	                <div class="SR_flex SR_justify-end SR_gap-4">
 	                    <button class="SR_btn-secondary" onclick="closeModal('giveFeedbackModal')">취소</button>
-	                    <button class="SR_btn-primary" onclick="submitFeedback()">피드백 제출</button>
+	                    <button class="SR_btn-primary ml-10" onclick="submitFeedback()">피드백 제출</button>
 	                </div>
 	            </div>
 	        </div>
@@ -284,9 +284,6 @@
 	            // Render Requester Feedbacks
 	            renderRequesterFeedback(selectedStep.feedbacks);
 	
-	            // Render Final Results
-	            renderFinalResults(selectedStep.finalResults);
-	
 	            // Control button visibility
 	            const providerReportButtons = document.getElementById('provider-report-buttons');
 	            const requesterFeedbackButtons = document.getElementById('requester-feedback-buttons');
@@ -309,10 +306,14 @@
 	            // Control visibility of final results box and adjust flex-grow for other boxes
 	            if (selectedStep.status === "완료") {
 	                finalResultsBox.classList.remove('SR_hidden');
+	                // When final results are visible, remove flex-grow from other boxes
 	                providerReportBox.classList.remove('SR_flex-grow-content');
 	                requesterFeedbackBox.classList.remove('SR_flex-grow-content');
+	                // Render Final Results only when visible
+	                renderFinalResults(selectedStep.finalResults);
 	            } else {
 	                finalResultsBox.classList.add('SR_hidden');
+	                // When final results are hidden, add flex-grow to other boxes
 	                providerReportBox.classList.add('SR_flex-grow-content');
 	                requesterFeedbackBox.classList.add('SR_flex-grow-content');
 	            }
