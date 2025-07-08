@@ -54,10 +54,6 @@
 						<div class="section-title">
 							<div class="title">
 								<h3>카테고리</h3>
-								<!-- 모든 카테고리를 삭제할지는 선택하시면 됩니다. -->
-								<a class="show-all" href="#"> 모든 카테고리 <i
-									class="fi-rs-angle-right"></i>
-								</a>
 							</div>
 							<div
 								class="slider-arrow slider-arrow-2 flex-right carausel-8-columns-arrow"
@@ -147,12 +143,8 @@
 										aria-selected="false">가장 오래된순</button>
 								</li>
 				            </ul>
-				        </div>
-				        
-				     
+				        </div> 
 				        <div th:if="${not #lists.isEmpty(findOSList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
-				            
-				            <!-- ▼▼▼ th:each로 popularList 데이터를 반복하여 아이템 카드를 생성합니다 ▼▼▼ -->
 				            <div th:each="content : ${findOSList}" class="slider-item">
 				            
 				                <!-- 개별 아이템 카드 (이전에 만들었던 카드 구조를 재활용) -->
@@ -164,13 +156,8 @@
 				                            <!-- stretched-link와 함께 사용할 a 태그는 비워둡니다 -->
 				                            <a href="javascript:void(0);">
 				                                <!-- 썸네일 이미지가 있다면 DTO에 추가해서 사용하세요 -->
-				                                <img class="default-img" th:src="@{/imgs/placeholder.png}" alt="콘텐츠 이미지" />
+				                                <!-- <img class="default-img" th:src="@{/imgs/placeholder.png}" alt="콘텐츠 이미지" /> -->
 				                            </a>
-				                        </div>
-				                        <!-- PRIME, 품질보증 등 뱃지 (데이터가 있을 경우 표시) -->
-				                        <div class="product-badges product-badges-position product-badges-mrg">
-				                           <span class="hot" th:if="${#strings.contains(content.osTtl, 'PRIME')}">PRIME</span>
-				                           <span class="sale" th:if="${#strings.contains(content.osTtl, '보증')}">품질보증</span>
 				                        </div>
 				                    </div>
 				                    
@@ -199,11 +186,9 @@
 				                           <span th:text="${content.osAtm}">가격 정보~</span>
 				                        </div>
 				                    </div>
-				                </div> <!-- product-cart-wrap 끝 -->
-				                
-				            </div> <!-- th:each 루프 끝 -->
-				        </div> <!-- popular-outsourcing-slider 끝 -->
-				
+				                </div>
+				            </div> 
+				        </div>
 				        <!-- 데이터가 없을 경우 표시할 메시지 -->
 				        <div th:if="${#lists.isEmpty(findOSList)}" class="text-center py-5">
 				            <p>표시할 인기 콘텐츠가 없습니다.</p>
@@ -463,6 +448,10 @@
 		<!-- 리뷰 영역 끝 -->
 		<!--End category slider-->
 	</main>
+	
+
+</th:block>
+<th:block layout:fragment="jsFile">
 	<script>
 		// DOMContentLoaded 이벤트 리스너를 사용하여 문서를 먼저 읽고 스크립트 실행한다
 		document.addEventListener('DOMContentLoaded', function() {
@@ -519,11 +508,5 @@
 			});
 		});
 	</script>
-	<!-- jQuery + Slick 라이브러리 추가 -->
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
-		
 </th:block>
 </html>
