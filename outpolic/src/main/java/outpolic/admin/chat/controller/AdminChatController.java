@@ -8,12 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value="/admin")
 public class AdminChatController {
 	
-	@GetMapping("/adminChatAttachment")
-	public String adminChatAttachmentView() {
-		// 채팅 파일 관리
-		
-		return "admin/chat/adminChatAttachmentView";
-	}
 	
 	@GetMapping("/adminChatMessage")
 	public String adminChatMessageView() {
@@ -29,10 +23,4 @@ public class AdminChatController {
 		return "admin/chat/adminChatRoomProcessView";
 	}
 	
-	@GetMapping("/adminChatRoom")
-	public String adminChatRoomView() {
-		// 채팅방 목록
-		
-		return "admin/chat/adminChatRoomView";
-	}
 }
