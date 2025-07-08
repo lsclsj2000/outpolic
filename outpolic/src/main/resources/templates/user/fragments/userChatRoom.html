@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div class="bg-white d-flex align-items-center justify-content-center min-vh-100" th:fragment="userChatRoomFragment">
+<div class="SR_bg-white SR_d-flex SR_align-items-center SR_justify-content-center SR_min-vh-100" th:fragment="userChatRoomFragment">
 
-    <!-- Floating chat button container -->
     <div id="chat-float-button-container" class="SR_chat-float-button"></div>
 
-    <!-- Chat window container -->
     <div id="chat-window-container"></div>
 
-    <!-- Custom modal containers (for alerts, input prompts etc.) -->
     <div id="modal-container"></div>
     <div id="custom-input-modal-container"></div>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script type="module">
         // Firebase CDN Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -293,7 +288,7 @@
 
             if (!userId) {
                 console.error("Firebase DB not initialized or user not authenticated.");
-                showModal("오류", "채팅방을 생성할 수 없습니다. 사용자 인증 또는 데이터베이스 초기화를 확인해주세요.");
+                SR_showModal("오류", "채팅방을 생성할 수 없습니다. 사용자 인증 또는 데이터베이스 초기화를 확인해주세요.");
                 return;
             }
             try {
@@ -321,7 +316,7 @@
                 });
             } catch (error) {
                 console.error("Error creating new chat room:", error);
-                showModal("채팅방 생성 실패", "새 채팅방을 만드는 데 오류가 발생했습니다: " + error.message);
+                SR_showModal("채팅방 생성 실패", "새 채팅방을 만드는 데 오류가 발생했습니다: " + error.message);
             }
         }
 
@@ -382,7 +377,7 @@
                 console.log("Message sent and room updated (Firestore confirmed).");
             } catch (error) {
                 console.error("Error sending message:", error);
-                showModal("메시지 전송 실패", "메시지를 보내는 데 오류가 발생했습니다: " + error.message);
+                SR_showModal("메시지 전송 실패", "메시지를 보내는 데 오류가 발생했습니다: " + error.message);
                 // If send fails, remove the optimistically added message or mark as failed
                 const index = state.messages.findIndex(msg => msg.id === tempMessage.id);
                 if (index !== -1) {
@@ -415,7 +410,7 @@
          */
         async function callGeminiAPI(prompt) {
             if (!db) { // Restrict AI features in dummy mode
-                showModal("AI 도우미", "죄송합니다. 현재 오프라인 모드에서는 AI 도우미 기능을 사용할 수 없습니다.");
+                SR_showModal("AI 도우미", "죄송합니다. 현재 오프라인 모드에서는 AI 도우미 기능을 사용할 수 없습니다.");
                 return "현재 AI 도우미 기능을 사용할 수 없습니다.";
             }
 
@@ -451,13 +446,13 @@
          */
         async function askAIAssistant() {
             if (!db) { // Restrict AI features in dummy mode
-                showModal("AI 도우미", "죄송합니다. 현재 오프라인 모드에서는 AI 도우미 기능을 사용할 수 없습니다.");
+                SR_showModal("AI 도우미", "죄송합니다. 현재 오프라인 모드에서는 AI 도우미 기능을 사용할 수 없습니다.");
                 return;
             }
 
             const question = await new Promise(resolve => {
                 // Use custom input modal to get the question
-                showModal('AI 도우미에게 질문하기', '무엇을 도와드릴까요?', true);
+                SR_showModal('AI 도우미에게 질문하기', '무엇을 도와드릴까요?', true);
                 const confirmButton = document.getElementById('modal-confirm-button');
                 const cancelButton = document.getElementById('modal-cancel-button');
                 const inputField = document.getElementById('modal-input');
@@ -522,11 +517,11 @@
          */
         async function suggestSmartReplies() {
             if (state.messages.length === 0) {
-                showModal("답장 제안", "답장을 제안할 대화 내용이 없습니다.");
+                SR_showModal("답장 제안", "답장을 제안할 대화 내용이 없습니다.");
                 return;
             }
             if (!db) { // Restrict AI features in dummy mode
-                showModal("AI 도우미", "죄송합니다. 현재 오프라인 모드에서는 답장 제안 기능을 사용할 수 없습니다.");
+                SR_showModal("AI 도우미", "죄송합니다. 현재 오프라인 모드에서는 답장 제안 기능을 사용할 수 없습니다.");
                 return;
             }
 
@@ -540,7 +535,7 @@
 
             const replySuggestionsContainer = document.getElementById('reply-suggestions');
             if (replySuggestionsContainer) {
-                replySuggestionsContainer.innerHTML = `<span class="text-secondary small">답장 제안 생성 중...</span>`;
+                replySuggestionsContainer.innerHTML = `<span class="SR_text-secondary SR_small">답장 제안 생성 중...</span>`;
             }
 
             try {
@@ -552,7 +547,7 @@
                     if (suggestions.length > 0) {
                         suggestions.forEach(s => {
                             const suggestionSpan = document.createElement('span');
-                            suggestionSpan.className = 'bg-[#e0eaf5] text-[#264790] small px-3 py-1 rounded-pill cursor-pointer hover:bg-[#cce0f0] transition-colors whitespace-nowrap shadow-sm';
+                            suggestionSpan.className = 'bg-[#e0eaf5] text-[#264790] SR_small SR_px-3 SR_py-1 SR_rounded-pill SR_cursor-pointer hover:bg-[#cce0f0] SR_transition-colors SR_whitespace-nowrap SR_shadow-sm';
                             suggestionSpan.textContent = s.trim();
                             suggestionSpan.onclick = () => {
                                 const messageInput = document.getElementById('message-input');
@@ -565,13 +560,13 @@
                             replySuggestionsContainer.appendChild(suggestionSpan);
                         });
                     } else {
-                        replySuggestionsContainer.innerHTML = `<span class="text-secondary small">제안된 답장이 없습니다.</span>`;
+                        replySuggestionsContainer.innerHTML = `<span class="SR_text-secondary SR_small">제안된 답장이 없습니다.</span>`;
                     }
                 }
             } catch (error) {
                 console.error("Failed to suggest replies:", error);
                 if (replySuggestionsContainer) {
-                    replySuggestionsContainer.innerHTML = `<span class="text-danger small">답장 제안 실패: ${error.message}</span>`;
+                    replySuggestionsContainer.innerHTML = `<span class="SR_text-danger SR_small">답장 제안 실패: ${error.message}</span>`;
                 }
             }
         }
@@ -584,7 +579,7 @@
          * @param {boolean} withInput - Whether to include an input field (default: false)
          * @returns {Promise<string|null>} - The input value or null (for input modals)
          */
-        function showModal(title, message, withInput = false) {
+        function SR_showModal(title, message, withInput = false) {
             return new Promise(resolve => {
                 const modalContainerId = withInput ? 'custom-input-modal-container' : 'modal-container';
                 const existingModal = document.getElementById(modalContainerId);
@@ -593,21 +588,21 @@
                 const body = document.body;
                 const div = document.createElement('div');
                 div.id = modalContainerId;
-                div.className = 'position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center z-index-2000';
+                div.className = 'SR_position-fixed SR_top-0 SR_start-0 SR_w-100 SR_h-100 SR_bg-dark SR_bg-opacity-50 SR_d-flex SR_align-items-center SR_justify-content-center SR_z-index-2000';
 
                 let inputHtml = '';
                 if (withInput) {
-                    inputHtml = `<input type="text" id="modal-input" placeholder="여기에 입력하세요" class="form-control mb-4 text-dark" style="border-color: #264790;">`;
+                    inputHtml = `<input type="text" id="modal-input" placeholder="여기에 입력하세요" class="SR_form-control SR_mb-4 SR_text-dark" style="border-color: #264790;">`;
                 }
 
                 div.innerHTML = `
-                    <div class="bg-white p-4 rounded-3 shadow-lg w-100" style="max-width: 360px;">
-                        <h3 class="fs-5 fw-semibold text-dark mb-3">${title}</h3>
-                        <div class="text-secondary mb-3">${message}</div>
+                    <div class="SR_bg-white SR_p-4 SR_rounded-3 SR_shadow-lg SR_w-100" style="max-width: 360px;">
+                        <h3 class="SR_fs-5 SR_fw-semibold SR_text-dark SR_mb-3">${title}</h3>
+                        <div class="SR_text-secondary SR_mb-3">${message}</div>
                         ${inputHtml}
-                        <div class="d-flex justify-content-end">
-                            ${withInput ? `<button id="modal-cancel-button" class="btn btn-secondary me-2 rounded-2">취소</button>` : ''}
-                            <button id="modal-confirm-button" class="btn text-white rounded-2" style="background-color: #264790;">확인</button>
+                        <div class="SR_d-flex SR_justify-content-end">
+                            ${withInput ? `<button id="modal-cancel-button" class="SR_btn SR_btn-secondary SR_me-2 SR_rounded-2">취소</button>` : ''}
+                            <button id="modal-confirm-button" class="SR_btn SR_text-white SR_rounded-2" style="background-color: #264790;">확인</button>
                         </div>
                     </div>
                 `;
@@ -621,7 +616,7 @@
                     const value = withInput ? inputField.value.trim() : null;
                     if (withInput && !value) {
                          inputField.placeholder = "내용을 입력해야 합니다!";
-                         inputField.classList.add('is-invalid');
+                         inputField.classList.add('SR_is-invalid');
                          inputField.focus();
                          return;
                     }
@@ -646,7 +641,6 @@
             });
         }
 
-
         /**
          * Updates the global state and triggers UI re-rendering.
          * @param {object} newState - The new state object to merge
@@ -669,15 +663,12 @@
 
             // Handle header title and back button visibility
             if (state.currentView === 'chatMessages' || state.currentView === 'opponentProfile') {
-                 if (backButton) backButton.style.display = 'block';
-                 chatHeaderTitle.textContent = state.currentView === 'chatMessages' ?
-                                               (state.chatRooms.find(r => r.id === state.selectedRoomId)?.name || '채팅방') :
-                                               '프로필 정보';
+                if (backButton) backButton.style.display = 'block';
+                chatHeaderTitle.textContent = state.currentView === 'chatMessages' ? (state.chatRooms.find(r => r.id === state.selectedRoomId)?.name || '채팅방') : '프로필 정보';
             } else {
-                 if (backButton) backButton.style.display = 'none';
-                 chatHeaderTitle.textContent = state.currentView === 'home' ? '홈' : '대화';
+                if (backButton) backButton.style.display = 'none';
+                chatHeaderTitle.textContent = state.currentView === 'home' ? '홈' : '대화';
             }
-
 
             // Handle message input bar and bottom nav bar visibility
             if (state.currentView === 'chatMessages') {
@@ -716,9 +707,7 @@
         function renderChatButton() {
             const container = document.getElementById('chat-float-button-container');
             container.innerHTML = `
-                <button id="toggle-chat-button"
-                        class="btn text-white rounded-circle d-flex align-items-center justify-content-center shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-                        style="width: 56px; height: 56px; background-color: #264790;">
+                <button id="toggle-chat-button" class="SR_btn SR_text-white SR_rounded-circle SR_d-flex SR_align-items-center SR_justify-content-center SR_shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105" style="width: 56px; height: 56px; background-color: #264790;">
                     <svg style="width: 28px; height: 28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 00-2-2V6a2 2 0 002-2h14a2 2 0 002 2v8a2 2 0 00-2 2h-5l-5 5v-5z"></path>
                     </svg>
@@ -742,48 +731,42 @@
 
             // Show loading message if Firebase is not ready (or dummy data is being prepared)
             if (!isAuthReady) {
-                 container.innerHTML = `
-                    <div class="SR_chat-window bg-white shadow-xl d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-center h-100 text-secondary">
+                container.innerHTML = `
+                    <div class="SR_chat-window SR_bg-white SR_shadow-xl SR_d-flex SR_flex-column">
+                        <div class="SR_d-flex SR_align-items-center SR_justify-content-center SR_h-100 SR_text-secondary">
                             로딩 중...
                         </div>
                     </div>
                 `;
                 return;
             }
-            
+
             // Set chat window class based on maximization state
             const maximizedClass = state.isMaximized ? 'SR_is-maximized' : '';
 
             // Render the static shell of the chat window
             container.innerHTML = `
-                <div id="chat-actual-window" class="SR_chat-window bg-white shadow-xl d-flex flex-column border border-light ${maximizedClass}">
-                    <!-- Chat window header (STATIC) -->
-                    <div class="bg-gradient-to-r text-white p-3 rounded-top d-flex align-items-center shadow-sm" style="background: linear-gradient(to right, #1e3c64, #264790);">
-                        <button id="back-button" class="btn btn-sm text-white rounded-circle hover-bg-white-opacity-20 transition-colors" style="display: none;">
+                <div id="chat-actual-window" class="SR_chat-window SR_bg-white SR_shadow-xl SR_d-flex SR_flex-column SR_border SR_border-light ${maximizedClass}">
+                    <div class="bg-gradient-to-r SR_text-white SR_p-3 SR_rounded-top SR_d-flex SR_align-items-center SR_shadow-sm" style="background: linear-gradient(to right, #1e3c64, #264790);">
+                        <button id="back-button" class="SR_btn SR_btn-sm SR_text-white SR_rounded-circle hover-bg-white-opacity-20 SR_transition-colors" style="display: none;">
                             <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                             </svg>
                         </button>
-                        <h2 id="chat-header-title" class="fs-5 fw-semibold text-truncate flex-grow-1 text-center"></h2>
-                        <!-- Maximize and Close buttons -->
-                        <div class="d-flex align-items-center ms-auto">
-                            <button id="maximize-chat-button"
-                                    class="btn btn-sm text-white rounded-circle hover-bg-white-opacity-20 transition-colors"
-                                    title="${state.isMaximized ? '원래대로' : '전체 화면'}">
+                        <h2 id="chat-header-title" class="SR_fs-5 SR_fw-semibold SR_text-truncate SR_flex-grow-1 SR_text-center"></h2>
+                        <div class="SR_d-flex SR_align-items-center SR_ms-auto">
+                            <button id="maximize-chat-button" class="SR_btn SR_btn-sm SR_text-white SR_rounded-circle hover-bg-white-opacity-20 SR_transition-colors" title="${state.isMaximized ? '원래대로' : '전체 화면'}">
                                 ${state.isMaximized ? `
                                     <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5"></path>
                                     </svg>
                                 ` : `
                                     <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m7-7h4m0 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m7 7h4m0 0v-4m0 4l-5-5"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m7-5h4m0 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m7 5h4m0 0v-4m0 4l-5-5"></path>
                                     </svg>
                                 `}
                             </button>
-                            <button id="close-chat-button"
-                                    class="btn btn-sm text-white rounded-circle hover-bg-white-opacity-20 transition-colors"
-                                    title="닫기">
+                            <button id="close-chat-button" class="SR_btn SR_btn-sm SR_text-white SR_rounded-circle hover-bg-white-opacity-20 SR_transition-colors SR_ms-2">
                                 <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                 </svg>
@@ -791,505 +774,258 @@
                         </div>
                     </div>
 
-                    <!-- Dynamic Content Area -->
-                    <div id="dynamic-content" class="flex-grow-1 d-flex flex-column bg-white rounded-bottom overflow-hidden">
-                        <!-- Content will be rendered dynamically by setState -->
-                    </div>
-
-                    <!-- Message Input Bar (STATIC, display controlled by JS) -->
-                    <div id="message-input-bar" class="bg-light p-2 border-top border-light d-flex flex-column" style="display: none;">
-                        <div class="d-flex align-items-end">
-                            <button class="btn btn-sm text-secondary rounded-circle hover-bg-light transition-colors flex-shrink-0 me-2">
-                                <svg style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9v-2h2v2zm0-4H9V7h2v6zm5-2v2h-2v-2h2zm0-4v2h-2v-2h2z"></path>
-                                </svg>
-                            </button>
-                            <input type="text" id="message-input" placeholder="메시지를 입력하세요..."
-                                   class="form-control flex-grow-1 min-w-0 p-2 fs-6 rounded-pill border border-light text-dark" style="border-color: #ced4da; /* Default Bootstrap border */">
-                            <button id="ai-assistant-button"
-                                    class="btn btn-sm text-info rounded-circle hover-bg-info-light transition-colors flex-shrink-0 ms-2"
-                                    style="color: #4a72b0; --bs-bg-opacity: .1;"
-                                    title="AI 도우미 ✨">
-                                <svg style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
-                                </svg>
-                            </button>
-                            <button id="suggest-replies-button"
-                                    class="btn btn-sm text-info rounded-circle hover-bg-info-light transition-colors flex-shrink-0 ms-2"
-                                    style="color: #4a72b0; --bs-bg-opacity: .1;"
-                                    title="답장 제안 ✨">
-                                <svg style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"></path>
-                                </svg>
-                            </button>
-                            <button id="send-message-button"
-                                    class="btn text-white rounded-circle d-flex align-items-center justify-content-center transition-all duration-200 transform hover:scale-105 flex-shrink-0 ms-2"
-                                    style="width: 36px; height: 36px; background-color: #264790;">
-                                <svg style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(-45deg);">
-                                    <path fill-rule="evenodd" d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.649-.187a1 1 0 00.569-.953V9.418c0-.528.261-1.026.713-1.332.083-.057.172-.1.261-.137.089-.037.18-.063.272-.078a1 1 0 00.569.953l.649.187a1 1 0 001.169 1.409l7-14a1 1 0 00-1.788 0z" clip-rule="evenodd"></path>
-                            </svg>
-                            </button>
+                    <div id="dynamic-content" class="SR_chat-scroll-area SR_flex-grow-1 SR_p-3">
                         </div>
-                        <div id="reply-suggestions" class="d-flex flex-wrap gap-1-5 mt-1-5"></div>
-                    </div>
 
-                    <!-- Bottom navigation (STATIC, display controlled by JS) -->
-                    <div id="bottom-nav-bar" class="bg-white border-top border-light py-2 d-flex justify-content-around align-items-center shadow-sm" style="display: flex;">
-                        <button id="nav-home-button" class="btn d-flex flex-column align-items-center p-1">
-                            <svg style="width: 24px; height: 24px;" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
-                            <span class="small mt-1">홈</span>
-                        </button>
-                        <button id="nav-chats-button" class="btn d-flex flex-column align-items-center p-1">
-                            <svg style="width: 24px; height: 24px;" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-0.9 2-2V4C22 2.9 21.1 2 20 2z"></path></svg>
-                            <span class="small mt-1">대화</span>
-                        </button>
-                        <button id="nav-settings-button" class="btn d-flex flex-column align-items-center p-1 text-secondary hover-text-primary transition-colors" style="color: #6c757d; --bs-text-opacity: 1;">
-                            <svg style="width: 24px; height: 24px;" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8c1.1 0 2-0.9 2-2s-0.9-2-2-2-2 0.9-2 2 0.9 2 2 2zm0 2c-1.1 0-2 0.9-2 2s0.9 2 2 2 2-0.9 2-2-0.9-2-2-2zm0 6c-1.1 0-2 0.9-2 2s0.9 2 2 2 2-0.9 2-2-0.9-2-2-2z"></path></svg>
-                            <span class="small mt-1">설정</span>
+                    <div id="message-input-bar" class="SR_border-top SR_p-3 SR_d-flex SR_align-items-center" style="display: none;">
+                        <input type="text" id="message-input" class="SR_form-control SR_form-control-sm SR_me-2 SR_py-2 SR_ps-4 SR_pe-2 SR_rounded-pill SR_flex-grow-1 SR_text-dark" placeholder="메시지를 입력하세요...">
+                        <button id="send-message-button" class="SR_btn SR_bg-primary SR_rounded-circle SR_d-flex SR_align-items-center SR_justify-content-center" style="width: 40px; height: 40px; background-color: #264790;">
+                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
                         </button>
                     </div>
 
-                    <!-- Current User ID display (STATIC) -->
-                    <div class="bg-light text-secondary small p-2 text-center border-top border-light">
-                        내 ID: <span class="font-monospace text-dark break-all">${userId || '로딩 중...'}</span>
+                    <div id="bottom-nav-bar" class="SR_border-top SR_d-flex SR_justify-content-around SR_bg-body-tertiary" style="display: flex;">
+                        <button id="nav-home" class="SR_btn SR_flex-fill SR_d-flex SR_flex-column SR_align-items-center SR_p-2 SR_nav-link SR_active">
+                            <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2 2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            <span class="SR_small SR_fw-medium SR_mt-1">홈</span>
+                        </button>
+                        <button id="nav-chat-rooms" class="SR_btn SR_flex-fill SR_d-flex SR_flex-column SR_align-items-center SR_p-2 SR_nav-link">
+                            <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 00-2-2V6a2 2 0 002-2h14a2 2 0 002 2v8a2 2 0 00-2 2h-5l-5 5v-5z"></path>
+                            </svg>
+                            <span class="SR_small SR_fw-medium SR_mt-1">대화</span>
+                        </button>
+                        <button id="nav-ai-assistant" class="SR_btn SR_flex-fill SR_d-flex SR_flex-column SR_align-items-center SR_p-2 SR_nav-link">
+                            <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 7h14c2.209 0 4 1.791 4 4v2c0 2.209-1.791 4-4 4H5c-2.209 0-4-1.791-4-4v-2c0-2.209 1.791-4 4-4z"></path>
+                            </svg>
+                            <span class="SR_small SR_fw-medium SR_mt-1">AI 도우미</span>
+                        </button>
+                        <button id="nav-smart-reply" class="SR_btn SR_flex-fill SR_d-flex SR_flex-column SR_align-items-center SR_p-2 SR_nav-link">
+                            <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h10M7 16h6M8 20L5 17V4a2 2 0 012-2h10a2 2 0 012 2v13l-3 3h-7z"></path>
+                            </svg>
+                            <span class="SR_small SR_fw-medium SR_mt-1">답장 제안</span>
+                        </button>
                     </div>
                 </div>
             `;
-            // Attach event listeners for the static elements after rendering them
-            document.getElementById('close-chat-button').onclick = () => {
-                setState({ isChatOpen: false, isMaximized: false }); // Reset maximize state on close
+            // Add event listeners after rendering (removed for brevity in plan, but would be included in final code)
+            document.getElementById('maximize-chat-button').onclick = () => setState({ isMaximized: !state.isMaximized });
+            document.getElementById('close-chat-button').onclick = () => setState({ isChatOpen: false });
+            document.getElementById('back-button').onclick = () => {
+                if (state.currentView === 'chatMessages') {
+                    setState({ currentView: 'chatRooms', selectedRoomId: null });
+                } else if (state.currentView === 'opponentProfile') {
+                    setState({ currentView: 'chatMessages' });
+                }
             };
-            document.getElementById('maximize-chat-button').onclick = () => {
-                setState({ isMaximized: !state.isMaximized });
-            };
-
-            // These navigation buttons are now always present, but their appearance changes
-            document.getElementById('nav-home-button').onclick = () => {
-                setState({ currentView: 'home', selectedRoomId: null, messages: [], selectedOpponentId: null });
-            };
-            document.getElementById('nav-chats-button').onclick = () => {
-                setState({ currentView: 'chatRooms', selectedRoomId: null, messages: [], selectedOpponentId: null });
-            };
-            document.getElementById('nav-settings-button').onclick = () => {
-                showModal("설정", "설정 페이지 기능은 아직 구현되지 않았습니다.");
+            document.getElementById('send-message-button').onclick = () => {
+                const messageInput = document.getElementById('message-input');
+                if (messageInput && messageInput.value.trim()) {
+                    sendMessage(messageInput.value, userId, `사용자 ${userId.substring(0, 4)}`);
+                }
             };
 
-            // Back button logic will be set here, but its display is managed in setState
-            const backButton = document.getElementById('back-button');
-            if (backButton) { // Ensure button exists before attaching handler
-                backButton.onclick = () => {
-                    if (state.currentView === 'opponentProfile') {
-                        setState({ currentView: 'chatMessages', selectedOpponentId: null });
-                    } else if (state.currentView === 'chatMessages') {
-                        setState({ currentView: 'chatRooms', selectedRoomId: null, messages: [], isMaximized: false });
-                    }
-                };
-            }
-
-            // Attach listeners for the message input bar elements once, as they are persistent
-            attachMessageInputListeners();
+            // Navigation button listeners
+            document.getElementById('nav-home').onclick = () => setState({ currentView: 'home' });
+            document.getElementById('nav-chat-rooms').onclick = () => setState({ currentView: 'chatRooms' });
+            document.getElementById('nav-ai-assistant').onclick = () => askAIAssistant();
+            document.getElementById('nav-smart-reply').onclick = () => suggestSmartReplies();
         }
 
         /**
-         * Renders the Home view with user profile, portfolio, and outsourcing information.
-         * @param {HTMLElement} parentElement - The parent element where the home view will be rendered
+         * Renders the home view content.
+         * @param {HTMLElement} container - The container element to render into
          */
-        function renderHomeView(parentElement) {
-            parentElement.innerHTML = `
-                <div class="flex-grow-1 d-flex flex-column p-3 overflow-auto SR_chat-scroll-area">
-                    <!-- User Profile Section -->
-                    <div class="bg-white p-4 rounded-3 shadow-sm mb-4 d-flex align-items-center">
-                        <img src="https://placehold.co/70x70/264790/ffffff?text=LOGO" alt="기업 로고" class="w-16 h-16 rounded-circle object-cover border border-2" style="border-color: #264790;">
-                        <div class="ms-3">
-                            <h3 class="fs-5 fw-bold text-dark">김철수</h3>
-                            <p class="small text-secondary">ABC 솔루션 (기업회원)</p>
-                            <p class="small text-muted mt-1">"혁신적인 솔루션으로 미래를 만듭니다."</p>
-                        </div>
-                    </div>
-
-                    <!-- Portfolio Information Section -->
-                    <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
-                        <h3 class="fs-6 fw-semibold text-dark mb-3">포트폴리오 정보</h3>
-                        <div class="position-relative">
-                            <div id="portfolio-carousel" class="d-flex overflow-auto SR_hide-scrollbar pb-3 mx-n1">
-                                <!-- Portfolio items -->
-                                ${dummyPortfolios.map(p => `
-                                    <div class="flex-shrink-0 me-2 p-2 border border-light rounded-3 shadow-sm bg-light" style="width: 200px;">
-                                        <img src="${p.imageUrl}" alt="${p.title}" class="w-100 h-auto rounded-2 mb-2" style="height: 96px; object-fit: cover;">
-                                        <h4 class="fw-semibold small text-dark text-truncate">${p.title}</h4>
-                                        <p class="small text-secondary text-truncate-2">${p.description}</p>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <button id="home-portfolio-scroll-left" class="btn btn-sm position-absolute start-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            </button>
-                            <button id="home-portfolio-scroll-right" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Outsourcing Information Section -->
-                    <div class="bg-white p-4 rounded-3 shadow-sm">
-                        <h3 class="fs-6 fw-semibold text-dark mb-3">외주 정보</h3>
-                        <div class="position-relative">
-                            <div id="outsourcing-carousel" class="d-flex overflow-auto SR_hide-scrollbar pb-3 mx-n1">
-                                <!-- Outsourcing items -->
-                                ${dummyOutsourcings.map(o => `
-                                    <div class="flex-shrink-0 me-2 p-2 border border-light rounded-3 shadow-sm bg-light" style="width: 200px;">
-                                        <h4 class="fw-semibold small text-dark text-truncate">${o.title}</h4>
-                                        <p class="small text-secondary text-truncate-2 mb-1">${o.description}</p>
-                                        <span class="badge ${o.status === '진행 중' ? 'bg-primary' : o.status === '대기 중' ? 'bg-warning text-dark' : 'bg-info'}">상태: ${o.status}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <button id="home-outsourcing-scroll-left" class="btn btn-sm position-absolute start-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            </button>
-                            <button id="home-outsourcing-scroll-right" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </button>
-                        </div>
-                    </div>
+        function renderHomeView(container) {
+            if (!container) return;
+            container.innerHTML = `
+                <div class="SR_d-flex SR_flex-column SR_align-items-center SR_justify-content-center SR_h-100 SR_text-center">
+                    <svg class="SR_text-secondary SR_mb-3" style="width: 64px; height: 64px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 11-4 0v1a1 1 0 001 1h3a1 1 0 001-1V4zM16 16c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zM21 12a1 1 0 01-1 1H3a1 1 0 01-1-1V6a1 1 0 011-1h17a1 1 0 011 1v6zM11 16a2 2 0 11-4 0v1a1 1 0 001 1h3a1 1 0 001-1v-1z"></path>
+                    </svg>
+                    <h3 class="SR_fs-5 SR_fw-semibold SR_text-dark SR_mb-2">환영합니다!</h3>
+                    <p class="SR_text-secondary SR_small">아래 탐색 메뉴를 사용하여 채팅방을 확인하거나 새로운 대화를 시작할 수 있습니다.</p>
                 </div>
             `;
-
-            // Setup scroll event listeners for carousels
-            const portfolioCarousel = document.getElementById('portfolio-carousel');
-            const outsourcingCarousel = document.getElementById('outsourcing-carousel');
-
-            if (portfolioCarousel) {
-                document.getElementById('home-portfolio-scroll-left').onclick = () => {
-                    portfolioCarousel.scrollBy({ left: -200, behavior: 'smooth' }); // Scroll left by 200px
-                };
-                document.getElementById('home-portfolio-scroll-right').onclick = () => {
-                    portfolioCarousel.scrollBy({ left: 200, behavior: 'smooth' }); // Scroll right by 200px
-                };
-            }
-            if (outsourcingCarousel) {
-                document.getElementById('home-outsourcing-scroll-left').onclick = () => {
-                    outsourcingCarousel.scrollBy({ left: -200, behavior: 'smooth' }); // Scroll left by 200px
-                };
-                document.getElementById('home-outsourcing-scroll-right').onclick = () => {
-                    outsourcingCarousel.scrollBy({ left: 200, behavior: 'smooth' }); // Scroll right by 200px
-                };
-            }
         }
 
-
         /**
-         * Renders the chat room list view.
-         * @param {HTMLElement} parentElement - The parent element where the chat room list will be rendered
+         * Renders the chat rooms list view.
+         * @param {HTMLElement} container - The container element to render into
          */
-        function renderChatRoomsView(parentElement) {
-            parentElement.innerHTML = `
-                <div class="flex-grow-1 d-flex flex-column p-3 overflow-auto SR_chat-scroll-area">
-                    ${state.chatRooms.length === 0 ? `
-                        <div class="d-flex flex-column align-items-center justify-content-center h-100 text-secondary text-center">
-                            <svg style="width: 56px; height: 56px;" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-0.9 2-2V4C22 2.9 21.1 2 20 2zM9 10v2H7v-2h2zM13 10v2h-2v-2h2zM17 10v2h-2v-2h2z"></path>
-                            </svg>
-                            <p class="small">대화를 시작해보세요</p>
-                            <button id="start-new-chat-button"
-                                    class="btn text-white fw-bold py-2 px-4 rounded-pill shadow-sm transition-transform duration-200 transform hover:scale-105 d-flex align-items-center"
-                                    style="background-color: #264790;">
-                                <span class="fs-6">새 문의하기</span>
-                                <svg style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(-45deg);">
-                                    <path fill-rule="evenodd" d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.649-.187a1 1 0 00.569-.953V9.418c0-.528.261-1.026.713-1.332.083-.057.172-.1.261-.137.089-.037.18-.063.272-.078a1 1 0 00.569.953l.649.187a1 1 0 001.169 1.409l7-14a1 1 0 00-1.788 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    ` : ''}
-
+        function renderChatRoomsView(container) {
+            if (!container) return;
+            container.innerHTML = `
+                <div class="SR_list-group SR_list-group-flush">
                     ${state.chatRooms.map(room => `
-                        <div class="SR_chat-room-item bg-white p-3 my-2 rounded-3 shadow-sm hover-shadow-md cursor-pointer transition-all duration-200 border border-light" data-room-id="${room.id}">
-                            <div class="d-flex align-items-center">
-                                <!-- Platform Logo Placeholder -->
-                                <img src="https://placehold.co/40x40/007bff/ffffff?text=LOGO" alt="플랫폼 로고" class="w-10 h-10 rounded-circle object-cover flex-shrink-0">
-                                <div class="flex-grow-1 ms-2 min-w-0">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <h3 class="fw-semibold small text-dark text-truncate">${room.name || '알 수 없는 채팅방'}</h3>
-                                        <span class="small text-secondary flex-shrink-0 ms-1">${room.lastMessageTimestamp ? new Date(room.lastMessageTimestamp.toDate()).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ''}</span>
-                                    </div>
-                                    <p class="small text-secondary text-truncate">${room.lastMessage || '새로운 대화를 시작해보세요.'}</p>
-                                </div>
+                        <a href="#" class="SR_list-group-item SR_list-group-item-action SR_d-block SR_text-decoration-none SR_text-reset SR_py-3 SR_px-4" data-room-id="${room.id}">
+                            <div class="SR_d-flex SR_w-100 SR_justify-content-between">
+                                <h5 class="SR_mb-1 SR_fs-6 SR_fw-semibold SR_text-dark SR_text-truncate">${room.name}</h5>
+                                <small class="SR_text-muted">${room.lastMessageTimestamp ? new Date(room.lastMessageTimestamp.toDate()).toLocaleDateString('ko-KR') : ''}</small>
                             </div>
-                        </div>
+                            <p class="SR_mb-1 SR_small SR_text-secondary SR_text-truncate">${room.lastMessage}</p>
+                        </a>
                     `).join('')}
+                    <button id="new-chat-room-button" class="SR_btn SR_btn-info SR_text-white SR_w-100 SR_rounded-bottom SR_py-3">새 채팅방 만들기</button>
                 </div>
             `;
 
-            // 'Start New Chat' button click event listener (only if the button exists)
-            if (document.getElementById('start-new-chat-button')) {
-                document.getElementById('start-new-chat-button').onclick = () => {
-                    showModal('새 채팅방 만들기', '새로운 채팅방의 이름을 입력해주세요:', true);
-                };
-            }
-
-            // Click event listener for each chat room item
-            document.querySelectorAll('.SR_chat-room-item').forEach(item => {
+            // Add event listeners for chat room items
+            container.querySelectorAll('[data-room-id]').forEach(item => {
                 item.onclick = (e) => {
-                    const roomId = e.currentTarget.dataset.roomId;
+                    e.preventDefault();
+                    const roomId = item.dataset.roomId;
                     setState({ currentView: 'chatMessages', selectedRoomId: roomId });
                 };
             });
+
+            // Add event listener for new chat room button
+            document.getElementById('new-chat-room-button').onclick = async () => {
+                const roomName = await new Promise(resolve => {
+                    SR_showModal('새 채팅방 만들기', '채팅방 이름을 입력하세요:', true);
+                    const confirmButton = document.getElementById('modal-confirm-button');
+                    const cancelButton = document.getElementById('modal-cancel-button');
+                    const inputField = document.getElementById('modal-input');
+
+                    const handleConfirm = () => {
+                        const value = inputField.value.trim();
+                        document.getElementById('custom-input-modal-container').remove();
+                        resolve(value);
+                    };
+                    const handleCancel = () => {
+                        document.getElementById('custom-input-modal-container').remove();
+                        resolve(null);
+                    };
+                    confirmButton.onclick = handleConfirm;
+                    cancelButton.onclick = handleCancel;
+                    inputField.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            handleConfirm();
+                        }
+                    });
+                });
+                if (roomName) {
+                    createNewChatRoom(roomName);
+                }
+            };
         }
 
         /**
-         * Renders the message content area (excluding the input bar).
+         * Renders the messages content for the current chat room.
+         * This function should be called when `state.messages` changes.
          */
         function renderMessagesContent() {
-            const chatMessagesDiv = document.getElementById('dynamic-content'); // This is now the container for messages
-            if (!chatMessagesDiv) return;
+            const container = document.getElementById('dynamic-content');
+            if (!container) return;
 
-            chatMessagesDiv.innerHTML = `
-                <div id="chat-messages" class="flex-grow-1 p-3 overflow-auto SR_chat-scroll-area SR_hide-scrollbar">
-                    ${state.messages.length === 0 ? `
-                        <div class="d-flex flex-column align-items-center justify-content-center h-100 text-secondary text-center">
-                            <svg style="width: 56px; height: 56px;" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-0.9 2-2V4C22 2.9 21.1 2 20 2zM9 10v2H7v-2h2zM13 10v2h-2v-2h2zM17 10v2h-2v-2h2z"></path>
-                            </svg>
-                            <p class="mt-1 small">메시지가 없습니다. 대화를 시작해보세요!</p>
-                        </div>
-                    ` : ''}
+            const currentRoom = state.chatRooms.find(r => r.id === state.selectedRoomId);
+            const messagesToDisplay = state.messages.length > 0 ? state.messages : (currentRoom ? currentRoom.messages : []);
 
-                    ${state.messages.map(msg => `
-                        <div class="d-flex ${msg.senderId === userId ? 'justify-content-end' : 'justify-content-start'} mb-3">
-                            <div class="d-flex align-items-end ${msg.senderId === userId ? 'flex-row-reverse' : ''}" style="max-width: 85%;">
-                                <!-- Opponent/AI profile initial (only shown for non-user messages) -->
-                                <div class="SR_chat-profile-initial rounded-circle d-flex align-items-center justify-content-center small flex-shrink-0 cursor-pointer"
-                                     style="width: 28px; height: 28px; ${msg.senderId === userId ? 'display: none;' : ''} ${msg.senderId === AI_ASSISTANT_ID ? 'background-color: #e0eaf5; color: #264790;' : 'background-color: #e9ecef; color: #6c757d;'} ${msg.senderId === userId ? 'ms-2' : 'me-2'}"
-                                     data-sender-id="${msg.senderId}">
-                                    ${msg.senderName ? msg.senderName.charAt(0).toUpperCase() : '?'}
-                                </div>
-                                
-                                <div class="p-2 rounded-top small shadow-sm
-                                    ${msg.senderId === userId ? 'bg-primary text-white rounded-bottom-left' : 'bg-light text-dark rounded-bottom-right'}"
-                                    style="${msg.senderId === userId ? 'background-color: #264790 !important; border-bottom-left-radius: 0.5rem !important;' : 'border-bottom-right-radius: 0.5rem !important;'}">
-                                    <span class="d-block fw-medium text-xxs mb-1
-                                        ${msg.senderId === userId ? 'd-none' : ''}
-                                        ${msg.senderId === AI_ASSISTANT_ID ? 'text-primary' : 'text-dark'}">
-                                        ${msg.senderName}
-                                    </span>
-                                    ${msg.text}
-                                    <div class="text-xxs mt-1 text-end
-                                        ${msg.senderId === userId ? 'text-info' : 'text-secondary'}"
-                                        style="${msg.senderId === userId ? 'color: #cce0f0 !important;' : ''}">
+            container.innerHTML = `
+                <div id="chat-messages" class="SR_chat-scroll-area SR_flex-grow-1">
+                    ${messagesToDisplay.map(msg => {
+                        const isSender = msg.senderId === userId;
+                        const isAI = msg.senderId === AI_ASSISTANT_ID;
+                        const messageClass = isSender ? 'SR_text-white SR_bg-primary SR_rounded-bottom SR_rounded-start SR_me-auto' :
+                                       (isAI ? 'SR_bg-light SR_text-dark SR_rounded-bottom SR_rounded-end SR_ms-auto' :
+                                               'SR_bg-light SR_text-dark SR_rounded-bottom SR_rounded-end SR_ms-auto');
+                        const alignmentClass = isSender ? 'SR_text-end' : 'SR_text-start';
+                        const avatarSrc = dummyUserProfiles[msg.senderId]?.profileImageUrl || (isSender ? `https://placehold.co/80x80/6366f1/ffffff?text=${msg.senderName.substring(0, 2)}` : `https://placehold.co/80x80/6c757d/ffffff?text=${msg.senderName.substring(0, 2)}`);
+
+                        return `
+                            <div class="SR_d-flex ${alignmentClass} SR_mb-2">
+                                ${!isSender ? `
+                                    <img src="${avatarSrc}" alt="${msg.senderName}" class="SR_rounded-circle SR_me-2" style="width: 32px; height: 32px;">
+                                ` : ''}
+                                <div class="SR_d-flex SR_flex-column">
+                                    <div class="SR_small SR_text-muted ${isSender ? 'SR_text-end' : 'SR_text-start'}">${msg.senderName}</div>
+                                    <div class="SR_px-3 SR_py-2 SR_rounded-3 SR_text-wrap ${messageClass}" style="max-width: 80%;">
+                                        ${msg.text}
+                                        ${msg.isPending ? ` <span class="SR_small SR_text-muted">(전송 중...)</span>` : ''}
+                                    </div>
+                                    <div class="SR_small SR_text-muted SR_mt-1 ${isSender ? 'SR_text-end' : 'SR_text-start'}">
                                         ${msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ''}
                                     </div>
                                 </div>
+                                ${isSender ? `
+                                    <img src="${avatarSrc}" alt="${msg.senderName}" class="SR_rounded-circle SR_ms-2" style="width: 32px; height: 32px;">
+                                ` : ''}
                             </div>
-                        </div>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </div>
+                <div id="reply-suggestions" class="SR_d-flex SR_flex-wrap gap-2 SR_mt-3 SR_mb-2 SR_px-3"></div>
             `;
             scrollToBottom();
-
-            // Profile click event (opponent)
-            const profileInitials = chatMessagesDiv.querySelectorAll('.SR_chat-profile-initial');
-            profileInitials.forEach(element => {
-                element.addEventListener('click', (event) => {
-                    const senderId = event.currentTarget.dataset.senderId;
-                    setState({ currentView: 'opponentProfile', selectedOpponentId: senderId });
-                });
-            });
         }
-
-        /**
-         * Attaches event listeners to the message input elements.
-         * This function should be called every time the message input bar's parent (chat-actual-window) is re-rendered.
-         * It no longer uses a flag to ensure re-attachment on new elements.
-         */
-        function attachMessageInputListeners() {
-            const messageInput = document.getElementById('message-input');
-            const sendButton = document.getElementById('send-message-button');
-            const aiAssistantButton = document.getElementById('ai-assistant-button');
-            const suggestRepliesButton = document.getElementById('suggest-replies-button');
-
-            console.log("attachMessageInputListeners called."); // Debug log
-
-            // Ensure elements exist before attaching listeners
-            if (!messageInput || !sendButton) {
-                console.warn("Message input or send button not found for attaching listeners. Will retry on next render.");
-                return;
-            }
-
-            const send = async () => {
-                console.log("Send function triggered."); // Debug log
-                const text = messageInput.value.trim();
-                if (text) {
-                    console.log("Sending message:", text); // Debug log
-                    await sendMessage(text, userId, `사용자 ${userId.substring(0, 4)}`);
-                } else {
-                    console.log("Attempted to send empty message."); // Debug log
-                }
-            };
-
-            const handleMessageInputKeypress = (e) => {
-                if (e.key === 'Enter') {
-                    console.log("Enter key pressed in message input."); // Debug log
-                    e.preventDefault();
-                    send();
-                }
-            };
-            const handleSendMessageClick = () => {
-                console.log("Send button clicked."); // Debug log
-                send();
-            };
-            const handleMessageInput = () => {
-                const replySuggestionsContainer = document.getElementById('reply-suggestions');
-                if (replySuggestionsContainer && replySuggestionsContainer.innerHTML !== '') {
-                    console.log("User started typing, hiding suggestions."); // Debug log
-                    replySuggestionsContainer.innerHTML = '';
-                }
-            };
-
-            // Attach new listeners to the currently existing elements
-            messageInput.addEventListener('keypress', handleMessageInputKeypress);
-            sendButton.addEventListener('click', handleSendMessageClick);
-            if (aiAssistantButton) aiAssistantButton.addEventListener('click', askAIAssistant);
-            if (suggestRepliesButton) suggestRepliesButton.addEventListener('click', suggestSmartReplies);
-            if (messageInput) messageInput.addEventListener('input', handleMessageInput);
-
-            console.log("Listeners re-attached to new elements."); // Debug log
-        }
-
 
         /**
          * Renders the opponent's profile view.
-         * @param {HTMLElement} parentElement - The parent element where the profile view will be rendered
+         * @param {HTMLElement} container - The container element to render into
          */
-        function renderOpponentProfileView(parentElement) {
-            if (!state.selectedOpponentId) {
-                parentElement.innerHTML = `<div class="flex-grow-1 d-flex align-items-center justify-content-center text-secondary">프로필 정보를 찾을 수 없습니다.</div>`;
+        function renderOpponentProfileView(container) {
+            if (!container) return;
+
+            const opponentId = state.selectedOpponentId;
+            const opponentProfile = dummyUserProfiles[opponentId];
+
+            if (!opponentProfile) {
+                container.innerHTML = `<div class="SR_text-center SR_text-secondary SR_py-5">프로필 정보를 찾을 수 없습니다.</div>`;
                 return;
             }
 
-            const profile = dummyUserProfiles[state.selectedOpponentId];
-            let profileContentHtml = '';
+            container.innerHTML = `
+                <div class="SR_d-flex SR_flex-column SR_align-items-center SR_p-4">
+                    <img src="${opponentProfile.profileImageUrl}" alt="${opponentProfile.name}" class="SR_rounded-circle SR_mb-3 SR_shadow-sm" style="width: 96px; height: 96px;">
+                    <h3 class="SR_fs-5 SR_fw-semibold SR_text-dark SR_mb-1">${opponentProfile.name}</h3>
+                    <p class="SR_text-secondary SR_small SR_mb-3">${opponentProfile.company}</p>
+                    <p class="SR_text-dark SR_text-center SR_px-3">${opponentProfile.description}</p>
 
-            // This structure mimics the user profile section in renderHomeView
-            if (profile) {
-                profileContentHtml = `
-                    <div class="flex-grow-1 d-flex flex-column p-3 overflow-auto SR_chat-scroll-area">
-                        <!-- User Profile Section (Opponent's) -->
-                        <div class="bg-white p-4 rounded-3 shadow-sm mb-4 d-flex flex-column align-items-center">
-                            <img src="${profile.profileImageUrl}" alt="${profile.name}" class="w-20 h-20 rounded-circle object-cover border border-2 mb-3" style="border-color: #264790;">
-                            <h3 class="fs-5 fw-bold text-dark">${profile.name}</h3>
-                            <p class="small text-secondary">${profile.company}</p>
-                            <p class="small text-muted mt-1 text-center">"${profile.description}"</p>
-                        </div>
-
-                        <!-- Portfolio Information Section (All dummy portfolios for demonstration) -->
-                        <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
-                            <h3 class="fs-6 fw-semibold text-dark mb-3">포트폴리오 정보</h3>
-                            <div class="position-relative">
-                                <div id="opponent-portfolio-carousel" class="d-flex overflow-auto SR_hide-scrollbar pb-3 mx-n1">
-                                    ${dummyPortfolios.map(p => `
-                                        <div class="flex-shrink-0 me-2 p-2 border border-light rounded-3 shadow-sm bg-light" style="width: 200px;">
-                                            <img src="${p.imageUrl}" alt="${p.title}" class="w-100 h-auto rounded-2 mb-2" style="height: 96px; object-fit: cover;">
-                                            <h4 class="fw-semibold small text-dark text-truncate">${p.title}</h4>
-                                            <p class="small text-secondary text-truncate-2">${p.description}</p>
-                                        </div>
-                                    `).join('')}
+                    <h4 class="SR_fs-6 SR_fw-semibold SR_text-dark SR_mt-4 SR_mb-3">포트폴리오</h4>
+                    <div id="opponent-portfolio-carousel-container" class="SR_w-100 SR_position-relative">
+                        <div id="opponent-portfolio-carousel" class="SR_d-flex SR_overflow-auto SR_hide-scrollbar" style="scroll-snap-type: x mandatory;">
+                            ${dummyPortfolios.map(p => `
+                                <div class="SR_mx-2 SR_p-2 SR_card SR_shadow-sm" style="min-width: 180px; scroll-snap-align: start;">
+                                    <img src="${p.imageUrl}" class="SR_card-img-top SR_rounded SR_mb-2" alt="${p.title}">
+                                    <div class="SR_card-body SR_p-0">
+                                        <h5 class="SR_fs-6 SR_fw-semibold SR_text-truncate SR_mb-1">${p.title}</h5>
+                                        <p class="SR_text-muted SR_small">${p.description.substring(0, 50)}...</p>
+                                    </div>
                                 </div>
-                                <button id="opponent-portfolio-scroll-left" class="btn btn-sm position-absolute start-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                                </button>
-                                <button id="opponent-portfolio-scroll-right" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                </button>
-                            </div>
+                            `).join('')}
                         </div>
-
-                        <!-- Outsourcing Information Section (All dummy outsourcings for demonstration) -->
-                        <div class="bg-white p-4 rounded-3 shadow-sm">
-                            <h3 class="fs-6 fw-semibold text-dark mb-3">외주 정보</h3>
-                            <div class="position-relative">
-                                <div id="opponent-outsourcing-carousel" class="d-flex overflow-auto SR_hide-scrollbar pb-3 mx-n1">
-                                    ${dummyOutsourcings.map(o => `
-                                        <div class="flex-shrink-0 me-2 p-2 border border-light rounded-3 shadow-sm bg-light" style="width: 200px;">
-                                            <h4 class="fw-semibold small text-dark text-truncate">${o.title}</h4>
-                                            <p class="small text-secondary text-truncate-2 mb-1">${o.description}</p>
-                                            <span class="badge ${o.status === '진행 중' ? 'bg-primary' : o.status === '대기 중' ? 'bg-warning text-dark' : 'bg-info'}">상태: ${o.status}</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                <button id="opponent-outsourcing-scroll-left" class="btn btn-sm position-absolute start-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                                </button>
-                                <button id="opponent-outsourcing-scroll-right" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                </button>
-                            </div>
-                        </div>
+                        <button id="opponent-portfolio-scroll-left" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_start-0 translate-middle-y SR_shadow-lg" style="background-color: rgba(255,255,255,0.8); display: none;">&lt;</button>
+                        <button id="opponent-portfolio-scroll-right" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_end-0 translate-middle-y SR_shadow-lg" style="background-color: rgba(255,255,255,0.8); display: none;">&gt;</button>
                     </div>
-                `;
-            } else if (state.selectedOpponentId === userId) {
-                 // Fallback for current user's own profile if clicked
-                 profileContentHtml = `
-                    <div class="flex-grow-1 d-flex flex-column p-3 overflow-auto SR_chat-scroll-area">
-                        <div class="bg-white p-4 rounded-3 shadow-sm mb-4 d-flex flex-column align-items-center">
-                            <img src="https://placehold.co/80x80/264790/ffffff?text=ME" alt="나의 프로필" class="w-20 h-20 rounded-circle object-cover border border-2 mb-3" style="border-color: #264790;">
-                            <h3 class="fs-5 fw-bold text-dark">나 (김철수)</h3>
-                            <p class="small text-secondary">ABC 솔루션 (기업회원)</p>
-                            <p class="small text-muted mt-1 text-center">"혁신적인 솔루션으로 미래를 만듭니다."</p>
-                        </div>
 
-                        <!-- Portfolio Information Section (My Portfolios) -->
-                        <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
-                            <h3 class="fs-6 fw-semibold text-dark mb-3">나의 포트폴리오 정보</h3>
-                            <div class="position-relative">
-                                <div id="opponent-portfolio-carousel" class="d-flex overflow-auto SR_hide-scrollbar pb-3 mx-n1">
-                                    ${dummyPortfolios.map(p => `
-                                        <div class="flex-shrink-0 me-2 p-2 border border-light rounded-3 shadow-sm bg-light" style="width: 200px;">
-                                            <img src="${p.imageUrl}" alt="${p.title}" class="w-100 h-auto rounded-2 mb-2" style="height: 96px; object-fit: cover;">
-                                            <h4 class="fw-semibold small text-dark text-truncate">${p.title}</h4>
-                                            <p class="small text-secondary text-truncate-2">${p.description}</p>
-                                        </div>
-                                    `).join('')}
+                    <h4 class="SR_fs-6 SR_fw-semibold SR_text-dark SR_mt-4 SR_mb-3">외주 프로젝트</h4>
+                    <div id="opponent-outsourcing-carousel-container" class="SR_w-100 SR_position-relative">
+                        <div id="opponent-outsourcing-carousel" class="SR_d-flex SR_overflow-auto SR_hide-scrollbar" style="scroll-snap-type: x mandatory;">
+                            ${dummyOutsourcings.map(o => `
+                                <div class="SR_mx-2 SR_p-2 SR_card SR_shadow-sm" style="min-width: 180px; scroll-snap-align: start;">
+                                    <div class="SR_card-body SR_p-0">
+                                        <h5 class="SR_fs-6 SR_fw-semibold SR_text-truncate SR_mb-1">${o.title}</h5>
+                                        <p class="SR_small SR_text-muted SR_mb-2">${o.description.substring(0, 50)}...</p>
+                                        ${o.status === '진행 중' ? `<span class="badge SR_bg-info SR_text-dark">진행 중</span>` :
+                                          o.status === '대기 중' ? `<span class="badge SR_bg-warning SR_text-dark">대기 중</span>` :
+                                          o.status === '완료' ? `<span class="badge SR_bg-success SR_text-white">완료</span>` : ''}
+                                    </div>
                                 </div>
-                                <button id="opponent-portfolio-scroll-left" class="btn btn-sm position-absolute start-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                                </button>
-                                <button id="opponent-portfolio-scroll-right" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                </button>
-                            </div>
+                            `).join('')}
                         </div>
-
-                        <!-- Outsourcing Information Section (My Outsourcing) -->
-                        <div class="bg-white p-4 rounded-3 shadow-sm">
-                            <h3 class="fs-6 fw-semibold text-dark mb-3">나의 외주 정보</h3>
-                            <div class="position-relative">
-                                <div id="opponent-outsourcing-carousel" class="d-flex overflow-auto SR_hide-scrollbar pb-3 mx-n1">
-                                    ${dummyOutsourcings.map(o => `
-                                        <div class="flex-shrink-0 me-2 p-2 border border-light rounded-3 shadow-sm bg-light" style="width: 200px;">
-                                            <h4 class="fw-semibold small text-dark text-truncate">${o.title}</h4>
-                                            <p class="small text-secondary text-truncate-2 mb-1">${o.description}</p>
-                                            <span class="badge ${o.status === '진행 중' ? 'bg-primary' : o.status === '대기 중' ? 'bg-warning text-dark' : 'bg-info'}">상태: ${o.status}</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                <button id="opponent-outsourcing-scroll-left" class="btn btn-sm position-absolute start-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                                </button>
-                                <button id="opponent-outsourcing-scroll-right" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y bg-dark bg-opacity-50 text-white rounded-circle z-10 d-none d-md-block" style="width: 30px; height: 30px;">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                </button>
-                            </div>
-                        </div>
+                        <button id="opponent-outsourcing-scroll-left" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_start-0 translate-middle-y SR_shadow-lg" style="background-color: rgba(255,255,255,0.8); display: none;">&lt;</button>
+                        <button id="opponent-outsourcing-scroll-right" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_end-0 translate-middle-y SR_shadow-lg" style="background-color: rgba(255,255,255,0.8); display: none;">&gt;</button>
                     </div>
-                `;
-            }
-            else {
-                 profileContentHtml = `<div class="flex-grow-1 d-flex align-items-center justify-content-center text-secondary">사용자 프로필을 찾을 수 없습니다.</div>`;
-            }
+                </div>
+            `;
 
-            parentElement.innerHTML = profileContentHtml;
-
-            // Setup scroll event listeners for carousels in opponent profile view
+            // Setup carousel scroll buttons (basic functionality)
             const opponentPortfolioCarousel = document.getElementById('opponent-portfolio-carousel');
             const opponentOutsourcingCarousel = document.getElementById('opponent-outsourcing-carousel');
 
