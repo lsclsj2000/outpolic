@@ -13300,6 +13300,45 @@ background-color: #c7d2fe;
 .popular-categories .card-1 figure.img-hover-scale.overflow-hidden {
     overflow: visible !important; 
 }
+     
+/* 1. 이미지 컨테이너를 위치 기준점으로 설정하고, '비율'을 이용해 높이를 확보합니다. */
+.product-img-zoom {
+    position: relative; /* 자식 absolute의 기준점 (유지) */
+    overflow: hidden;   /* 자식 이미지가 밖으로 삐져나가지 않도록 (유지) */
+
+    /* ▼▼▼ 핵심 수정 코드 ▼▼▼ */
+    /* 너비에 비례하여 높이를 설정 (padding-top 트릭) */
+    /* 예를 들어 3:2 비율의 이미지를 원한다면 2 / 3 * 100 = 66.66% */
+    /* 1:1 정사각형 비율을 원한다면 100% */
+    /* 스크린샷의 이미지가 대략 4:3 비율이므로 75%로 설정합니다. */
+    padding-top: 75%; 
+}
+
+/* 2. 기본/호버 이미지를 컨테이너 내부에 겹치도록 절대 위치로 배치합니다. (이전과 동일) */
+.product-img-zoom .default-img,
+.product-img-zoom .hover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지가 컨테이너 비율에 맞게 잘리거나 채워지도록 함 */
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* 3. 기본 상태에서 호버 이미지는 투명하게 만듭니다. (이전과 동일) */
+.product-img-zoom .hover-img {
+    opacity: 0;
+}
+
+/* 4. 컨테이너에 마우스 호버 시 이미지를 교체합니다. (이전과 동일) */
+.product-img-zoom:hover .default-img {
+    opacity: 0;
+}
+
+.product-img-zoom:hover .hover-img {
+    opacity: 1;
+}
 /* 김한별 CSS 추가 영역 끝 */
 
 
