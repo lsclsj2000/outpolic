@@ -8,6 +8,7 @@ public class AdminInquiryType {
 	private String inquiryTypeName;
 	private String inquiryTypeExpln;
 	private String statusCode;
+	private String statusName;
 	private String inquiryTypeRegAdm;
 	private String inquiryTypeRegDate;
 	private String inquiryTypeMdfcnAdm;

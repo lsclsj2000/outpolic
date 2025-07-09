@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.inquiry.domain.AdminInquiry;
+import outpolic.admin.inquiry.domain.AdminInquiryType;
 import outpolic.admin.inquiry.mapper.AdminInquiryMapper;
 import outpolic.admin.inquiry.mapper.AdminInquiryMapper;
 import outpolic.admin.inquiry.service.AdminInquiryService;
@@ -34,6 +35,13 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 		// 문의 목록 조회
 		List<AdminInquiry> adminInquiryList = adminInquiryMapper.getAdminInquiryList();
 		return adminInquiryList;
+	}
+
+	@Override
+	public List<AdminInquiryType> getAdminInquiryTypeList() {
+		// 문의 타입 자원 조회
+		List<AdminInquiryType> adminInquiryTypeList = adminInquiryMapper.getAdminInquiryTypeList();
+		return adminInquiryTypeList;
 	}
 
 }

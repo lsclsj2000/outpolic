@@ -29,6 +29,8 @@ public class AdminDeclarationServiceImpl implements AdminDeclarationService {
 	@Override
 	public List<AdminDeclaration> getAdminDeclarationTypeList() {
 		// 신고 타입 자원 조회
-		return null;
+		List<AdminDeclaration> adminDeclarationList= adminDeclarationMapper.getAdminDeclarationTypeList();
+		
+		return adminDeclarationList;
 	}
 }

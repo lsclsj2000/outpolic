@@ -15,7 +15,7 @@
 	        <div class="row">
 	            <div class="col-12">
 	                <div class="content-header">
-	                    <h2 class="content-title">신고 자원 등록</h2>
+	                    <h2 class="content-title">문의 자원 등록</h2>
 	                    <div>
 	                        <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
 	                        <button class="btn btn-md rounded font-sm hover-up">Publich</button>
@@ -30,8 +30,8 @@
 			                    <table class="table table-hover">
 			                        <thead>
 			                            <tr>
-			                                <th scope="col" class="start text-center col-1">신고타입코드</th>
-			                                <th scope="col" class="text-center col-1">신고타입명</th>
+			                                <th scope="col" class="start text-center col-1">문의타입코드</th>
+			                                <th scope="col" class="text-center col-1">문의명</th>
 			                                <th scope="col" class="text-center col-1">타입설명</th>
 			                                <th scope="col" class="text-center col-1">타입상태코드</th>
 			                                <th scope="col" class="text-center col-1">등록자</th>
@@ -44,23 +44,23 @@
 			                        <tbody>
 										<tr class="start pt-30"
 										    style="border:0px; border-bottom: solid 1px #ececec;"
-										    th:each="dt : ${adminDeclarationTypeList}">
+										    th:each="it : ${adminInquiryTypeList}">
 										    
 										    <td class="start text-center">
-										        <span th:text="${dt.declarationTypeCode}">신고타입코드</span>
+										        <span th:text="${it.inquiryTypeCode}">문의타입코드</span>
 										    </td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeName}">신고타입명</td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeExpln}">타입설명</td>
-										    <td scope="col" class="text-center" th:switch="${dt.declarationTypeStcName}">
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeName}">문의명</td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeExpln}">타입설명</td>
+										    <td scope="col" class="text-center" th:switch="${it.statusName}">
 			                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
 			                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
 			                                </td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeRegAdmCode}">등록자</td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeRegYmdt}">최초등록일시</td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeMdfcnAdmCode}">수정자</td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeMdfcnYmdt}">최종수정일시</td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegAdm}">등록자</td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegDate}">최초등록일시</td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnAdm}">수정자</td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnDate}">최종수정일시</td>
 										    <td scope="col" class="text-center">
-												<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${dt.declarationTypeCode}">수정</a>
+												<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${it.inquiryTypeCode}">수정</a>
 											</td>
 										</tr>
 									</tbody>
@@ -75,9 +75,7 @@
 	                        <div class="row gx-5">
 	                            <aside class="col-lg-3 border-end">
 	                                <nav class="nav nav-pills flex-column mb-4">
-	                                    <a class="nav-link active" aria-current="page" href="#">신고 타입</a>
-	                                    <a class="nav-link" href="#">신고 사유</a>
-	                                    <a class="nav-link" href="#">신고 결과</a>
+	                                    <a class="nav-link active" aria-current="page" href="#">문의 타입</a>
 	                                </nav>
 	                            </aside>
 	                            <div class="col-lg-9">
@@ -100,7 +98,7 @@
 	                                        </div>
 	                                        <!-- row.// -->
 	                                        <div class="row mb-4">
-	                                            <label class="col-lg-3 col-form-label">신고타입코드*</label>
+	                                            <label class="col-lg-3 col-form-label">문의타입코드*</label>
 	                                            <div class="col-lg-9">
 	                                                <input type="text" class="form-control" placeholder="Type here"/>
 	                                            </div>
@@ -108,7 +106,7 @@
 	                                        </div>
 	                                        <!-- row.// -->
 	                                        <div class="row mb-4">
-	                                            <label class="col-lg-3 col-form-label">신고타입명*</label>
+	                                            <label class="col-lg-3 col-form-label">문의명*</label>
 	                                            <div class="col-lg-9">
 	                                                <input type="text" class="form-control" placeholder="Type here"/>
 	                                            </div>

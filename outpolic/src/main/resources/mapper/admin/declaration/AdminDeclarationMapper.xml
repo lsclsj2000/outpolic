@@ -20,7 +20,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="drc_cd" 			property="declarationResultCode"/>
 		<result column="drc_nm" 			property="declarationResultName"/>
 	</resultMap>
-
+	
+	<resultMap id="AdminDeclarationTypeMap" type="outpolic.admin.declaration.domain.AdminDeclaration">
+		<id 	column="dt_cd" 				property="declarationTypeCode"/>
+		<result column="dt_nm" 				property="declarationTypeName"/>
+		<result column="dt_expln" 			property="declarationTypeExpln"/>
+		<result column="stc_cd" 			property="declarationTypeStcCode"/>
+		<result column="stc_nm" 			property="declarationTypeStcName"/>
+		<result column="dt_reg_adm_cd" 		property="declarationTypeRegAdmCode"/>
+		<result column="dt_reg_ymdt" 		property="declarationTypeRegYmdt"/>
+		<result column="dt_mdfcn_adm_cd" 	property="declarationTypeMdfcnAdmCode"/>
+		<result column="dt_mdfcn_ymdt" 		property="declarationTypeMdfcnYmdt"/>
+	</resultMap>
+	
+	<select id="getAdminDeclarationTypeList" resultMap="AdminDeclarationTypeMap">
+		/* 신고 타입 내역 조회 */
+		select
+			dt.dt_cd as dt_cd,
+			dt.dt_nm as dt_nm,
+			dt.dt_expln as dt_expln,
+			dt.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			dt.dt_reg_adm_cd as dt_reg_adm_cd,
+			dt.dt_reg_ymdt as dt_reg_ymdt,
+			dt.dt_mdfcn_adm_cd as dt_mdfcn_adm_cd,
+			dt.dt_mdfcn_ymdt as dt_mdfcn_ymdt
+		from
+			declaration_type dt 
+			left join status_code sc on dt.stc_cd = sc.stc_cd
+		order by
+			dt.dt_reg_ymdt;
+	</select>
+	
 	<select id="getAdminDeclarationList" resultMap="AdminDeclarationResultMap">
 		/* 신고 내역 리스트 조회 */
 		SELECT

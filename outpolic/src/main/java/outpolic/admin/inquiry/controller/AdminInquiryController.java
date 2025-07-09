@@ -1,5 +1,7 @@
 package outpolic.admin.inquiry.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.inquiry.domain.AdminInquiry;
+import outpolic.admin.inquiry.domain.AdminInquiryType;
 import outpolic.admin.inquiry.service.AdminInquiryService;
 
 @Controller
@@ -18,17 +21,24 @@ public class AdminInquiryController {
 	
 	private final AdminInquiryService adminInquiryService; 
 	
-	/*
-	 * @GetMapping("/adminInquiryManage") public String adminInquiryManageView() {
-	 * // 문의 프로세스 관리
-	 * 
-	 * return "admin/inquiry/adminInquiryManageView"; }
-	 * 
-	 * @GetMapping("/adminInquiryProcess") public String adminInquiryProcessView() {
-	 * // 문의 처리 페이지
-	 * 
-	 * return "admin/inquiry/adminInquiryProcessView"; }
-	 */
+	
+	 @GetMapping("/adminInquiryResources") 
+	 public String adminInquiryResourcesView(Model model) {
+		 // 문의 자원 등록 페이지
+		 List<AdminInquiryType> adminInquiryTypeList = adminInquiryService.getAdminInquiryTypeList();
+		 
+		 model.addAttribute("title", "문의 자원 등록");
+		 model.addAttribute("adminInquiryTypeList", adminInquiryTypeList);
+		 
+		 return "admin/inquiry/adminInquiryResourcesView"; }
+	 
+	 
+//	 @GetMapping("/adminInquiryProcess") public String adminInquiryProcessView() {
+//	 // 문의 처리 페이지
+//	 
+//	 return "admin/inquiry/adminInquiryProcessView"; }
+	 
+	 
 	
 	@GetMapping("/adminInquiryMdfcn")
 	@ResponseBody
