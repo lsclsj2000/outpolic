@@ -40,7 +40,7 @@ public class OutsourcingRequestController {
 		model.addAttribute("supplierName","임시 공급자 이름");
 		
 		// resources/templates/enter/outsourcing/outsourcingRequestListView.html 파일을 보여줍니다.
-		return "enter/outsourcing/outsourcingRequestListView";
+		return "enter/outsourcingRequest/outsourcingRequestListView";
 	}
 	
 	/**

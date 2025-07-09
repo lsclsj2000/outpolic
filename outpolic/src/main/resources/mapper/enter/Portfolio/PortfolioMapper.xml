@@ -86,8 +86,8 @@
     </select>
 
     <insert id="insertPortfolio" parameterType="EnterPortfolio">
-        INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, adm_cd, stc_cd)
-        VALUES (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), #{admCd}, 'SD_ACTIVE')
+        INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd)
+        VALUES (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(),'SD_ACTIVE')
     </insert>
 
     <insert id="insertContentList">
