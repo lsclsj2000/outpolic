@@ -13493,7 +13493,558 @@ input[type="number"] {
             }
         }       
         
-   
+/* 유사랑 추가한 스타일 */
+/* FAQ 페이지 스타일 */
+.faq {
+	font-family: Arial, sans-serif;
+	background: #f7f7f7;
+	padding: 100px 40px 100px 40px;
+	width: 1000px;
+}
+
+.faq-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+.faq-item {
+	width: calc(50% - 8px); /* 2열 */
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	display: block; /* <-- 핵심 수정 */
+	overflow: hidden;
+	transition: box-shadow 0.3s ease;
+	align-self: flex-start; /* <-- 핵심 수정 */
+}
+
+.faq-item:hover {
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.faq-question {
+	padding: 15px 20px;
+	cursor: pointer;
+	font-weight: bold;
+	background-color: #f0f0f0;
+	border-bottom: 1px solid #eee;
+}
+
+.faq-answer {
+	height: 0;
+	opacity: 0;
+	overflow: hidden;
+	transition: height 0.4s ease, opacity 0.4s ease;
+	background-color: #fafafa;
+	padding: 0 20px;
+}
+
+.faq-item.faq-active .faq-answer {
+	opacity: 1;
+}
+
+.faq-answer-inner {
+	padding: 15px 0;
+}
+
+@media screen and (max-width: 700px) {
+	.faq-item {
+		width: 100%;
+	}
+}
+
+/* 유사랑 첨부파일 추가. */
+.SR_content-input-box {
+	width: 100%;
+	max-width: 800px; /* 모든 박스의 최대 너비 통일 */
+	background-color: #ffffff;
+	border-radius: 12px;
+	padding: 30px; /* 박스 내부 패딩 */
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+	border: 1px solid #e0e0e0;
+	margin-bottom: 20px; /* 박스들 사이의 아래쪽 간격 */
+	box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+}
+
+/* 입력 필드 자체의 스타일 (SR_content-input-box 내부) */
+.SR_content-input-box input[type="text"],
+.SR_content-input-box textarea,
+.SR_content-input-box .custom_select select {
+	width: 100%;
+	padding: 12px 18px; /* 입력 필드 내부 패딩 */
+	border: 1px solid #e0e0e0;
+	border-radius: 8px; /* 모서리 둥글게 */
+	font-size: 0.9rem;
+	box-sizing: border-box;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	outline: none; /* 포커스 시 기본 아웃라인 제거 */
+	-webkit-appearance: none; /* Safari/Chrome 기본 스타일 제거 */
+	-moz-appearance: none; /* Firefox 기본 스타일 제거 */
+	appearance: none; /* 기본 스타일 제거 */
+}
+
+.SR_content-input-box input[type="text"]:focus,
+.SR_content-input-box textarea:focus,
+.SR_content-input-box .custom_select select:focus {
+	border-color: #264796; /* 포커스 시 테두리 색상 변경 */
+	box-shadow: 0 0 5px 2px   #bdcff3; /* 포커스 시 그림자 추가 */
+}
+
+/* 텍스트 영역의 높이 조절 */
+.SR_content-input-box textarea {
+	resize: vertical; /* 수직으로만 크기 조절 가능 */
+	min-height: 120px; /* 최소 높이 설정 */
+}
+
+/* select 박스 아이콘 추가 (커스텀 드롭다운 화살표) */
+.SR_content-input-box .custom_select {
+	position: relative;
+}
+.SR_content-input-box .custom_select::after {
+	position: absolute;
+	top: 50%;
+	right: 15px;
+	transform: translateY(-50%);
+	pointer-events: none; /* 클릭 이벤트 방지 */
+	color: #666;
+	font-size: 0.8rem;
+}
+
+/* 기존 form-group의 하단 마진 제거 (SR_content-input-box가 마진을 담당) */
+.SR_content-input-box .form-group {
+	margin-bottom: 0;
+}
+
+/* 파일 업로드 컨테이너 스타일 (SR_content-input-box와 동일한 너비를 가짐) */
+.SR_file-upload-container {
+	width: 100%;
+	max-width: 800px; /* 모든 박스의 최대 너비 통일 */
+	background-color: #ffffff;
+	border-radius: 12px;
+	padding: 30px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+	border: 1px solid #e0e0e0;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	box-sizing: border-box;
+}
+
+/* 체크박스 컨테이너 */
+.SR_checkbox-container {
+	display: flex;
+	align-items: center;
+}
+
+.SR_checkbox-container input[type="checkbox"] {
+	margin-right: 12px;
+	accent-color: #264796;
+	width: 22px;
+	height: 22px;
+	border-radius: 4px;
+}
+
+.SR_checkbox-container label {
+	font-size: 0.9rem;
+	color: #333333;
+	font-weight: 500;
+	margin-bottom: 0px;
+}
+
+/* 파일 입력 영역 (초기 숨김) */
+.SR_file-input-area {
+	display: none;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.SR_file-input-area.SR_active {
+	display: flex !important;
+}
+
+/* 파일 드롭존 */
+.SR_file-drop-zone {
+	border: 2px dashed #bdcff3;
+	border-radius: 10px;
+	padding: 40px 20px;
+	text-align: center;
+	color: #666666;
+	font-size: 1.05rem;
+	transition: background-color 0.3s ease, border-color 0.3s ease;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 180px;
+}
+
+.SR_file-drop-zone.SR_hover {
+	background-color: #e6ffee;
+	border-color: #264796;
+}
+
+.SR_file-drop-zone p {
+	margin-bottom: 18px;
+	font-weight: 500;
+	color: #555555;
+	line-height: 1.5;
+}
+
+/* 사용자 정의 파일 선택 버튼 */
+.SR_custom-file-button {
+	display: inline-block;
+	background-color: #264796;
+	color: white;
+	padding: 12px 28px;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 1rem;
+	font-weight: 600;
+	transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.2s ease;
+	box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.SR_custom-file-button:hover {
+	background-color: #4BAEA0;
+	transform: translateY(-2px);
+	box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.SR_custom-file-button:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* 선택된 파일 목록 */
+.SR_selected-files {
+	margin-top: 25px;
+	text-align: left;
+	max-height: 200px;
+	overflow-y: auto;
+	padding-right: 15px;
+}
+
+.SR_selected-files::-webkit-scrollbar {
+	width: 8px;
+}
+.SR_selected-files::-webkit-scrollbar-thumb {
+	background-color: #d1d5db;
+	border-radius: 4px;
+}
+.SR_selected-files::-webkit-scrollbar-track {
+	background-color: #f3f4f6;
+}
+
+.SR_selected-file-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: #f8f9fa;
+	padding: 12px 18px;
+	border-radius: 8px;
+	margin-bottom: 12px;
+	font-size: 0.95rem;
+	color: #333333;
+	border: 1px solid #eceff1;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+ 
+.SR_file-info {
+	display: flex;
+	align-items: center;
+	flex-grow: 1;
+	overflow: hidden;
+}
+
+.SR_file-preview-img,
+.SR_file-placeholder {
+	width: 40px;
+	height: 40px;
+	object-fit: cover;
+	border-radius: 4px;
+	margin-right: 15px;
+	border: 1px solid #eee;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #e0e0e0;
+	color: #777;
+}
+.SR_file-placeholder svg {
+	width: 24px;
+	height: 24px;
+	stroke: currentColor;
+}
+
+.SR_file-info span {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-weight: 500;
+}
+
+.SR_selected-file-item .SR_remove-file {
+	background: none;
+	border: none;
+	color: #ff4d4d;
+	font-size: 1.5rem;
+	cursor: pointer;
+	padding: 0 8px;
+	transition: color 0.2s ease, transform 0.1s ease;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.SR_selected-file-item .SR_remove-file:hover {
+	color: #cc0000;
+	transform: scale(1.1);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+	.SR_file-upload-container,
+	.SR_content-input-box {
+		padding: 20px;
+		margin: 20px 0;
+}
+	.SR_file-drop-zone {
+		padding: 30px 15px;
+	}
+	.SR_custom-file-button {
+		padding: 10px 20px;
+	}
+}
+
+/* 유사랑 첨부파일 이미지 추가 */
+.SR_inquiry-attached-image {
+    max-width: 100%; /* 부모 요소의 너비를 넘지 않도록 */
+    height: auto;    /* 이미지 비율 유지 */
+    display: block;  /* 이미지를 블록 요소로 만들어 줄바꿈 및 여백 제어 용이 */
+    margin: 20px 0;  /* 위아래 여백 추가 */
+    border: 1px solid #e0e0e0; /* 테두리 추가 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+
+/* 유사랑 첨부파일 목록 추가 */
+/* SR_attachment-list: 전체 첨부파일 목록 박스 */
+.SR_attachment-list {
+	background-color: #ffffff; /* 흰색 배경 */
+	border-radius: 10px; /* 둥근 모서리 */
+	padding: 15px; /* 내부 여백 */
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* 부드러운 그림자 */
+	width: 100%; /* 너비 100% */
+	box-sizing: border-box;
+}
+
+/* SR_att-label: "첨부파일" 라벨 */
+.SR_att-label {
+	display: block; /* 블록 요소로 설정 */
+	font-size: 1.1em; /* 글자 크기 */
+	font-weight: 600; /* 글자 두께 */
+	color: #333333; /* 글자색 */
+	margin-bottom: 0px; /* 아래쪽 여백 */
+	padding-bottom: 5px; /* 라벨 아래 패딩 */
+	padding-left: 5px;
+	border-bottom: 1px solid #eeeeee; /* 라벨 아래 구분선 */
+	
+}
+
+/* SR_att-file-list: 파일 목록 (ul) */
+.SR_att-file-list {
+	list-style: none; /* 목록 마커 제거 */
+	padding: 0; /* 기본 패딩 제거 */
+	padding-right: 16px;
+	margin: 0; /* 기본 마진 제거 */
+}
+
+.SR_single-content ul li {
+	position: relative;
+    margin-bottom: 0px;
+    padding: 7px 0; /* 상하 여백 */
+    padding-left: 10px;
+}
+
+/* SR_att-file-list li: 각 파일 항목 (li) */
+.SR_att-file-list  li {
+	display: flex; /* 내부 요소를 가로로 정렬 */
+	justify-content: space-between; /* 파일명과 다운로드 아이콘을 양 끝으로 정렬 */
+	align-items: center; /* 세로 중앙 정렬 */
+	padding: 7px 0; /* 상하 여백 */
+	border-bottom: 1px solid #f0f0f0; /* 하단 구분선 */
+	margin: 0px 0px 0px;
+	font-size: 1.0em;
+	color: #4a4a4a;
+}
+
+/* 마지막 파일 항목에는 하단 구분선 제거 */
+.SR_att-file-list li:last-child {
+	border-bottom: none;
+	margin-bottom: 0px;
+}
+
+/* 파일명과 파일 크기를 감싸는 div */
+.SR_file-info {
+	flex-grow: 1; /* 남은 공간을 채우도록 확장 */
+	display: flex;
+	flex-direction: row; /* 세로로 정렬 */
+	margin-bottom: 0px;
+}
+
+/* 파일명 링크 (a) */
+.SR_file-info a {
+	color: #4a4a4a; /* 글자색 */
+	text-decoration: none; /* 밑줄 제거 */
+	font-weight: 500; /* 글자 두께 */
+	font-size: 0.95em; /* 글자 크기 */
+	transition: color 0.2s ease; /* 호버 시 색상 변경 애니메이션 */
+	word-break: break-all; /* 긴 파일명 줄바꿈 */
+	margin-bottom: 0px;
+}
+
+.SR_file-info a:hover {
+	color: #007bff; /* 호버 시 색상 변경 */
+}
+
+/* 파일 크기 (span) */
+.SR_file-info .SR_file-size {
+	display: block; /* 새 줄로 표시 */
+	color: #888888; /* 글자색 */
+	font-size: 0.8em; /* 글자 크기 */
+	margin-top: 4px; /* 파일명과의 간격 */
+	margin-left: 7px;
+}
+
+/* 다운로드 아이콘 링크 (a) */
+.SR_download-link {
+	flex-shrink: 0; /* 공간 축소 방지 */
+	margin-left: 5px; 
+	margin-right: 5px; /* 파일 정보와의 간격 */
+	width: 20px; /* 아이콘 영역 너비 */
+	height: 20px; /* 아이콘 영역 높이 */
+	display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+/* 다운로드 아이콘 SVG 스타일 */
+.SR_download-link svg {
+	width: 10px; /* SVG 아이콘 크기 */
+	height: 10px;
+	color: #4a4a4a; /* SVG 아이콘 색상 */
+	stroke-width: 1.5; /* SVG 선 두께 */
+}
+
+/* SR_content-image: 내용 이미지 스타일 */
+.SR_content-image {
+	display: block; /* 블록 요소로 설정하여 margin: auto 적용 가능 */
+	width: 700px; /* 이미지 고정 너비 */
+	height: auto; /* 비율 유지를 위해 높이는 자동 */
+	max-width: 100%; /* 부모 요소 너비를 넘지 않도록 (반응형) */
+	margin: 20px auto; /* 상하 20px 여백, 좌우 auto로 중앙 정렬 */
+}
+
+/* 유사랑 비밀글 추가 */
+.SR_secret-setting {
+	display: flex;
+	align-items: center;
+	margin-top: 10px; /* 제목 입력 필드와의 간격 */
+	padding-left: 5px; /* 왼쪽 여백 */
+	justify-content: flex-end;
+}
+
+.SR_secret-setting input[type="checkbox"] {
+	margin-right: 8px; /* 체크박스와 텍스트 사이 간격 */
+	width: 16px; /* 체크박스 크기 */
+	height: 16px; /* 체크박스 크기 */
+	cursor: pointer;
+}
+
+.SR_secret-setting label {
+	font-size: 0.85em; /* 텍스트 크기 작게 */
+	color: #555; /* 텍스트 색상 */
+	cursor: pointer;
+	user-select: none; /* 텍스트 선택 방지 */
+}
+
+/* 삭제 버튼 */
+/* SR_remove 버튼 스타일 */
+.SR_remove {
+    /* 배경 */
+    background-color: #f8f8f8; /* 아주 연한 회색 (거의 흰색에 가까움) */
+    color: #888888;          /* 회색 글씨 */
+    border: 1px solid #e0e0e0; /* 아주 연한 회색 테두리로 살짝 구분감 주기 */
+    border-radius: 4px;      /* 모서리 둥글게 */
+    cursor: pointer;         /* 마우스 오버 시 포인터 변경 */
+    font-size: 14px;         /* 글씨 크기 */
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s; /* 부드러운 호버 효과 */
+    display: inline-flex;    /* flexbox를 사용하여 내부 요소를 가운데 정렬 (예: 아이콘과 텍스트) */
+    align-items: center;
+    justify-content: center;
+    gap: 4px; /* 아이콘과 텍스트 사이 간격 */
+}
+
+/* 마우스 오버 시 (hover) 효과 */
+.SR_remove:hover {
+    background-color: #e9e9e9; /* 약간 더 진한 회색 */
+    border-color: #d0d0d0;   /* 테두리도 약간 더 진하게 */
+    color: #666666;          /* 글씨도 약간 더 진하게 */
+}
+
+/* 버튼 클릭 시 (active) 효과 */
+.SR_remove:active {
+    background-color: #dcdcdc; /* 클릭 시 좀 더 확실한 회색 */
+    border-color: #c0c0c0;
+}
+
+/* 포커스 시 (키보드 내비게이션 등) 아웃라인 제거 (선택 사항) */
+.SR_remove:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(136, 136, 136, 0.2); /* 미묘한 포커스 효과 */
+}
+
+/* 버튼이 비활성화되었을 때의 스타일 (선택 사항) */
+.SR_remove:disabled {
+    background-color: #f0f0f0;
+    color: #b0b0b0;
+    border-color: #e0e0e0;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.SR_total_blue_btn {
+background-color: #264796;
+color: white;
+padding: 10px 20px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-size: 16px;
+}
+
+.SR_total_blue_btn:hover {
+background-color: #2563eb;
+}
+
+.SR_total_sky_btn {
+background-color: #e0e7ff;
+color: #264796;
+padding: 10px 20px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-size: 16px;
+}
+
+.SR_total_sky_btn:hover {
+background-color: #c7d2fe;
+}
+
+/* 유사랑 CSS 추가 영역 끝*/   
       
 
 /*# sourceMappingURL=main.css.map */

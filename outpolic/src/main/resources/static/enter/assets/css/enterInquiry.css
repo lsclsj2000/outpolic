@@ -1,0 +1,453 @@
+.shipping_calculator .custom_select .select2-container--default .select2-selection--single {
+    border-radius: 10px;
+    height: 45px;
+    line-height: 45px; /* 컨테이너 자체의 line-height를 설정하여 전체 높이에 맞춤 */
+}
+
+/* 내부 텍스트(.select2-selection__rendered)의 line-height를 부모 높이에 맞춰 수직 중앙 정렬되도록 조정 */
+.shipping_calculator .custom_select .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 45px; /* 기존 line-height들을 오버라이드하여 부모의 height에 맞춤 */
+    font-size: 13px; /* 기존 폰트 사이즈 유지 */
+    padding-left: 8px; /* 기존 padding-left 유지 또는 조정 */
+    padding-right: 20px; /* 기존 padding-right 유지 또는 조정 */
+    color: #7E7E7E; /* 기존 색상 유지 (SCSS 변수 $color-heading 대신 직접 값 사용) */
+    font-family: "Quicksand", sans-serif; /* 기존 폰트 패밀리 유지 */
+}
+
+/* 드롭다운 화살표(.select2-selection__arrow)의 높이와 line-height를 부모 높이에 맞춰 수직 중앙 정렬되도록 조정 */
+.shipping_calculator .custom_select .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 45px; /* 부모 높이에 맞춰 설정 */
+    line-height: 45px; /* 화살표를 수직 중앙에 정렬 */
+}
+
+/* 기타 문의 파일 첨부 UI 관련 스타일 (기존 HTML에 있는 클래스 기반으로 추가) */
+.SR_file-upload-container {
+    margin-top: 15px; /* 필요에 따라 마진 조정 */
+    border: 1px solid #e0e0e0; /* 테두리 추가 */
+    border-radius: 8px; /* 둥근 모서리 */
+    padding: 15px; /* 내부 여백 */
+    background-color: #f9f9f9; /* 배경색 */
+}
+
+.SR_checkbox-container {
+    display: flex;
+    align-items: center;
+}
+
+.SR_checkbox-container input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px; /* 체크박스 크기 조정 */
+    height: 16px; /* 체크박스 크기 조정 */
+}
+
+.SR_checkbox-container label {
+    font-size: 15px;
+    color: #7E7E7E;
+    cursor: pointer;
+}
+
+.SR_file-input-area {
+    display: none; /* 기본적으로 숨김 */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.SR_file-input-area.SR_active {
+    display: block; /* 활성화 시 표시 */
+    opacity: 1;
+}
+
+.SR_file-drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    color: #777;
+    cursor: pointer;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.SR_file-drop-zone.SR_hover {
+    border-color: #007bff; /* 호버 시 색상 변경 */
+}
+
+.SR_file-drop-zone p {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.SR_custom-file-button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.SR_custom-file-button:hover {
+    background-color: #0056b3;
+}
+
+.SR_selected-files {
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.SR_selected-file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+    color: #555;
+}
+
+.SR_selected-file-item:last-child {
+    border-bottom: none;
+}
+
+.SR_file-info {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.SR_file-preview-img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.SR_file-placeholder {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    margin-right: 10px;
+    color: #6c757d;
+}
+
+.SR_remove-file {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 5px;
+    transition: color 0.2s ease-in-out;
+}
+
+.SR_remove-file:hover {
+    color: #c82333;
+}
+
+/* 기타 문의 입력 필드 스타일 */
+#etcExpln {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px; /* select2와 일관된 border-radius 적용 */
+    font-size: 14px;
+    color: #253D4E;
+    height: 45px; /* select2와 일관된 height 적용 */
+    line-height: 20px; /* 텍스트가 여러 줄일 수 있으므로 적절한 line-height */
+    box-sizing: border-box; /* padding이 width에 포함되도록 */
+}
+
+#etcExpln:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+#etcExpln:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* 제목 입력 필드 */
+#inquiryTitle {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #253D4E;
+    height: 45px;
+    line-height: 20px;
+    box-sizing: border-box;
+}
+
+#inquiryTitle:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* 문의 내용 필드 (textarea) */
+#inquiryCn {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #253D4E;
+    box-sizing: border-box;
+    resize: vertical; /* 세로 크기 조절 가능 */
+    min-height: 120px; /* 최소 높이 */
+}
+
+#inquiryCn:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* 비밀글 설정 체크박스 및 레이블 */
+.SR_secret-setting {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.SR_secret-setting input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0; /* 체크박스가 줄어들지 않도록 */
+}
+
+.SR_secret-setting label {
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+    margin-bottom: 0; /* Bootstrap 기본 마진 제거 */
+}
+
+/* 버튼 스타일 */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* 폼 그룹 간 간격 */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* .SR_content-input-box와 .SR_file-upload-container의 너비 조정을 위한 부모 컨테이너 */
+form#addInquiryForm {
+    width: 100%; /* 폼이 부모의 전체 너비를 차지하도록 */
+    margin: 0 auto; /* 중앙 정렬 */
+    padding: 0 15px; /* 좌우 패딩 */
+    box-sizing: border-box;
+}
+
+/* 폼 내부의 input-box 스타일 */
+.SR_content-input-box {
+    background-color: #fff;
+    padding: 20px 20px 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+/* 제목 h3에 대한 스타일 */
+h2.mb-30 {
+    font-size: 28px;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Bootstrap 그리드 시스템 오버라이드 (필요시) */
+.row.shipping_calculator {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+.row.shipping_calculator > .form-group {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* select2 드롭다운이 열렸을 때의 스타일 (선택사항) */
+.select2-container--open .select2-dropdown {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: #007bff;
+    color: white;
+}
+
+.select2-container--default .select2-results__option--selected {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+/* 파일 첨부 영역의 mt-15 클래스에 대한 TailwindCSS 대체 또는 직접 정의 */
+.mt-15 {
+    margin-top: 15px;
+}
+
+/* General body and container styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #ffffff; /* Explicitly white background */
+    color: #333;
+}
+
+.SR_container-custom {
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Header/Footer sections - assuming these are handled by the layout, but keeping the styles for reference if needed */
+.SR_header-section, .SR_footer-section {
+    background-color: #e0e7ff; /* Light blue from the first image's header */
+    padding: 20px 0;
+    text-align: center;
+}
+.SR_header-section {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    margin-bottom: 20px;
+}
+.SR_footer-section {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    margin-top: 20px;
+}
+
+/* Label styles */
+.SR_form-label {
+    font-weight: 600; /* Requested thickness */
+    font-size: 1rem; /* Requested size */
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Input/Textarea/Select styles for consistency */
+/* These should override or complement Bootstrap's form-control */
+.form-control,
+.form-select.select-active {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0; /* Consistent border from userInquiry.css */
+    border-radius: 10px; /* Consistent border-radius from userInquiry.css */
+    font-size: 1rem; /* Consistent font size */
+    color: #253D4E; /* Consistent text color from userInquiry.css */
+    height: 45px; /* Consistent height */
+    line-height: 1.5; /* Default line height */
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.SR_form-control-textarea { /* Specific for textarea */
+    min-height: 150px;
+    resize: vertical;
+    height: auto;
+}
+
+/* Focus styles */
+.form-control:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #264796; /* Main Blue for focus */
+    box-shadow: 0 0 0 0.25rem rgba(38, 71, 150, 0.25); /* Main Blue with opacity for shadow */
+}
+
+/* Disabled input */
+.SR_disabled-input {
+    background-color: #f0f0f0;
+    color: #777;
+    cursor: not-allowed;
+}
+
+/* Clickable input for modal trigger */
+.SR_clickable-input {
+    cursor: pointer;
+}
+
+/* Button styles */
+.SR_btn-primary {
+    background-color: #264796; /* Main Blue */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+    border: none;
+}
+.SR_btn-primary:hover {
+    background-color: #4BAEA0; /* Hover Color */
+}
+.SR_btn-secondary {
+    background-color: #e0e7ff; /* Light blue for secondary button */
+    color: #264796; /* Main blue for text */
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+    border: none;
+}
+.SR_btn-secondary:hover {
+    background-color: #c7d2fe; /* Lighter hover for secondary */
+}
+
+/* Spacing adjustments */
+.form-group {
+    margin-bottom: 15px;
+}
+h2.mt-30 {
+    font-size: 28px;
+    color: #333;
+    font-weight: 600;
+    text-align: center;
+}
+/* For flex container gaps (like d-flex justify-content-end gap-3) */
+.d-flex.justify-content-end.gap-3 > *:not(:last-child) {
+    margin-right: 1rem; /* Equivalent to Bootstrap's gap-3 */
+}
+.modal-footer .SR_btn-secondary {
+    margin-right: 10px; /* Spacing between modal buttons */
+}
+
+/* CKEditor specific styling to match form-control */
+.ck-editor__editable[role="textbox"] {
+    min-height: 300px; /* User's original CKEditor height */
+    border: 1px solid #e0e0e0; /* Match form-control border */
+    border-radius: 10px; /* Match form-control border-radius */
+    padding: 12px 15px; /* Match form-control padding */
+    font-size: 1rem; /* Match form-control font-size */
+    color: #253D4E; /* Match form-control color */
+}
+.ck-editor__editable[role="textbox"]:focus {
+    border-color: #264796; /* Match form-control focus border */
+    box-shadow: 0 0 0 0.25rem rgba(38, 71, 150, 0.25); /* Match form-control focus shadow */
+}

@@ -20,14 +20,14 @@
 	<header th:replace="~{enter/fragments/enterHeader :: enterHeaderFragment}"></header>
 	<!-- header end -->
 	
-	<div th:replace="~{enter/fragments/enterNavi :: enterNaviFragment}"></div>
 	<main class="main pages">
-		<div class="page-content pt-100 pb-150">
-            <div class="container">
+    	<div class="container">
+			<div th:replace="~{enter/fragments/enterNavi :: enterNaviFragment}"></div>
+			<div class="page-content pt-100 pb-150">
 				<div class="col-lg-9 m-auto">
 					<th:block layout:fragment="title"></th:block>
-				   	<div class="row">
-						<div th:replace="~{enter/fragments/enterInquirySidebar :: enterInquirySidebarFragment}"></div>
+				   	<div class="row justify-content-around">
+						<div th:replace="~{enter/fragments/enterInquiryDetailSidebar :: enterInquiryDetailSidebarFragment}"></div>
 						<div class="col-md-9">
 							<!-- 새로 추가할 콘텐츠 박스 -->
 				        	<th:block layout:fragment="contents"></th:block>

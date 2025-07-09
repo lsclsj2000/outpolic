@@ -19,13 +19,5 @@ public class EnterChatController {
 		return "enter/chat/enterChatMessageView";
 	}
 	
-	@GetMapping("/enterChatRoom")
-	public String enterChatRoomView() {
-		// 채팅방 목록 페이지
-		
-		return "enter/chat/enterChatRoomView";
-	}
-	
-	
 	
 }
