@@ -13103,7 +13103,20 @@ background-color: #c7d2fe;
 	pointer-events: none;
 	transition: all 0.3s;
 }
+.upgrade-btn {
+    font-size: 13px;
+    padding: 6px 12px;
+    margin-left: 20px;
+    border-radius: 5px;
+    white-space: nowrap;
+    transition: 0.2s ease-in-out;
+}
 
+.upgrade-btn:hover {
+    background-color: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+}
 /* 이성재 CSS 추가 영역 끝*/
 
 /* 김한별 CSS 추가 영역 */
