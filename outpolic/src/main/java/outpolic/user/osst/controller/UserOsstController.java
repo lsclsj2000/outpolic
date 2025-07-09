@@ -1,4 +1,4 @@
-package outpolic.user.outsourcingStatus.controller;
+package outpolic.user.osst.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/user")
 public class UserOsstController {
 	
-	@GetMapping("/userOutsourcingStatusList")
+	@GetMapping("/userOsstList")
 	public String userOutsourcingStatusList() {
 		
 		return "user/osst/userOutsourcingStatusList";
 	}
 
-	@GetMapping("/userOutsourcingStatus")
+	@GetMapping("/userOsst")
 	public String userOutsourcingStatus() {
 		
 		return "user/osst/userOutsourcingStatus";
