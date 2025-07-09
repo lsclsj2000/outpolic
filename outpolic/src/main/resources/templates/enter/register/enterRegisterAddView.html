@@ -5,7 +5,7 @@
 
 	<head>
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
-		<title>회원가입</title>
+		<title>기업회원 전환</title>
 	</head>
 	<th:block layout:fragment="contents">
 		        <!-- 수정 신세영 -->
@@ -16,37 +16,58 @@
 		                <div class="login_wrap widget-taber-content background-white mx-auto">
 		                    <div class="padding_eight_all bg-white">
 		                        <div class="heading_s1 text-center">
-		                            <h1 class="mb-5 reg-ttl-ssy">기업 인증</h1>
-		                            <p class="mb-30">
-		                                기업회원이 아니신가요? <a class="a-lgn-ssy" th:href="@{/user/registerInfo}">일반회원가입</a>
-		                            </p>
+		                            <h1 class="mb-5 reg-ttl-ssy">기업 회원 정보 입력</h1>
 		                        </div>
 		                        <div>
-									<form id="corpJoinForm" method="post" action="/corp/join">
-									 
-									  
-									  <div class="mb-3">
-									    <label>사업자등록번호</label>
-									    <input type="text" class="form-control" id="bizno" name="bizno" required>
-									    <button type="button" class="btn btn-secondary mt-2" onclick="verifyBiz()">기업 인증</button>
-									  </div>
-									
-									  <div id="corpInfoSection">
+									<form id="corpJoinForm" method="post" action="/enter/register">
+										<input type="hidden" name="memberCode" th:value="${session.SCD}" />
+									  	<div class="mb-3">
+										    <label>사업자등록번호</label>
+										    <input type="text" class="form-control" id=corpBrno name="corpBrno" required>
+										    <button type="button" class="verifiedbtn btn-secondary mt-2" onclick="verifyBiz()">기업 인증</button>
+									  	</div>
 									    <div class="mb-3">
 									      <label>회사명</label>
-									      <input type="text" class="form-control" name="corpName" id="corpName" readonly>
+									      <input type="text" class="form-control" name="corpName" id="corpName" readonly required>
 									    </div>
 									    <div class="mb-3">
 									      <label>대표자명</label>
-									      <input type="text" class="form-control" name="ceoName" id="ceoName" readonly>
+									      <input type="text" class="form-control" name="corpRprsv" id="corpRprsv" readonly required>
 									    </div>
 									    <div class="mb-3">
-									      <label>주소</label>
-									      <input type="text" class="form-control" name="corpAddr" id="corpAddr" readonly>
+									      <label>대표 번호</label>
+									      <input type="text" class="form-control" name="corpTelNo" id="corpTelNo" readonly required>
 									    </div>
-									  </div>
+									    <div class="mb-3">
+									      <label>홈페이지 주소 (선택)</label>
+									      <input type="text" class="form-control" name="corpHomepageUrl" id="corpHomepageUrl" readonly>
+									    </div>
+									     <div class="mb-3">
+									      <label>설립일</label>
+									      <input type="date" class="form-control" name="corpFoundationYmdt" id="corpFoundationYmdt" readonly required>
+									    </div>
+										<div class="mb-3">
+											<label>기업규모(인원수)</label>
+											<input type="text" class="form-control" name="corpScale" id="corpScale" readonly required>
+										</div>
+									    <h4 style="color: #6c757d;" class="mb-10">기업 주소</h4>
 										<div class="form-group">
-											<button type="button" class="text-white" onclick="location.href='/enterRegister'">다음 단계로 넘어가기</button>
+										    <label for="sample4_postcode">우편번호</label>
+									        <input type="text" id="sample4_postcode" name="corpZip" class="form-control"  readonly required/>
+									        <button type="button" class="btn btn-outline-secondary" id="postcodeBtn">우편번호 찾기</button>
+										</div>
+										<div class="form-group">
+										    <label for="sample4_roadAddress">도로명 주소</label>
+										    <input type="text" id="sample4_roadAddress" name="corpAddress" class="form-control" readonly required />
+										</div>
+										<div class="form-group">
+										    <label for="sample4_detailAddress">상세 주소</label>
+										    <input type="text" id="sample4_detailAddress" name="corpDAddress" class="form-control"  readonly/>
+										</div>
+										<span id="guide" style="color:#999; display:none"></span>
+									   
+										<div class="form-group">
+											<button type="submit" class="btnSave text-white" >기업회원으로 전환하기</button>
 										</div>
 							    	</form>
 								</div>
@@ -56,7 +77,60 @@
 		        </div>
 		    </div>
 		</div>
-	</th:block>        
+	</th:block>      
+	<th:block layout:fragment="jsScript">
+	<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script src="/enter/assets/js/enterRegister.js"></script>
+	<script>
+	/*function verifyBiz() {
+	    const corpBrno = document.getElementById("corpBrno").value.trim();
+	
+	    if (!corpBrno || corpBrno.length !== 10) {
+	        alert("- 를 뺀 10자리의 유효한 사업자등록번호를 입력해주세요.");
+	        return;
+	    }
+	
+	    const requestData = {
+	        b_no: [corpBrno]
+	    };
+	
+	    $.ajax({
+	        url: "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=Ss%2FcvhJpKRk4dplp4cgMb0nTueeuNsPgQjcHEdPf08R7qidouA2AqUvvMatuMmUPrj5dPlVXjUH%2BkaEyGR2k8A%3D%3D",
+	        type: "POST",
+	        data: JSON.stringify(requestData),
+	        dataType: "JSON",
+	        contentType: "application/json",
+	        accept: "application/json",
+	        success: function(result) {
+	            console.log(result); 
+				if (!result || !result.data || result.data.length === 0) {
+	                alert("조회 결과가 없습니다. 사업자번호를 다시 확인해주세요.");
+	                return;
+	            }
+	            const data = result.data[0];
+	            if (data.b_stt === "계속사업자") {
+	            document.getElementById("corpName").readOnly = false;
+				document.getElementById("corpRprsv").readOnly = false;
+				document.getElementById("corpTelNo").readOnly = false;
+				document.getElementById("corpHomepageUrl").readOnly = false;
+				document.getElementById("corpFoundationYmdt").readOnly = false;
+				document.getElementById("corpScale").readOnly = false;
+				document.getElementById("sample4_postcode").readOnly = false;
+				document.getElementById("sample4_roadAddress").readOnly = false;
+				document.getElementById("sample4_detailAddress").readOnly = false;
+	                alert("유효한 사업자등록번호입니다. 나머지 폼을 작성해주세요");
+	            } else {
+	                alert("유효하지 않은 사업자등록번호입니다.");
+	            }
+	        },
+	        error: function(error) {
+	            console.log(error.responseText);
+	            alert("기업 인증 중 오류가 발생했습니다.");
+	        }
+	    });
+	}*/
+</script>
+</th:block>
 	<!-- 추가할 js file -->
 	<!-- class="col-lg-6 pr-30 d-none d-lg-block" -->
 </html>

@@ -3,8 +3,8 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
-<mapper namespace="outpolic.enter.mypage.mapper.EnterpriseMapper">
-	<resultMap type="CorpInfo" id="EnterpriseResultMap">
+<mapper namespace="outpolic.enter.register.mapper.EnterRegisterMapper">
+	<resultMap type="CorpInfo" id="EnterRegisterResultMap">
 		<id column="ent_cd" property="corpCode"></id>
 		<result column="ent_brno" property="corpBrno"/>
 		<result column="mbr_cd" property="memberCode"/>
@@ -21,12 +21,21 @@
 		<result column="ent_mdfcn_ymdt" property="corpModificationYmdt"/>
 		<result column="ent_scr" property="corpScr"/>
 		<result column="ent_join_ymdt" property="corpJoinYmdt"/>
+		<result column="stc_cd" property="statuseCode"/>
 		<result column="ent_prtf_cnt" property="corpPortfolioCount"/>
 		<result column="ent_os_cnt" property="corpOutsourcingCount"/>
 	</resultMap>
-	<select id="getEnterpriseInfoByCode" parameterType="String" resultMap="EnterpriseResultMap"> 
-		SELECT 
-			ent_cd, 
+
+ 	<select id="getNextEnterCode" resultType="String">
+ 		/* 기업 회원 기본키(ent_cd) 만드는 쿼리문. */
+        SELECT CONCAT('EI_C', LPAD(SUBSTRING(MAX(ent_cd), 5) + 1, 5, '0')) AS nextEntCode
+        FROM enterprise
+        WHERE ent_cd LIKE 'EI_C%';
+ 	</select>
+ 	
+ 	<insert id="enterRegister" parameterType="outpolic.enter.mypage.dto.CorpInfo">
+ 		insert into enterprise
+ 			(ent_cd, 
 			ent_brno, 
 			mbr_cd, 
 			ent_nm, 
@@ -39,29 +48,32 @@
 			ent_scl, 
 			ent_expln, 
 			ent_url, 
-			ent_mdfcn_ymdt
-		FROM enterprise
-		WHERE mbr_cd=#{memberCode};
-	</select>
-	<update id="updateEnterpriseInfo" parameterType="CorpInfo">
- 		UPDATE enterprise
- 		set
-			ent_nm = #{corpName},
-			ent_rprsv = #{corpRprsv},
-			ent_telno = #{corpTelNo}, 
-			ent_fndn_ymdt = #{corpFoundationYmdt},
-			ent_addr = #{corpAddress},
-			ent_daddr = #{corpDAddress},
-			ent_zip = #{corpZip},
-			ent_scl = #{corpScale},
-			ent_expln = #{corpExplain},
-			ent_url = #{corpHomepageUrl},
-			ent_mdfcn_ymdt = now()
-		where
-			mbr_cd= #{memberCode};
+			ent_join_ymdt,
+			ent_mdfcn_ymdt,
+			stc_cd)
+		values
+			(#{corpCode},
+			#{corpBrno},
+			#{memberCode},
+			#{corpName},
+			#{corpRprsv},
+			#{corpTelNo},
+			#{corpFoundationYmdt},
+			#{corpAddress},
+			#{corpDAddress},
+			#{corpZip},
+			#{corpScale},
+			#{corpExplain},
+			#{corpHomepageUrl},
+			now(),
+			now(),
+			'SD_ACTIVE');	
+ 	</insert>
+ 	<update id="userEnterCdUpdate" parameterType="CorpInfo">
+ 		update member
+ 		set grd_cd = 'ENTER'
+ 		where mbr_cd =#{memberCode};
  	</update>
-
- 	
 </mapper>
 
 

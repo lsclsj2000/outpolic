@@ -12,47 +12,47 @@
 	<div class="row justify-content-center">
 	<th:block layout:fragment="contents">
 		<div class="row col-6">
-			<form class="register edit" th:action="@{/enterpriseEdit}" method="post" th:object="${enterpriseInfo}">
+			<form class="register edit" th:action="@{/enterpriseEdit}" method="post" th:object="${corpInfo}">
 			<h3 class="mb-30">기업 정보 수정</h3>
 				<div class="form-group">
-				    <label for="enterName">기업명</label>
-				    <input type="text" id="enterName" name="enterName"  th:value = "*{enterName}" required/>
+				    <label for="corpName">기업명</label>
+				    <input type="text" id="corpName" name="corpName"  th:value = "*{corpName}" required/>
 				</div>
 				<div class="form-group">
-				    <label for="enterRprsv">대표자명</label>
-				    <input type="text" id="enterRprsv" name="enterRprsv" th:value = "*{enterRprsv}" required/>
+				    <label for="corpRprsv">대표자명</label>
+				    <input type="text" id="corpRprsv" name="corpRprsv" th:value = "*{corpRprsv}" required/>
 				</div>
 				<div class="form-group">
-				    <label for="enterTelNo">대표번호</label>
-				    <input type="text" id="enterTelNo" name="enterTelNo" th:value = "*{enterTelNo}" required/>
+				    <label for="corpTelNo">대표번호</label>
+				    <input type="text" id="corpTelNo" name="corpTelNo" th:value = "*{corpTelNo}" required/>
 				</div>
 				<div class="form-group">
-				    <label for="enterFoundationYmdt">설립일</label>
-				    <input type="date" id="enterFoundationYmdt" name="enterFoundationYmdt" class="form-control" th:value ="*{enterFoundationYmdt}"  required/>
+				    <label for="corpFoundationYmdt">설립일</label>
+				    <input type="date" id="corpFoundationYmdt" name="corpFoundationYmdt" class="form-control" th:value ="*{corpFoundationYmdt}"  required/>
 				</div>
 				<h4 style="color: #6c757d;" class="mb-10">기업 주소</h4>
 				<div class="form-group">
 				    <label for="sample4_postcode">우편번호</label>
-			        <input type="text" id="sample4_postcode" name="enterZip" class="form-control" th:value ="*{enterZip}" readonly />
+			        <input type="text" id="sample4_postcode" name="corpZip" class="form-control" th:value ="*{corpZip}" readonly />
 			        <button type="button" class="btn btn-outline-secondary" id="postcodeBtn">우편번호 찾기</button>
 				</div>
 				<div class="form-group">
 				    <label for="sample4_roadAddress">도로명 주소</label>
-				    <input type="text" id="sample4_roadAddress" name="enterAddress" class="form-control" th:value = "*{enterAddress}" readonly />
+				    <input type="text" id="sample4_roadAddress" name="corpAddress" class="form-control" th:value = "*{corpAddress}" readonly />
 				</div>
 				<div class="form-group">
 				    <label for="sample4_detailAddress">상세 주소</label>
-				    <input type="text" id="sample4_detailAddress" name="enterDAddress" class="form-control" th:value ="*{enterDAddress}"  />
+				    <input type="text" id="sample4_detailAddress" name="corpDAddress" class="form-control" th:value ="*{corpDAddress}"  />
 				</div>
 				<span id="guide" style="color:#999; display:none"></span>
 				
 				<div class="form-group">
-				    <label for="enterScale">기업 규모(인원수)</label>
-				    <input type="text" id="enterScale" name="enterScale" th:value = "*{enterScale}"/>
+				    <label for="corpScale">기업 규모(인원수)</label>
+				    <input type="text" id="corpScale" name="corpScale" th:value = "*{corpScale}"/>
 				</div>
 				<div class="form-group">
-				    <label for="enterExplain">기업 설명</label>
-				    <textarea id="enterExplain" name="enterExplain" placeholder="기업에 대해 자유롭게 소개해주세요.">[[*{enterExplain}]]</textarea>
+				    <label for="corpExplain">기업 설명</label>
+				    <textarea id="corpExplain" name="corpExplain" placeholder="기업에 대해 자유롭게 소개해주세요.">[[*{corpExplain}]]</textarea>
 				</div>
 			 	<div class="form-group btnSave">
 	                <button type="button" id="btnSave" class="btn btn-primary w-70 fw-bold">정보 수정</button>
@@ -63,7 +63,6 @@
 	</div>
 		<th:block layout:fragment="jsScript">
 			<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-		
 		    <script src="/enter/assets/js/enterServiceAjax.js"></script>
 			<script src="/enter/assets/js/enterService.js"></script>
 			<script src="/common/assets/js/validate.js"></script>

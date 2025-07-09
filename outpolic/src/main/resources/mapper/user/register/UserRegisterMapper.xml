@@ -23,7 +23,7 @@
 	</resultMap>
     <select id="getNextMemberCode" resultType="String">
     	/* 회원 기본키(mbr_cd) 만드는 쿼리문. */
-        SELECT CONCAT('MB_C', LPAD(SUBSTRING(MAX(mbr_cd), 6) + 1, 7, '0')) AS nextCode
+        SELECT CONCAT('MB_C', LPAD(SUBSTRING(MAX(mbr_cd), 5) + 1, 7, '0')) AS nextCode
         FROM member
         WHERE mbr_cd LIKE 'MB_C%';
     </select>
