@@ -18,19 +18,23 @@ public class AdminDeclarationController {
 	
 	private final AdminDeclarationService adminDeclarationService;
 	
-	@GetMapping("/adminDeclarationManage")
-	public String adminDeclarationManageView() {
-		// 신고 프로세스 등록 페이지
+	@GetMapping("/adminDeclarationResources")
+	public String adminDeclarationManageView(Model model) {
+		// 신고 자원 등록 페이지
+		List<AdminDeclaration> adminDeclarationTypeList = adminDeclarationService.getAdminDeclarationTypeList();
 		
-		return "admin/declaration/adminDeclarationManageView";
+		model.addAttribute("title", "신고 자원 등록");
+		model.addAttribute("adminDeclarationResourcesList", adminDeclarationTypeList);
+		
+		return "admin/declaration/adminDeclarationResourcesView";
 	}
 	
-	@GetMapping("/adminDeclarationProcess")
-	public String adminDeclarationProcessView() {
-		// 신고 내역 조회 페이지
-		
-		return "admin/declaration/adminDeclarationProcessView";
-	}
+	/*
+	 * @GetMapping("/adminDeclarationProcess") public String
+	 * adminDeclarationProcessView() { // 신고 내역 조회 페이지
+	 * 
+	 * return "admin/declaration/adminDeclarationProcessView"; }
+	 */
 	
 	@GetMapping("/adminDeclaration")
 	public String adminDeclarationView(Model model) {
