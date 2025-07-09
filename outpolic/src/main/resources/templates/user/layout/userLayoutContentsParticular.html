@@ -21,20 +21,20 @@
 		<!-- header start -->
 		<header th:replace="~{user/fragments/userHeader :: userHeaderFragment}"></header>
 		<!-- header end -->
-		
-        <div class="container mb-30" style="width:1300px;">
-            <div class="row flex-row-reverse">
-            	<div class="col-lg-4-5 pt-30">
-            		
-					<th:block layout:fragment="contents"></th:block>
-            	</div>
-            	<div th:replace="~{user/fragments/userSidebar :: userSidebarFragment}"></div>
-            </div>
-            <!--/* 삽입할 부분을 선언 */-->
-        </div>
+
+	    <!-- container의 너비를 좀 더 넓게 잡거나, fluid로 변경할 수 있습니다. -->
+	    <div class="container mb-30" style="width: 100%; max-width: 1300px; margin-top: 30px;">
+	        <div class="row">
+	            <!-- 이제 콘텐츠가 전체 너비를 차지하게 됩니다. -->
+	            <div class="col-12">
+	                <th:block layout:fragment="contents"></th:block>
+	            </div>
+	        </div>
+	    </div>
+
     </main>
     
-    <div th:replace="~{user/fragments/userChatRoom :: userChatRoomFragment}"></div>
+	<div th:replace="~{user/fragments/userChatRoom :: userChatRoomFragment}"></div>
     <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
 	
 	
@@ -60,8 +60,8 @@
     <script src="/user/assets/js/plugins/jquery.theia.sticky.js"></script>
     <script src="/user/assets/js/plugins/jquery.elevatezoom.js"></script>
     <!-- Template  JS -->
-    <script src="./assets/js/main.js?v=5.6"></script>
-    <script src="./assets/js/shop.js?v=5.6"></script>
+    <script th:src="@{/user/assets/js/main.js?v=5.6}"></script>
+    <script th:src="@{/user/assets/js/shop.js?v=5.6}"></script>
     
 </body>
 </html>
