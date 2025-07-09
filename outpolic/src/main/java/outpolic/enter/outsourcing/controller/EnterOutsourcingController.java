@@ -51,7 +51,7 @@ public class EnterOutsourcingController {
         
         // 세션에 임시 저장된 데이터가 있다면 불러와서 폼에 채울 수 있음 (단계별 복귀 시)
         OutsourcingFormDataDto formData = (OutsourcingFormDataDto) session.getAttribute("outsourcingFormData");
-        if (formData != null) {
+        if (formData == null) {
         	formData = new OutsourcingFormDataDto();
         }
         model.addAttribute("formData",formData);
@@ -157,6 +157,10 @@ public class EnterOutsourcingController {
     @GetMapping("/edit/{osCd}")
     public String showEditOutsourcingForm(@PathVariable String osCd, Model model) {
         EnterOutsourcing outsourcing = outsourcingService.getOutsourcingByOsCd(osCd); 
+        if(outsourcing == null) {
+        	return "redirect:/enter/outsourcing/list?error=notfound";
+        }
+        
         model.addAttribute("outsourcing", outsourcing);
         return "enter/outsourcing/editOutsourcing";
     }

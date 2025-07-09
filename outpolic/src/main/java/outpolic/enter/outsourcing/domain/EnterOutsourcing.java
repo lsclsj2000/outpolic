@@ -2,6 +2,7 @@ package outpolic.enter.outsourcing.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -56,7 +57,9 @@ public class EnterOutsourcing {
     private BigDecimal osAmt;
     
     // DB 조회 결과를 담기 위한 추가 필드
-    private List<CategorySearchDto> categories;
-    private List<String> tagNames;
-    private List<EnterPortfolio> relatedPortfolios;
+    private List<CategorySearchDto> categories = new ArrayList<>();
+    private List<String> tagNames = new ArrayList<>();
+    private List<EnterPortfolio> relatedPortfolios = new ArrayList<>();
+    
+    private String prtfThumbnailUrl;;
 }

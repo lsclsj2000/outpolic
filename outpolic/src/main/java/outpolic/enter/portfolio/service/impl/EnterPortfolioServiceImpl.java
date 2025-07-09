@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
@@ -40,7 +41,7 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
 
     @Override
     @Transactional
-    public void addPortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags) throws IOException {
+    public void addPortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags,MultipartFile portfolioImage) throws IOException {
         String latestPrtfCd = portfolioMapper.findLatestPrtfCd();
         int nextNum = (latestPrtfCd == null) ? 1 : Integer.parseInt(latestPrtfCd.substring(4)) + 1;
         String newPrtfCd = String.format("PO_C%05d", nextNum);
