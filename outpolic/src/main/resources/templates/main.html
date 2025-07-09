@@ -40,15 +40,14 @@
 							<div
 								class="slider-arrow slider-arrow-2 flex-right carausel-8-columns-arrow"
 								id="carausel-8-columns-arrows"></div>
-						</div>
-						<div class="carausel-8-columns-cover position-relative">
-							<div class="carausel-8-columns" id="carausel-8-columns"
-								th:if="${!mainCategories.isEmpty()}">
-								<div class="card-1" th:each="cat : ${mainCategories}">
-									<figure class="img-hover-scale overflow-hidden">
-										<a th:href="@{/user/products(category=${cat.categoryId})}">
-											<!-- th:switch를 사용하여 cat.categoryName 값에 따라 분기합니다. --> <th:block
-												th:switch="${cat.categoryName}">
+							</div>
+							<div class="carausel-8-columns-cover position-relative">
+								<div class="carausel-8-columns" id="carausel-8-columns"
+									 th:if="${!mainCategories.isEmpty()}">
+									<div class="card-1" th:each="cat : ${mainCategories}">
+										<figure class="img-hover-scale overflow-hidden">
+											<a th:href="@{/user/products(category=${cat.categoryId})}">
+											<th:block th:switch="${cat.categoryName}">
 												<!-- case 1: 카테고리 이름이 '디자인'일 경우 -->
 												<img th:case="'디자인'"
 													src="/user/assets/imgs/icon/graphic-designer.png"
@@ -87,7 +86,6 @@
 												<img th:case="'세무·법무·노무'"
 													src="/user/assets/imgs/icon/law-scale.png"
 													th:alt="${cat.categoryName}" />
-		
 											</th:block>
 										</a>
 									</figure>
