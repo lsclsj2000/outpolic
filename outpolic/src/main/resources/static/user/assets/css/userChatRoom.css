@@ -91,7 +91,7 @@ body {
 .SR_d-flex { display: flex !important; }
 .SR_align-items-center { align-items: center !important; }
 .SR_justify-content-center { justify-content: center !important; }
-.SR_min-vh-100 { min-height: 100vh !important; }
+.SR_min-vh-100 { min-height: 10vh !important; }
 .SR_p-3 { padding: 1rem !important; }
 .SR_rounded-top { border-top-left-radius: 0.5rem !important; border-top-right-radius: 0.5rem !important; }
 .SR_shadow-sm { box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important; }
