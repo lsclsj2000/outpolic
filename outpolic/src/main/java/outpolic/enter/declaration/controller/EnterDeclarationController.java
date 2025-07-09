@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class EnterDeclarationController {
 	
 	
-	@GetMapping("/enterDeclarationWriteNotice")
+	@GetMapping("/enterDeclarationWrite")
 	public String enterDeclarationWriteView() {
 		// 신고 작성 페이지
 		
