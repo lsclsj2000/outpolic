@@ -10,13 +10,13 @@ import outpolic.user.mypage.dto.UserInfoDTO;
 public interface EnterMypageService {
 	
 	// 특정 기업회원 조회하기
-	EnterInfo getEnterInfoById(String memberId);
+	EnterInfo getEnterInfoByCode(String memberCode);
 	
 	// 특정 기업 개인정보 수정하기
 	void editEnterInfo(EnterInfo enterInfo);
 	
 	// 특정 기업 개인정보 중복검사
-	boolean isEnterInfoDuple(String type,String memberId,String memberNickname,String memberEmail,String memberTelNo);
+	boolean isEnterInfoDuple(String type,String memberCode,String memberNickname,String memberEmail,String memberTelNo);
 
 	// 특정 기업정보 조회
 	EnterpriseInfo getEnterpriseInfoByCode(String memberCode);

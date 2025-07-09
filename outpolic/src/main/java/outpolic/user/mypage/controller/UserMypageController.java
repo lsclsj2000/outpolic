@@ -24,8 +24,8 @@ public class UserMypageController {
  	@GetMapping("/mypage")
  	public String myPage(HttpSession session, Model model) {
 
- 		String memberId = (String) session.getAttribute("SID");
- 	    UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
+ 		String memberCode = (String) session.getAttribute("SCD");
+ 	    UserInfoDTO userInfo = userMypageEditService.getUserInfoByCode(memberCode);
  	    model.addAttribute("userInfo", userInfo);
  		return "user/mypage/userMypageView";
  	}
@@ -40,8 +40,8 @@ public class UserMypageController {
 									            @RequestParam(required = false) String memberNickname,
 									            @RequestParam(required = false) String memberEmail,
 									            @RequestParam(required = false) String memberTelNo) {
-    	String memberId = (String) session.getAttribute("SID");
-        boolean duplicated = userMypageEditService.isUserInfoDuple(type, memberId, memberNickname, memberEmail, memberTelNo);
+    	String memberCode = (String) session.getAttribute("SCD");
+        boolean duplicated = userMypageEditService.isUserInfoDuple(type, memberCode, memberNickname, memberEmail, memberTelNo);
         return ResponseEntity.ok(duplicated);
     }
  	// userEditView 이동
@@ -49,7 +49,7 @@ public class UserMypageController {
  	public String usreProfileEditView(@RequestParam("password") String memberPw, HttpSession session, Model model) {
  		
  		String memberCode = (String) session.getAttribute("SCD");
- 	    UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberCode);
+ 	    UserInfoDTO userInfo = userMypageEditService.getUserInfoByCode(memberCode);
  		
  		if(memberPw.equals(userInfo.getMemberPw())) {
  		model.addAttribute("userInfo", userInfo);
@@ -77,7 +77,7 @@ public class UserMypageController {
   		String memberCode = (String) session.getAttribute("SCD");
 
  		 
- 		 return userMypageEditService.getUserInfoById(memberCode); 
+ 		 return userMypageEditService.getUserInfoByCode(memberCode); 
  	 }
  	 @PostMapping("/userEdit/update")
  	 @ResponseBody

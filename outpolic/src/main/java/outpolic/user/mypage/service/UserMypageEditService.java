@@ -11,10 +11,10 @@ public interface UserMypageEditService {
 	// 특정 회원 수정
 	void editUserInfo(UserInfoDTO user);
 	// 특정 회원 정보 조회
-	UserInfoDTO getUserInfoById(String memberId);
+	UserInfoDTO getUserInfoByCode(String memberCode);
 	// 회원목록 조회
 	List<UserInfoDTO> getMemberList();
 	
 	//회원 개인정보 중복검사
-	boolean isUserInfoDuple(String type, String memberId, String memberNickname, String memberEmail, String memberTelNo);
+	boolean isUserInfoDuple(String type, String memberCode, String memberNickname, String memberEmail, String memberTelNo);
 }

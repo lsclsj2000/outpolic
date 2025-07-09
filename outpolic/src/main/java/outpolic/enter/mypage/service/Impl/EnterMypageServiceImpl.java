@@ -20,9 +20,9 @@ public class EnterMypageServiceImpl implements EnterMypageService {
 	
 	// 개인정보 호출
 	@Override
-	public EnterInfo getEnterInfoById(String memberId) {
+	public EnterInfo getEnterInfoByCode(String memberCode) {
 
-		return enterMypageMapper.getEnterInfoById(memberId);
+		return enterMypageMapper.getEnterInfoByCode(memberCode);
 	}
 
 	//개인정보 수정
@@ -34,15 +34,15 @@ public class EnterMypageServiceImpl implements EnterMypageService {
 	}
 	// 중복 검사
 	@Override
-	public boolean isEnterInfoDuple(String type, String memberId, String memberNickname, String memberEmail,
+	public boolean isEnterInfoDuple(String type, String memberCode, String memberNickname, String memberEmail,
 			String memberTelNo) {	
 		switch (type) { 
         case "memberNickname":
-            return enterMypageMapper.isNickNameDuplicated(memberNickname, memberId);
+            return enterMypageMapper.isNickNameDuplicated(memberNickname, memberCode);
         case "memberEmail":
-            return enterMypageMapper.isEmailDuplicated(memberEmail, memberId);
+            return enterMypageMapper.isEmailDuplicated(memberEmail, memberCode);
         case "memberTelNo":
-            return enterMypageMapper.isTelDuplicated(memberTelNo, memberId);
+            return enterMypageMapper.isTelDuplicated(memberTelNo, memberCode);
         default:
             return false;
 		}

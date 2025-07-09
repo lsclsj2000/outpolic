@@ -23,8 +23,8 @@ public class enterMypageController {
 	// 기업 마이페이지 
     @GetMapping("/enterMypage")
     public String myPage(HttpSession session, Model model) {
-    	String memberId = (String) session.getAttribute("SID");
- 	    EnterInfo enterInfo = enterMypageService.getEnterInfoById(memberId);
+    	String memberCode = (String) session.getAttribute("SCD");
+ 	    EnterInfo enterInfo = enterMypageService.getEnterInfoByCode(memberCode);
  	    model.addAttribute("enterInfo", enterInfo);
     	return "enter/mypage/enterMypageView";
     }
@@ -36,16 +36,16 @@ public class enterMypageController {
 									              @RequestParam(required = false) String memberNickname,
 									              @RequestParam(required = false) String memberEmail,
 									              @RequestParam(required = false) String memberTelNo) {
-    	String memberId = (String) session.getAttribute("SID");
-        boolean duplicated = enterMypageService.isEnterInfoDuple(type, memberId, memberNickname, memberEmail, memberTelNo);
+    	String memberCode = (String) session.getAttribute("SCD");
+        boolean duplicated = enterMypageService.isEnterInfoDuple(type, memberCode, memberNickname, memberEmail, memberTelNo);
         return ResponseEntity.ok(duplicated);
     }
     
     // 비밀번호 입력 후 기업/개인정보 수정 선택 페이지로 이동
     @PostMapping("/enterEditChoice")
     public String enterEditChoiceView(@RequestParam("password") String memberPw, HttpSession session, Model model) {
-    	String memberId = (String) session.getAttribute("SID");
-    	EnterInfo enterInfo = enterMypageService.getEnterInfoById(memberId);
+    	String memberCode = (String) session.getAttribute("SCD");
+    	EnterInfo enterInfo = enterMypageService.getEnterInfoByCode(memberCode);
     	
     	if(memberPw.equals(enterInfo.getMemberPw())) {
     		model.addAttribute("enterInfo", enterInfo);
@@ -63,11 +63,11 @@ public class enterMypageController {
     // 개인정보 수정 페이지 이동
     @GetMapping("/enterEditView")
     public String enterProfileEditView(Model model, HttpSession session) {
-    	String memberId = (String) session.getAttribute("SID");
-    	if (memberId == null) {
+    	String memberCode = (String) session.getAttribute("SCD");
+    	if (memberCode == null) {
             return "redirect:/login"; // 또는 오류 페이지
         }
-    	 EnterInfo enterInfo = enterMypageService.getEnterInfoById(memberId);
+    	 EnterInfo enterInfo = enterMypageService.getEnterInfoByCode(memberCode);
     	 model.addAttribute("enterInfo", enterInfo);
 
     	return "enter/mypage/enterProfileEditView";
@@ -76,16 +76,16 @@ public class enterMypageController {
     @GetMapping("/enterEdit/info")
     @ResponseBody 
     public EnterInfo getEnterInfo(HttpSession session) { 
-    	String memberId = (String) session.getAttribute("SID"); 
-    	return enterMypageService.getEnterInfoById(memberId); 
+    	String memberCode = (String) session.getAttribute("SCD"); 
+    	return enterMypageService.getEnterInfoByCode(memberCode); 
     }
     
     // 기업 개인정보 업데이트
     @PostMapping("/enterEdit/update")
     @ResponseBody
     public EnterInfo getEnterInfoAjax(HttpSession session) {
-    	String memberId=(String) session.getAttribute("SID");
-    	return enterMypageService.getEnterInfoById(memberId);
+    	String memberCode=(String) session.getAttribute("SCD");
+    	return enterMypageService.getEnterInfoByCode(memberCode);
     }
     
     // 기업 개인정보 수정
