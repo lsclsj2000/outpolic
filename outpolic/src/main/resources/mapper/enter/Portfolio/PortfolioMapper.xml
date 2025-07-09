@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/dtd/Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.enter.portfolio.mapper.PortfolioMapper">
+
+    <resultMap id="OutsourcingSimpleResultMap" type="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+        <id property="osCd" column="os_cd"/>
+        <result property="osTtl" column="os_ttl"/>
+    </resultMap>
 
     <resultMap id="portfolioDetailResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
         <id property="prtfCd" column="prtf_cd"/>
         <result property="entCd" column="ent_cd"/>
         <result property="prtfTtl" column="prtf_ttl"/>
         <result property="prtfCn" column="prtf_cn"/>
-        <result property="prtfDwnldCnt" column="prtf_dwnld_cnt"/>
+        <result property="prtfDwnld_cnt" column="prtf_dwnld_cnt"/>
         <result property="prtfRegYmdt" column="prtf_reg_ymdt"/>
         <result property="admCd" column="adm_cd"/>
         <result property="prtfMdfcnYmdt" column="prtf_mdfcn_ymdt"/>
         <result property="stcCd" column="stc_cd"/>
         <collection property="categories" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto">
             <id property="ctgryId" column="category_id"/>
-            <result property="ctgryNm" column="category_name"/>
+            <result property="ctgryNm" column="ctgry_nm"/> 
         </collection>
         <collection property="tagNames" ofType="java.lang.String">
             <result column="tag_name"/>
@@ -33,8 +38,7 @@
         SELECT
             p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd,
             c.ctgry_id AS category_id,
-            c.ctgry_nm AS category_name,
-            t.tag_nm AS tag_name
+            c.ctgry_nm AS ctgry_nm, t.tag_nm AS tag_name
         FROM
             portfolio p
         LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
@@ -52,8 +56,7 @@
         SELECT
             p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd,
             c.ctgry_id AS category_id,
-            c.ctgry_nm AS category_name,
-            t.tag_nm AS tag_name
+            c.ctgry_nm AS ctgry_nm, t.tag_nm AS tag_name
         FROM
             portfolio p
         LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
@@ -167,7 +170,7 @@
         LIMIT 10
     </select>
 
-    <select id="findLinkedOutsourcingsByPrtfCd" resultMap="outpolic.enter.outsourcing.mapper.OutsourcingMapper.OutsourcingSimpleResultMap">
+    <select id="findLinkedOutsourcingsByPrtfCd" resultMap="OutsourcingSimpleResultMap">
         SELECT
             o.os_cd,
             o.os_ttl
@@ -177,9 +180,11 @@
             outsourcing_portfolio op ON o.os_cd = op.os_cd
         WHERE
             op.prtf_cd = #{prtfCd}
+        ORDER BY
+            op.op_reg_ymdt DESC
     </select>
 
-    <select id="findUnlinkedOutsourcings" resultMap="outpolic.enter.outsourcing.mapper.OutsourcingMapper.OutsourcingSimpleResultMap">
+    <select id="findUnlinkedOutsourcings" resultMap="OutsourcingSimpleResultMap">
         SELECT
             o.os_cd,
             o.os_ttl
