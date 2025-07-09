@@ -42,10 +42,11 @@
 				<li class="menu-item has-submenu">
 					<a class="menu-link" th:href="@{/admin/adminOsst}">
 					    <i class="icon material-icons md-store"></i>
-					    <span class="text">외주</span>
+					    <span class="text">외주&채팅</span>
 					</a>
 					<div class="submenu">
 					    <a th:href="@{/admin/adminOsst}">외주 진행 현황</a>
+					    <a th:href="@{/admin/adminChatRoom}">채팅방 관리</a>
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
@@ -57,6 +58,8 @@
 						<a th:href="@{/admin/adminDeclaration}">신고 내역</a>
 						<a th:href="@{/admin/adminDeclarationResources}">신고 자원 등록</a>
 					    <a th:href="@{/admin/adminLimits}">제재 내역</a>
+					    <a th:href="@{/admin/adminLimitsProcess}">제재 처리</a>
+					    <a th:href="@{/admin/adminLimitsAuthority}">권한 설정</a>
 					    <a th:href="@{/admin/adminLimitsResources}">제재 자원 등록</a>
 					</div>
 				</li>

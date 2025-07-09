@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="outpolic.admin.chat.mapper.AdminChatMapper">
+	<!-- AdminChat.DTO -->
+	<resultMap id="AdminChatMap" type="outpolic.admin.chat.domain.AdminChat">
+		<id 	column="chr_cd" 		property="ChatRoomCode"/>
+		<result column="mbr1_cd" 		property="ChatMember1Code"/>
+		<result column="mbr2_cd" 		property="ChatMember2Code"/>
+		<result column="chr_nm" 		property="ChatRoomName"/>
+		<result column="chr_reg_ymdt" 	property="ChatRoomRegYmdt"/>
+		<result column="chr_last_ymdt" 	property="ChatLastYmdt"/>
+		<result column="stc1_cd" 		property="ChatStc1Code"/>
+		<result column="stc2_cd" 		property="ChatStc2Code"/>
+		<result column="stc1_nm" 		property="ChatStc1Name"/>
+		<result column="stc2_nm" 		property="ChatStc2Name"/>
+	</resultMap>
+	
+	<select id="getAdminChatRoomList" resultMap="AdminChatMap">
+		/* 채팅방 목록 조회 */
+		select
+			cr.chr_cd as chr_cd,
+			cr.mbr1_cd as mbr1_cd,
+			cr.mbr2_cd as mbr2_cd,
+			cr.chr_nm as chr_nm,
+			cr.chr_reg_ymdt as chr_reg_ymdt,
+			cr.chr_last_ymdt as chr_last_ymdt,
+			cr.stc1_cd as stc1_cd,
+			sc1.stc_nm as stc1_nm,
+			cr.stc2_cd as stc2_cd,
+			sc2.stc_nm as stc2_nm
+		from
+			chat_room cr 
+			left join status_code sc1 on cr.stc1_cd = sc1.stc_cd
+			left join status_code sc2 on cr.stc2_cd = sc2.stc_cd
+		order by
+			cr.chr_reg_ymdt;
+	</select>
+</mapper>
