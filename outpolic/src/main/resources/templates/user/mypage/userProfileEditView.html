@@ -10,6 +10,7 @@
 	<body>
 		<!-- 회원 정보 수정 페이지 시작 -->
 		<th:block layout:fragment="contents">
+		<input type="hidden" id="memberCode" th:value="${userInfo.memberCode}">
 			<form class="register edit col-6" th:action="@{/userEdit}" method="post" th:object="${userInfo}">
 				<h3 class="mb-30">내 정보 수정</h3>
 				<div class="form-group">

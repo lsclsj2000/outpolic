@@ -22,7 +22,7 @@
 	<update id="updateMemberLoginDate" parameterType="Member">
 		UPDATE member
 		set mbr_last_lgn_ymdt = NOW()
-		where mbr_id = #{memberId};
+		where mbr_cd = #{memberCode};
 	</update>
 	
 <!-- 	<insert id="insertFailHistory" parameterType="LoginFailHistoryDTO">

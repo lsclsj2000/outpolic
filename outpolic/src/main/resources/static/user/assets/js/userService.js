@@ -6,6 +6,7 @@
 // 회원정보 불러오기
 function fillUserInfoForm(data) {
   $('#memberName').val(data.memberName);
+  $('#memberCode').val(data.memberCode);
   $('#memberNickname').val(data.memberNickname);
   $('#memberTelNo').val(data.memberTelNo);
   $('#sample4_roadAddress').val(data.memberAddress);
@@ -18,7 +19,7 @@ function fillUserInfoForm(data) {
 
 //중복확인용
 let isDupleNick = false;
-let isVerified = false;
+let isVerified = true;
 let isDupleEmail = false;
 // 닉네임 입력안했을때 경고문 띄우기
 function isNicknameValid(){
@@ -96,6 +97,7 @@ function sample4_execDaumPostcode() {
 function collectUserInfo() {
   return {
     memberId: $('#memberId').val(),
+	memberCode: $('#memberCode').val(),
     memberName: $('#memberName').val(),
     memberNickname: $('#memberNickname').val(),
     memberTelNo: $('#memberTelNo').val(),
@@ -111,7 +113,7 @@ function collectUserInfo() {
 // 클릭 이벤트 시작
 $(document).ready(function () {
 	//사실상 필요없긴한데 혹시몰라서 넣어둔 메소드
-	getUserInfo(fillUserInfoForm);
+	//getUserInfo(fillUserInfoForm);
 	// 닉네임 중복확인 버튼 클릭 
 	$('#nicknmDupleBtn').click(function () {
 		console.log("닉네임 중복확인 버튼 눌림"); 
@@ -119,10 +121,10 @@ $(document).ready(function () {
 
 	   const nickname = $('#memberNickname').val();
 	   console.log('입력된 닉네임:', nickname);
-	   const memberId = $('#memberId').val();
-	   console.log('현재 memberId:', memberId);
+	   const memberCode = $('#memberCode').val();
+	   console.log('현재 memberCode:', memberCode);
 
-	   dupleUserInfoCheck("memberNickname", nickname, memberId, function(data){
+	   dupleUserInfoCheck("memberNickname", nickname, memberCode, function(data){
 			if (data === true || data === 'true') {
 			    alert('닉네임이 중복입니다. 다른 닉네임을 입력하세요');
 			    isDupleNick = false;
@@ -136,10 +138,10 @@ $(document).ready(function () {
    $('#emailDupleBtn').click(function () {
    	   if (!isEmailValid()) return;
    	   const email = $('#memberEmail').val();
-   	   const memberId = $('#memberId').val();
+   	   const memberCode = $('#memberCode').val();
 	   // 이메일 유효성 검증
 	   if (!isValidEmail(email)){ alert('이메일이 유효하지 않습니다'); return;}
-   	   dupleUserInfoCheck("memberEmail", email, memberId, function(data){
+   	   dupleUserInfoCheck("memberEmail", email, memberCode, function(data){
    			if (data === true || data === 'true') {
    			    alert('이메일이 중복입니다. 다른 이메일을 입력하세요');
    			    isDupleEmail = false;
@@ -150,7 +152,7 @@ $(document).ready(function () {
    		});
       });
    
-	//인증번호 확인 버튼 클릭시
+/*	//인증번호 확인 버튼 클릭시
 	// 상황상 인증번호를 보낼 수 없어서 isVerified를 true로 유지하도록 함
 	$('#sendCodeBtn').click(function() {
 		const phone = $('#memberTelNo').val();
@@ -175,7 +177,7 @@ $(document).ready(function () {
 			alert('인증완료 되었습니다');
 			isVerified = true;
 		});
-	});
+	});*/
 	
 	
 	// 우편번호 찾기 호출    

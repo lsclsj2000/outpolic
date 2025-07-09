@@ -26,13 +26,13 @@ function dupleNicknameCheck(nickname, callback){
 	});
 }
 //중복체크 확장
-function dupleEnterInfoCheck(type, value, memberId, callback){
+function dupleEnterInfoCheck(type, value, memberCode, callback){
 	$.ajax({
 		url: `/check/${type}`,
 		type:'POST',
 		data:{
 			[type] : value,
-			memberId: memberId
+			memberCode: memberCode
 		},
 		success:callback,
 		error:() => alert("중복 확인 중 에러가 발생했습니다.")
@@ -81,7 +81,7 @@ function saveEnterInfo(url, enterInfo, callback) {
 
 
 // 마이페이지 내 기업정보 수정 시작
-unction getEnterpriseInfo(callback){
+function getEnterpriseInfo(callback){
 	$.ajax({
 		url: '/enterpriseEdit/info',
 		method: 'GET',

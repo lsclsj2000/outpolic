@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.common.domain.Member;
+import outpolic.user.login.mapper.UserLoginMapper;
 import outpolic.user.login.service.UserLoginService;
 
 @Controller
@@ -22,6 +23,7 @@ import outpolic.user.login.service.UserLoginService;
 public class UserLoginController {
 	
 	private final UserLoginService userLoginService;
+
 	
     // 로그인 페이지 GET 요청
     @GetMapping("/login")
@@ -41,7 +43,6 @@ public class UserLoginController {
    	  
     	  Map<String, Object> loginResult = userLoginService.loginUser(memberId, memberPw);
     	  boolean isMatched = (boolean) loginResult.get("isMatched");
-    	  
     	  String clientIp = request.getRemoteAddr();
     	  String redirectUri = "redirect:/login";
         
