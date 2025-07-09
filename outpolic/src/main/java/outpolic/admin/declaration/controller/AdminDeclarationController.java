@@ -24,7 +24,7 @@ public class AdminDeclarationController {
 		List<AdminDeclaration> adminDeclarationTypeList = adminDeclarationService.getAdminDeclarationTypeList();
 		
 		model.addAttribute("title", "신고 자원 등록");
-		model.addAttribute("adminDeclarationResourcesList", adminDeclarationTypeList);
+		model.addAttribute("adminDeclarationTypeList", adminDeclarationTypeList);
 		
 		return "admin/declaration/adminDeclarationResourcesView";
 	}
