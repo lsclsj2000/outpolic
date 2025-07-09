@@ -31,15 +31,11 @@ import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.enter.portfolio.service.EnterPortfolioService;
 import org.springframework.http.HttpStatus;
 
-import org.slf4j.Logger; // Logger 임포트
-import org.slf4j.LoggerFactory; // LoggerFactory 임포트
 
 @Controller
 @RequestMapping("/enter/portfolio")
 @RequiredArgsConstructor
 public class EnterPortfolioController {
-
-    private static final Logger logger = LoggerFactory.getLogger(EnterPortfolioController.class); // 로거 추가
 
     private final EnterPortfolioService portfolioService;
     private final CategorySearchService categorySearchService;
@@ -69,18 +65,11 @@ public class EnterPortfolioController {
         model.addAttribute("entCd", "EI_C00001"); 
         model.addAttribute("mbrCd", "MB_C0000036");
 
-        // --- 핵심 수정 부분 (모델에 portfolio 객체 추가) ---
-        EnterPortfolio portfolio = new EnterPortfolio();
-        model.addAttribute("portfolio", portfolio); 
-        // --- 디버그 로그 추가 ---
-        logger.debug("showAddPortfolioForm: portfolio object in model is null? {}", (model.getAttribute("portfolio") == null));
-        if (model.getAttribute("portfolio") != null) {
-            EnterPortfolio p = (EnterPortfolio) model.getAttribute("portfolio");
-            logger.debug("showAddPortfolioForm: portfolio.categories is null? {}, size: {}", (p.getCategories() == null), (p.getCategories() != null ? p.getCategories().size() : "N/A"));
-        }
-        // --- 디버그 로그 끝 ---
+        // --- 핵심 수정 부분 ---
+        model.addAttribute("portfolio", new EnterPortfolio()); 
+        // --- 핵심 수정 부분 끝 ---
         
-        return "enter/portfolio/addPortfolioView"; 
+        return "enter/portfolio/addPortfolio"; 
     }
     
     @GetMapping("/ContractList")
@@ -97,8 +86,9 @@ public class EnterPortfolioController {
             @RequestParam(value="tags", required=false) String tags,
             @RequestParam(value="portfolioImage",required=false) MultipartFile portfolioImage) {
         
+    	// TODO: 세션에서 실제 기업/회원 코드 가져와서 portfolio에 설정
     	portfolio.setEntCd("EI_C00001"); 
-        portfolio.setAdmCd("MB_C0000036"); 
+        portfolio.setAdmCd("MB_C0000036"); // <- 이 값 'MB_C0000036'이 admin 테이블에 있어야 합니다.
     	
         if (bindingResult.hasErrors()) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -174,7 +164,7 @@ public class EnterPortfolioController {
         }
 
         try {
-            portfolio.setAdmCd("ADM_C001"); 
+            portfolio.setAdmCd("ADM_C004"); 
             portfolioService.updatePortfolio(portfolio, categoryCodes, tags);
             return ResponseEntity.ok(Map.of("success",true,"message","수정되었습니다.","redirectUrl","/enter/portfolio/list"));
         } catch (Exception e) {
