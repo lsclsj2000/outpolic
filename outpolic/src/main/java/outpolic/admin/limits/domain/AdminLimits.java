@@ -25,4 +25,14 @@ public class AdminLimits {
 	private String limitsClearYmdt;
 	private Integer limitsRmdDays;
 	private String limitsStatus;
+	
+	private String authorityMemberCode;
+	private String authorityGrdCode;
+	private Integer authorityPortfolio;
+	private Integer authorityOsWrite;
+	private Integer authorityOsContract;
+	private Integer authorityOs;
+	private Integer authorityChat;
+	private Integer authorityReview;
+	private Integer authorityMdfcnYmdt;
 }

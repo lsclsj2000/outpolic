@@ -7,7 +7,6 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
-		<title>문의 내역 조회</title>
 	</head>
 	
 	
@@ -15,8 +14,8 @@
 		<section class="content-main">
 	        <div class="content-header">
 	            <div>
-	                <h2 class="content-title card-title">신고 내역 조회</h2>
-	                <p>사용자 신고 내역 조회</p>
+	                <h2 class="content-title card-title">회원 권한 설정</h2>
+	                <p>사용자 권한 설정</p>
 	            </div>
 	            <div>
 	                <input type="text" placeholder="Search order ID" class="form-control bg-white" />
@@ -50,38 +49,53 @@
 	                    <table class="table table-hover">
 	                        <thead>
 	                            <tr>
-	                                <th scope="col" class="start text-center col-1">신고코드</th>
-	                                <th scope="col" class="text-center col-1">신고타입</th>
-	                                <th scope="col" class="text-center col-1">신고사유</th>
-	                                <th scope="col" class="text-center col-1">신고자</th>
-	                                <th scope="col" class="text-center col-1">신고대상</th>
-	                                <th scope="col" class="text-center col-1">신고일시</th>
-	                                <th scope="col" class="text-center col-1">처리상태</th>
-	                                <th scope="col" class="text-center col-1">처리결과</th>
+	                                <th scope="col" class="start text-center col-1">No.</th>
+	                                <th scope="col" class="text-center col-1">회원코드</th>
+	                                <th scope="col" class="text-center col-1">회원등급</th>
+	                                <th scope="col" class="text-center col-1">포트폴리오</th>
+	                                <th scope="col" class="text-center col-1">외주 게시</th>
+	                                <th scope="col" class="text-center col-1">외주 신청</th>
+	                                <th scope="col" class="text-center col-1">외주</th>
+	                                <th scope="col" class="text-center col-1">채팅</th>
+	                                <th scope="col" class="text-center col-1">리뷰</th>
 	                                <th scope="col" class="end text-center col-1">Action</th>
 	                            </tr>
 	                        </thead>
 	                        <tbody>
 								<tr class="start pt-30"
 								    style="border:0px; border-bottom: solid 1px #ececec;"
-								    th:each="d : ${adminDeclarationList}">
+								    th:each="l, stat : ${adminLimitsAuthorityList}">
 								    
-								    <td class="start text-center">
-								        <span th:text="${d.declarationCode}">신고코드</span>
+								    <td class="start text-center" th:text="${stat.index + 1}">No.</td>
+								    <!-- <td scope="col" class="text-center" th:text="${l.limitsCode}">No.</td> -->
+								    <td scope="col" class="text-center" th:text="${l.authorityMemberCode}">회원코드</td>
+								    <td scope="col" class="text-center" th:text="${l.authorityGrdCode}">회원코드</td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityPortfolio}">
+								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
 								    </td>
-								    <td scope="col" class="text-center" th:text="${d.declarationTypeName}">신고타입</td>
-								    <td scope="col" class="text-center" th:text="${d.declarationReasonName}">신고사유</td>
-								    <td scope="col" class="text-center" th:text="${d.declarationMemberCode}">신고자</td>
-								    <td scope="col" class="text-center" th:text="${d.declarationTargetCode}">신고대상</td>
-								    <td scope="col" class="text-center" th:text="${d.declarationRegYmdt}">신고일시</td>
-								    <td scope="col" class="text-center" th:switch="${d.declarationStcName}">
-	                                	<span th:case="${'처리완료'}" class="badge rounded-pill alert-success">처리완료</span>
-	                                	<span th:case="${'처리중'}" class="badge rounded-pill alert-info">처리중</span>
-	                                	<span th:case="${'확인전'}" class="badge rounded-pill alert-warning">확인전</span>
+								    <td scope="col" class="text-center" th:switch="${l.authorityOsWrite}">
+								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								    </td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityOsContract}">
+								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								    </td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityOs}">
+								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								    </td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityChat}">
+								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								    </td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityReview}">
+	                                	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
 	                                </td>
-	                                <td scope="col" class="text-center" th:text="${d.declarationResultName}">처리결과</td>
 								    <td scope="col" class="text-center">
-										<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${d.declarationCode}">처리</a>
+										<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${l.authorityMemberCode}">수정</a>
 									</td>
 								</tr>
 							</tbody>

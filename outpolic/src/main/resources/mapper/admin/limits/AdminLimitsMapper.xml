@@ -30,6 +30,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="lmt_status" 		property="limitsStatus"/>
 	</resultMap>
 	
+	<resultMap id="AdminLimitsAuthorityMap" type="outpolic.admin.limits.domain.AdminLimits">
+		<id 	column="mbr_cd" 					property="authorityMemberCode"/>
+		<result column="grd_cd" 					property="authorityGrdCode"/>
+		<result column="ma_portfolio" 				property="authorityPortfolio"/>
+		<result column="ma_outsourcing_write" 		property="authorityOsWrite"/>
+		<result column="ma_outsourcing_contract" 	property="authorityOsContract"/>
+		<result column="ma_outsourcing" 			property="authorityOs"/>
+		<result column="ma_chat" 					property="authorityChat"/>
+		<result column="ma_review" 					property="authorityReview"/>
+		<result column="ma_mdfcn_ymdt" 				property="authorityMdfcnYmdt"/>
+	</resultMap>
+	
+	<select id="getAdminLimitsAuthorityList" resultMap="AdminLimitsAuthorityMap">
+		/* 회원 권한 조회 */
+		select
+			ma.mbr_cd as mbr_cd,
+			m.grd_cd as grd_cd,
+			ma.ma_portfolio as ma_portfolio,
+			ma.ma_outsourcing_write as ma_outsourcing_write,
+			ma.ma_outsourcing_contract as ma_outsourcing_contract,
+			ma.ma_outsourcing as ma_outsourcing,
+			ma.ma_chat as ma_chat,
+			ma.ma_review as ma_review,
+			ma.ma_mdfcn_ymdt as ma_mdfcn_ymdt
+		from
+			member_authority ma 
+			left join member m on ma.mbr_cd = m.mbr_cd
+		order by
+			m.mbr_join_ymdt;
+	</select>
+	
 	<select id="getAdminLimitsList" resultMap="AdminLimitsTypeMap">
 		/* 제재 내역 조회 */
 		select

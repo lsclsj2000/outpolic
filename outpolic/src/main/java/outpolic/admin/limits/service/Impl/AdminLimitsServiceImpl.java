@@ -34,4 +34,12 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
 		return adminLimitsList;
 	}
 
+	@Override
+	public List<AdminLimits> getAdminLimitsAuthorityList() {
+		// 회원 권한 조회
+		List<AdminLimits> adminLimitsAuthorityList = adminLimitsMapper.getAdminLimitsAuthorityList();
+		
+		return adminLimitsAuthorityList;
+	}
+
 }

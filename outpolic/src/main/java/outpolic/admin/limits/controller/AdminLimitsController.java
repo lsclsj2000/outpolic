@@ -20,10 +20,20 @@ public class AdminLimitsController {
 	
 	private final AdminLimitsService adminLimitsService;
 	
-	@GetMapping("/adminLimitsProcess")
-	public String adminLimitsProcessView() {
-		// 제재 처리
+	@GetMapping("/adminLimitsAuthority")
+	public String adminLimitsAuthorityView(Model model) {
+		// 권한 설정
+		List<AdminLimits> adminLimitsAuthorityList = adminLimitsService.getAdminLimitsAuthorityList();
+		model.addAttribute("title", "회원 권한 조회");
+		model.addAttribute("adminLimitsAuthorityList", adminLimitsAuthorityList);
 		
+		return "admin/limits/adminLimitsAuthorityView";
+	}
+	
+	@GetMapping("/adminLimitsProcess")
+	public String adminLimitsProcessView(Model model) {
+		// 제재 처리 페이지
+		model.addAttribute("title", "제재 처리");
 		return "admin/limits/adminLimitsProcessView";
 	}
 	
