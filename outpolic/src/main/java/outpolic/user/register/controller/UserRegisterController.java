@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.common.domain.Member;
@@ -21,10 +22,10 @@ public class UserRegisterController {
 	private final UserRegisterService userRegisterService;
     // 회원가입 페이지 시작
     // 기업회원, 일반회원 선택 페이지
-    @GetMapping("/choiceRegister")
-    public String choiceReg() {
-    	return "user/register/userRegisterChoiceView";
-    }
+	/*
+	 * @GetMapping("/choiceRegister") public String choiceReg() { return
+	 * "user/register/userRegisterChoiceView"; }
+	 */
     // 일반회원 회원가입 페이지
     @GetMapping("/user/registerInfo")
     public String userReg() {
@@ -62,7 +63,9 @@ public class UserRegisterController {
         }
         
         userRegisterService.registerMember(member);
-        return "redirect:/login"; // 또는 가입 완료 페이지
+        model.addAttribute("msg", "회원가입이 완료되었습니다. 로그인해주세요");
+        model.addAttribute("url", "/login");
+        return "user/mypage/alert"; // 또는 가입 완료 페이지
     }
     
     @GetMapping("/user/checkDuplicate")

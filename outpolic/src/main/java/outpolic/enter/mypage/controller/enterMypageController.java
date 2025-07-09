@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import outpolic.enter.mypage.dto.CorpInfo;
 import outpolic.enter.mypage.dto.EnterInfo;
-import outpolic.enter.mypage.dto.EnterpriseInfo;
 import outpolic.enter.mypage.service.EnterMypageService;
 
 @Controller
@@ -108,8 +108,8 @@ public class enterMypageController {
             model.addAttribute("url", "/login");
             return "enter/mypage/alert";
         }
-        EnterpriseInfo enterpriseInfo = enterMypageService.getEnterpriseInfoByCode(memberCode);
-    	model.addAttribute("enterpriseInfo", enterpriseInfo);
+        CorpInfo corpInfo = enterMypageService.getEnterpriseInfoByCode(memberCode);
+    	model.addAttribute("corpInfo", corpInfo);
     	
     	return "enter/mypage/enterEnterpriseInfoEditView";
     }
@@ -117,17 +117,17 @@ public class enterMypageController {
     // 기업 기업정보 불러오기
     @GetMapping("/enterpriseEdit/info")
     @ResponseBody
-    public EnterpriseInfo getEnterpriseInfo(HttpSession session) {
+    public CorpInfo getEnterpriseInfo(HttpSession session) {
         String memberCode = (String) session.getAttribute("SCD");
         return enterMypageService.getEnterpriseInfoByCode(memberCode);
     }
     
     // 기업 기업정보 페이지 수정
     @PostMapping("/enterpriseEdit")
-    public String saveEnterpriseInfo(Model model, EnterpriseInfo enterpriseInfo) {
-    	enterMypageService.editEnterpriseInfo(enterpriseInfo);
+    public String saveEnterpriseInfo(Model model, CorpInfo corpInfo) {
+    	enterMypageService.editEnterpriseInfo(corpInfo);
     	model.addAttribute("title", "개인정보 수정");
-    	model.addAttribute("enterpriseInfo", enterpriseInfo);
+    	model.addAttribute("enterpriseInfo", corpInfo);
     	return "redirect:/enterMypage";
     }
     

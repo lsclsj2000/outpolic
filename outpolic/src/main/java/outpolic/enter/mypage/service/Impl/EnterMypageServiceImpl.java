@@ -4,11 +4,12 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import outpolic.enter.mypage.dto.CorpInfo;
 import outpolic.enter.mypage.dto.EnterInfo;
-import outpolic.enter.mypage.dto.EnterpriseInfo;
 import outpolic.enter.mypage.mapper.EnterMypageMapper;
 import outpolic.enter.mypage.mapper.EnterpriseMapper;
 import outpolic.enter.mypage.service.EnterMypageService;
+import outpolic.enter.register.mapper.EnterRegisterMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +18,16 @@ public class EnterMypageServiceImpl implements EnterMypageService {
 	
 	private final EnterMypageMapper enterMypageMapper;
 	private final EnterpriseMapper enterpriseMapper;
+	private final EnterRegisterMapper enterRegisterMapper;
+	
+	//기업정보입력
+	// 기업 정보 입력위해 기업 기본키 생성
+	public String getNextEnterCode() {
+		return enterRegisterMapper.getNextEnterCode();
+	}
+	
+	
+	
 	
 	// 개인정보 호출
 	@Override
@@ -50,16 +61,16 @@ public class EnterMypageServiceImpl implements EnterMypageService {
 	
 	// 기업정보 호출
 	@Override
-	public EnterpriseInfo getEnterpriseInfoByCode(String memberCode) {
+	public CorpInfo getEnterpriseInfoByCode(String memberCode) {
 	
 		return enterpriseMapper.getEnterpriseInfoByCode(memberCode);
 	}
 
 	//기업정보 수정
 	@Override
-	public void editEnterpriseInfo(EnterpriseInfo enterpriseInfo) {
-		log.info("수정요청 들어온 데이터 : {}", enterpriseInfo);
-		int result = enterpriseMapper.updateEnterpriseInfo(enterpriseInfo);
+	public void editEnterpriseInfo(CorpInfo corpInfo) {
+		log.info("수정요청 들어온 데이터 : {}", corpInfo);
+		int result = enterpriseMapper.updateEnterpriseInfo(corpInfo);
 		log.info("수정 완료된 데이터는 {}건 있습니다", result);	
 		
 	}
