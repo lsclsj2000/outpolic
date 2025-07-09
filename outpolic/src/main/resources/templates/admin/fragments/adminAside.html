@@ -30,43 +30,40 @@
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
-					<a class="menu-link" href="page-orders-1.html">
+					<a class="menu-link" th:href="@{/admin/adminInquiryList}">
 					    <i class="icon material-icons md-shopping_cart"></i>
 					    <span class="text">문의</span>
 					</a>
 					<div class="submenu">
 					    <a th:href="@{/admin/adminInquiryList}">문의내역</a>
-					    <a href="page-orders-2.html">문의 처리</a>
-					    <a href="page-orders-detail.html">문의 프로세스 관리</a>
+					    <a th:href="@{/admin/adminInquiryResources}">문의 자원 등록</a>
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
-					<a class="menu-link" href="page-sellers-cards.html">
+					<a class="menu-link" th:href="@{/admin/adminOsst}">
 					    <i class="icon material-icons md-store"></i>
-					    <span class="text">Sellers</span>
+					    <span class="text">외주</span>
 					</a>
 					<div class="submenu">
-					    <a href="page-sellers-cards.html">Sellers cards</a>
-					    <a href="page-sellers-list.html">Sellers list</a>
-					    <a href="page-seller-detail.html">Seller profile</a>
+					    <a th:href="@{/admin/adminOsst}">외주 진행 현황</a>
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
-					<a class="menu-link" href="page-form-product-1.html">
+					<a class="menu-link" th:href="@{/admin/adminDeclaration}">
 					    <i class="icon material-icons md-add_box"></i>
-					    <span class="text">Add product</span>
+					    <span class="text">신고&제재</span>
 					</a>
 					<div class="submenu">
-					    <a href="page-form-product-1.html">Add product 1</a>
-					    <a href="page-form-product-2.html">Add product 2</a>
-					    <a href="page-form-product-3.html">Add product 3</a>
-					    <a href="page-form-product-4.html">Add product 4</a>
+						<a th:href="@{/admin/adminDeclaration}">신고 내역</a>
+						<a th:href="@{/admin/adminDeclarationResources}">신고 자원 등록</a>
+					    <a th:href="@{/admin/adminLimits}">제재 내역</a>
+					    <a th:href="@{/admin/adminLimitsResources}">제재 자원 등록</a>
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
 					<a class="menu-link" href="page-transactions-1.html">
 					    <i class="icon material-icons md-monetization_on"></i>
-					    <span class="text">Transactions</span>
+					    <span class="text">Transaction</span>
 					</a>
 					<div class="submenu">
 					    <a href="page-transactions-1.html">Transaction 1</a>

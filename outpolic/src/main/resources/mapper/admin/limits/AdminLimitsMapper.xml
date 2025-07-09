@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="outpolic.admin.limits.mapper.AdminLimitsMapper">
+	<!-- AdminInquiry.DTO -->
+	<resultMap id="AdminLimitsTypeMap" type="outpolic.admin.limits.domain.AdminLimits">
+		<id 	column="lt_cd" 				property="limitsTypeCode"/>
+		<id 	column="lmt_cd" 			property="limitsCode"/>
+		<result column="lt_nm" 				property="limitsTypeName"/>
+		<result column="lt_expln" 			property="limitsTypeExpln"/>
+		<result column="stc_cd" 			property="limitsTypeStcCode"/>
+		<result column="stc_nm" 			property="limitsTypeStcName"/>
+		<result column="lt_reg_adm_cd" 		property="limitsTypeRegAdmCode"/>
+		<result column="lt_reg_ymdt" 		property="limitsTypeRegYmdt"/>
+		<result column="lt_mdfcn_adm_cd" 	property="limitsTypeMdfcnAdmCode"/>
+		<result column="lt_mdfcn_ymdt" 		property="limitsTypeMdfcnYmdt"/>
+		
+		<result column="mbr_cd" 			property="limitsMemberCode"/>
+		<result column="dt_cd" 				property="DeclarationTypeCode"/>
+		<result column="dt_nm" 				property="DeclarationTypeName"/>
+		<result column="dr_cd" 				property="DeclarationReasonCode"/>
+		<result column="dr_nm" 				property="DeclarationReasonName"/>
+		<result column="lmt_start_ymdt" 	property="limitsStartYmdt"/>
+		<result column="lmt_end_ymdt" 		property="limitsEndYmdt"/>
+		<result column="lmt_clear_ymdt" 	property="limitsClearYmdt"/>
+		<result column="lmt_rmd_days" 		property="limitsRmdDays"/>
+		<result column="lmt_status" 		property="limitsStatus"/>
+	</resultMap>
+	
+	<select id="getAdminLimitsList" resultMap="AdminLimitsTypeMap">
+		/* 제재 내역 조회 */
+		select
+		    l.lmt_cd as lmt_cd,
+		    l.mbr_cd as mbr_cd,
+		    dr.dt_cd as dt_cd,
+		    dt.dt_nm as dt_nm,
+		    l.dr_cd as dr_cd,
+		    dr.dr_nm as dr_nm,
+		    l.lmt_start_ymdt as lmt_start_ymdt,
+		    l.lmt_end_ymdt as lmt_end_ymdt,
+		    l.lmt_clear_ymdt as lmt_clear_ymdt,
+		    l.lmt_rmd_days as lmt_rmd_days,
+		    case 
+		        when l.lmt_rmd_days = 0 then '제재종료'
+		        else '제재중'
+		    end as lmt_status
+		from
+		    limits l
+		    left join declaration_reason dr on l.dr_cd = dr.dr_cd
+		    left join declaration_type dt on dt.dt_cd = dr.dt_cd
+		order by
+		    l.lmt_start_ymdt;
+	</select>
+	
+	<select id="getAdminLimitsTypeList" resultMap="AdminLimitsTypeMap">
+		/* 제재 타입 내역 조회 */
+		select
+			lt.lt_cd as lt_cd, 
+			lt.lt_nm as lt_nm,
+			lt.lt_expln as lt_expln,
+			lt.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			lt.lt_reg_adm_cd as lt_reg_adm_cd,
+			lt.lt_reg_ymdt as lt_reg_ymdt,
+			lt.lt_mdfcn_adm_cd as lt_mdfcn_adm_cd,
+			lt.lt_mdfcn_ymdt as lt_mdfcn_ymdt
+		from
+			limits_type lt
+			left join status_code sc on lt.stc_cd = sc.stc_cd
+		order by
+			lt.lt_reg_ymdt;
+	</select>
+</mapper>
