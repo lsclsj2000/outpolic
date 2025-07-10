@@ -1,4 +1,4 @@
-package outpolic.user.search.controller;
+package outpolic.enter.search.controller;
 
 
 
@@ -15,35 +15,35 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import outpolic.user.search.domain.UserContents;
-import outpolic.user.search.service.UserSearchService;
+import outpolic.enter.search.domain.EnterContents;
+import outpolic.enter.search.service.EnterSearchService;
 
 
 @Controller
-@RequestMapping(value="/user")
+@RequestMapping(value="/enter")
 @RequiredArgsConstructor
 @Slf4j
-public class UserSearchController {
+public class EnterSearchController {
 	
-	@Qualifier("userSearchService")
-	private final UserSearchService searchService;
+	@Qualifier("enterSearchService")
+	private final EnterSearchService searchService;
 		
-	@GetMapping("/userSearch")
+	@GetMapping("/enterSearch")
 	public String SearchControllerView(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, Model model) {
 		
-		List<UserContents> contentsList = searchService.getContentsList(keyword);
+		List<EnterContents> contentsList = searchService.getContentsList(keyword);
 		
 		model.addAttribute("title", "콘텐츠목록조회");
 	    model.addAttribute("contentsList", contentsList);
 	    model.addAttribute("initialKeyword", keyword);
 
 		
-		return "user/search/userSearchView";
+		return "enter/search/enterSearchView";
 	}
 	
 	@GetMapping("/search/api")
 	@ResponseBody
-	public List<UserContents> searchAjax(@RequestParam("keyword") String keyword) {
+	public List<EnterContents> searchAjax(@RequestParam("keyword") String keyword) {
 		return searchService.getContentsList(keyword);
 	}
 }

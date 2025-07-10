@@ -4,48 +4,37 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>enter 메인 화면</title>
+    <title>enter 콘텐츠 상세 페이지</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="@{/enter/assets/imgs/theme/favicon.svg}" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="/enter/assets/css/plugins/slider-range.css" />
-    <link rel="stylesheet" href="/enter/assets/css/enterRanking.css" />
     <link rel="stylesheet" href="/enter/assets/css/main.css?v=5.6" />
     <link rel="stylesheet" href="/enter/assets/css/enterChatRoom.css" />
 </head>
 
 <body>
-	<!-- header start -->
-	<header th:replace="~{enter/fragments/enterHeader :: enterHeaderFragment}"></header>
-	<!-- header end -->
 	
 	<main class="main">
-	    <div class="container mb-30" style="width:1300px;">
-	        <div class="row"> <!-- flex-row-reverse 클래스는 필요하다면 유지 -->
-			    <div th:replace="~{enter/fragments/enterNavi :: enterNaviFragment}"></div>
-	            
-	            <!-- 1. 사이드바 영역: 전체의 1/5 너비를 차지하는 별도의 div -->
-	            <div class="col-lg-1-5 primary-sidebar sticky-sidebar">
-	                <div th:replace="~{enter/fragments/enterCategorySidebar :: enterCategorySidebarFragment}"></div>
+		<!-- header start -->
+		<header th:replace="~{enter/fragments/enterHeader :: enterHeaderFragment}"></header>
+		<!-- header end -->
+
+	    <!-- container의 너비를 좀 더 넓게 잡거나, fluid로 변경할 수 있습니다. -->
+	    <div class="container mb-30" style="width: 100%; max-width: 1300px; margin-top: 30px;">
+	        <div class="row">
+	            <!-- 이제 콘텐츠가 전체 너비를 차지하게 됩니다. -->
+	            <div class="col-12">
+	                <th:block layout:fragment="contents"></th:block>
 	            </div>
-	
-	            <!-- 2. 메인 콘텐츠 영역: 전체의 4/5 너비를 차지하는 별도의 div -->
-	            <div class="col-lg-4-5">
-	                <div th:replace="~{enter/fragments/enterProductFillter :: enterProductFilterFragment}"></div>
-	                
-	                <!-- 실제 페이지 내용이 여기에 들어옵니다 -->
-	                <div class="row">
-	                    <th:block layout:fragment="contents"></th:block>
-	                </div>
-	            </div>
-	
 	        </div>
 	    </div>
-	</main>
+
+    </main>
     
-    <div th:replace="~{enter/fragments/enterChatRoom :: enterChatRoomFragment}"></div>
+	<div th:replace="~{enter/fragments/enterChatRoom :: enterChatRoomFragment}"></div>
     <footer th:replace="~{enter/fragments/enterFooter :: enterFooterFragment}"></footer>
 	
 	
@@ -71,8 +60,8 @@
     <script src="/enter/assets/js/plugins/jquery.theia.sticky.js"></script>
     <script src="/enter/assets/js/plugins/jquery.elevatezoom.js"></script>
     <!-- Template  JS -->
-    <script src="./enter/assets/js/main.js?v=5.6"></script>
-    <script src="./enter/assets/js/shop.js?v=5.6"></script>
+    <script th:src="@{/enter/assets/js/main.js?v=5.6}"></script>
+    <script th:src="@{/enter/assets/js/shop.js?v=5.6}"></script>
     
 </body>
 </html>
