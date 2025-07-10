@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutkjw}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+	<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/admin/css/adminSearchView.css}">
+</th:block>
+	<th:block layout:fragment="jsScript">
+		<script>
+
+		// 1. 헤더 검색창에서 검색 시, 페이지 새로고침 없이 AJAX로 결과를 받아와 화면에 표시합니다.
+		// 2. 검색 결과 목록을 '포트폴리오', '아웃소싱' 등으로 필터링하는 기능을 제공합니다.
+
+		document.addEventListener('DOMContentLoaded', function() {
+
+		    // 자주 사용하는 DOM 요소들을 미리 변수에 할당해두면,
+		    // 필요할 때마다 DOM을 탐색하는 비용을 줄여 성능에 도움이 됩니다.
+		    const contentsContainer = document.getElementById('contentsListContainer');
+		    const filterButtons = document.querySelectorAll('#myTab .nav-link');
+		    const headerSearchForm = document.querySelector('form[action="/admin/adminSearch"]');
+		    const headerSearchInput = headerSearchForm?.querySelector('input[name="keyword"]'); // optional chaining으로 더 간결하게
+		    const resultTitle = document.querySelector('.section-title h3');
+
+
+		    
+		     // 서버에서 받은 콘텐츠 데이터 배열을 기반으로 화면에 목록을 그려주는 함수입니다.
+		     // @param {Array} contents - 서버에서 받은 콘텐츠 객체 배열
+		    
+		    function renderContents(contents) {
+		        // 우선, 기존에 있던 목록이나 '결과 없음' 메시지를 모두 지웁니다.
+		        contentsContainer.innerHTML = '';
+
+		        if (!contents || contents.length === 0) {
+		            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
+		            return; // 데이터가 없으면 여기서 함수를 종료합니다.
+		        }
+
+		        // map을 사용해 각 데이터 조각을 HTML 문자열로 변환하고, join으로 합쳐서 한 번에 삽입합니다.
+		        const contentsHtml = contents.map((content, index) => {
+		            const imageId1 = content.id || index + 40;
+		            const imageId2 = content.id ? content.id + 100 : index + 140;
+
+		            return `
+			            <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="${content.contentsType}">
+		                <div class="product-cart-wrap mb-30 position-relative">
+		                    
+		                    <!-- [복원] 이미지 관련 부분은 원래 구조와 동일하게 -->
+		                    <div class="product-img-action-wrap">
+		                        <div class="product-img product-img-zoom">
+		                            <a th:href="@{/admin/contents/{id}(id=${content.contentsId})}">
+		                                <img class="default-img" src="https://picsum.photos/id/${index + 40}/300/200" alt="콘텐츠 이미지">
+		                                <img class="hover-img" src="https://picsum.photos/id/${index + 140}/300/200" alt="콘텐츠 이미지">
+		                            </a>
+		                        </div>
+		                        <div class="product-action-1">
+		                            <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+		                            <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+		                            <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+		                        </div>
+		                    </div>
+		                    
+		                    <!-- [복원] 콘텐츠 제목 부분도 원래 구조와 동일하게 -->
+		                    <div class="product-content-wrap" style="margin-top: 15px;">
+		                        <!-- ▼▼▼ h2 안에 실제 링크를 넣고 'stretched-link' 클래스 추가 ▼▼▼ -->
+		                        <h2>
+		                            <a href="/admin/contents/${content.contentsId}" class="stretched-link">${content.contentsTitle}</a>
+		                        </h2>
+		                        <div>
+		                            <span class="font-small text-muted">By <a href="#">${content.enterName}</a></span>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		            `;
+		        }).join('');
+
+		        contentsContainer.innerHTML = contentsHtml;
+		    }
+
+
+
+		     // 입력된 키워드로 서버에 AJAX 검색을 요청하고, 그 결과를 화면에 반영합니다.
+
+		    async function performAjaxSearch(keyword) {
+		        // 1. 브라우저 주소창의 URL을 변경하여 사용자 경험을 향상시킵니다. (페이지는 이동하지 않음)
+		        const newUrl = `/admin/adminSearch?keyword=${encodeURIComponent(keyword)}`;
+		        history.pushState({ keyword }, '', newUrl);
+
+		        // 2. 사용자에게 로딩 중임을 시각적으로 알려줍니다.
+		        resultTitle.innerHTML = '결과를 불러오는 중...';
+		        contentsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
+		        try {
+		            // 3. fetch API를 사용해 서버에 데이터를 비동기적으로 요청합니다.
+		            const response = await fetch(`/admin/search/api?keyword=${encodeURIComponent(keyword)}`);
+
+		            if (!response.ok) {
+		                // HTTP 상태 코드가 200-299 범위가 아닐 경우 에러를 발생시킵니다.
+		                throw new Error(`서버 응답 오류: ${response.status}`);
+		            }
+
+		            const data = await response.json();
+
+		            // 4. 요청 성공 시, 화면을 새로운 데이터로 업데이트합니다.
+		            // 검색 결과 제목을 변경합니다.
+		            if (keyword && keyword.trim() !== '') {
+		                resultTitle.innerHTML = `'<span class="text-brand">${keyword}</span>' 검색 결과`;
+		            } else {
+		                resultTitle.innerHTML = '전체 콘텐츠';
+		            }
+
+		            // 받아온 데이터로 목록을 다시 그립니다.
+		            renderContents(data);
+
+
+		            setActiveFilterButton(document.querySelector('.nav-link[data-filter="All"]'));
+
+		        } catch (error) {
+		            // 5. 네트워크 오류나 서버 에러 발생 시 사용자에게 알려줍니다.
+		            console.error("AJAX 검색 중 에러 발생:", error);
+		            resultTitle.innerHTML = '오류';
+		            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.</p></div>';
+		        }
+		    }
+
+		    function setActiveFilterButton(clickedButton) {
+		        if (!clickedButton) return;
+
+		        // 모든 버튼을 한 번 순회하면서 'active' 클래스를 지웁니다.
+		        filterButtons.forEach(button => {
+		            button.classList.remove('active');
+		        });
+
+		        // 그리고 클릭된 버튼에만 'active' 클래스를 추가합니다.
+		        clickedButton.classList.add('active');
+		    }
+
+
+
+		     // @param {string} filterType - 필터링할 타입 ('All', 'Portfolio', 'Outsourcing')
+
+		    function applyFilter(filterType) {
+		        const items = contentsContainer.querySelectorAll('.product-item');
+		        let visibleItemCount = 0;
+
+		        items.forEach(item => {
+		            const itemType = item.dataset.type;
+
+		            // 'All'을 선택했거나, 아이템의 타입이 선택한 필터와 일치하면 보여줍니다.
+		            if (filterType === 'All' || itemType === filterType) {
+		                item.style.display = '';
+		                visibleItemCount++;
+		            } else {
+		                item.style.display = 'none';
+		            }
+		        });
+
+		        // 필터링 결과가 하나도 없을 때를 대비한 처리
+		        const noResultMessage = contentsContainer.querySelector('.no-filter-result');
+		        if (noResultMessage) {
+		            noResultMessage.remove(); // 이전에 생성된 메시지가 있다면 먼저 삭제
+		        }
+
+		        if (visibleItemCount === 0 && items.length > 0) {
+		            const messageHtml = '<div class="col-12 text-center no-filter-result"><p>선택하신 필터에 해당하는 콘텐츠가 없습니다.</p></div>';
+		            contentsContainer.insertAdjacentHTML('beforeend', messageHtml);
+		        }
+		    }
+		     
+		    // 1. 필터 버튼들에 대한 클릭 이벤트
+		    filterButtons.forEach(button => {
+		        button.addEventListener('click', function(event) {
+		            event.preventDefault();
+
+		            const filterType = this.dataset.filter;
+		            setActiveFilterButton(this);
+		            applyFilter(filterType);
+		        });
+		    });
+
+
+		    // 2. 헤더 검색 폼 제출(submit) 이벤트
+		    if (headerSearchForm) {
+		        headerSearchForm.addEventListener('submit', function(event) {
+		            // 현재 페이지가 검색 결과 페이지일 때만 AJAX로 처리하고,
+		            // 다른 페이지에서는 원래대로 form의 action 주소로 이동하게 둡니다.
+		            if (window.location.pathname.includes('/admin/adminSearch')) {
+		                event.preventDefault(); // form의 기본 제출 동작(페이지 새로고침)을 막습니다.
+		                const keyword = headerSearchInput.value;
+		                performAjaxSearch(keyword);
+		            }
+		        });
+		    }
+		});
+		
+		// jsScript 블록 안에 이 함수를 추가하거나 기존 함수를 교체합니다.
+
+		function openPortfolioModal(contentsId) {
+		    const modalTitle = document.getElementById('portfolioModalTitle');
+		    const modalBody = document.getElementById('portfolioModalBody');
+		    const portfolioModal = new bootstrap.Modal(document.getElementById('portfolioDetailModal'));
+
+		    // 1. 모달 내용을 '로딩 중' 상태로 초기화 후 모달을 표시
+		    modalTitle.textContent = '포트폴리오 정보 로딩 중...';
+		    modalBody.innerHTML = `
+		        <div class="text-center p-5">
+		            <div class="spinner-border" role="status">
+		                <span class="visually-hidden">Loading...</span>
+		            </div>
+		        </div>
+		    `;
+		    portfolioModal.show();
+
+		    // 2. 서버에 jQuery AJAX로 상세 데이터 요청
+		    $.ajax({
+		        // ★★ 작성자님이 알려주신 API 경로로 수정 ★★
+		        url: `/admin/api/contents/${contentsId}`, 
+		        type: 'GET',
+		        dataType: 'json',
+		        success: function(data) {
+		            // 3. 요청 성공 시, DTO 데이터로 모달 내용 업데이트
+		            
+		            // 모달 제목 설정
+		            modalTitle.textContent = data.contentsTitle;
+
+		            // 모달 본문 HTML 구성 (스크린샷 레이아웃 반영)
+		            // ★★ DTO에 없는 정보(태그, 클라이언트 등)는 제외하고, 있는 정보(enterName, contentsBody 등)로 구성합니다.
+		            modalBody.innerHTML = `
+		                <div class="container-fluid">
+		                    <div class="row">
+		                        <!-- 왼쪽 정보 영역 (7) -->
+		                        <div class="col-md-7">
+		                            <div class="d-flex align-items-center mb-3">
+		                                <img src="/assets/imgs/theme/icons/icon-admin.svg" alt="admin" class="rounded-circle me-2" style="width: 40px; height: 40px; border: 1px solid #ddd;">
+		                                <div>
+		                                    <h6 class="mb-0">${data.enterName}</h6>
+		                                    <span class="text-muted small">MASTER</span>
+		                                </div>
+		                            </div>
+		                            
+		                            <hr>
+
+		                            <h5>프로젝트 설명</h5>
+		                            <p style="white-space: pre-wrap;">${data.contentsBody || '상세 설명이 없습니다.'}</p>
+		                            
+		                            <hr>
+
+		                            <div class="row">
+		                                <div class="col-sm-6">
+		                                    <h6>등록일</h6>
+		                                    <p>${new Date(data.registrationDate).toLocaleDateString()}</p>
+		                                </div>
+		                                <!-- DTO에 가격 정보가 있지만, 포트폴리오에서는 보통 표시하지 않으므로 주석 처리
+		                                <div class="col-sm-6">
+		                                    <h6>서비스 가격</h6>
+		                                    <p>${data.price.toLocaleString()} 원</p>
+		                                </div>
+		                                -->
+		                            </div>
+
+		                            <!-- DTO에 정보가 없으므로 '클라이언트', '업종', '스타일' 등은 현재 표시하지 않습니다. -->
+		                            <!-- 추후 DTO가 확장되면 이 곳에 추가할 수 있습니다. -->
+
+		                        </div>
+
+		                        <!-- 오른쪽 이미지 영역 (5) -->
+		                        <div class="col-md-5">
+		                             <!-- 중요: DTO에 이미지 정보가 없으므로 임시 이미지를 사용합니다. -->
+		                             <!-- 추후 DTO에 이미지 경로 필드가 추가되면 data.imageUrl 등으로 교체해야 합니다. -->
+		                            <img src="https://picsum.photos/seed/${data.contentsId}/600/800" class="img-fluid rounded" alt="${data.contentsTitle}">
+		                        </div>
+		                    </div>
+		                </div>
+		            `;
+		        },
+		        error: function(xhr, status, error) {
+		            // 4. 요청 실패 시, 에러 메시지 표시
+		            console.error("포트폴리오 상세 정보 로딩 실패:", xhr);
+		            modalTitle.textContent = '오류 발생';
+		            modalBody.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.</p>';
+		        }
+		    });
+		}
+		</script>
+	</th:block>
+	
+	
+	
+	<th:block layout:fragment="contents">
+		<section class="product-tabs section-padding position-relative">
+	        <div class="container" style="width:1300px;">
+	            <div class="section-title style-2 wow animate__animated animate__fadeIn">
+					<!-- 컨트롤러에서 받은 initialKeyword 값에 따라 제목을 동적으로 변경합니다. -->
+	                <h3>
+						<span th:if="${initialKeyword == null || initialKeyword == ''}">전체 콘텐츠</span>
+						<span th:unless="${initialKeyword == null || initialKeyword == ''}">
+							'<th:block th:text="${initialKeyword}"/>' 검색 결과
+						</span>
+					</h3>
+					
+				</div>
+				<ul class="nav nav-tabs links" id="myTab" role="tablist">
+				    <li class="nav-item" role="presentation">
+				        <!-- [수정] data-filter 속성 추가 -->
+				        <button class="nav-link active" data-filter="All" type="button">All</button>
+				    </li>
+				    <li class="nav-item" role="presentation">
+				        <button class="nav-link" data-filter="Portfolio" type="button">포트폴리오</button>
+				    </li>
+				    <li class="nav-item" role="presentation">
+				        <button class="nav-link" data-filter="Outsourcing" type="button">외주</button>
+				    </li>
+				</ul>
+				<br>
+				<!--End nav-tabs-->
+				<div class="tab-content" id="myTabContent" style="border: none;">
+				    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+						<!-- AJAX로 결과가 채워질 컨테이너에 id="contentsListContainer" 부여 -->
+						<div class="row product-grid-4" id="contentsListContainer">
+							<!-- 이 부분은 페이지가 처음 로딩될 때만 Thymeleaf가 렌더링합니다. -->
+							<!-- =================== 최종 완성 코드로 교체할 부분 시작 =================== -->
+							<th:block th:if="${not #lists.isEmpty(contentsList)}" th:each="content, iterStat : ${contentsList}">
+							
+							    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" th:attr="data-type=${content.contentsType}">
+							        
+							        <div th:switch="${content.contentsType}">
+							
+							            <!-- CASE 1: 타입이 'Portfolio'일 경우 (이 부분은 이전과 동일하게 올바릅니다) -->
+							            <div th:case="'Portfolio'"
+							                 class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn position-relative" 
+							                 th:attr="onclick='openPortfolioModal(\'' + ${content.contentsId} + '\')'"
+							                 style="cursor: pointer;"
+							                 data-wow-delay=".1s">
+							                
+							                <div class="product-img-action-wrap">
+							                    <div class="product-img product-img-zoom">
+							                        <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
+							                        <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
+							                    </div>
+							                    <div class="product-action-1">
+							                        <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+							                        <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+							                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+							                    </div>
+							                </div>
+							                <div class="product-content-wrap" style="margin-top: 15px;">
+							                    <h2 th:text="${content.contentsTitle}">콘텐츠 제목</h2>
+							                    <div>
+							                        <span class="font-small text-muted">By <a th:text="${content.enterName}" href="#">회원닉네임</a></span>
+							                    </div>
+							                </div>
+							
+							            </div>
+							
+							            <!-- CASE 2: 타입이 'Outsourcing' 또는 그 외일 경우 (★★ Stretched-link 방식으로 최종 수정 ★★) -->
+							            <div th:case="*" class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn position-relative" data-wow-delay=".1s">
+							                
+							                <div class="product-img-action-wrap">
+							                    <div class="product-img product-img-zoom">
+							                        <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
+							                        <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
+							                    </div>
+							                    <div class="product-action-1">
+							                        <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+							                        <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+							                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+							                    </div>
+							                </div>
+							                <div class="product-content-wrap" style="margin-top: 15px;">
+							                    <h2>
+							                        <!-- ★★★ 핵심 수정: 링크를 제목(h2) 안에 넣고 stretched-link 클래스를 추가합니다. ★★★ -->
+							                        <a th:href="@{/admin/contents/{id}(id=${content.contentsId})}" 
+							                           th:text="${content.contentsTitle}"
+							                           class="stretched-link">콘텐츠 제목</a>
+							                    </h2>
+							                    <div>
+							                        <span class="font-small text-muted">By <a th:text="${content.enterName}" href="#">회원닉네임</a></span>
+							                    </div>
+							                </div>
+							
+							            </div>
+							
+							        </div>
+							    </div>
+							</th:block>
+							<!-- 검색 결과가 없을 때 (초기 로딩 시) -->
+							<div th:if="${#lists.isEmpty(contentsList)}" class="col-12">
+								<p class="text-center">표시할 콘텐츠가 없습니다.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- body 태그가 닫히기 직전에 삽입 -->
+		<div class="modal fade" id="portfolioDetailModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
+		    <!-- modal-lg를 modal-xl로 변경하여 더 넓게 표시 -->
+		    <div class="modal-dialog modal-xl modal-dialog-centered">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <h5 class="modal-title" id="portfolioModalTitle"></h5>
+		                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		            </div>
+		            <div class="modal-body" id="portfolioModalBody">
+		                <!-- 이 부분은 JS가 동적으로 채워넣습니다 -->
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+		                <!-- 필요 시 '문의하기' 등 추가 버튼 배치 가능 -->
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	</th:block>
+</html>
