@@ -2,61 +2,59 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="outpolic.user.payment.mapper.UserPaymentMapper">
+<mapper
+	namespace="outpolic.user.payment.mapper.UserPaymentMapper">
 
-    <insert id="insertSettlement" parameterType="SettlementDTO">
-    	<selectKey keyColumn="newCode" keyProperty="stlmCd" resultType="String" order="BEFORE">
-            SELECT
-                CASE
-                    WHEN COUNT(*) = 0 THEN 'STLM_C0000001'
-                    ELSE CONCAT(
-                        'STLM_C',
-                        LPAD(
-                            CAST(SUBSTRING_INDEX(MAX(stlm_cd), 'STLM_C', -1) AS UNSIGNED) + 1,
-                            7,
-                            '0'
-                        )
-                    )
-                END AS newCode
-            FROM settlement
-            WHERE stlm_cd LIKE 'STLM_C%';
-        </selectKey>
-        INSERT INTO settlement (
-            stlm_cd,
-            mbr_cd,
-            gds_cd,
-            stc_cd,
-            stlm_cnt,
-            stlm_pay_type,
-            stlm_amt,
-            stlm_used_points,
-            stlm_final_amt,
-            stlm_payment_info,
-            stlm_card_nm,
-            stlm_provider_nm,
-            stlm_account_info,
-            stlm_account_nm,
-            stlm_ymdt,
-            stlm_agre_yn
-        )
-        VALUES (
-            #{stlmCd},
-            #{mbrCd},
-            #{gdsCd},
-            #{stcCd},
-            #{stlmCnt},
-            #{stlmPayType},
-            #{stlmAmt},
-            #{stlmUsedPoints},
-            #{stlmFinalAmt},
-            #{stlmPaymentInfo},
-            #{stlmCardNm},
-            #{stlmProviderNm},
-            #{stlmAccountInfo},
-            #{stlmAccountNm},
-            #{stlmYmdt},
-            #{stlmAgreYn}
-        )
-    </insert>
+	<insert id="insertSettlement" parameterType="SettlementDTO">
+		<selectKey keyColumn="newCode" keyProperty="stlmCd"
+			resultType="String" order="BEFORE">
+			SELECT
+				CASE
+					WHEN COUNT(*) = 0 THEN 'STLM_C1'
+				ELSE CONCAT(
+					'STLM_C',
+					MAX(CAST(SUBSTRING_INDEX(stlm_cd, 'STLM_C', -1) AS UNSIGNED)) + 1
+				)
+			END AS newCode
+			FROM settlement
+			WHERE stlm_cd LIKE 'STLM_C%';
+		</selectKey>
+		INSERT INTO settlement (
+		stlm_cd,
+		mbr_cd,
+		gds_cd,
+		stc_cd,
+		stlm_cnt,
+		stlm_pay_type,
+		stlm_amt,
+		stlm_used_points,
+		stlm_final_amt,
+		stlm_payment_info,
+		stlm_card_nm,
+		stlm_provider_nm,
+		stlm_account_info,
+		stlm_account_nm,
+		stlm_ymdt,
+		stlm_agre_yn
+		)
+		VALUES (
+		#{stlmCd},
+		#{mbrCd},
+		#{gdsCd},
+		#{stcCd},
+		#{stlmCnt},
+		#{stlmPayType},
+		#{stlmAmt},
+		#{stlmUsedPoints},
+		#{stlmFinalAmt},
+		#{stlmPaymentInfo},
+		#{stlmCardNm},
+		#{stlmProviderNm},
+		#{stlmAccountInfo},
+		#{stlmAccountNm},
+		#{stlmYmdt},
+		#{stlmAgreYn}
+		)
+	</insert>
 
 </mapper>
