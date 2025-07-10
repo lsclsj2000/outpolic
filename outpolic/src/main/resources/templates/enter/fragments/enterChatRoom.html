@@ -6,262 +6,336 @@
     <div id="chat-float-button-container" class="SR_chat-float-button"></div>
 
     <!-- Chat window container -->
-    <div id="chat-window-container"></div>
+    <div id="chat-window-container" style="display: none;">
+        <!-- Chat window shell - Initially hidden, controlled by JS display property -->
+        <div id="chat-actual-window" class="SR_chat-window SR_bg-white SR_shadow-xl SR_d-flex SR_flex-column SR_border SR_border-light">
+            <!-- Chat window header -->
+            <div class="SR_bg-gradient-header SR_text-white SR_p-3 SR_rounded-top SR_d-flex SR_align-items-center SR_shadow-sm">
+                <button id="back-button" class="SR_btn SR_btn-sm SR_text-white SR_rounded-circle SR_hover-bg-white-opacity-20 SR_transition-colors SR_d-none">
+                    <svg class="SR_send-icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </button>
+                <h2 id="chat-header-title" class="SR_fs-5 SR_fw-semibold SR_text-truncate SR_flex-grow-1 SR_text-center" style="color:white;"></h2>
+                <div class="SR_d-flex SR_align-items-center SR_ms-auto">
+                    <button id="maximize-chat-button" class="SR_btn SR_btn-sm SR_text-white SR_rounded-circle SR_hover-bg-white-opacity-20 SR_transition-colors" title="전체 화면">
+                        <svg class="SR_send-icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m7-7h4m0 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m7 7h4m0 0v-4m0 4l-5-5"></path>
+                        </svg>
+                    </button>
+                    <button id="close-chat-button" class="SR_btn SR_btn-sm SR_text-white SR_rounded-circle SR_hover-bg-white-opacity-20 SR_transition-colors SR_ms-2" title="닫기">
+                        <svg class="SR_send-icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Home Static View (initially hidden) -->
+            <div id="home-static-view" class="SR_chat-scroll-area SR_flex-grow-1 SR_p-3 SR_d-none">
+                <div class="SR_flex-grow-1 SR_d-flex SR_flex-column SR_overflow-auto SR_chat-scroll-area" >
+                    <!-- User Profile Section -->
+                    <div class="SR_bg-white SR_p-4 SR_rounded-3 SR_shadow-sm SR_mb-4 SR_d-flex SR_align-items-center">
+                        <!-- Profile Image/Logo -->
+                        <img src="https://placehold.co/70x70/264790/ffffff?text=LOGO" alt="기업 로고" class="SR_w-16 SR_h-16 SR_rounded-circle SR_object-cover SR_border SR_border-2 SR_profile-image-border">
+                        
+                        <!-- Profile Details -->
+                        <div class="SR_ms-3 SR_flex-grow-1">
+                            <h3 class="SR_fs-5 SR_fw-bold SR_text-dark SR_mb-1">김철수</h3>
+                            <p class="SR_small SR_text-secondary SR_mb-1">ABC 솔루션 (기업회원)</p>
+                            <p class="SR_small SR_text-muted SR_mb-0">"혁신적인 솔루션으로 미래를 만듭니다."</p>
+                        </div>
+                    </div>
+
+                    <!-- Portfolio Information Section -->
+                    <div class="SR_bg-white SR_p-4 SR_rounded-3 SR_shadow-sm SR_mb-4">
+                        <h3 class="SR_fs-6 SR_fw-semibold SR_text-dark SR_mb-3">포트폴리오 정보</h3>
+                        <div class="SR_position-relative">
+                            <div id="portfolio-carousel" class="SR_d-flex SR_overflow-auto SR_hide-scrollbar SR_pb-3 SR_mx-n1">
+                                <!-- Portfolio items - Static content, as data will be loaded later -->
+                                <div class="SR_text-secondary SR_p-3">포트폴리오 정보가 없습니다.</div>
+                            </div>
+                            <!-- Portfolio Scroll Buttons -->
+                            <button id="home-portfolio-scroll-left" class="SR_btn SR_btn-sm SR_position-absolute SR_start-0 SR_top-50 SR_translate-middle-y SR_bg-secondary SR_text-white SR_rounded-circle SR_z-10 SR_d-none d-md-block SR_carousel-button-size">
+                                <svg class="SR_w-4 SR_h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </button>
+                            <button id="home-portfolio-scroll-right" class="SR_btn SR_btn-sm SR_position-absolute SR_end-0 SR_top-50 SR_translate-middle-y SR_bg-secondary SR_text-white SR_rounded-circle SR_z-10 SR_d-none d-md-block SR_carousel-button-size">
+                                <svg class="SR_w-4 SR_h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Outsourcing Information Section -->
+                    <div class="SR_bg-white SR_p-4 SR_rounded-3 SR_shadow-sm">
+                        <h3 class="SR_fs-6 SR_fw-semibold SR_text-dark SR_mb-3">외주 정보</h3>
+                        <div class="SR_position-relative">
+                            <div id="outsourcing-carousel" class="SR_d-flex SR_overflow-auto SR_hide-scrollbar SR_pb-3 SR_mx-n1">
+                                <!-- Outsourcing items - Static content, as data will be loaded later -->
+                                <div class="SR_text-secondary SR_p-3">외주 정보가 없습니다.</div>
+                            </div>
+                            <!-- Outsourcing Scroll Buttons -->
+                            <button id="home-outsourcing-scroll-left" class="SR_btn SR_btn-sm SR_position-absolute SR_start-0 SR_top-50 SR_translate-middle-y SR_bg-secondary SR_text-white SR_rounded-circle SR_z-10 SR_d-none d-md-block SR_carousel-button-size">
+                                <svg class="SR_w-4 SR_h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </button>
+                            <button id="home-outsourcing-scroll-right" class="SR_btn SR_btn-sm SR_position-absolute SR_end-0 SR_top-50 SR_translate-middle-y SR_bg-secondary SR_text-white SR_rounded-circle SR_z-10 SR_d-none d-md-block SR_carousel-button-size">
+                                <svg class="SR_w-4 SR_h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Rooms Static View (initially hidden) -->
+            <div id="chat-rooms-static-view" class="SR_chat-scroll-area SR_flex-grow-1 SR_p-3 SR_d-none">
+                <div class="SR_list-group SR_list-group-flush" id="chat-rooms-list-container">
+                    <!-- Chat room items will be dynamically inserted here by renderChatRoomsView -->
+                    <div class="SR_d-flex SR_flex-column SR_align-items-center SR_justify-content-center SR_h-100 SR_text-secondary SR_text-center">
+                        <svg class="SR_w-16 SR_h-16" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-0.9 2-2V4C22 2.9 21.1 2 20 2zM9 10v2H7v-2h2zM13 10v2h-2v-2h2zM17 10v2h-2v-2h2z"></path>
+                        </svg>
+                        <p class="SR_small">대화를 시작해보세요</p>
+                        <button id="start-new-chat-button"
+                                class="SR_btn SR_text-white SR_fw-bold SR_py-2 SR_px-4 SR_rounded-pill SR_shadow-sm SR_transition-all-duration-200-transform-hover-scale-105 SR_d-flex SR_align-items-center SR_send-button-bg">
+                            <span class="SR_fs-6">새 문의하기</span>
+                            <svg class="SR_send-icon-size SR_send-icon-transform" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.649-.187a1 1 0 00.569-.953V9.418c0-.528.261-1.026.713-1.332.083-.057.172-.1.261-.137.089-.037.18-.063.272-.078a1 1 0 00.569.953l.649.187a1 1 0 001.169 1.409l7-14a1 1 0 00-1.788 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages Static View (initially hidden) -->
+            <div id="chat-messages-static-view" class="SR_d-flex SR_flex-column SR_flex-grow-1 SR_p-3 SR_d-none">
+                <div id="chat-messages" class="SR_chat-scroll-area SR_flex-grow-1">
+                    <!-- Messages will be dynamically inserted here by renderMessagesContent -->
+                    <div class="SR_text-secondary SR_p-3 SR_text-center">메시지가 없습니다.</div>
+                </div>
+                <div id="reply-suggestions" class="SR_d-flex SR_flex-wrap gap-2 SR_mt-3 SR_mb-2 SR_px-3"></div>
+                <!-- Message Input Bar - Now inside the chat-messages-static-view -->
+                <div id="message-input-bar" class="SR_border-top SR_p-3 SR_d-flex SR_align-items-center SR_d-none">
+                    <input type="text" id="message-input" class="SR_form-control SR_form-control-sm SR_me-2 SR_py-2 SR_ps-4 SR_pe-2 SR_rounded-pill SR_flex-grow-1 SR_text-dark" placeholder="메시지를 입력하세요...">
+                    <button id="ai-assistant-button"
+                            class="SR_btn SR_btn-sm SR_text-info SR_rounded-circle SR_hover-bg-info-light SR_transition-colors SR_flex-shrink-0 SR_ms-2 SR_ai-suggest-button-color SR_ai-suggest-button-bg-opacity-10"
+                            title="AI 도우미 ✨">
+                        <svg class="SR_ai-suggest-icon-size" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
+                        </svg>
+                    </button>
+                    <button id="suggest-replies-button"
+                            class="SR_btn SR_btn-sm SR_text-info SR_rounded-circle SR_hover-bg-info-light SR_transition-colors SR_flex-shrink-0 SR_ms-2 SR_ai-suggest-button-color SR_ai-suggest-button-bg-opacity-10"
+                            title="답장 제안 ✨">
+                        <svg class="SR_ai-suggest-icon-size" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"></path>
+                        </svg>
+                    </button>
+                    <button id="send-message-button" class="SR_btn SR_bg-primary SR_rounded-circle SR_d-flex SR_align-items-center SR_justify-content-center SR_transition-all-duration-200-transform-hover-scale-105 SR_ms-2 SR_send-button-size SR_send-button-bg">
+                        <svg class="SR_send-icon-size" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.649-.187a1 1 0 00.569-.953V9.418c0-.528.261-1.026.713-1.332.083-.057.172-.1.261-.137.089-.037.18-.063.272-.078a1 1 0 00.569.953l.649.187a1 1 0 001.169 1.409l7-14a1 1 0 00-1.788 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Opponent Profile Static View (initially hidden) -->
+            <div id="opponent-profile-static-view" class="SR_chat-scroll-area SR_flex-grow-1 SR_p-3 SR_d-none">
+                <div class="SR_d-flex SR_flex-column SR_align-items-center SR_p-4">
+                    <img src="https://placehold.co/96x96/cccccc/333333?text=Profile" alt="프로필 이미지" class="SR_rounded-circle SR_mb-3 SR_shadow-sm SR_profile-avatar-size">
+                    <h3 class="SR_fs-5 SR_fw-semibold SR_text-dark SR_mb-1">상대방 이름</h3>
+                    <p class="SR_text-secondary SR_small SR_mb-3">상대방 회사</p>
+                    <p class="SR_text-dark SR_text-center SR_px-3">이것은 상대방의 간단한 자기소개입니다.</p>
+
+                    <h4 class="SR_fs-6 SR_fw-semibold SR_text-dark SR_mt-4 SR_mb-3">포트폴리오</h4>
+                    <div id="opponent-portfolio-carousel-container" class="SR_w-100 SR_position-relative">
+                        <div id="opponent-portfolio-carousel" class="SR_d-flex SR_overflow-auto SR_hide-scrollbar" style="scroll-snap-type: x mandatory;">
+                            <!-- 포트폴리오 정보가 없습니다. (데이터는 나중에 불러올 예정) -->
+                            <div class="SR_text-secondary SR_p-3">포트폴리오 정보가 없습니다.</div>
+                        </div>
+                        <button id="opponent-portfolio-scroll-left" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_start-0 SR_translate-middle-y SR_shadow-lg SR_bg-secondary SR_text-white SR_carousel-button-size">&lt;</button>
+                        <button id="opponent-portfolio-scroll-right" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_end-0 SR_translate-middle-y SR_shadow-lg SR_bg-secondary SR_text-white SR_carousel-button-size">&gt;</button>
+                    </div>
+
+                    <h4 class="SR_fs-6 SR_fw-semibold SR_text-dark SR_mt-4 SR_mb-3">외주 프로젝트</h4>
+                    <div id="opponent-outsourcing-carousel-container" class="SR_w-100 SR_position-relative">
+                        <div id="opponent-outsourcing-carousel" class="SR_d-flex SR_overflow-auto SR_hide-scrollbar" style="scroll-snap-type: x mandatory;">
+                            <!-- 외주 정보가 없습니다. (데이터는 나중에 불러올 예정) -->
+                            <div class="SR_text-secondary SR_p-3">외주 정보가 없습니다.</div>
+                        </div>
+                        <button id="opponent-outsourcing-scroll-left" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_start-0 SR_translate-middle-y SR_shadow-lg SR_bg-secondary SR_text-white SR_carousel-button-size">&lt;</button>
+                        <button id="opponent-outsourcing-scroll-right" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_end-0 SR_translate-middle-y SR_shadow-lg SR_bg-secondary SR_text-white SR_carousel-button-size">&gt;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom navigation - Initially flex, controlled by JS display property -->
+            <div id="bottom-nav-bar" class="SR_border-top SR_d-flex SR_justify-content-around SR_bg-body-tertiary">
+                <button id="nav-home" class="SR_btn SR_flex-fill SR_d-flex SR_flex-column SR_align-items-center SR_p-2 SR_nav-link SR_active">
+                    <svg class="SR_send-icon-size" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+                    </svg>
+                    <span class="SR_small SR_fw-medium SR_mt-1">홈</span>
+                </button>
+                <button id="nav-chat-rooms" class="SR_btn SR_flex-fill SR_d-flex SR_flex-column SR_align-items-center SR_p-2 SR_nav-link">
+                    <svg class="SR_send-icon-size" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 4H6v2h8v-2z"></path>
+                    </svg>
+                    <span class="SR_small SR_fw-medium SR_mt-1">대화</span>
+                </button>
+            </div>
+
+            <!-- Current User ID display -->
+            <div class="SR_bg-light SR_text-secondary SR_small SR_p-2 SR_text-center SR_border-top SR_border-light">
+                내 ID: <span id="current-user-id" class="font-monospace SR_text-dark SR_text-break-all">로딩 중...</span>
+            </div>
+        </div>
+    </div>
 
     <!-- Custom modal containers (for alerts, input prompts etc.) -->
     <div id="modal-container"></div>
     <div id="custom-input-modal-container"></div>
 
+    <!-- Bootstrap Bundle with Popper -->
+    <!-- Bootstrap JS CDN은 사용하지 않으므로 주석 처리합니다. -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script> -->
     <script type="module">
-        // Firebase CDN Imports
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Firebase CDN Imports - Firebase를 사용하지 않으므로 제거합니다.
+        // import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        // import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Global state variables
-        let app;
-        let db;
-        let auth;
-        let userId = null; // User ID set after authentication
-        let isAuthReady = false; // Flag to indicate Firebase auth is ready
+        // Firebase 관련 변수는 사용하지 않으므로 제거합니다.
+        // let app;
+        // let db;
+        // let auth;
+        // 사용자 ID를 관리하는 전역 변수입니다. (Firebase 없이 단순 문자열로 관리)
+        let userId = 'user-' + crypto.randomUUID().substring(0, 8); 
+        // Firebase 인증 준비 완료 여부 플래그 (Firebase를 사용하지 않으므로 제거합니다.)
+        // let isAuthReady = false; 
 
         // Application state object
+        // 애플리케이션의 현재 상태를 관리하는 객체입니다.
         let state = {
-            isChatOpen: false, // Chat window open/closed status
-            currentView: 'home', // Current view: 'home', 'chatRooms' (list) or 'chatMessages' (messages) - changed default to 'home'
-            selectedRoomId: null, // Currently selected chat room ID
-            selectedOpponentId: null, // New: Stores the ID of the selected opponent for profile view
-            chatRooms: [], // Chat room data (filled with dummy data or real data)
-            messages: [], // Messages for the current chat room
-            firestoreListeners: [], // Array to store unsubscribe functions for Firestore listeners
-            isMaximized: false // New state for chat window maximization
+            isChatOpen: false, // 채팅 창 열림/닫힘 상태
+            currentView: 'home', // 현재 뷰: 'home', 'chatRooms' (목록) 또는 'chatMessages' (메시지)
+            selectedRoomId: null, // 현재 선택된 채팅방 ID
+            selectedOpponentId: null, // 프로필 뷰를 위해 선택된 상대방의 ID를 저장합니다.
+            chatRooms: [], // 채팅방 데이터 (더미 데이터 또는 실제 데이터로 채워짐)
+            messages: [], // 현재 채팅방의 메시지
+            // firestoreListeners: [], // Firestore 리스너의 구독 취소 함수를 저장하는 배열 (Firebase를 사용하지 않으므로 제거합니다.)
+            isMaximized: false // 채팅 창 최대화 상태
         };
 
-        // Firebase configuration (provided by Canvas environment)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        // FIX: Corrected the ReferenceError by directly using the global __initial_auth_token
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Gemini AI Assistant unique ID (to differentiate from other user IDs)
-        const AI_ASSISTANT_ID = "gemini-ai-assistant";
-        const AI_ASSISTANT_NAME = "AI 도우미 ✨";
+        // Firebase configuration (provided by Canvas environment) - Firebase를 사용하지 않으므로 제거합니다.
+        // const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        // const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        // const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // Dummy Data for Portfolio and Outsourcing
-        const dummyPortfolios = [
-            { id: 'p1', title: '웹사이트 개발 프로젝트 (대규모)', description: '반응형 웹사이트 및 백엔드 시스템 구축. 최신 웹 기술 스택을 활용하여 확장성과 안정성을 보장합니다.', imageUrl: 'https://placehold.co/180x120/abc123/ffffff?text=웹사이트' },
-            { id: 'p2', title: '모바일 앱 UI/UX 디자인 (혁신적)', description: '사용자 중심의 직관적인 인터페이스 설계 및 디자인 시스템 구축으로 사용자 만족도를 극대화합니다.', imageUrl: 'https://placehold.co/180x120/def456/ffffff?text=모바일앱' },
-            { id: 'p3', title: '데이터 분석 대시보드 (실시간)', description: '대용량 데이터의 실시간 수집 및 시각화, 인사이트 도출을 위한 고급 분석 대시보드 솔루션입니다.', imageUrl: 'https://placehold.co/180x120/789ghi/ffffff?text=데이터분석' },
-            { id: 'p4', title: 'AI 기반 챗봇 솔루션 (맞춤형)', description: '자연어 처리 및 머신러닝 기술을 활용한 지능형 챗봇 개발로 고객 응대 자동화 및 효율성을 높입니다.', imageUrl: 'https://placehold.co/180x120/jkl012/ffffff?text=AI챗봇' },
-            { id: 'p5', title: '클라우드 인프라 구축 (안정성)', description: 'AWS 기반의 고가용성 및 확장 가능한 클라우드 인프라를 설계하고 구축하여 안정적인 서비스 운영을 지원합니다.', imageUrl: 'https://placehold.co/180x120/mno345/ffffff?text=클라우드' },
-            { id: 'p6', title: '게임 개발 프레임워크', description: '크로스 플랫폼 게임 개발을 위한 강력한 프레임워크 설계', imageUrl: 'https://placehold.co/180x120/456def/ffffff?text=게임개발' }
-        ];
-
-        const dummyOutsourcings = [
-            { id: 'o1', title: '신규 서비스 랜딩 페이지 제작', description: '신규 서비스 런칭을 위한 마케팅용 고성능 랜딩 페이지 개발이 필요합니다.', status: '진행 중' },
-            { id: 'o2', title: '재고 관리 시스템 개발 의뢰', description: '소상공인을 위한 맞춤형 클라우드 기반 재고 관리 시스템 개발을 의뢰합니다.', status: '대기 중' },
-            { id: 'o3', title: 'ERP 시스템 모듈 연동 및 커스터마이징', description: '기존 ERP에 신규 모듈 연동 및 기업 특성에 맞는 기능 커스터마이징 프로젝트입니다.', status: '완료' },
-            { id: 'o4', title: '컨텐츠 관리 시스템 고도화 개발', description: '기존 컨텐츠 관리 시스템에 이미지 및 비디오 처리 기능 강화를 위한 고도화 개발을 요청합니다.', status: '진행 중' },
-            { id: 'o5', title: '사내 교육 플랫폼 구축', description: '직원 교육을 위한 인터랙티브 온라인 교육 플랫폼 구축 프로젝트입니다.', status: '진행 중' },
-            { id: 'o6', title: '보안 솔루션 도입 컨설팅', description: '기업 데이터 보안 강화를 위한 전문가 컨설팅 및 솔루션 도입을 희망합니다.', status: '대기 중' }
-        ];
-
-        // Dummy Profile Data for other users (for opponent profile view)
-        const dummyUserProfiles = {
-            'dummyUser2': { name: '이팀장', company: 'ABC 솔루션', description: '프로젝트 관리 및 기획 전문가입니다.', profileImageUrl: 'https://placehold.co/80x80/6366f1/ffffff?text=이팀장' },
-            'dummyUser3': { name: '최대리', company: 'XYZ 디자인', description: '창의적인 UI/UX 디자인을 담당합니다.', profileImageUrl: 'https://placehold.co/80x80/10b981/ffffff?text=최대리' },
-            'dummyUser4': { name: '박부장', company: 'Startup Tech', description: '기술 컨설팅 및 솔루션 아키텍처 담당입니다.', profileImageUrl: 'https://placehold.co/80x80/ef4444/ffffff?text=박부장' },
-            [AI_ASSISTANT_ID]: { name: AI_ASSISTANT_NAME, company: 'Gemini AI', description: '다양한 질문에 답변하고 대화를 돕는 AI 도우미입니다.', profileImageUrl: 'https://placehold.co/80x80/8b5cf6/ffffff?text=AI' }
-        };
+        // 포트폴리오 더미 데이터 (데이터는 나중에 불러올 것이므로 빈 배열로 유지)
+        const dummyPortfolios = [];
+        // 외주 더미 데이터 (데이터는 나중에 불러올 것이므로 빈 배열로 유지)
+        const dummyOutsourcings = [];
+        // 더미 사용자 프로필 데이터 (데이터는 나중에 불러올 것이므로 빈 객체로 유지)
+        const dummyUserProfiles = {};
 
         /**
          * Initializes Firebase and sets up the authentication listener.
+         * Firebase를 사용하지 않으므로, 초기 상태 설정 및 더미 데이터 로드만 수행합니다.
          */
         async function initializeFirebase() {
-            try {
-                // Check if Firebase config is missing
-                if (Object.keys(firebaseConfig).length === 0) {
-                    console.error("Firebase config is missing. Cannot initialize Firebase.");
-					loadDummyChatRooms();
-    				isAuthReady = true;
-    				render();
-    				return;
-                } else {
-                    app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-                }
-
-                // Set up listener for authentication state changes
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid; // Set authenticated user ID
-                        console.log("Firebase authenticated. User ID:", userId);
-                    } else {
-                        console.log("No user signed in. Attempting sign-in...");
-                        try {
-                            if (initialAuthToken) {
-                                // Try signing in with custom token if available
-                                await signInWithCustomToken(auth, initialAuthToken);
-                                console.log("Signed in with custom token successfully.");
-                            } else {
-                                // If no custom token, try anonymous sign-in
-                                await signInAnonymously(auth);
-                                console.log("Signed in anonymously.");
-                            }
-                            userId = auth.currentUser?.uid || crypto.randomUUID(); // Fallback to random ID if UID still not available
-                            console.log("Auth attempt complete. Current User ID:", userId);
-                        } catch (error) {
-                            // If custom token sign-in fails (e.g., auth/invalid-claims), try anonymous sign-in as fallback
-                            console.log("Initial sign-in attempt (custom token) failed. Attempting anonymous sign-in as fallback...", error.message);
-                            try {
-                                await signInAnonymously(auth);
-                                userId = auth.currentUser?.uid || crypto.randomUUID();
-                                console.log("Successfully signed in anonymously as fallback. Current User ID:", userId);
-                            } catch (anonError) {
-                                console.error("Firebase anonymous sign-in fallback also failed:", anonError);
-                                userId = crypto.randomUUID(); // Assign random ID if all auth attempts fail
-                            }
-                        }
-                    }
-                    isAuthReady = true; // Auth process completed (user or anonymous)
-                    // Load dummy data or set up real data listener after Firebase init and auth are complete
-                    if (db) { // Check if db was successfully initialized
-                         setupFirestoreListeners(); // Set up real Firestore data listeners
-                    } else {
-                        // Fallback to dummy data if Firebase DB initialization fails
-                        loadDummyChatRooms();
-                    }
-                    render(); // Initial render
-                });
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                // Fallback to dummy data if Firebase initialization fails
-                loadDummyChatRooms();
-                isAuthReady = true; // Allow UI rendering even without Firebase
-                render();
-            }
+            // Firebase 관련 로직을 제거하고, 더미 데이터 로드 및 초기 뷰 설정만 남깁니다.
+            loadDummyChatRooms(); // 더미 데이터 로드
+            // isAuthReady = true; // Firebase를 사용하지 않으므로 필요하지 않습니다.
+            setState({ currentView: 'home' }); // 초기 뷰 설정
         }
 
         /**
          * Loads initial dummy chat room data. Includes dummy messages for each room.
          * This function is called when Firebase Firestore is not initialized or encounters an error.
+         * As per user request, this now initializes an empty chat room list.
+         * 초기 더미 채팅방 데이터를 로드합니다. 각 방에 대한 더미 메시지를 포함합니다.
+         * 이 함수는 Firebase Firestore가 초기화되지 않거나 오류가 발생할 때 호출됩니다.
+         * 사용자 요청에 따라 이제 빈 채팅방 목록으로 초기화됩니다.
          */
         function loadDummyChatRooms() {
-            const now = new Date();
-            // Ensure userId is set before creating dummy rooms that depend on it
-            if (!userId) {
-                userId = 'dummy-user-' + crypto.randomUUID().substring(0, 8);
-            }
-            state.chatRooms = [
-                {
-                    id: 'dummy-room-1',
-                    name: '환영합니다! 👋',
-                    lastMessage: '채팅 앱에 오신 것을 환영합니다.',
-                    lastMessageTimestamp: { toDate: () => new Date(now.getTime() - 60 * 1000) },
-                    participants: [userId, 'dummyUser2'], // Ensure current userId is a participant
-                    messages: [
-                        { senderId: 'dummyUser2', senderName: '이팀장', text: '안녕하세요! 문의사항이 있으시면 언제든지 물어보세요.', timestamp: { toDate: () => new Date(now.getTime() - 55 * 1000) } },
-                        { senderId: userId, senderName: `사용자 ${userId.substring(0, 4)}`, text: '네, 감사합니다!', timestamp: { toDate: () => new Date(now.getTime() - 50 * 1000) } },
-                        { senderId: AI_ASSISTANT_ID, senderName: AI_ASSISTANT_NAME, text: '환영합니다! 어떤 도움이 필요하신가요?', timestamp: { toDate: () => new Date(now.getTime() - 45 * 1000) } }
-                    ]
-                },
-                {
-                    id: 'dummy-room-2',
-                    name: '프로젝트 논의방',
-                    lastMessage: '다음 주 회의 안건에 대해 논의합시다.',
-                    lastMessageTimestamp: { toDate: () => new Date(now.getTime() - 5 * 60 * 1000) },
-                    participants: [userId, 'dummyUser3'], // Ensure current userId is a participant
-                    messages: [
-                        { senderId: 'dummyUser3', senderName: '최대리', text: '회의 자료 준비되셨나요?', timestamp: { toDate: () => new Date(now.getTime() - 4 * 60 * 1000) } },
-                        { senderId: userId, senderName: `사용자 ${userId.substring(0, 4)}`, text: '네, 거의 다 됐습니다!', timestamp: { toDate: () => new Date(now.getTime() - 3 * 60 * 1000) } }
-                    ]
-                },
-                {
-                    id: 'dummy-room-3',
-                    name: '자유 게시판 💬',
-                    lastMessage: '오늘 점심 뭐 드셨나요?',
-                    lastMessageTimestamp: { toDate: () => new Date(now.getTime() - 15 * 60 * 1000) },
-                    participants: [userId, 'dummyUser4'], // Ensure current userId is a participant
-                    messages: [
-                        { senderId: 'dummyUser4', senderName: '박부장', text: '오늘 점심 뭐 드셨나요? 저는 비빔밥 먹었어요!', timestamp: { toDate: () => new Date(now.getTime() - 14 * 60 * 1000) } },
-                        { senderId: userId, senderName: `사용자 ${userId.substring(0, 4)}`, text: '저는 김치찌개 먹었어요!', timestamp: { toDate: () => new Date(now.getTime() - 13 * 60 * 1000) } }
-                    ]
-                }
-            ];
-            console.log("Dummy chat rooms and messages loaded.");
+            state.chatRooms = [];
+            console.log("Dummy chat rooms initialized as empty.");
         }
 
 
         /**
          * Cleans up all active Firestore listeners.
+         * Firebase를 사용하지 않으므로, 이 함수는 제거합니다.
          */
-        function cleanupFirestoreListeners() {
-            state.firestoreListeners.forEach(unsubscribe => unsubscribe());
-            state.firestoreListeners = [];
-        }
+        // function cleanupFirestoreListeners() {
+        //     state.firestoreListeners.forEach(unsubscribe => unsubscribe());
+        //     state.firestoreListeners = [];
+        // }
 
         /**
          * Sets up real-time Firestore listeners for chat rooms and messages.
+         * Firebase를 사용하지 않으므로, 이 함수는 제거합니다.
          */
-        function setupFirestoreListeners() {
-            if (!isAuthReady || !db) {
-                console.log("Firestore not ready or user not authenticated. Using dummy data fallback.");
-                loadDummyChatRooms(); // Load dummy data if Firestore connection fails
-                return;
-            }
+        // function setupFirestoreListeners() {
+        //     if (!isAuthReady || !db) {
+        //         console.log("Firestore not ready or user not authenticated. Using dummy data fallback.");
+        //         loadDummyChatRooms(); // Firestore 연결 실패 시 더미 데이터 로드
+        //         return;
+        //     }
 
-            cleanupFirestoreListeners(); // Unsubscribe existing listeners first
+        //     cleanupFirestoreListeners(); // 기존 리스너 먼저 구독 취소
 
-            // Set up listener for chat rooms collection
-            const roomsCollectionRef = collection(db, `artifacts/${appId}/public/data/chatRooms`);
-            const unsubscribeRooms = onSnapshot(roomsCollectionRef, (snapshot) => {
-                const rooms = [];
-                snapshot.forEach(doc => {
-                    rooms.push({ id: doc.id, ...doc.data() });
-                });
-                // Sort by last message timestamp (newest first)
-                state.chatRooms = rooms.sort((a, b) => (b.lastMessageTimestamp?.toDate() || 0) - (a.lastMessageTimestamp?.toDate() || 0));
-                console.log("Chat rooms updated:", state.chatRooms);
-                // Only re-render chat rooms view if currently on that view
-                if (state.currentView === 'chatRooms') {
-                    renderChatRoomsView(document.getElementById('dynamic-content'));
-                }
-            }, (error) => {
-                console.error("Error fetching chat rooms:", error);
-                loadDummyChatRooms(); // Fallback to dummy data on error
-            });
-            state.firestoreListeners.push(unsubscribeRooms);
+        //     // 채팅방 컬렉션에 대한 리스너를 설정합니다.
+        //     const roomsCollectionRef = collection(db, `artifacts/${appId}/public/data/chatRooms`);
+        //     const unsubscribeRooms = onSnapshot(roomsCollectionRef, (snapshot) => {
+        //         const rooms = [];
+        //         snapshot.forEach(doc => {
+        //             rooms.push({ id: doc.id, ...doc.data() });
+        //         });
+        //         // 마지막 메시지 타임스탬프 (최신순)으로 정렬합니다.
+        //         state.chatRooms = rooms.sort((a, b) => (b.lastMessageTimestamp?.toDate() || 0) - (a.lastMessageTimestamp?.toDate() || 0));
+        //         console.log("Chat rooms updated:", state.chatRooms);
+        //         // 현재 해당 뷰에 있을 경우에만 채팅방 뷰를 다시 렌더링합니다.
+        //         if (state.currentView === 'chatRooms') {
+        //             renderChatRoomsView(document.getElementById('dynamic-content'));
+        //         }
+        //     }, (error) => {
+        //         console.error("Error fetching chat rooms:", error);
+        //         loadDummyChatRooms(); // 오류 발생 시 더미 데이터로 대체
+        //     });
+        //     state.firestoreListeners.push(unsubscribeRooms);
 
-            // Set up listener for messages in the selected chat room (if in messages view)
-            if (state.currentView === 'chatMessages' && state.selectedRoomId) {
-                const messagesCollectionRef = collection(db, `artifacts/${appId}/public/data/chatRooms/${state.selectedRoomId}/messages`);
-                // Note: Firestore orderBy requires an index; sorting in-memory here for simplicity.
-                const unsubscribeMessages = onSnapshot(messagesCollectionRef, (snapshot) => {
-                    const messages = [];
-                    snapshot.forEach(doc => {
-                        messages.push({ id: doc.id, ...doc.data() });
-                    });
-                    // Sort by timestamp (oldest first)
-                    state.messages = messages.sort((a, b) => (a.timestamp?.toDate() || 0) - (b.timestamp?.toDate() || 0));
-                    console.log(`Messages for room ${state.selectedRoomId} updated:`, state.messages);
-                    // Only update the messages content, not the whole view
-                    renderMessagesContent();
-                    scrollToBottom(); // Scroll to the latest message
-                }, (error) => {
-                    console.error("Error fetching messages:", error);
-                });
-                state.firestoreListeners.push(unsubscribeMessages);
-            }
-        }
+        //     // 선택된 채팅방의 메시지에 대한 리스너를 설정합니다 (메시지 뷰에 있을 경우).
+        //     if (state.currentView === 'chatMessages' && state.selectedRoomId) {
+        //         const messagesCollectionRef = collection(db, `artifacts/${appId}/public/data/chatRooms/${state.selectedRoomId}/messages`);
+        //         // 참고: Firestore orderBy는 인덱스가 필요합니다. 여기서는 간단하게 메모리에서 정렬합니다.
+        //         const unsubscribeMessages = onSnapshot(messagesCollectionRef, (snapshot) => {
+        //             const messages = [];
+        //             snapshot.forEach(doc => {
+        //                 messages.push({ id: doc.id, ...doc.data() });
+        //             });
+        //             // 타임스탬프 (오래된 순)으로 정렬합니다.
+        //             state.messages = messages.sort((a, b) => (a.timestamp?.toDate() || 0) - (b.timestamp?.toDate() || 0));
+        //             console.log(`Messages for room ${state.selectedRoomId} updated:`, state.messages);
+        //             // 전체 뷰가 아닌 메시지 콘텐츠만 업데이트합니다.
+        //             renderMessagesContent();
+        //             scrollToBottom(); // 최신 메시지로 스크롤
+        //         }, (error) => {
+        //             console.error("Error fetching messages:", error);
+        //         });
+        //         state.firestoreListeners.push(unsubscribeMessages);
+        //     }
+        // }
 
         /**
          * Scrolls the chat message area to the bottom.
+         * 채팅 메시지 영역을 맨 아래로 스크롤합니다.
          */
         function scrollToBottom() {
             const chatMessages = document.getElementById('chat-messages');
             if (chatMessages) {
-                // Use setTimeout to ensure scroll happens after DOM updates
+                // DOM 업데이트 후 스크롤이 발생하도록 setTimeout을 사용합니다.
                 setTimeout(() => {
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 }, 0);
@@ -270,312 +344,101 @@
 
         /**
          * Creates a new chat room.
-         * @param {string} roomName - The name of the chat room to create
+         * 새 채팅방을 로컬 상태에만 생성합니다. (Firebase 사용 안 함)
+         * @param {string} roomName - 생성할 채팅방의 이름
          */
         async function createNewChatRoom(roomName) {
-            // If in dummy mode, do not use Firestore
-            if (!db) {
-                console.warn("Firestore not available. Creating dummy chat room locally.");
-                const newRoomId = 'dummy-room-' + Math.random().toString(36).substring(2, 9);
-                const now = new Date();
-                const newDummyRoom = {
-                    id: newRoomId,
-                    name: roomName,
-                    lastMessage: "새 채팅방이 생성되었습니다.",
-                    lastMessageTimestamp: { toDate: () => now },
-                    participants: [userId, 'dummyUser2'], // Assume a dummy opponent
-                    messages: [ // Add an initial dummy message
-                        { senderId: AI_ASSISTANT_ID, senderName: AI_ASSISTANT_NAME, text: `"${roomName}" 채팅방이 개설되었습니다!`, timestamp: { toDate: () => now } }
-                    ]
-                };
-                state.chatRooms.unshift(newDummyRoom); // Add to the beginning of the list
-                setState({ currentView: 'chatMessages', selectedRoomId: newRoomId });
+            if (!roomName.trim()) {
+                SR_showModal("오류", "채팅방 이름을 입력해주세요.");
                 return;
             }
 
-            if (!userId) {
-                console.error("Firebase DB not initialized or user not authenticated.");
-                SR_showModal("오류", "채팅방을 생성할 수 없습니다. 사용자 인증 또는 데이터베이스 초기화를 확인해주세요.");
-                return;
-            }
-            try {
-                const roomsCollectionRef = collection(db, `artifacts/${appId}/public/data/chatRooms`);
-                const newRoomRef = await addDoc(roomsCollectionRef, {
-                    name: roomName,
-                    createdAt: serverTimestamp(),
-                    lastMessage: "채팅방이 생성되었습니다.",
-                    lastMessageTimestamp: serverTimestamp(),
-                    participants: [userId] // Add creator as participant
-                });
-                // Add initial message to the new room
-                await addDoc(collection(db, `artifacts/${appId}/public/data/chatRooms/${newRoomRef.id}/messages`), {
-                    senderId: AI_ASSISTANT_ID,
-                    senderName: AI_ASSISTANT_NAME,
-                    text: `"${roomName}" 채팅방이 개설되었습니다!`,
-                    timestamp: serverTimestamp()
-                });
-
-                console.log("New chat room created with ID:", newRoomRef.id);
-                // Navigate to the new chat room immediately after creation
-                setState({
-                    currentView: 'chatMessages',
-                    selectedRoomId: newRoomRef.id
-                });
-            } catch (error) {
-                console.error("Error creating new chat room:", error);
-                SR_showModal("채팅방 생성 실패", "새 채팅방을 만드는 데 오류가 발생했습니다: " + error.message);
-            }
+            const newRoomId = 'local-room-' + Math.random().toString(36).substring(2, 9);
+            const now = new Date();
+            const newLocalRoom = {
+                id: newRoomId,
+                name: roomName,
+                lastMessage: "새 채팅방이 생성되었습니다.",
+                lastMessageTimestamp: { toDate: () => now }, // 더미 데이터용 toDate 함수
+                messages: [
+                    { senderId: userId, senderName: `사용자 ${userId.substring(0, 4)}`, text: `"${roomName}" 채팅방이 개설되었습니다!`, timestamp: { toDate: () => now } }
+                ]
+            };
+            state.chatRooms.unshift(newLocalRoom); // 목록의 맨 앞에 추가
+            setState({ currentView: 'chatMessages', selectedRoomId: newRoomId });
+            console.log("Local chat room created:", newLocalRoom);
         }
 
         /**
          * Sends a message to the currently selected chat room.
-         * @param {string} messageText - The content of the message to send
-         * @param {string} senderId - The ID of the message sender
-         * @param {string} senderName - The name of the message sender
+         * 현재 선택된 채팅방에 메시지를 로컬 상태에만 전송합니다. (Firebase 사용 안 함)
+         * @param {string} messageText - 전송할 메시지 내용
+         * @param {string} senderId - 메시지 발신자 ID
+         * @param {string} senderName - 메시지 발신자 이름
          */
         async function sendMessage(messageText, senderId, senderName) {
-            console.log("sendMessage called with text:", messageText); // Debug log
+            console.log("sendMessage called with text:", messageText); // 디버그 로그
             if (!state.selectedRoomId || !messageText.trim()) {
                 console.error("Cannot send message: no room selected, or empty message.");
                 return;
             }
 
-            // Create a temporary message object for optimistic update
+            // 낙관적 업데이트를 위한 임시 메시지 객체를 생성합니다.
             const tempMessage = {
-                id: 'temp-msg-' + Date.now() + Math.random().toString(36).substring(2, 9), // Unique temporary ID
+                id: 'temp-msg-' + Date.now() + Math.random().toString(36).substring(2, 9), // 고유한 임시 ID
                 senderId: senderId,
                 senderName: senderName,
                 text: messageText,
-                timestamp: { toDate: () => new Date() }, // Client-side timestamp
-                isSending: true // Flag for optimistic rendering (optional, but good practice)
+                timestamp: { toDate: () => new Date() }, // 클라이언트 측 타임스탬프
+                isSending: true // 로딩 상태를 나타내는 플래그 (선택 사항이지만 좋은 관행)
             };
 
-            // Add the temporary message to the state and re-render only messages content
+            // 임시 메시지를 상태에 추가하고 메시지 콘텐츠만 다시 렌더링합니다.
             state.messages.push(tempMessage);
-            renderMessagesContent(); // Update UI
+            renderMessagesContent(); // UI 업데이트
             scrollToBottom();
 
-            // If in dummy mode, do not use Firestore after optimistic update
-            if (!db) {
-                console.warn("Firestore not available. Sent dummy message locally (optimistic update).");
-                return;
+            // 채팅방 목록에서 마지막 메시지 정보를 업데이트합니다.
+            const roomIndex = state.chatRooms.findIndex(room => room.id === state.selectedRoomId);
+            if (roomIndex !== -1) {
+                state.chatRooms[roomIndex].lastMessage = messageText;
+                state.chatRooms[roomIndex].lastMessageTimestamp = { toDate: () => new Date() };
+                // 로컬 더미 데이터의 경우 정렬은 덜 중요합니다.
+                state.chatRooms.sort((a, b) => (b.lastMessageTimestamp?.toDate() || 0) - (a.lastMessageTimestamp?.toDate() || 0));
             }
 
-            if (!senderId) { // userId is set in initializeFirebase
-                console.error("Cannot send message: sender not identified.");
-                return;
+            // 입력 필드를 지우고 포커스를 설정합니다.
+            const messageInput = document.getElementById('message-input');
+            if (messageInput) {
+                messageInput.value = ''; // 입력 필드를 즉시 지웁니다.
+                messageInput.focus(); // 즉시 포커스
             }
-
-            try {
-                const messagesCollectionRef = collection(db, `artifacts/${appId}/public/data/chatRooms/${state.selectedRoomId}/messages`);
-                const docRef = await addDoc(messagesCollectionRef, {
-                    senderId: senderId,
-                    senderName: senderName,
-                    text: messageText,
-                    timestamp: serverTimestamp()
-                });
-
-                // Update last message info in the chat room document (includes AI messages)
-                const roomDocRef = doc(db, `artifacts/${appId}/public/data/chatRooms/${state.selectedRoomId}`);
-                await updateDoc(roomDocRef, {
-                    lastMessage: messageText,
-                    lastMessageTimestamp: serverTimestamp()
-                });
-                console.log("Message sent and room updated (Firestore confirmed).");
-            } catch (error) {
-                console.error("Error sending message:", error);
-                SR_showModal("메시지 전송 실패", "메시지를 보내는 데 오류가 발생했습니다: " + error.message);
-                // If send fails, remove the optimistically added message or mark as failed
-                const index = state.messages.findIndex(msg => msg.id === tempMessage.id);
-                if (index !== -1) {
-                    state.messages.splice(index, 1); // Remove it
-                    renderMessagesContent(); // Re-render to show removal
-                }
-            } finally {
-                // Clear input and focus regardless of success/failure
-                const messageInput = document.getElementById('message-input');
-                if (messageInput) {
-                    console.log("Before clearing input. Current value:", messageInput.value);
-                    messageInput.value = ''; // Clear the input field immediately
-                    console.log("After clearing input. Current value:", messageInput.value);
-                    messageInput.focus(); // Focus immediately
-                    console.log("Message input focused immediately.");
-                } else {
-                    console.log("Message input element not found in finally block.");
-                }
-                const replySuggestionsContainer = document.getElementById('reply-suggestions');
-                if (replySuggestionsContainer) {
-                    replySuggestionsContainer.innerHTML = ''; // Hide suggestions after sending
-                }
+            const replySuggestionsContainer = document.getElementById('reply-suggestions');
+            if (replySuggestionsContainer) {
+                replySuggestionsContainer.innerHTML = ''; // 전송 후 제안 숨기기
             }
         }
 
         /**
          * Calls the Gemini LLM API.
-         * @param {string} prompt - The prompt to send to the LLM
-         * @returns {Promise<string>} - The LLM's response text
+         * Gemini LLM API를 사용하지 않으므로, 이 함수는 제거합니다.
          */
-        async function callGeminiAPI(prompt) {
-            if (!db) { // Restrict AI features in dummy mode
-                SR_showModal("AI 도우미", "죄송합니다. 현재 오프라인 모드에서는 AI 도우미 기능을 사용할 수 없습니다.");
-                return "현재 AI 도우미 기능을 사용할 수 없습니다.";
-            }
-
-            let chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-            const payload = { contents: chatHistory };
-            const apiKey = ""; // Automatically provided by Canvas environment
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    return result.candidates[0].content.parts[0].text;
-                } else {
-                    console.error("Gemini API returned an unexpected structure:", result);
-                    throw new Error("Gemini API 응답 구조가 예상과 다릅니다.");
-                }
-            } catch (error) {
-                console.error("Error calling Gemini API:", error);
-                throw new Error("Gemini API 호출 중 오류 발생: " + error.message);
-            }
-        }
+        // async function callGeminiAPI(prompt) { /* ... */ }
 
         /**
          * Asks a question to the Gemini AI Assistant and adds the response to the chat.
+         * Gemini AI 도우미 기능을 사용하지 않으므로, 이 함수는 제거합니다.
          */
         async function askAIAssistant() {
-            if (!db) { // Restrict AI features in dummy mode
-                SR_showModal("AI 도우미", "죄송합니다. 현재 오프라인 모드에서는 AI 도우미 기능을 사용할 수 없습니다.");
-                return;
-            }
-
-            const question = await new Promise(resolve => {
-                // Use custom input modal to get the question
-                SR_showModal('AI 도우미에게 질문하기', '무엇을 도와드릴까요?', true);
-                const confirmButton = document.getElementById('modal-confirm-button');
-                const cancelButton = document.getElementById('modal-cancel-button');
-                const inputField = document.getElementById('modal-input');
-
-                const handleConfirm = () => {
-                    const value = inputField.value.trim();
-                    document.getElementById('custom-input-modal-container').remove();
-                    resolve(value);
-                };
-
-                const handleCancel = () => {
-                    document.getElementById('custom-input-modal-container').remove();
-                    resolve(null); // Return null on cancel
-                };
-
-                confirmButton.onclick = handleConfirm;
-                cancelButton.onclick = handleCancel;
-                inputField.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        handleConfirm();
-                    }
-                });
-            });
-
-            if (!question) {
-                console.log("AI Assistant question cancelled.");
-                return;
-            }
-
-            // Add user's question to chat first
-            await sendMessage(question, userId, `사용자 ${userId.substring(0, 4)}`);
-
-            // Add AI response loading message to chat
-            const loadingMessageRef = await addDoc(collection(db, `artifacts/${appId}/public/data/chatRooms/${state.selectedRoomId}/messages`), {
-                senderId: AI_ASSISTANT_ID,
-                senderName: AI_ASSISTANT_NAME,
-                text: "AI 응답 생성 중...",
-                timestamp: serverTimestamp(),
-                isPending: true // Flag to indicate loading state
-            });
-
-            try {
-                const aiResponse = await callGeminiAPI(question);
-                // Update loading message with AI response
-                await updateDoc(loadingMessageRef, {
-                    text: aiResponse,
-                    isPending: false // Loading complete
-                });
-                console.log("AI Assistant responded:", aiResponse);
-            } catch (error) {
-                console.error("AI Assistant error:", error);
-                // Update loading message with error message
-                await updateDoc(loadingMessageRef, {
-                    text: "AI 도우미 응답 실패: " + error.message,
-                    isPending: false
-                });
-            }
+            SR_showModal("AI 도우미", "AI 도우미 기능은 현재 지원되지 않습니다.");
         }
 
         /**
          * Generates smart reply suggestions based on recent messages in the current chat room.
+         * 스마트 답장 제안 기능을 사용하지 않으므로, 이 함수는 제거합니다.
          */
         async function suggestSmartReplies() {
-            if (state.messages.length === 0) {
-                SR_showModal("답장 제안", "답장을 제안할 대화 내용이 없습니다.");
-                return;
-            }
-            if (!db) { // Restrict AI features in dummy mode
-                SR_showModal("AI 도우미", "죄송합니다. 현재 오프라인 모드에서는 답장 제안 기능을 사용할 수 없습니다.");
-                return;
-            }
-
-            // Get only the last 5 messages for the summary prompt
-            const recentMessages = state.messages.slice(-5);
-            let conversationText = "다음 채팅 대화에 대해 3가지 짧고 정중하며 관련성 있는 답장을 제안해 주세요. 답변에는 제안된 답장만 포함하고, 각 답장은 새 줄로 구분해주세요. (예: 네, 알겠습니다.\\n다른 의견 있으신가요?\\n수고하세요.):\n\n";
-            recentMessages.forEach(msg => {
-                const timestamp = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '';
-                conversationText += `[${timestamp}] ${msg.senderName}: ${msg.text}\n`;
-            });
-
-            const replySuggestionsContainer = document.getElementById('reply-suggestions');
-            if (replySuggestionsContainer) {
-                replySuggestionsContainer.innerHTML = `<span class="SR_text-secondary SR_small">답장 제안 생성 중...</span>`;
-            }
-
-            try {
-                const rawSuggestions = await callGeminiAPI(conversationText);
-                const suggestions = rawSuggestions.split('\n').filter(s => s.trim() !== '').slice(0, 3); // Use max 3 suggestions
-
-                if (replySuggestionsContainer) {
-                    replySuggestionsContainer.innerHTML = ''; // Clear existing loading message
-                    if (suggestions.length > 0) {
-                        suggestions.forEach(s => {
-                            const suggestionSpan = document.createElement('span');
-                            suggestionSpan.className = 'bg-[#e0eaf5] text-[#264790] SR_small SR_px-3 SR_py-1 SR_rounded-pill SR_cursor-pointer hover:bg-[#cce0f0] SR_transition-colors SR_whitespace-nowrap SR_shadow-sm';
-                            suggestionSpan.textContent = s.trim();
-                            suggestionSpan.onclick = () => {
-                                const messageInput = document.getElementById('message-input');
-                                if (messageInput) {
-                                    messageInput.value = s.trim();
-                                    messageInput.focus(); // Keep focus after inserting suggestion
-                                }
-                                replySuggestionsContainer.innerHTML = ''; // Hide suggestions after selection
-                            };
-                            replySuggestionsContainer.appendChild(suggestionSpan);
-                        });
-                    } else {
-                        replySuggestionsContainer.innerHTML = `<span class="SR_text-secondary SR_small">제안된 답장이 없습니다.</span>`;
-                    }
-                }
-            } catch (error) {
-                console.error("Failed to suggest replies:", error);
-                if (replySuggestionsContainer) {
-                    replySuggestionsContainer.innerHTML = `<span class="SR_text-danger SR_small">답장 제안 실패: ${error.message}</span>`;
-                }
-            }
+            SR_showModal("답장 제안", "답장 제안 기능은 현재 지원되지 않습니다.");
         }
 
 
@@ -590,7 +453,7 @@
             return new Promise(resolve => {
                 const modalContainerId = withInput ? 'custom-input-modal-container' : 'modal-container';
                 const existingModal = document.getElementById(modalContainerId);
-                if (existingModal) existingModal.remove(); // Remove any previously open modal
+                if (existingModal) existingModal.remove(); // 이전에 열린 모달이 있으면 제거
 
                 const body = document.body;
                 const div = document.createElement('div');
@@ -599,17 +462,17 @@
 
                 let inputHtml = '';
                 if (withInput) {
-                    inputHtml = `<input type="text" id="modal-input" placeholder="여기에 입력하세요" class="SR_form-control SR_mb-4 SR_text-dark" style="border-color: #264790;">`;
+                    inputHtml = `<input type="text" id="modal-input" placeholder="여기에 입력하세요" class="SR_form-control SR_mb-4 SR_text-dark SR_modal-input-border-color">`;
                 }
 
                 div.innerHTML = `
-                    <div class="SR_bg-white SR_p-4 SR_rounded-3 SR_shadow-lg SR_w-100" style="max-width: 360px;">
+                    <div class="SR_modal-content-box">
                         <h3 class="SR_fs-5 SR_fw-semibold SR_text-dark SR_mb-3">${title}</h3>
                         <div class="SR_text-secondary SR_mb-3">${message}</div>
                         ${inputHtml}
                         <div class="SR_d-flex SR_justify-content-end">
                             ${withInput ? `<button id="modal-cancel-button" class="SR_btn SR_btn-secondary SR_me-2 SR_rounded-2">취소</button>` : ''}
-                            <button id="modal-confirm-button" class="SR_btn SR_text-white SR_rounded-2" style="background-color: #264790;">확인</button>
+                            <button id="modal-confirm-button" class="SR_btn SR_text-white SR_rounded-2 SR_modal-confirm-button-bg">확인</button>
                         </div>
                     </div>
                 `;
@@ -641,7 +504,7 @@
                 if (inputField) {
                     inputField.addEventListener('keypress', (e) => {
                         if (e.key === 'Enter') {
-                            confirmButton.click(); // Click confirm button on Enter key press
+                            confirmButton.click(); // Enter 키를 누르면 확인 버튼 클릭
                         }
                     });
                 }
@@ -653,342 +516,249 @@
          * @param {object} newState - The new state object to merge
          */
         function setState(newState) {
-            const prevState = { ...state }; // Capture previous state for comparison
-            Object.assign(state, newState); // Merge new state into current state
+            const prevState = { ...state };
+            Object.assign(state, newState);
 
-            // Directly handle message input bar and bottom nav bar visibility
+            // 모든 뷰 컨테이너를 가져옵니다.
+            const chatWindowContainer = document.getElementById('chat-window-container');
+            const homeStaticView = document.getElementById('home-static-view');
+            const chatRoomsStaticView = document.getElementById('chat-rooms-static-view');
+            const chatMessagesStaticView = document.getElementById('chat-messages-static-view');
+            const opponentProfileStaticView = document.getElementById('opponent-profile-static-view');
+
+            if (!chatWindowContainer || !homeStaticView || !chatRoomsStaticView || !chatMessagesStaticView || !opponentProfileStaticView) {
+                console.error("Critical chat window internal element missing.");
+                return;
+            }
+
+            // 채팅 창 컨테이너 가시성을 업데이트합니다.
+            chatWindowContainer.style.display = state.isChatOpen ? 'flex' : 'none';
+
+            // 최대화 상태 클래스를 업데이트합니다.
+            const chatActualWindow = document.getElementById('chat-actual-window');
+            if (chatActualWindow) {
+                if (state.isMaximized) {
+                    chatActualWindow.classList.add('SR_is-maximized');
+                } else {
+                    chatActualWindow.classList.remove('SR_is-maximized');
+                }
+            }
+
+            // 채팅이 열려 있지 않으면 더 이상 내부 요소 업데이트 불필요
+            if (!state.isChatOpen) {
+                return;
+            }
+
+            // 모든 뷰를 숨깁니다.
+            homeStaticView.classList.add('SR_d-none');
+            chatRoomsStaticView.classList.add('SR_d-none');
+            chatMessagesStaticView.classList.add('SR_d-none');
+            opponentProfileStaticView.classList.add('SR_d-none');
+
+            // 현재 뷰에 따라 적절한 컨테이너를 표시합니다.
+            switch (state.currentView) {
+                case 'home':
+                    homeStaticView.classList.remove('SR_d-none');
+                    renderHomeViewContent(); // 홈 뷰 콘텐츠를 업데이트하고 리스너를 다시 연결합니다.
+                    break;
+                case 'chatRooms':
+                    chatRoomsStaticView.classList.remove('SR_d-none');
+                    renderChatRoomsViewContent(); // 채팅방 목록 콘텐츠를 업데이트하고 리스너를 다시 연결합니다.
+                    break;
+                case 'chatMessages':
+                    chatMessagesStaticView.classList.remove('SR_d-none');
+                    renderMessagesContent(); // 메시지 콘텐츠를 업데이트하고 리스너를 다시 연결합니다.
+                    break;
+                case 'opponentProfile':
+                    opponentProfileStaticView.classList.remove('SR_d-none');
+                    renderOpponentProfileViewContent(); // 프로필 뷰 콘텐츠를 업데이트하고 리스너를 다시 연결합니다.
+                    break;
+            }
+
+            // 헤더 제목, 뒤로 가기 버튼, 메시지 입력 바, 하단 탐색 바 가시성 처리
+            const chatHeaderTitle = document.getElementById('chat-header-title');
+            const backButton = document.getElementById('back-button');
             const messageInputBar = document.getElementById('message-input-bar');
             const bottomNavBar = document.getElementById('bottom-nav-bar');
 
-            if (messageInputBar) {
-                messageInputBar.style.display = state.currentView === 'chatMessages' ? 'flex' : 'none';
-            }
-            if (bottomNavBar) {
-                bottomNavBar.style.display = state.currentView === 'chatMessages' ? 'none' : 'flex';
-            }
-
-            // Only re-render the whole window if major view changes or chat open/close
-            if (newState.isChatOpen !== prevState.isChatOpen || newState.isMaximized !== prevState.isMaximized) {
-                renderChatWindow(); // Full re-render if chat open/close or maximization changes
+            if (state.currentView === 'chatMessages' || state.currentView === 'opponentProfile') {
+                backButton.classList.remove('SR_d-none');
+                chatHeaderTitle.textContent = state.currentView === 'chatMessages' ?
+                                            (state.chatRooms.find(r => r.id === state.selectedRoomId)?.name || '채팅방') :
+                                            '프로필 정보';
+            } else {
+                backButton.classList.add('SR_d-none');
+                chatHeaderTitle.textContent = state.currentView === 'home' ? '홈' : '대화';
             }
 
-            // Defer other DOM manipulations to ensure elements are ready
-            setTimeout(() => {
-                const dynamicContentArea = document.getElementById('dynamic-content');
-                const chatHeaderTitle = document.getElementById('chat-header-title');
-                const backButton = document.getElementById('back-button');
-                
-                // Handle header title and back button visibility
-                if (chatHeaderTitle) {
-                    if (state.currentView === 'chatMessages' || state.currentView === 'opponentProfile') {
-                        chatHeaderTitle.textContent = state.currentView === 'chatMessages' ? (state.chatRooms.find(r => r.id === state.selectedRoomId)?.name || '채팅방') : '프로필 정보';
-                    } else {
-                        chatHeaderTitle.textContent = state.currentView === 'home' ? '홈' : '대화';
-                    }
+            if (state.currentView === 'chatMessages') {
+                messageInputBar.classList.remove('SR_d-none');
+                bottomNavBar.classList.add('SR_d-none'); // Hide bottom nav bar
+                const messageInput = document.getElementById('message-input');
+                if (messageInput) {
+                    setTimeout(() => messageInput.focus(), 0);
                 }
-
-                if (backButton) {
-                    if (state.currentView === 'chatMessages' || state.currentView === 'opponentProfile') {
-                        backButton.style.display = 'block';
-                    } else {
-                        backButton.style.display = 'none';
-                    }
-                }
-
-                // Render dynamic content
-                if (dynamicContentArea) {
-                    if (state.currentView === 'home') {
-                        renderHomeView(dynamicContentArea);
-                    } else if (state.currentView === 'chatRooms') {
-                        renderChatRoomsView(dynamicContentArea);
-                    } else if (state.currentView === 'chatMessages') {
-                        renderMessagesContent();
-                    } else if (state.currentView === 'opponentProfile') {
-                        renderOpponentProfileView(dynamicContentArea);
-                    }
-                }
-
-                // Re-setup listeners based on new state, only if Firebase is ready and DB is initialized
-                if (isAuthReady && db) {
-                    setupFirestoreListeners();
-                }
-            }, 0); // Defer by 0ms
+            } else {
+                messageInputBar.classList.add('SR_d-none'); // Hide message input bar
+                bottomNavBar.classList.remove('SR_d-none'); // Show bottom nav bar
+            }
         }
 
         /**
          * Renders the floating chat button.
+         * 플로팅 채팅 버튼을 렌더링합니다.
          */
         function renderChatButton() {
             const container = document.getElementById('chat-float-button-container');
             container.innerHTML = `
-                <button id="toggle-chat-button" class="SR_btn SR_text-white SR_rounded-circle SR_d-flex SR_align-items-center SR_justify-content-center SR_shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105" style="width: 56px; height: 56px; background-color: #264790;">
-                    <svg style="width: 28px; height: 28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 00-2-2V6a2 2 0 002-2h14a2 2 0 002 2v8a2 2 0 00-2 2h-5l-5 5v-5z"></path>
+                <button id="toggle-chat-button"
+                        class="SR_btn SR_text-white SR_rounded-circle SR_d-flex SR_align-items-center SR_justify-content-center SR_shadow-lg SR_transition-all-duration-300-ease-in-out-transform-hover-scale-105 SR_float-button-size SR_send-button-bg">
+                    <svg class="SR_send-icon-size" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path>
                     </svg>
                 </button>
             `;
+            // 채팅 버튼 클릭 시 채팅 창의 열림/닫힘 상태를 토글합니다.
             document.getElementById('toggle-chat-button').onclick = () => setState({ isChatOpen: !state.isChatOpen });
         }
 
         /**
-         * Renders the main chat window.
-         * This function now renders the static shell of the chat window.
-         * Dynamic content and bar visibility are handled in setState.
+         * Attaches event listeners to the main chat window elements.
+         * This function is called once after the initial static HTML render.
+         * 주요 채팅 창 요소에 이벤트 리스너를 연결합니다.
+         * 이 함수는 초기 정적 HTML 렌더링 후 한 번 호출됩니다.
          */
-        function renderChatWindow() {
-            const container = document.getElementById('chat-window-container');
-            if (!state.isChatOpen) {
-                container.innerHTML = '';
-                cleanupFirestoreListeners(); // Unsubscribe listeners when chat is closed
-                return;
-            }
-
-            // Show loading message if Firebase is not ready (or dummy data is being prepared)
-            if (!isAuthReady) {
-                container.innerHTML = `
-                    <div class="SR_chat-window SR_bg-white SR_shadow-xl SR_d-flex SR_flex-column">
-                        <div class="SR_d-flex SR_align-items-center SR_justify-content-center SR_h-100 SR_text-secondary">
-                            로딩 중...
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            // Set chat window class based on maximization state
-            const maximizedClass = state.isMaximized ? 'SR_is-maximized' : '';
-
-            // Determine initial display style for message input bar and bottom nav bar
-            // These will be overridden immediately by setState's direct manipulation
-            const messageInputBarDisplay = state.currentView === 'chatMessages' ? 'flex' : 'none';
-            const bottomNavBarDisplay = state.currentView === 'chatMessages' ? 'none' : 'flex';
-
-            // Render the static shell of the chat window
-            container.innerHTML = `
-                <div id="chat-actual-window" class="SR_chat-window SR_bg-white SR_shadow-xl SR_d-flex SR_flex-column SR_border SR_border-light ${maximizedClass}">
-                    <div class="bg-gradient-to-r SR_text-white SR_p-3 SR_rounded-top SR_d-flex SR_align-items-center SR_shadow-sm" style="background: linear-gradient(to right, #1e3c64, #264790);">
-                        <button id="back-button" class="SR_btn SR_btn-sm SR_text-white SR_rounded-circle hover-bg-white-opacity-20 SR_transition-colors" style="display: none;">
-                            <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                            </svg>
-                        </button>
-                        <h2 id="chat-header-title" class="SR_fs-5 SR_fw-semibold SR_text-truncate SR_flex-grow-1 SR_text-center"></h2>
-                        <div class="SR_d-flex SR_align-items-center SR_ms-auto">
-                            <button id="maximize-chat-button" class="SR_btn SR_btn-sm SR_text-white SR_rounded-circle hover-bg-white-opacity-20 SR_transition-colors" title="${state.isMaximized ? '원래대로' : '전체 화면'}">
-                                ${state.isMaximized ? `
-                                    <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5"></path>
-                                    </svg>
-                                ` : `
-                                    <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m7-5h4m0 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m7 5h4m0 0v-4m0 4l-5-5"></path>
-                                    </svg>
-                                `}
-                            </button>
-                            <button id="close-chat-button" class="SR_btn SR_btn-sm SR_text-white SR_rounded-circle hover-bg-white-opacity-20 SR_transition-colors SR_ms-2">
-                                <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="dynamic-content" class="SR_chat-scroll-area SR_flex-grow-1 SR_p-3">
-                        </div>
-
-                    <div id="message-input-bar" class="SR_border-top SR_p-3 SR_d-flex SR_align-items-center" style="display: ${messageInputBarDisplay};">
-                        <input type="text" id="message-input" class="SR_form-control SR_form-control-sm SR_me-2 SR_py-2 SR_ps-4 SR_pe-2 SR_rounded-pill SR_flex-grow-1 SR_text-dark" placeholder="메시지를 입력하세요...">
-                        <button id="send-message-button" class="SR_btn SR_bg-primary SR_rounded-circle SR_d-flex SR_align-items-center SR_justify-content-center" style="width: 40px; height: 40px; background-color: #264790;">
-                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div id="bottom-nav-bar" class="SR_border-top SR_d-flex SR_justify-content-around SR_bg-body-tertiary" style="display: ${bottomNavBarDisplay};">
-                        <button id="nav-home" class="SR_btn SR_flex-fill SR_d-flex SR_flex-column SR_align-items-center SR_p-2 SR_nav-link SR_active">
-                            <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2 2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                            </svg>
-                            <span class="SR_small SR_fw-medium SR_mt-1">홈</span>
-                        </button>
-                        <button id="nav-chat-rooms" class="SR_btn SR_flex-fill SR_d-flex SR_flex-column SR_align-items-center SR_p-2 SR_nav-link">
-                            <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 00-2-2V6a2 2 0 002-2h14a2 2 0 002 2v8a2 2 0 00-2 2h-5l-5 5v-5z"></path>
-                            </svg>
-                            <span class="SR_small SR_fw-medium SR_mt-1">대화</span>
-                        </button>
-                    </div>
-                </div>
-            `;
-            // Add event listeners after rendering (removed for brevity in plan, but would be included in final code)
-            document.getElementById('maximize-chat-button').onclick = () => setState({ isMaximized: !state.isMaximized });
-            document.getElementById('close-chat-button').onclick = () => setState({ isChatOpen: false });
+        function attachGlobalEventListeners() {
+            // 메인 채팅 창 버튼
+            document.getElementById('close-chat-button').onclick = () => {
+                setState({ isChatOpen: false, isMaximized: false });
+            };
+            document.getElementById('maximize-chat-button').onclick = () => {
+                setState({ isMaximized: !state.isMaximized });
+            };
             document.getElementById('back-button').onclick = () => {
-                if (state.currentView === 'chatMessages') {
-                    setState({ currentView: 'chatRooms', selectedRoomId: null });
-                } else if (state.currentView === 'opponentProfile') {
-                    setState({ currentView: 'chatMessages' });
+                if (state.currentView === 'opponentProfile') {
+                    setState({ currentView: 'chatMessages', selectedOpponentId: null });
+                } else if (state.currentView === 'chatMessages') {
+                    setState({ currentView: 'chatRooms', selectedRoomId: null, messages: [] });
                 }
             };
+
+            // 메시지 입력 바 버튼
             document.getElementById('send-message-button').onclick = () => {
                 const messageInput = document.getElementById('message-input');
                 if (messageInput && messageInput.value.trim()) {
                     sendMessage(messageInput.value, userId, `사용자 ${userId.substring(0, 4)}`);
                 }
             };
+            document.getElementById('message-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const messageInput = document.getElementById('message-input');
+                    if (messageInput && messageInput.value.trim()) {
+                        sendMessage(messageInput.value, userId, `사용자 ${userId.substring(0, 4)}`);
+                    }
+                }
+            });
+            document.getElementById('message-input').addEventListener('input', () => {
+                const replySuggestionsContainer = document.getElementById('reply-suggestions');
+                if (replySuggestionsContainer) {
+                    replySuggestionsContainer.innerHTML = ''; // 입력 시 제안 숨기기
+                }
+            });
 
-            // Navigation button listeners
-            document.getElementById('nav-home').onclick = () => setState({ currentView: 'home' });
-            document.getElementById('nav-chat-rooms').onclick = () => setState({ currentView: 'chatRooms' });
+            document.getElementById('ai-assistant-button').onclick = askAIAssistant;
+            document.getElementById('suggest-replies-button').onclick = suggestSmartReplies;
+
+            // 하단 탐색 버튼
+            document.getElementById('nav-home').onclick = () => setState({ currentView: 'home', selectedRoomId: null, messages: [], selectedOpponentId: null });
+            document.getElementById('nav-chat-rooms').onclick = () => setState({ currentView: 'chatRooms', selectedRoomId: null, messages: [], selectedOpponentId: null });
         }
 
+
         /**
-         * Renders the home view content.
-         * @param {HTMLElement} container - The container element to render into
+         * Updates the content of the home view and attaches event listeners.
+         * 홈 뷰 콘텐츠를 업데이트하고 이벤트 리스너를 연결합니다.
          */
-        function renderHomeView(container) {
-            if (!container) return;
-            container.innerHTML = `
-                <div class="SR_flex-grow-1 SR_d-flex SR_flex-column SR_p-3 SR_overflow-auto SR_chat-scroll-area">
-                    <!-- User Profile Section -->
-                    <div class="SR_bg-white SR_p-4 SR_rounded-3 SR_shadow-sm SR_mb-4 SR_d-flex SR_align-items-center">
-                        <!-- Profile Image/Logo -->
-                        <img src="https://placehold.co/70x70/264790/ffffff?text=LOGO" alt="기업 로고" class="SR_w-16 SR_h-16 SR_rounded-circle object-cover SR_border SR_border-2" style="border-color: #264790;">
-                        
-                        <!-- Profile Details -->
-                        <div class="SR_ms-3 SR_flex-grow-1">
-                            <h3 class="SR_fs-5 SR_fw-bold SR_text-dark SR_mb-1">김철수</h3>
-                            <p class="SR_small SR_text-secondary SR_mb-1">ABC 솔루션 (기업회원)</p>
-                            <p class="SR_small SR_text-muted SR_mb-0">"혁신적인 솔루션으로 미래를 만듭니다."</p>
-                        </div>
-                    </div>
-
-                    <!-- Portfolio Information Section -->
-                    <div class="SR_bg-white SR_p-4 SR_rounded-3 SR_shadow-sm SR_mb-4">
-                        <h3 class="SR_fs-6 SR_fw-semibold SR_text-dark SR_mb-3">포트폴리오 정보</h3>
-                        <div class="SR_position-relative">
-                            <div id="portfolio-carousel" class="SR_d-flex SR_overflow-auto SR_hide-scrollbar SR_pb-3 SR_mx-n1">
-                                <!-- Portfolio items -->
-                                ${dummyPortfolios.map(p => `
-                                    <div class="SR_flex-shrink-0 SR_me-2 SR_p-2 SR_border SR_border-light SR_rounded-3 SR_shadow-sm SR_bg-light" style="width: 200px;">
-                                        <img src="${p.imageUrl}" alt="${p.title}" class="SR_w-100 SR_h-auto SR_rounded-2 SR_mb-2" style="height: 96px; object-fit: cover;">
-                                        <h4 class="SR_fw-semibold SR_small SR_text-dark SR_text-truncate">${p.title}</h4>
-                                        <p class="SR_small SR_text-secondary text-truncate-2">${p.description}</p>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <!-- Portfolio Scroll Buttons -->
-                            <button id="home-portfolio-scroll-left" class="SR_btn SR_btn-sm SR_position-absolute SR_start-0 SR_top-50 translate-middle-y SR_bg-dark SR_bg-opacity-50 SR_text-white SR_rounded-circle z-10 SR_d-none d-md-block" style="width: 30px; height: 30px;">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            </button>
-                            <button id="home-portfolio-scroll-right" class="SR_btn SR_btn-sm SR_position-absolute SR_end-0 SR_top-50 translate-middle-y SR_bg-dark SR_bg-opacity-50 SR_text-white SR_rounded-circle z-10 SR_d-none d-md-block" style="width: 30px; height: 30px;">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Outsourcing Information Section -->
-                    <div class="SR_bg-white SR_p-4 SR_rounded-3 SR_shadow-sm">
-                        <h3 class="SR_fs-6 SR_fw-semibold SR_text-dark SR_mb-3">외주 정보</h3>
-                        <div class="SR_position-relative">
-                            <div id="outsourcing-carousel" class="SR_d-flex SR_overflow-auto SR_hide-scrollbar SR_pb-3 SR_mx-n1">
-                                <!-- Outsourcing items -->
-                                ${dummyOutsourcings.map(o => `
-                                    <div class="SR_flex-shrink-0 SR_me-2 SR_p-2 SR_border SR_border-light SR_rounded-3 SR_shadow-sm SR_bg-light" style="width: 200px;">
-                                        <h4 class="SR_fw-semibold SR_small SR_text-dark SR_text-truncate">${o.title}</h4>
-                                        <p class="SR_small SR_text-secondary text-truncate-2 SR_mb-1">${o.description}</p>
-                                        <span class="badge ${o.status === '진행 중' ? 'SR_bg-primary' : o.status === '대기 중' ? 'SR_bg-warning SR_text-dark' : 'SR_bg-info'}">상태: ${o.status}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <!-- Outsourcing Scroll Buttons -->
-                            <button id="home-outsourcing-scroll-left" class="SR_btn SR_btn-sm SR_position-absolute SR_start-0 SR_top-50 translate-middle-y SR_bg-dark SR_bg-opacity-50 SR_text-white SR_rounded-circle z-10 SR_d-none d-md-block" style="width: 30px; height: 30px;">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            </button>
-                            <button id="home-outsourcing-scroll-right" class="SR_btn SR_btn-sm SR_position-absolute SR_end-0 SR_top-50 translate-middle-y SR_bg-dark SR_bg-opacity-50 SR_text-white SR_rounded-circle z-10 SR_d-none d-md-block" style="width: 30px; height: 30px;">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Setup scroll event listeners for carousels
+        function renderHomeViewContent() {
+            // 캐러셀에 대한 스크롤 이벤트 리스너를 설정합니다.
             const portfolioCarousel = document.getElementById('portfolio-carousel');
             const outsourcingCarousel = document.getElementById('outsourcing-carousel');
 
             if (portfolioCarousel) {
                 document.getElementById('home-portfolio-scroll-left').onclick = () => {
-                    portfolioCarousel.scrollBy({ left: -200, behavior: 'smooth' }); // Scroll left by 200px
+                    portfolioCarousel.scrollBy({ left: -200, behavior: 'smooth' }); // 왼쪽으로 200px 스크롤
                 };
                 document.getElementById('home-portfolio-scroll-right').onclick = () => {
-                    portfolioCarousel.scrollBy({ left: 200, behavior: 'smooth' }); // Scroll right by 200px
+                    portfolioCarousel.scrollBy({ left: 200, behavior: 'smooth' }); // 오른쪽으로 200px 스크롤
                 };
             }
             if (outsourcingCarousel) {
                 document.getElementById('home-outsourcing-scroll-left').onclick = () => {
-                    outsourcingCarousel.scrollBy({ left: -200, behavior: 'smooth' }); // Scroll left by 200px
+                    outsourcingCarousel.scrollBy({ left: -200, behavior: 'smooth' }); // 왼쪽으로 200px 스크롤
                 };
                 document.getElementById('home-outsourcing-scroll-right').onclick = () => {
-                    outsourcingCarousel.scrollBy({ left: 200, behavior: 'smooth' }); // Scroll right by 200px
+                    outsourcingCarousel.scrollBy({ left: 200, behavior: 'smooth' }); // 오른쪽으로 200px 스크롤
                 };
             }
         }
 
 
         /**
-         * Renders the chat room list view.
-         * @param {HTMLElement} container - The container element where the chat room list will be rendered
+         * Updates the content of the chat rooms view and attaches event listeners.
+         * 채팅방 목록 뷰 콘텐츠를 업데이트하고 이벤트 리스너를 연결합니다.
          */
-        function renderChatRoomsView(container) {
-            if (!container) return;
-            container.innerHTML = `
-                <div class="SR_list-group SR_list-group-flush">
-                    ${state.chatRooms.length === 0 ? `
-                        <div class="SR_d-flex SR_flex-column SR_align-items-center SR_justify-content-center SR_h-100 SR_text-secondary SR_text-center">
-                            <svg style="width: 56px; height: 56px;" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-0.9 2-2V4C22 2.9 21.1 2 20 2zM9 10v2H7v-2h2zM13 10v2h-2v-2h2zM17 10v2h-2v-2h2z"></path>
-                            </svg>
-                            <p class="SR_small">대화를 시작해보세요</p>
-                            <button id="start-new-chat-button"
-                                    class="SR_btn SR_text-white SR_fw-bold SR_py-2 SR_px-4 SR_rounded-pill SR_shadow-sm transition-transform duration-200 transform hover:scale-105 SR_d-flex SR_align-items-center"
-                                    style="background-color: #264790;">
-                                <span class="SR_fs-6">새 문의하기</span>
-                                <svg style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(-45deg);">
-                                    <path fill-rule="evenodd" d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.649-.187a1 1 0 00.569-.953V9.418c0-.528.261-1.026.713-1.332.083-.057.172-.1.261-.137.089-.037.18-.063.272-.078a1 1 0 00.569.953l.649.187a1 1 0 001.169 1.409l7-14a1 1 0 00-1.788 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    ` : ''}
+        function renderChatRoomsViewContent() {
+            const chatRoomsListContainer = document.getElementById('chat-rooms-list-container');
+            if (!chatRoomsListContainer) return;
 
-                    ${state.chatRooms.map(room => `
-                        <div class="SR_chat-room-item SR_bg-white SR_p-3 SR_my-2 SR_rounded-3 SR_shadow-sm hover-shadow-md SR_cursor-pointer transition-all duration-200 SR_border SR_border-light" data-room-id="${room.id}">
-                            <div class="SR_d-flex SR_align-items-center">
-                                <!-- Platform Logo Placeholder -->
-                                <img src="https://placehold.co/40x40/007bff/ffffff?text=LOGO" alt="플랫폼 로고" class="SR_w-10 SR_h-10 SR_rounded-circle object-cover SR_flex-shrink-0">
-                                <div class="SR_flex-grow-1 SR_ms-2 min-w-0">
-                                    <div class="SR_d-flex SR_justify-content-between SR_align-items-center SR_mb-1">
-                                        <h3 class="SR_fw-semibold SR_small SR_text-dark SR_text-truncate">${room.name || '알 수 없는 채팅방'}</h3>
-                                        <span class="SR_small SR_text-secondary SR_flex-shrink-0 SR_ms-1">${room.lastMessageTimestamp ? new Date(room.lastMessageTimestamp.toDate()).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ''}</span>
-                                    </div>
-                                    <p class="SR_small SR_text-secondary SR_text-truncate">${room.lastMessage || '새로운 대화를 시작해보세요.'}</p>
+            // 현재 채팅방 목록 상태를 기반으로 HTML을 다시 생성합니다.
+            chatRoomsListContainer.innerHTML = `
+                ${state.chatRooms.length === 0 ? `
+                    <div class="SR_d-flex SR_flex-column SR_align-items-center SR_justify-content-center SR_h-100 SR_text-secondary SR_text-center">
+                        <svg class="SR_w-16 SR_h-16" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-0.9 2-2V4C22 2.9 21.1 2 20 2zM9 10v2H7v-2h2zM13 10v2h-2v-2h2zM17 10v2h-2v-2h2z"></path>
+                        </svg>
+                        <p class="SR_small">대화를 시작해보세요</p>
+                        <button id="start-new-chat-button"
+                                class="SR_btn SR_text-white SR_fw-bold SR_py-2 SR_px-4 SR_rounded-pill SR_shadow-sm SR_transition-all-duration-200-transform-hover-scale-105 SR_d-flex SR_align-items-center SR_send-button-bg">
+                            <span class="SR_fs-6">새 문의하기</span>
+                            <svg class="SR_send-icon-size SR_send-icon-transform" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.649-.187a1 1 0 00.569-.953V9.418c0-.528.261-1.026.713-1.332.083-.057.172-.1.261-.137.089-.037.18-.063.272-.078a1 1 0 00.569.953l.649.187a1 1 0 001.169 1.409l7-14a1 1 0 00-1.788 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    </div>
+                ` : ''}
+
+                ${state.chatRooms.map(room => `
+                    <div class="SR_chat-room-item SR_bg-white SR_p-3 SR_my-2 SR_rounded-3 SR_shadow-sm hover-shadow-md SR_cursor-pointer SR_transition-all-duration-200-transform-hover-scale-105 SR_border SR_border-light" data-room-id="${room.id}">
+                        <div class="SR_d-flex SR_align-items-center">
+                            <!-- Platform Logo Placeholder -->
+                            <img src="https://placehold.co/40x40/007bff/ffffff?text=LOGO" alt="플랫폼 로고" class="SR_w-10 SR_h-10 SR_rounded-circle SR_object-cover SR_flex-shrink-0">
+                            <div class="SR_flex-grow-1 SR_ms-2 SR_min-w-0">
+                                <div class="SR_d-flex SR_justify-content-between SR_align-items-center SR_mb-1">
+                                    <h3 class="SR_fw-semibold SR_small SR_text-dark SR_text-truncate">${room.name || '알 수 없는 채팅방'}</h3>
+                                    <span class="SR_small SR_text-secondary SR_flex-shrink-0 SR_ms-1">${room.lastMessageTimestamp ? new Date(room.lastMessageTimestamp.toDate()).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ''}</span>
                                 </div>
+                                <p class="SR_small SR_text-secondary SR_text-truncate">${room.lastMessage || '새로운 대화를 시작해보세요.'}</p>
                             </div>
                         </div>
-                    `).join('')}
-                </div>
+                    </div>
+                `).join('')}
             `;
 
             // 'Start New Chat' button click event listener (only if the button exists)
-            if (document.getElementById('start-new-chat-button')) {
-                document.getElementById('start-new-chat-button').onclick = () => {
+            // '새 문의하기' 버튼 클릭 시 새 채팅방 생성 모달을 표시합니다.
+            const startNewChatButton = document.getElementById('start-new-chat-button');
+            if (startNewChatButton) {
+                startNewChatButton.onclick = () => {
                     SR_showModal('새 채팅방 만들기', '새로운 채팅방의 이름을 입력해주세요:', true);
                 };
             }
 
             // Click event listener for each chat room item
-            document.querySelectorAll('.SR_chat-room-item').forEach(item => {
+            // 각 채팅방 항목 클릭 시 해당 채팅방 메시지 뷰로 이동합니다.
+            document.querySelectorAll('#chat-rooms-list-container .SR_chat-room-item').forEach(item => {
                 item.onclick = (e) => {
                     e.preventDefault();
                     const roomId = item.dataset.roomId;
@@ -999,113 +769,59 @@
 
         /**
          * Renders the message content area (excluding the input bar).
+         * 메시지 콘텐츠 영역을 렌더링합니다 (입력 바 제외).
          */
         function renderMessagesContent() {
-            const container = document.getElementById('dynamic-content');
-            if (!container) return;
+            const chatMessagesContainer = document.getElementById('chat-messages');
+            if (!chatMessagesContainer) return;
 
             const currentRoom = state.chatRooms.find(r => r.id === state.selectedRoomId);
             const messagesToDisplay = state.messages.length > 0 ? state.messages : (currentRoom ? currentRoom.messages : []);
 
-            container.innerHTML = `
-                <div id="chat-messages" class="SR_chat-scroll-area SR_flex-grow-1">
-                    ${messagesToDisplay.map(msg => {
-                        const isSender = msg.senderId === userId;
-                        const isAI = msg.senderId === AI_ASSISTANT_ID;
-                        const messageClass = isSender ? 'SR_text-white SR_bg-primary SR_rounded-bottom SR_rounded-start SR_me-auto' :
-                                       (isAI ? 'SR_bg-light SR_text-dark SR_rounded-bottom SR_rounded-end SR_ms-auto' :
-                                               'SR_bg-light SR_text-dark SR_rounded-bottom SR_rounded-end SR_ms-auto');
-                        const alignmentClass = isSender ? 'SR_text-end' : 'SR_text-start';
-                        const avatarSrc = dummyUserProfiles[msg.senderId]?.profileImageUrl || (isSender ? `https://placehold.co/80x80/6366f1/ffffff?text=${msg.senderName.substring(0, 2)}` : `https://placehold.co/80x80/6c757d/ffffff?text=${msg.senderName.substring(0, 2)}`);
+            chatMessagesContainer.innerHTML = `
+                ${messagesToDisplay.map(msg => {
+                    const isSender = msg.senderId === userId;
+                    // AI_ASSISTANT_ID 및 AI_ASSISTANT_NAME 상수가 제거되었으므로, 문자열 ID를 직접 확인합니다.
+                    const isAI = msg.senderId === "gemini-ai-assistant";
+                    const messageClass = isSender ? 'SR_text-white SR_bg-primary SR_rounded-bottom SR_rounded-start SR_me-auto' :
+                                   (isAI ? 'SR_bg-light SR_text-dark SR_rounded-bottom SR_rounded-end SR_ms-auto' :
+                                           'SR_bg-light SR_text-dark SR_rounded-bottom SR_rounded-end SR_ms-auto');
+                    const alignmentClass = isSender ? 'SR_text-end' : 'SR_text-start';
+                    // dummyUserProfiles가 비어 있으므로, 아바타는 일반적인 것으로 표시됩니다.
+                    const avatarSrc = (isSender ? `https://placehold.co/80x80/6366f1/ffffff?text=${msg.senderName.substring(0, 2)}` : `https://placehold.co/80x80/6c757d/ffffff?text=${msg.senderName.substring(0, 2)}`);
 
-                        return `
-                            <div class="SR_d-flex ${alignmentClass} SR_mb-2">
-                                ${!isSender ? `
-                                    <img src="${avatarSrc}" alt="${msg.senderName}" class="SR_rounded-circle SR_me-2" style="width: 32px; height: 32px;">
-                                ` : ''}
-                                <div class="SR_d-flex SR_flex-column">
-                                    <div class="SR_small SR_text-muted ${isSender ? 'SR_text-end' : 'SR_text-start'}">${msg.senderName}</div>
-                                    <div class="SR_px-3 SR_py-2 SR_rounded-3 SR_text-wrap ${messageClass}" style="max-width: 80%;">
-                                        ${msg.text}
-                                        ${msg.isPending ? ` <span class="SR_small SR_text-muted">(전송 중...)</span>` : ''}
-                                    </div>
-                                    <div class="SR_small SR_text-muted SR_mt-1 ${isSender ? 'SR_text-end' : 'SR_text-start'}">
-                                        ${msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ''}
-                                    </div>
+                    return `
+                        <div class="SR_d-flex ${alignmentClass} SR_mb-2">
+                            ${!isSender ? `
+                                <img src="${avatarSrc}" alt="${msg.senderName}" class="SR_rounded-circle SR_me-2 SR_message-avatar-size">
+                            ` : ''}
+                            <div class="SR_d-flex SR_flex-column">
+                                <div class="SR_small SR_text-muted ${isSender ? 'SR_text-end' : 'SR_text-start'}">${msg.senderName}</div>
+                                <div class="SR_px-3 SR_py-2 SR_rounded-3 SR_text-wrap ${messageClass} SR_message-bubble-max-width">
+                                    ${msg.text}
+                                    ${msg.isPending ? ` <span class="SR_small SR_text-muted">(전송 중...)</span>` : ''}
                                 </div>
-                                ${isSender ? `
-                                    <img src="${avatarSrc}" alt="${msg.senderName}" class="SR_rounded-circle SR_ms-2" style="width: 32px; height: 32px;">
-                                ` : ''}
+                                <div class="SR_small SR_text-muted SR_mt-1 ${isSender ? 'SR_text-end' : 'SR_text-start'}">
+                                    ${msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ''}
+                                </div>
                             </div>
-                        `;
-                    }).join('')}
-                </div>
-                <div id="reply-suggestions" class="SR_d-flex SR_flex-wrap gap-2 SR_mt-3 SR_mb-2 SR_px-3"></div>
+                            ${isSender ? `
+                                <img src="${avatarSrc}" alt="${msg.senderName}" class="SR_rounded-circle SR_ms-2 SR_message-avatar-size">
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('')}
             `;
             scrollToBottom();
         }
 
         /**
-         * Renders the opponent's profile view.
-         * @param {HTMLElement} container - The container element to render into
+         * Updates the content of the opponent's profile view and attaches event listeners.
+         * 상대방의 프로필 뷰 콘텐츠를 업데이트하고 이벤트 리스너를 연결합니다.
          */
-        function renderOpponentProfileView(container) {
-            if (!container) return;
-
-            const opponentId = state.selectedOpponentId;
-            const opponentProfile = dummyUserProfiles[opponentId];
-
-            if (!opponentProfile) {
-                container.innerHTML = `<div class="SR_text-center SR_text-secondary SR_py-5">프로필 정보를 찾을 수 없습니다.</div>`;
-                return;
-            }
-
-            container.innerHTML = `
-                <div class="SR_d-flex SR_flex-column SR_align-items-center SR_p-4">
-                    <img src="${opponentProfile.profileImageUrl}" alt="${opponentProfile.name}" class="SR_rounded-circle SR_mb-3 SR_shadow-sm" style="width: 96px; height: 96px;">
-                    <h3 class="SR_fs-5 SR_fw-semibold SR_text-dark SR_mb-1">${opponentProfile.name}</h3>
-                    <p class="SR_text-secondary SR_small SR_mb-3">${opponentProfile.company}</p>
-                    <p class="SR_text-dark SR_text-center SR_px-3">${opponentProfile.description}</p>
-
-                    <h4 class="SR_fs-6 SR_fw-semibold SR_text-dark SR_mt-4 SR_mb-3">포트폴리오</h4>
-                    <div id="opponent-portfolio-carousel-container" class="SR_w-100 SR_position-relative">
-                        <div id="opponent-portfolio-carousel" class="SR_d-flex SR_overflow-auto SR_hide-scrollbar" style="scroll-snap-type: x mandatory;">
-                            ${dummyPortfolios.map(p => `
-                                <div class="SR_mx-2 SR_p-2 SR_card SR_shadow-sm" style="min-width: 180px; scroll-snap-align: start;">
-                                    <img src="${p.imageUrl}" class="SR_card-img-top SR_rounded SR_mb-2" alt="${p.title}">
-                                    <div class="SR_card-body SR_p-0">
-                                        <h5 class="SR_fs-6 SR_fw-semibold SR_text-truncate SR_mb-1">${p.title}</h5>
-                                        <p class="SR_text-muted SR_small">${p.description.substring(0, 50)}...</p>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <button id="opponent-portfolio-scroll-left" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_start-0 translate-middle-y SR_shadow-lg" style="background-color: rgba(255,255,255,0.8); display: none;">&lt;</button>
-                        <button id="opponent-portfolio-scroll-right" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_end-0 translate-middle-y SR_shadow-lg" style="background-color: rgba(255,255,255,0.8); display: none;">&gt;</button>
-                    </div>
-
-                    <h4 class="SR_fs-6 SR_fw-semibold SR_text-dark SR_mt-4 SR_mb-3">외주 프로젝트</h4>
-                    <div id="opponent-outsourcing-carousel-container" class="SR_w-100 SR_position-relative">
-                        <div id="opponent-outsourcing-carousel" class="SR_d-flex SR_overflow-auto SR_hide-scrollbar" style="scroll-snap-type: x mandatory;">
-                            ${dummyOutsourcings.map(o => `
-                                <div class="SR_mx-2 SR_p-2 SR_card SR_shadow-sm" style="min-width: 180px; scroll-snap-align: start;">
-                                    <div class="SR_card-body SR_p-0">
-                                        <h5 class="SR_fs-6 SR_fw-semibold SR_text-truncate SR_mb-1">${o.title}</h5>
-                                        <p class="SR_small SR_text-muted SR_mb-2">${o.description.substring(0, 50)}...</p>
-                                        ${o.status === '진행 중' ? `<span class="badge SR_bg-primary">진행 중</span>` : // Changed to SR_bg-primary for consistency
-                                          o.status === '대기 중' ? `<span class="badge SR_bg-warning SR_text-dark">대기 중</span>` :
-                                          o.status === '완료' ? `<span class="badge SR_bg-info">완료</span>` : ''} <!-- Changed to SR_bg-info for consistency -->
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <button id="opponent-outsourcing-scroll-left" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_start-0 translate-middle-y SR_shadow-lg" style="background-color: rgba(255,255,255,0.8); display: none;">&lt;</button>
-                        <button id="opponent-outsourcing-scroll-right" class="SR_btn SR_btn-sm SR_rounded-circle SR_position-absolute SR_top-50 SR_end-0 translate-middle-y SR_shadow-lg" style="background-color: rgba(255,255,255,0.8); display: none;">&gt;</button>
-                    </div>
-                </div>
-            `;
-
-            // Setup carousel scroll buttons (basic functionality)
+        function renderOpponentProfileViewContent() {
+            // 이 함수는 'opponent-profile-static-view'의 정적 HTML을 직접 수정하지 않습니다.
+            // 대신, 캐러셀 스크롤 버튼에 대한 이벤트 리스너를 연결합니다.
             const opponentPortfolioCarousel = document.getElementById('opponent-portfolio-carousel');
             const opponentOutsourcingCarousel = document.getElementById('opponent-outsourcing-carousel');
 
@@ -1129,16 +845,23 @@
 
 
         // Function to render the entire app
+        // 전체 애플리케이션을 렌더링하는 함수입니다.
         function render() {
-            renderChatButton();
-            renderChatWindow(); // This now renders the static shell and sets up initial listeners
+            renderChatButton(); // 플로팅 채팅 버튼을 렌더링합니다.
+            // 채팅 창 셸은 이제 정적 HTML이므로, 초기 상태가 올바른지 확인하고
+            // 전역 이벤트 리스너를 연결하기만 하면 됩니다.
+            attachGlobalEventListeners();
+            // 현재 상태를 다시 적용하여 디스플레이를 업데이트합니다.
+            setState({ currentView: state.currentView, isChatOpen: state.isChatOpen }); 
         }
 
 
-        // Start Firebase initialization and app rendering when the window loads
+        // Start app rendering when the window loads
+        // 창이 로드될 때 앱 렌더링을 시작합니다.
         window.onload = function() {
-            initializeFirebase();
-            render(); // Initial button render
+            initializeFirebase(); // Firebase 초기화 대신 초기 상태 설정을 호출합니다.
+            // 초기 렌더링 호출은 정적 HTML을 설정하고 리스너를 연결합니다.
+            render();
         };
     </script>
 </div>
