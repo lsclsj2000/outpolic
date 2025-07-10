@@ -180,8 +180,6 @@ function sample4_execDaumPostcode() {
                 guideTextBox.innerHTML = '(예상 지번 주소 : ' + expJibunAddr + ')';
                 guideTextBox.style.display = 'block';
             } else {
-                guideTextBox.innerHTML = '';
-                guideTextBox.style.display = 'none';
             }
         }
     }).open();

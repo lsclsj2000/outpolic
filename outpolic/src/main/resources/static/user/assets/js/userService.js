@@ -203,7 +203,12 @@ $(document).ready(function () {
 		
 		saveUserInfo('/userEdit/update', userInfo, () => {
 			alert('정보가 성공적으로 수정되었습니다.')
-		window.location.href = '/mypage';
+			const grade = $('#gradeCode').val();
+			if (grade === 'ENTER') {
+			  window.location.href = '/enterMypage';
+			} else {
+			  window.location.href = '/mypage';
+			}
 		});
 	});
 });
