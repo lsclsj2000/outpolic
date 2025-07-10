@@ -14,5 +14,7 @@ public interface AdminSearchService {
 		AdminContentsDetailDTO getContentsDetailById(String contentsId);
 		
 		List<AdminContentItemDTO> findContentsByCategoryId(String categoryId);
+		
+		void deleteContent(String contentsId);
 
 }

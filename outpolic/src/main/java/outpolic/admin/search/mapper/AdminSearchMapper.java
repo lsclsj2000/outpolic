@@ -17,4 +17,14 @@ public interface AdminSearchMapper {
 	AdminContentsDetailDTO getContentsDetailById(String contentsId);
 	
 	List<AdminContentItemDTO> findContentsByCategoryId(String categoryId);
+	
+	String findClCdByCntdCd(String contentsId);
+
+    void deleteCategoryMappingByClCd(String clCd);
+    void deleteTagMappingByClCd(String clCd);
+    void deleteBookmarkByClCd(String clCd);
+    void deleteOutsourcingPortfolioByPrtfCd(String prtfCd);
+    void deletePortfolioByPrtfCd(String prtfCd);
+    void deleteOutsourcingByOsCd(String osCd);
+    void deleteContentListByClCd(String clCd);
 }
