@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
- <mapper namespace="outpolic.admin.portfolio.mapper.PortfolioMapper">
- 	<resultMap type="outpolic.admin.portfolio.domain.Portfolio" id="contentResultMap">
+ <mapper namespace="outpolic.admin.search.mapper.AdminSearchMapper">
+ 	<resultMap type="outpolic.admin.search.domain.AdminContents" id="contentResultMap">
  		<id column="content_id" 				property="contentsId"/>
  		<result column="content_type" 			property="contentsType"/>
  		<result column="content_title" 			property="contentsTitle"/>
@@ -62,7 +62,7 @@
  	</select>
 
 	<!-- 1. 상세 정보 DTO(ContentsDetailDTO)를 위한 resultMap -->
-	<resultMap type="outpolic.user.search.domain.ContentsDetailDTO" id="contentsDetailResultMap">
+	<resultMap type="outpolic.admin.search.domain.AdminContentsDetailDTO" id="contentsDetailResultMap">
 	    <!-- 공통 정보 -->
 	    <id     column="content_id"         property="contentsId"/>
 	    <result column="content_type"       property="contentsType"/>
@@ -123,7 +123,7 @@
 	        o.os_cd = #{contentsId} AND #{contentsId} LIKE 'OS_%'
 	</select>
 	
-	<resultMap type="outpolic.user.search.domain.ContentItemDTO" id="outsourcingContentItemMap">
+	<resultMap type="outpolic.admin.search.domain.AdminContentItemDTO" id="outsourcingContentItemMap">
         <id     column="os_cd"         property="contentsId"/>
         <result column="os_ttl"        property="contentsTitle"/>
         <result column="ent_nm"        property="enterName"/>

@@ -1,0 +1,102 @@
+.content-main .section-title.style-2 {
+    /* 기존 템플릿의 스타일을 그대로 활용하되, 필요시 마진 등을 조정할 수 있습니다. */
+    margin-bottom: 2rem;
+}
+
+.content-main .section-title.style-2 h3 {
+    font-size: 1.75rem; /* 28px */
+    font-weight: 600;
+    color: #495057;
+}
+
+.content-main .section-title .text-brand {
+    color: #3BB77E; /* admin 템플릿의 기본 브랜드 색상 */
+}
+
+/* 필터 버튼 (All, 포트폴리오, 외주) */
+.content-main .nav-tabs.links {
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 1.5rem;
+}
+
+.content-main .nav-tabs.links .nav-link {
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 0.8rem 1rem;
+    margin: 0 0.5rem -1px 0.5rem; /* 아래쪽 경계선과 겹치도록 */
+    color: #6c757d;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.content-main .nav-tabs.links .nav-link:hover {
+    color: #333;
+}
+
+.content-main .nav-tabs.links .nav-link.active {
+    color: #3BB77E;
+    border-bottom-color: #3BB77E;
+}
+
+
+/* 
+ * 2. 콘텐츠 목록 그리드 스타일
+ * -----------------------------------------------------------------
+ * user 페이지와 동일한 카드 디자인을 적용하기 위해
+ * common.css에 정의된 스타일을 기반으로 합니다.
+ * 여기서는 admin 페이지에 맞게 일부 간격만 조정합니다.
+ */
+
+/* 그리드 컨테이너 */
+.content-main #contentsListContainer.product-grid-4 {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -12px;
+    margin-right: -12px;
+}
+
+/* 그리드 아이템 (카드) */
+.content-main #contentsListContainer .product-item {
+    width: 20%; /* 5열 그리드 */
+    padding-left: 12px;
+    padding-right: 12px;
+    margin-bottom: 24px;
+}
+
+/* 
+ * 카드 내부 스타일(.product-cart-wrap, .product-img-zoom 등)은
+ * common.css 파일에 정의된 스타일을 그대로 사용합니다.
+ * 이 파일에서는 추가적인 재정의(override)가 필요하지 않습니다.
+ */
+
+
+/* 
+ * 3. 반응형 웹 디자인 (화면 크기에 따른 열 개수 조정)
+ * -----------------------------------------------------------------
+ */
+
+/* 테블릿 사이즈 */
+@media (max-width: 1200px) {
+    .content-main #contentsListContainer .product-item {
+        width: 25%; /* 4열 */
+    }
+}
+
+@media (max-width: 992px) {
+    .content-main #contentsListContainer .product-item {
+        width: 33.333%; /* 3열 */
+    }
+}
+
+/* 모바일 사이즈 */
+@media (max-width: 768px) {
+    .content-main #contentsListContainer .product-item {
+        width: 50%; /* 2열 */
+    }
+}
+
+@media (max-width: 480px) {
+    .content-main #contentsListContainer .product-item {
+        width: 100%; /* 1열 */
+    }
+}
