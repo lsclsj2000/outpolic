@@ -10,7 +10,7 @@
         
         <!-- collection 태그: 자식 객체의 리스트(List<Category>)를 매핑합니다. -->
         <collection property="children" 
-                    ofType="outpolic.user.category.domain.Category" 
+                    ofType="outpolic.user.category.domain.UserCategory" 
                     select="findChildrenByParentId" 
                     column="ctgry_id" />
     </resultMap>
