@@ -57,7 +57,7 @@ public class EnterHomeController {
             return "error/404"; // templates/error/404.html 같은 에러 페이지
         }
 
-        // 3. 조회된 실제 데이터를 "detail" 이라는 이름으로 모델에 담습니다.
+        // 3. 조회된 실제 데이터를 "detail" 이라는 이름으로 모델에 담 습니다.
         model.addAttribute("detail", detailData);
 
         // 4. 상세 페이지 뷰를 리턴합니다.
