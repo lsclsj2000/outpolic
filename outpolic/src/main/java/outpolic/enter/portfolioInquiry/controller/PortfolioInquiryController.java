@@ -36,7 +36,7 @@ public class PortfolioInquiryController {
         model.addAttribute("supplierCd", portfolio.getEntCd());
 
         // 3. 문의 작성 페이지 View를 반환합니다.
-        return "enter/portfolioInquiry/inquiryFormView"; // 포트폴리오 문의 전용 View 경로
+        return "enter/portfolioInquiry/portfolioInquiryListView"; // 포트폴리오 문의 전용 View 경로
     }
 
     /**
