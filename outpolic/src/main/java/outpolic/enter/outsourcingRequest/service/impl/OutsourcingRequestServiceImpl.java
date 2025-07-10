@@ -1,5 +1,7 @@
 package outpolic.enter.outsourcingRequest.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,30 @@ public class OutsourcingRequestServiceImpl  implements OutsourcingRequestService
 		
 		// 4. DB에 최종 저장
 		requestMapper.insertOutsourcingRequest(request);
+		
+		
+	}
+	
+	@Override
+	public List<OutsourcingRequest> getReceivedRequests(String entCd){
+		return requestMapper.findReceivedRequestsByEntCd(entCd);
+	}
+	
+	@Override
+	public List<OutsourcingRequest> getSentRequests(String mbrCd){
+		return requestMapper.findSentRequestsByMbrCd(mbrCd);
+	}
+	
+	@Override
+	public OutsourcingRequest getRequestDetail(String ocdCd) {
+		return requestMapper.findRequestByOcdCd(ocdCd);
+	}
+	
+	@Override
+	@Transactional
+	public void updateRequestStatus(String ocdCd, String stcCd) {
+		// TODO: 상태 변경에 대한 권한 검사 로직이 필요할 수 있음 (예: 공급자만 승인/ 거절 가능)
+		requestMapper.updateRequestStatus(ocdCd, stcCd);
 	}
 }
 

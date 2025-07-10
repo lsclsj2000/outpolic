@@ -3,25 +3,25 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{enter/layout/enterLayoutkjw}"> <head>
     <meta charset="UTF-8">
-    <title>받은 외주 요청 목록</title>
+    <title>보낸 외주 요청 목록</title>
     </head>
 <body>
 <th:block layout:fragment="contents">
     <div class="main-container w-100">
-        <h1 class="section-title">받은 외주 요청 목록</h1>
+        <h1 class="section-title">보낸 외주 요청 목록</h1>
 
         <div class="card">
             <table class="table">
                 <thead>
                     <tr>
                         <th>요청 제목</th>
-                        <th>요청자</th>
+                        <th>공급자</th>
                         <th>요청일시</th>
                         <th>상태</th>
                         <th>관리</th>
                     </tr>
                 </thead>
-                <tbody id="request-list-body">
+                <tbody id="sent-request-list-body">
                     </tbody>
             </table>
         </div>
@@ -31,15 +31,15 @@
 <th:block layout:fragment="jsFile">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 페이지 로드 시 받은 요청 목록을 AJAX로 가져옴
-            fetch('/enter/requests/received/list')
+            // 페이지 로드 시 보낸 요청 목록을 AJAX로 가져옴
+            fetch('/enter/requests/sent/list')
                 .then(response => response.json())
                 .then(data => {
-                    const listBody = document.getElementById('request-list-body');
+                    const listBody = document.getElementById('sent-request-list-body');
                     listBody.innerHTML = ''; // 기존 내용 비우기
 
                     if (data.length === 0) {
-                        listBody.innerHTML = '<tr><td colspan="5" class="text-center">받은 요청이 없습니다.</td></tr>';
+                        listBody.innerHTML = '<tr><td colspan="5" class="text-center">보낸 요청이 없습니다.</td></tr>';
                         return;
                     }
 
@@ -50,16 +50,16 @@
                         const row = `
                             <tr>
                                 <td>${request.ocdTtl}</td>
-                                <td>${request.demanderName}</td>
+                                <td>${request.supplierName}</td>
                                 <td>${formattedDate}</td>
-                                <td><span class="badge rounded-pill alert-success">${request.statusName}</span></td>
+                                <td><span class="badge rounded-pill alert-info">${request.statusName}</span></td>
                                 <td><a href="/enter/requests/detail/${request.ocdCd}" class="btn btn-xs">상세보기</a></td>
                             </tr>
                         `;
                         listBody.innerHTML += row;
                     });
                 })
-                .catch(error => console.error('Error fetching received requests:', error));
+                .catch(error => console.error('Error fetching sent requests:', error));
         });
     </script>
 </th:block>

@@ -29,4 +29,17 @@ public class OutsourcingRequest {
 	private LocalDateTime ocdMdfcnYmdt; //수정일시
 	private String ocdYn; 				//신청 취소 여부('Y'/'N')
 	private LocalDateTime ocdYnYmdt;	// 신청 취소 일시 
+	
+	// -- 목록용 필드 --
+	private String demanderName;  		// 요청자 이름(기업명 또는 회원이름)
+	private String statusName;			// 상태 코드명(예:확인전,승인 등)
+	private String suppllierName; 		// 공급자 이름(기업명)
+	
+	// 상세보기를 위해 아래 필드 추가 
+	private String supplierTel;			// 공급자 연락처
+	private String demanderTel;			// 요청자 연락처
+	private String demanderEmail;		// 요청자 이메일 
+	
+	
+	
 }

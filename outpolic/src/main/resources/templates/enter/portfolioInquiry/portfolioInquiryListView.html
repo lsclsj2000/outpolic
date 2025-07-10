@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{enter/layout/enterLayoutkjw}">
+<head>
+    <meta charset="UTF-8">
+    <title>포트폴리오 문의</title>
+    </head>
+<body>
+<th:block layout:fragment="contents">
+    <div class="main-container">
+        <h1 class="section-title">포트폴리오 문의 (새 외주 의뢰)</h1>
+        <div class="card">
+            <form id="portfolioInquiryForm">
+                <input type="hidden" name="prtfCd" th:value="${portfolio.prtfCd}">
+                <input type="hidden" name="entCd" th:value="${supplierCd}">
+
+                <div class="form-group">
+                    <label>문의하는 포트폴리오</label>
+                    <input type="text" class="form-control" th:value="${portfolio.prtfTtl}" readonly>
+                    <input type="hidden" name="ocdTtl" th:value="|'${portfolio.prtfTtl}' 포트폴리오 관련 문의|">
+                </div>
+
+                <div class="form-group">
+                    <label for="ocdExpln">의뢰 상세 내용</label>
+                    <textarea id="ocdExpln" name="ocdExpln" class="form-control" rows="8" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="ocdAmt">희망 예산 (원)</label>
+                    <input type="number" id="ocdAmt" name="ocdAmt" class="form-control">
+                </div>
+
+                <button type="submit" class="btn-submit">문의하기</button>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="jsFile">
+    <script>
+        document.getElementById('portfolioInquiryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/enter/portfolio-inquiry/submit', { // 컨트롤러에 새로 만든 URL로 요청
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // 성공 시 '보낸 요청 목록' 페이지로 이동
+                    window.location.href = '/enter/requests/sent';
+                } else {
+                    alert('오류: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</th:block>
+</body>
+</html>

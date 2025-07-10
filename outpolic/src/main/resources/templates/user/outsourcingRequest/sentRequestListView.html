@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/userLayoutkjw}"> <head>
+    <meta charset="UTF-8">
+    <title>내가 보낸 요청 목록</title>
+    <style>
+        .main-container { max-width: 960px; margin: 40px auto; padding: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+        .table th { font-weight: 600; color: #333; }
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; color: #fff; }
+        .badge-info { background-color: #0dcaf0; }
+        .badge-success { background-color: #198754; }
+        .badge-danger { background-color: #dc3545; }
+        .btn-xs { padding: 5px 10px; font-size: 12px; text-decoration: none; background-color: #6c757d; color: white; border-radius: 4px; }
+    </style>
+</head>
+
+<body>
+<th:block layout:fragment="content"> <div class="main-container">
+        <div class="card">
+            <h2 class="mb-4">내가 보낸 외주 요청 목록</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>요청 제목</th>
+                        <th>공급자</th>
+                        <th>요청일시</th>
+                        <th>상태</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody id="sent-request-list-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="script"> <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 페이지 로드 시 보낸 요청 목록을 AJAX로 가져옴
+            fetch('/user/requests/sent/list') // user용 컨트롤러 경로
+                .then(response => response.json())
+                .then(data => {
+                    const listBody = document.getElementById('sent-request-list-body');
+                    listBody.innerHTML = ''; // 기존 내용 비우기
+
+                    if (!data || data.length === 0) {
+                        listBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">보낸 요청이 없습니다.</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(request => {
+                        // 날짜 포맷 변경 (YYYY-MM-DD HH:MM)
+                        const formattedDate = new Date(request.ocdDmndYmdt).toLocaleString('sv-SE').slice(0, 16);
+                        
+                        // 상태에 따른 뱃지 스타일
+                        let statusBadge;
+                        switch (request.stcCd) {
+                            case 'SD_APPROVED':
+                                statusBadge = `<span class="badge badge-success">${request.statusName}</span>`;
+                                break;
+                            case 'SD_REJECTED':
+                                statusBadge = `<span class="badge badge-danger">${request.statusName}</span>`;
+                                break;
+                            default:
+                                statusBadge = `<span class="badge badge-info">${request.statusName}</span>`;
+                        }
+
+                        const row = `
+                            <tr>
+                                <td>${request.ocdTtl}</td>
+                                <td>${request.supplierName}</td>
+                                <td>${formattedDate}</td>
+                                <td>${statusBadge}</td>
+                                <td><a href="/user/requests/detail/${request.ocdCd}" class="btn-xs">상세보기</a></td>
+                            </tr>
+                        `;
+                        listBody.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching sent requests:', error);
+                    const listBody = document.getElementById('sent-request-list-body');
+                    listBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">목록을 불러오는 중 오류가 발생했습니다.</td></tr>';
+                });
+        });
+    </script>
+</th:block>
+</body>
+</html>

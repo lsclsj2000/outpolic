@@ -16,11 +16,83 @@
 	</insert>
 	
 	<insert id="insertOutsourcingRequest" parameterType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequest">
-		INSERT INTO outsourcing_contract_details
-			(ocd_cd,ocd_req_type,mbr_cd,ent_cd,ocd_ttl,ocd_frctn_cmdty,ocd_dlvgds_mthd,ocd_expln,ocd_dedline,ocd_amt, stc_cd,ocd_dmnd_ymdt, ocd_yn)
-		VALUES
-			(#{ocdCd},#{ocdReqType},#{mbrCd},#{entCd},#{clCd},#{ocdTtl},#{ocdFrctnCmdty},#{ocdExpln},#{ocdDedLine},#{ocdAmt},#{stcCd},NOW(),'N')
-				
+    INSERT INTO outsourcing_contract_details
+        (ocd_cd, ocd_req_type, mbr_cd, ent_cd, cl_cd, ocd_ttl, ocd_frctn_cmdty, ocd_dlvgds_mthd, ocd_expln, ocd_dedline, ocd_amt, stc_cd, ocd_dmnd_ymdt, ocd_yn)
+    VALUES
+        (#{ocdCd}, #{ocdReqType}, #{mbrCd}, #{entCd}, #{clCd}, #{ocdTtl}, #{ocdFrctnCmdty}, #{ocdDlvgdsMthd}, #{ocdExpln}, #{ocdDedline}, #{ocdAmt}, #{stcCd}, NOW(), 'N')
+</insert>
+
+<select id="findReceivedRequestsByEntCd" resultType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequest">
+		SELECT
+		    ocd.ocd_cd,
+		    ocd.ocd_ttl,
+		    ocd.ocd_dmnd_ymdt,
+		    -- 요청자가 기업회원이면 기업명을, 아니면 일반 회원명을 demanderName으로 설정
+		    COALESCE(e.ent_nm, m.mbr_nm) AS demanderName,
+		    sc.stc_nm AS statusName
+		FROM
+		    outsourcing_contract_details ocd
+		JOIN
+		    member m ON ocd.mbr_cd = m.mbr_cd
+		JOIN
+		    status_code sc ON ocd.stc_cd = sc.stc_cd
+		-- 요청한 회원이 기업(Enterprise)일 수도 있으므로 LEFT JOIN
+		LEFT JOIN
+		    enterprise e ON m.mbr_cd = e.mbr_cd
+		WHERE
+		    ocd.ent_cd = #{entCd}
+		ORDER BY
+		    ocd.ocd_dmnd_ymdt DESC
+	</select>
 	
-	</insert>
+	<select id="findSentRequestsByMbrCd" resultType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequest">
+		SELECT
+		    ocd.ocd_cd,
+		    ocd.ocd_ttl,
+		    ocd.ocd_dmnd_ymdt,
+		    e.ent_nm AS supplierName, -- 공급받는 기업의 이름을 supplierName으로 설정
+		    sc.stc_nm AS statusName
+		FROM
+		    outsourcing_contract_details ocd
+		JOIN
+		    enterprise e ON ocd.ent_cd = e.ent_cd -- 요청받은 기업(공급자) 정보 JOIN
+		JOIN
+		    status_code sc ON ocd.stc_cd = sc.stc_cd
+		WHERE
+		    ocd.mbr_cd = #{mbrCd} -- 요청한 사람(로그인한 나)의 코드로 조회
+		ORDER BY
+		    ocd.ocd_dmnd_ymdt DESC
+	</select>
+	
+	<select id="findRequestByOcdCd" resultType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequest">
+		SELECT
+		    ocd.*, -- 모든 컬럼 선택
+		    s.ent_nm AS supplierName,
+		    s.ent_telno AS supplierTel,
+		    COALESCE(d_ent.ent_nm, d_mbr.mbr_nm) AS demanderName,
+		    d_mbr.mbr_telno AS demanderTel,
+		    d_mbr.mbr_eml AS demanderEmail,
+		    sc.stc_nm AS statusName
+		FROM
+		    outsourcing_contract_details ocd
+		JOIN
+		    enterprise s ON ocd.ent_cd = s.ent_cd -- 공급자 정보
+		JOIN
+		    member d_mbr ON ocd.mbr_cd = d_mbr.mbr_cd -- 수요자(회원) 정보
+		LEFT JOIN
+		    enterprise d_ent ON d_mbr.mbr_cd = d_ent.mbr_cd -- 수요자가 기업일 경우
+		JOIN
+		    status_code sc ON ocd.stc_cd = sc.stc_cd
+		WHERE
+		    ocd.ocd_cd = #{ocdCd}
+	</select>
+
+	<update id="updateRequestStatus">
+		UPDATE outsourcing_contract_details
+		SET
+		    stc_cd = #{stcCd},
+		    ocd_rspns_ymdt = NOW() -- 응답일시를 현재 시간으로 업데이트
+		WHERE
+		    ocd_cd = #{ocdCd}
+	</update>
 </mapper>
