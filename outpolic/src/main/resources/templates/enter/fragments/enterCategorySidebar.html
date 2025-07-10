@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<div class="new-category-sidebar" th:fragment="enterCategorySidebarFragment"
+         th:if="${mainCategory != null and !categoryGroups.isEmpty()}">
+        
+        <!-- 컨트롤러가 model에 담아준 'mainCategory'를 사용 -->
+        <h2 class="sidebar-main-title" th:text="${mainCategory.categoryName}">카테고리</h2>
+        
+        <ul class="category-list">
+            <!-- 컨트롤러가 model에 담아준 'categoryGroups'를 반복 -->
+            <li th:each="group : ${categoryGroups}">
+                <h5 class="category-group-title">
+                    <span th:text="${group.name}"></span>
+                    <span class="toggle-arrow"></span>
+                </h5>
+                <ul class="subcategory-list" th:if="${group.subCategorys != null and !group.subCategorys.isEmpty()}">
+                    <li th:each="sub : ${group.subCategorys}">
+                        <a th:href="@{${sub.url}}" th:text="${sub.name}"></a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</html>

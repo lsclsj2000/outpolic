@@ -12,7 +12,7 @@
 				    </div>
 					<div class="header-right">
 						<div class="search-style-2">
-                            <form class="outpolicTopSearch" th:action="@{/user/userSearch}" method="get">
+                            <form class="outpolicTopSearch" th:action="@{/enter/enterSearch}" method="get">
                                 <input  type="text" name="keyword" placeholder="Search for items..." required />
                                 <button type="submit">검색</button>
                             </form>
@@ -88,7 +88,7 @@
 					                <div class="mega-menu-sidebar">
 					                    <ul class="main-category-list">
 					                        <li th:each="mainCat, iterStat : ${megaMenuCategories}">
-					                            <a th:href="@{/user/products(category=${mainCat.categoryId})}"
+					                            <a th:href="@{/enter/products(category=${mainCat.categoryId})}"
 					                               th:classappend="${iterStat.index == 0} ? 'active'"
 					                               th:data-target-id="'content-panel-' + ${iterStat.index}">
 					                                <span th:text="${mainCat.categoryName}"></span>
@@ -107,13 +107,13 @@
 					                        <!-- 중분류 그룹 (mainCat의 children 리스트를 순회) -->
 					                        <div class="category-group" th:each="group : ${mainCat.children}">
 					                            <h5 class="category-group-title">
-					                                <a th:href="@{/user/products(category=${group.categoryId})}" th:text="${group.categoryName}"></a>
+					                                <a th:href="@{/enter/products(category=${group.categoryId})}" th:text="${group.categoryName}"></a>
 					                            </h5>
 					                            
 					                            <!-- 소분류 목록 (group의 children 리스트를 순회) -->
 					                            <ul class="sub-category-list" th:if="${group.children != null and !group.children.isEmpty()}">
 					                                <li th:each="sub : ${group.children}">
-					                                    <a th:href="@{/user/products(category=${sub.categoryId})}" th:text="${sub.categoryName}"></a>
+					                                    <a th:href="@{/enter/products(category=${sub.categoryId})}" th:text="${sub.categoryName}"></a>
 					                                </li>
 					                            </ul>
 					                        </div>
@@ -131,10 +131,10 @@
 							<nav>
 								<ul>
 									<li>
-										<a th:href="@{/user/userSearch}"> 외주 </a>
+										<a th:href="@{/enter/enterSearch}"> 외주 </a>
 									</li>
 									<li>
-										<a th:href="@{/user/userSearch}"> 포트폴리오 </a>
+										<a th:href="@{/enter/enterSearch}"> 포트폴리오 </a>
 									</li>
 									<li>
 									    <a href="#">콘텐츠<i class="fi-rs-angle-down"></i></a>
