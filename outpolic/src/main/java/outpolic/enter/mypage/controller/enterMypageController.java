@@ -47,6 +47,12 @@ public class enterMypageController {
     	String memberCode = (String) session.getAttribute("SCD");
     	EnterInfo enterInfo = enterMypageService.getEnterInfoByCode(memberCode);
     	
+    	if(memberCode == null) {
+    		model.addAttribute("msg", "로그인이 만료되었습니다. 다시 로그인 해주세요");
+    		model.addAttribute("url", "/login");
+    		return "enter/mypage/alert";
+    	}
+    	
     	if(memberPw.equals(enterInfo.getMemberPw())) {
     		model.addAttribute("enterInfo", enterInfo);
     		return "enter/mypage/enterEditChoiceView";

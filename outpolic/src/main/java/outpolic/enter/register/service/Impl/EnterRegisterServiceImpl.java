@@ -33,4 +33,10 @@ public class EnterRegisterServiceImpl implements EnterRegisterService{
 		return registerResult + updateCdResult;
 	}
 
+
+	@Override
+	public int isBrnoDuplicated(String corpBrno) {
+		return enterRegisterMapper.isBrnoDuplicated(corpBrno);
+	}
+
 }
