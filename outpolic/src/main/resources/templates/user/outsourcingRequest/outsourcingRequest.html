@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/userLayoutkjw}"> <head>
+    <meta charset="UTF-8">
+    <title>새 외주 프로젝트 신청</title>
+    <style>
+        .main-container { max-width: 960px; margin: 40px auto; padding: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn-submit { display: block; width: 100%; padding: 12px; background-color: #3BB77E; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; text-align: center; }
+        .file-preview-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .file-preview-item { position: relative; width: 100px; height: 100px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #555; }
+        .file-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        .remove-file-btn { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+
+<body>
+<th:block layout:fragment="content"> <div class="main-container">
+        <div class="card">
+            <h2 class="mb-4">새 외주 프로젝트 신청</h2>
+            <p class="mb-4 text-muted">
+                <strong th:text="${supplierName}">공급자 이름</strong>에게 보낼 요청 내용을 작성해주세요.
+            </p>
+
+            <form id="outsourcingApplicationForm">
+                <input type="hidden" name="entCd" th:value="${supplierCd}">
+
+                <div class="form-group">
+                    <label for="ocdTtl">프로젝트 제목</label>
+                    <input type="text" id="ocdTtl" name="ocdTtl" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="ocdExpln">상세 설명</label>
+                    <textarea id="ocdExpln" name="ocdExpln" class="form-control" rows="8" required placeholder="프로젝트의 목적, 주요 기능, 참고 사이트 등 상세한 내용을 기재해주세요."></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="ocdDedline">희망 작업 기한</label>
+                        <input type="date" id="ocdDedline" name="ocdDedline" class="form-control">
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="ocdAmt">제안 금액 (원)</label>
+                        <input type="number" id="ocdAmt" name="ocdAmt" class="form-control" required placeholder="세전 금액을 입력해주세요.">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="referenceFiles">참고 자료 첨부 (선택)</label>
+                    <input type="file" id="referenceFiles" name="files" class="form-control" multiple>
+                    <div id="file-preview" class="file-preview-container"></div>
+                </div>
+
+                <button type="submit" class="btn-submit">외주 프로젝트 신청하기</button>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="script"> <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('outsourcingApplicationForm');
+            const fileInput = document.getElementById('referenceFiles');
+            const previewContainer = document.getElementById('file-preview');
+            const dataTransfer = new DataTransfer();
+
+            // 파일 미리보기 및 관리 기능
+            fileInput.addEventListener('change', () => {
+                Array.from(fileInput.files).forEach(file => dataTransfer.items.add(file));
+                fileInput.files = dataTransfer.files;
+                renderPreview();
+            });
+
+            function renderPreview() {
+                previewContainer.innerHTML = '';
+                Array.from(dataTransfer.files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    const item = document.createElement('div');
+                    item.className = 'file-preview-item';
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-file-btn';
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.type = 'button';
+                    removeBtn.onclick = () => {
+                        dataTransfer.items.remove(index);
+                        fileInput.files = dataTransfer.files;
+                        renderPreview();
+                    };
+                    item.appendChild(removeBtn);
+
+                    if (file.type.startsWith('image/')) {
+                        reader.onload = () => {
+                            const img = document.createElement('img');
+                            img.src = reader.result;
+                            item.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        item.append(`📄 ${file.name.substring(0, 10)}...`);
+                    }
+                    previewContainer.appendChild(item);
+                });
+            }
+
+            // 폼 제출 기능
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+
+                if (!formData.get('ocdTtl') || !formData.get('ocdAmt')) {
+                    alert('프로젝트 제목과 제안 금액은 필수입니다.');
+                    return;
+                }
+
+                // user용 컨트롤러 경로로 수정해야 합니다.
+                fetch('/user/requests/add', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('외주 신청이 성공적으로 접수되었습니다.');
+                        // 성공 후, 보낸 요청 목록 페이지로 이동
+                        window.location.href = '/user/requests/sent';
+                    } else {
+                        alert('오류: ' + (data.message || '알 수 없는 오류 발생'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('신청 처리 중 오류가 발생했습니다.');
+                });
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>
