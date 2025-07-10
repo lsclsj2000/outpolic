@@ -103,7 +103,11 @@
 		    <artifactId>sdk</artifactId>
 		    <version>4.3.0</version>
 		</dependency>
-
+		<!--비밀번호 암호화 의존성 주입-->
+		<dependency>
+   	 		<groupId>org.springframework.boot</groupId>
+	    	<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
