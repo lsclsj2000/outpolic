@@ -25,7 +25,6 @@ public class WebConfig implements WebMvcConfigurer{
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		
-
 		/*
 		 * // 로그인 안한 이용자 접근 차단 registry.addInterceptor(loginInterceptor)
 		 * .addPathPatterns("/**") // 인터셉터로 로그인 안한사람 막음 .excludePathPatterns("/",
@@ -41,6 +40,8 @@ public class WebConfig implements WebMvcConfigurer{
 		 * 
 		 * WebMvcConfigurer.super.addInterceptors(registry);
 		 */
+
+
 	}
 
 	

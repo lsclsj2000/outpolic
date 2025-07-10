@@ -13,13 +13,14 @@ public class SecurityConfig {
 	//비밀번호 암호화
 	@Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(12);
     }
 	// main페이지 띄우기 위한 노력
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		 http
 	        .csrf(csrf -> csrf.disable())  // CSRF 비활성화
+	        .formLogin(form -> form.disable())
 	        .authorizeHttpRequests(auth -> auth
 	            .anyRequest().permitAll()  // 모든 요청 허용
 	        )
@@ -31,4 +32,4 @@ public class SecurityConfig {
 	    return http.build();
 	}
 
-}
+} 

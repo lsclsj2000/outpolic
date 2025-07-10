@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutMain}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+		<body>
+		<th:block layout:fragment="contents">
+			<section class="content-main mt-80 mb-80">
+                <div class="card mx-auto card-login">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Sign in</h4>
+                        <form action="/admin/login" method="post">
+                            <div class="mb-3">
+                                <input class="form-control" placeholder="Username or email" type="text" id="memberId" name="memberId"/>
+                            </div>
+                            <!-- form-group// -->
+                            <div class="mb-3">
+                                <input class="form-control" placeholder="Password" type="password" id="memberPw" name="memberPw"/>
+                            </div>
+
+                            <!-- form-group form-check .// -->
+                            <div class="mb-4">
+                                <button type="submit" class="btn btn-primary w-100">Login</button>
+                            </div>
+                    	</form>        
+                    </div>
+                </div>
+            </section>
+		</th:block>
+		
+	<th:block layout:fragment="jsScript">
+ 		<script th:if="${success != null}">
+		    alert([[${success}]]);
+		</script>
+		<script>
+			window.addEventListener("DOMContentLoaded", () => {
+				const urlParams = new URLSearchParams(window.location.search);
+				const id = urlParams.get("id");
+				const pw = urlParams.get("pw");
+				
+				if(id&&pw){
+					document.getElementById("memberId").value = id;
+					document.getElementById("memberPw").value = pw;
+					}
+				});	
+		</script>
+	</th:block>
+	</body>
+</html>

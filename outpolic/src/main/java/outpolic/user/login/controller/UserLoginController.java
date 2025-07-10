@@ -43,7 +43,7 @@ public class UserLoginController {
    	  
     	  Map<String, Object> loginResult = userLoginService.loginUser(memberId, memberPw);
     	  boolean isMatched = (boolean) loginResult.get("isMatched");
-    	  String clientIp = request.getRemoteAddr();
+//    	  String clientIp = request.getRemoteAddr();
     	  String redirectUri = "redirect:/login";
         
         if (isMatched) {
