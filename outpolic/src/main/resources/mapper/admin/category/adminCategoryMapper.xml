@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.admin.category.mapper.AdminCategoryMapper">
+    
+    <resultMap id="category_rm" type="outpolic.admin.category.domain.AdminCategory">
+        <id property="ctgryId" column="CTGRY_ID"/>
+        <result property="ctgryNm" column="CTGRY_NM"/>
+        <result property="ctgryUpId" column="CTGRY_UP_ID"/>
+    </resultMap>
+
+    <select id="selectAllCategories" resultMap="category_rm">
+        SELECT CTGRY_ID, CTGRY_NM, CTGRY_UP_ID
+        FROM category
+        ORDER BY CTGRY_ID ASC
+    </select>
+</mapper>
