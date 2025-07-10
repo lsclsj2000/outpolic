@@ -50,7 +50,6 @@
 						successUrl: `http://localhost/paymentSuccess?usedMileage=${usedMileage}&grdCd=${grdCd}`,
 						failUrl: "http://localhost/paymentFail"
 					});
-					alert("결제 되었습니다");
 				});
 			});
 		 
@@ -170,9 +169,16 @@
 				  applyMileage(currentTotal);
 				});
 				
-				resetBtn?.addEventListener("click", () => {
-				  const ok = confirm("선택한 상품을 모두 초기화할까요?\n확인을 누르면 페이지가 새로고침됩니다.");
-				  if (ok) location.reload();
+				resetBtn?.addEventListener("click", (e) => {
+					  e.preventDefault(); // ✅ 필수!
+
+					  const ok = confirm("선택한 상품을 모두 초기화할까요?\n확인을 누르면 페이지가 새로고침됩니다.");
+					  if (ok) {
+						console.log("resetBtn:", resetBtn);
+					    location.reload();
+					  } else {
+					    console.log("취소됨: 새로고침 없이 유지");
+					  }
 				});
 
 				updateText();
@@ -186,7 +192,7 @@
 				<div class="row w-100">
 					<div class="col-lg-7">
 						<div class="table-responsive shopping-summery">
-							<button id="reset-selection" class="btn btn-secondary mt-3 mb-4">선택
+							<button id="reset-selection" class="btn btn-secondary mt-3 mb-4" type="button">선택
 								초기화</button>
 							<table class="table table-wishlist">
 								<thead>
