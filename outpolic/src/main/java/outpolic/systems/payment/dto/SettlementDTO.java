@@ -1,4 +1,4 @@
-package outpolic.user.payment.dto;
+package outpolic.systems.payment.dto;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;

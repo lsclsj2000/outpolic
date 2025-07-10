@@ -1,4 +1,4 @@
-package outpolic.user.payment.dto;
+package outpolic.systems.payment.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown =true)
-public class UserPaymentDTO {
+public class PaymentDTO {
 	private String mId;					// 상점번호
 	private String lastTransactionKey;	// 마지막 거래 키
 	private String paymentKey;			// 결제 키
@@ -18,8 +18,8 @@ public class UserPaymentDTO {
 	private String approvedAt;			// 결제 승인 일시
 	private String useEscrow;			// 		필요없어보임
 	private String cultureExpense;		// 문화비 필요없어보임
-	private CardDTO card;				// 카드로 결제하면 제공되는 카드 관련 정보
-	private EasyPayDTO easyPay;			// 간편결제로 결제하면 제공되는 정보
+	private CardDTO card;			// 카드로 결제하면 제공되는 카드 관련 정보
+	private EasyPayDTO easyPay;		// 간편결제로 결제하면 제공되는 정보
 	
 	
 	

@@ -1,5 +1,6 @@
 
-package outpolic.user.payment.dto;
+package outpolic.systems.payment.dto;
+
 
 import lombok.Data;
 
