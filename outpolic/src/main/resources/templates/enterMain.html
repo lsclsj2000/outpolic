@@ -48,51 +48,51 @@
 										 th:if="${!mainCategories.isEmpty()}">
 										<div class="card-1" th:each="cat : ${mainCategories}">
 											<figure class="img-hover-scale overflow-hidden">
-												<a th:href="@{/user/products(category=${cat.categoryId})}">
+												<a th:href="@{/enter/products(category=${cat.categoryId})}">
 												<th:block th:switch="${cat.categoryName}">
 													<!-- case 1: 카테고리 이름이 '디자인'일 경우 -->
 													<img th:case="'디자인'"
-														src="/user/assets/imgs/icon/graphic-designer.png"
+														src="/enter/assets/imgs/icon/graphic-designer.png"
 														th:alt="${cat.categoryName}" />
 			
 													<!-- case 2: 카테고리 이름이 'IT·프로그래밍'일 경우 -->
 													<img th:case="'IT·프로그래밍'"
-														src="/user/assets/imgs/icon/technical-support.png"
+														src="/enter/assets/imgs/icon/technical-support.png"
 														th:alt="${cat.categoryName}" />
 			
 													<!-- case 3: 카테고리 이름이 '영상·사진·음향'일 경우 -->
 													<img th:case="'영상·사진·음향'"
-														src="/user/assets/imgs/icon/picture.png"
+														src="/enter/assets/imgs/icon/picture.png"
 														th:alt="${cat.categoryName}" />
 													<!-- case 4: 카테고리 이름이 '마케팅'일 경우 -->
 													<img th:case="'마케팅'"
-														src="/user/assets/imgs/icon/social-media.png"
+														src="/enter/assets/imgs/icon/social-media.png"
 														th:alt="${cat.categoryName}" />
 													<!-- case 5: 카테고리 이름이 '번역·통역'일 경우 -->
 													<img th:case="'번역·통역'"
-														src="/user/assets/imgs/icon/translate.png"
+														src="/enter/assets/imgs/icon/translate.png"
 														th:alt="${cat.categoryName}" />
 													<!-- case 6: 카테고리 이름이 '문서·글쓰기'일 경우 -->
 													<img th:case="'문서·글쓰기'"
-														src="/user/assets/imgs/icon/documentation.png"
+														src="/enter/assets/imgs/icon/documentation.png"
 														th:alt="${cat.categoryName}" />
 													<!-- case 7: 카테고리 이름이 '창업·사업'일 경우 -->
 													<img th:case="'창업·사업'"
-														src="/user/assets/imgs/icon/business.png"
+														src="/enter/assets/imgs/icon/business.png"
 														th:alt="${cat.categoryName}" />
 													<!-- case 8: 카테고리 이름이 '주문제작'일 경우 -->
 													<img th:case="'주문제작'"
-														src="/user/assets/imgs/icon/color-selection.png"
+														src="/enter/assets/imgs/icon/color-selection.png"
 														th:alt="${cat.categoryName}" />
 													<!-- case 9: 카테고리 이름이 '세무·법무·노무'일 경우 -->
 													<img th:case="'세무·법무·노무'"
-														src="/user/assets/imgs/icon/law-scale.png"
+														src="/enter/assets/imgs/icon/law-scale.png"
 														th:alt="${cat.categoryName}" />
 												</th:block>
 											</a>
 										</figure>
 										<h6>
-											<a th:href="@{/user/products(category=${cat.categoryId})}"
+											<a th:href="@{/enter/products(category=${cat.categoryId})}"
 												th:text="${cat.categoryName}">카테고리명</a>
 										</h6>
 									</div>
@@ -151,7 +151,7 @@
 					                        </div>
 					                        <!-- 제목 (h2 안에 stretched-link를 가진 a 태그) -->
 					                        <h2>
-					                            <a th:href="@{/user/contents/{id}(id=${content.osCode})}" 
+					                            <a th:href="@{/enter/contents/{id}(id=${content.osCode})}" 
 					                               th:text="${content.osTtl}"
 					                               class="stretched-link">콘텐츠 제목</a>
 					                        </h2>
@@ -259,9 +259,9 @@
 					<div class="review-slider-active">
 						<!-- 리뷰 항목 1 -->
 						<div class="single-comment justify-content-between d-flex">
-							<div class="user justify-content-between d-flex">
+							<div class="enter justify-content-between d-flex">
 								<div class="thumb text-center">
-									<img src="user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+									<img src="enter/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
 									<a href="#" class="font-heading text-brand">Sienna</a>
 								</div>
 								<div class="desc">
@@ -279,9 +279,9 @@
 						</div>
 						<!-- 리뷰 항목 2 -->
 						<div class="single-comment justify-content-between d-flex">
-							<div class="user justify-content-between d-flex">
+							<div class="enter justify-content-between d-flex">
 								<div class="thumb text-center">
-									<img src="user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+									<img src="enter/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
 									<a href="#" class="font-heading text-brand">Sienna</a>
 								</div>
 								<div class="desc">
@@ -299,9 +299,9 @@
 						</div>
 						<!-- 리뷰 항목 3 -->
 						<div class="single-comment justify-content-between d-flex">
-							<div class="user justify-content-between d-flex">
+							<div class="enter justify-content-between d-flex">
 								<div class="thumb text-center">
-									<img src="user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+									<img src="enter/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
 									<a href="#" class="font-heading text-brand">Sienna</a>
 								</div>
 								<div class="desc">
@@ -319,9 +319,9 @@
 						</div>
 						<!-- 리뷰 항목 4 -->
 						<div class="single-comment justify-content-between d-flex">
-							<div class="user justify-content-between d-flex">
+							<div class="enter justify-content-between d-flex">
 								<div class="thumb text-center">
-									<img src="user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+									<img src="enter/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
 									<a href="#" class="font-heading text-brand">Sienna</a>
 								</div>
 								<div class="desc">
@@ -339,9 +339,9 @@
 						</div>
 						<!-- 리뷰 항목 5 -->
 						<div class="single-comment justify-content-between d-flex">
-							<div class="user justify-content-between d-flex">
+							<div class="enter justify-content-between d-flex">
 								<div class="thumb text-center">
-									<img src="user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+									<img src="enter/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
 									<a href="#" class="font-heading text-brand">Sienna</a>
 								</div>
 								<div class="desc">
@@ -474,7 +474,7 @@
 	
 			    // 2. 서버에 jQuery AJAX로 상세 데이터 요청
 			    $.ajax({
-			        url: `/user/api/contents/${contentsId}`,
+			        url: `/enter/api/contents/${contentsId}`,
 			        type: 'GET',
 			        dataType: 'json',
 			        success: function(data) {
@@ -485,7 +485,7 @@
 			                    <div class="row">
 			                        <div class="col-md-7">
 			                             <div class="d-flex align-items-center mb-3">
-			                                <img src="/assets/imgs/theme/icons/icon-user.svg" alt="user" class="rounded-circle me-2" style="width: 40px; height: 40px; border: 1px solid #ddd;">
+			                                <img src="/assets/imgs/theme/icons/icon-enter.svg" alt="user" class="rounded-circle me-2" style="width: 40px; height: 40px; border: 1px solid #ddd;">
 			                                <div>
 			                                    <h6 class="mb-0">${data.enterName}</h6>
 			                                    <span class="text-muted small">MASTER</span>
