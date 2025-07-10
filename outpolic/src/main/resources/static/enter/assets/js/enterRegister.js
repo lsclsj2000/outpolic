@@ -38,7 +38,7 @@ function getUserTelNo(memberTelNo){
 
 
 // 기업 회원가입 시작
-
+let isBrnoUnique = false;
 function verifyBiz() {
     const corpBrno = document.getElementById("corpBrno").value.trim();
 
@@ -46,7 +46,6 @@ function verifyBiz() {
         alert("- 를 뺀 10자리의 유효한 사업자등록번호를 입력해주세요.");
         return;
     }
-
     const requestData = {
         b_no: [corpBrno]
     };
@@ -66,16 +65,7 @@ function verifyBiz() {
             }
             const data = result.data[0];
             if (data.b_stt === "계속사업자") {
-            document.getElementById("corpName").readOnly = false;
-			document.getElementById("corpRprsv").readOnly = false;
-			document.getElementById("corpTelNo").readOnly = false;
-			document.getElementById("corpHomepageUrl").readOnly = false;
-			document.getElementById("corpFoundationYmdt").readOnly = false;
-			document.getElementById("corpScale").readOnly = false;
-			document.getElementById("sample4_postcode").readOnly = false;
-			document.getElementById("sample4_roadAddress").readOnly = false;
-			document.getElementById("sample4_detailAddress").readOnly = false;
-                alert("유효한 사업자등록번호입니다. 나머지 폼을 작성해주세요");
+				getCorpBrno(corpBrno);
             } else {
                 alert("유효하지 않은 사업자등록번호입니다.");
             }
@@ -86,6 +76,35 @@ function verifyBiz() {
         }
     });
 }
+function getCorpBrno(corpBrno){
+	$.ajax({
+		url: '/enter/checkDuplicate',
+		method: 'GET',
+		data:{type: 'corpBrno',
+		      value: $('#corpBrno').val()},
+		success:function(result){
+			if(result>0){
+				alert('이미 등록된 사용자입니다.')
+			}else{
+				alert('유효한 사업자등록번호입니다. 나머지 폼을 작성해주세요')
+				document.getElementById("corpName").readOnly = false;
+				document.getElementById("corpRprsv").readOnly = false;
+				document.getElementById("corpTelNo").readOnly = false;
+				document.getElementById("corpHomepageUrl").readOnly = false;
+				document.getElementById("corpFoundationYmdt").readOnly = false;
+				document.getElementById("corpScale").readOnly = false;
+				document.getElementById("sample4_postcode").readOnly = false;
+				document.getElementById("sample4_roadAddress").readOnly = false;
+				document.getElementById("sample4_detailAddress").readOnly = false;
+				document.getElementById("corpBrno").readOnly = true;
+			}
+		},
+		error: function(){
+			$('#memberTelNoMsg').text('서버 오류로 확인에 실패했습니다.').removeClass('text-success').addClass('text-danger');
+			isBrnoUnique = false;
+		}			  
+	});
+}
 
 
 // 다음 주소 api 사용
@@ -94,7 +113,7 @@ function sample4_execDaumPostcode() {
     new daum.Postcode({
         oncomplete: function(data) {
             // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-
+			const guideTextBox = document.getElementById('guide');
             // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
             // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
             var roadAddr = data.roadAddress; // 도로명 주소 변수

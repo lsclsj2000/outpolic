@@ -144,7 +144,7 @@ function sample4_execDaumPostcode() {
     new daum.Postcode({
         oncomplete: function(data) {
             // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-
+			const guideTextBox = document.getElementById('guide');
             // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
             // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
             var roadAddr = data.roadAddress; // 도로명 주소 변수
@@ -167,7 +167,7 @@ function sample4_execDaumPostcode() {
             // 우편번호와 주소 정보를 해당 필드에 넣는다.
             document.getElementById('sample4_postcode').value = data.zonecode;
             document.getElementById("sample4_roadAddress").value = roadAddr;
-            document.getElementById("sample4_jibunAddress").value = data.jibunAddress;
+          //  document.getElementById("sample4_jibunAddress").value = data.jibunAddress;
 
             // 사용자가 '선택 안함'을 클릭한 경우, 예상 주소라는 표시를 해준다.
             if(data.autoRoadAddress) {
@@ -206,7 +206,7 @@ $(document).ready(function(){
 		const Id = $(this).val().trim();
 		//빈값일 경우 중복확인 메세지 출력 안함
 		if(Id===''){
-			$('#memberIdMsg').text('').removeClass('text-success text-danger');
+			$('#memberIdMsg').text('아이디를 입력해주세요.').removeClass('text-success').addClass('text-danger');
 			isIdUnique = false;
 			return;
 		}
@@ -291,43 +291,102 @@ $(document).ready(function(){
 		
 		e.preventDefault();
 		
-		if (!isIdUnique) {
+		const Id = $('#memberId').val().trim();
+		if (!isIdUnique&&Id!=='') {
 		    $('#memberIdMsg').text('이미 사용 중인 아이디입니다.').removeClass('text-success').addClass('text-danger');
 		    $('#memberId').focus();
 		    return;
+		}else if(Id===''){
+			$('#memberIdMsg').text('아이디를 입력해주세요.').removeClass('text-success').addClass('text-danger');
+			$('#memberId').focus();
+			return;
+		}else{
+			
 		}
-	
-		if (!isEmailUnique) {
-		    $('#memberEmailMsg').text('이미 사용 중인 이메일입니다.').removeClass('text-success').addClass('text-danger');
-		    $('#memberEmail').focus();
-		    return;
+		
+		const pw = $('#memberPw').val().trim();
+		if(pw===''){
+			$('#memberPwMsg').text('사용하실 비밀번호를 입력해주세요.').removeClass().addClass('text-danger');
+			$('#memberPw').focus();
+			return;
 		}
-	
-		if (!isTelUnique) {
-		    $('#memberTelNoMsg').text('이미 사용 중인 전화번호입니다.').removeClass('text-success').addClass('text-danger');
-		    $('#memberTelNo').focus();
-		    return;
-		}
-	
-		if (!isNickNmUnique) {
-		    $('#memberNickNmMsg').text('이미 사용 중인 닉네임입니다.').removeClass('text-success').addClass('text-danger');
-		    $('#memberNickname').focus();
-		    return;
-		}
-	
 		if (!pwEqual) {
 		    $('#pwCheckMsg').text('비밀번호가 일치하지 않습니다.').addClass('text-danger');
 		    $('#userpwcheck').focus();
 		    return;
 		}
-	
+
+		const name = $('#memberName').val().trim();
+		if(name === ''){
+			$('#memberNameMsg').text('이름을 입력해주세요.').removeClass().addClass('text-danger');
+			$('#memberName').focus();
+			return;
+		}
+		const nickNm = $('#memberNickname').val().trim();
+			if (!isNickNmUnique&&nickNm!=='') {
+			    $('#memberNickNmMsg').text('이미 사용 중인 닉네임입니다.').removeClass('text-success').addClass('text-danger');
+				$('#memberNickname').focus();
+			    return;
+			}else if(nickNm === ''){
+				// 빈 닉네임은 유효함 → 랜덤 닉네임이 자동 생성되므로
+				$('#memberNickNmMsg').text('입력하지 않으면 랜덤 닉네임이 부여됩니다.')
+				                     .removeClass('text-danger')
+				                     .addClass('text-info'); 
+									 
+			}else{
+				
+			}
+		const telNo = $('#memberTelNo').val().trim();
+		if (!isTelUnique&&telNo!=='') {
+		    $('#memberTelNoMsg').text('이미 사용 중인 전화번호입니다.').removeClass('text-success').addClass('text-danger');
+		    $('#memberTelNo').focus();
+		    return;
+		}else if(telNo===''){
+			$('#memberTelNoMsg').text('전화번호를 입력해주세요.').removeClass('text-success').addClass('text-danger');
+			$('#memberTelNo').focus();
+			return;
+		}else{
+			
+		}
+		
+		const email = $('#memberEmail').val().trim();
+		if (!isEmailUnique&&email!=='') {
+		    $('#memberEmailMsg').text('이미 사용 중인 이메일입니다.').removeClass('text-success').addClass('text-danger');
+		    $('#memberEmail').focus();
+		    return;
+		}else if(email===''){
+			$('#memberEmailMsg').text('이메일을 입력해주세요.').removeClass('text-success').addClass('text-danger');
+			$('#memberEmail').focus();
+			return;
+		}else{
+			
+		}
+		const birth = $('#memberBirth').val().trim();
+		if(birth===''){
+			$('#memberBirthMsg').text('생일을 입력해주세요').removeClass('text-success').addClass('text-danger');
+			return; 
+		}else{
+			$('#memberBirthMsg').text('');
+		}
+
+		const zip = $('#sample4_postcode').val().trim();
+		if(zip===''){
+			$('#memberAddressMsg').text('주소를 입력해주세요').removeClass('text-success').addClass('text-danger');
+			return;
+		}else{
+			$('#memberAddressMsg').text('');
+		}
+		const gender = document.querySelector('input[name="memberGender"]:checked')?.value;
+		if(!gender){
+			alert("성별을 선택해주세요.");
+			return;
+		}
 		const isAgreeChecked = document.getElementById('agree')?.checked;
 		if (!$('#agree').is(':checked')) {
 		    alert("이용약관 및 개인정보처리방침에 동의하셔야 가입이 가능합니다.");
 		    return;
 		}
 		
-		const gender = document.querySelector('input[name="memberGender"]:checked')?.value;
 	
 	   if (!$('#agree').is(':checked')) {
 	       alert("이용약관 및 개인정보처리방침에 동의하셔야 가입이 가능합니다.");

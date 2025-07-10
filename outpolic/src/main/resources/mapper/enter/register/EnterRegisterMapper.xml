@@ -74,6 +74,11 @@
  		set grd_cd = 'ENTER'
  		where mbr_cd =#{memberCode};
  	</update>
+ 	<select id="isBrnoDuplicated" resultType="int">
+ 		select count(*)
+ 		from enterprise
+ 		where ent_brno = #{corpBrno};
+ 	</select>
 </mapper>
 
 
