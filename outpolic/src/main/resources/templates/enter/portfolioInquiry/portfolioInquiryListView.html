@@ -6,181 +6,97 @@
     <meta charset="UTF-8">
     <title>포트폴리오 문의하기</title>
     <style>
-        body {
-            background-color: #f9fafb; /* 전체 배경색 */
-        }
-        .inquiry-container {
-            max-width: 800px;
-            margin: 2rem auto; /* 위아래 여백 및 가운데 정렬 */
-            padding: 2rem;
-        }
-        .page-title {
-            font-size: 2.25rem; /* 36px */
-            font-weight: 800;
-            color: #1f2937;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        .form-card {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 2.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        /* [수정] 문의 대상 정보를 깔끔하게 표시하는 부분 */
-        .info-display {
-            border: 1px solid #e5e7eb;
-            background-color: #f9fafb;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-        }
-        .info-display p {
-            margin: 0;
-            font-size: 1rem;
-            color: #4b5563;
-        }
-        .info-display strong {
-            color: #111827;
-            margin-right: 0.5rem;
-        }
+      
+        h1 { font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 2rem; }
         
-        .form-group {
-            margin-bottom: 1.75rem;
+        /* 문의 대상 정보 */
+        .info-box {
+            background-color: #f1f3f5; padding: 1.5rem; border-radius: 8px;
+            margin-bottom: 2rem; font-size: 1rem; border-left: 5px solid #4f46e5;
         }
-        .form-group label {
-            display: block;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: #374151;
-        }
+        .info-box p { margin: 0 0 0.5rem 0; color: #495057; }
+        .info-box strong { color: #111827; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.75rem; }
         .form-control {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%; padding: 0.8rem 1rem; border: 1px solid #d1d5db;
+            border-radius: 6px; font-size: 1rem; box-sizing: border-box;
         }
-        .form-control:focus {
-            border-color: #4f46e5;
-            outline: 0;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-        }
-        /* [수정] 숫자 입력 필드의 스피너(증감버튼) 제거 */
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-          -webkit-appearance: none; 
-          margin: 0; 
-        }
+        textarea.form-control { min-height: 120px; resize: vertical; }
 
         .btn-submit {
-            width: 100%;
-            background: linear-gradient(90deg, #4f46e5, #6366f1);
-            color: white;
-            padding: 0.9rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.2);
+            display: block; width: 100%; background-color: #4f46e5; color: white; padding: 0.9rem;
+            border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer;
         }
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
-        }
-        .btn-submit:disabled {
-            background: #a5b4fc;
-            cursor: not-allowed;
-        }
-        .feedback-message {
-            margin-top: 1rem;
-            text-align: center;
-            font-weight: 600;
-        }
+        .feedback { margin-top: 1rem; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
 <th:block layout:fragment="contents">
-    <div class="inquiry-container">
-        <h1 class="page-title">포트폴리오 문의하기</h1>
+    <div class="container">
+        <h1>포트폴리오 문의하기</h1>
 
-        <div class="form-card">
-            <div class="info-display">
-                <p><strong>To:</strong> <span th:text="${supplierName}">[공급자 기업 이름]</span></p>
-                <p><strong>About:</strong> <span th:text="${portfolio.prtfTtl}">[문의 대상 포트폴리오 제목]</span></p>
+        <div class="info-box">
+            <p><strong>문의 대상 기업:</strong> <span th:text="${supplier.name}">스마트 전문가</span></p>
+            <p><strong>관련 포트폴리오:</strong> <span th:text="${portfolio.title}">인포그래픽 디자인</span></p>
+        </div>
+
+        <form id="portfolio-inquiry-form">
+            <input type="hidden" name="ent_cd" th:value="${supplier.id}"> <input type="hidden" name="cl_cd" th:value="${portfolio.clCd}"> <input type="hidden" name="mbr_cd" value="MB_C0000008"> <div class="form-group">
+                <label for="title">문의 제목 <span style="color:red;">*</span></label>
+                <input type="text" id="title" name="ocd_ttl" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="content">문의 내용 <span style="color:red;">*</span></label>
+                <textarea id="content" name="ocd_expln" class="form-control" rows="6" required placeholder="포트폴리오 관련하여 궁금한 점을 작성해주세요."></textarea>
             </div>
 
-            <form id="portfolioInquiryForm">
-                <input type="hidden" name="prtfCd" th:value="${portfolio.prtfCd}">
-                <input type="hidden" name="entCd" th:value="${supplierCd}">
-                <input type="hidden" name="ocdTtl" th:value="|'${portfolio.prtfTtl}' 포트폴리오 관련 문의|">
-
-                <div class="form-group">
-                    <label for="ocdExpln">의뢰 상세 내용</label>
-                    <textarea id="ocdExpln" name="ocdExpln" class="form-control" rows="8" required placeholder="원하시는 작업 스타일, 내용, 분량 등을 구체적으로 작성해주세요."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="ocdAmt">희망 예산 (원)</label>
-                    <input type="number" id="ocdAmt" name="ocdAmt" class="form-control" placeholder="숫자만 입력해주세요 (예: 500000)">
-                </div>
-
-                <button type="submit" id="submitButton" class="btn-submit">문의 전송</button>
-                <div id="formFeedback" class="feedback-message"></div>
-            </form>
-        </div>
+            <button type="submit" class="btn-submit">문의 보내기</button>
+            <div id="form-feedback" class="feedback"></div>
+        </form>
     </div>
 </th:block>
 
 <th:block layout:fragment="jsFile">
     <script>
-        document.getElementById('portfolioInquiryForm').addEventListener('submit', function(e) {
+        document.getElementById('portfolio-inquiry-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const submitButton = document.getElementById('submitButton');
-            const formFeedback = document.getElementById('formFeedback');
-            const formData = new FormData(this);
+            const form = this;
+            const submitButton = form.querySelector('.btn-submit');
+            const feedbackDiv = document.getElementById('form-feedback');
 
-            // [수정] 전송 중 버튼 비활성화 및 로딩 표시
             submitButton.disabled = true;
             submitButton.textContent = '전송 중...';
-            formFeedback.textContent = '';
+            feedbackDiv.textContent = '';
 
-            fetch('/enter/portfolio-inquiry/submit', {
+            const formData = new FormData(form);
+            formData.append('ocd_req_type', '문의'); // 이 요청의 구분은 '문의'
+
+            // [API 필요] 서버에 포트폴리오 문의 제출
+            fetch('/api/inquiries', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => {
-                if (!response.ok) {
-                    // 서버에서 에러 응답 시, 응답 내용을 기반으로 에러를 생성
-                    return response.json().then(err => Promise.reject(err));
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                // [수정] alert 대신 페이지 내에 메시지 표시
-                formFeedback.style.color = 'green';
-                formFeedback.textContent = data.message || '성공적으로 전송되었습니다.';
-                
-                // 2초 후 '보낸 요청 목록' 페이지로 이동
-                setTimeout(() => {
-                    window.location.href = '/enter/requests/sent';
-                }, 2000);
+                if (data.success) {
+                    feedbackDiv.style.color = 'green';
+                    feedbackDiv.textContent = '문의를 성공적으로 보냈습니다.';
+                    form.reset();
+                    // 2초 후 나의 문의 내역 페이지로 이동
+                    setTimeout(() => {
+                        window.location.href = '/enter/requests/sent';
+                    }, 2000);
+                } else {
+                    throw new Error(data.message || '알 수 없는 오류');
+                }
             })
             .catch(error => {
-                console.error('Error:', error);
-                // [수정] alert 대신 페이지 내에 오류 메시지 표시
-                formFeedback.style.color = 'red';
-                formFeedback.textContent = '오류: ' + (error.message || '알 수 없는 오류가 발생했습니다.');
-                
-                // 실패 시 버튼 다시 활성화
+                feedbackDiv.style.color = 'red';
+                feedbackDiv.textContent = `오류: ${error.message}`;
                 submitButton.disabled = false;
-                submitButton.textContent = '문의 전송';
+                submitButton.textContent = '문의 보내기';
             });
         });
     </script>

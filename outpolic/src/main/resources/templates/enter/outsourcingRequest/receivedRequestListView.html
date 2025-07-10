@@ -4,197 +4,178 @@
       layout:decorate="~{enter/layout/enterLayoutkjw}">
 <head>
     <meta charset="UTF-8">
-    <title>받은 외주 요청 목록</title>
+    <title>요청 상세 보기</title>
     <style>
-        /* 전체 컨테이너 스타일 */
-        .request-page-container {
-            width: 100%;
-            max-width: 1024px; /* 최대 너비 */
-            margin: 0 auto; /* 가운데 정렬 */
-            padding: 2rem;
-            background-color: #f9fafb; /*옅은 회색 배경*/
-        }
-        .request-page-title {
-            font-size: 2rem; /* 32px */
-            font-weight: bold;
-            color: #111827; /* 어두운 회색 글자 */
-            margin-bottom: 2rem;
-        }
-        .request-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem; /* 카드 사이의 간격 */
-        }
-
-        /* 개별 요청 카드 스타일 */
+       
+        /* 요청 상세 정보 카드 */
         .request-card {
-            background-color: white;
-            border: 1px solid #e5e7eb; /* 테두리 */
-            border-radius: 0.5rem; /* 둥근 모서리 */
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
-            transition: box-shadow 0.2s ease-in-out;
+            background: #ffffff; border-radius: 12px; padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.07); margin-bottom: 2rem;
         }
-        .request-card:hover {
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        .request-header h1 {
+            font-size: 1.8rem; font-weight: 800; color: #1f2937; margin: 0 0 1rem 0;
         }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 1rem;
+        .meta-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
+            border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;
+            padding: 1.5rem 0; margin-bottom: 1.5rem;
         }
-        .card-title {
-            font-size: 1.125rem; /* 18px */
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.25rem;
-        }
-        .card-title a {
-            color: inherit;
-            text-decoration: none;
-        }
-        .card-title a:hover {
-            color: #4f46e5;
-        }
-        .card-requester {
-            font-size: 0.875rem; /* 14px */
-            color: #4b5563;
-        }
-        .card-meta {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            flex-shrink: 0;
-        }
-        .card-date {
-            font-size: 0.75rem; /* 12px */
-            color: #6b7280;
-            margin-bottom: 0.5rem;
-        }
-        /* 상태 배지 기본 스타일 */
-        .status-badge {
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px; /* 원형에 가까운 둥근 모서리 */
-        }
-        /* 상태별 배지 색상 */
-        .badge-yellow { background-color: #fef3c7; color: #92400e; }
-        .badge-blue { background-color: #dbeafe; color: #1e40af; }
-        .badge-green { background-color: #d1fae5; color: #065f46; }
-        .badge-gray { background-color: #f3f4f6; color: #374151; }
+        .meta-item { font-size: 1rem; color: #4b5563; }
+        .meta-item strong { color: #111827; display: block; margin-bottom: 0.25rem; }
+        .request-body { line-height: 1.6; }
+        .request-body h3 { font-size: 1.2rem; font-weight: 700; margin-top: 0; }
 
-        .card-footer {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #f3f4f6;
-            text-align: right;
+        /* 답변(커뮤니케이션) 영역 */
+        .communication-thread {
+            background: #ffffff; border-radius: 12px; padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.07);
         }
-        .btn-detail {
-            background-color: #4f46e5; /* 남색 계열 */
-            color: white;
-            font-weight: bold;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            text-decoration: none;
-            font-size: 0.875rem;
-            transition: background-color 0.2s ease-in-out;
+        .communication-thread h2 { font-size: 1.5rem; font-weight: 700; margin-top: 0; margin-bottom: 1.5rem; }
+        
+        .reply-history { max-height: 400px; overflow-y: auto; padding: 1rem; background: #f8f9fa; border-radius: 8px; margin-bottom: 1.5rem; }
+        .reply-bubble {
+            padding: 0.8rem 1rem; border-radius: 12px; margin-bottom: 1rem;
+            max-width: 75%; line-height: 1.5;
         }
-        .btn-detail:hover {
-            background-color: #4338ca;
+        .my-reply { background-color: #4f46e5; color: white; margin-left: auto; border-bottom-right-radius: 2px; }
+        .their-reply { background-color: #e5e7eb; color: #1f2937; border-bottom-left-radius: 2px; }
+        .reply-meta { font-size: 0.75rem; display: block; margin-top: 0.5rem; opacity: 0.8; }
+        
+        /* 새 답변 작성 폼 */
+        #reply-form textarea {
+            width: 100%; min-height: 100px; padding: 0.8rem 1rem; border: 1px solid #d1d5db;
+            border-radius: 6px; font-size: 1rem; box-sizing: border-box; resize: vertical; margin-bottom: 1rem;
         }
-        .text-center { text-align: center; }
-        .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+        #reply-form button {
+            display: block; width: 100%; background-color: #16a34a; color: white; padding: 0.8rem;
+            border: none; border-radius: 6px; font-size: 1rem; font-weight: 700; cursor: pointer;
+        }
+        
+        /* 상태 변경 버튼 영역 */
+        .action-bar { text-align: right; margin-top: 1rem; }
+        .action-button {
+            padding: 0.6rem 1.2rem; border-radius: 6px; border: none; font-weight: 600;
+            cursor: pointer; margin-left: 0.5rem;
+        }
+        .btn-approve { background-color: #2563eb; color: white; }
+        .btn-reject { background-color: #dc2626; color: white; }
     </style>
 </head>
 <body>
 <th:block layout:fragment="contents">
-    <div class="request-page-container">
-        <h1 class="request-page-title">받은 외주 요청</h1>
-        <div id="request-list-container" class="request-list">
+    <div class="container">
+        <div class="request-card">
+            <div class="request-header">
+                <h1 id="request-title">[요청 제목이 여기에 표시됩니다]</h1>
             </div>
+            <div class="meta-grid">
+                <div class="meta-item"><strong>요청자</strong> <span id="requester-name"></span></div>
+                <div class="meta-item"><strong>요청 대상</strong> <span id="recipient-name"></span></div>
+                <div class="meta-item"><strong>요청일</strong> <span id="request-date"></span></div>
+                <div class="meta-item"><strong>희망 예산</strong> <span id="request-amount"></span></div>
+            </div>
+            <div class="request-body">
+                <h3>상세 요청 내용</h3>
+                <p id="request-content">[요청 내용이 여기에 표시됩니다]</p>
+            </div>
+        </div>
+
+        <div class="communication-thread">
+            <h2>답변 및 진행 상황</h2>
+            <div id="reply-history" class="reply-history">
+                </div>
+            <form id="reply-form">
+                <textarea id="reply-content" placeholder="답변을 입력하세요..."></textarea>
+                <button type="submit">답변 전송</button>
+            </form>
+            <div class="action-bar">
+                <button class="action-button btn-reject">요청 거절</button>
+                <button class="action-button btn-approve">요청 수락</button>
+            </div>
+        </div>
     </div>
 </th:block>
 
 <th:block layout:fragment="jsFile">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const listContainer = document.getElementById('request-list-container');
+            // URL에서 요청 ID 가져오기 (예: /enter/requests/detail/OCD_C00008)
+            const pathParts = window.location.pathname.split('/');
+            const requestId = pathParts[pathParts.length - 1];
+            
+            // 현재 로그인한 사용자 ID (테스트용)
+            const myUserId = 'EI_C00003';
 
-            // [수정] 상태에 따라 다른 색상의 배지 클래스를 반환하는 함수
-            const getStatusBadgeClass = (statusName) => {
-                if (statusName === '요청접수' || statusName === '접수') {
-                    return 'badge-yellow';
-                }
-                if (statusName === '진행중') {
-                    return 'badge-blue';
-                }
-                if (statusName === '완료' || statusName === '계약완료') {
-                    return 'badge-green';
-                }
-                return 'badge-gray'; // 그 외의 경우
+            // 답변 HTML 생성 함수
+            const createReplyBubble = (reply) => {
+                const bubble = document.createElement('div');
+                bubble.className = 'reply-bubble';
+                const isMyReply = reply.replierId === myUserId;
+                bubble.classList.add(isMyReply ? 'my-reply' : 'their-reply');
+                
+                const content = document.createElement('p');
+                content.textContent = reply.content;
+                
+                const meta = document.createElement('span');
+                meta.className = 'reply-meta';
+                const date = new Date(reply.date).toLocaleString();
+                meta.textContent = `${isMyReply ? '나' : reply.replierName} ・ ${date}`;
+                
+                bubble.appendChild(content);
+                bubble.appendChild(meta);
+                return bubble;
             };
 
-            fetch('/enter/requests/received/list')
-                .then(response => {
-                    // [수정] 응답이 성공적이지 않을 경우 에러 처리
-                    if (!response.ok) {
-                        throw new Error(`서버 응답 오류: ${response.status}`);
-                    }
-                    return response.json();
-                })
+            // [API 필요] 서버에서 상세 데이터 및 답변 목록 가져오기
+            fetch(`/api/requests/${requestId}`)
+                .then(response => response.ok ? response.json() : Promise.reject('서버 오류'))
                 .then(data => {
-                    if (!data || data.length === 0) {
-                        listContainer.innerHTML = '<div class="text-center py-10">받은 요청이 없습니다.</div>';
-                        return;
-                    }
-                    
-                    // [수정] HTML을 배열에 담아 마지막에 한 번에 추가 (성능 개선)
-                    const cardsHtml = data.map(request => {
-                        // [수정] 데이터가 null일 경우를 대비한 방어 코드
-                        const title = request.ocdTtl || '제목 없음';
-                        const requester = request.demanderName || '알 수 없음';
-                        const status = request.statusName || '상태 미지정';
-                        const detailUrl = `/enter/requests/detail/${request.ocdCd}`;
-                        
-                        let formattedDate = '날짜 정보 없음';
-                        try {
-                             if(request.ocdDmndYmdt) {
-                                formattedDate = new Date(request.ocdDmndYmdt).toLocaleDateString('ko-KR');
-                             }
-                        } catch(e) {
-                            console.error('날짜 변환 오류:', request.ocdDmndYmdt, e);
-                        }
+                    // 1. 요청 상세 정보 채우기
+                    document.getElementById('request-title').textContent = data.request.ocd_ttl;
+                    document.getElementById('requester-name').textContent = data.request.demanderName;
+                    document.getElementById('recipient-name').textContent = data.request.supplierName;
+                    document.getElementById('request-date').textContent = new Date(data.request.ocd_dmnd_ymdt).toLocaleDateString();
+                    document.getElementById('request-amount').textContent = data.request.ocd_amt ? `${data.request.ocd_amt.toLocaleString()}원` : '협의';
+                    document.getElementById('request-content').textContent = data.request.ocd_expln;
 
-                        const badgeClass = getStatusBadgeClass(status);
-
-                        return `
-                            <div class="request-card">
-                                <div class="card-header">
-                                    <div>
-                                        <h2 class="card-title"><a href="${detailUrl}">${title}</a></h2>
-                                        <p class="card-requester">요청자: ${requester}</p>
-                                    </div>
-                                    <div class="card-meta">
-                                        <div class="card-date">${formattedDate}</div>
-                                        <span class="status-badge ${badgeClass}">${status}</span>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <a href="${detailUrl}" class="btn-detail">상세보기</a>
-                                </div>
-                            </div>
-                        `;
+                    // 2. 답변 이력 채우기
+                    const historyContainer = document.getElementById('reply-history');
+                    historyContainer.innerHTML = '';
+                    data.replies.forEach(reply => {
+                        historyContainer.appendChild(createReplyBubble(reply));
                     });
-
-                    listContainer.innerHTML = cardsHtml.join('');
-
+                    historyContainer.scrollTop = historyContainer.scrollHeight; // 스크롤을 맨 아래로
                 })
-                .catch(error => {
-                    console.error('받은 요청 목록 로딩 실패:', error);
-                    listContainer.innerHTML = '<div class="text-center py-10" style="color: red;">데이터를 불러오는 중 오류가 발생했습니다.</div>';
-                });
+                .catch(error => console.error("데이터 로딩 실패:", error));
+
+            // 새 답변 제출 이벤트
+            document.getElementById('reply-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const contentText = document.getElementById('reply-content').value.trim();
+                if (!contentText) return;
+
+                const newReplyData = {
+                    replierId: myUserId,
+                    content: contentText,
+                    // name, date 등은 서버에서 생성
+                };
+                
+                // [API 필요] 새 답변을 서버에 저장
+                fetch(`/api/requests/${requestId}/replies`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newReplyData)
+                })
+                .then(response => response.ok ? response.json() : Promise.reject('전송 실패'))
+                .then(savedReply => {
+                    // 화면에 새 답변 바로 추가
+                    const historyContainer = document.getElementById('reply-history');
+                    historyContainer.appendChild(createReplyBubble(savedReply));
+                    historyContainer.scrollTop = historyContainer.scrollHeight;
+                    document.getElementById('reply-content').value = '';
+                })
+                .catch(error => alert('답변 전송에 실패했습니다.'));
+            });
         });
     </script>
 </th:block>
