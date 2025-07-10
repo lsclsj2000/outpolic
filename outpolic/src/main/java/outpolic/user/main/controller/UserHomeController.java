@@ -74,4 +74,9 @@ public class UserHomeController {
         // @ModelAttribute 덕분에 헤더는 이미 'megaMenuCategories' 데이터를 받은 상태입니다.
         return "user/main/userListpageView";
     }
+    
+    @GetMapping("/projectInfo")
+    public String projectMainInfo() {
+    	return "projectInfo";
+    }
 }
