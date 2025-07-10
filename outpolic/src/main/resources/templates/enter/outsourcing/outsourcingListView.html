@@ -2,6 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{enter/layout/enterLayoutkjw}">
+      <script>
+        // 다른 스크립트가 실행되기 전에 먼저
+        // initializeFirebase를 아무것도 안하는 함수로 정의해버립니다.
+        function initializeFirebase() {
+            // 이 함수는 호출되더라도 아무 일도 하지 않으므로 오류가 발생하지 않습니다.
+            console.log("Firebase 초기화 호출을 무시했습니다.");
+        }
+    </script>
 <head>
     <title>내 외주 목록</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -305,6 +313,10 @@
 <th:block layout:fragment="jsFile">
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
     <script>
+    function initializeFirebase() {
+        // 아무 내용도 없는 빈 함수
+      }
+
         $(document).ready(function() {
             let grid = $('#outsourcingItemsGrid');
             let shareTitle = '';

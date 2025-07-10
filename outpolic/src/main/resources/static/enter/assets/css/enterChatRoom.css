@@ -3,7 +3,7 @@ body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Prevent body scroll when chat window is open */
+    /* Prevent body scroll when chat window is open */
 }
 /* Custom scrollbar for chat message area */
 .SR_chat-scroll-area::-webkit-scrollbar {

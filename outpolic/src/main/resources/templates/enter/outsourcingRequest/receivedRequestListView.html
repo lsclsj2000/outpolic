@@ -1,65 +1,200 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{enter/layout/enterLayoutkjw}"> <head>
+      layout:decorate="~{enter/layout/enterLayoutkjw}">
+<head>
     <meta charset="UTF-8">
     <title>받은 외주 요청 목록</title>
-    </head>
+    <style>
+        /* 전체 컨테이너 스타일 */
+        .request-page-container {
+            width: 100%;
+            max-width: 1024px; /* 최대 너비 */
+            margin: 0 auto; /* 가운데 정렬 */
+            padding: 2rem;
+            background-color: #f9fafb; /*옅은 회색 배경*/
+        }
+        .request-page-title {
+            font-size: 2rem; /* 32px */
+            font-weight: bold;
+            color: #111827; /* 어두운 회색 글자 */
+            margin-bottom: 2rem;
+        }
+        .request-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; /* 카드 사이의 간격 */
+        }
+
+        /* 개별 요청 카드 스타일 */
+        .request-card {
+            background-color: white;
+            border: 1px solid #e5e7eb; /* 테두리 */
+            border-radius: 0.5rem; /* 둥근 모서리 */
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+            transition: box-shadow 0.2s ease-in-out;
+        }
+        .request-card:hover {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .card-title {
+            font-size: 1.125rem; /* 18px */
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        .card-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .card-title a:hover {
+            color: #4f46e5;
+        }
+        .card-requester {
+            font-size: 0.875rem; /* 14px */
+            color: #4b5563;
+        }
+        .card-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+        .card-date {
+            font-size: 0.75rem; /* 12px */
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        /* 상태 배지 기본 스타일 */
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px; /* 원형에 가까운 둥근 모서리 */
+        }
+        /* 상태별 배지 색상 */
+        .badge-yellow { background-color: #fef3c7; color: #92400e; }
+        .badge-blue { background-color: #dbeafe; color: #1e40af; }
+        .badge-green { background-color: #d1fae5; color: #065f46; }
+        .badge-gray { background-color: #f3f4f6; color: #374151; }
+
+        .card-footer {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f3f4f6;
+            text-align: right;
+        }
+        .btn-detail {
+            background-color: #4f46e5; /* 남색 계열 */
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .btn-detail:hover {
+            background-color: #4338ca;
+        }
+        .text-center { text-align: center; }
+        .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+    </style>
+</head>
 <body>
 <th:block layout:fragment="contents">
-    <div class="main-container w-100">
-        <h1 class="section-title">받은 외주 요청 목록</h1>
-
-        <div class="card">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>요청 제목</th>
-                        <th>요청자</th>
-                        <th>요청일시</th>
-                        <th>상태</th>
-                        <th>관리</th>
-                    </tr>
-                </thead>
-                <tbody id="request-list-body">
-                    </tbody>
-            </table>
-        </div>
+    <div class="request-page-container">
+        <h1 class="request-page-title">받은 외주 요청</h1>
+        <div id="request-list-container" class="request-list">
+            </div>
     </div>
 </th:block>
 
 <th:block layout:fragment="jsFile">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 페이지 로드 시 받은 요청 목록을 AJAX로 가져옴
-            fetch('/enter/requests/received/list')
-                .then(response => response.json())
-                .then(data => {
-                    const listBody = document.getElementById('request-list-body');
-                    listBody.innerHTML = ''; // 기존 내용 비우기
+            const listContainer = document.getElementById('request-list-container');
 
-                    if (data.length === 0) {
-                        listBody.innerHTML = '<tr><td colspan="5" class="text-center">받은 요청이 없습니다.</td></tr>';
+            // [수정] 상태에 따라 다른 색상의 배지 클래스를 반환하는 함수
+            const getStatusBadgeClass = (statusName) => {
+                if (statusName === '요청접수' || statusName === '접수') {
+                    return 'badge-yellow';
+                }
+                if (statusName === '진행중') {
+                    return 'badge-blue';
+                }
+                if (statusName === '완료' || statusName === '계약완료') {
+                    return 'badge-green';
+                }
+                return 'badge-gray'; // 그 외의 경우
+            };
+
+            fetch('/enter/requests/received/list')
+                .then(response => {
+                    // [수정] 응답이 성공적이지 않을 경우 에러 처리
+                    if (!response.ok) {
+                        throw new Error(`서버 응답 오류: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        listContainer.innerHTML = '<div class="text-center py-10">받은 요청이 없습니다.</div>';
                         return;
                     }
+                    
+                    // [수정] HTML을 배열에 담아 마지막에 한 번에 추가 (성능 개선)
+                    const cardsHtml = data.map(request => {
+                        // [수정] 데이터가 null일 경우를 대비한 방어 코드
+                        const title = request.ocdTtl || '제목 없음';
+                        const requester = request.demanderName || '알 수 없음';
+                        const status = request.statusName || '상태 미지정';
+                        const detailUrl = `/enter/requests/detail/${request.ocdCd}`;
+                        
+                        let formattedDate = '날짜 정보 없음';
+                        try {
+                             if(request.ocdDmndYmdt) {
+                                formattedDate = new Date(request.ocdDmndYmdt).toLocaleDateString('ko-KR');
+                             }
+                        } catch(e) {
+                            console.error('날짜 변환 오류:', request.ocdDmndYmdt, e);
+                        }
 
-                    data.forEach(request => {
-                        // 날짜 포맷 변경 (YYYY-MM-DD HH:MM)
-                        const formattedDate = new Date(request.ocdDmndYmdt).toLocaleString('sv-SE').slice(0, 16);
+                        const badgeClass = getStatusBadgeClass(status);
 
-                        const row = `
-                            <tr>
-                                <td>${request.ocdTtl}</td>
-                                <td>${request.demanderName}</td>
-                                <td>${formattedDate}</td>
-                                <td><span class="badge rounded-pill alert-success">${request.statusName}</span></td>
-                                <td><a href="/enter/requests/detail/${request.ocdCd}" class="btn btn-xs">상세보기</a></td>
-                            </tr>
+                        return `
+                            <div class="request-card">
+                                <div class="card-header">
+                                    <div>
+                                        <h2 class="card-title"><a href="${detailUrl}">${title}</a></h2>
+                                        <p class="card-requester">요청자: ${requester}</p>
+                                    </div>
+                                    <div class="card-meta">
+                                        <div class="card-date">${formattedDate}</div>
+                                        <span class="status-badge ${badgeClass}">${status}</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="${detailUrl}" class="btn-detail">상세보기</a>
+                                </div>
+                            </div>
                         `;
-                        listBody.innerHTML += row;
                     });
+
+                    listContainer.innerHTML = cardsHtml.join('');
+
                 })
-                .catch(error => console.error('Error fetching received requests:', error));
+                .catch(error => {
+                    console.error('받은 요청 목록 로딩 실패:', error);
+                    listContainer.innerHTML = '<div class="text-center py-10" style="color: red;">데이터를 불러오는 중 오류가 발생했습니다.</div>';
+                });
         });
     </script>
 </th:block>
