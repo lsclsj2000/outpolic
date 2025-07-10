@@ -8,7 +8,7 @@
 			<div class="container">
 				<div class="header-wrap">
 				    <div class="logo logo-width-1">
-				        <a href="/"><img class="d-flex align-items-center" src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
+				        <a th:href="@{/enter}"><img class="d-flex align-items-center" src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
 				    </div>
 					<div class="header-right">
 						<div class="search-style-2">
@@ -19,101 +19,48 @@
 						</div>
 						<div class="header-action-right">
 							<div class="header-action-2">
-							    <div class="search-location">
-									<form action="#">
-										<select class="select-active">
-											<option>Your Location</option>
-											<option>Alabama</option>
-											<option>Alaska</option>
-											<option>Arizona</option>
-											<option>Delaware</option>
-											<option>Florida</option>
-											<option>Georgia</option>
-											<option>Hawaii</option>
-											<option>Indiana</option>
-											<option>Maryland</option>
-											<option>Nevada</option>
-											<option>New Jersey</option>
-											<option>New Mexico</option>
-											<option>New York</option>
-										</select>
-									</form>
-							    </div>
-								<div class="header-action-icon-2">
-									<a href="#">
-									    <img class="svgInject" alt="Nest" src="/user/assets/imgs/theme/icons/icon-compare.svg" />
-									    <span class="pro-count blue">3</span>
-									</a>
-									<a href="#"><span class="lable ml-0">Compare</span></a>
-								</div>
-								<div class="header-action-icon-2">
-									<a href="#">
-									    <img class="svgInject" alt="Nest" src="/user/assets/imgs/theme/icons/icon-heart.svg" />
-									    <span class="pro-count blue">6</span>
-									</a>
-									<a href="#"><span class="lable">Wishlist</span></a>
-								</div>
-								<div class="header-action-icon-2">
+							    <div class="header-action-icon-2">
 									<a class="mini-cart-icon" href="#">
-									    <img alt="Nest" src="/user/assets/imgs/theme/icons/icon-cart.svg" />
-									    <span class="pro-count blue">2</span>
+										<img style="max-width:30px;" src="/user/assets/imgs/outpolic/bell.png" />
+										<span class="pro-count blue">1</span>
 									</a>
-									<a href="#"><span class="lable">Cart</span></a>
+									<a href="#"><span class="lable">알림</span></a>
+								
+									<!-- 알림 드롭다운 시작 -->
 									<div class="cart-dropdown-wrap cart-dropdown-hm2">
-										<ul>
-											<li>
-												<div class="shopping-cart-img">
-												    <a href="#"><img alt="Nest" src="/user/assets/imgs/shop/thumbnail-3.jpg" /></a>
-												</div>
+										<ul class="notification-list">
+											<!-- 알림이 있을 때 아래 항목이 반복됨 -->
+											<li class="notification-item">
 												<div class="shopping-cart-title">
-												    <h4><a href="#">Daisy Casual Bag</a></h4>
-												    <h4><span>1 × </span>$800.00</h4>
-												</div>
-												<div class="shopping-cart-delete">
-												    <a href="#"><i class="fi-rs-cross-small"></i></a>
+													<h4><a href="#">새 외주 요청이 도착했습니다.</a></h4>
+													<span class="font-xs text-muted">2025-07-09 10:23</span>
 												</div>
 											</li>
-										    <li>
-												<div class="shopping-cart-img">
-												    <a href="#"><img alt="Nest" src="/user/assets/imgs/shop/thumbnail-2.jpg" /></a>
-												</div>
-												<div class="shopping-cart-title">
-												    <h4><a href="#">Corduroy Shirts</a></h4>
-												    <h4><span>1 × </span>$3200.00</h4>
-												</div>
-												<div class="shopping-cart-delete">
-												    <a href="#"><i class="fi-rs-cross-small"></i></a>
-												</div>
-										    </li>
+											<!-- 알림이 없을 때 보여줄 영역 -->
+											<li class="notification-empty text-center" style="display: none;">
+												<p class="text-muted m-3">알림이 없습니다.</p>
+											</li>
 										</ul>
-										<div class="shopping-cart-footer">
-											<div class="shopping-cart-total">
-											    <h4>Total <span>$4000.00</span></h4>
-											</div>
-											<div class="shopping-cart-button">
-											    <a href="#" class="outline">View cart</a>
-											    <a href="#">Checkout</a>
-											</div>
-										</div>
 									</div>
 								</div>
 								<div class="header-action-icon-2">
 									<a href="#">
 									    <img class="svgInject" alt="Nest" src="/user/assets/imgs/theme/icons/icon-user.svg" />
 									</a>
-									<a th:href="@{/enterMypage}"><span class="lable ml-0">Account</span></a>
+									<a th:href="@{/mypage}"><span class="lable ml-0">마이페이지</span></a>
 									<div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
 										<ul>
-										    <li><a th:href="@{/enterMypage}"><i class="fi fi-rs-user mr-10"></i>My Account</a></li>
-										    <li><a href="#"><i class="fi fi-rs-location-alt mr-10"></i>Order Tracking</a></li>
-										    <li><a href="#"><i class="fi fi-rs-label mr-10"></i>My Voucher</a></li>
-										    <li><a href="#"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a></li>
-										    <li><a href="#"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a></li>
-										    <li><a th:href="@{/login}"><i class="fi fi-rs-log-in mr-10"></i>login</a></li>
-										    <li><a th:href="@{/logout}"><i class="fi fi-rs-log-out mr-10"></i>logout</a></li>
+										    <li><a th:href="@{/enterMypage}"><i class="fi fi-rs-user mr-10"></i>내정보</a></li>
+										    <li><a th:href="@{/login}"><i class="fi fi-rs-log-in mr-10"></i>로그인</a></li>
+										    <li><a th:href="@{/logout}"><i class="fi fi-rs-log-out mr-10"></i>로그아웃</a></li>
+										    <li><a th:href="@{/forgotPswd}"><i class="fi fi-rs-log-out mr-10"></i>비밀번호찾기</a></li>
+										    <li><a th:href="@{/user/registerInfo}"><i class="fi fi-rs-log-out mr-10"></i>회원가입</a></li>
 										</ul>
 									</div>
 								</div>
+								
+								
+								
 							</div>
 						</div>
 					</div>
@@ -183,172 +130,38 @@
 						<div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
 							<nav>
 								<ul>
-									<li class="hot-deals"><img src="/user/assets/imgs/theme/icons/icon-hot.svg" alt="hot deals" /><a href="#">Deals</a></li>
 									<li>
-										<a class="active" href="#">Home <i class="fi-rs-angle-down"></i></a>
-										<ul class="sub-menu">
-											<li><a href="#">Home 1</a></li>
-											<li><a href="#">Home 2</a></li>
-											<li><a href="#">Home 3</a></li>
-											<li><a href="#">Home 4</a></li>
-											<li><a href="#">Home 5</a></li>
-											<li><a href="#">Home 6</a></li>
-										</ul>
+										<a th:href="@{/user/userSearch}"> 외주 </a>
 									</li>
 									<li>
-									    <a href="#">About</a>
+										<a th:href="@{/user/userSearch}"> 포트폴리오 </a>
 									</li>
 									<li>
-										<a href="#">Shop <i class="fi-rs-angle-down"></i></a>
-										<ul class="sub-menu">
-											<li><a href="#">Shop Grid – Right Sidebar</a></li>
-											<li><a href="#">Shop Grid – Left Sidebar</a></li>
-											<li><a href="#">Shop List – Right Sidebar</a></li>
-											<li><a href="#">Shop List – Left Sidebar</a></li>
-											<li><a href="#">Shop - Wide</a></li>
-											<li>
-												<a href="#">Single Product <i class="fi-rs-angle-right"></i></a>
-												<ul class="level-menu">
-												    <li><a href="#">Product – Right Sidebar</a></li>
-												    <li><a href="#">Product – Left Sidebar</a></li>
-												    <li><a href="#">Product – No sidebar</a></li>
-												    <li><a href="#">Product – Vendor Infor</a></li>
-												</ul>
-											</li>
-											<li><a href="#">Shop – Filter</a></li>
-											<li><a href="#">Shop – Wishlist</a></li>
-											<li><a href="#">Shop – Cart</a></li>
-											<li><a href="#">Shop – Checkout</a></li>
-											<li><a href="#">Shop – Compare</a></li>
-											<li>
-												<a href="#">Shop Invoice<i class="fi-rs-angle-right"></i></a>
-												<ul class="level-menu">
-												    <li><a href="#">Shop Invoice 1</a></li>
-												    <li><a href="#">Shop Invoice 2</a></li>
-												    <li><a href="#">Shop Invoice 3</a></li>
-												    <li><a href="#">Shop Invoice 4</a></li>
-												    <li><a href="#">Shop Invoice 5</a></li>
-												    <li><a href="#">Shop Invoice 6</a></li>
-												</ul>
-											</li>
-										</ul>
-									</li>
-									<li>
-									    <a href="#">Vendors <i class="fi-rs-angle-down"></i></a>
+									    <a href="#">콘텐츠<i class="fi-rs-angle-down"></i></a>
 									    <ul class="sub-menu">
-									        <li><a href="#">Vendors Grid</a></li>
-									        <li><a href="#">Vendors List</a></li>
-									        <li><a href="#">Vendor Details 01</a></li>
-									        <li><a href="#">Vendor Details 02</a></li>
-									        <li><a href="#">Vendor Dashboard</a></li>
-									        <li><a href="#">Vendor Guide</a></li>
-									    </ul>
-									</li>
-									<li class="position-static">
-									    <a href="#">Mega menu <i class="fi-rs-angle-down"></i></a>
-									    <ul class="mega-menu">
-									        <li class="sub-mega-menu sub-mega-menu-width-22">
-									            <a class="menu-title" href="#">Fruit & Vegetables</a>
-									            <ul>
-									                <li><a href="#">Meat & Poultry</a></li>
-									                <li><a href="#">Fresh Vegetables</a></li>
-									                <li><a href="#">Herbs & Seasonings</a></li>
-									                <li><a href="#">Cuts & Sprouts</a></li>
-									                <li><a href="#">Exotic Fruits & Veggies</a></li>
-									                <li><a href="#">Packaged Produce</a></li>
-									            </ul>
-									        </li>
-									        <li class="sub-mega-menu sub-mega-menu-width-22">
-									            <a class="menu-title" href="#">Breakfast & Dairy</a>
-									            <ul>
-									                <li><a href="#">Milk & Flavoured Milk</a></li>
-									                <li><a href="#">Butter and Margarine</a></li>
-									                <li><a href="#">Eggs Substitutes</a></li>
-									                <li><a href="#">Marmalades</a></li>
-									                <li><a href="#">Sour Cream</a></li>
-									                <li><a href="#">Cheese</a></li>
-									            </ul>
-									        </li>
-									        <li class="sub-mega-menu sub-mega-menu-width-22">
-									            <a class="menu-title" href="#">Meat & Seafood</a>
-									            <ul>
-									                <li><a href="#">Breakfast Sausage</a></li>
-									                <li><a href="#">Dinner Sausage</a></li>
-									                <li><a href="#">Chicken</a></li>
-									                <li><a href="#">Sliced Deli Meat</a></li>
-									                <li><a href="#">Wild Caught Fillets</a></li>
-									                <li><a href="#">Crab and Shellfish</a></li>
-									            </ul>
-									        </li>
-									        <li class="sub-mega-menu sub-mega-menu-width-34">
-									            <div class="menu-banner-wrap">
-									                <a href="#"><img src="/user/assets/imgs/banner/banner-menu.png" alt="Nest" /></a>
-									                <div class="menu-banner-content">
-									                    <h4>Hot deals</h4>
-									                    <h3>
-									                        Don't miss<br />
-									                        Trending
-									                    </h3>
-									                    <div class="menu-banner-price">
-									                        <span class="new-price text-success">Save to 50%</span>
-									                    </div>
-									                    <div class="menu-banner-btn">
-									                        <a href="#">Shop now</a>
-									                    </div>
-									                </div>
-									                <div class="menu-banner-discount">
-									                    <h3>
-									                        <span>25%</span>
-									                        off
-									                    </h3>
-									                </div>
-									            </div>
-									        </li>
+									        <li><a th:href="@{/enter/portfolio/list}">내 포트폴리오</a></li>
+									        <li><a th:href="@{/enter/outsourcing/list}">내 외주</a></li>
+									        <li><a th:href="@{/enter/enterOsstList}">내 진행 외주</a></li>
 									    </ul>
 									</li>
 									<li>
-									    <a href="#">Blog <i class="fi-rs-angle-down"></i></a>
+									    <a th:href="@{/userGoodsList}">서비스 상품</a>
+									</li>
+									<li>
+									    <a href="#">고객센터<i class="fi-rs-angle-down"></i></a>
 									    <ul class="sub-menu">
-									        <li><a href="#">Blog Category Grid</a></li>
-									        <li><a href="#">Blog Category List</a></li>
-									        <li><a href="#">Blog Category Big</a></li>
-									        <li><a href="#">Blog Category Wide</a></li>
-									        <li>
-									            <a href="#">Single Post <i class="fi-rs-angle-right"></i></a>
-									            <ul class="level-menu level-menu-modify">
-									                <li><a href="#">Left Sidebar</a></li>
-									                <li><a href="#">Right Sidebar</a></li>
-									                <li><a href="#">No Sidebar</a></li>
-									            </ul>
-									        </li>
+									        <li><a th:href="@{/enter/enterInquiryTotal}">공지사항</a></li>
+									        <li><a th:href="@{/enter/enterInquiryList}">문의</a></li>
+									        <li><a th:href="@{/enter/enterDeclarationWrite}">신고</a></li>
 									    </ul>
-									</li>
-									<li>
-									    <a href="#">Pages <i class="fi-rs-angle-down"></i></a>
-									    <ul class="sub-menu">
-									        <li><a href="#">About Us</a></li>
-									        <li><a href="#">Contact</a></li>
-									        <li><a th:href="@{/enterMypage}">My Account</a></li>
-									        <li><a th:href="@{/login}">Login</a></li>
-									        <li><a th:href="@{/choiceRegister}">Register</a></li>
-									        <li><a th:href="@{/forgotPswd}">Forgot password</a></li>
-									        <li><a href="#">Reset password</a></li>
-									        <li><a href="#">Purchase Guide</a></li>
-									        <li><a href="#">Privacy Policy</a></li>
-									        <li><a href="#">Terms of Service</a></li>
-									        <li><a href="#">404 Page</a></li>
-									    </ul>
-									</li>
-									<li>
-									    <a href="#">Contact</a>
 									</li>
 								</ul>
 							</nav>
 						</div>
 					</div>
 					<div class="hotline d-none d-lg-flex">
-					    <button class="btn mr-20">포트폴리오 올리기</button>
-					    <button class="btn">외주 올리기</button>
+					    <a th:href="@{/enter/portfolio/add}"><button class="btn mr-20">포트폴리오 올리기</button></a>
+					    <a th:href="@{/enter/outsourcing/add}"><button class="btn">외주 올리기</button></a>
 					</div>
 					<div class="header-action-icon-2 d-block d-lg-none">
 					    <div class="burger-icon burger-icon-white">
