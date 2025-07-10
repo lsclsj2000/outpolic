@@ -31,7 +31,7 @@
         scrollSpeed: 900,
         animation: "fade"
     });
-	
+
     /*------ Wow Active ----*/
     new WOW().init();
 
@@ -728,6 +728,12 @@
         mousePause: false,
         showItems: 1
     });
+	
+	
 })(jQuery);
 
-		
+
+
+
+
+

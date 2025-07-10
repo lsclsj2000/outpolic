@@ -10,448 +10,505 @@
 </head>
 
 	<th:block layout:fragment="contents">
-    <main class="main">
-    	<!-- 메인화면 사진 영역. 수정 필요.  -->
-        <section class="hero-3 position-relative align-items">
-            <h2 class="mb-30 text-center">What are you looking for?</h2>
-            <form class="form-subcriber d-flex mb-30 text-center">
-                <input type="email" placeholder="Your emaill address" tabindex="-1" />
-                <button class="btn" type="submit" tabindex="-1">Subscribe</button>
-            </form>
-            <ul class="list-inline nav nav-tabs links font-xs text-center">
-                <li class="list-inline-item nav-item"><a class="nav-link font-xs" href="#">수정해야해요</a></li>
-                <li class="list-inline-item nav-item"><a class="nav-link font-xs" href="#">사진만 넣을지</a></li>
-                <li class="list-inline-item nav-item"><a class="nav-link font-xs" href="#">회사정보를 포함한 내용 및 사진</a></li>
-                <li class="list-inline-item nav-item"><a class="nav-link font-xs" href="#">을 넣을지. 아무튼 수정해야해요</a></li>
-            </ul>
-        </section>
-        <!--End hero-->
-        <section class="popular-categories section-padding">
-		    <div class="container" style="width:1300px">
-		        <div class="section-title">
-		            <div class="title">
-		                <h3>카테고리</h3> 
-		                <!-- 모든 카테고리를 삭제할지는 선택하시면 됩니다. -->
-		                <a class="show-all" href="#">
-		                    모든 카테고리
-		                    <i class="fi-rs-angle-right"></i>
-		                </a>
-		            </div>
-		            <div class="slider-arrow slider-arrow-2 flex-right carausel-8-columns-arrow" id="carausel-8-columns-arrows"></div>
-		        </div>
-		        <div class="carausel-8-columns-cover position-relative">
-		            <div class="carausel-8-columns" id="carausel-8-columns" th:if="${!mainCategories.isEmpty()}">
-		                <div class="card-1" th:each="cat : ${mainCategories}">
-						    <figure class="img-hover-scale overflow-hidden">
-						        <a th:href="@{/user/products(category=${cat.categoryId})}">
-						            <!-- th:switch를 사용하여 cat.categoryName 값에 따라 분기합니다. -->
-						            <th:block th:switch="${cat.categoryName}">
-						                <!-- case 1: 카테고리 이름이 '디자인'일 경우 -->
-						                <img th:case="'디자인'" 
-						                     src="/user/assets/imgs/icon/graphic-designer.png" 
-						                     th:alt="${cat.categoryName}" />
-						                
-						                <!-- case 2: 카테고리 이름이 'IT·프로그래밍'일 경우 -->
-						                <img th:case="'IT·프로그래밍'" 
-						                     src="/user/assets/imgs/icon/technical-support.png" 
-						                     th:alt="${cat.categoryName}" />
+	    <main class="main">
+			<!-- 메인화면 사진 영역. 수정 필요.  -->
+			<section class="hero-3 position-relative align-items">
+				<h2 class="mb-30 text-center">What are you looking for?</h2>
+				<form class="form-subcriber d-flex mb-30 text-center">
+					<input type="email" placeholder="Your emaill address" tabindex="-1" />
+					<button class="btn" type="submit" tabindex="-1">Subscribe</button>
+				</form>
+				<ul class="list-inline nav nav-tabs links font-xs text-center">
+					<li class="list-inline-item nav-item"><a
+						class="nav-link font-xs" href="#">수정해야해요</a></li>
+					<li class="list-inline-item nav-item"><a
+						class="nav-link font-xs" href="#">사진만 넣을지</a></li>
+					<li class="list-inline-item nav-item"><a
+						class="nav-link font-xs" href="#">회사정보를 포함한 내용 및 사진</a></li>
+					<li class="list-inline-item nav-item"><a
+						class="nav-link font-xs" href="#">을 넣을지. 아무튼 수정해야해요</a></li>
+				</ul>
+			</section>
+			<!--End hero-->
+			
+			<div class="container mb-30">
+				<div class="row d-flex justify-content-center">
+					<div class="col-lg-4-5">
+						<section class="popular-categories section-padding">
+							<div class="section-title">
+								<div class="title">
+									<h3>카테고리</h3>
+								</div>
+								<div
+									class="slider-arrow slider-arrow-2 flex-right carausel-8-columns-arrow"
+									id="carausel-8-columns-arrows"></div>
+								</div>
+								<div class="carausel-8-columns-cover position-relative">
+									<div class="carausel-8-columns" id="carausel-8-columns"
+										 th:if="${!mainCategories.isEmpty()}">
+										<div class="card-1" th:each="cat : ${mainCategories}">
+											<figure class="img-hover-scale overflow-hidden">
+												<a th:href="@{/user/products(category=${cat.categoryId})}">
+												<th:block th:switch="${cat.categoryName}">
+													<!-- case 1: 카테고리 이름이 '디자인'일 경우 -->
+													<img th:case="'디자인'"
+														src="/user/assets/imgs/icon/graphic-designer.png"
+														th:alt="${cat.categoryName}" />
+			
+													<!-- case 2: 카테고리 이름이 'IT·프로그래밍'일 경우 -->
+													<img th:case="'IT·프로그래밍'"
+														src="/user/assets/imgs/icon/technical-support.png"
+														th:alt="${cat.categoryName}" />
+			
+													<!-- case 3: 카테고리 이름이 '영상·사진·음향'일 경우 -->
+													<img th:case="'영상·사진·음향'"
+														src="/user/assets/imgs/icon/picture.png"
+														th:alt="${cat.categoryName}" />
+													<!-- case 4: 카테고리 이름이 '마케팅'일 경우 -->
+													<img th:case="'마케팅'"
+														src="/user/assets/imgs/icon/social-media.png"
+														th:alt="${cat.categoryName}" />
+													<!-- case 5: 카테고리 이름이 '번역·통역'일 경우 -->
+													<img th:case="'번역·통역'"
+														src="/user/assets/imgs/icon/translate.png"
+														th:alt="${cat.categoryName}" />
+													<!-- case 6: 카테고리 이름이 '문서·글쓰기'일 경우 -->
+													<img th:case="'문서·글쓰기'"
+														src="/user/assets/imgs/icon/documentation.png"
+														th:alt="${cat.categoryName}" />
+													<!-- case 7: 카테고리 이름이 '창업·사업'일 경우 -->
+													<img th:case="'창업·사업'"
+														src="/user/assets/imgs/icon/business.png"
+														th:alt="${cat.categoryName}" />
+													<!-- case 8: 카테고리 이름이 '주문제작'일 경우 -->
+													<img th:case="'주문제작'"
+														src="/user/assets/imgs/icon/color-selection.png"
+														th:alt="${cat.categoryName}" />
+													<!-- case 9: 카테고리 이름이 '세무·법무·노무'일 경우 -->
+													<img th:case="'세무·법무·노무'"
+														src="/user/assets/imgs/icon/law-scale.png"
+														th:alt="${cat.categoryName}" />
+												</th:block>
+											</a>
+										</figure>
+										<h6>
+											<a th:href="@{/user/products(category=${cat.categoryId})}"
+												th:text="${cat.categoryName}">카테고리명</a>
+										</h6>
+									</div>
+								</div>
+							</div>
+						</section>
 						
-						                <!-- case 3: 카테고리 이름이 '영상·사진·음향'일 경우 -->
-						                <img th:case="'영상·사진·음향'" 
-						                     src="/user/assets/imgs/icon/picture.png"  
-						                     th:alt="${cat.categoryName}" />
-						                <!-- case 4: 카테고리 이름이 '마케팅'일 경우 -->
-						                <img th:case="'마케팅'" 
-						                     src="/user/assets/imgs/icon/social-media.png" 
-						                     th:alt="${cat.categoryName}" />
-						                <!-- case 5: 카테고리 이름이 '번역·통역'일 경우 -->
-						                <img th:case="'번역·통역'" 
-						                     src="/user/assets/imgs/icon/translate.png" 
-						                     th:alt="${cat.categoryName}" />
-						                <!-- case 6: 카테고리 이름이 '문서·글쓰기'일 경우 -->
-						                <img th:case="'문서·글쓰기'" 
-						                     src="/user/assets/imgs/icon/documentation.png" 
-						                     th:alt="${cat.categoryName}" />
-						                <!-- case 7: 카테고리 이름이 '창업·사업'일 경우 -->
-						                <img th:case="'창업·사업'" 
-						                     src="/user/assets/imgs/icon/business.png" 
-						                     th:alt="${cat.categoryName}" />
-						                <!-- case 8: 카테고리 이름이 '주문제작'일 경우 -->
-						                <img th:case="'주문제작'" 
-						                     src="/user/assets/imgs/icon/color-selection.png" 
-						                     th:alt="${cat.categoryName}" />
-						                <!-- case 9: 카테고리 이름이 '세무·법무·노무'일 경우 -->
-						                <img th:case="'세무·법무·노무'" 
-						                     src="/user/assets/imgs/icon/law-scale.png" 
-						                     th:alt="${cat.categoryName}" />
-
-						            </th:block>
-						        </a>
-						    </figure>
-						    <h6>
-						        <a th:href="@{/user/products(category=${cat.categoryId})}" th:text="${cat.categoryName}">카테고리명</a>
-						    </h6>
+						<!-- 외주 랭킹 시작 -->
+						<section class="section-padding">
+							<!-- 섹션 제목 부분 -->
+					        <div class="section-title style-2 wow animate__animated animate__fadeIn">
+					            <h3>인기있는 외주</h3>
+					            <ul class="nav nav-tabs links" style="font-size: 14px;">
+									<li class="nav-item" role="presentation">
+										<button class="nav-link active" id="portfolio-nav-tab-one"
+											data-bs-toggle="tab" data-bs-target="#portfolio-tab-one"
+											type="button" role="tab" aria-controls="portfolio-tab-one"
+											aria-selected="true">전체보기</button>
+									</li>
+									<li class="nav-item" role="presentation">
+										<button class="nav-link" id="portfolio-nav-tab-two"
+											data-bs-toggle="tab" data-bs-target="#portfolio-tab-two"
+											type="button" role="tab" aria-controls="portfolio-tab-two"
+											aria-selected="false">가장 최신순</button>
+									</li>
+									<li class="nav-item" role="presentation">
+										<button class="nav-link" id="portfolio-nav-tab-three"
+											data-bs-toggle="tab" data-bs-target="#portfolio-tab-three"
+											type="button" role="tab" aria-controls="portfolio-tab-three"
+											aria-selected="false">가장 오래된순</button>
+									</li>
+					            </ul>
+					        </div> 
+					        <div th:if="${not #lists.isEmpty(findOSList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
+					            <div th:each="content : ${findOSList}" class="slider-item">
+					            
+					                <!-- 개별 아이템 카드 (이전에 만들었던 카드 구조를 재활용) -->
+					                <div class="product-cart-wrap mb-30 position-relative">
+					                    
+					                    <!-- 이미지 영역 -->
+					                    <div class="product-img-action-wrap">
+					                        <div class="product-img product-img-zoom">
+					                            <!-- stretched-link와 함께 사용할 a 태그는 비워둡니다 -->
+					                            <a href="javascript:void(0);">
+					                                <!-- 썸네일 이미지가 있다면 DTO에 추가해서 사용하세요 -->
+					                                <!-- <img class="default-img" th:src="@{/imgs/placeholder.png}" alt="콘텐츠 이미지" /> -->
+					                            </a>
+					                        </div>
+					                    </div>
+					                    
+					                    <!-- 콘텐츠 내용 영역 -->
+					                    <div class="product-content-wrap" style="padding: 15px;">
+					                        <!-- 카테고리 + 기업명 -->
+					                        <div class="product-category">
+					                            <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" href="#">카테고리 | 기업명</a>
+					                        </div>
+					                        <!-- 제목 (h2 안에 stretched-link를 가진 a 태그) -->
+					                        <h2>
+					                            <a th:href="@{/user/contents/{id}(id=${content.osCode})}" 
+					                               th:text="${content.osTtl}"
+					                               class="stretched-link">콘텐츠 제목</a>
+					                        </h2>
+					                        <!-- 별점 -->
+					                        <div class="product-rate-cover">
+					                           <div class="product-rate d-inline-block">
+					                              <!-- 예: 평점이 3.5점이면 70% 채워짐 -->
+					                              <div class="product-rating" th:style="'width:' + (${content.reviewScore} * 20) + '%'"></div>
+					                           </div>
+					                           <span class="font-small ml-5 text-muted" th:text="' (' + ${#numbers.formatDecimal(content.reviewScore, 1, 1)} + ')'"> (4.5)</span>
+					                        </div>
+					                        <!-- 가격 (가격 정보가 DTO에 있다면 추가) -->
+					                        <div class="product-price">
+					                           <span th:text="${content.osAtm}">가격 정보~</span>
+					                        </div>
+					                    </div>
+					                </div>
+					            </div> 
+					        </div>
+					        <!-- 데이터가 없을 경우 표시할 메시지 -->
+					        <div th:if="${#lists.isEmpty(findOSList)}" class="text-center py-5">
+					            <p>표시할 인기 콘텐츠가 없습니다.</p>
+					        </div>
+						</section>
+						<!-- 외주 랭킹 끝 -->
+						<!--Products Tabs-->
+					</div>
+				</div>
+			</div>
+			<!-- 인기있는 포트폴리오 영역 시작 -->
+			<div class="container mb-30">
+				<div class="row d-flex justify-content-center">
+					<div class="col-lg-4-5">
+						<section class="section-padding">
+							<!-- 섹션 제목 부분 -->
+					        <div class="section-title style-2 wow animate__animated animate__fadeIn">
+					            <h3>인기있는 포트폴리오</h3>
+					            <ul class="nav nav-tabs links" style="font-size: 14px;">
+									<li class="nav-item" role="presentation">
+										<button class="nav-link active" id="portfolio-nav-tab-one"
+											data-bs-toggle="tab" data-bs-target="#portfolio-tab-one"
+											type="button" role="tab" aria-controls="portfolio-tab-one"
+											aria-selected="true">전체보기</button>
+									</li>
+									<li class="nav-item" role="presentation">
+										<button class="nav-link" id="portfolio-nav-tab-two"
+											data-bs-toggle="tab" data-bs-target="#portfolio-tab-two"
+											type="button" role="tab" aria-controls="portfolio-tab-two"
+											aria-selected="false">가장 최신순</button>
+									</li>
+									<li class="nav-item" role="presentation">
+										<button class="nav-link" id="portfolio-nav-tab-three"
+											data-bs-toggle="tab" data-bs-target="#portfolio-tab-three"
+											type="button" role="tab" aria-controls="portfolio-tab-three"
+											aria-selected="false">가장 오래된순</button>
+									</li>
+					            </ul>
+					        </div> 
+					        <div th:if="${not #lists.isEmpty(findPOList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
+					            <div th:each="content : ${findPOList}" class="slider-item">
+	
+								    <!-- ★★★ 1. 카드 전체에 onclick 이벤트와 커서 스타일을 추가합니다. ★★★ -->
+								    <div class="product-cart-wrap mb-30 position-relative"
+								         th:attr="onclick='openPortfolioModal(\'' + ${content.prtfCode} + '\')'"
+								         style="cursor: pointer;">
+								        
+								        <!-- ... 이미지 영역 (기존과 동일) ... -->
+								        <div class="product-img-action-wrap">
+								            <div class="product-img product-img-zoom">
+								                <a href="javascript:void(0);">
+								                    <!-- 썸네일 이미지를 추가할 수 있습니다 -->
+								                </a>
+								            </div>
+								        </div>
+								        
+								        <!-- 콘텐츠 내용 영역 -->
+								        <div class="product-content-wrap" style="padding: 15px;">
+								            <div class="product-category">
+								                <!-- 이 부분은 링크가 필요 없으므로 span으로 변경하거나 a 태그를 유지해도 무방합니다 -->
+								                <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" href="#">카테고리 | 기업명</a>
+								            </div>
+								            
+								            <!-- ★★★ 2. stretched-link를 가진 a 태그를 제거하고, h2 태그에 바로 텍스트를 표시합니다. ★★★ -->
+								            <h2 th:text="${content.prtfTtl}">
+								                콘텐츠 제목
+								            </h2>
+								        </div>
+								    </div>
+								</div>
+					        </div>
+					        <!-- 데이터가 없을 경우 표시할 메시지 -->
+					        <div th:if="${#lists.isEmpty(findPOList)}" class="text-center py-5">
+					            <p>표시할 인기 콘텐츠가 없습니다.</p>
+					        </div>
+						</section>
+						<!--Products Tabs-->
+					</div>
+				</div>
+			</div>
+			<!-- 인기있는 포트폴리오 영역 끝 -->
+			<!-- 리뷰 영역 시작 -->
+			<div class="comments-area">
+				<div class="container" id="review-area" style="width: 1300px;">
+					<h3 class="mb-30">최근에 작성된 리뷰</h3>
+					<div class="review-slider-active">
+						<!-- 리뷰 항목 1 -->
+						<div class="single-comment justify-content-between d-flex">
+							<div class="user justify-content-between d-flex">
+								<div class="thumb text-center">
+									<img src="user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+									<a href="#" class="font-heading text-brand">Sienna</a>
+								</div>
+								<div class="desc">
+									<a href="#">	<!-- 리뷰가 작성된 게시글 주소를 넣으시면 됩니다. -->
+										<div class="d-flex justify-content-between mb-10">
+											<span class="font-xs text-muted">2025년 7월 8일 11:12</span>
+											<div class="product-rate d-inline-block">
+												<div class="product-rating" style="width: 80%"></div>
+											</div>
+										</div>
+										<p class="mb-10">1테스트 리뷰입니다. 여기에 리뷰 내용이 들어갑니다.</p>
+									</a>
+								</div>
+							</div>
 						</div>
-		            </div>
-		        </div>
-		    </div>
-		</section>
-		<div class="container mb-30">
-            <div class="row d-flex justify-content-center">
-                <div class="col-lg-4-5">
-                    <section class="product-tabs section-padding position-relative">
-                        <div class="section-title style-2">
-                            <h3>인기있는 외주</h3>
-                            <ul class="nav nav-tabs links" id="myTab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="nav-tab-one" data-bs-toggle="tab" data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one" aria-selected="true">전체보기</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="nav-tab-two" data-bs-toggle="tab" data-bs-target="#tab-two" type="button" role="tab" aria-controls="tab-two" aria-selected="false">가장 최신순</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="nav-tab-three" data-bs-toggle="tab" data-bs-target="#tab-three" type="button" role="tab" aria-controls="tab-three" aria-selected="false">가장 오래된순</button>
-                                </li>
-                            </ul>
-                        </div>
-                        <!--End nav-tabs-->
-                        <!-- 인기있는 외주 컨텐츠 시작 -->
-                        <!-- tab-one = 전체보기 / tab-two = 가장 최신순 / tab-three = 가장 오래된순 -->
-                        <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
-                                <div class="row product-grid-4">
-                                    <!--end product card-->
-                                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                                        <div class="product-cart-wrap">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="#">
-                                                        <img class="default-img" src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-                                                        <img class="hover-img" src="user/assets/imgs/shop/product-5-2.jpg" alt="" />
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
-                                                    <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-                                                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                </div>
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                	<!-- 외주 카테고리 -->
-                                                    <a href="#">카테고리 입니다</a>
-                                                </div>
-                                                <!-- 외주글 제목 -->
-                                                <h2><a href="#">외주글 제목 입니다</a></h2>
-                                                <div class="product-rate-cover">
-                                                    <div class="product-rate d-inline-block">
-                                                    	<!-- 평점 별 / width값에 따라 별 색이 채워집니다 -->
-                                                        <div class="product-rating" style="width: 50%"></div>
-                                                    </div>
-                                                    <!-- 평점 개수 또는 평점을 기입하면 됩니다 -->
-                                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                                </div>
-                                                <div>
-                                                	<!-- 외주 희망 가격입니다 -->
-                                                    2,500,000원~
-                                                </div>
-                                                <div>
-                                                	<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-                                                    <span class="font-small text-muted"><a href="#">회사 이름입니다</a></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end product card-->
-                                </div>
-                                <!--End product-grid-4-->
-                            </div>
-                            <!--En tab one-->
-                            <div class="tab-pane fade" id="tab-two" role="tabpanel" aria-labelledby="tab-two">
-                                <div class="row product-grid-4">
-                                    <!--end product card-->
-                                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                                        <div class="product-cart-wrap">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="#">
-                                                        <img class="default-img" src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-                                                        <img class="hover-img" src="user/assets/imgs/shop/product-5-2.jpg" alt="" />
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
-                                                    <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-                                                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                </div>
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                	<!-- 외주 카테고리 -->
-                                                    <a href="#">카테고리 입니다</a>
-                                                </div>
-                                                <!-- 외주글 제목 -->
-                                                <h2><a href="#">외주글 제목 입니다</a></h2>
-                                                <div class="product-rate-cover">
-                                                    <div class="product-rate d-inline-block">
-                                                    	<!-- 평점 별 / width값에 따라 별 색이 채워집니다 -->
-                                                        <div class="product-rating" style="width: 50%"></div>
-                                                    </div>
-                                                    <!-- 평점 개수 또는 평점을 기입하면 됩니다 -->
-                                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                                </div>
-                                                <div>
-                                                	<!-- 외주 희망 가격입니다 -->
-                                                    2,500,000원~
-                                                </div>
-                                                <div>
-                                                	<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-                                                    <span class="font-small text-muted"><a href="#">회사 이름입니다</a></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end product card-->
-                                </div>
-                                <!--End product-grid-4-->
-                            </div>
-                            <!--En tab two-->
-                            <div class="tab-pane fade" id="tab-three" role="tabpanel" aria-labelledby="tab-three">
-                                <div class="row product-grid-4">
-                                    <!--end product card-->
-                                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                                        <div class="product-cart-wrap">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="#">
-                                                        <img class="default-img" src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-                                                        <img class="hover-img" src="user/assets/imgs/shop/product-5-2.jpg" alt="" />
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
-                                                    <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-                                                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                </div>
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                	<!-- 외주 카테고리 -->
-                                                    <a href="#">카테고리 입니다</a>
-                                                </div>
-                                                <!-- 외주글 제목 -->
-                                                <h2><a href="#">외주글 제목 입니다</a></h2>
-                                                <div class="product-rate-cover">
-                                                    <div class="product-rate d-inline-block">
-                                                    	<!-- 평점 별 / width값에 따라 별 색이 채워집니다 -->
-                                                        <div class="product-rating" style="width: 50%"></div>
-                                                    </div>
-                                                    <!-- 평점 개수 또는 평점을 기입하면 됩니다 -->
-                                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                                </div>
-                                                <div>
-                                                	<!-- 외주 희망 가격입니다 -->
-                                                    2,500,000원~
-                                                </div>
-                                                <div>
-                                                	<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-                                                    <span class="font-small text-muted"><a href="#">회사 이름입니다</a></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end product card-->
-                                </div>
-                                <!--End product-grid-4-->
-                            </div>
-                            <!--En tab three-->
-                        </div>
-                        <!--End tab-content-->
-                    </section>
-                    <!--Products Tabs-->
-                </div>
-            </div>
-        </div>
-        <!-- 인기있는 포트폴리오 영역 시작 -->
-		<div class="container mb-30">
-            <div class="row d-flex justify-content-center">
-                <div class="col-lg-4-5">
-                    <section class="product-tabs section-padding position-relative">
-                        <div class="section-title style-2">
-                            <h3>인기있는 포트폴리오</h3>
-                            <ul class="nav nav-tabs links" id="portfolioTab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                	<!-- 이부분 수정중! -->
-                                    <button class="nav-link active" id="portfolio-nav-tab-one" data-bs-toggle="tab" data-bs-target="#portfolio-tab-one" type="button" role="tab" aria-controls="tab-one" aria-selected="true">전체보기</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="portfolio-nav-tab-two" data-bs-toggle="tab" data-bs-target="#tab-two" type="button" role="tab" aria-controls="tab-two" aria-selected="false">가장 최신순</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="portfolio-nav-tab-three" data-bs-toggle="tab" data-bs-target="#tab-three" type="button" role="tab" aria-controls="tab-three" aria-selected="false">가장 오래된순</button>
-                                </li>
-                            </ul>
-                        </div>
-                        <!--End nav-tabs-->
-                        <!-- 인기있는 포트폴리오 컨텐츠 시작 -->
-                        <!-- tab-one = 전체보기 / tab-two = 가장 최신순 / tab-three = 가장 오래된순 -->
-                        <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
-                                <div class="row product-grid-4">
-                                    <!--end product card-->
-                                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                                        <div class="product-cart-wrap">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="#">
-                                                        <img class="default-img" src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-                                                        <img class="hover-img" src="user/assets/imgs/shop/product-5-2.jpg" alt="" />
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
-                                                    <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-                                                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                </div>
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                	<!-- 외주 카테고리 -->
-                                                    <a href="#">카테고리 입니다</a>
-                                                </div>
-                                                <!-- 외주글 제목 -->
-                                                <h2><a href="#">외주글 제목 입니다</a></h2>
-                                                <div class="product-rate-cover">
-                                                    <div class="product-rate d-inline-block">
-                                                    	<!-- 평점 별 / width값에 따라 별 색이 채워집니다 -->
-                                                        <div class="product-rating" style="width: 50%"></div>
-                                                    </div>
-                                                    <!-- 평점 개수 또는 평점을 기입하면 됩니다 -->
-                                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                                </div>
-                                                <div>
-                                                	<!-- 외주 희망 가격입니다 -->
-                                                    2,500,000원~
-                                                </div>
-                                                <div>
-                                                	<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-                                                    <span class="font-small text-muted"><a href="#">회사 이름입니다</a></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end product card-->
-                                </div>
-                                <!--End product-grid-4-->
-                            </div>
-                            <!--En tab one-->
-                            <div class="tab-pane fade" id="tab-two" role="tabpanel" aria-labelledby="tab-two">
-                                <div class="row product-grid-4">
-                                    <!--end product card-->
-                                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                                        <div class="product-cart-wrap">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="#">
-                                                        <img class="default-img" src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-                                                        <img class="hover-img" src="user/assets/imgs/shop/product-5-2.jpg" alt="" />
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
-                                                    <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-                                                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                </div>
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                	<!-- 외주 카테고리 -->
-                                                    <a href="#">카테고리 입니다</a>
-                                                </div>
-                                                <!-- 외주글 제목 -->
-                                                <h2><a href="#">외주글 제목 입니다</a></h2>
-                                                <div class="product-rate-cover">
-                                                    <div class="product-rate d-inline-block">
-                                                    	<!-- 평점 별 / width값에 따라 별 색이 채워집니다 -->
-                                                        <div class="product-rating" style="width: 50%"></div>
-                                                    </div>
-                                                    <!-- 평점 개수 또는 평점을 기입하면 됩니다 -->
-                                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                                </div>
-                                                <div>
-                                                	<!-- 외주 희망 가격입니다 -->
-                                                    2,500,000원~
-                                                </div>
-                                                <div>
-                                                	<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-                                                    <span class="font-small text-muted"><a href="#">회사 이름입니다</a></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end product card-->
-                                </div>
-                                <!--End product-grid-4-->
-                            </div>
-                            <!--En tab two-->
-                            <div class="tab-pane fade" id="tab-three" role="tabpanel" aria-labelledby="tab-three">
-                                <div class="row product-grid-4">
-                                    <!--end product card-->
-                                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                                        <div class="product-cart-wrap">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="#">
-                                                        <img class="default-img" src="user/assets/imgs/shop/product-5-1.jpg" alt="" />
-                                                        <img class="hover-img" src="user/assets/imgs/shop/product-5-2.jpg" alt="" />
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
-                                                    <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-                                                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                </div>
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                	<!-- 외주 카테고리 -->
-                                                    <a href="#">카테고리 입니다</a>
-                                                </div>
-                                                <!-- 외주글 제목 -->
-                                                <h2><a href="#">외주글 제목 입니다</a></h2>
-                                                <div class="product-rate-cover">
-                                                    <div class="product-rate d-inline-block">
-                                                    	<!-- 평점 별 / width값에 따라 별 색이 채워집니다 -->
-                                                        <div class="product-rating" style="width: 50%"></div>
-                                                    </div>
-                                                    <!-- 평점 개수 또는 평점을 기입하면 됩니다 -->
-                                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                                </div>
-                                                <div>
-                                                	<!-- 외주 희망 가격입니다 -->
-                                                    2,500,000원~
-                                                </div>
-                                                <div>
-                                                	<!-- 회사 이름이 들어가면 됩니다. 앵커(a)태그는 빼도 무방 -->
-                                                    <span class="font-small text-muted"><a href="#">회사 이름입니다</a></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end product card-->
-                                </div>
-                                <!--End product-grid-4-->
-                            </div>
-                            <!--En tab three-->
-                        </div>
-                        <!--End tab-content-->
-                    </section>
-                    <!--Products Tabs-->
-                </div>
-            </div>
-        </div>
-        <!-- 인기있는 포트폴리오 영역 끝 -->
-        <!--End category slider-->
-    </main>
+						<!-- 리뷰 항목 2 -->
+						<div class="single-comment justify-content-between d-flex">
+							<div class="user justify-content-between d-flex">
+								<div class="thumb text-center">
+									<img src="user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+									<a href="#" class="font-heading text-brand">Sienna</a>
+								</div>
+								<div class="desc">
+									<a href="#">	<!-- 리뷰가 작성된 게시글 주소를 넣으시면 됩니다. -->
+										<div class="d-flex justify-content-between mb-10">
+											<span class="font-xs text-muted">2025년 7월 8일 11:12</span>
+											<div class="product-rate d-inline-block">
+												<div class="product-rating" style="width: 80%"></div>
+											</div>
+										</div>
+										<p class="mb-10">2테스트 리뷰입니다. 여기에 리뷰 내용이 들어갑니다. 테스트입니다.</p>
+									</a>
+								</div>
+							</div>
+						</div>
+						<!-- 리뷰 항목 3 -->
+						<div class="single-comment justify-content-between d-flex">
+							<div class="user justify-content-between d-flex">
+								<div class="thumb text-center">
+									<img src="user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+									<a href="#" class="font-heading text-brand">Sienna</a>
+								</div>
+								<div class="desc">
+									<a href="#">	<!-- 리뷰가 작성된 게시글 주소를 넣으시면 됩니다. -->
+										<div class="d-flex justify-content-between mb-10">
+											<span class="font-xs text-muted">2025년 7월 8일 11:12</span>
+											<div class="product-rate d-inline-block">
+												<div class="product-rating" style="width: 80%"></div>
+											</div>
+										</div>
+										<p class="mb-10">3테스트 리뷰입니다. 여기에 리뷰 내용이 들어갑니다.</p>
+									</a>
+								</div>
+							</div>
+						</div>
+						<!-- 리뷰 항목 4 -->
+						<div class="single-comment justify-content-between d-flex">
+							<div class="user justify-content-between d-flex">
+								<div class="thumb text-center">
+									<img src="user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+									<a href="#" class="font-heading text-brand">Sienna</a>
+								</div>
+								<div class="desc">
+									<a href="#">	<!-- 리뷰가 작성된 게시글 주소를 넣으시면 됩니다. -->
+										<div class="d-flex justify-content-between mb-10">
+											<span class="font-xs text-muted">2025년 7월 8일 11:12</span>
+											<div class="product-rate d-inline-block">
+												<div class="product-rating" style="width: 80%"></div>
+											</div>
+										</div>
+										<p class="mb-10">4테스트 리뷰입니다. 여기에 리뷰 내용이 들어갑니다.</p>
+									</a>
+								</div>
+							</div>
+						</div>
+						<!-- 리뷰 항목 5 -->
+						<div class="single-comment justify-content-between d-flex">
+							<div class="user justify-content-between d-flex">
+								<div class="thumb text-center">
+									<img src="user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+									<a href="#" class="font-heading text-brand">Sienna</a>
+								</div>
+								<div class="desc">
+									<a href="#">	<!-- 리뷰가 작성된 게시글 주소를 넣으시면 됩니다. -->
+										<div class="d-flex justify-content-between mb-10">
+											<span class="font-xs text-muted">2025년 7월 8일 11:12</span>
+											<div class="product-rate d-inline-block">
+												<div class="product-rating" style="width: 80%"></div>
+											</div>
+										</div>
+										<p class="mb-10">5테스트 리뷰입니다. 여기에 리뷰 내용이 들어갑니다.</p>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div
+						class="slider-arrow slider-arrow-2 flex-right review-slider-arrows"
+						id="review-slider-arrows"></div>
+				</div>
+			</div>
+			<!-- 리뷰 영역 끝  -->
+			
+			<!-- 모달창 -->
+			<div class="modal fade" id="portfolioDetailModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
+			    <!-- modal-lg를 modal-xl로 변경하여 더 넓게 표시 -->
+			    <div class="modal-dialog modal-xl modal-dialog-centered">
+			        <div class="modal-content">
+			            <div class="modal-header">
+			                <h5 class="modal-title" id="portfolioModalTitle"></h5>
+			                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			            </div>
+			            <div class="modal-body" id="portfolioModalBody">
+			                <!-- 이 부분은 JS가 동적으로 채워넣습니다 -->
+			            </div>
+			            <div class="modal-footer">
+			                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+			                <!-- 필요 시 '문의하기' 등 추가 버튼 배치 가능 -->
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</main>
     </th:block>
+    <th:block layout:fragment="jsScript">
+		<script>
+			// DOMContentLoaded 이벤트 리스너를 사용하여 문서를 먼저 읽고 스크립트 실행한다
+			document.addEventListener('DOMContentLoaded', function() {
+		
+			    // portfolio-title(포트폴리오 제목) 요소를 선택한다
+			    const portfolioTitles = document.querySelectorAll('.portfolio-title');
+			 	// outsourcing-title(외주 제목) 요소를 선택한다
+			    const outsourcingTitles = document.querySelectorAll('.outsourcing-title');
+			 	
+			    const maxLength = 12; // 제목을 자를 최대 길이를 설정한다
+		
+			    // 각 제목 요소에 대해 반복한다
+			    portfolioTitles.forEach(titleElement => {
+			        let originalText = titleElement.textContent; // 요소의 원본 텍스트를 가져온다
+		
+			        // 텍스트 길이가 maxLength를 초과하는지 확인한다
+			        if (originalText.length > maxLength) {
+			            // 텍스트를 자르고 말줄임표를 추가한다
+			            let truncatedText = originalText.substring(0, maxLength) + '...';
+			            titleElement.textContent = truncatedText; // 잘린 텍스트로 업데이트한다
+			        }
+			    });
+			    
+			 	// 외주 제목에 대해 반복하며 길이를 확인하고 자른다
+		        outsourcingTitles.forEach(titleElement => {
+		            let originalText = titleElement.textContent; // 요소의 원본 텍스트를 가져온다
+		
+		            // 텍스트 길이가 maxLength를 초과하는지 확인한다
+		            if (originalText.length > maxLength) {
+		                // 텍스트를 자르고 말줄임표를 추가한다
+		                let truncatedText = originalText.substring(0, maxLength) + '...';
+		                titleElement.textContent = truncatedText; // 잘린 텍스트로 업데이트한다
+		            }
+		        });
+			});
+			
+			document.addEventListener('DOMContentLoaded', function () {
+				$('.review-slider-active').slick({
+					infinite: true,
+					slidesToShow: 2, // 한 번에 보이는 리뷰 수
+					slidesToScroll: 1,
+					autoplay: true,
+					autoplaySpeed: 2000,
+					centerMode: true,
+					arrows: true,
+					dots: false,
+					responsive: [
+						{
+							breakpoint: 768,
+							settings: {
+								slidesToShow: 1
+							}
+						}
+					]
+				});
+			});
+			
+			function openPortfolioModal(contentsId) {
+			    // bootstrap.Modal 클래스와 jQuery($)가 먼저 로드되어 있어야 합니다.
+			    if (typeof bootstrap === 'undefined' || typeof $ === 'undefined') {
+			        console.error("Bootstrap 또는 jQuery가 로드되지 않았습니다.");
+			        return;
+			    }
+	
+			    const modalElement = document.getElementById('portfolioDetailModal');
+			    if (!modalElement) {
+			        console.error("모달 HTML(#portfolioDetailModal)을 찾을 수 없습니다.");
+			        return;
+			    }
+	
+			    const modalTitle = modalElement.querySelector('#portfolioModalTitle');
+			    const modalBody = modalElement.querySelector('#portfolioModalBody');
+			    const portfolioModal = new bootstrap.Modal(modalElement);
+	
+			    // 1. 모달 내용을 '로딩 중' 상태로 초기화 후 모달을 표시
+			    modalTitle.textContent = '포트폴리오 정보 로딩 중...';
+			    modalBody.innerHTML = `
+			        <div class="text-center p-5">
+			            <div class="spinner-border" role="status">
+			                <span class="visually-hidden">Loading...</span>
+			            </div>
+			        </div>
+			    `;
+			    portfolioModal.show();
+	
+			    // 2. 서버에 jQuery AJAX로 상세 데이터 요청
+			    $.ajax({
+			        url: `/user/api/contents/${contentsId}`,
+			        type: 'GET',
+			        dataType: 'json',
+			        success: function(data) {
+			            // ... (이전에 완성했던 success 콜백 내용 그대로)
+			            modalTitle.textContent = data.contentsTitle;
+			            modalBody.innerHTML = `
+			                <div class="container-fluid">
+			                    <div class="row">
+			                        <div class="col-md-7">
+			                             <div class="d-flex align-items-center mb-3">
+			                                <img src="/assets/imgs/theme/icons/icon-user.svg" alt="user" class="rounded-circle me-2" style="width: 40px; height: 40px; border: 1px solid #ddd;">
+			                                <div>
+			                                    <h6 class="mb-0">${data.enterName}</h6>
+			                                    <span class="text-muted small">MASTER</span>
+			                                </div>
+			                            </div>
+			                            <hr>
+			                            <h5>프로젝트 설명</h5>
+			                            <p style="white-space: pre-wrap;">${data.contentsBody || '상세 설명이 없습니다.'}</p>
+			                        </div>
+			                        <div class="col-md-5">
+			                            <img src="https://picsum.photos/seed/${data.contentsId}/600/800" class="img-fluid rounded" alt="${data.contentsTitle}">
+			                        </div>
+			                    </div>
+			                </div>
+			            `;
+			        },
+			        error: function(xhr, status, error) {
+			            console.error("포트폴리오 상세 정보 로딩 실패:", xhr);
+			            modalTitle.textContent = '오류 발생';
+			            modalBody.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>';
+			        }
+			    });
+			}
+		</script>
+	</th:block>
 </html>
