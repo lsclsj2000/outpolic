@@ -15,7 +15,7 @@ public class AdminCategoryController {
 	
 	@GetMapping("/deleteCategory")
 	public String deleteCategoryView() {
-		return "admin/category/adminCategoryDeleteView";
+		return "admin/category/adminCategoryeDeleteView";
 	}
 	
 	@GetMapping("/selectCategory")
