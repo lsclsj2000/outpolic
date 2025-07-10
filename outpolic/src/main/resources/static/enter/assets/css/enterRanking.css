@@ -1,0 +1,149 @@
+@charset "UTF-8";
+
+/* =================================== */
+/*    인기 외주 슬라이더 최종 스타일      */
+/* =================================== */
+
+/* 1. 슬라이더 아이템 사이의 간격 */
+.popular-outsourcing-slider .slider-item {
+    padding: 0 10px;
+}
+
+
+/* 2. 화살표 버튼 스타일 (가장 중요!) */
+/*
+   !important를 사용하여 템플릿의 다른 CSS 규칙을
+   강제로 덮어쓰고 충돌을 해결합니다.
+*/
+.popular-outsourcing-slider .slick-btn {
+    /* --- 모든 상속 스타일 초기화 --- */
+    all: unset;
+
+    /* --- 버튼 디자인 재정의 --- */
+    background: #f0f2f5 !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease !important;
+    
+    /* --- 위치 지정 --- */
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+    
+    /* --- 아이콘 중앙 정렬 (핵심) --- */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* 3. 화살표 안의 아이콘 스타일 */
+.popular-outsourcing-slider .slick-btn i {
+    font-size: 20px !important;
+    color: #555 !important;
+    line-height: 1 !important;
+}
+
+/* 4. 화살표에 마우스를 올렸을 때 */
+.popular-outsourcing-slider .slick-btn:hover {
+    background-color: #e2e4e8 !important;
+}
+
+/* 5. 이전/다음 버튼 위치 */
+.popular-outsourcing-slider .slick-prev {
+    left: -45px !important;
+}
+
+.popular-outsourcing-slider .slick-next {
+    right: -45px !important;
+}
+
+/* 6. 비활성화된 화살표 (끝에 도달했을 때) */
+.popular-outsourcing-slider .slick-disabled {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
+
+/* =================================== */
+/*        카드 내부 콘텐츠 스타일         */
+/* =================================== */
+
+/* 7. 카테고리 + 기업명 */
+.popular-outsourcing-slider .product-category a {
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+}
+
+/* 8. 카드 제목 */
+.popular-outsourcing-slider .product-content-wrap h2 a {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+
+
+
+/* 카드 하단 푸터 및 버튼 스타일 (이전 답변과 동일, 이미 추가했다면 생략 가능) */
+.SR_card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+.SR_btn-secondary { background-color: #6c757d; color: white; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; }
+.SR_btn-secondary:hover { background-color: #5a6268; }
+.SR_btn-primary { background-color: #007bff; color: white; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; }
+.SR_btn-primary:hover { background-color: #0056b3; }
+.SR_project-status { margin: 0; }
+
+/* 리뷰 모달용 스타일 */
+.SR_hidden { display: none !important; }
+
+/* 별점 스타일 */
+#starRating .star {
+    font-size: 2rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+#starRating .star.selected,
+#starRating .star:hover {
+    color: #ffc107; /* 노란색 별 */
+}
+
+/* 텍스트 입력창 스타일 */
+textarea.SR_w-full {
+    width: 100%;
+}
+
+/* TailwindCSS의 기본값을 참고한 max-width 클래스 정의 */
+/* 'md'는 medium을 의미하며, 보통 500px ~ 700px 사이로 설정합니다. */
+
+.SR_max-w-md {
+    max-width: 28rem; /* 448px */
+}
+
+/* 다른 사이즈도 필요할 경우를 대비한 예시 */
+.SR_max-w-lg { /* Large */
+    max-width: 32rem; /* 512px */
+}
+.SR_max-w-xl { /* Extra Large */
+    max-width: 36rem; /* 576px */
+}
+.SR_max-w-2xl { /* 2X Large - 컨테이너 너비와 비슷하게 맞출 때 유용 */
+    max-width: 42rem; /* 672px */
+}
+
+/* 너비를 100%로 채우는 클래스 */
+.SR_w-full {
+    width: 100%;
+}
