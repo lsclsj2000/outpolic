@@ -5,6 +5,22 @@
 <mapper namespace="outpolic.user.payment.mapper.UserPaymentMapper">
 
     <insert id="insertSettlement" parameterType="SettlementDTO">
+    	<selectKey keyColumn="newCode" keyProperty="stlmCd" resultType="String" order="BEFORE">
+            SELECT
+                CASE
+                    WHEN COUNT(*) = 0 THEN 'STLM_C0000001'
+                    ELSE CONCAT(
+                        'STLM_C',
+                        LPAD(
+                            CAST(SUBSTRING_INDEX(MAX(stlm_cd), 'STLM_C', -1) AS UNSIGNED) + 1,
+                            7,
+                            '0'
+                        )
+                    )
+                END AS newCode
+            FROM settlement
+            WHERE stlm_cd LIKE 'STLM_C%';
+        </selectKey>
         INSERT INTO settlement (
             stlm_cd,
             mbr_cd,
