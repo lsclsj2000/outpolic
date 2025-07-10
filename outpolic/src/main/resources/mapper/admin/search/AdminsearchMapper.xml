@@ -149,4 +149,32 @@
 	        o.os_reg_ymdt DESC
 	</select>
 	
+	<select id="findClCdByCntdCd" parameterType="string" resultType="string">
+    SELECT cl_cd FROM content_list WHERE cntd_cd = #{contentsId}
+</select>
+
+<delete id="deleteCategoryMappingByClCd" parameterType="string">
+    DELETE FROM category_mapping WHERE cl_cd = #{clCd}
+</delete>
+<delete id="deleteTagMappingByClCd" parameterType="string">
+    DELETE FROM tag_mapping WHERE cl_cd = #{clCd}
+</delete>
+<delete id="deleteBookmarkByClCd" parameterType="string">
+    DELETE FROM bookmark WHERE cl_cd = #{clCd}
+</delete>
+
+<delete id="deleteOutsourcingPortfolioByPrtfCd" parameterType="string">
+    DELETE FROM outsourcing_portfolio WHERE prtf_cd = #{prtfCd}
+</delete>
+<delete id="deletePortfolioByPrtfCd" parameterType="string">
+    DELETE FROM portfolio WHERE prtf_cd = #{prtfCd}
+</delete>
+
+<delete id="deleteOutsourcingByOsCd" parameterType="string">
+    DELETE FROM outsourcing WHERE os_cd = #{osCd}
+</delete>
+
+<delete id="deleteContentListByClCd" parameterType="string">
+    DELETE FROM content_list WHERE cl_cd = #{clCd}
+</delete>
  </mapper>
