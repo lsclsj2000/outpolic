@@ -95,7 +95,7 @@ public class UserPaymentController {
             
             // 3. SettlementDTO 생성 및 매핑
             SettlementDTO settlement = new SettlementDTO();
-            settlement.setStlmCd("STLM_C2"); // 결제코드 생성
+            //settlement.setStlmCd("STLM_C2"); // 결제코드 생성
             settlement.setMbrCd("MB_C0000035"); // 세션 또는 로그인 정보에서 가져오는게 좋음
             settlement.setGdsCd(grdCd); // 프론트에서 상품 선택 정보를 받아오는게 바람직함
             settlement.setStcCd("SD_SUCCESS"); // 상태코드 테이블에 정의된 값
