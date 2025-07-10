@@ -33,8 +33,9 @@ public class OutsourcingRequestController {
 	 * @Param supplierCd 공급자 목록에서 선택한 기업의 코드
 	 * 
 	 */
+	//@RequestParam("supplierCd") 
 	@GetMapping("/new")
-	public String showNewRequestForm(@RequestParam("supplierCd") String supplierCd,Model model) {
+	public String showNewRequestForm(String supplierCd,Model model) {
 		// 실제로는 EnterpriseService를 이용해 공급자 정보를 DB에 조회해야 합니다.
 		// Enterprise supplier = enterpriseService.getEnterpriseByCd(supplierCd);
 		// model.addAttribute("supplier",supplier);
@@ -58,7 +59,7 @@ public class OutsourcingRequestController {
 		// TODO: 실제 운영 시에는 세션에서 로그인한 수요자(회원)의 코드를 가져와야 합니다.
 		// String memberCd = (String) session.getAttribute("loginMemberCd");
 		// request.setMbrCd(memberCd);
-		request.setMbrCd("MB_C0000007"); // 현재는 테스트를 위해 임시 코드를 사용
+		 request.setMbrCd("MB_C0000007");  // 현재는 테스트를 위해 임시 코드를 사용
 		
 		try {
 			// 서비스 로직을 호출하여 DB에 저장
@@ -104,7 +105,7 @@ public class OutsourcingRequestController {
 	/**
 	 * 외주 요청 상세 페이지(View)를 보여주는 메서드
 	 */
-	@GetMapping("/detail/{ocdCd}")
+	@GetMapping("/detail")
 	public String showRequestDetailView(@PathVariable String ocdCd, Model model, HttpSession session) {
 		OutsourcingRequest requestDetail = requestService.getRequestDetail(ocdCd);
 		model.addAttribute("request", requestDetail);
