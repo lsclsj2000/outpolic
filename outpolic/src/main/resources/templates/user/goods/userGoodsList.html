@@ -45,10 +45,10 @@
 					tossPayments.requestPayment("카드", {
 						amount: amount,
 						orderId: "ORDER_" + Date.now(),
-						orderName: "개인용 구독권",
+						orderName: "개인용 상품",
 						customerName: "홍길동",
-						successUrl: `http://localhost/paymentSuccess?usedMileage=${usedMileage}&grdCd=${grdCd}`,
-						failUrl: "http://localhost/paymentFail"
+						successUrl: `http://localhost/user/paymentSuccess?usedMileage=${usedMileage}&grdCd=${grdCd}`,
+						failUrl: "http://localhost/user/paymentFail"
 					});
 				});
 			});
@@ -70,7 +70,7 @@
 				const resetBtn = document.getElementById("reset-selection");
 				
 				const unitSubsPrice = 39900;
-				const unitTicketPrice = 100;
+				const unitTicketPrice = 100; // 테스트를 위해서 임시로 가격을 100원으로 변경. 추후 원래 가격인 22900으로 수정 예정.
 				
 				const totalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[0]; // 결제상품 금액
 				const finalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[1]; // 최종 결제 금액
