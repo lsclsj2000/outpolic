@@ -2,11 +2,11 @@
     ("use strict");
     // Page loading
     $(window).on("load", function () {
-        $("#preloader-active").delay(450).fadeOut("slow");
-        $("body").delay(450).css({
+        $("body").css({
             overflow: "visible"
         });
-        $("#onloadModal").modal("show");
+        /*$("#preloader-active").delay(450).fadeOut("slow");
+        $("#onloadModal").modal("show");*/
     });
     /*-----------------
         Menu Stick
