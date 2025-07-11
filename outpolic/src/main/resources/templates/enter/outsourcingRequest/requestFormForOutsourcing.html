@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{enter/layout/enterLayoutkjw}">
+<head>
+    <meta charset="UTF-8">
+    <title>외주 신청서 작성</title>
+    <th:block layout:fragment="css">
+        <style>
+            .card {
+                padding: 2.5rem; background-color: #ffffff;
+                border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+            }
+            .section-title {
+                font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 2.5rem;
+            }
+            .form-group { margin-bottom: 1.75rem; }
+            .form-group label { display: block; font-weight: 600; margin-bottom: 0.75rem; }
+            .form-group .required { color: #e11d48; margin-left: 4px; }
+            .form-control { width: 100%; padding: 0.8rem 1rem; border: 1px solid #d1d5db; border-radius: 6px; }
+            .form-control[readonly] { background-color: #f3f4f6; cursor: not-allowed; }
+            
+            .info-box {
+                background-color: #f8f9fa; padding: 1.5rem;
+                border-radius: 8px; margin-bottom: 2rem;
+            }
+            .info-box h3 { margin-top: 0; font-size: 1.25rem; }
+            .info-box p { margin: 0.5rem 0 0; color: #4b5563; }
+            
+            .btn-submit {
+                display: block; width: 100%; background-color: #4f46e5; color: white;
+                padding: 0.9rem; border: none; border-radius: 8px; font-size: 1.1rem;
+                font-weight: 700; cursor: pointer;
+            }
+            .btn-submit:disabled { background-color: #a5b4fc; }
+        </style>
+    </th:block>
+</head>
+<body>
+<th:block layout:fragment="contents">
+    <div class="main-container">
+        <h1 class="section-title">외주 신청서</h1>
+        <div class="card">
+            <div class="info-box">
+                <h3>신청 대상 프로젝트</h3>
+                <p th:text="${outsourcing.osTtl}">[외주 프로젝트 제목]</p>
+                <p><strong>공급자:</strong> <span th:text="${outsourcing.enterprise.entNm}">[공급 기업 이름]</span></p>
+            </div>
+            
+            <form id="outsourcing-request-form">
+                <input type="hidden" name="mbr_cd" th:value="${demander.mbrCd}"> 
+                <input type="hidden" name="ent_cd" th:value="${outsourcing.entCd}">
+                <input type="hidden" name="cl_cd" th:value="${outsourcing.clCd}">
+
+                <div class="form-group">
+                    <label for="title">요청 제목<span class="required">*</span></label>
+                    <input type="text" id="title" name="ocd_ttl" class="form-control" th:value="'\'\'' + ${outsourcing.osTtl} + '\' 관련 요청'" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="explanation">상세 요청 내용<span class="required">*</span></label>
+                    <textarea id="explanation" name="ocd_expln" class="form-control" rows="6" placeholder="원하는 작업 내용을 구체적으로 작성해주세요." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="deliverable">최종 제작물</label>
+                    <input type="text" id="deliverable" name="ocd_frctn_cmdty" class="form-control" placeholder="예: 디자인 원본 파일(PSD), 최종 보고서(PDF)">
+                </div>
+
+                <div class="form-group">
+                    <label for="delivery-method">납품 방법</label>
+                    <input type="text" id="delivery-method" name="ocd_dlvgds_mthd" class="form-control" placeholder="예: 이메일 전달, 클라우드 링크">
+                </div>
+                
+                <div class="form-group">
+                    <label for="deadline">희망 작업 기한<span class="required">*</span></label>
+                    <input type="datetime-local" id="deadline" name="ocd_dedline" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">희망 예산 (원)</label>
+                    <input type="number" id="amount" name="ocd_amt" class="form-control" placeholder="숫자만 입력">
+                </div>
+
+                <button type="submit" id="submit-button" class="btn-submit">외주 신청하기</button>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="jsFile">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('outsourcing-request-form');
+            const submitButton = document.getElementById('submit-button');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                submitButton.disabled = true;
+                submitButton.textContent = '전송 중...';
+
+                const formData = new FormData(form);
+                // 이 요청의 타입은 '신청'
+                formData.append('ocd_req_type', '신청');
+
+                fetch('/enter/requests', { // API 엔드포인트는 그대로 사용
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('외주 신청을 성공적으로 보냈습니다.');
+                        // '보낸 요청 목록' 페이지로 이동
+                        window.location.href = data.redirectUrl; 
+                    } else {
+                        throw new Error(data.message || '알 수 없는 오류가 발생했습니다.');
+                    }
+                })
+                .catch(error => {
+                    alert(`오류: ${error.message}`);
+                    submitButton.disabled = false;
+                    submitButton.textContent = '외주 신청하기';
+                });
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

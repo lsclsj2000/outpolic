@@ -156,4 +156,11 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         // 여기서는 더 이상 처리하지 않습니다.
         throw new UnsupportedOperationException("This method is now handled by EnterOutsourcingService.");
     }
+    @Override
+    @Transactional
+    public void updateOutsourcingStep1(EnterOutsourcing outsourcingToUpdate) {
+        outsourcingToUpdate.setOsMdfcnYmdt(LocalDateTime.now());
+        // ▼▼▼ 호출하는 매퍼 메서드 이름을 바꿉니다. ▼▼▼
+        outsourcingMapper.updateOutsourcing(outsourcingToUpdate);
+    }
 }
