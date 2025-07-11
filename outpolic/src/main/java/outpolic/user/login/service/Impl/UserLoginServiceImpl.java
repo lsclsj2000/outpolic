@@ -26,14 +26,18 @@ public class UserLoginServiceImpl implements UserLoginService {
 		Map<String, Object> resultMap = new HashMap<>();
 		boolean isMatched = false;
 		Member member = userLoginMapper.findMemberById(memberId);
-		log.info("입력된 비밀번호(평문): {}", memberPw);
-		log.info("DB 저장된 비밀번호(암호): {}", member.getMemberPw());
-		log.info("매치 결과: {}", passwordEncoder.matches(memberPw, member.getMemberPw()));
 
+		
 	    if (member != null && passwordEncoder.matches(memberPw, member.getMemberPw())) {
 	        isMatched = true;
 	        resultMap.put("memberInfo", member);
-	        
+	        log.info("입력된 비밀번호(평문): {}", memberPw);
+	        log.info("DB 저장된 비밀번호(암호): {}", member.getMemberPw());
+	        log.info("매치 결과: {}", passwordEncoder.matches(memberPw, member.getMemberPw()));
+	    }else {
+	    	isMatched = false;
+	    	log.info("입력된 아이디(평문): {}", memberId);
+	        log.info("입력된 비밀번호(평문): {}", memberPw);
 	    }
 
 	    resultMap.put("isMatched", isMatched);
