@@ -26,13 +26,13 @@ function dupleNicknameCheck(nickname, callback){
 	});
 }
 //중복체크 확장
-function dupleUserInfoCheck(type, value, memberId, callback){
+function dupleUserInfoCheck(type, value, memberCode, callback){
 	$.ajax({
 		url: `/check/${type}`,
 		type:'POST',
 		data:{
 			[type] : value,
-			memberId: memberId
+			memberCode: memberCode
 		},
 		success:callback,
 		error:() => alert("중복 확인 중 에러가 발생했습니다.")

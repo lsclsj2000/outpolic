@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.enter.op.mapper.OpMapper">
+	<select id="findLatestOpCd" resultType="String">
+		SELECT
+			op_cd
+		FROM
+			outsourcing_portfolio
+		ORDER BY op_cd DESC LIMIT 1
+
+	</select>
+
+	<select id="findLinkedOutsourcingsByPrtfCd" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+		SELECT
+			o.os_cd,
+			o.os_ttl
+		FROM
+			outsourcing o
+		JOIN
+			outsourcing_portfolio op ON o.os_cd = op.os_cd
+		WHERE
+			op.prtf_cd = #{prtfCd}
+
+
+	</select>
+
+	<select id="findUnlinkedOutsourcings" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+		SELECT
+			o.os_cd,
+			o.os_ttl
+		FROM
+			outsourcing o
+		WHERE
+			o.ent_cd = #{entCd}
+			AND o.os_ttl LIKE CONCAT('%',#{query},'%')
+			AND NOT EXISTS (
+				SELECT 1
+				FROM
+					outsourcing_portfolio op
+				WHERE
+					op.prtf_cd = #{prtfCd} AND op.os_cd = o.os_cd
+			)
+		LIMIT 10
+
+
+	</select>
+
+	<insert id="linkOutsourcingToPortfolio">
+		INSERT INTO outsourcing_portfolio (op_cd,os_cd,prtf_cd,op_reg_ymdt,ent_cd)
+		VALUES (#{opCd},#{osCd},#{prtfCd},NOW(),#{entCd})
+
+	</insert>
+
+	<delete id="unlinkOutsourcingFromPortfolio">
+		DELETE
+		FROM
+			outsourcing_portfolio
+		WHERE
+			os_cd = #{osCd} AND prtf_cd = #{prtfCd}
+
+	</delete>
+</mapper>

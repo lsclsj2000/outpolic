@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutkjw}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+	<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/admin/css/adminSearchView.css}">
+</th:block>
+	<th:block layout:fragment="jsScript">
+		<script>
+		document.addEventListener('DOMContentLoaded', function() {
+		    const contentsContainer = document.getElementById('contentsListContainer');
+		    const filterButtons = document.querySelectorAll('#myTab .nav-link');
+		    const headerSearchForm = document.querySelector('form[action="/admin/adminSearch"]');
+		    const headerSearchInput = headerSearchForm?.querySelector('input[name="keyword"]');
+		    const resultTitle = document.querySelector('.section-title h3');
+
+		    function renderContents(contents) {
+		        contentsContainer.innerHTML = '';
+		        if (!contents || contents.length === 0) {
+		            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
+		            return;
+		        }
+		        const contentsHtml = contents.map((content, index) => {
+		            const imageId1 = content.id || index + 40;
+		            const imageId2 = content.id ? content.id + 100 : index + 140;
+		            return `
+		            <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="${content.contentsType}">
+		            <div class="product-cart-wrap mb-30 position-relative">
+		                <div class="product-img-action-wrap">
+		                    <div class="product-img product-img-zoom">
+		                        <a href="/admin/contents/${content.contentsId}">
+		                            <img class="default-img" src="https://picsum.photos/id/${index + 40}/300/200" alt="콘텐츠 이미지">
+		                            <img class="hover-img" src="https://picsum.photos/id/${index + 140}/300/200" alt="콘텐츠 이미지">
+		                        </a>
+		                    </div>
+		                    <div class="product-action-1">
+		                        <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+		                        <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+		                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+		                        
+		                        <a aria-label="Delete" class="action-btn btn-delete-custom" onclick="deleteContent(\'${content.contentsId}\', event)">삭제</a>
+		                    </div>
+		                </div>
+		                <div class="product-content-wrap" style="margin-top: 15px;">
+		                    <h2><a href="/admin/contents/${content.contentsId}" class="stretched-link">${content.contentsTitle}</a></h2>
+		                    <div><span class="font-small text-muted">By <a href="#">${content.enterName}</a></span></div>
+		                </div>
+		            </div>
+		        </div>
+		        `;
+		    }).join('');
+		        contentsContainer.innerHTML = contentsHtml;
+		    }
+
+		    async function performAjaxSearch(keyword) {
+		        const newUrl = `/admin/adminSearch?keyword=${encodeURIComponent(keyword)}`;
+		        history.pushState({ keyword }, '', newUrl);
+		        resultTitle.innerHTML = '결과를 불러오는 중...';
+		        contentsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+		        try {
+		            const response = await fetch(`/admin/search/api?keyword=${encodeURIComponent(keyword)}`);
+		            if (!response.ok) { throw new Error(`서버 응답 오류: ${response.status}`); }
+		            const data = await response.json();
+		            if (keyword && keyword.trim() !== '') {
+		                resultTitle.innerHTML = `'<span class="text-brand">${keyword}</span>' 검색 결과`;
+		            } else {
+		                resultTitle.innerHTML = '전체 콘텐츠';
+		            }
+		            renderContents(data);
+		            setActiveFilterButton(document.querySelector('.nav-link[data-filter="All"]'));
+		        } catch (error) {
+		            console.error("AJAX 검색 중 에러 발생:", error);
+		            resultTitle.innerHTML = '오류';
+		            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.</p></div>';
+		        }
+		    }
+
+		    function setActiveFilterButton(clickedButton) {
+		        if (!clickedButton) return;
+		        filterButtons.forEach(button => { button.classList.remove('active'); });
+		        clickedButton.classList.add('active');
+		    }
+
+		    function applyFilter(filterType) {
+		        const items = contentsContainer.querySelectorAll('.product-item');
+		        let visibleItemCount = 0;
+		        items.forEach(item => {
+		            const itemType = item.dataset.type;
+		            if (filterType === 'All' || itemType === filterType) {
+		                item.style.display = '';
+		                visibleItemCount++;
+		            } else {
+		                item.style.display = 'none';
+		            }
+		        });
+		        const noResultMessage = contentsContainer.querySelector('.no-filter-result');
+		        if (noResultMessage) { noResultMessage.remove(); }
+		        if (visibleItemCount === 0 && items.length > 0) {
+		            const messageHtml = '<div class="col-12 text-center no-filter-result"><p>선택하신 필터에 해당하는 콘텐츠가 없습니다.</p></div>';
+		            contentsContainer.insertAdjacentHTML('beforeend', messageHtml);
+		        }
+		    }
+		     
+		    filterButtons.forEach(button => {
+		        button.addEventListener('click', function(event) {
+		            event.preventDefault();
+		            const filterType = this.dataset.filter;
+		            setActiveFilterButton(this);
+		            applyFilter(filterType);
+		        });
+		    });
+
+		    if (headerSearchForm) {
+		        headerSearchForm.addEventListener('submit', function(event) {
+		            if (window.location.pathname.includes('/admin/adminSearch')) {
+		                event.preventDefault();
+		                const keyword = headerSearchInput.value;
+		                performAjaxSearch(keyword);
+		            }
+		        });
+		    }
+		});
+		
+		function openPortfolioModal(contentsId) {
+		    const modalTitle = document.getElementById('portfolioModalTitle');
+		    const modalBody = document.getElementById('portfolioModalBody');
+		    const portfolioModal = new bootstrap.Modal(document.getElementById('portfolioDetailModal'));
+		    modalTitle.textContent = '포트폴리오 정보 로딩 중...';
+		    modalBody.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>`;
+		    portfolioModal.show();
+		    $.ajax({
+		        url: `/admin/api/contents/${contentsId}`, type: 'GET', dataType: 'json',
+		        success: function(data) {
+		            modalTitle.textContent = data.contentsTitle;
+		            modalBody.innerHTML = `<div class="container-fluid"><div class="row"><div class="col-md-7"><div class="d-flex align-items-center mb-3"><img src="/assets/imgs/theme/icons/icon-admin.svg" alt="admin" class="rounded-circle me-2" style="width: 40px; height: 40px; border: 1px solid #ddd;"><div><h6 class="mb-0">${data.enterName}</h6><span class="text-muted small">MASTER</span></div></div><hr><h5>프로젝트 설명</h5><p style="white-space: pre-wrap;">${data.contentsBody || '상세 설명이 없습니다.'}</p><hr><div class="row"><div class="col-sm-6"><h6>등록일</h6><p>${new Date(data.registrationDate).toLocaleDateString()}</p></div></div></div><div class="col-md-5"><img src="https://picsum.photos/seed/${data.contentsId}/600/800" class="img-fluid rounded" alt="${data.contentsTitle}"></div></div></div>`;
+		        },
+		        error: function(xhr, status, error) {
+		            console.error("포트폴리오 상세 정보 로딩 실패:", xhr);
+		            modalTitle.textContent = '오류 발생';
+		            modalBody.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.</p>';
+		        }
+		    });
+		}
+		
+		function deleteContent(contentsId, event) {
+		    event.stopPropagation();
+		    if (!confirm(`'${contentsId}' 콘텐츠를 정말로 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) { return; }
+		    fetch(`/admin/api/contents/${contentsId}`, { method: 'DELETE', })
+		    .then(response => {
+		        if (response.ok) { return response.json(); } 
+		        else { throw new Error('서버에서 삭제 처리를 실패했습니다.'); }
+		    })
+		    .then(data => {
+		        console.log(data.message);
+		        alert('성공적으로 삭제되었습니다.');
+		        const itemElement = event.target.closest('.product-item');
+		        if (itemElement) { itemElement.remove(); }
+		    })
+		    .catch(error => {
+		        console.error('콘텐츠 삭제 중 오류 발생:', error);
+		        alert('삭제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+		    });
+		}
+		</script>
+	</th:block>
+	
+	<th:block layout:fragment="contents">
+		<section class="product-tabs section-padding position-relative">
+	        <div class="container" style="width:1300px;">
+	            <div class="section-title style-2 wow animate__animated animate__fadeIn">
+					<h3>
+						<span th:if="${initialKeyword == null || initialKeyword == ''}">전체 콘텐츠</span>
+						<span th:unless="${initialKeyword == null || initialKeyword == ''}">
+							'<th:block th:text="${initialKeyword}"/>' 검색 결과
+						</span>
+					</h3>
+				</div>
+				<ul class="nav nav-tabs links" id="myTab" role="tablist">
+				    <li class="nav-item" role="presentation"><button class="nav-link active" data-filter="All" type="button">All</button></li>
+				    <li class="nav-item" role="presentation"><button class="nav-link" data-filter="Portfolio" type="button">포트폴리오</button></li>
+				    <li class="nav-item" role="presentation"><button class="nav-link" data-filter="Outsourcing" type="button">외주</button></li>
+				</ul>
+				<br>
+				<div class="tab-content" id="myTabContent" style="border: none;">
+				    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+						<div class="row product-grid-4" id="contentsListContainer">
+							<th:block th:if="${not #lists.isEmpty(contentsList)}" th:each="content, iterStat : ${contentsList}">
+							    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" th:attr="data-type=${content.contentsType}">
+							        <div th:switch="${content.contentsType}">
+							            <div th:case="'Portfolio'" class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn position-relative" th:attr="onclick='openPortfolioModal(\'' + ${content.contentsId} + '\')'" style="cursor: pointer;" data-wow-delay=".1s">
+							                <div class="product-img-action-wrap">
+							                    <div class="product-img product-img-zoom">
+							                        <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
+							                        <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
+							                    </div>
+							                    <div class="product-action-1">
+							                        <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+							                        <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+							                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+													<a aria-label="Delete" class="action-btn btn-delete-custom" th:onclick="deleteContent([[${content.contentsId}]], event)">삭제</a>
+							                    </div>
+							                </div>
+							                <div class="product-content-wrap" style="margin-top: 15px;">
+							                    <h2 th:text="${content.contentsTitle}">콘텐츠 제목</h2>
+							                    <div><span class="font-small text-muted">By <a th:text="${content.enterName}" href="#">회원닉네임</a></span></div>
+							                </div>
+							            </div>
+							            <div th:case="*" class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn position-relative" data-wow-delay=".1s">
+							                <div class="product-img-action-wrap">
+							                    <div class="product-img product-img-zoom">
+							                        <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
+							                        <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
+							                    </div>
+							                    <div class="product-action-1">
+							                        <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+							                        <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+							                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+													<a aria-label="Delete" class="action-btn btn-delete-custom" th:onclick="deleteContent([[${content.contentsId}]], event)">삭제</a>
+							                    </div>
+							                </div>
+							                <div class="product-content-wrap" style="margin-top: 15px;">
+							                    <h2><a th:href="@{/admin/contents/{id}(id=${content.contentsId})}" th:text="${content.contentsTitle}" class="stretched-link">콘텐츠 제목</a></h2>
+							                    <div><span class="font-small text-muted">By <a th:text="${content.enterName}" href="#">회원닉네임</a></span></div>
+							                </div>
+							            </div>
+							        </div>
+							    </div>
+							</th:block>
+							<div th:if="${#lists.isEmpty(contentsList)}" class="col-12">
+								<p class="text-center">표시할 콘텐츠가 없습니다.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<div class="modal fade" id="portfolioDetailModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
+		    <div class="modal-dialog modal-xl modal-dialog-centered">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <h5 class="modal-title" id="portfolioModalTitle"></h5>
+		                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		            </div>
+		            <div class="modal-body" id="portfolioModalBody"></div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	</th:block>
+</html>

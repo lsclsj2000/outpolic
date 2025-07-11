@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="utf-8" />
+    <title>enter 콘텐츠 상세 페이지</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="@{/enter/assets/imgs/theme/favicon.svg}" />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/enter/assets/css/plugins/slider-range.css" />
+    <link rel="stylesheet" href="/enter/assets/css/main.css?v=5.6" />
+    <link rel="stylesheet" href="/enter/assets/css/enterChatRoom.css" />
+</head>
+
+<body>
+	
+	<main class="main">
+		<!-- header start -->
+		<header th:replace="~{enter/fragments/enterHeader :: enterHeaderFragment}"></header>
+		<!-- header end -->
+
+	    <!-- container의 너비를 좀 더 넓게 잡거나, fluid로 변경할 수 있습니다. -->
+	    <div class="container mb-30" style="width: 100%; max-width: 1300px; margin-top: 30px;">
+	        <div class="row">
+	            <!-- 이제 콘텐츠가 전체 너비를 차지하게 됩니다. -->
+	            <div class="col-12">
+	                <th:block layout:fragment="contents"></th:block>
+	            </div>
+	        </div>
+	    </div>
+
+    </main>
+    
+	<div th:replace="~{enter/fragments/enterChatRoom :: enterChatRoomFragment}"></div>
+    <footer th:replace="~{enter/fragments/enterFooter :: enterFooterFragment}"></footer>
+	
+	
+	<!-- Vendor JS-->
+    <script src="/enter/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/enter/assets/js/vendor/jquery-3.6.0.min.js"></script>
+    <script src="/enter/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="/enter/assets/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/enter/assets/js/plugins/slick.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="/enter/assets/js/plugins/wow.js"></script>
+    <script src="/enter/assets/js/plugins/slider-range.js"></script>
+    <script src="/enter/assets/js/plugins/perfect-scrollbar.js"></script>
+    <script src="/enter/assets/js/plugins/magnific-popup.js"></script>
+    <script src="/enter/assets/js/plugins/select2.min.js"></script>
+    <script src="/enter/assets/js/plugins/waypoints.js"></script>
+    <script src="/enter/assets/js/plugins/counterup.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.countdown.min.js"></script>
+    <script src="/enter/assets/js/plugins/images-loaded.js"></script>
+    <script src="/enter/assets/js/plugins/isotope.js"></script>
+    <script src="/enter/assets/js/plugins/scrollup.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.vticker-min.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.elevatezoom.js"></script>
+    <!-- Template  JS -->
+    <script th:src="@{/enter/assets/js/main.js?v=5.6}"></script>
+    <script th:src="@{/enter/assets/js/shop.js?v=5.6}"></script>
+    
+</body>
+</html>

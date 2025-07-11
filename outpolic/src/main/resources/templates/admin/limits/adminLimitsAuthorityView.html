@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutMain}">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+	
+	
+	<th:block layout:fragment="contents">
+		<section class="content-main">
+	        <div class="content-header">
+	            <div>
+	                <h2 class="content-title card-title">회원 권한 설정</h2>
+	                <p>사용자 권한 설정</p>
+	            </div>
+	            <div>
+	                <input type="text" placeholder="Search order ID" class="form-control bg-white" />
+	            </div>
+	        </div>
+	        <div class="card mb-4">
+	            <header class="card-header">
+	                <div class="row gx-3">
+	                    <div class="col-lg-4 col-md-6 me-auto">
+	                        <input type="text" placeholder="Search..." class="form-control" />
+	                    </div>
+	                    <div class="col-lg-2 col-6 col-md-3">
+	                        <select class="form-select">
+	                            <option>Status</option>
+	                            <option>Active</option>
+	                            <option>Disabled</option>
+	                            <option>Show all</option>
+	                        </select>
+	                    </div>
+	                    <div class="col-lg-2 col-6 col-md-3">
+	                        <select class="form-select">
+	                            <option>Show 20</option>
+	                            <option>Show 30</option>
+	                            <option>Show 40</option>
+	                        </select>
+	                    </div>
+	                </div>
+	            </header>
+	            <div class="card-body">
+	                <div class="table-responsive">
+	                    <table class="table table-hover">
+	                        <thead>
+	                            <tr>
+	                                <th scope="col" class="start text-center col-1">No.</th>
+	                                <th scope="col" class="text-center col-1">회원코드</th>
+	                                <th scope="col" class="text-center col-1">회원등급</th>
+	                                <th scope="col" class="text-center col-1">포트폴리오</th>
+	                                <th scope="col" class="text-center col-1">외주 게시</th>
+	                                <th scope="col" class="text-center col-1">외주 신청</th>
+	                                <th scope="col" class="text-center col-1">외주</th>
+	                                <th scope="col" class="text-center col-1">채팅</th>
+	                                <th scope="col" class="text-center col-1">리뷰</th>
+	                                <th scope="col" class="end text-center col-1">Action</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+								<tr class="start pt-30"
+								    style="border:0px; border-bottom: solid 1px #ececec;"
+								    th:each="l, stat : ${adminLimitsAuthorityList}">
+								    
+								    <td class="start text-center" th:text="${stat.index + 1}">No.</td>
+								    <!-- <td scope="col" class="text-center" th:text="${l.limitsCode}">No.</td> -->
+								    <td scope="col" class="text-center" th:text="${l.authorityMemberCode}">회원코드</td>
+								    <td scope="col" class="text-center" th:text="${l.authorityGrdCode}">회원코드</td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityPortfolio}">
+								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								    </td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityOsWrite}">
+								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								    </td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityOsContract}">
+								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								    </td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityOs}">
+								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								    </td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityChat}">
+								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								    </td>
+								    <td scope="col" class="text-center" th:switch="${l.authorityReview}">
+	                                	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+	                                </td>
+								    <td scope="col" class="text-center">
+										<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${l.authorityMemberCode}">수정</a>
+									</td>
+								</tr>
+							</tbody>
+	                    </table>
+	                </div>
+	            </div>
+	        </div>
+	    </section>
+
+		<div id="authorityModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>신고 처리</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+                <div class="SR_popup-info">
+                    <div class="SR_writer-info">
+                        <span id="SR_writerCode">작성자 코드</span> | <span id="SR_writerName">작성자명</span> | <span id="SR_writeDate">작성일자</span>
+                    </div>
+                    <select id="inquiryStatusEdit" name="status" class="SR_form-control SR_status-dropdown">
+                        <option value="CONFIRMED">확인전</option>
+                        <option value="PROCESSING">처리중</option>
+                        <option value="COMPLETED">처리완료</option>
+                    </select>
+                </div>
+
+				<form id="inquiryForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label for="inquiryCodeDisplay">문의코드</label>
+                            <input type="text" id="inquiryCodeDisplay" name="inquiryCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label for="inquiryTitleEdit">제목</label>
+                            <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label for="inquiryTypeCodeDisplay">문의타입 코드</label>
+                            <input type="text" id="inquiryTypeCodeDisplay" name="inquiryTypeCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label for="inquiryTypeEdit">문의타입 이름</label>
+                            <select id="inquiryTypeEdit" name="inquiryType" class="SR_form-control">
+                                <option value="1">상품 문의</option>
+                                <option value="2">배송 문의</option>
+                                <option value="3">기술 지원</option>
+                                <option value="4">기타</option>
+                            </select>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label for="inquiryContentEdit">문의 내용</label>
+						<textarea id="inquiryContentEdit" name="inquiryContent" class="SR_form-control" rows="5" readonly></textarea>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+                        <label>첨부파일 목록</label>
+                        <div id="SR_fileList" class="SR_form-control SR_file-list">
+                            파일1.jpg (1.2MB) <br>
+                            파일2.pdf (3.5MB)
+                        </div>
+                    </div>
+                    
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                            <span id="SR_updaterName">수정자</span> | <span id="SR_updateDate">수정일시</span>
+                        </div>
+						<button type="submit" id="saveButton" class="SR_btn-primary">저장</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		</th:block>
+
+    <th:block layout:fragment="jsScript">
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+			    const modal = document.getElementById('authorityModal');
+			    const closeButton = document.querySelector('#authorityModal .SR_close-button');
+			    const saveButton = document.getElementById('saveButton');
+			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+	
+			    // 팝업 열기
+			    openPopupButtons.forEach(button => {
+			        button.addEventListener('click', function (event) {
+			            event.preventDefault();
+			            modal.style.display = 'flex';
+			            document.body.style.overflow = 'hidden';
+			        });
+			    });
+	
+			    // 팝업 닫기 (닫기 버튼)
+			    closeButton.addEventListener('click', function () {
+			        modal.style.display = 'none';
+			        document.body.style.overflow = 'auto';
+			    });
+	
+			    // 팝업 닫기 (바깥 클릭 시)
+			    window.addEventListener('click', function (event) {
+			        if (event.target === modal) {
+			            modal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			        }
+			    });
+	
+			    // 저장 버튼 클릭
+			    const inquiryForm = document.getElementById('inquiryForm');
+			    inquiryForm.addEventListener('submit', function (event) {
+			        event.preventDefault();
+			        alert('저장 버튼이 클릭되었습니다! (저장 로직은 필요 시 추가)');
+			        modal.style.display = 'none';
+			        document.body.style.overflow = 'auto';
+			    });
+			});
+		</script>
+	</th:block>
+</html>

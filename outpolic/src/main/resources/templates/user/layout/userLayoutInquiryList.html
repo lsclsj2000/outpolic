@@ -12,7 +12,7 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="/user/assets/css/plugins/slider-range.css" />
     <link rel="stylesheet" href="/user/assets/css/main.css?v=5.6" />
-    
+    <link rel="stylesheet" href="/user/assets/css/userChatRoom.css" />
 </head>
 
 <body>
@@ -21,11 +21,15 @@
 	<!-- header end -->
 	
 	<main class="main">
-		<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+		<div class="container">
+			<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+			
+			<th:block layout:fragment="contents"></th:block>
+		</div>
 		
-		<th:block layout:fragment="contents"></th:block>
     </main>
     
+    <div th:replace="~{user/fragments/userChatRoom :: userChatRoomFragment}"></div>
     <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
 	
 	
@@ -51,17 +55,12 @@
     <script src="/user/assets/js/plugins/jquery.theia.sticky.js"></script>
     <script src="/user/assets/js/plugins/jquery.elevatezoom.js"></script>
     <!-- Template  JS -->
-    <script src="./assets/js/main.js?v=5.6"></script>
-    <script src="./assets/js/shop.js?v=5.6"></script>
+    <script src="/user/assets/js/main.js?v=5.6"></script>
+    <script src="/user/assets/js/shop.js?v=5.6"></script>
     
     
-    <script src="/admin/assets/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="/admin/assets/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="/admin/assets/js/vendors/select2.min.js"></script>
-    <script src="/admin/assets/js/vendors/perfect-scrollbar.js"></script>
-    <script src="/admin/assets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
-    <script src="./admin/assets/js/main.js?v=1.1" type="text/javascript"></script>
+    <script src="/user/assets/js/main.js?v=1.1" type="text/javascript"></script>
     
     
     <script th:src="@{/user/assets/js/plugins/jquery-ui.js}"></script>

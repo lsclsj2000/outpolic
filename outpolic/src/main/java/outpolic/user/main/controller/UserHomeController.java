@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import outpolic.user.category.domain.Category;
-import outpolic.user.category.service.CategoryService;
+import outpolic.enter.ranking.domain.EnterPortfolioRankingContentsDTO;
+import outpolic.enter.ranking.domain.EnterRankingContentsDTO;
+import outpolic.enter.ranking.service.EnterRankingService;
+import outpolic.user.category.domain.UserCategory;
+import outpolic.user.category.service.UserCategoryService;
+import outpolic.user.ranking.domain.UserPortfolioRankingContentsDTO;
 import outpolic.user.ranking.domain.UserRankingContentsDTO;
 import outpolic.user.ranking.service.UserRankingService;
 
@@ -20,7 +24,9 @@ import outpolic.user.ranking.service.UserRankingService;
 @RequestMapping(value="/")
 @RequiredArgsConstructor
 public class UserHomeController {
-	 private final CategoryService categoryService;
+	
+	 private final UserCategoryService categoryService;
+	 
 	 private final UserRankingService userRankingService;
 	 
 	 
@@ -29,11 +35,14 @@ public class UserHomeController {
     public String mainPage(HttpSession session, Model model) {
         
         // 1. 서비스 호출: DB에서 대분류 카테고리 목록을 가져옵니다.
-        List<Category> mainCategories = categoryService.getMainCategoryList();
+        List<UserCategory> mainCategories = categoryService.getMainCategoryList();
         
         // 2. Model에 담기: "mainCategories" 라는 이름으로 HTML에 전달합니다.
         model.addAttribute("mainCategories", mainCategories);
         log.info("메인 페이지 세션 확인: {}", session.getAttribute("SID"));
+        
+        List<UserPortfolioRankingContentsDTO> popularPortfolioList = userRankingService.getUserRankingPoContents();
+        model.addAttribute("findPOList", popularPortfolioList);
         
         // 인기 외주 리스트 불러오기
         List<UserRankingContentsDTO> popularOutsourcingList = userRankingService.getRankingContentsList();
@@ -41,6 +50,7 @@ public class UserHomeController {
 
         return "main";
     }
+    
 
     /**
      * "/userListpage" 페이지 요청 처리 
@@ -50,5 +60,10 @@ public class UserHomeController {
         // 이 메소드 안에는 model.addAttribute가 없지만,
         // @ModelAttribute 덕분에 헤더는 이미 'megaMenuCategories' 데이터를 받은 상태입니다.
         return "user/main/userListpageView";
+    }
+    
+    @GetMapping("/projectInfo")
+    public String projectMainInfo() {
+    	return "projectInfo";
     }
 }

@@ -6,6 +6,7 @@
     <title>새 포트폴리오 등록</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* addOutsourcingListView.html 과 동일한 스타일 유지 */
         .portfolio-add-form-container { max-width: 800px; margin: 40px auto; padding: 30px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
         .portfolio-add-form-container h3 { text-align: center; margin-bottom: 30px; font-size: 1.8em; }
         .form-group { margin-bottom: 25px; }
@@ -21,38 +22,76 @@
         .selected-items-area { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 38px; padding: 5px; border: 1px solid #ced4da; border-radius: .25rem;}
         .selected-item-badge { display: flex; align-items: center; background-color: #0d6efd; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
         .selected-item-badge .remove-btn { margin-left: 8px; background: none; border: none; color: white; font-size: 1.2em; cursor: pointer; padding: 0; line-height: 1; }
+        
+        /* 새로운 카테고리 UI 스타일 (addOutsourcingListView.html의 스타일 복사) */
+        .category-input-group { display: flex; align-items: center; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 8px; overflow: visible; position: relative; }
+        .category-input-group:last-of-type { margin-bottom: 0; }
+        .category-input-group .category-name-input { border: none; flex-grow: 1; padding: 12px 15px; box-shadow: none; border-radius: 0; }
+        .category-input-group .category-name-input:focus { outline: none; box-shadow: none; }
+        .category-input-group .category-controls { display: flex; align-items: center; background-color: #f8f8f8; border-left: 1px solid #eee; padding: 0 5px; }
+        .category-input-group .category-controls button { background: none; border: none; padding: 10px; cursor: pointer; font-size: 1em; color: #555; transition: color 0.2s ease; line-height: 1; }
+        .category-input-group .category-controls button:hover { color: #3BB77E; }
+        .category-input-group .category-controls .add-row-btn { background-color: #f0f0f0; color: #007bff; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; justify-content: center; align-items: center; margin-right: 5px; padding: 0; }
+        .category-input-group .category-controls .add-row-btn:hover { background-color: #e0e0e0; color: #0056b3; }
+        .category-input-group .category-controls .remove-category-btn { color: #dc3545; }
+        .category-input-group .category-controls .remove-category-btn:hover { color: #c82333; }
+        .add-category-btn-wrapper { display: none; } /* 이 섹션 전체를 숨김 */
+        .category-search-dropdown-item { position: absolute; width: 100%; box-sizing: border-box; top: 100%; left: 0; border: 1px solid #ddd; background-color: #fff; z-index: 1001; max-height: 150px; overflow-y: auto; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; padding: 5px 0; }
+        .category-search-dropdown-item .result-item { padding: 10px; cursor: pointer; }
+        .category-search-dropdown-item .result-item:hover { background-color: #f0f0f0; }
+
     </style>
 </head>
 <body>
 <th:block layout:fragment="contents">
     <div class="portfolio-add-form-container">
         <h3>새로운 포트폴리오 정보 입력</h3>
-        <form id="portfolioAddForm" enctype="multipart/form-data">
-            <input type="hidden" name="entCd" th:value="${entCd}" />
-            <input type="hidden" name="mbrCd" th:value="${mbrCd}" />
+        <form id="portfolioRegistrationForm">
+            <input type="hidden" name="entCd" th:value="${entCd}">
+            <input type="hidden" name="mbrCd" th:value="${mbrCd}">
+            
             <div class="form-group">
-                <label for="prtfTtl">제목</label>
-                <input type="text" id="prtfTtl" name="prtfTtl" required class="form-control">
+                <label for="prtfTtl">포트폴리오 제목 <span style="color:red;">*</span></label>
+                <input type="text" id="prtfTtl" name="prtfTtl" class="form-control" required th:value="${portfolio?.prtfTtl}">
+                <div class="error-message" id="prtfTtlError"></div>
             </div>
+
             <div class="form-group">
-                <label>카테고리</label>
-                <div id="selected-categories-area" class="selected-items-area"></div>
-                <div class="category-search-wrapper">
-                    <input type="text" id="category-search-input" class="form-control" placeholder="카테고리를 검색하여 추가하세요">
-                    <div id="category-search-results" class="search-results-dropdown"></div>
+                <label for="prtfCn">포트폴리오 내용 <span style="color:red;">*</span></label>
+                <textarea id="prtfCn" name="prtfCn" class="form-control" rows="8" required th:text="${portfolio?.prtfCn}"></textarea>
+                <div class="error-message" id="prtfCnError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>카테고리 <span style="color:red;">*</span></label>
+                <div id="category-inputs-container">
+                	<th:block th:if="${portfolio.categories != null and !portfolio.categories.empty}">
+                		<script th:inline="javascript">
+                			/*<![CDATA[*/
+                			// $(document).ready() 제거 버전 (글로벌 함수 호출)
+                			var categories = /*[[${portfolio.categories}]]*/ [];
+                			categories.forEach(function(cat){
+								addCategoryInput(cat.ctgryNm, cat.ctgryId);
+                			});
+                			/*]]>*/
+                		</script>
+                	</th:block>
                 </div>
-                </div>
+                <div class="error-message" id="categoryCodesError"></div>
+            </div>
             <div class="form-group">
                 <label for="tags">태그 (쉼표로 구분)</label>
-                <input type="text" id="tags" name="tags" class="form-control">
+                <div class="tag-search-wrapper">
+                    <input type="text" id="tags" name="tags" class="form-control" th:value="${#strings.listJoin(portfolio?.tagNames, ', ')}">
+                    <div id="tag-search-results" class="search-results-dropdown"></div>
+                </div>
             </div>
             <div class="form-group">
-                <label for="prtfCn">상세 내용</label>
-                <textarea id="prtfCn" name="prtfCn" rows="8" class="form-control"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="portfolioFiles">대표 이미지 및 첨부파일</label>
-                <input type="file" id="portfolioFiles" name="portfolioFiles" multiple>
+                <label for="portfolioImage">대표 이미지 및 첨부파일</label>
+                <input type="file" id="portfolioImage" name="portfolioImage" class="form-control p-2">
+                <p class="form-instruction">포트폴리오를 대표하는 이미지를 첨부해주세요.</p>
+                <div class="image-preview-container mt-3" id="portfolioImage-preview-container">
+                    </div>
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn-submit">등록하기</button>
@@ -63,144 +102,346 @@
 
 <th:block layout:fragment="jsFile">
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
     <script>
-        $(document).ready(function() {
-            let searchTimeout;
-            let tagSearchTimeout;
-            
-            $('#category-search-input').on('input', function() {
-                clearTimeout(searchTimeout);
-                const query = $(this).val();
-                if (query.length < 1) {
-                    $('#category-search-results').hide();
-                    return;
+    // --- 카테고리 함수 (글로벌 스코프) ---
+    function getCategoryInputTemplate(name = '', id = '') {
+        return `
+            <div class="category-input-group">
+                <input type="text" class="form-control category-name-input" placeholder="카테고리 이름 입력" value="${name}">
+                <input type="hidden" class="category-id-input" value="${id}">
+                <div class="category-controls">
+                    <button type="button" class="add-row-btn"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="remove-category-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="category-search-dropdown-item"></div>
+            </div>
+        `;
+    }
+
+    function addCategoryInput(name = '', id = '') {
+        const container = $('#category-inputs-container');
+        if (container.length === 0) {
+            console.error("Error: #category-inputs-container not found when trying to add category input.");
+            return;
+        }
+        container.append(getCategoryInputTemplate(name, id));
+    }
+    // --- 카테고리 함수 끝 ---
+
+
+    // --- 파일 미리보기 함수 (글로벌 스코프, addOutsourcingListView.html에서 가져옴) ---
+    const MAX_FILE_COUNT = 1; // 포트폴리오 대표 이미지는 보통 1개
+    function initializeFilePreview(fileInputId, previewContainerId) {
+        const fileInput = document.getElementById(fileInputId);
+        const previewContainer = document.getElementById(previewContainerId);
+
+        if (!fileInput || !previewContainer) {
+            console.error(`Element with ID '${fileInputId}' or '${previewContainerId}' not found. Cannot initialize file preview.`);
+            return;
+        }
+
+        fileInput.addEventListener('change', function (event) {
+            previewContainer.innerHTML = ''; 
+            const newlySelectedFiles = event.target.files; 
+            const currentFilesDt = new DataTransfer(); 
+
+            for (let i = 0; i < newlySelectedFiles.length; i++) {
+                const file = newlySelectedFiles.item(i);
+                if (currentFilesDt.items.length < MAX_FILE_COUNT) {
+                    currentFilesDt.items.add(file);
+                } else {
+                    alert(`파일은 최대 ${MAX_FILE_COUNT}개까지 첨부할 수 있습니다.`);
+                    break;
                 }
-                searchTimeout = setTimeout(() => {
-                    $.get('/enter/portfolio/api/categories/search', { query: query }, function(data) {
-                        const resultsDiv = $('#category-search-results').empty().show();
-                        if (data && data.length > 0) {
-                            data.forEach(cat => {
-                                resultsDiv.append(`<div class="result-item" data-id="${cat.ctgryId}">${cat.ctgryNm}</div>`);
-                            });
-                        }
-                    });
-                }, 300);
-            });
-            $('#tags').on('input',function(){
-				clearTimeout(tagSearchTimeout);
-				const tagInput = $(this);
-				const currentVal = tagInput.val();
-				const parts = currentVal.split(',');
-				const query = parts[parts.length - 1].trim(); 
-				
-				if(query.length <1){
-					$('#tag-search-results').hide();
-					return;
-				}
-				tagSearchTimeout = setTimeout(() => {
-		            $.get('/enter/portfolio/api/tags/search', { query: query }, function(data) {
-		                const resultsDiv = $('#tag-search-results').empty().show();
-		                if (data && data.length > 0) {
-		                    data.forEach(tag => {
-		                        resultsDiv.append(`<div class="result-item-tag" data-tag="${tag}">${tag}</div>`);
-		                    });
-		                }
-		            });
-		        }, 300);
-		    });
+            }
 
-		    // 추천 태그 클릭 시
-		    $(document).on('click', '.result-item-tag', function() {
-		        const selectedTag = $(this).data('tag');
-		        const tagInput = $('#tags');
-		        const currentVal = tagInput.val();
-		        const parts = currentVal.split(',');
-		        
-		        parts[parts.length - 1] = ' ' + selectedTag; // 마지막 조각을 선택한 태그로 교체 (앞에 공백 추가)
-		        
-		        tagInput.val(parts.join(',') + ', '); // 쉼표와 공백을 추가하여 다음 태그 입력을 준비
-		        
-		        $('#tag-search-results').hide().empty();
-		        tagInput.focus();
-		    });
+            fileInput.files = currentFilesDt.files;
 
-		    // 다른 곳 클릭 시 태그 추천 창 숨기기
-		    $(document).on('click', function(event) {
-		        if (!$(event.target).closest('.tag-search-wrapper').length) {
-		            $('#tag-search-results').hide();
-		        }
-		    });
-            	
-            
+            const filesToRender = fileInput.files;
 
-            $(document).on('click', '.result-item', function() {
-                const catId = $(this).data('id');
-                const catName = $(this).text();
-                if ($(`form input[name="categoryCodes"][value="${catId}"]`).length > 0) {
-                    alert('이미 추가된 카테고리입니다.');
-                    return;
-                }
-                $('#selected-categories-area').append(`<span class="selected-item-badge" data-id="${catId}">${catName} <button type="button" class="remove-btn">&times;</button></span>`);
-                $('#portfolioAddForm').append(`<input type="hidden" name="categoryCodes" value="${catId}">`);
-                $('#category-search-input').val('');
-                $('#category-search-results').hide();
-            });
+            if (filesToRender.length > 0) {
+                for (let i = 0; i < filesToRender.length; i++) {
+                    const file = filesToRender.item(i);
+                    const fileType = file.type;
+                    const fileName = file.name;
 
-            $('#selected-categories-area').on('click', '.remove-btn', function() {
-                const badge = $(this).parent();
-                const catId = badge.data('id');
-                badge.remove();
-                $(`form input[name="categoryCodes"][value="${catId}"]`).remove();
-            });
+                    const fileDiv = document.createElement('div');
+                    fileDiv.classList.add('relative', 'w-24', 'h-24', 'overflow-hidden', 'rounded-lg', 'shadow-sm', 'group', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'bg-gray-100', 'text-center', 'break-all', 'p-1');
 
-            $(document).on('click', function(event) {
-                if (!$(event.target).closest('.category-search-wrapper').length) {
-                    $('#category-search-results').hide();
-                }
-            });
+                    if (fileType.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            fileDiv.innerHTML = `
+                                <img src="${e.target.result}" alt="Reference File" class="w-full h-full object-cover">
+                                <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-file-btn" data-file-name="${fileName}">
+                                    <i class="fas fa-times-circle"></i>
+                                </button>
+                            `;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        let iconClass = 'fas fa-file';
+                        if (fileType.includes('pdf')) iconClass = 'fas fa-file-pdf';
+                        else if (fileType.includes('word')) iconClass = 'fas fa-file-word';
+                        else if (fileType.includes('powerpoint')) iconClass = 'fas fa-file-powerpoint';
+                        else if (fileType.includes('text')) iconClass = 'fas fa-file-alt';
 
-            $('#portfolioAddForm').on('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-
-                // --- ▼▼▼ 핵심 수정 내용 ▼▼▼ ---
-                // 1. 화면에 표시된 선택된 카테고리 뱃지에서 ID를 모두 가져와 배열로 만듭니다.
-                const categoryIds = [];
-                $('#selected-categories-area .selected-item-badge').each(function() {
-                    categoryIds.push($(this).data('id'));
-                });
-
-                // 2. ID 배열을 쉼표로 구분된 하나의 문자열로 합칩니다.
-                const categoryCodesString = categoryIds.join(',');
-
-                // 3. 합쳐진 문자열을 'categoryCodes'라는 이름의 단일 데이터로 FormData에 추가합니다.
-                if (categoryCodesString) {
-                    formData.append('categoryCodes', categoryCodesString);
-                }
-                // --- ▲▲▲ 여기까지 수정 ▲▲▲ ---
-
-                $.ajax({
-                    url: '/enter/portfolio/add-ajax',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(res) {
-                        if (res.success) {
-                            alert(res.message);
-                            window.location.href = res.redirectUrl;
-                        } else {
-                            alert('등록 실패: ' + (res.message || '알 수 없는 오류'));
-                        }
-                    },
-                    error: function(xhr) {
-                        const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : '서버 통신에 실패했습니다.';
-                        alert('오류가 발생했습니다: ' + errorMsg);
+                        fileDiv.innerHTML = `
+                            <div class="flex flex-col items-center justify-center p-1">
+                                <i class="${iconClass} text-3xl mb-1 text-gray-400"></i>
+                                <span class="text-xs font-medium">${fileName}</span>
+                            </div>
+                            <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-file-btn" data-file-name="${fileName}">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        `;
                     }
+                    previewContainer.appendChild(fileDiv);
+                }
+            } else {
+                previewContainer.innerHTML = '';
+            }
+
+            previewContainer.querySelectorAll('.remove-file-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const fileNameToRemove = this.dataset.fileName;
+                    const dt = new DataTransfer();
+                    const currentInputFiles = fileInput.files;
+
+                    for (let j = 0; j < currentInputFiles.length; j++) {
+                        if (currentInputFiles.item(j).name !== fileNameToRemove) {
+                            dt.items.add(currentInputFiles.item(j));
+                        }
+                    }
+                    fileInput.files = dt.files;
+                    this.closest('div').remove();
                 });
             });
         });
+    }
+
+
+    $(document).ready(function() {
+        let categorySearchTimeout;
+        let tagSearchTimeout;
+        
+        // --- 오류 메시지 초기화 함수 ---
+        function clearErrors() { 
+            $('.error-message').text('');
+        }
+
+        // 초기 로드 시 최소 하나의 카테고리 입력 필드 보장
+        if ($('#category-inputs-container .category-input-group').length === 0) {
+            addCategoryInput();
+        }
+
+        // '카테고리 추가' 버튼 클릭 이벤트 (각 항목 내 '+' 버튼)
+        $(document).on('click', '.add-row-btn', function() {
+            const currentItem = $(this).closest('.category-input-group');
+            currentItem.after(getCategoryInputTemplate()); 
+            currentItem.next('.category-input-group').find('.category-name-input').focus(); 
+        });
+
+        // '카테고리 삭제' 버튼 클릭 이벤트
+        $(document).on('click', '.remove-category-btn', function() {
+            const itemToRemove = $(this).closest('.category-input-group');
+            if ($('#category-inputs-container .category-input-group').length > 1) { 
+                itemToRemove.remove();
+            } else {
+                alert('최소 하나의 카테고리는 남겨야 합니다.');
+                itemToRemove.find('.category-name-input').val(''); 
+                itemToRemove.find('.category-id-input').val(''); 
+            }
+        });
+
+        // --- 카테고리 검색/자동 완성 로직 (동적 생성 필드에 적용) ---
+        $(document).on('input', '.category-name-input', function() {
+            const currentInput = $(this);
+            const hiddenIdInput = currentInput.siblings('.category-id-input');
+            const dropdown = currentInput.closest('.category-input-group').find('.category-search-dropdown-item');
+            const query = currentInput.val();
+            
+            clearTimeout(categorySearchTimeout);
+            hiddenIdInput.val(''); 
+
+            if (query.length < 1) {
+                dropdown.hide().empty();
+                dropdown.css('display','none');
+                return;
+            }
+
+            categorySearchTimeout = setTimeout(() => {
+                $.get('/enter/outsourcing/api/categories/search', { query: query }, function(data) { // 동일한 API 사용
+                    dropdown.empty();
+                    if (data && data.length > 0) {
+                        data.forEach(cat => {
+                            dropdown.append(`<div class="result-item" data-id="${cat.ctgryId}">${cat.ctgryNm}</div>`);
+                        });
+                        dropdown.show();
+                        dropdown.css('display','block');
+                    } else {
+                        dropdown.hide();
+                        dropdown.css('display','none');
+                    }
+                });
+            }, 300);
+        });
+
+        // 검색 결과 클릭 시 해당 입력 필드 채우기
+        $(document).on('click', '.category-search-dropdown-item .result-item', function() {
+            const selectedItem = $(this);
+            const ctgryId = selectedItem.data('id');
+            const ctgryNm = selectedItem.text();
+            
+            const categoryInputGroup = selectedItem.closest('.category-input-group');
+            categoryInputGroup.find('.category-name-input').val(ctgryNm);
+            categoryInputGroup.find('.category-id-input').val(ctgryId); 
+            
+            selectedItem.parent().hide().empty(); 
+            selectedItem.parent().css('display','none');
+        });
+
+        // --- 태그 로직 (기존 유지) ---
+        $('#tags').on('input',function(){
+            clearTimeout(tagSearchTimeout);
+            const tagInput = $(this);
+            const currentVal = tagInput.val();
+            const parts = currentVal.split(',');
+            const query = parts[parts.length - 1].trim(); 
+            
+            if(query.length <1){
+                $('#tag-search-results').hide();
+                return;
+            }
+            tagSearchTimeout = setTimeout(() => {
+                $.get('/enter/outsourcing/api/tags/search', { query: query }, function(data) { // 동일한 API 사용
+                    const resultsDiv = $('#tag-search-results').empty().show();
+                    if (data && data.length > 0) {
+                        data.forEach(tag => {
+                            resultsDiv.append(`<div class="result-item-tag" data-tag="${tag}">${tag}</div>`);
+                        });
+                    }
+                });
+            }, 300);
+        });
+
+        // 추천 태그 클릭 시
+        $(document).on('click', '.result-item-tag', function() {
+            const selectedTag = $(this).data('tag');
+            const tagInput = $('#tags');
+            const currentVal = tagInput.val();
+            const parts = currentVal.split(',');
+            
+            parts[parts.length - 1] = ' ' + selectedTag; 
+            tagInput.val(parts.join(',') + ', '); 
+            
+            $('#tag-search-results').hide().empty();
+            tagInput.focus();
+        });
+        
+        // --- 파일 미리보기 로직 (포트폴리오 이미지에 사용) ---
+        // addOutsourcingListView.html의 initializeFilePreview를 활용
+        initializeFilePreview('portfolioImage', 'portfolioImage-preview-container'); // 이 라인 활성화됨 
+        
+        // --- 공통: 검색 결과창 숨기기 ---
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('.tag-search-wrapper, .category-input-group').length) {
+                $('.category-search-dropdown-item').hide().empty(); 
+                $('.category-search-dropdown-item').css('display','none'); 
+                $('#tag-search-results').hide();                     
+            }
+        });
+
+        // --- 포트폴리오 등록 폼 제출 로직 (전면 수정) ---
+        $('#portfolioRegistrationForm').on('submit', function(e) { 
+            e.preventDefault();
+            clearErrors(); 
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]'); 
+            submitBtn.prop('disabled', true).text('저장 중...');
+
+            const formData = new FormData(); 
+            
+            // --- 포트폴리오 폼 필드 수동 추가 ---
+            formData.append('entCd', $('input[name="entCd"]').val()); 
+            formData.append('mbrCd', $('input[name="mbrCd"]').val()); 
+            formData.append('prtfTtl', $('#prtfTtl').val()); 
+            formData.append('prtfCn', $('#prtfCn').val()); 
+            
+            // 카테고리 ID들 수집 (새로운 UI에서)
+            const categoryIds = [];
+            let hasEmptyCategoryField = false;
+            $('#category-inputs-container .category-input-group').each(function() {
+                const categoryId = $(this).find('.category-id-input').val();
+                const categoryName = $(this).val().trim(); // 표시되는 이름 필드 값
+                // if (categoryName) { // 빈 필드는 건너뛰고, 유효한 것만 추가
+                //     categoryIds.push(categoryId || categoryName); // ID 있으면 ID, 없으면 이름
+                // } else {
+                //     hasEmptyCategoryField = true;
+                // }
+
+                // 필수가 아닌 빈 필드 건너뛰기
+                if (!categoryId && !categoryName) {
+                    hasEmptyCategoryField = true; // 비어있는 필드가 있음을 표시
+                    return true; // continue in forEach equivalent
+                }
+                categoryIds.push(categoryId || categoryName); // ID가 없으면 이름 (서버에서 처리)
+            });
+            
+            if (categoryIds.length === 0) {
+                $('#categoryCodesError').text('최소 하나 이상의 카테고리를 입력하거나 선택해야 합니다.');
+                submitBtn.prop('disabled', false).text('포트폴리오 등록하기');
+                return;
+            }
+            formData.append('categoryCodes', categoryIds.join(','));
+
+            // 태그 수집
+            formData.append('tags', $('#tags').val()); 
+
+            // 파일 첨부 (addOutsourcingListView.html의 initializeFilePreview를 활용하므로, 그 input ID에 맞춤)
+            const portfolioImageInput = document.getElementById('portfolioImage'); 
+            if (portfolioImageInput && portfolioImageInput.files && portfolioImageInput.files.length > 0) {
+                formData.append('portfolioImage', portfolioImageInput.files[0]); 
+            } else {
+                alert('대표 이미지를 선택해주세요.');
+                submitBtn.prop('disabled', false).text('포트폴리오 등록하기');
+                return;
+            }
+            
+            $.ajax({
+                url: '/enter/portfolio/add-ajax', 
+                type: 'POST',
+                data: formData,
+                processData: false, 
+                contentType: false, 
+                success: res => {
+                    if (res.success) {
+                        alert(res.message);
+                        window.location.href = res.redirectUrl; 
+                    } else {
+                        if (res.errors) { 
+                            res.errors.forEach(errorString => {
+                                const parts = errorString.split(':');
+                                if (parts.length >= 2) {
+                                    $(`#${parts[0].trim()}Error`).text(parts.slice(1).join(':').trim());
+                                }
+                            });
+                        } else {
+                            alert('포트폴리오 등록 실패: ' + (res.message || '알 수 없는 오류'));
+                        }
+                    }
+                },
+                error: xhr => {
+                    console.error("AJAX Error:", xhr);
+                    const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : '서버 통신 실패';
+                    alert('오류: ' + errorMessage + '\n(HTTP 상태 코드: ' + xhr.status + ')');
+                },
+                complete: () => submitBtn.prop('disabled', false).text('포트폴리오 등록하기')
+            });
+        });
+
+    });
     </script>
 </th:block>
-</body>
-</html>

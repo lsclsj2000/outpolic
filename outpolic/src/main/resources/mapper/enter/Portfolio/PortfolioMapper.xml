@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/dtd/Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.enter.portfolio.mapper.PortfolioMapper">
+
+    <resultMap id="OutsourcingSimpleResultMap" type="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+        <id property="osCd" column="os_cd"/>
+        <result property="osTtl" column="os_ttl"/>
+    </resultMap>
 
     <resultMap id="portfolioDetailResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
         <id property="prtfCd" column="prtf_cd"/>
         <result property="entCd" column="ent_cd"/>
         <result property="prtfTtl" column="prtf_ttl"/>
         <result property="prtfCn" column="prtf_cn"/>
-        <result property="prtfDwnldCnt" column="prtf_dwnld_cnt"/>
+        <result property="prtfDwnld_cnt" column="prtf_dwnld_cnt"/>
         <result property="prtfRegYmdt" column="prtf_reg_ymdt"/>
         <result property="admCd" column="adm_cd"/>
         <result property="prtfMdfcnYmdt" column="prtf_mdfcn_ymdt"/>
         <result property="stcCd" column="stc_cd"/>
         <collection property="categories" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto">
             <id property="ctgryId" column="category_id"/>
-            <result property="ctgryNm" column="category_name"/>
+            <result property="ctgryNm" column="ctgry_nm"/> 
         </collection>
         <collection property="tagNames" ofType="java.lang.String">
             <result column="tag_name"/>
         </collection>
+        <collection property="linkedOutsourcings" javaType="java.util.ArrayList"
+                    ofType="outpolic.enter.outsourcing.domain.EnterOutsourcing"
+                    column="prtf_cd" select="findLinkedOutsourcingsByPrtfCd" />
     </resultMap>
 
     <resultMap id="simplePortfolioResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
@@ -30,8 +38,7 @@
         SELECT
             p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd,
             c.ctgry_id AS category_id,
-            c.ctgry_nm AS category_name,
-            t.tag_nm AS tag_name
+            c.ctgry_nm AS ctgry_nm, t.tag_nm AS tag_name
         FROM
             portfolio p
         LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
@@ -49,8 +56,7 @@
         SELECT
             p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd,
             c.ctgry_id AS category_id,
-            c.ctgry_nm AS category_name,
-            t.tag_nm AS tag_name
+            c.ctgry_nm AS ctgry_nm, t.tag_nm AS tag_name
         FROM
             portfolio p
         LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
@@ -80,8 +86,8 @@
     </select>
 
     <insert id="insertPortfolio" parameterType="EnterPortfolio">
-        INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, adm_cd, stc_cd)
-        VALUES (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), #{admCd}, 'SD_ACTIVE')
+        INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd)
+        VALUES (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(),'SD_ACTIVE')
     </insert>
 
     <insert id="insertContentList">
@@ -158,13 +164,13 @@
     </select>
     
     <select id="searchTagsByName" resultType="String">
-        SELECT tag_nm 
+        SELECT tag_nm
         FROM tag
         WHERE tag_nm LIKE CONCAT('%', #{query},'%')
         LIMIT 10
     </select>
 
-    <select id="findLinkedOutsourcingsByPrtfCd" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+    <select id="findLinkedOutsourcingsByPrtfCd" resultMap="OutsourcingSimpleResultMap">
         SELECT
             o.os_cd,
             o.os_ttl
@@ -174,9 +180,11 @@
             outsourcing_portfolio op ON o.os_cd = op.os_cd
         WHERE
             op.prtf_cd = #{prtfCd}
+        ORDER BY
+            op.op_reg_ymdt DESC
     </select>
 
-    <select id="findUnlinkedOutsourcings" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+    <select id="findUnlinkedOutsourcings" resultMap="OutsourcingSimpleResultMap">
         SELECT
             o.os_cd,
             o.os_ttl
@@ -193,14 +201,21 @@
         LIMIT 10
     </select>
 
-    <insert id="linkOutsourcingToPortfolio">
-        INSERT INTO outsourcing_portfolio (op_cd, os_cd, prtf_cd, op_reg_ymdt, ent_cd)
-        VALUES (#{opCd}, #{osCd}, #{prtfCd}, NOW(), #{entCd})
-    </insert>
-
-    <delete id="unlinkOutsourcingFromPortfolio">
-        DELETE FROM outsourcing_portfolio
-        WHERE os_cd = #{osCd} AND prtf_cd = #{prtfCd}
-    </delete>
+    <select id="findUnlinkedPortfolios" resultMap="simplePortfolioResultMap">
+        SELECT
+            p.prtf_cd,
+            p.prtf_ttl
+        FROM
+            portfolio p
+        WHERE
+            p.ent_cd = #{entCd}
+            AND p.prtf_ttl LIKE CONCAT('%', #{query}, '%')
+            AND NOT EXISTS (
+                SELECT 1
+                FROM outsourcing_portfolio op
+                WHERE op.os_cd = #{osCd} AND op.prtf_cd = p.prtf_cd
+            )
+        LIMIT 10
+    </select>
 
 </mapper>

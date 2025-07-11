@@ -25,7 +25,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="stc_nm" 		property="statusName"/>
 		<result column="sa_orgnl_nm" 	property="subAttchOrgnlName"/>
 	</resultMap>
-
+	<!-- AdminInquiryType.DTO -->
+	<resultMap id="AdminInquiryTypeMap" type="outpolic.admin.inquiry.domain.AdminInquiryType">
+		<id 	column="iqt_cd" 			property="inquiryTypeCode"/>
+		<result column="iqt_nm" 			property="inquiryTypeName"/>
+		<result column="iqt_expln" 			property="inquiryTypeExpln"/>
+		<result column="stc_cd" 			property="statusCode"/>
+		<result column="stc_nm" 			property="statusName"/>
+		<result column="iqt_reg_adm_cd" 	property="inquiryTypeRegAdm"/>
+		<result column="iqt_reg_ymdt" 		property="inquiryTypeRegDate"/>
+		<result column="iqt_mdfcn_adm_cd" 	property="inquiryTypeMdfcnAdm"/>
+		<result column="iqt_mdfcn_ymdt" 	property="inquiryTypeMdfcnDate"/>
+	</resultMap>
+	
+	
+	<select id="getAdminInquiryTypeList" resultMap="AdminInquiryTypeMap">
+		/* 문의 타입 내역 조회 */
+		select
+			it.iqt_cd as iqt_cd,
+			it.iqt_nm as iqt_nm,
+			it.iqt_expln as iqt_expln,
+			it.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			it.iqt_reg_adm_cd as iqt_reg_adm_cd,
+			it.iqt_reg_ymdt as iqt_reg_ymdt,
+			it.iqt_mdfcn_adm_cd as iqt_mdfcn_adm_cd,
+			it.iqt_mdfcn_ymdt as iqt_mdfcn_ymdt
+		from
+			inquiry_type it 
+			left join status_code sc on it.stc_cd = sc.stc_cd
+		order by
+			it.iqt_reg_ymdt;
+	</select>
 	
 	<select id="getAdminInquiryMdfcnList" resultMap="AdminInquiryResultMap">
 		/* 문의 내역 수정 팝업 조회 */

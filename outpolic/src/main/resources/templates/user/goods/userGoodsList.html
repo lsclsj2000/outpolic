@@ -45,10 +45,10 @@
 					tossPayments.requestPayment("카드", {
 						amount: amount,
 						orderId: "ORDER_" + Date.now(),
-						orderName: "개인용 구독권",
+						orderName: "개인용 상품",
 						customerName: "홍길동",
-						successUrl: `http://localhost/paymentSuccess?usedMileage=${usedMileage}&grdCd=${grdCd}`,
-						failUrl: "http://localhost/paymentFail"
+						successUrl: `http://localhost/user/paymentSuccess?usedMileage=${usedMileage}&grdCd=${grdCd}`,
+						failUrl: "http://localhost/user/paymentFail"
 					});
 				});
 			});
@@ -70,7 +70,7 @@
 				const resetBtn = document.getElementById("reset-selection");
 				
 				const unitSubsPrice = 39900;
-				const unitTicketPrice = 100;
+				const unitTicketPrice = 100; // 테스트를 위해서 임시로 가격을 100원으로 변경. 추후 원래 가격인 22900으로 수정 예정.
 				
 				const totalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[0]; // 결제상품 금액
 				const finalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[1]; // 최종 결제 금액
@@ -169,23 +169,30 @@
 				  applyMileage(currentTotal);
 				});
 				
-				resetBtn?.addEventListener("click", () => {
-				  const ok = confirm("선택한 상품을 모두 초기화할까요?\n확인을 누르면 페이지가 새로고침됩니다.");
-				  if (ok) location.reload();
+				resetBtn?.addEventListener("click", (e) => {
+					  e.preventDefault(); // ✅ 필수!
+
+					  const ok = confirm("선택한 상품을 모두 초기화할까요?\n확인을 누르면 페이지가 새로고침됩니다.");
+					  if (ok) {
+						console.log("resetBtn:", resetBtn);
+					    location.reload();
+					  } else {
+					    console.log("취소됨: 새로고침 없이 유지");
+					  }
 				});
 
 				updateText();
 				applyBlur();
 			});
 		
-
+			
 		</script>
 		<form id="paymentForm" method="get">
 			<div class="d-flex justify-content-center">
 				<div class="row w-100">
 					<div class="col-lg-7">
 						<div class="table-responsive shopping-summery">
-							<button id="reset-selection" class="btn btn-secondary mt-3 mb-4">선택
+							<button id="reset-selection" class="btn btn-secondary mt-3 mb-4" type="button">선택
 								초기화</button>
 							<table class="table table-wishlist">
 								<thead>
@@ -257,10 +264,6 @@
 							</table>
 						</div>
 						<!-- <div class="divider-2 mb-30"></div> -->
-						<div class="cart-action d-flex justify-content-between">
-							<a class="btn ">뒤로가기</a>
-							<!-- <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-refresh mr-10"></i>Update Cart</a> -->
-						</div>
 					</div>
 					<div class="col-lg-5">
 						<div class="border p-md-4 cart-totals ml-30">
@@ -336,33 +339,38 @@
 		</form>
 
 
-
 		<!-- userGoodsList JS-->
-
-		<script src="/user/assets/js/vendor/modernizr-3.6.0.min.js"></script>
-		<script src="/user/assets/js/vendor/jquery-3.6.0.min.js"></script>
-		<script src="/user/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
-		<script src="/user/assets/js/vendor/bootstrap.bundle.min.js"></script>
-		<script src="/user/assets/js/plugins/slick.js"></script>
-		<script src="/user/assets/js/plugins/jquery.syotimer.min.js"></script>
-		<script src="/user/assets/js/plugins/wow.js"></script>
-		<script src="/user/assets/js/plugins/jquery-ui.js"></script>
-		<script src="/user/assets/js/plugins/perfect-scrollbar.js"></script>
-		<script src="/user/assets/js/plugins/magnific-popup.js"></script>
-		<script src="/user/assets/js/plugins/select2.min.js"></script>
-		<script src="/user/assets/js/plugins/waypoints.js"></script>
-		<script src="/user/assets/js/plugins/counterup.js"></script>
-		<script src="/user/assets/js/plugins/jquery.countdown.min.js"></script>
-		<script src="/user/assets/js/plugins/images-loaded.js"></script>
-		<script src="/user/assets/js/plugins/isotope.js"></script>
-		<script src="/user/assets/js/plugins/scrollup.js"></script>
-		<script src="/user/assets/js/plugins/jquery.vticker-min.js"></script>
-		<script src="/user/assets/js/plugins/jquery.theia.sticky.js"></script>
-		<script src="/user/assets/js/plugins/jquery.elevatezoom.js"></script>
-		<!-- Template  JS -->
-		<script src="./user/assets/js/main.js?v=5.6"></script>
-		<script src="./user/assets/js/shop.js?v=5.6"></script>
-
+	    <script src="/user/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+	    <script src="/user/assets/js/vendor/jquery-3.6.0.min.js"></script>
+	    <script src="/user/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+	    <script src="/user/assets/js/vendor/bootstrap.bundle.min.js"></script>
+	    <script src="/user/assets/js/plugins/slick.js"></script>
+	    <script src="/user/assets/js/plugins/jquery.syotimer.min.js"></script>
+	    <script src="/user/assets/js/plugins/wow.js"></script>
+	    <script src="/user/assets/js/plugins/slider-range.js"></script>
+	    <script src="/user/assets/js/plugins/perfect-scrollbar.js"></script>
+	    <script src="/user/assets/js/plugins/magnific-popup.js"></script>
+	    <script src="/user/assets/js/plugins/select2.min.js"></script>
+	    <script src="/user/assets/js/plugins/waypoints.js"></script>
+	    <script src="/user/assets/js/plugins/counterup.js"></script>
+	    <script src="/user/assets/js/plugins/jquery.countdown.min.js"></script>
+	    <script src="/user/assets/js/plugins/images-loaded.js"></script>
+	    <script src="/user/assets/js/plugins/isotope.js"></script>
+	    <script src="/user/assets/js/plugins/scrollup.js"></script>
+	    <script src="/user/assets/js/plugins/jquery.vticker-min.js"></script>
+	    <script src="/user/assets/js/plugins/jquery.theia.sticky.js"></script>
+	    <script src="/user/assets/js/plugins/jquery.elevatezoom.js"></script>
+	    
+	    <!-- Template  JS -->
+	    <script src="/user/assets/js/main.js?v=5.6"></script>
+	    <script src="/user/assets/js/shop.js?v=5.6"></script>
+	    
+	    
+	    <!-- Main Script -->
+	    <script src="/user/assets/js/main.js?v=1.1" type="text/javascript"></script>
+	    
+	    
+	    <script th:src="@{/user/assets/js/plugins/jquery-ui.js}"></script>
 
 	</th:block>
 </body>

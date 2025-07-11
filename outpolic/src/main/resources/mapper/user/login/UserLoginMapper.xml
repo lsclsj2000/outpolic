@@ -13,16 +13,15 @@
 	</resultMap>
 
 	<select id="findMemberById" resultMap="UserLoginResultMap">
-	    SELECT mbr_id, mbr_pw, grd_cd
+	    SELECT mbr_id, mbr_pw, grd_cd, mbr_cd, stc_cd
 	    FROM member 
-	    WHERE mbr_id = #{memberId}
-	    AND stc_cd = 'SD_ACTIVE';
+	    WHERE mbr_id = #{memberId};
 	</select>
 	
 	<update id="updateMemberLoginDate" parameterType="Member">
 		UPDATE member
 		set mbr_last_lgn_ymdt = NOW()
-		where mbr_id = #{memberId};
+		where mbr_cd = #{memberCode};
 	</update>
 	
 <!-- 	<insert id="insertFailHistory" parameterType="LoginFailHistoryDTO">

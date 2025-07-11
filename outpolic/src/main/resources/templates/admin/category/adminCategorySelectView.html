@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutMain}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+	
+	<body>
+		<th:block layout:fragment="contents">
+			<div class="container mt-4">
+			    <h2>카테고리 목록 관리</h2>
+			    <p>전체 카테고리 목록을 확인하고 관리할 수 있습니다.</p>
+			
+			    <!-- 카테고리 목록을 표시할 영역 -->
+			    <div class="list-group mt-3">
+			    
+			        <!-- ==================== 대분류 반복 ==================== -->
+			        <!-- categoryList가 비어있지 않은 경우에만 전체 블록을 렌더링합니다. -->
+			        <th:block th:if="${!#lists.isEmpty(categoryList)}">
+			            <div th:each="largeCat : ${categoryList}" class="list-group-item flex-column align-items-start">
+			                
+			                <!-- 대분류 이름 및 버튼 -->
+			                <div class="d-flex w-100 justify-content-between align-items-center">
+			                    <h5 class="mb-1" th:text="|${largeCat.ctgryNm} (${largeCat.ctgryId})|">대분류 카테고리명</h5>
+			                    <div>
+			                        <!-- TODO: 수정/삭제 기능 구현 시 링크 추가 -->
+			                        <button type="button" class="btn btn-sm btn-outline-primary">수정</button>
+			                        <button type="button" class="btn btn-sm btn-outline-danger">삭제</button>
+			                    </div>
+			                </div>
+			
+			                <!-- ==================== 중분류 반복 ==================== -->
+			                <!-- 대분류에 속한 자식(중분류)이 있을 경우에만 ul 태그를 생성합니다. -->
+			                <ul class="list-group mt-2" th:if="${!#lists.isEmpty(largeCat.children)}">
+			                    <li th:each="mediumCat : ${largeCat.children}" class="list-group-item">
+			
+			                        <!-- 중분류 이름 및 버튼 -->
+			                        <div class="d-flex w-100 justify-content-between align-items-center">
+			                            <p class="mb-0" th:text="|${mediumCat.ctgryNm} (${mediumCat.ctgryId})|">중분류 카테고리명</p>
+			                            <div>
+			                                <button type="button" class="btn btn-sm btn-outline-primary">수정</button>
+			                                <button type="button" class="btn btn-sm btn-outline-danger">삭제</button>
+			                            </div>
+			                        </div>
+			
+			                        <!-- ==================== 소분류 반복 ==================== -->
+			                        <!-- 중분류에 속한 자식(소분류)이 있을 경우에만 ul 태그를 생성합니다. -->
+			                        <ul class="list-group mt-2" th:if="${!#lists.isEmpty(mediumCat.children)}">
+			                            <li th:each="smallCat : ${mediumCat.children}" class="list-group-item list-group-item-light">
+			                                
+			                                <!-- 소분류 이름 및 버튼 -->
+			                                <div class="d-flex w-100 justify-content-between align-items-center">
+			                                    <span th:text="|${smallCat.ctgryNm} (${smallCat.ctgryId})|">소분류 카테고리명</span>
+			                                    <div>
+			                                        <button type="button" class="btn btn-sm btn-outline-primary">수정</button>
+			                                        <button type="button" class="btn btn-sm btn-outline-danger">삭제</button>
+			                                    </div>
+			                                </div>
+			
+			                            </li>
+			                        </ul>
+			                    </li>
+			                </ul>
+			            </div>
+			        </th:block>
+			
+			        <!-- 카테고리가 하나도 없을 경우 메시지를 표시합니다. -->
+			        <div th:if="${#lists.isEmpty(categoryList)}" class="list-group-item">
+			            <p class="text-center mb-0">등록된 카테고리가 없습니다.</p>
+			        </div>
+			    </div>
+			</div>
+		</th:block>
+	</body>
+	<!-- 추가할 js file -->
+	
+</html>

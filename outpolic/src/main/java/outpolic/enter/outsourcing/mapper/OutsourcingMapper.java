@@ -4,41 +4,48 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.portfolio.domain.EnterPortfolio;
 
 @Mapper
 public interface OutsourcingMapper {
+    // --- 조회 (SELECT) ---
+    List<EnterOutsourcing> findOutsourcingDetailsByEntCd(String entCd);
+    EnterOutsourcing findOutsourcingDetailsByOsCd(String osCd);
+    List<String> searchTagsByName(@Param("query") String query);
+    String findLatestOsCd();
+    String findLatestTagCd();
+    String findTagCdByName(String tagName);
+    String findClCdByOsCd(String osCd);
+    String findLatestOpCd();
+
+    // --- 저장 (INSERT) ---
+    // useGeneratedKeys, keyProperty 속성을 제거 (osCd는 Java에서 직접 생성하여 넘김)
     int insertOutsourcing(EnterOutsourcing outsourcing);
     int insertContentList(@Param("clCd") String clCd, @Param("cntdCd") String cntdCd);
     int insertCategoryMapping(@Param("ctgryCd") String ctgryCd, @Param("clCd") String clCd, @Param("mbrCd") String mbrCd);
     int insertTag(@Param("tagCd") String tagCd, @Param("tagName") String tagName, @Param("mbrCd") String mbrCd);
     int insertTagMapping(@Param("tagCd") String tagCd, @Param("clCd") String clCd, @Param("mbrCd") String mbrCd);
-    
-    List<EnterOutsourcing> findOutsourcingDetailsByEntCd(String entCd);
-    List<String> searchTagsByName(@Param("query") String query);
-    
-    String findLatestOsCd();
-    String findLatestTagCd();
-    String findTagCdByName(String tagName);
-    
-    EnterOutsourcing findOutsourcingDetailsByOsCd(String osCd);
-    String findClCdByOsCd(String osCd);
+    int insertOutsourcingPortfolio(@Param("opCd") String opCd, @Param("osCd") String osCd, @Param("prtfCd") String prtfCd, @Param("entCd") String entCd);
+
+    // --- 수정(UPDATE) ---
+    int updateOutsourcing(EnterOutsourcing outsourcing);
+
+    // --- 삭제 (DELETE) ---
+    int deleteOutsourcingByOsCd(String osCd);
+    int deleteContentListByClCd(String clCd);
     int deleteCategoryMappingByClCd(String clCd);
     int deleteTagMappingByClCd(String clCd);
-    int updateOutsourcing(EnterOutsourcing outsourcing);
-    
-    int deleteContentListByClCd(String clCd);
-    int deleteOutsourcingByOsCd(String osCd);
-    int deleteBookmarkByClCd(String clCd); // 추가
-    int deleteOutsourcingContractDetailsByClCd(String clCd); // 추가
+    int deleteOutsourcingPortfolioByOsCd(@Param("osCd") String osCd);
+    int deleteBookmarkByClCd(String clCd);
+    int deleteOutsourcingContractDetailsByClCd(String clCd);
     int deleteOutsourcingStatusByOcdCd(String ocdCd);
-    int deleteOutsourcingStatusByClCd(String clCd); // <-- 이 줄을 추가합니다.
+    int deleteOutsourcingStatusByClCd(String clCd);
     int deleteRankingByClCd(String clCd);
-    int deleteTodayViewByClCd(String clCd); 
+    int deleteTodayViewByClCd(String clCd);
     int deleteTotalViewByClCd(String clCd);
-    
-    // outsourcing_portfolio 테이블 관련
-    String findLatestOpCd();
-    int insertOutsourcingPortfolio(@Param("opCd") String opCd, @Param("osCd") String osCd,@Param("prtfCd") String prtfCd, @Param("entCd") String entCd);
-    int deleteOutsourcingPortfolioByOsCd(String osCd);
+    int deletePortfolioLinkByPrtfCd(@Param("prtfCd") String prtfCd);
 
+    // --- 외주-포트폴리오 연결을 위한 매퍼 메서드 ---
+    List<EnterPortfolio> findLinkedPortfoliosByOsCd(@Param("osCd") String osCd);
+    int unlinkOutsourcingFromPortfolio(@Param("osCd") String osCd, @Param("prtfCd") String prtfCd);
 }

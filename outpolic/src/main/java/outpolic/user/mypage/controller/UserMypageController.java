@@ -2,6 +2,7 @@ package outpolic.user.mypage.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,20 +13,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import outpolic.common.domain.Member;
+import outpolic.user.login.mapper.UserLoginMapper;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.service.UserMypageEditService;
 
 @Controller
+@RequiredArgsConstructor
 public class UserMypageController {
 
-
+	private final PasswordEncoder passwordEncoder;
+	
  // 유저 마이페이지
- 	@GetMapping("/mypage")
+ 	@GetMapping("/user/mypage")
  	public String myPage(HttpSession session, Model model) {
 
- 		String memberId = (String) session.getAttribute("SID");
- 	    UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
+ 		String memberCode = (String) session.getAttribute("SCD");
+ 	    UserInfoDTO userInfo = userMypageEditService.getUserInfoByCode(memberCode);
  	    model.addAttribute("userInfo", userInfo);
  		return "user/mypage/userMypageView";
  	}
@@ -40,23 +45,23 @@ public class UserMypageController {
 									            @RequestParam(required = false) String memberNickname,
 									            @RequestParam(required = false) String memberEmail,
 									            @RequestParam(required = false) String memberTelNo) {
-    	String memberId = (String) session.getAttribute("SID");
-        boolean duplicated = userMypageEditService.isUserInfoDuple(type, memberId, memberNickname, memberEmail, memberTelNo);
+    	String memberCode = (String) session.getAttribute("SCD");
+        boolean duplicated = userMypageEditService.isUserInfoDuple(type, memberCode, memberNickname, memberEmail, memberTelNo);
         return ResponseEntity.ok(duplicated);
     }
  	// userEditView 이동
- 	@PostMapping("/userEditView")
+ 	@PostMapping("/user/userEditView")
  	public String usreProfileEditView(@RequestParam("password") String memberPw, HttpSession session, Model model) {
  		
- 		String memberId = (String) session.getAttribute("SID");
- 		UserInfoDTO userInfo = userMypageEditService.getUserInfoById(memberId);
+ 		String memberCode = (String) session.getAttribute("SCD");
+ 	    UserInfoDTO userInfo = userMypageEditService.getUserInfoByCode(memberCode);
  		
- 		if(memberPw.equals(userInfo.getMemberPw())) {
+ 		if(passwordEncoder.matches(memberPw, userInfo.getMemberPw())) {
  		model.addAttribute("userInfo", userInfo);
  		return "user/mypage/userProfileEditView";
  		}else {
  			model.addAttribute("msg", "비밀번호가 일치하지 않습니다");
- 			model.addAttribute("url", "/mypage");
+ 			model.addAttribute("url", "/user/mypage");
  			return "user/mypage/alert";
  		}
  	}
@@ -74,9 +79,10 @@ public class UserMypageController {
  	 @GetMapping("/userEdit/info")
  	 @ResponseBody
  	 public UserInfoDTO getUserInfoAjax(HttpSession session) {
- 		String memberId = (String) session.getAttribute("SID");
+  		String memberCode = (String) session.getAttribute("SCD");
+
  		 
- 		 return userMypageEditService.getUserInfoById(memberId); 
+ 		 return userMypageEditService.getUserInfoByCode(memberCode); 
  	 }
  	 @PostMapping("/userEdit/update")
  	 @ResponseBody

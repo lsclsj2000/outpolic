@@ -4,6 +4,7 @@ package outpolic.user.login.service.Impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -16,16 +17,27 @@ import outpolic.user.login.service.UserLoginService;
 @RequiredArgsConstructor
 @Slf4j
 public class UserLoginServiceImpl implements UserLoginService {
+	
 	private final UserLoginMapper userLoginMapper;
-
+	private final PasswordEncoder passwordEncoder;
+	
 	@Override
 	public Map<String, Object> loginUser(String memberId, String memberPw) {
 		Map<String, Object> resultMap = new HashMap<>();
 		boolean isMatched = false;
 		Member member = userLoginMapper.findMemberById(memberId);
-	    if (member != null && member.getMemberPw().equals(memberPw)) {
+
+		
+	    if (member != null && passwordEncoder.matches(memberPw, member.getMemberPw())) {
 	        isMatched = true;
 	        resultMap.put("memberInfo", member);
+	        log.info("입력된 비밀번호(평문): {}", memberPw);
+	        log.info("DB 저장된 비밀번호(암호): {}", member.getMemberPw());
+	        log.info("매치 결과: {}", passwordEncoder.matches(memberPw, member.getMemberPw()));
+	    }else {
+	    	isMatched = false;
+	    	log.info("입력된 아이디(평문): {}", memberId);
+	        log.info("입력된 비밀번호(평문): {}", memberPw);
 	    }
 
 	    resultMap.put("isMatched", isMatched);

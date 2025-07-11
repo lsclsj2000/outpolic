@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import outpolic.user.ranking.domain.UserPortfolioRankingContentsDTO;
 import outpolic.user.ranking.domain.UserRankingContentsDTO;
 import outpolic.user.ranking.mapper.UserRankingMapper;
 import outpolic.user.ranking.service.UserRankingService;
@@ -18,6 +19,12 @@ public class UserRankingServiceImpl implements UserRankingService{
 	public List<UserRankingContentsDTO> getRankingContentsList() {
 
 		return userRankingMapper.getUserRankingOsContents();
+	}
+
+	
+	@Override
+	public List<UserPortfolioRankingContentsDTO> getUserRankingPoContents() {
+		return userRankingMapper.getUserRankingPoContents();
 	}
 
 }

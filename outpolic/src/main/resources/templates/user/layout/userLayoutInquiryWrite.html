@@ -12,6 +12,7 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="/user/assets/css/plugins/slider-range.css" />
     <link rel="stylesheet" href="/user/assets/css/main.css?v=5.6" />
+    <link rel="stylesheet" href="/user/assets/css/userChatRoom.css" />
 </head>
 
 <body>
@@ -37,6 +38,7 @@
         </div>
     </main>
     
+    <div th:replace="~{user/fragments/userChatRoom :: userChatRoomFragment}"></div>
     <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
 	
 	

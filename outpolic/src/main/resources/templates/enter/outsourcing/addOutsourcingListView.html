@@ -12,24 +12,231 @@
         .card { background-color: white; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); padding: 2.5rem; border: 1px solid #e5e7eb; }
         .form-group { margin-bottom: 25px; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 10px; color: #253D4E; font-size: 1.05rem; }
-        .form-control { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; color: #4b5563; transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
-        .form-control:focus { outline: none; border-color: #3BB77E; box-shadow: 0 0 0 3px rgba(59, 183, 126, 0.2); }
-        textarea.form-control { min-height: 180px; resize: vertical; }
-        .required-star { color: #ef4444; font-weight: 700; margin-left: 4px; }
-        .btn-submit { background-color: #3BB77E; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.15rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease-in-out; box-shadow: 0 4px 10px rgba(59, 183, 126, 0.3); width: 100%; margin-top: 30px; }
-        .btn-submit:hover { background-color: #29A56C; transform: translateY(-2px); }
+        .form-control { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; color: #4b5563; }
         .flex-row { display: flex; gap: 20px; flex-wrap: wrap; }
         .flex-row > .form-group { flex: 1; min-width: 250px; }
         .input-with-unit { display: flex; align-items: center; width : 100%; }
         .input-with-unit input { flex-grow: 1; border-top-right-radius: 0; border-bottom-right-radius: 0; }
-        .input-with-unit span { background-color: #f3f4f6; border: 1px solid #d1d5db; border-left: none; border-top-right-radius: 8px; border-bottom-right-radius: 8px; padding: 12px 15px; color: #4b5563; }
+        .input-with-unit span { background-color: #f3f4f6; border: 1px solid #d1d5db; border-left: none; padding: 12px 15px; }
         .category-search-wrapper, .tag-search-wrapper { position: relative; }
         .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd; background-color: #fff; z-index: 1000; max-height: 200px; overflow-y: auto; }
         .search-results-dropdown .result-item, .search-results-dropdown .result-item-tag { padding: 10px; cursor: pointer; }
         .search-results-dropdown .result-item:hover, .search-results-dropdown .result-item-tag:hover { background-color: #f0f0f0; }
-        .selected-item-badge { display: inline-flex; align-items: center; background-color: #e0e7ff; color: #3b82f6; padding: 5px 10px; border-radius: 5px; margin-right: 8px; margin-top: 8px; font-size: 0.9em; white-space: nowrap; }
-        .selected-item-badge .remove-btn { background: none; border: none; color: #3b82f6; font-size: 1.2em; margin-left: 5px; cursor: pointer; padding: 0; line-height: 1; }
-        .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 5px; }
+        .selected-item-badge { display: inline-flex; align-items: center; background-color: #e0e7ff; color: #3b82f6; padding: 5px 10px; border-radius: 5px; margin: 4px; }
+        .selected-item-badge .remove-btn { background: none; border: none; font-size: 1.2em; margin-left: 5px; cursor: pointer; padding: 0; }
+        /* 파일 미리보기에 필요한 스타일 */
+        .image-preview-container { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem; }
+        .image-preview-container > div {
+            position: relative; width: 96px; height: 96px; overflow: hidden; border-radius: 0.5rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; background-color: #f3f4f6;
+            display: flex; align-items: center; justify-content: center; text-align: center; padding: 1px;
+        }
+        .image-preview-container img { width: 100%; height: 100%; object-fit: cover; }
+        .image-preview-container .remove-file-btn { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex;
+            align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.6);
+            color: white; opacity: 0; transition: opacity 0.2s ease-in-out; font-size: 1.5rem; cursor: pointer;
+        }
+        .image-preview-container > div:hover .remove-file-btn { opacity: 1; }
+
+        /* --- 새로운 카테고리 UI 스타일 (cate1.png 및 image_e7561a.png 디자인 통합) --- */
+        .category-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: visible; 
+            position: relative; 
+        }
+        .category-input-group:last-of-type {
+            margin-bottom: 0; 
+        }
+        .category-input-group .category-name-input { 
+            border: none; 
+            flex-grow: 1;
+            padding: 12px 15px;
+            box-shadow: none; 
+            border-radius: 0; 
+        }
+        .category-input-group .category-name-input:focus {
+             outline: none;
+             box-shadow: none;
+        }
+        .category-input-group .category-controls {
+            display: flex;
+            align-items: center;
+            background-color: #f8f8f8; 
+            border-left: 1px solid #eee;
+            padding: 0 5px;
+        }
+        .category-input-group .category-controls button {
+            background: none;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            color: #555;
+            transition: color 0.2s ease;
+            line-height: 1; 
+        }
+        .category-input-group .category-controls button:hover {
+            color: #3BB77E; 
+        }
+        /* '+' 버튼 스타일 (각 항목 내 추가 버튼) */
+        .category-input-group .category-controls .add-row-btn {
+            background-color: #f0f0f0; 
+            color: #007bff; 
+            border-radius: 50%; 
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 5px; 
+            padding: 0;
+        }
+        .category-input-group .category-controls .add-row-btn:hover {
+            background-color: #e0e0e0;
+            color: #0056b3;
+        }
+
+        .category-input-group .category-controls .remove-category-btn {
+            color: #dc3545; 
+        }
+        .category-input-group .category-controls .remove-category-btn:hover {
+            color: #c82333;
+        }
+        /* 기존 add-category-btn-wrapper 및 add-category-btn 스타일은 이제 사용되지 않음 */
+        .add-category-btn-wrapper {
+            display: none; 
+        }
+
+        /* 각 카테고리 입력 필드 아래에 개별적으로 붙을 검색 드롭다운 */
+        .category-search-dropdown-item {
+            position: absolute;
+            width: 100%; 
+            box-sizing: border-box; 
+            top: 100%; 
+            left: 0;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            z-index: 1001; 
+            max-height: 150px;
+            overflow-y: auto;
+            display: none; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 0 0 8px 8px;
+            padding: 5px 0; 
+        }
+        .category-search-dropdown-item .result-item {
+            padding: 10px; 
+            cursor: pointer;
+        }
+        .category-search-dropdown-item .result-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* ----- 단계별 폼 스타일 ----- */
+        .form-step {
+            display: none; /* 기본적으로 모든 단계를 숨김 */
+        }
+        .form-step.active {
+            display: block; /* 활성화된 단계만 보여줌 */
+        }
+        .form-navigation {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .form-navigation .btn-step {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            flex-grow: 1; /* 버튼 너비 균등 분배 */
+        }
+        .form-navigation .btn-step.prev {
+            background-color: #6c757d;
+        }
+        .form-navigation .btn-step:hover {
+            opacity: 0.9;
+        }
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #888;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            border: 2px solid #ccc;
+        }
+        .progress-step.active {
+            background-color: #3BB77E;
+            color: white;
+            border-color: #3BB77E;
+        }
+        .progress-step.completed {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        /* ----- 모달 스타일 (Bootstrap 5 필요) ----- */
+        .modal {
+            --bs-modal-width: 800px; 
+        }
+        .modal-body .linking-section {
+            border-top: none; 
+            padding-top: 0;
+            margin-top: 0;
+        }
+        .modal-body .linking-section h4 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        #linked-portfolio-list, #portfolio-search-results {
+            border: 1px solid #eee;
+            min-height: 80px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 8px;
+            margin-bottom: 15px;
+        }
+        .linked-item, .search-result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .linked-item:last-child, .search-result-item:last-child {
+            border-bottom: none;
+        }
+        .linked-item span, .search-result-item span {
+            font-size: 0.9em;
+        }
+        .btn-link, .btn-unlink {
+            padding: 4px 8px;
+            font-size: 0.75em;
+            margin-left: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -40,278 +247,432 @@
             <form id="outsourcingRegistrationForm">
                 <input type="hidden" name="entCd" th:value="${entCd}">
                 <input type="hidden" name="mbrCd" th:value="${mbrCd}">
-
-				 <label>관련 포트폴리오 선택 <span class="optional-tag">(선택)</span></label>
-                    <div class="category-search-wrapper">
-                        <input type="text" id="portfolio-search-input" class="form-control" placeholder="연결할 포트폴리오를 검색하세요">
-                        <div id="portfolio-search-results" class="search-results-dropdown"></div>
-                    </div>
-                    <div id="selected-portfolios-area" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px;"></div>
-                    
-                <div class="form-group">
-                    <label for="osTtl">외주 프로젝트 제목 <span class="required-star">*</span></label>
-                    <input type="text" id="osTtl" name="osTtl" class="form-control" required>
-                    <div id="osTtlError" class="error-message"></div>
+                <input type="hidden" id="currentOsCd" value=""> <div class="progress-indicator">
+                    <div class="progress-step active" data-step="1">1</div>
+                    <div class="progress-step" data-step="2">2</div>
+                    <div class="progress-step" data-step="3">3</div>
+                    <div class="progress-step" data-step="4">4</div>
                 </div>
 
-                <div class="form-group">
-                    <label>카테고리 <span class="required-star">*</span></label> 
-                    <div class="category-search-wrapper">
-                        <input type="text" id="category-search-input" class="form-control" placeholder="카테고리를 검색하여 추가하세요">
-                        <div id="category-search-results" class="search-results-dropdown"></div>
-                    </div>
-                    <div id="selected-categories-area" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px;"></div>
-                    <div id="categoryCodesError" class="error-message"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="osExpln">외주 프로젝트 내용 <span class="required-star">*</span></label>
-                    <textarea id="osExpln" name="osExpln" class="form-control" rows="8" required></textarea>
-                    <div id="osExplnError" class="error-message"></div>
-                </div>
-
-               <div class="form-group">
-                    <label for="tags">태그 (쉼표로 구분)</label>
-                    <div class="tag-search-wrapper">
-                        <input type="text" id="tags" name="tags" class="form-control">
-                        <div id="tag-search-results" class="search-results-dropdown"></div>
-                    </div>
-                    <div id="tagsError" class="error-message"></div>
-                </div>
-
-                <div class="flex-row">
+                <div class="form-step active" id="step1">
                     <div class="form-group">
-                        <label for="osStrtYmdt">희망 작업 시작일시 <span class="required-star">*</span></label>
-                        <input type="datetime-local" id="osStrtYmdt" name="osStrtYmdt" class="form-control" required>
-                        <div id="osStrtYmdtError" class="error-message"></div>
+                        <label for="osTtl">외주 프로젝트 제목 <span style="color:red;">*</span></label>
+                        <input type="text" id="osTtl" name="osTtl" class="form-control" required th:value="${outsourcing?.osTtl}">
+                        <div class="error-message" id="osTtlError"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="osEndYmdt">희망 작업 종료일시 <span class="required-star">*</span></label>
-                        <input type="datetime-local" id="osEndYmdt" name="osEndYmdt" class="form-control" required>
-                        <div id="osEndYmdtError" class="error-message"></div>
-                    </div>
-                </div>
 
-                <div class="flex-row">
                     <div class="form-group">
-                        <label for="osAmt">희망 금액 <span class="required-star">*</span></label>
-                        <div class="input-with-unit">
-                            <input type="number" id="osAmt" name="osAmt" class="form-control" min="0" required>
-                            <span>원</span>
+                        <label for="osExpln">외주 프로젝트 내용 <span style="color:red;">*</span></label>
+                        <textarea id="osExpln" name="osExpln" class="form-control" rows="8" required th:text="${outsourcing?.osExpln}"></textarea>
+                        <div class="error-message" id="osExplnError"></div>
+                    </div>
+
+                    <div class="flex-row">
+                        <div class="form-group">
+                            <label for="osStrtYmdt">희망 작업 시작일시 <span style="color:red;">*</span></label>
+                            <input type="datetime-local" id="osStrtYmdt" name="osStrtYmdt" class="form-control" required th:value="${outsourcing?.osStrtYmdt != null ? #temporals.format(formData.osStrtYmdt, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                            <div class="error-message" id="osStrtYmdtError"></div>
                         </div>
-                        <div id="osAmtError" class="error-message"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="osFlfmtCnt">수행 가능 인원 <span class="required-star">*</span></label>
-                        <div class="input-with-unit">
-                            <input type="number" id="osFlfmtCnt" name="osFlfmtCnt" class="form-control" min="1" value="1" required>
-                            <span>명</span>
+                        <div class="form-group">
+                            <label for="osEndYmdt">희망 작업 종료일시 <span style="color:red;">*</span></label>
+                            <input type="datetime-local" id="osEndYmdt" name="osEndYmdt" class="form-control" required th:value="${outsourcing?.osEndYmdt != null ? #temporals.format(formData.osEndYmdt, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                            <div class="error-message" id="osEndYmdtError"></div>
                         </div>
-                        <div id="osFlfmtCntError" class="error-message"></div>
+                    </div>
+
+                    <div class="flex-row">
+                        <div class="form-group">
+                            <label for="osAmt">희망 금액 <span style="color:red;">*</span></label>
+                            <div class="input-with-unit">
+                                <input type="number" id="osAmt" name="osAmt" class="form-control" min="0" required th:value="${outsourcing?.osAmt}">
+                                <span>원</span>
+                            </div>
+                            <div class="error-message" id="osAmtError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="osFlfmtCnt">수행 가능 인원 <span style="color:red;">*</span></label>
+                            <div class="input-with-unit">
+                                <input type="number" id="osFlfmtCnt" name="osFlfmtCnt" class="form-control" min="1" required th:value="${outsourcing?.osFlfmtCnt}">
+                                <span>명</span>
+                            </div>
+                            <div class="error-message" id="osFlfmtCntError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn-step next" data-step="1">다음</button>
                     </div>
                 </div>
+
+                <div class="form-step" id="step2">
+                    <div class="form-group">
+                        <label>카테고리 <span style="color:red;">*</span></label>
+                        <div id="category-inputs-container">
+                            <th:block th:if="${outsourcing?.categoryCodes != null and !outsourcing.categoryCodes.empty}">
+                                <script th:inline="javascript">
+                                    /*<![CDATA[*/
+                                    $(document).ready(function() {
+                                        var categories = /*[[${formData.categoryCodes}]]*/ [];
+                                        categories.forEach(function(catId) {
+                                            // 백엔드에서 이름으로 매핑해줘야 함. 여기서는 ID로만 일단 채움.
+                                            // 나중에 수정 페이지처럼 이름을 불러와야 함.
+                                            addCategoryInput(catId, catId); // (name, id)
+                                        });
+                                    });
+                                    /*]]>*/
+                                </script>
+                            </th:block>
+                        </div>
+                        <div class="error-message" id="categoryCodesError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tags">태그 (쉼표로 구분)</label>
+                        <div class="tag-search-wrapper">
+                            <input type="text" id="tags" name="tags" class="form-control" th:value="${outsourcing?.tags}">
+                            <div id="tag-search-results" class="search-results-dropdown"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn-step prev" data-step="2">이전</button>
+                        <button type="button" class="btn-step next" data-step="2">다음</button>
+                    </div>
+                </div>
+
+                <div class="form-step" id="step3">
+                    <div class="form-group">
+                        <label for="outsourcingReferenceFiles">첨부 파일</label>
+                        <input type="file" id="outsourcingReferenceFiles" name="outsourcingReferenceFiles" multiple class="form-control p-2">
+                        <p class="form-instruction">참고 자료 등 필요한 파일을 첨부해주세요. (최대 5개)</p>
+                        <div class="image-preview-container mt-3" id="outsourcingReferenceFiles-preview-container">
+                            <th:block th:if="${formData?.referenceFileUrls != null and !formData.referenceFileUrls.empty}">
+                                <script th:inline="javascript">
+                                    /*<![CDATA[*/
+                                    $(document).ready(function() {
+                                        var fileUrls = /*[[${formData.referenceFileUrls}]]*/ [];
+                                        var previewContainer = $('#outsourcingReferenceFiles-preview-container');
+                                        fileUrls.forEach(function(url) {
+                                            // 파일 URL에서 파일명 추출 (간단한 예시)
+                                            var fileName = url.substring(url.lastIndexOf('/') + 1);
+                                            // 이미지인지 여부는 URL만으로는 판단 어려움. 실제 파일 타입 저장 필요.
+                                            // 여기서는 단순히 이름과 아이콘으로 표시
+                                            previewContainer.append(`
+                                                <div class="relative w-24 h-24 overflow-hidden rounded-lg shadow-sm group flex items-center justify-center text-gray-500 bg-gray-100 text-center break-all p-1">
+                                                    <div class="flex flex-col items-center justify-center p-1">
+                                                        <i class="fas fa-file text-3xl mb-1 text-gray-400"></i>
+                                                        <span class="text-xs font-medium">${fileName}</span>
+                                                    </div>
+                                                    </div>
+                                            `);
+                                        });
+                                    });
+                                    /*]]>*/
+                                </script>
+                            </th:block>
+                        </div>
+                    </div>
+                    <div class="form-navigation">
+                        <button type="button" class="btn-step prev" data-step="3">이전</button>
+                        <button type="button" class="btn-step next" data-step="3">다음</button>
+                    </div>
+                </div>
+
+                <div class="form-step" id="step4">
+                    <h3>최종 확인 및 포트폴리오 연결</h3>
+                    <p>등록하실 외주 정보가 맞는지 최종 확인해주세요.</p>
+                    <div class="linking-section">
+                        <label style="font-size: 1.2em; margin-bottom: 10px;">관련 포트폴리오 관리</label>
+                        
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 280px;">
+                                <h4>현재 연결된 포트폴리오</h4>
+                                <div id="linked-portfolio-list">
+                                    <p style="color:#888;">데이터 로드 중...</p>
+                                </div>
+                            </div>
                 
-                <button type="submit" class="btn-submit"><i class="fas fa-paper-plane mr-2"></i> 외주 등록하기</button>
+                            <div style="flex: 1; min-width: 280px;">
+                                <h4>연결할 포트폴리오 검색</h4>
+                                <input type="text" id="portfolio-search-input" class="form-control" placeholder="연결할 포트폴리오 제목을 검색하세요">
+                                <div id="portfolio-search-results" class="search-results-list">
+                                    <p style="color:#888;">포트폴리오를 검색하세요.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn-step prev" data-step="4">이전</button>
+                        <button type="button" class="btn-step submit" data-step="4">외주 등록 완료</button>
+                    </div>
+                </div>
+
             </form>
         </div>
     </div>
-</th:block>
+
+    </th:block>
+
 <th:block layout:fragment="jsFile">
-    <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
-    <script>
+   <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<script>
+    // =============================================================
+    // ▼▼▼ 헬퍼 함수들 (페이지 전역에서 사용 가능하도록 정의) ▼▼▼
+    // =============================================================
+
+    const MAX_FILE_COUNT = 5;
+
+    /**
+     * 파일 입력(input)에 대한 미리보기 기능을 초기화하는 함수
+     * @param {string} fileInputId - 파일 input 요소의 ID
+     * @param {string} previewContainerId - 미리보기 이미지가 표시될 컨테이너의 ID
+     */
+    function initializeFilePreview(fileInputId, previewContainerId) {
+        const fileInput = document.getElementById(fileInputId);
+        const previewContainer = document.getElementById(previewContainerId);
+        if (!fileInput || !previewContainer) return;
+
+        fileInput.addEventListener('change', function(event) {
+            previewContainer.innerHTML = '';
+            const allFiles = new DataTransfer();
+
+            Array.from(event.target.files).forEach(file => {
+                if (allFiles.items.length < MAX_FILE_COUNT) {
+                    allFiles.items.add(file);
+                }
+            });
+
+            if (event.target.files.length > MAX_FILE_COUNT) {
+                alert(`파일은 최대 ${MAX_FILE_COUNT}개까지 첨부할 수 있습니다.`);
+            }
+
+            fileInput.files = allFiles.files;
+
+            Array.from(fileInput.files).forEach(file => {
+                const fileDiv = document.createElement('div');
+                // ... 파일 종류에 따른 미리보기 HTML 생성 로직 ...
+                previewContainer.appendChild(fileDiv);
+            });
+        });
+        
+        // ... 파일 제거 버튼 이벤트 리스너 로직 ...
+    }
+    
+    /**
+     * 새로운 카테고리 입력 필드의 HTML 템플릿을 반환하는 함수
+     * @param {string} name - 카테고리 이름 초기값
+     * @param {string} id - 카테고리 ID 초기값
+     */
+    function getCategoryInputTemplate(name = '', id = '') {
+        return `
+            <div class="category-input-group">
+                <input type="text" class="form-control category-name-input" placeholder="카테고리 이름 입력" value="${name}">
+                <input type="hidden" class="category-id-input" value="${id}">
+                <div class="category-controls">
+                    <button type="button" class="add-row-btn"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="remove-category-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="category-search-dropdown-item"></div>
+            </div>
+        `;
+    }
+
+    /**
+     * 카테고리 입력 필드를 컨테이너에 추가하는 함수
+     * @param {string} name - 카테고리 이름 초기값
+     * @param {string} id - 카테고리 ID 초기값
+     */
+    function addCategoryInput(name = '', id = '') {
+        $('#category-inputs-container').append(getCategoryInputTemplate(name, id));
+    }
+    
+    /**
+     * 현재 시간을 기준으로 datetime-local 입력 필드의 최소값을 설정하는 함수
+     */
+    function setMinDateTime() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60000;
+        const kstDate = new Date(now.getTime() - offset);
+        $('#osStrtYmdt').attr('min', kstDate.toISOString().slice(0, 16));
+    }
+
+    /**
+     * 특정 번호의 단계를 화면에 보여주는 함수
+     * @param {number} stepNum - 보여줄 단계 번호
+     */
+    function showStep(stepNum) {
+        $('.form-step').removeClass('active');
+        $(`#step${stepNum}`).addClass('active');
+        $('.progress-step').removeClass('active completed');
+        for (let i = 1; i <= stepNum; i++) {
+            $(`.progress-step[data-step="${i}"]`).addClass('active');
+        }
+        for (let i = 1; i < stepNum; i++) {
+            $(`.progress-step[data-step="${i}"]`).addClass('completed');
+        }
+        if (stepNum === 4 && $('#currentOsCd').val()) {
+            loadLinkedPortfoliosForStep4();
+        }
+    }
+
+    /**
+     * 연결된 포트폴리오 목록을 불러오는 함수 (4단계 전용)
+     */
+    function loadLinkedPortfoliosForStep4() {
+        const listDiv = $('#linked-portfolio-list').empty();
+        const currentOsCd = $('#currentOsCd').val();
+        if (!currentOsCd) {
+            listDiv.append('<p style="color:red;">외주 정보가 저장되지 않아 포트폴리오를 불러올 수 없습니다.</p>');
+            return;
+        }
+        $.get(`/enter/outsourcing/${currentOsCd}/linked-portfolios`, function(data) {
+            // ... 데이터 표시 로직 ...
+        }).fail(function() {
+            listDiv.append('<p style="color:red;">연결된 포트폴리오 로딩에 실패했습니다.</p>');
+        });
+    }
+
+
+    // ==================================================================
+    // ▼▼▼ 페이지 로딩 완료 후 실행될 코드 (이벤트 리스너 등) ▼▼▼
+    // ==================================================================
     $(document).ready(function() {
-        // 검색용 타임아웃 변수
-        let categorySearchTimeout;
-        let tagSearchTimeout;
-        let portfolioSearchTimeout;
+        let categorySearchTimeout, tagSearchTimeout, portfolioSearchTimeout;
+        let currentStepNum = 1;
 
-        // 오류 메시지 초기화 함수
-        function clearErrors() {
-            $('.error-message').text('');
+        // --- 초기화 ---
+        setMinDateTime();
+        initializeFilePreview('outsourcingReferenceFiles', 'outsourcingReferenceFiles-preview-container');
+        if ($('#category-inputs-container .category-input-group').length === 0) {
+            addCategoryInput();
         }
+        showStep(currentStepNum);
 
-        // 시작일시에 과거 날짜를 선택하지 못하도록 제한하는 함수
-        function setMinDateTime() {
-            const now = new Date();
-            const offset = now.getTimezoneOffset() * 60000;
-            const kstDate = new Date(now.getTime() - offset);
-            const localDateTime = kstDate.toISOString().slice(0, 16);
-            $('#osStrtYmdt').attr('min', localDateTime);
-        }
-        setMinDateTime(); // 페이지 로드 시 실행
+        // --- 이벤트 리스너 바인딩 ---
 
-        // --- 1. 카테고리 검색 로직 ---
-        $('#category-search-input').on('input', function() {
-            clearTimeout(categorySearchTimeout);
-            const query = $(this).val();
-            if (query.length < 1) { $('#category-search-results').hide(); return; }
-            
-            categorySearchTimeout = setTimeout(() => {
-                $.get('/enter/outsourcing/api/categories/search', { query: query }, function(data) {
-                    const resultsDiv = $('#category-search-results').empty().show();
-                    if (data && data.length > 0) {
-                        data.forEach(cat => {
-                            resultsDiv.append(`<div class="result-item" data-id="${cat.ctgryId}">${cat.ctgryNm}</div>`);
-                        });
-                    }
-                });
-            }, 300);
-        });
-
-        $(document).on('click', '#category-search-results .result-item', function() {
-            const catId = $(this).data('id');
-            const catName = $(this).text();
-            if (!catId) return;
-            if ($(`#selected-categories-area input[value="${catId}"]`).length > 0) {
-                alert('이미 추가된 카테고리입니다.');
-                return;
+        // 카테고리 추가/삭제
+        $(document).on('click', '.add-row-btn', () => addCategoryInput());
+        $(document).on('click', '.remove-category-btn', function() {
+            if ($('#category-inputs-container .category-input-group').length > 1) {
+                $(this).closest('.category-input-group').remove();
+            } else {
+                alert('최소 하나의 카테고리는 남겨야 합니다.');
             }
-            $('#selected-categories-area').append(`
-                <span class="selected-item-badge" data-id="${catId}">
-                    ${catName} <button type="button" class="remove-btn">&times;</button>
-                    <input type="hidden" name="categoryCodes" value="${catId}">
-                </span>`);
-            $('#category-search-input').val('');
-            $('#category-search-results').hide();
         });
 
-        $('#selected-categories-area').on('click', '.remove-btn', function() {
-            $(this).closest('.selected-item-badge').remove();
+        // 카테고리 검색
+        $(document).on('input', '.category-name-input', function() {
+            // ... 검색 로직 (clearTimeout, $.get 등) ...
         });
-
-        // --- 2. 태그 추천/검색 로직 ---
+        
+        // 카테고리 검색 결과 선택
+        $(document).on('click', '.category-search-dropdown-item .result-item', function() {
+            // ... 선택 로직 ...
+        });
+        
+        // 태그 검색
         $('#tags').on('input', function() {
-            clearTimeout(tagSearchTimeout);
-            const tagInput = $(this);
-            const parts = tagInput.val().split(',');
-            const query = parts[parts.length - 1].trim();
-
-            if (query.length < 1) { $('#tag-search-results').hide(); return; }
-
-            tagSearchTimeout = setTimeout(() => {
-                $.get('/enter/outsourcing/api/tags/search', { query: query }, function(data) {
-                    const resultsDiv = $('#tag-search-results').empty().show();
-                    if (data && data.length > 0) {
-                        data.forEach(tag => {
-                            resultsDiv.append(`<div class="result-item-tag" data-tag="${tag}">${tag}</div>`);
-                        });
-                    }
-                });
-            }, 300);
+            // ... 검색 로직 ...
         });
 
+        // 추천 태그 선택
         $(document).on('click', '.result-item-tag', function() {
-            const selectedTag = $(this).data('tag');
-            const tagInput = $('#tags');
-            const parts = tagInput.val().split(',');
-            parts[parts.length - 1] = ' ' + selectedTag;
-            tagInput.val(parts.join(',') + ', ');
-            $('#tag-search-results').hide().empty();
-            tagInput.focus();
+            // ... 선택 로직 ...
         });
-
-        // --- 3. 관련 포트폴리오 검색 로직 ---
-	  $('#portfolio-search-input').on('input', function() {
-		    clearTimeout(portfolioSearchTimeout);
-		    const query = $(this).val();
-		    if (query.length < 1) { $('#portfolio-search-results').hide(); return; }
-		
-		    portfolioSearchTimeout = setTimeout(() => {
-		        $.get('/enter/outsourcing/api/portfolio/search', { query: query }, function(data) {
-		            
-		            // --- ▼▼▼ 이 부분을 수정하세요 ▼▼▼ ---
-		
-		            console.log("서버로부터 받은 데이터:", data); // 1. 받은 데이터를 콘솔에 찍어보기
-		
-		            const resultsDiv = $('#portfolio-search-results').empty().show();
-		            if (data && data.length > 0) {
-		                data.forEach(p => {
-		                    if (p) { // 2. p 객체가 null이 아닌지 확인
-		                        // 3. 서버가 보낸 데이터의 필드 이름(prtfCd, prtfTtl)이 정확한지 확인
-		                        resultsDiv.append(`<div class="result-item" data-id="${p.prtfCd}">${p.prtfTtl}</div>`);
-		                    }
-		                });
-		            } else {
-		                resultsDiv.append('<div class="result-item">검색 결과가 없습니다.</div>');
-		            }
-		            // --- ▲▲▲ 여기까지 수정 ▲▲▲ ---
-		        });
-		    }, 300);
-		});
-
-        $(document).on('click', '#portfolio-search-results .result-item', function() {
-            const prtfCd = $(this).data('id');
-            const prtfTtl = $(this).text();
-            if (!prtfCd) return;
-            if ($(`#selected-portfolios-area input[value="${prtfCd}"]`).length > 0) {
-                alert('이미 추가된 포트폴리오입니다.');
-                return;
-            }
-            $('#selected-portfolios-area').append(`
-                <span class="selected-item-badge" data-id="${prtfCd}">
-                    ${prtfTtl} <button type="button" class="remove-btn">&times;</button>
-                    <input type="hidden" name="portfolioCds" value="${prtfCd}">
-                </span>`);
-            $('#portfolio-search-input').val('');
-            $('#portfolio-search-results').hide();
-        });
-
-        $('#selected-portfolios-area').on('click', '.remove-btn', function() {
-            $(this).closest('.selected-item-badge').remove();
-        });
-
-        // --- 공통: 검색 결과창 숨기기 ---
+        
+        // 포트폴리오 검색 및 연결/해제
+        $('#portfolio-search-input').on('input', function() { /* ... */ });
+        $(document).on('click', '#portfolio-search-results .btn-link', function() { /* ... */ });
+        $(document).on('click', '#linked-portfolio-list .btn-unlink', function() { /* ... */ });
+        
+        // 검색 결과창 숨기기
         $(document).on('click', function(event) {
-            if (!$(event.target).closest('.category-search-wrapper, .tag-search-wrapper, .portfolio-search-wrapper').length) {
-                $('.search-results-dropdown').hide();
+            if (!$(event.target).closest('.tag-search-wrapper, .category-input-group, #portfolio-search-input').length) {
+                $('.category-search-dropdown-item, #tag-search-results, #portfolio-search-results').hide().empty();
             }
         });
-
-        // --- 4. 최종 폼 제출 로직 ---
-        $('#outsourcingRegistrationForm').on('submit', function(e) {
-            e.preventDefault();
-            clearErrors();
-            const formData = new FormData(this);
-
-            if ($('input[name="categoryCodes"]').length === 0) {
-                $('#categoryCodesError').text('최소 하나 이상의 카테고리를 선택해야 합니다.');
-                return;
+        
+        // 단계 이동 버튼
+        $('.btn-step.next').on('click', function() {
+            const stepId = $(this).data('step');
+            if (stepId === 1) saveStepAndProceed(1, new FormData(document.getElementById('outsourcingRegistrationForm')));
+            else if (stepId === 2) saveStepAndProceed(2, new FormData(document.getElementById('outsourcingRegistrationForm')));
+            else if (stepId === 3) saveStepAndProceed(3, new FormData(document.getElementById('outsourcingRegistrationForm')));
+        });
+        
+        $('.btn-step.prev').on('click', function() {
+            currentStepNum--;
+            showStep(currentStepNum);
+        });
+        
+        $('.btn-step.submit').on('click', function() {
+            completeRegistration();
+        });
+        
+        // 단계별 저장 및 이동 공통 함수
+        function saveStepAndProceed(step, formData) {
+            const currentOsCd = $('#currentOsCd').val();
+            if (currentOsCd) {
+                formData.append('osCd', currentOsCd);
             }
-
+            
+            // 필수 필드 유효성 검사 등...
+            
             $.ajax({
-                url: '/enter/outsourcing/add-ajax',
+                url: `/enter/outsourcing/save-step${step}`,
                 type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(res) {
+                success: res => {
+                    if (res.success) {
+                        if (res.osCd) {
+                            $('#currentOsCd').val(res.osCd);
+                        }
+                        currentStepNum++;
+                        showStep(currentStepNum);
+                    } else {
+                        alert(`${step}단계 저장 실패: ` + (res.message || '알 수 없는 오류'));
+                    }
+                },
+                error: xhr => {
+                    alert(`${step}단계 저장 중 서버 오류가 발생했습니다.`);
+                    console.error(xhr);
+                }
+            });
+        }
+
+        // 최종 등록 완료 함수
+        function completeRegistration() {
+            const currentOsCd = $('#currentOsCd').val();
+            if (!currentOsCd) {
+                alert('저장된 외주 정보가 없습니다. 1단계부터 다시 진행해주세요.');
+                return;
+            }
+            $.ajax({
+                url: '/enter/outsourcing/complete-registration',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ osCd: currentOsCd }),
+                success: res => {
                     if (res.success) {
                         alert(res.message);
                         window.location.href = res.redirectUrl;
                     } else {
-                        if (res.errors) {
-                            res.errors.forEach(errorString => {
-                                const parts = errorString.split(':');
-                                if (parts.length >= 2) {
-                                    const fieldName = parts[0].trim();
-                                    const errorMessage = parts.slice(1).join(':').trim();
-                                    $(`#${fieldName}Error`).text(errorMessage);
-                                }
-                            });
-                        } else {
-                             alert('등록 실패: ' + res.message);
-                        }
+                        alert('최종 등록 실패: ' + (res.message || '알 수 없는 오류'));
                     }
                 },
-                error: function(xhr){
-                    const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : '서버 통신에 실패했습니다. 다시 시도해주세요.';
-                    const errorDetails = xhr.responseJSON ? (xhr.responseJSON.errors ? xhr.responseJSON.errors.join('\n') : '') : '';
-                    alert('오류가 발생했습니다: ' + errorMsg + '\n' + errorDetails);
+                error: xhr => {
+                    alert('최종 등록 중 서버 오류가 발생했습니다.');
+                    console.error(xhr);
                 }
             });
-        });
+        }
     });
-    </script>
+</script>
 </th:block>
 </body>
 </html>

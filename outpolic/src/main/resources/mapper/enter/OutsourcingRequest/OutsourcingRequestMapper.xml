@@ -1,26 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.enter.outsourcingRequest.mapper.OutsourcingRequestMapper">
-	<select id="findLatestOcdCd" resultType="String">
-		SELECT 
-			ocd_cd
+	
+	<select id="searchEnterprises" resultType="map">
+		SELECT
+			ent_cd as id, ent_nm as name
 		FROM
-			outsourcing_contract_details
-		ORDER BY ocd_cd DESC LIMIT 1		
+			enterprise
+		WHERE
+			ent_nm LIKE CONCAT('%',#{query},'%')		
 	</select>
+	<insert id="insertRequest" parameterType="OutsourcingRequestDTO">
+        INSERT INTO outsourcing_contract_details (
+            ocd_cd, ocd_req_type, mbr_cd, ent_cd, cl_cd, ocd_ttl, 
+            ocd_expln, ocd_frctn_cmdty, ocd_dlvgds_mthd, ocd_dedline, 
+            ocd_amt, stc_cd, ocd_dmnd_ymdt, ocd_yn
+        ) VALUES (
+            #{ocd_cd}, #{ocd_req_type}, #{mbr_cd}, #{ent_cd}, #{cl_cd}, #{ocd_ttl},
+            #{ocd_expln}, #{ocd_frctn_cmdty}, #{ocd_dlvgds_mthd}, #{ocd_dedline},
+            #{ocd_amt}, 'SD_BEFORE', NOW(), 'N'
+        )
+    </insert>
+    <select id="findAllRequestsByUserId" resultType="RequestViewDTO">
+        SELECT
+            ocd.ocd_cd,
+            ocd.ocd_req_type,
+            ocd.ocd_ttl,
+            m.mbr_nm AS demanderName,
+            e.ent_nm AS supplierName,
+            ocd.ocd_dmnd_ymdt,
+            ocd.stc_cd
+        FROM
+            outsourcing_contract_details ocd
+        JOIN
+            member m ON ocd.mbr_cd = m.mbr_cd
+        JOIN
+            enterprise e ON ocd.ent_cd = e.ent_cd
+        WHERE
+            ocd.mbr_cd = #{userId} OR ocd.ent_cd = #{userId}
+        ORDER BY
+            ocd.ocd_dmnd_ymdt DESC
+    </select>
+    
+    
 	
-	<insert id="insertContentListForRequest">
-		INSERT INTO content_list (cl_cd,cntd_cd,cl_reg_ymdt)
-		VALUES (#{clCd}, #{ocdCd},NOW())
-	
-	</insert>
-	
-	<insert id="insertOutsourcingRequest" parameterType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequest">
-		INSERT INTO outsourcing_contract_details
-			(ocd_cd,ocd_req_type,mbr_cd,ent_cd,ocd_ttl,ocd_frctn_cmdty,ocd_dlvgds_mthd,ocd_expln,ocd_dedline,ocd_amt, stc_cd,ocd_dmnd_ymdt, ocd_yn)
-		VALUES
-			(#{ocdCd},#{ocdReqType},#{mbrCd},#{entCd},#{clCd},#{ocdTtl},#{ocdFrctnCmdty},#{ocdExpln},#{ocdDedLine},#{ocdAmt},#{stcCd},NOW(),'N')
-				
-	
-	</insert>
 </mapper>

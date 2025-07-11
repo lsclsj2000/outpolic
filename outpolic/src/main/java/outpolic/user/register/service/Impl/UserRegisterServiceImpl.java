@@ -1,5 +1,6 @@
 package outpolic.user.register.service.Impl;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -13,19 +14,16 @@ public class UserRegisterServiceImpl implements UserRegisterService {
 	
 	
 	private final UserRegisterMapper userRegisterMapper;
-	
+	 private final PasswordEncoder passwordEncoder;
+	// 회원 기본키 생성
 	@Override
 	public String getNextMemberCode() {
 		
 		return userRegisterMapper.getNextMemberCode();
 	}
 
-	@Override
-	public int registerMember(Member member) {
-		
-		return userRegisterMapper.UserRegister(member);
-	}
 
+	// 회원 정보 중복확인
 	@Override
 	public boolean isUserInfoDuple(String type, String value) {
 		switch (type) {
@@ -41,11 +39,23 @@ public class UserRegisterServiceImpl implements UserRegisterService {
 		return false;
 		}
 	}
-	
+	//회원 랜덤닉네임 생성
 	@Override
 	public String getRandomNickname() {
 	    return userRegisterMapper.getRandomNickname();
 	}
+	
+	//회원 비밀번호 암호화
+	// 회원가입처리
+    @Override
+    public int registerMember(Member member) {
+        // 👉 비밀번호 암호화
+        String rawPw = member.getMemberPw();
+        String encodedPw = passwordEncoder.encode(rawPw);
+        member.setMemberPw(encodedPw);
+
+        return userRegisterMapper.UserRegister(member);
+    }
 }
 
 

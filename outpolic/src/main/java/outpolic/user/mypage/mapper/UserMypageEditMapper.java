@@ -9,16 +9,16 @@ import outpolic.user.mypage.dto.UserInfoDTO;
 public interface UserMypageEditMapper {
 
 	//특정 회원 조회
-	 UserInfoDTO getUserInfoById(String memberId);
+	 UserInfoDTO getUserInfoByCode(String memberCode);
 	 
 	 // 특정 회원 수정
 	 // 회원의 수정된 행 값을 리턴하기때문에 int를 사용한당
 //	 int userEditInfo(UserMypage user);
 	 int updateUserInfo(UserInfoDTO userInfo);
 	 // 중복확인
-	 boolean isNickNameDuplicated(@Param("memberNickname") String memberNickname, @Param("memberId") String memberId);
-	 boolean isEmailDuplicated(@Param("memberEmail") String memberEmail, @Param("memberId") String memberId);
-	 boolean isTelDuplicated(@Param("memberTelNo") String memberTelNo, @Param("memberId") String memberId);
+	 boolean isNickNameDuplicated(@Param("memberNickname") String memberNickname, @Param("memberCode") String memberCode);
+	 boolean isEmailDuplicated(@Param("memberEmail") String memberEmail, @Param("memberCode") String memberCode);
+	 boolean isTelDuplicated(@Param("memberTelNo") String memberTelNo, @Param("memberCode") String memberCode);
 	 
 	/*
 	 * int countByNickname(@Param("memberNickName") String memberNickName,

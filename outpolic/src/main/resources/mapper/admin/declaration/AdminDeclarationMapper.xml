@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="outpolic.admin.declaration.mapper.AdminDeclarationMapper">
+	<!-- AdminInquiry.DTO -->
+	<resultMap id="AdminDeclarationResultMap" type="outpolic.admin.declaration.domain.AdminDeclaration">
+		<id 	column="decl_cd" 			property="declarationCode"/>
+		<result column="dt_cd" 				property="declarationTypeCode"/>
+		<result column="dt_nm" 				property="declarationTypeName"/>
+		<result column="dr_cd" 				property="declarationReasonCode"/>
+		<result column="dt_nm" 				property="declarationReasonName"/>
+		<result column="mbr_cd" 			property="declarationMemberCode"/>
+		<result column="decl_target_cd" 	property="declarationTargetCode"/>
+		<result column="decl_reg_ymdt" 		property="declarationRegYmdt"/>
+		<result column="stc_cd" 			property="declarationStcCode"/>
+		<result column="stc_nm" 			property="declarationStcName"/>
+		<result column="drc_cd" 			property="declarationResultCode"/>
+		<result column="drc_nm" 			property="declarationResultName"/>
+	</resultMap>
+	
+	<resultMap id="AdminDeclarationTypeMap" type="outpolic.admin.declaration.domain.AdminDeclaration">
+		<id 	column="dt_cd" 				property="declarationTypeCode"/>
+		<result column="dt_nm" 				property="declarationTypeName"/>
+		<result column="dt_expln" 			property="declarationTypeExpln"/>
+		<result column="stc_cd" 			property="declarationTypeStcCode"/>
+		<result column="stc_nm" 			property="declarationTypeStcName"/>
+		<result column="dt_reg_adm_cd" 		property="declarationTypeRegAdmCode"/>
+		<result column="dt_reg_ymdt" 		property="declarationTypeRegYmdt"/>
+		<result column="dt_mdfcn_adm_cd" 	property="declarationTypeMdfcnAdmCode"/>
+		<result column="dt_mdfcn_ymdt" 		property="declarationTypeMdfcnYmdt"/>
+	</resultMap>
+	
+	<select id="getAdminDeclarationTypeList" resultMap="AdminDeclarationTypeMap">
+		/* 신고 타입 내역 조회 */
+		select
+			dt.dt_cd as dt_cd,
+			dt.dt_nm as dt_nm,
+			dt.dt_expln as dt_expln,
+			dt.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			dt.dt_reg_adm_cd as dt_reg_adm_cd,
+			dt.dt_reg_ymdt as dt_reg_ymdt,
+			dt.dt_mdfcn_adm_cd as dt_mdfcn_adm_cd,
+			dt.dt_mdfcn_ymdt as dt_mdfcn_ymdt
+		from
+			declaration_type dt 
+			left join status_code sc on dt.stc_cd = sc.stc_cd
+		order by
+			dt.dt_reg_ymdt;
+	</select>
+	
+	<select id="getAdminDeclarationList" resultMap="AdminDeclarationResultMap">
+		/* 신고 내역 리스트 조회 */
+		SELECT
+			d.decl_cd as decl_cd,
+			d.dt_cd as dt_cd,
+			dt.dt_nm as dt_nm,
+			d.dr_cd as dr_cd,
+			dr.dr_nm as dt_nm,
+			d.mbr_cd as mbr_cd,
+			d.decl_target_cd as decl_target_cd,
+			d.decl_reg_ymdt as decl_reg_ymdt,
+			d.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			dp.drc_cd as drc_cd,
+			drc.drc_nm as drc_nm
+		from
+			declaration d
+			left join declaration_type dt on d.dt_cd = dt.dt_cd
+			left join declaration_reason dr on d.dr_cd = dr.dr_cd
+			left join status_code sc on d.stc_cd = sc.stc_cd
+			left join declaration_process dp on d.decl_cd = dp.decl_cd
+			left join declaration_result_code drc on dp.drc_cd = drc.drc_cd
+		order by
+			d.decl_reg_ymdt desc;
+	</select>
+	
+</mapper>

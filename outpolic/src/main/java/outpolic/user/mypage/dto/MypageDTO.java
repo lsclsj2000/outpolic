@@ -10,6 +10,7 @@ public class MypageDTO {
 	// 마이페이지 구현에 필요한 여러 dto의 집합
 	// 마이페이지의 메인 화면에 노출시킬 몇몇 개인정보
 	private String memberId;
+	private String memberCode;
     private String memberName;
     private String memberNickname;
     private String memberTelNo;

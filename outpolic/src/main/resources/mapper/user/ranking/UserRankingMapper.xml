@@ -3,16 +3,54 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="outpolic.user.ranking.mapper.UserRankingMapper">
-    <resultMap id="ContentsRankingMap" type="outpolic.user.ranking.domain.UserRankingContentsDTO">
-        <id 	property="rankingView" 		column="rk_view" />
-        <result property="osCode" 	column="os_cd" />
-        <result property="entName" column="ent_nm" />
-        <result property="ctgryName" column="ctgry_nm" />
-        <result property="osTtl" column="os_ttl" />
-        <result property="osExpln" column="os_expln" />
-        <result property="reviewScore" column="avg_review_score" />
-        
+ 
+ 	<resultMap  id="PortfolioContentsRankingMap" type="outpolic.user.ranking.domain.UserPortfolioRankingContentsDTO">
+        <id 	property="prtfCode" 		column="prtf_cd" />
+        <result property="entCode" 			column="ent_cd" />
+        <result property="entName" 			column="ent_nm" />
+        <result property="prtfTtl" 			column="prtf_ttl" />
+        <result property="prtfDate" 		column="prtf_reg_ymdt" />
+        <result property="ctgryName" 		column="ctgry_nm" />
+        <result property="stcCode" 			column="stc_cd" />
+        <result property="rankingView" 		column="rk_view" />
+        <result property="rkDate" 			column="rk_tot_ymd" />
     </resultMap>
+ 
+    <resultMap  id="ContentsRankingMap" type="outpolic.user.ranking.domain.UserRankingContentsDTO">
+        <id 	property="osCode" 			column="os_cd" />
+        <result property="rankingView" 		column="rk_view" />
+        <result property="entName"		 	column="ent_nm" />
+        <result property="ctgryName" 		column="ctgry_nm" />
+        <result property="osTtl" 			column="os_ttl" />
+        <result property="osExpln" 			column="os_expln" />
+        <result property="reviewScore" 		column="avg_review_score" />
+        <result property="osAtm" 			column="os_amt" />
+    </resultMap>
+    <!-- 포트폴리오 랭킹 -->
+    <select id="getUserRankingPoContents" resultMap="PortfolioContentsRankingMap">
+    	select
+			p.prtf_cd,
+			p.ent_cd,
+			e.ent_nm,
+			p.prtf_ttl,
+			p.prtf_reg_ymdt,
+			p.stc_cd,
+			c.ctgry_nm,
+			r.rk_view,
+			r.rk_tot_ymd
+		from
+			ranking r join content_list cl 
+			USING (cl_cd)
+			join portfolio p on cl.cntd_cd = p.prtf_cd
+			join enterprise e USING(ent_cd)
+			left join category_mapping cm on cl.cl_cd = cm.cl_cd
+			left join category c on cm.ctgry_id = c.ctgry_id
+		group by p.prtf_cd
+		ORDER BY 
+			r.rk_tot_ymd DESC, r.rk_view DESC
+		LIMIT 10;
+    </select>
+    <!-- 외주랭킹 -->
 	<select id="getUserRankingOsContents" resultMap="ContentsRankingMap">
 		SELECT
 		    r.rk_view,
@@ -21,7 +59,8 @@
 		    c.ctgry_nm,
 		    o.os_ttl,
 		    o.os_expln,
-		    IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score
+		    IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score,
+		    o.os_amt
 		FROM
 		    -- ▼▼▼ 핵심 변경점 1: 그냥 ranking 테이블 대신, 서브쿼리를 사용합니다 ▼▼▼
 		    (
@@ -62,7 +101,8 @@
 		    o.os_ttl,
 		    o.os_expln
 		ORDER BY
-		    r.rk_view DESC;
+		    r.rk_view DESC
+		LIMIT 10;
 				
 	</select>
  </mapper>

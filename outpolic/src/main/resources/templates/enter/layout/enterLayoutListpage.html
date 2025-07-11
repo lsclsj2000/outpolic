@@ -4,14 +4,16 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>user 메인 화면</title>
+    <title>enter 메인 화면</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="@{/user/assets/imgs/theme/favicon.svg}" />
+    <link rel="shortcut icon" type="image/x-icon" href="@{/enter/assets/imgs/theme/favicon.svg}" />
     <!-- Template CSS -->
-    <link rel="stylesheet" href="/user/assets/css/plugins/slider-range.css" />
-    <link rel="stylesheet" href="/user/assets/css/main.css?v=5.6" />
+    <link rel="stylesheet" href="/enter/assets/css/plugins/slider-range.css" />
+    <link rel="stylesheet" href="/enter/assets/css/enterRanking.css" />
+    <link rel="stylesheet" href="/enter/assets/css/main.css?v=5.6" />
+    <link rel="stylesheet" href="/enter/assets/css/enterChatRoom.css" />
 </head>
 
 <body>
@@ -20,48 +22,57 @@
 	<!-- header end -->
 	
 	<main class="main">
-		<div th:replace="~{enter/fragments/enterNavi :: enterNaviFragment}"></div>
-		<div th:replace="~{enter/fragments/enterCategoryContainer :: enterCategoryContainerFragment}"></div>
-		
-        <div class="container mb-30">
-            <div class="row flex-row-reverse">
-            	<div class="col-lg-4-5 pt-30">
-            		<div th:replace="~{enter/fragments/enterProductFillter :: enterProductFilterFragment}"></div>
-            	</div>
-            	<div th:replace="~{enter/fragments/enterSidebar :: enterSidebarFragment}"></div>
-            </div>
-            <!--/* 삽입할 부분을 선언 */-->
-			<th:block layout:fragment="contents"></th:block>
-        </div>
-    </main>
+	    <div class="container mb-30" style="width:1300px;">
+	        <div class="row"> <!-- flex-row-reverse 클래스는 필요하다면 유지 -->
+			    <div th:replace="~{enter/fragments/enterNavi :: enterNaviFragment}"></div>
+	            
+	            <!-- 1. 사이드바 영역: 전체의 1/5 너비를 차지하는 별도의 div -->
+	            <div class="col-lg-1-5 primary-sidebar sticky-sidebar">
+	                <div th:replace="~{enter/fragments/enterCategorySidebar :: enterCategorySidebarFragment}"></div>
+	            </div>
+	
+	            <!-- 2. 메인 콘텐츠 영역: 전체의 4/5 너비를 차지하는 별도의 div -->
+	            <div class="col-lg-4-5">
+	                <div th:replace="~{enter/fragments/enterProductFillter :: enterProductFilterFragment}"></div>
+	                
+	                <!-- 실제 페이지 내용이 여기에 들어옵니다 -->
+	                <div class="row">
+	                    <th:block layout:fragment="contents"></th:block>
+	                </div>
+	            </div>
+	
+	        </div>
+	    </div>
+	</main>
     
+    <div th:replace="~{enter/fragments/enterChatRoom :: enterChatRoomFragment}"></div>
     <footer th:replace="~{enter/fragments/enterFooter :: enterFooterFragment}"></footer>
 	
 	
 	<!-- Vendor JS-->
-    <script src="/user/assets/js/vendor/modernizr-3.6.0.min.js"></script>
-    <script src="/user/assets/js/vendor/jquery-3.6.0.min.js"></script>
-    <script src="/user/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
-    <script src="/user/assets/js/vendor/bootstrap.bundle.min.js"></script>
-    <script src="/user/assets/js/plugins/slick.js"></script>
-    <script src="/user/assets/js/plugins/jquery.syotimer.min.js"></script>
-    <script src="/user/assets/js/plugins/wow.js"></script>
-    <script src="/user/assets/js/plugins/slider-range.js"></script>
-    <script src="/user/assets/js/plugins/perfect-scrollbar.js"></script>
-    <script src="/user/assets/js/plugins/magnific-popup.js"></script>
-    <script src="/user/assets/js/plugins/select2.min.js"></script>
-    <script src="/user/assets/js/plugins/waypoints.js"></script>
-    <script src="/user/assets/js/plugins/counterup.js"></script>
-    <script src="/user/assets/js/plugins/jquery.countdown.min.js"></script>
-    <script src="/user/assets/js/plugins/images-loaded.js"></script>
-    <script src="/user/assets/js/plugins/isotope.js"></script>
-    <script src="/user/assets/js/plugins/scrollup.js"></script>
-    <script src="/user/assets/js/plugins/jquery.vticker-min.js"></script>
-    <script src="/user/assets/js/plugins/jquery.theia.sticky.js"></script>
-    <script src="/user/assets/js/plugins/jquery.elevatezoom.js"></script>
+    <script src="/enter/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/enter/assets/js/vendor/jquery-3.6.0.min.js"></script>
+    <script src="/enter/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="/enter/assets/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/enter/assets/js/plugins/slick.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="/enter/assets/js/plugins/wow.js"></script>
+    <script src="/enter/assets/js/plugins/slider-range.js"></script>
+    <script src="/enter/assets/js/plugins/perfect-scrollbar.js"></script>
+    <script src="/enter/assets/js/plugins/magnific-popup.js"></script>
+    <script src="/enter/assets/js/plugins/select2.min.js"></script>
+    <script src="/enter/assets/js/plugins/waypoints.js"></script>
+    <script src="/enter/assets/js/plugins/counterup.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.countdown.min.js"></script>
+    <script src="/enter/assets/js/plugins/images-loaded.js"></script>
+    <script src="/enter/assets/js/plugins/isotope.js"></script>
+    <script src="/enter/assets/js/plugins/scrollup.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.vticker-min.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="/enter/assets/js/plugins/jquery.elevatezoom.js"></script>
     <!-- Template  JS -->
-    <script src="./assets/js/main.js?v=5.6"></script>
-    <script src="./assets/js/shop.js?v=5.6"></script>
+    <script src="./enter/assets/js/main.js?v=5.6"></script>
+    <script src="./enter/assets/js/shop.js?v=5.6"></script>
     
 </body>
 </html>

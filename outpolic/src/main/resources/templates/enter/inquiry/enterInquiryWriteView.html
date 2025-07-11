@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{enter/layout/enterLayoutInquiryDetail}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		
+		<style type="text/css">
+			.ck-editor__editable[role="textbox"] {
+			    min-height: 300px;
+		    }
+			
+			.ck-content .image {
+			  max-width: 80%;
+			  margin: 20px auto;
+			}
+		</style>
+		 
+		<script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/super-build/ckeditor.js"></script>
+		
+		<link rel="stylesheet" th:href="@{/enter/assets/css/enterInquiry.css}">
+	</head>
+
+	
+	<th:block layout:fragment="jsScript_file">
+		<script>
+	    $(function() {
+			/* =================================== */
+				let previousImageSrcs = [];
+				let editorInstance; // CKEditor 인스턴스를 저장할 변수 추가
+
+				CKEDITOR.ClassicEditor.create(document.getElementById("inquiryCn"), {
+				    toolbar: {
+				      items: [
+				        'exportPDF', 'exportWord', '|',
+				        'findAndReplace', 'selectAll', '|',
+				        'heading', '|',
+				        'bold', 'italic', 'strikethrough', 'underline', 'code', 'subscript', 'superscript', 'removeFormat', '|',
+				        'bulletedList', 'numberedList', 'todoList', '|',
+				        'outdent', 'indent', '|',
+				        'undo', 'redo', '|',
+				        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+				        'alignment', '|',
+				        'link', 'insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
+				        'specialCharacters', 'horizontalLine', 'pageBreak', '|',
+				        'textPartLanguage', '|',
+				        'sourceEditing'
+				      ],
+				      shouldNotGroupWhenFull: true
+				    },
+				    list: {
+				      properties: {
+				        styles: true,
+				        startIndex: true,
+				        reversed: true
+				      }
+				    },
+				    heading: {
+				      options: [
+				        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+				        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+				        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+				        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+				        { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
+				        { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
+				        { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
+				      ]
+				    },
+				    placeholder: 'Welcome to CKEditor 5!',
+				    fontFamily: {
+				      options: [
+				        'default',
+				        'Arial, Helvetica, sans-serif',
+				        'Courier New, Courier, monospace',
+				        'Georgia, serif',
+				        'Lucida Sans Unicode, Lucida Grande, sans-serif',
+				        'Tahoma, Geneva, sans-serif',
+				        'Times New Roman, Times, serif',
+				        'Trebuchet MS, Helvetica, sans-serif',
+				        'Verdana, Geneva, sans-serif'
+				      ],
+				      supportAllValues: true
+				    },
+				    fontSize: {
+				      options: [10, 12, 14, 'default', 18, 20, 22],
+				      supportAllValues: true
+				    },
+				    htmlSupport: {
+				      allow: [
+				        {
+				          name: /.*/,
+				          attributes: true,
+				          classes: true,
+				          styles: true
+				        }
+				      ]
+				    },
+				    htmlEmbed: {
+				      showPreviews: true
+				    },
+				    link: {
+				      decorators: {
+				        addTargetToExternalLinks: true,
+				        defaultProtocol: 'https://',
+				        toggleDownloadable: {
+				          mode: 'manual',
+				          label: 'Downloadable',
+				          attributes: {
+				            download: 'file'
+				          }
+				        }
+				      }
+				    },
+				    mention: {
+				      feeds: [
+				        {
+				          marker: '@',
+				          feed: [
+				            '@apple', '@bears', '@brownie', '@cake', '@cake', '@candy', '@canes', '@chocolate', '@cookie', '@cotton', '@cream',
+				            '@cupcake', '@danish', '@donut', '@dragée', '@fruitcake', '@gingerbread', '@gummi', '@ice', '@jelly-o',
+				            '@liquorice', '@macaroon', '@marzipan', '@oat', '@pie', '@plum', '@pudding', '@sesame', '@snaps', '@soufflé',
+				            '@sugar', '@sweet', '@topping', '@wafer'
+				          ],
+				          minimumCharacters: 1
+				        }
+				      ]
+				    },
+				    removePlugins: [
+				      'ExportPdf',
+				      'ExportWord',
+				      'CKBox',
+				      'CKFinder',
+				      'EasyImage',
+				      'RealTimeCollaborativeComments',
+				      'RealTimeCollaborativeTrackChanges',
+				      'RealTimeCollaborativeRevisionHistory',
+				      'PresenceList',
+				      'Comments',
+				      'TrackChanges',
+				      'TrackChangesData',
+				      'RevisionHistory',
+				      'Pagination',
+				      'WProofreader',
+				      'MathType'
+				    ],
+				    ckfinder : {
+						uploadUrl: '/enter/uploadImage'
+				    }
+				  })
+				  .then(editor => {
+					  editorInstance = editor;
+					  const editorElement = editor.ui.view.editable.element;
+					  
+					  const extractImagSrcs = html => {
+					  		const parser = new DOMParser();
+					  		const doc = parser.parseFromString(html, 'text/html');
+					  		return Array.from(doc.querySelectorAll('img'))
+					  				    .map(img => $(img).attr('src'))
+					  				    .filter(src => Boolean(src));
+					  }
+					  
+					  // 초기 이미지 저장
+					  previousImageSrcs = extractImagSrcs(editor.getData());
+					  
+					  // observer 생성
+					  const observer = new MutationObserver(()=>{
+							const currentImageSrcs = extractImagSrcs(editor.getData());
+							
+							
+							// 삭제 이미지 탐지
+							const deletedImages = previousImageSrcs.filter(src => !currentImageSrcs.includes(src));
+							
+							deletedImages.forEach( src => {
+								console.log(src , '<-- 삭제 이미지');
+								if(src){
+									const request = $.ajax({
+										method : 'POST',
+										url : '/enter/deleteImage',
+										data : { 'imageUrl' : src }
+									});
+									request.done( res => {
+										console.log(`이미지 삭제 : ${res}`);
+									});
+									request.fail( (jqXHR, textStatus, error) => {
+										console.log(jqXHR, textStatus, error)
+									});
+								}
+								
+							});
+							
+							previousImageSrcs = currentImageSrcs;
+					  });
+					  
+					  observer.observe(editorElement, {
+							childList : true,
+							subtree : true,
+							characterData : true
+					  });
+		
+				  });
+				
+				
+			/* ==================================== */
+		
+	        const $faqItems = $('.faq-item');
+
+	        $('#etcExpln').prop('disabled', true);
+
+	        let attachedFiles = [];
+
+	        $('#addInquiryBtn').click(e => {
+	            e.preventDefault();
+
+	            const title = $('#inquiryTitle').val().trim(); // .trim() 추가
+	            const typeCode = $('#inquiryTypeCode').val();
+	            const content = editorInstance.getData().trim(); // CKEditor 인스턴스에서 내용 가져오기
+	            const etcExpln = $('#etcExpln').val().trim(); // .trim() 추가
+				const secret = $('#inquirySecret').is(':checked') ? 1 : 0;
+				
+				// 1. 문의 타입 유효성 검사
+	            if (!typeCode) {
+	                alert('문의유형을 선택해주세요.');
+	                $('#inquiryTypeCode').focus();
+	                return;
+	            }
+	
+	            // 2. 제목 유효성 검사
+	            if (!title) {
+	                alert('제목을 입력해주세요.');
+	                $('#inquiryTitle').focus();
+	                return;
+	            }
+
+	            // 3. 문의 내용 유효성 검사
+	            if (!content) {
+	                alert('문의내용을 입력해주세요.');
+	                // CKEditor가 활성화된 경우, 이 포커스 로직은 필요 없을 수 있습니다.
+	                // $('#inquiryCn').focus(); 
+	                return;
+	            }
+
+	            // 4. '기타 문의' (IQT_OTHER) 선택 시 기타 설명 필드 유효성 검사
+	            if (typeCode === 'IQT_OTHER' && !etcExpln) { 
+	                alert('기타 문의 설명을 입력해주세요.');
+	                $('#etcExpln').focus();
+	                return;
+	            }
+
+	            // 5. 파일 첨부 유효성 검사
+	            const SR_attachFileCheckbox = document.getElementById('SR_attachFileCheckbox');
+	            if (SR_attachFileCheckbox && SR_attachFileCheckbox.checked && attachedFiles.length === 0) {
+	                alert('파일 첨부를 선택하셨습니다. 파일을 드롭하거나 선택해주세요.');
+	                return;
+	            }
+
+	            const formData = new FormData();
+	            formData.append('inquiryTitle', title);
+	            formData.append('inquiryTypeCode', typeCode);
+	            formData.append('inquiryCn', content);
+	            formData.append('etcExpln', etcExpln);
+				formData.append('inquirySecret', secret);
+
+	            // 첨부 파일 추가 (단일 파일만 전송)
+	            if (SR_attachFileCheckbox.checked && attachedFiles.length > 0) {
+	            	
+	            	attachedFiles.forEach(attachement => formData.append('attachment', attachement.file));
+	                //formData.append('attachment', attachedFiles[0].file);
+	            }
+
+	            // 디버깅을 위해 FormData 내용 로깅
+	            console.log("FormData being sent:");
+	            for (let [key, value] of formData.entries()) {
+	                console.log(`${key}:`, value);
+	            }
+
+	            
+	            $.ajax({
+	                type: 'POST',
+	                url: '/enter/enterInquiryWrite',
+	                data: formData,
+	                processData: false,
+	                contentType: false,
+	                success: function(response) {
+	                    alert('문의가 등록되었습니다.');
+	                    $('#addInquiryForm')[0].reset();
+	                    
+	                    if (SR_attachFileCheckbox) {
+	                        SR_attachFileCheckbox.checked = false;
+	                    }
+	                    
+	                    attachedFiles.forEach(fileData => {
+	                        if (fileData.previewURL) {
+	                            URL.revokeObjectURL(fileData.previewURL);
+	                        }
+	                    });
+	                    
+	                    attachedFiles = [];
+	                    renderSelectedFiles();
+	                    
+	                    window.location.href = '/enter/enterInquiryDetail?iq_cd=' + response.iq_cd;
+	                    
+	                },
+	                error: function(xhr, status, error) {
+	                    alert('문의 등록에 실패했습니다. 다시 시도해 주세요.');
+	                    console.error("AJAX Error: ", status, error, xhr.responseText);
+	                }
+	            });
+	        });
+
+	        // 문의 유형 변경 시 '기타 설명' 필드 활성화/비활성화
+	        $('#inquiryTypeCode').change(function() {
+	            if ($(this).val() === 'IQT_OTHER') { 
+	                $('#etcExpln').prop('disabled', false);
+	            } else {
+	                $('#etcExpln').val('');
+	                $('#etcExpln').prop('disabled', true);
+	            }
+	        });
+
+	        // 새로운 파일 첨부 JS 시작
+	        const SR_attachFileCheckbox = document.getElementById('SR_attachFileCheckbox');
+	        const SR_fileInputArea = document.getElementById('SR_fileInputArea');
+	        const SR_fileInput = document.getElementById('SR_fileInput');
+	        const SR_fileDropZone = document.getElementById('SR_fileDropZone');
+	        const SR_selectedFilesContainer = document.getElementById('SR_selectedFiles');
+
+	        // 체크박스 상태에 따라 파일 첨부 영역 표시/숨김
+	        if (SR_attachFileCheckbox && SR_fileInputArea) {
+	            if (SR_attachFileCheckbox.checked) {
+	                SR_fileInputArea.classList.add('SR_active');
+	            } else {
+	                SR_fileInputArea.classList.remove('SR_active');
+	            }
+
+	            SR_attachFileCheckbox.addEventListener('change', () => {
+	                if (SR_attachFileCheckbox.checked) {
+	                    SR_fileInputArea.classList.add('SR_active');
+	                } else {
+	                    SR_fileInputArea.classList.remove('SR_active');
+	                    attachedFiles.forEach(fileData => {
+	                        if (fileData.previewURL) {
+	                            URL.revokeObjectURL(fileData.previewURL);
+	                        }
+	                    });
+	                    attachedFiles = [];
+	                    renderSelectedFiles();
+	                }
+	            });
+	        }
+
+	        // 파일 선택 버튼 클릭 시 파일 인풋 활성화
+	        const customFileButton = document.querySelector('.SR_custom-file-button');
+	        if (customFileButton && SR_fileInput) {
+	            customFileButton.addEventListener('click', (event) => {
+	                event.preventDefault();
+	                SR_fileInput.click();
+	            });
+	        }
+
+	        // 파일 인풋 변경 시 (파일 선택)
+	        if (SR_fileInput) {
+	            SR_fileInput.addEventListener('change', (event) => {
+	                handleFiles(event.target.files);
+	                event.target.value = '';
+	            });
+	        }
+
+	        // 드래그 앤 드롭 이벤트 리스너
+	        if (SR_fileDropZone) {
+	            SR_fileDropZone.addEventListener('dragover', (event) => {
+	                event.preventDefault();
+	                SR_fileDropZone.classList.add('SR_hover');
+	            });
+
+	            SR_fileDropZone.addEventListener('dragleave', () => {
+	                SR_fileDropZone.classList.remove('SR_hover');
+	            });
+
+	            SR_fileDropZone.addEventListener('drop', (event) => {
+	                event.preventDefault();
+	                SR_fileDropZone.classList.remove('SR_hover');
+	                handleFiles(event.dataTransfer.files);
+	            });
+	        }
+
+	        // 파일 처리 함수
+	        function handleFiles(files) {
+	            if (files.length === 0) {
+	                return;
+	            }
+	            attachedFiles = [];
+	            [...files].forEach((attachement, idx) => {
+	            	
+					
+		            const file = attachement;
+	
+		            const maxSize = 10 * 1024 * 1024; // 10MB
+		            const allowedTypes = [
+		                'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', // 이미지
+		                'application/pdf',                                                // PDF
+		                'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // Word (.doc, .docx)
+		                'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // Excel (.xls, .xlsx)
+		                'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PowerPoint (.ppt, .pptx)
+		                'text/plain', 'text/csv',                                         // 텍스트, CSV
+		                'application/zip', 'application/x-rar-compressed', 'application/x-7z-compressed' // 압축 파일
+		            ];
+	
+		            if (file.size > maxSize) {
+		                alert(`${file.name}은(는) 10MB를 초과합니다.`);
+		                return;
+		            }
+	
+		            if (!allowedTypes.includes(file.type)) {
+		                alert(`${file.name}은(는) 허용되지 않은 파일 형식입니다. (허용: JPG, PNG, GIF, BMP, WEBP, PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, CSV, ZIP, RAR, 7Z)`);
+		                return;
+		            }
+	
+		            const fileData = {
+		                file: file,
+		                previewURL: null
+		            };
+	
+		            if (file.type.startsWith('image/')) {
+		                fileData.previewURL = URL.createObjectURL(file);
+		            }
+		            
+		            attachedFiles.push(fileData);
+	            });
+
+	            renderSelectedFiles();
+	            
+	        }
+
+	        // 선택된 파일 목록 렌더링
+	        function renderSelectedFiles() {
+	            if (!SR_selectedFilesContainer) {
+	                return;
+	            }
+	            SR_selectedFilesContainer.innerHTML = '';
+
+	            if (attachedFiles.length === 0) {
+	                SR_selectedFilesContainer.innerHTML = '<p class="text-gray-400 italic text-center p-5">선택된 파일 없음</p>';
+	                return;
+	            }
+
+	            attachedFiles.forEach((fileData, index) => {
+	                const file = fileData.file;
+	                const previewURL = fileData.previewURL;
+
+	                const fileDiv = document.createElement('div');
+	                fileDiv.className = 'SR_selected-file-item';
+	                
+	                let previewHtml = '';
+	                if (previewURL) {
+	                    previewHtml = `<img src="${previewURL}" alt="File preview" class="SR_file-preview-img">`;
+	                } else {
+	                    previewHtml = `
+	                        <div class="SR_file-placeholder">
+	                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+	                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+	                            </svg>
+	                        </div>
+	                    `;
+	                }
+
+	                fileDiv.innerHTML = `
+	                    <div class="SR_file-info">
+	                        ${previewHtml}
+	                        <span>${file.name} (${formatBytes(file.size)})</span>
+	                    </div>
+	                    <button type="button" class="SR_remove-file" data-index="${index}">&times;</button>
+	                `;
+	                SR_selectedFilesContainer.appendChild(fileDiv);
+	            });
+	            
+
+	            SR_selectedFilesContainer.querySelectorAll('.SR_remove-file').forEach(button => {
+	                button.addEventListener('click', (event) => {
+	                    const indexToRemove = parseInt(event.target.dataset.index);
+	                    const fileRemoved = attachedFiles[indexToRemove];
+
+	                    if (fileRemoved.previewURL) {
+	                        URL.revokeObjectURL(fileRemoved.previewURL);
+	                    }
+
+	                    attachedFiles.splice(indexToRemove, 1);
+	                    renderSelectedFiles();
+	                });
+	            });
+	        }
+
+	        function formatBytes(bytes, decimals = 2) {
+	            if (bytes === 0) return '0 Bytes';
+	            const k = 1024;
+	            const dm = decimals < 0 ? 0 : decimals;
+	            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+	            const i = Math.floor(Math.log(bytes) / Math.log(k));
+	            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+	        }
+
+	        renderSelectedFiles();
+	    });
+		</script>
+	</th:block>
+	
+	<th:block layout:fragment="contents">
+		<h2>문의 작성</h2>			
+		<div class="row">
+			<form id="addInquiryForm" method="post" action="#" enctype="multipart/form-data" style="padding-left:0px;">
+			    <div class="SR_content-input-box">
+					<div class="row shipping_calculator" style="display: flex; flex-wrap: wrap; margin: 0 -15px;">
+						<div class="form-group col-lg-6" style="flex: 0 0 50%; max-width: 50%; padding: 0 15px;">
+							<div class="custom_select">
+								<select class="form-control select-active" id="inquiryTypeCode" name="inquiryTypeCode" style="height:45px;">
+									<option value="">Inquiry Type</option>
+									<th:block th:unless="${#lists.isEmpty(inquiryTypeList)}"
+											  th:each="i : ${inquiryTypeList}">
+										<option th:value="${i.inquiryTypeCode}" th:text="${i.inquiryTypeName}">문의타입명</option>
+									</th:block>
+								</select>
+							</div>
+						</div>
+						<div class="form-group col-lg-6" style="flex: 0 0 50%; max-width: 50%; padding: 0 15px;">
+							<input type="text" placeholder="기타 설명" id="etcExpln" name="etcExpln">
+						</div>
+					</div>
+					<div class="form-group mt-10">
+						<input type="text" placeholder="제목을 입력하세요" id="inquiryTitle" name="inquiryTitle" style="height: 45px;">
+					</div>
+					<div class="SR_secret-setting">
+						<input type="checkbox" id="inquirySecret" name="inquirySecret" style="border: 1px solid #7E7E7E;">
+						<label for="SR_secretCheckbox" style="margin-bottom: 0px;">비밀글 설정</label>
+					</div>
+				</div>
+			
+					
+				
+				<div class="SR_content-input-box" style="padding-bottom:20px; margin-bottom: 0px;" >
+					<div class="form-group">
+						<textarea rows="5" placeholder="문의내용을 입력하시오." id="inquiryCn" name="inquiryCn"></textarea>
+					</div>
+				</div>
+				 
+				<div class="SR_file-upload-container" style="margin-top: 0px;">
+					<div class="SR_checkbox-container">
+						<input type="checkbox" id="SR_attachFileCheckbox">
+						<label for="SR_attachFileCheckbox">첨부파일을 추가하시겠습니까?</label>
+					</div>
+				
+					<div class="SR_file-input-area SR_active mt-15" id="SR_fileInputArea">
+						<div class="SR_file-drop-zone" id="SR_fileDropZone">
+							<p>여기에 파일을 드롭하거나</p>
+							<label for="SR_fileInput" class="SR_custom-file-button">파일 선택</label>
+							<input type="file" id="SR_fileInput" name="attachment" style="display: none;" multiple />
+							<div id="SR_selectedFiles" class="SR_selected-files"></div>
+						</div>
+					</div>
+				</div>
+							
+				<div style="max-width:800px; display:flex; flex-direction: row-reverse;">
+					<button id="addInquiryBtn" type="submit" class="btn btn-success text-white">문의 등록</button>
+				</div>
+			</form>
+		</div>
+	</th:block>
+	
+</html>

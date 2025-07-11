@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.admin.login.mapper.AdminLoginMapper">
+	<resultMap type="outpolic.common.domain.Member" id="AdminLoginResultMap">
+		<id column="mbr_id" property="memberId"/>
+ 		<result column="mbr_pw" property="memberPw"/>
+ 		<result column="grd_cd" property="gradeCode"/>
+ 		<result column="mbr_cd" property="memberCode"/>
+ 		<result column="stc_cd" property="statusCode"/>
+ 		<result column="mbr_last_lgn_ymdt" property="memberLastLoginYmdt"/>
+	</resultMap>
+
+	<select id="findAdminMemberById" resultMap="AdminLoginResultMap">
+	    SELECT mbr_id, mbr_pw, grd_cd, mbr_cd, stc_cd
+	    FROM member 
+	    WHERE mbr_id = #{memberId};
+	</select>
+	
+	<update id="updateAdminMemberLoginDate" parameterType="Member">
+		UPDATE member
+		set mbr_last_lgn_ymdt = NOW()
+		where mbr_cd = #{memberCode};
+	</update>
+	
+<!-- 	<insert id="insertFailHistory" parameterType="LoginFailHistoryDTO">
+		INSERT INTO 
+			login_fail_history
+			(lfh_cd, lfh_ip, lfh_attemp_ymdt, lfh_cnt, lfh_in_ymdt, lfh_out_ymdt, lfr_cd)
+		VALUES('', '', '', , '', '', '');
+	</insert> -->
+</mapper>
