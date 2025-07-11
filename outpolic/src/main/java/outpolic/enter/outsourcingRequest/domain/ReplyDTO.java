@@ -1,14 +1,17 @@
 package outpolic.enter.outsourcingRequest.domain;
 
+import lombok.Data;
 import java.time.LocalDateTime;
 
-import lombok.Data;
-// 답변 데이터를 주고받기 위한 DTO
+/**
+ * 신청 건에 대한 답변(메시지) 정보를 담는 DTO.
+ */
 @Data
 public class ReplyDTO {
-	private String requestId;
-	private String replierId;
-	private String replierName;
-	private String content;
-	private LocalDateTime date;
+    private String replyId;
+    private String requestId;
+    private String replierId;
+    private String replierName;
+    private String content;
+    private LocalDateTime date;
 }
