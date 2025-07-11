@@ -13,7 +13,7 @@
 					<div class="header-right">
 						<div class="search-style-2">
                             <form class="outpolicTopSearch" th:action="@{/enter/enterSearch}" method="get">
-                                <input  type="text" name="keyword" placeholder="Search for items..." required />
+                                <input  type="text" name="keyword" placeholder="Search for items..." required style="margin-bottom: 0px;"/>
                                 <button type="submit">검색</button>
                             </form>
 						</div>
@@ -50,7 +50,7 @@
 									<a th:href="@{/mypage}"><span class="lable ml-0">마이페이지</span></a>
 									<div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
 										<ul>
-										    <li><a th:href="@{/enterMypage}"><i class="fi fi-rs-user mr-10"></i>내정보</a></li>
+										    <li><a th:href="@{/enter/mypage}"><i class="fi fi-rs-user mr-10"></i>내정보</a></li>
 										    <li><a th:href="@{/login}"><i class="fi fi-rs-log-in mr-10"></i>로그인</a></li>
 										    <li><a th:href="@{/logout}"><i class="fi fi-rs-log-out mr-10"></i>로그아웃</a></li>
 										    <li><a th:href="@{/forgotPswd}"><i class="fi fi-rs-log-out mr-10"></i>비밀번호찾기</a></li>

@@ -1,6 +1,7 @@
 package outpolic.enter.mypage.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +21,9 @@ import outpolic.enter.mypage.service.EnterMypageService;
 public class enterMypageController {
 	
 	private final EnterMypageService enterMypageService;
+	private final PasswordEncoder passwordEncoder;
 	// 기업 마이페이지 
-    @GetMapping("/enterMypage")
+    @GetMapping("/enter/mypage")
     public String myPage(HttpSession session, Model model) {
     	String memberCode = (String) session.getAttribute("SCD");
  	    EnterInfo enterInfo = enterMypageService.getEnterInfoByCode(memberCode);
@@ -53,21 +55,21 @@ public class enterMypageController {
     		return "enter/mypage/alert";
     	}
     	
-    	if(memberPw.equals(enterInfo.getMemberPw())) {
+    	if(passwordEncoder.matches(memberPw, enterInfo.getMemberPw())) {
     		model.addAttribute("enterInfo", enterInfo);
     		return "enter/mypage/enterEditChoiceView";
 			/*
 			 * return "enter/mypage/enterProfileEditView";
 			 */    	}else {
     		model.addAttribute("msg", "비밀번호가 일치하지 않습니다");
-  			model.addAttribute("url", "/enterMypage");
+  			model.addAttribute("url", "/enter/enterMypage");
   			return "enter/mypage/alert";
     	}
     }
     
     //분기 갈림길
     // 개인정보 수정 페이지 이동
-    @GetMapping("/enterEditView")
+    @GetMapping("/enter/enterEditView")
     public String enterProfileEditView(Model model, HttpSession session) {
     	String memberCode = (String) session.getAttribute("SCD");
     	if (memberCode == null) {
@@ -79,7 +81,7 @@ public class enterMypageController {
     	return "enter/mypage/enterProfileEditView";
     }
     // 기업 개인정보 불러오기
-    @GetMapping("/enterEdit/info")
+    @GetMapping("/enter/enterEdit/info")
     @ResponseBody 
     public EnterInfo getEnterInfo(HttpSession session) { 
     	String memberCode = (String) session.getAttribute("SCD"); 
@@ -87,7 +89,7 @@ public class enterMypageController {
     }
     
     // 기업 개인정보 업데이트
-    @PostMapping("/enterEdit/update")
+    @PostMapping("/enter/enterEdit/update")
     @ResponseBody
     public EnterInfo getEnterInfoAjax(HttpSession session) {
     	String memberCode=(String) session.getAttribute("SCD");
@@ -95,7 +97,7 @@ public class enterMypageController {
     }
     
     // 기업 개인정보 수정
-    @PostMapping("/enterEdit")
+    @PostMapping("/enter/enterEdit")
     public String enterProfileEdit(EnterInfo enterInfo,
     		Model model) {
     	enterMypageService.editEnterInfo(enterInfo);
