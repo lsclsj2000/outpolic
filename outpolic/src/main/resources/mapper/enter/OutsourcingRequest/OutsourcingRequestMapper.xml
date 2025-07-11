@@ -1,35 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.enter.outsourcingRequest.mapper.OutsourcingRequestMapper">
-	
-	<select id="searchEnterprises" resultType="map">
-		SELECT
-			ent_cd as id, ent_nm as name
-		FROM
-			enterprise
-		WHERE
-			ent_nm LIKE CONCAT('%',#{query},'%')		
-	</select>
-	<insert id="insertRequest" parameterType="OutsourcingRequestDTO">
+
+    <insert id="insertRequest" parameterType="OutsourcingRequestDTO">
         INSERT INTO outsourcing_contract_details (
-            ocd_cd, ocd_req_type, mbr_cd, ent_cd, cl_cd, ocd_ttl, 
-            ocd_expln, ocd_frctn_cmdty, ocd_dlvgds_mthd, ocd_dedline, 
+            ocd_cd, ocd_req_type, mbr_cd, ent_cd, cl_cd, ocd_ttl,
+            ocd_expln, ocd_frctn_cmdty, ocd_dlvgds_mthd, ocd_dedline,
             ocd_amt, stc_cd, ocd_dmnd_ymdt, ocd_yn
         ) VALUES (
-            #{ocd_cd}, #{ocd_req_type}, #{mbr_cd}, #{ent_cd}, #{cl_cd}, #{ocd_ttl},
+            #{ocd_cd}, '신청', #{mbr_cd}, #{ent_cd}, #{cl_cd}, #{ocd_ttl},
             #{ocd_expln}, #{ocd_frctn_cmdty}, #{ocd_dlvgds_mthd}, #{ocd_dedline},
             #{ocd_amt}, 'SD_BEFORE', NOW(), 'N'
         )
     </insert>
-    <select id="findAllRequestsByUserId" resultType="RequestViewDTO">
+
+    <select id="findSentOutsourcingRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
         SELECT
             ocd.ocd_cd,
-            ocd.ocd_req_type,
             ocd.ocd_ttl,
-            m.mbr_nm AS demanderName,
             e.ent_nm AS supplierName,
             ocd.ocd_dmnd_ymdt,
             ocd.stc_cd
+        FROM
+            outsourcing_contract_details ocd
+        JOIN
+            enterprise e ON ocd.ent_cd = e.ent_cd
+        WHERE
+            ocd.mbr_cd = #{requesterId}
+        AND
+            ocd.ocd_req_type = '신청'  -- ★ 오직 '신청' 건만 조회
+        ORDER BY
+            ocd.ocd_dmnd_ymdt DESC
+    </select>
+
+    <select id="findRequestDetailById" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
+        SELECT
+            ocd.ocd_cd, ocd.ocd_ttl,
+            m.mbr_nm   AS demanderName,
+            ocd.mbr_cd AS mbr_cd,
+            e.ent_nm   AS supplierName,
+            ocd.ent_cd AS ent_cd,
+            ocd.ocd_dmnd_ymdt, ocd.stc_cd, ocd.ocd_expln, ocd.ocd_amt
         FROM
             outsourcing_contract_details ocd
         JOIN
@@ -37,11 +48,30 @@
         JOIN
             enterprise e ON ocd.ent_cd = e.ent_cd
         WHERE
-            ocd.mbr_cd = #{userId} OR ocd.ent_cd = #{userId}
-        ORDER BY
-            ocd.ocd_dmnd_ymdt DESC
+            ocd.ocd_cd = #{requestId}
     </select>
-    
-    
-	
+
+    <select id="findProviderMbrCdByEntCd" resultType="string">
+        SELECT mbr_cd 
+        FROM enterprise 
+        WHERE ent_cd = #{entCd}
+    </select>
+
+    <select id="findRepliesByRequestId" resultType="outpolic.enter.outsourcingRequest.domain.ReplyDTO">
+        -- outsourcing_record 테이블에서 답변 목록을 조회하는 쿼리
+    </select>
+
+    <insert id="insertReply" parameterType="outpolic.enter.outsourcingRequest.domain.ReplyDTO">
+        -- outsourcing_record 테이블에 답변을 등록하는 쿼리
+    </insert>
+
+    <update id="updateRequestStatus">
+        UPDATE outsourcing_contract_details
+        SET
+            stc_cd = #{statusCd},
+            ocd_rspns_ymdt = NOW()
+        WHERE
+            ocd_cd = #{requestId}
+    </update>
+
 </mapper>

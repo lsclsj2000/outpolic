@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{enter/layout/enterLayoutkjw}">
+<head>
+    <meta charset="UTF-8">
+    <title>보낸 외주 신청 목록</title>
+    <style>
+        .request-item { border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; transition: box-shadow 0.2s; }
+        .request-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .item-info .item-title a { font-size: 1.2rem; font-weight: 600; color: #1f2937; text-decoration: none; }
+        .item-info .item-meta { font-size: 0.9rem; color: #6b7280; margin-top: 0.5rem; }
+        .item-status .status-badge { font-size: 0.8rem; font-weight: bold; padding: 0.3rem 0.75rem; border-radius: 9999px; color: white; }
+        .status-before { background-color: #6b7280; } /* 확인 전 */
+        .status-processing { background-color: #f59e0b; } /* 처리 중 */
+        .status-approved { background-color: #16a34a; } /* 승인 */
+        .status-rejected { background-color: #dc2626; } /* 거절 */
+        .empty-message { text-align: center; padding: 3rem; color: #6b7280; border: 2px dashed #e5e7eb; border-radius: 8px; }
+    </style>
+</head>
+<body>
+<th:block layout:fragment="contents">
+    <div class="container">
+        <h1>보낸 외주 신청 목록</h1>
+        <div id="request-list-container">
+            </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="jsFile">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const listContainer = document.getElementById('request-list-container');
+
+            // 상태 코드에 맞는 클래스와 텍스트를 반환하는 함수
+            const getStatusInfo = (statusCode) => {
+                const statuses = {
+                    'SD_BEFORE': { text: '확인 전', class: 'status-before' },
+                    'SD_PROCESS_ING': { text: '처리 중', class: 'status-processing' },
+                    'SD_APPROVED': { text: '승인', class: 'status-approved' },
+                    'SD_REJECTED': { text: '거절', class: 'status-rejected' }
+                    // 필요한 상태 추가
+                };
+                return statuses[statusCode] || { text: statusCode, class: 'status-before' };
+            };
+
+            // 목록 아이템 HTML을 생성하는 함수
+            const createRequestItemHtml = (req) => {
+                const status = getStatusInfo(req.stc_cd);
+                const requestedDate = new Date(req.ocd_dmnd_ymdt).toLocaleDateString();
+
+                return `
+                    <div class="request-item">
+                        <div class="item-info">
+                            <h3 class="item-title">
+                                <a href="/enter/requests/${req.ocd_cd}">${req.ocd_ttl}</a>
+                            </h3>
+                            <div class="item-meta">
+                                <span>To: <strong>${req.supplierName}</strong></span> |
+                                <span>신청일: ${requestedDate}</span>
+                            </div>
+                        </div>
+                        <div class="item-status">
+                            <span class="status-badge ${status.class}">${status.text}</span>
+                        </div>
+                    </div>
+                `;
+            };
+
+            // ★ 중요: 컨트롤러에 이 API 엔드포인트를 만들어야 합니다.
+            // 이 API는 로그인한 기업이 '수요자'이고, 타입이 '신청'인 요청만 반환해야 합니다.
+            fetch('/api/enter/requests/sent')
+                .then(response => {
+                    if (!response.ok) throw new Error('데이터를 불러오는 데 실패했습니다.');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.length > 0) {
+                        listContainer.innerHTML = data.map(createRequestItemHtml).join('');
+                    } else {
+                        listContainer.innerHTML = '<div class="empty-message"><p>보낸 외주 신청이 없습니다.</p></div>';
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    listContainer.innerHTML = '<div class="empty-message"><p>오류가 발생했습니다. 다시 시도해주세요.</p></div>';
+                });
+        });
+    </script>
+</th:block>
+</body>
+</html>

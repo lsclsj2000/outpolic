@@ -1,24 +1,19 @@
 package outpolic.enter.outsourcingRequest.mapper;
 
-
-
-import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.annotations.Mapper;
-
+import org.apache.ibatis.annotations.Param;
 import outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO;
 import outpolic.enter.outsourcingRequest.domain.ReplyDTO;
 import outpolic.enter.outsourcingRequest.domain.RequestViewDTO;
-
+import java.util.List;
 
 @Mapper
 public interface OutsourcingRequestMapper {
-	List<Map<String,Object>> searchEnterprises(String query);
-	void insertRequest(OutsourcingRequestDTO request);
-	 List<RequestViewDTO> findAllRequestsByUserId(String userId);
-	    RequestViewDTO findRequestDetailById(String requestId);
-	    void insertReply(ReplyDTO replyDto);
-	    List<ReplyDTO> findRepliesByRequestId(String requestId);
-
+    void insertRequest(OutsourcingRequestDTO request);
+    List<RequestViewDTO> findSentOutsourcingRequests(String requesterId);
+    RequestViewDTO findRequestDetailById(String requestId);
+    List<ReplyDTO> findRepliesByRequestId(String requestId);
+    void insertReply(ReplyDTO replyDto);
+    int updateRequestStatus(@Param("requestId") String requestId, @Param("statusCd") String statusCd);
+    String findProviderMbrCdByEntCd(String entCd);
 }
