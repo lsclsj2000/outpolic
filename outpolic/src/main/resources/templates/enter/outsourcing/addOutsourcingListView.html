@@ -257,25 +257,25 @@
                 <div class="form-step active" id="step1">
                     <div class="form-group">
                         <label for="osTtl">외주 프로젝트 제목 <span style="color:red;">*</span></label>
-                        <input type="text" id="osTtl" name="osTtl" class="form-control" required th:value="${formData?.osTtl}">
+                        <input type="text" id="osTtl" name="osTtl" class="form-control" required th:value="${outsourcing?.osTtl}">
                         <div class="error-message" id="osTtlError"></div>
                     </div>
 
                     <div class="form-group">
                         <label for="osExpln">외주 프로젝트 내용 <span style="color:red;">*</span></label>
-                        <textarea id="osExpln" name="osExpln" class="form-control" rows="8" required th:text="${formData?.osExpln}"></textarea>
+                        <textarea id="osExpln" name="osExpln" class="form-control" rows="8" required th:text="${outsourcing?.osExpln}"></textarea>
                         <div class="error-message" id="osExplnError"></div>
                     </div>
 
                     <div class="flex-row">
                         <div class="form-group">
                             <label for="osStrtYmdt">희망 작업 시작일시 <span style="color:red;">*</span></label>
-                            <input type="datetime-local" id="osStrtYmdt" name="osStrtYmdt" class="form-control" required th:value="${formData?.osStrtYmdt != null ? #temporals.format(formData.osStrtYmdt, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                            <input type="datetime-local" id="osStrtYmdt" name="osStrtYmdt" class="form-control" required th:value="${outsourcing?.osStrtYmdt != null ? #temporals.format(formData.osStrtYmdt, 'yyyy-MM-dd''T''HH:mm') : ''}">
                             <div class="error-message" id="osStrtYmdtError"></div>
                         </div>
                         <div class="form-group">
                             <label for="osEndYmdt">희망 작업 종료일시 <span style="color:red;">*</span></label>
-                            <input type="datetime-local" id="osEndYmdt" name="osEndYmdt" class="form-control" required th:value="${formData?.osEndYmdt != null ? #temporals.format(formData.osEndYmdt, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                            <input type="datetime-local" id="osEndYmdt" name="osEndYmdt" class="form-control" required th:value="${outsourcing?.osEndYmdt != null ? #temporals.format(formData.osEndYmdt, 'yyyy-MM-dd''T''HH:mm') : ''}">
                             <div class="error-message" id="osEndYmdtError"></div>
                         </div>
                     </div>
@@ -284,7 +284,7 @@
                         <div class="form-group">
                             <label for="osAmt">희망 금액 <span style="color:red;">*</span></label>
                             <div class="input-with-unit">
-                                <input type="number" id="osAmt" name="osAmt" class="form-control" min="0" required th:value="${formData?.osAmt}">
+                                <input type="number" id="osAmt" name="osAmt" class="form-control" min="0" required th:value="${outsourcing?.osAmt}">
                                 <span>원</span>
                             </div>
                             <div class="error-message" id="osAmtError"></div>
@@ -292,7 +292,7 @@
                         <div class="form-group">
                             <label for="osFlfmtCnt">수행 가능 인원 <span style="color:red;">*</span></label>
                             <div class="input-with-unit">
-                                <input type="number" id="osFlfmtCnt" name="osFlfmtCnt" class="form-control" min="1" required th:value="${formData?.osFlfmtCnt}">
+                                <input type="number" id="osFlfmtCnt" name="osFlfmtCnt" class="form-control" min="1" required th:value="${outsourcing?.osFlfmtCnt}">
                                 <span>명</span>
                             </div>
                             <div class="error-message" id="osFlfmtCntError"></div>
@@ -308,7 +308,7 @@
                     <div class="form-group">
                         <label>카테고리 <span style="color:red;">*</span></label>
                         <div id="category-inputs-container">
-                            <th:block th:if="${formData?.categoryCodes != null and !formData.categoryCodes.empty}">
+                            <th:block th:if="${outsourcing?.categoryCodes != null and !outsourcing.categoryCodes.empty}">
                                 <script th:inline="javascript">
                                     /*<![CDATA[*/
                                     $(document).ready(function() {
@@ -329,7 +329,7 @@
                     <div class="form-group">
                         <label for="tags">태그 (쉼표로 구분)</label>
                         <div class="tag-search-wrapper">
-                            <input type="text" id="tags" name="tags" class="form-control" th:value="${formData?.tags}">
+                            <input type="text" id="tags" name="tags" class="form-control" th:value="${outsourcing?.tags}">
                             <div id="tag-search-results" class="search-results-dropdown"></div>
                         </div>
                     </div>
