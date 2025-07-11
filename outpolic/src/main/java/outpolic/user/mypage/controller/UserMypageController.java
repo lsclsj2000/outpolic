@@ -61,7 +61,7 @@ public class UserMypageController {
  		return "user/mypage/userProfileEditView";
  		}else {
  			model.addAttribute("msg", "비밀번호가 일치하지 않습니다");
- 			model.addAttribute("url", "/mypage");
+ 			model.addAttribute("url", "/user/mypage");
  			return "user/mypage/alert";
  		}
  	}

@@ -62,7 +62,7 @@ public class enterMypageController {
 			 * return "enter/mypage/enterProfileEditView";
 			 */    	}else {
     		model.addAttribute("msg", "비밀번호가 일치하지 않습니다");
-  			model.addAttribute("url", "/enter/enterMypage");
+  			model.addAttribute("url", "/enter/mypage");
   			return "enter/mypage/alert";
     	}
     }
@@ -103,7 +103,7 @@ public class enterMypageController {
     	enterMypageService.editEnterInfo(enterInfo);
     	model.addAttribute("title", "개인정보 수정");
     	model.addAttribute("enterInfo", enterInfo);
-    	return "redirect:/enterMypage";
+    	return "redirect:/enter/mypage";
     }
     
     
@@ -136,7 +136,7 @@ public class enterMypageController {
     	enterMypageService.editEnterpriseInfo(corpInfo);
     	model.addAttribute("title", "개인정보 수정");
     	model.addAttribute("enterpriseInfo", corpInfo);
-    	return "redirect:/enterMypage";
+    	return "redirect:/enter/mypage";
     }
     
 
