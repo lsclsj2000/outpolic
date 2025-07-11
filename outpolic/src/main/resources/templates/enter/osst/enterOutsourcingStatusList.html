@@ -199,10 +199,11 @@
 	        }
 	
 	        function viewProjectDetails(projectId) {
-	            // In a real application, this would navigate to a detailed page
-	            // e.g., window.location.href = `/outsourcing/progress/${projectId}`;
-	            showMessageBox(`프로젝트 상세 보기: ${projectId} (실제 페이지로 이동)`);
-	            console.log(`Viewing details for project: ${projectId}`);
+	            // 프로젝트 ID가 없으므로 고정된 URL을 문자열로 지정합니다.
+	            const url = '/enter/enterOsst';
+
+	            // 페이지 이동
+	            window.location.href = url;
 	        }
 	        
 	        function writeReview(event, projectId) {
