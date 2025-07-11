@@ -44,8 +44,10 @@ public interface OutsourcingMapper {
     int deleteTodayViewByClCd(String clCd);
     int deleteTotalViewByClCd(String clCd);
     int deletePortfolioLinkByPrtfCd(@Param("prtfCd") String prtfCd);
+    void updateOutsourcingStep1(EnterOutsourcing outsourcing);
 
     // --- 외주-포트폴리오 연결을 위한 매퍼 메서드 ---
     List<EnterPortfolio> findLinkedPortfoliosByOsCd(@Param("osCd") String osCd);
     int unlinkOutsourcingFromPortfolio(@Param("osCd") String osCd, @Param("prtfCd") String prtfCd);
+    void updateOutsourcingRepresentativeCategory(@Param("osCd") String osCd, @Param("ctgryId") String ctgryId);
 }

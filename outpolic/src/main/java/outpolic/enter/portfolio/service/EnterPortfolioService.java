@@ -33,4 +33,6 @@ public interface EnterPortfolioService {
     List<EnterOutsourcing> searchUnlinkedOutsourcings(String prtfCd, String entCd, String query);
     void linkOutsourcing(String prtfCd, String osCd, String entCd);
     void unlinkOutsourcing(String prtfCd, String osCd);
+    void updateOutsourcingStep1(EnterOutsourcing outsourcingToUpdate);
+
 }

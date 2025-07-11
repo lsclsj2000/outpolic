@@ -217,5 +217,18 @@
             )
         LIMIT 10
     </select>
+   <select id="findLinkedPortfoliosByOsCd" resultMap="simplePortfolioResultMap">
+    SELECT
+        p.prtf_cd,
+        p.prtf_ttl
+    FROM
+        portfolio p
+    JOIN
+        outsourcing_portfolio op ON p.prtf_cd = op.prtf_cd
+    WHERE
+        op.os_cd = #{osCd}
+    ORDER BY
+        op.op_reg_ymdt DESC
+</select>
 
 </mapper>
