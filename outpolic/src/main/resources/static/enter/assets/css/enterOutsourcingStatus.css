@@ -569,3 +569,17 @@ select {
 .SR_project-status.upcoming {
     color: #6b7280; /* gray-500 */
 }
+
+.SR_hidden {
+    display: none !important;
+}
+/* 별점 스타일 추가: 클릭 시 시각적 피드백을 위해 */
+.star {
+    cursor: pointer;
+    color: #ccc; /* 기본 별 색상 */
+	font-size: 2em; /* 별 크기 */
+	transition: color 0.2s; /* 색상 변경 시 부드러운 전환 효과 */
+}
+.star.selected {
+    color: #ffc107; /* 선택된 별 색상 (황금색) */
+}
