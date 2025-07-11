@@ -17,7 +17,7 @@ import outpolic.user.search.domain.UserContentItemDTO;
 import outpolic.user.search.service.UserSearchService;
 
 
-@Controller("userCategoryController")
+@Controller
 @RequiredArgsConstructor
 @Slf4j
 public class UserCategoryController {
@@ -72,7 +72,7 @@ public class UserCategoryController {
         model.addAttribute("contentsList", contents); // View에서 사용할 이름 "contentsList"
         
         // 대분류/소분류가 공유하는 동일한 뷰 페이지를 반환
-        return "user/contents/userContentsView";
+        return "/user/contents/userContentsView";
     }
 
 
