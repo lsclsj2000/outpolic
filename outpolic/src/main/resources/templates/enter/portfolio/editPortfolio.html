@@ -34,23 +34,7 @@
             <input type="hidden" th:field="*{entCd}" />
             <input type="hidden" th:field="*{mbrCd}" />
             <div class="form-group">
-			    <hr style="margin: 40px 0;">
-			    <label style="font-size: 1.5em; margin-bottom: 20px;">관련 외주 관리</label>
-			    
-			    <div style="display: flex; gap: 20px;">
-			        <div style="flex: 1;">
-			            <h4>현재 연결된 외주</h4>
-			            <div id="linked-outsourcing-list" style="border: 1px solid #eee; padding: 10px; min-height: 150px;">
-			                </div>
-			        </div>
-			
-			        <div style="flex: 1;">
-			            <h4>연결할 외주 검색</h4>
-			            <input type="text" id="outsourcing-search-input" class="form-control" placeholder="연결할 외주 프로젝트명을 검색하세요">
-			            <div id="outsourcing-search-results" style="border: 1px solid #eee; padding: 10px; margin-top: 10px; min-height: 100px;">
-			                </div>
-			        </div>
-			    </div>
+			   
 			</div>
             
             <div class="form-group">
@@ -83,7 +67,8 @@
 
 			<div class="form-group">
 			    <label for="tags">태그 (쉼표로 구분)</label>
-			    <div class="tag-search-wrapper" style="position: relative;"> <input type="text" id="tags" name="tags" class="form-control">
+			    <div class="tag-search-wrapper" style="position: relative;"> 
+			    <input type="text" id="tags" name="tags" class="form-control" th:value="${#strings.listJoin(portfolio.tagNames, ', ')}">
 			        <div id="tag-search-results" class="search-results-dropdown"></div> </div>
 			</div>
 
