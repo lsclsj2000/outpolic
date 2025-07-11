@@ -51,7 +51,7 @@ public class UserCategoryController {
         // --- 사이드바 로직 끝 ---
 
         // 콘텐츠 목록을 보여줄 뷰 페이지 반환
-        return "/user/contents/userContentsView"; 
+        return "user/contents/userContentsView"; 
     }
     
     // --- 2. 소분류 클릭 시 (새로 추가하는 코드) ---
@@ -72,7 +72,7 @@ public class UserCategoryController {
         model.addAttribute("contentsList", contents); // View에서 사용할 이름 "contentsList"
         
         // 대분류/소분류가 공유하는 동일한 뷰 페이지를 반환
-        return "/user/contents/userContentsView";
+        return "user/contents/userContentsView";
     }
 
 
