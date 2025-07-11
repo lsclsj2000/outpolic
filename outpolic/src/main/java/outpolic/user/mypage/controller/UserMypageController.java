@@ -2,6 +2,7 @@ package outpolic.user.mypage.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,16 +13,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import outpolic.common.domain.Member;
+import outpolic.user.login.mapper.UserLoginMapper;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.service.UserMypageEditService;
 
 @Controller
+@RequiredArgsConstructor
 public class UserMypageController {
 
-
+	private final PasswordEncoder passwordEncoder;
+	
  // 유저 마이페이지
- 	@GetMapping("/mypage")
+ 	@GetMapping("/user/mypage")
  	public String myPage(HttpSession session, Model model) {
 
  		String memberCode = (String) session.getAttribute("SCD");
@@ -45,13 +50,13 @@ public class UserMypageController {
         return ResponseEntity.ok(duplicated);
     }
  	// userEditView 이동
- 	@PostMapping("/userEditView")
+ 	@PostMapping("/user/userEditView")
  	public String usreProfileEditView(@RequestParam("password") String memberPw, HttpSession session, Model model) {
  		
  		String memberCode = (String) session.getAttribute("SCD");
  	    UserInfoDTO userInfo = userMypageEditService.getUserInfoByCode(memberCode);
  		
- 		if(memberPw.equals(userInfo.getMemberPw())) {
+ 		if(passwordEncoder.matches(memberPw, userInfo.getMemberPw())) {
  		model.addAttribute("userInfo", userInfo);
  		return "user/mypage/userProfileEditView";
  		}else {
