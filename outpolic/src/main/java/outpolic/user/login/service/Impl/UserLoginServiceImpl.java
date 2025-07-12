@@ -51,6 +51,16 @@ public class UserLoginServiceImpl implements UserLoginService {
 		
 	}
 
+	@Override
+	public String getLastLoginCode(String memberCode) {
+		return userLoginMapper.getLastLoginCode(memberCode);
+	}
+
+	@Override
+	public void updateLogoutHistory(String loginHistoryCode) {
+		userLoginMapper.updateLogoutHistory(loginHistoryCode);
+	}
+
 
 	
 	

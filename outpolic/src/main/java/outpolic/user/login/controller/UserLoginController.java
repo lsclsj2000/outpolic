@@ -23,6 +23,7 @@ import outpolic.user.login.service.UserLoginService;
 public class UserLoginController {
 	
 	private final UserLoginService userLoginService;
+	private final UserLoginMapper userLoginMapper;
 
 	
     // 로그인 페이지 GET 요청
@@ -43,13 +44,18 @@ public class UserLoginController {
    	  
     	  Map<String, Object> loginResult = userLoginService.loginUser(memberId, memberPw);
     	  boolean isMatched = (boolean) loginResult.get("isMatched");
-//    	  String clientIp = request.getRemoteAddr();
+    	  String clientIp = request.getRemoteAddr();
     	  String redirectUri = "redirect:/login";
         
         if (isMatched) {
         	Member memberInfo = (Member) loginResult.get("memberInfo");
         	String status = memberInfo.getStatusCode();
         	String grade = memberInfo.getGradeCode();
+        	
+        	userLoginMapper.insertLoginHistory(userLoginMapper.getNextLoginHistoryCode(), 
+        										memberInfo.getMemberCode(), 
+        										request.getRemoteAddr());
+        	
         	log.info("로그인 등급: {}", grade);
         	
         	// 세션등록
@@ -98,9 +104,18 @@ public class UserLoginController {
     //로그아웃
     @GetMapping("/logout")
     public String logout(HttpSession session, Model model) {
-        session.invalidate();  // 세션 전체 제거
-        model.addAttribute("msg", "로그아웃되었습니다.");
-		model.addAttribute("url", "/");
+    	String memberCode = (String) session.getAttribute("SCD");
+    	if(memberCode != null) {
+    	    String loginHistoryCode = userLoginService.getLastLoginCode(memberCode);
+    	    userLoginService.updateLogoutHistory(loginHistoryCode);
+    		session.invalidate();  // 세션 전체 제거
+    		model.addAttribute("msg", "로그아웃되었습니다.");
+    		model.addAttribute("url", "/");
+    		
+    	}else {
+    		model.addAttribute("msg", "로그인 상태가 아닙니다.");
+    		model.addAttribute("url", "/");
+    	}
 		return "user/mypage/alert";
     }
     
