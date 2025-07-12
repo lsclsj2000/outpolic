@@ -8,7 +8,7 @@ import outpolic.enter.outsourcingRequest.service.OutsourcingRequestService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.UUID;
+import java.util.UUID; // UUID 임포트
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +20,10 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
     @Transactional
     public OutsourcingRequestDTO createRequest(OutsourcingRequestDTO request) {
         request.setOcd_cd("OCD_" + UUID.randomUUID().toString().substring(0, 10).toUpperCase());
+		/*
+		 * // ★추가: 채팅방 ID 생성 및 설정 (임시 로직, 실제로는 채팅방 서비스와 연동 필요) request.setChr_cd("CR_" +
+		 * UUID.randomUUID().toString().substring(0, 10).toUpperCase());
+		 */
         requestMapper.insertRequest(request);
         return request;
     }

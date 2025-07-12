@@ -3,33 +3,33 @@
 <mapper namespace="outpolic.enter.outsourcingRequest.mapper.OutsourcingRequestMapper">
 	
 	<insert id="insertRequest" parameterType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO">
-    INSERT INTO outsourcing_request (
+    INSERT INTO outsourcing_contract_details (
         ocd_cd,
         mbr_cd,
         ent_cd,
         cl_cd,
-        chr_cd,
         ocd_ttl,
         ocd_expln,
         ocd_frctn_cmdty,
         ocd_dlvgds_mthd,
-        ocd_strt_ymdt,
-        ocd_dedline,
-        ocd_amt
+        ocd_strt_ymdt, ocd_dedline,
+        ocd_amt,
+        ocd_dmnd_ymdt,
+        ocd_req_type,
+        stc_cd
     ) VALUES (
         #{ocd_cd},
         #{mbr_cd},
         #{ent_cd},
         #{cl_cd},
-        #{chr_cd},
         #{ocd_ttl},
         #{ocd_expln},
         #{ocd_frctn_cmdty},
         #{ocd_dlvgds_mthd},
-        #{ocd_strt_ymdt},
-        #{ocd_dedline},
-        #{ocd_amt}
-    )
+        #{ocd_strt_ymdt}, #{ocd_dedline},
+        #{ocd_amt},
+        NOW(),
+        '신청', 'SD_BEFORE' )
 </insert>
     
 
