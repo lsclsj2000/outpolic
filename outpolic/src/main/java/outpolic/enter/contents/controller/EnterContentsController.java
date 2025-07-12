@@ -1,6 +1,8 @@
 package outpolic.enter.contents.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import outpolic.enter.category.domain.EnterCategory;
 import outpolic.enter.category.domain.EnterCategoryGroup;
 import outpolic.enter.category.service.EnterCategoryService;
+import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.outsourcing.service.EnterOutsourcingService;
 import outpolic.enter.search.domain.EnterContentItemDTO;
 import outpolic.enter.search.domain.EnterContentsDetailDTO;
 import outpolic.enter.search.service.EnterSearchService;
@@ -30,6 +34,8 @@ public class EnterContentsController {
 	// final 필드들
     private final EnterSearchService searchService;
     private final EnterCategoryService categoryService;
+    private final EnterOutsourcingService enterOutsourcingService;
+
     
     @GetMapping("/api/contents/{contentsId}")
     @ResponseBody // 이 어노테이션이 핵심!
@@ -110,5 +116,32 @@ public class EnterContentsController {
         model.addAttribute("categoryGroups", categoryGroups);
         model.addAttribute("mainCategory", mainCategory);
     }
+    /**
+     * '/enter/contents/{osCd}' 주소를 처리하는 메서드
+     */
+    @GetMapping("/outsourcing/{osCd}")
+    public String showContentsParticularView(@PathVariable String osCd, Model model) {
+        log.info("상세 페이지 요청 (outsourcing path): ID = {}", osCd);
+        
+        EnterOutsourcing outsourcingData = enterOutsourcingService.getOutsourcingByOsCd(osCd);
 
+        if (outsourcingData == null) {
+            return "redirect:/enter/outsourcing/list"; 
+        }
+
+        // ★ DTO 대신 Map을 생성하여 데이터를 담습니다.
+        Map<String, Object> detailMap = new HashMap<>();
+        detailMap.put("content_id", outsourcingData.getOsCd());
+        detailMap.put("content_type", "Outsourcing");
+        detailMap.put("content_title", outsourcingData.getOsTtl());
+        detailMap.put("content_body", outsourcingData.getOsExpln());
+        detailMap.put("price", outsourcingData.getOsAmt() != null ? outsourcingData.getOsAmt().longValue() : 0L);
+        detailMap.put("registration_date", outsourcingData.getOsRegYmdt());
+        detailMap.put("registrant_name", outsourcingData.getEntCd()); // 임시로 entCd 사용
+
+        // ★ Map 객체를 모델에 담습니다.
+        model.addAttribute("detail", detailMap);
+
+        return "enter/contentsParticular/enterContentsParticularView";
+    }
 }

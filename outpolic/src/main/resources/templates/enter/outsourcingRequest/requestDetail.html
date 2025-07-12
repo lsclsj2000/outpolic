@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{enter/layout/enterLayoutkjw}">
+<head>
+    <meta charset="UTF-8">
+    <title>신청 상세 보기</title>
+    <th:block layout:fragment="css">
+        <style>
+            .request-card { background: #ffffff; border-radius: 12px; padding: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
+            .request-header h1 { font-size: 1.8rem; font-weight: 800; color: #1f2937; margin: 0 0 1rem 0; }
+            .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; padding: 1.5rem 0; margin-bottom: 1.5rem; }
+            .meta-item { font-size: 1rem; color: #4b5563; }
+            .meta-item strong { color: #111827; display: block; margin-bottom: 0.25rem; }
+            .request-body { line-height: 1.6; margin-bottom: 2rem;}
+            .request-body h3 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f3f4f6;}
+            .btn-back { display: inline-block; background-color: #6b7280; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s; }
+            .btn-back:hover { background-color: #4b5563; }
+            .status-badge { font-size: 1rem; font-weight: bold; padding: 0.4rem 0.8rem; border-radius: 9999px; color: white; }
+        </style>
+    </th:block>
+</head>
+<body>
+<th:block layout:fragment="contents">
+    <div class="container">
+        <div class="request-card" id="request-detail-card" style="display:none;">
+            <div class="request-header"><h1 id="request-title"></h1></div>
+            <div class="meta-grid">
+                <div class="meta-item"><strong>요청자</strong> <span id="requester-name"></span></div>
+                <div class="meta-item"><strong>공급자</strong> <span id="recipient-name"></span></div>
+                <div class="meta-item"><strong>요청일</strong> <span id="request-date"></span></div>
+                <div class="meta-item"><strong>상태</strong> <span id="request-status" class="status-badge"></span></div>
+            </div>
+            <div class="request-body">
+                <h3>상세 요청 내용</h3>
+                <p id="request-content" style="white-space: pre-wrap;"></p>
+                <h3>희망 예산</h3>
+                <p id="request-amount"></p>
+            </div>
+            <a href="/enter/outsourcing-requests/sent" class="btn-back">목록으로 돌아가기</a>
+        </div>
+        <div id="error-message" style="display:none;" class="empty-message"></div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="jsFile">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pathParts = window.location.pathname.split('/');
+            const requestId = pathParts[pathParts.length - 1];
+
+            const detailCard = document.getElementById('request-detail-card');
+            const errorMessageDiv = document.getElementById('error-message');
+
+            fetch(`/api/enter/outsourcing-requests/${requestId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => { throw new Error(text || '신청 내역을 불러올 수 없습니다.') });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('request-title').textContent = data.ocd_ttl;
+                    document.getElementById('requester-name').textContent = data.demanderName;
+                    document.getElementById('recipient-name').textContent = data.supplierName;
+                    document.getElementById('request-date').textContent = new Date(data.ocd_dmnd_ymdt).toLocaleDateString();
+                    
+                    const statusEl = document.getElementById('request-status');
+                    statusEl.textContent = data.stc_cd; // 상태 코드 텍스트
+                    statusEl.className = 'status-badge status-' + data.stc_cd; // 상태에 따른 CSS 클래스
+                    
+                    document.getElementById('request-content').textContent = data.ocd_expln;
+                    document.getElementById('request-amount').textContent = data.ocd_amt ? `${data.ocd_amt.toLocaleString()}원` : '협의';
+
+                    detailCard.style.display = 'block';
+                })
+                .catch(error => {
+                    errorMessageDiv.textContent = '오류: ' + error.message;
+                    errorMessageDiv.style.display = 'block';
+                });
+        });
+    </script>
+</th:block>
+</body>
+</html>

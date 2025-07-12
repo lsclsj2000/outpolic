@@ -285,4 +285,10 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     public void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd) {
         outsourcingMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
     }
+    
+    @Override
+    public EnterOutsourcing getOutsourcingByOsCd(String osCd) {
+        // Mapper에게 DB 조회를 요청하고 결과를 바로 반환합니다.
+        return outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
+    }
 }
