@@ -57,5 +57,13 @@ public interface EnterOutsourcingService {
      * @param files 새로 첨부된 파일 목록
      */
     void updateOutsourcingStep3(String osCd, MultipartFile[] files);
+    
+    /**
+     * 외주 코드(osCd)로 특정 외주 한 건의 상세 정보를 조회하는 기능
+     * ★ 이 메서드를 추가해주세요.
+     */
+    EnterOutsourcing getOutsourcingByOsCd(String osCd);
+    
+    
 
 }

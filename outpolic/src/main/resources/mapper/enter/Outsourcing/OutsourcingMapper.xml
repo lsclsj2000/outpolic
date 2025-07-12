@@ -12,13 +12,25 @@
         <result property="prtfTtl" column="prtf_ttl"/>
     </resultMap>
 
-    <insert id="insertOutsourcing" parameterType="EnterOutsourcing"> INSERT INTO outsourcing (os_cd, ent_cd, ctgry_id, os_ttl, os_expln, os_reg_ymdt, mbr_cd, stc_cd, os_strt_ymdt, os_end_ymdt, os_amt, os_flfmt_cnt)
+    <insert id="insertOutsourcing" parameterType="EnterOutsourcing">
+        INSERT INTO outsourcing (os_cd, ent_cd, ctgry_id, os_ttl, os_expln, os_reg_ymdt, mbr_cd, stc_cd, os_strt_ymdt, os_end_ymdt, os_amt, os_flfmt_cnt)
         VALUES (#{osCd}, #{entCd}, #{ctgryId}, #{osTtl}, #{osExpln}, NOW(), #{mbrCd}, 'SD_ACTIVE', #{osStrtYmdt}, #{osEndYmdt}, #{osAmt}, #{osFlfmtCnt})
     </insert>
 
-    <insert id="insertContentList"> INSERT INTO content_list (cl_cd, cntd_cd, cl_reg_ymdt) VALUES (#{clCd}, #{cntdCd}, NOW()) </insert>
-    <insert id="insertCategoryMapping"> INSERT INTO category_mapping (ctgry_id, cl_cd, cm_reg_ymdt, mbr_cd) VALUES (#{ctgryCd}, #{clCd}, NOW(), #{mbrCd}) </insert>
-    <insert id="insertTag"> INSERT INTO tag (tag_cd, tag_nm, mbr_cd, tag_reg_ymdt) VALUES (#{tagCd}, #{tagName}, #{mbrCd}, NOW()) </insert>
+    <insert id="insertContentList">
+        INSERT INTO content_list (cl_cd, cntd_cd, cl_reg_ymdt)
+        VALUES (#{clCd}, #{cntdCd}, NOW())
+    </insert>
+
+    <insert id="insertCategoryMapping">
+        INSERT INTO category_mapping (ctgry_id, cl_cd, cm_reg_ymdt, mbr_cd)
+        VALUES (#{ctgryCd}, #{clCd}, NOW(), #{mbrCd})
+    </insert>
+
+    <insert id="insertTag">
+        INSERT INTO tag (tag_cd, tag_nm, mbr_cd, tag_reg_ymdt)
+        VALUES (#{tagCd}, #{tagName}, #{mbrCd}, NOW())
+    </insert>
     
     <insert id="insertTagMapping">
         INSERT INTO tag_mapping (tag_cd, cl_cd, tm_reg_ymdt, mbr_cd, stc_cd)
@@ -39,6 +51,8 @@
         <result property="osAmt" column="os_amt"/>
         <result property="osFlfmtCnt" column="os_flfmt_cnt"/>
         <result property="admCd" column="adm_cd"/>
+        <!-- ★수정: clCd 필드 매핑 추가 -->
+        <result property="clCd" column="cl_cd"/>
         <collection property="categories" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto" javaType="java.util.ArrayList">
             <id property="ctgryId" column="category_ctgry_id"/>
             <result property="ctgryNm" column="category_ctgry_nm"/>
@@ -50,7 +64,6 @@
                 ofType="outpolic.enter.portfolio.domain.EnterPortfolio"
     			column="os_cd" select="findLinkedPortfoliosByOsCd" />
     </resultMap>
-
 
 	<select id="findRelatedPortfoliosByOsCd" resultType="outpolic.enter.portfolio.domain.EnterPortfolio">
 		SELECT
@@ -80,6 +93,7 @@
             o.os_end_ymdt,
             o.os_amt,
             o.os_flfmt_cnt,
+            cl.cl_cd,  -- ★수정: SELECT 절에 cl_cd 추가
             c.ctgry_id AS category_ctgry_id,
             c.ctgry_nm AS category_ctgry_nm,
             t.tag_nm AS tag_tag_nm
@@ -109,165 +123,164 @@
         SELECT tag_cd FROM tag WHERE tag_cd LIKE 'T_C%' ORDER BY CAST(SUBSTRING(tag_cd, 5) AS UNSIGNED) DESC LIMIT 1
     </select>
 
-<select id="findTagCdByName" resultType="String">
-    SELECT tag_cd FROM tag WHERE tag_nm = #{tagName}
-</select>
+    <select id="findTagCdByName" resultType="String">
+        SELECT tag_cd FROM tag WHERE tag_nm = #{tagName}
+    </select>
 
-<select id="findOutsourcingDetailsByOsCd" resultMap="OutsourcingDetailResultMap">
-    SELECT
-        o.os_cd, o.ent_cd, o.ctgry_id, o.os_ttl, o.os_expln, o.os_reg_ymdt,
-        o.mbr_cd, o.stc_cd, o.os_strt_ymdt, o.os_end_ymdt, o.os_amt, o.os_flfmt_cnt,
-        c.ctgry_id AS category_ctgry_id,
-        c.ctgry_nm AS category_ctgry_nm,
-        t.tag_nm AS tag_tag_nm
-    FROM
-        outsourcing o
-    LEFT JOIN
-        content_list cl ON o.os_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_OS_C%'
-    LEFT JOIN
-        category_mapping cm ON cl.cl_cd = cm.cl_cd
-    LEFT JOIN
-        category c ON cm.ctgry_id = c.ctgry_id
-    LEFT JOIN
-        tag_mapping tm ON cl.cl_cd = tm.cl_cd
-    LEFT JOIN
-        tag t ON tm.tag_cd = t.tag_cd
-    WHERE
-        o.os_cd = #{osCd}
-</select>
+    <select id="findOutsourcingDetailsByOsCd" resultMap="OutsourcingDetailResultMap">
+        SELECT
+            o.os_cd, o.ent_cd, o.ctgry_id, o.os_ttl, o.os_expln, o.os_reg_ymdt,
+            o.mbr_cd, o.stc_cd, o.os_strt_ymdt, o.os_end_ymdt, o.os_amt, o.os_flfmt_cnt,
+            cl.cl_cd,  -- ★수정: SELECT 절에 cl_cd 추가
+            c.ctgry_id AS category_ctgry_id,
+            c.ctgry_nm AS category_ctgry_nm,
+            t.tag_nm AS tag_tag_nm
+        FROM
+            outsourcing o
+        LEFT JOIN
+            content_list cl ON o.os_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_OS_C%'
+        LEFT JOIN
+            category_mapping cm ON cl.cl_cd = cm.cl_cd
+        LEFT JOIN
+            category c ON cm.ctgry_id = c.ctgry_id
+        LEFT JOIN
+            tag_mapping tm ON cl.cl_cd = tm.cl_cd
+        LEFT JOIN
+            tag t ON tm.tag_cd = t.tag_cd
+        WHERE
+            o.os_cd = #{osCd}
+    </select>
 
-<select id="findClCdByOsCd" resultType="String">
-    SELECT cl_cd FROM content_list WHERE cntd_cd = #{osCd} LIMIT 1
-</select>
+    <select id="findClCdByOsCd" resultType="String">
+        SELECT cl_cd FROM content_list WHERE cntd_cd = #{osCd} LIMIT 1
+    </select>
 
-<select id="searchTagsByName" resultType="String">
-	SELECT
-		tag_nm
-	FROM
-		tag
-	WHERE
-		tag_nm LIKE CONCAT('%',#{query},'%')
-	LIMIT 10
-</select>
+    <select id="searchTagsByName" resultType="String">
+        SELECT
+            tag_nm
+        FROM
+            tag
+        WHERE
+            tag_nm LIKE CONCAT('%',#{query},'%')
+        LIMIT 10
+    </select>
 
-<select id="findLatestOpCd" resultType="String">
-	SELECT
-		op_cd
-	FROM
-		outsourcing_portfolio
-	ORDER BY op_cd DESC LIMIT 1
-</select>
+    <select id="findLatestOpCd" resultType="String">
+        SELECT
+            op_cd
+        FROM
+            outsourcing_portfolio
+        ORDER BY op_cd DESC LIMIT 1
+    </select>
 
-<insert id="insertOutsourcingPortfolio">
-	INSERT INTO outsourcing_portfolio (op_cd,os_cd,prtf_cd,op_reg_ymdt,ent_cd)
-	VALUES(#{opCd},#{osCd},#{prtfCd},NOW(),#{entCd})
-</insert>
+    <insert id="insertOutsourcingPortfolio">
+        INSERT INTO outsourcing_portfolio (op_cd,os_cd,prtf_cd,op_reg_ymdt,ent_cd)
+        VALUES(#{opCd},#{osCd},#{prtfCd},NOW(),#{entCd})
+    </insert>
 
-<update id="updateOutsourcing" parameterType="EnterOutsourcing">
-    UPDATE outsourcing
-    SET
-        ctgry_id = #{ctgryId},
-        os_ttl = #{osTtl},
-        os_expln = #{osExpln},
-        os_mdfcn_ymdt = NOW(),
-        os_strt_ymdt = #{osStrtYmdt},
-        os_end_ymdt = #{osEndYmdt},
-        os_amt = #{osAmt},
-        os_flfmt_cnt = #{osFlfmtCnt}
-    WHERE
-        os_cd = #{osCd}
-</update>
+    <update id="updateOutsourcing" parameterType="EnterOutsourcing">
+        UPDATE outsourcing
+        SET
+            ctgry_id = #{ctgryId},
+            os_ttl = #{osTtl},
+            os_expln = #{osExpln},
+            os_mdfcn_ymdt = NOW(),
+            os_strt_ymdt = #{osStrtYmdt},
+            os_end_ymdt = #{osEndYmdt},
+            os_amt = #{osAmt},
+            os_flfmt_cnt = #{osFlfmtCnt}
+        WHERE
+            os_cd = #{osCd}
+    </update>
 
-<delete id="deleteOutsourcingByOsCd">
-    DELETE FROM outsourcing WHERE os_cd = #{osCd}
-</delete>
-<delete id="deleteContentListByClCd">
-    DELETE FROM content_list WHERE cl_cd = #{clCd}
-</delete>
-<delete id="deleteCategoryMappingByClCd">
-    DELETE FROM category_mapping WHERE cl_cd = #{clCd}
-</delete>
-<delete id="deleteTagMappingByClCd">
-    DELETE FROM tag_mapping WHERE cl_cd = #{clCd}
-</delete>
-<delete id="deleteBookmarkByClCd">
-    DELETE FROM bookmark WHERE cl_cd = #{clCd}
-</delete>
-<delete id="deleteOutsourcingContractDetailsByClCd">
-	DELETE FROM outsourcing_contract_details WHERE cl_cd = #{clCd}
-</delete>
-<delete id="deleteOutsourcingStatusByClCd">
-    DELETE os
-      FROM outsourcing_status AS os
-      JOIN outsourcing_contract_details AS ocd  ON os.ocd_cd = ocd.ocd_cd
-     WHERE ocd.cl_cd = #{clCd}
-</delete>
-<delete id="deleteRankingByClCd">
-	DELETE FROM ranking where cl_cd = #{clCd}
-</delete>
+    <delete id="deleteOutsourcingByOsCd">
+        DELETE FROM outsourcing WHERE os_cd = #{osCd}
+    </delete>
+    <delete id="deleteContentListByClCd">
+        DELETE FROM content_list WHERE cl_cd = #{clCd}
+    </delete>
+    <delete id="deleteCategoryMappingByClCd">
+        DELETE FROM category_mapping WHERE cl_cd = #{clCd}
+    </delete>
+    <delete id="deleteTagMappingByClCd">
+        DELETE FROM tag_mapping WHERE cl_cd = #{clCd}
+    </delete>
+    <delete id="deleteBookmarkByClCd">
+        DELETE FROM bookmark WHERE cl_cd = #{clCd}
+    </delete>
+    <delete id="deleteOutsourcingContractDetailsByClCd">
+        DELETE FROM outsourcing_contract_details WHERE cl_cd = #{clCd}
+    </delete>
+    <delete id="deleteOutsourcingStatusByClCd">
+        DELETE os
+          FROM outsourcing_status AS os
+          JOIN outsourcing_contract_details AS ocd  ON os.ocd_cd = ocd.ocd_cd
+         WHERE ocd.cl_cd = #{clCd}
+    </delete>
+    <delete id="deleteRankingByClCd">
+        DELETE FROM ranking where cl_cd = #{clCd}
+    </delete>
 
-<delete id="deleteTodayViewByClCd">
-	DELETE FROM today_view WHERE cl_cd = #{clCd}
+    <delete id="deleteTodayViewByClCd">
+        DELETE FROM today_view WHERE cl_cd = #{clCd}
+    </delete>
 
-</delete>
+    <delete id="deleteTotalViewByClCd">
+        DELETE FROM total_view WHERE cl_cd = #{clCd}
+    </delete>
 
-<delete id="deleteTotalViewByClCd">
-	DELETE FROM total_view WHERE cl_cd = #{clCd}
+    <delete id="deleteOutsourcingPortfolioByOsCd">
+        DELETE
+        FROM
+            outsourcing_portfolio
+        WHERE
+            os_cd =#{osCd}
+    </delete>
+    <delete id="deletePortfolioLinkByPrtfCd">
+        DELETE FROM outsourcing_portfolio WHERE prtf_cd = #{prtfCd}
+    </delete>
 
+    <select id="findLinkedPortfoliosByOsCd" resultMap="PortfolioSimpleResultMap">
+        SELECT
+            p.prtf_cd,
+            p.prtf_ttl
+        FROM
+            portfolio p
+        JOIN
+            outsourcing_portfolio op ON p.prtf_cd = op.prtf_cd
+        WHERE
+            op.os_cd = #{osCd}
+        ORDER BY
+            p.prtf_reg_ymdt DESC
+    </select>
 
-</delete>
-<delete id="deleteOutsourcingPortfolioByOsCd">
-	DELETE
-	FROM
-		outsourcing_portfolio
-	WHERE
-		os_cd =#{osCd}
-</delete>
-<delete id="deletePortfolioLinkByPrtfCd">
-    DELETE FROM outsourcing_portfolio WHERE prtf_cd = #{prtfCd}
-</delete>
+    <delete id="unlinkOutsourcingFromPortfolio">
+        DELETE FROM outsourcing_portfolio
+        WHERE os_cd = #{osCd} AND prtf_cd = #{prtfCd}
+    </delete>
 
-<select id="findLinkedPortfoliosByOsCd" resultMap="PortfolioSimpleResultMap">
-    SELECT
-        p.prtf_cd,
-        p.prtf_ttl
-    FROM
-        portfolio p
-    JOIN
-        outsourcing_portfolio op ON p.prtf_cd = op.prtf_cd
-    WHERE
-        op.os_cd = #{osCd}
-    ORDER BY
-        p.prtf_reg_ymdt DESC
-</select>
+    <update id="updateOutsourcingRepresentativeCategory">
+        UPDATE
+            outsourcing
+        SET
+            ctgry_id = #{ctgryId},
+            os_mdfcn_ymdt = NOW()
+        WHERE
+            os_cd = #{osCd}
+    </update>
 
-<delete id="unlinkOutsourcingFromPortfolio">
-    DELETE FROM outsourcing_portfolio
-    WHERE os_cd = #{osCd} AND prtf_cd = #{prtfCd}
-</delete>
-
-
-<update id="updateOutsourcingRepresentativeCategory">
-    UPDATE
-        outsourcing
-    SET
-        ctgry_id = #{ctgryId},
-        os_mdfcn_ymdt = NOW()  <!-- 대표 카테고리 변경도 수정이므로, 수정일시를 업데이트 해주는 것이 좋습니다 -->
-    WHERE
-        os_cd = #{osCd}
-</update>
-<update id="updateOutsourcingStep1" parameterType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
-    UPDATE
-        outsourcing
-    SET
-        os_ttl = #{osTtl},
-        os_expln = #{osExpln},
-        os_strt_ymdt = #{osStrtYmdt},
-        os_end_ymdt = #{osEndYmdt},
-        os_amt = #{osAmt},
-        os_flfmt_cnt = #{osFlfmtCnt},
-        os_mdfcn_ymdt = NOW()
-    WHERE
-        os_cd = #{osCd}
-</update>
+    <update id="updateOutsourcingStep1" parameterType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+        UPDATE
+            outsourcing
+        SET
+            os_ttl = #{osTtl},
+            os_expln = #{osExpln},
+            os_strt_ymdt = #{osStrtYmdt},
+            os_end_ymdt = #{osEndYmdt},
+            os_amt = #{osAmt},
+            os_flfmt_cnt = #{osFlfmtCnt},
+            os_mdfcn_ymdt = NOW()
+        WHERE
+            os_cd = #{osCd}
+    </update>
 </mapper>

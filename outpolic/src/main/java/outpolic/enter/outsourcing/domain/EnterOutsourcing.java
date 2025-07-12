@@ -62,4 +62,7 @@ public class EnterOutsourcing {
     private List<EnterPortfolio> relatedPortfolios = new ArrayList<>();
     
     private String prtfThumbnailUrl;;
+    
+    private String clCd;
+
 }
