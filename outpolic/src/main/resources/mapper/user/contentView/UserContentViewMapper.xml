@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="outpolic.user.contents.mapper.UserContentViewMapper">
+ 
+ 	<!-- [추가] total_view의 tv_cd 숫자 부분의 최대값을 조회 -->
+    <select id="selectMaxTvCdNum" resultType="Integer">
+        SELECT MAX(CAST(SUBSTRING(TV_CD, 5) AS UNSIGNED)) 
+        FROM total_view
+    </select>
+    
+    <!-- [추가] perusal_content의 pc_rcd_cd 숫자 부분의 최대값을 조회 -->
+    <select id="selectMaxPcRcdNum" resultType="Integer">
+	    SELECT MAX(CAST(SUBSTRING(PC_RCD_CD, 9) AS UNSIGNED)) 
+	    FROM perusal_content
+	    WHERE PC_RCD_CD LIKE 'PC_RCD_C%'
+	</select>
+
+    <!-- 기존 쿼리들은 그대로 유지합니다 -->
+    <select id="existsInTotalView" resultType="int">
+        SELECT COUNT(*) FROM total_view WHERE CL_CD = #{clCd}
+    </select>
+
+    <insert id="insertNewTotalView" parameterType="outpolic.user.contents.domain.UserTotalView">
+        INSERT INTO total_view (TV_CD, CL_CD, TV_VIEW_CNT, TV_UPDT_YMDT) 
+        VALUES (#{tvCd}, #{clCd}, 1, NOW())
+    </insert>
+
+    <update id="incrementTotalView">
+        UPDATE total_view SET TV_VIEW_CNT = TV_VIEW_CNT + 1, TV_UPDT_YMDT = NOW() 
+        WHERE CL_CD = #{clCd}
+    </update>
+    
+    <insert id="insertPerusalContent" parameterType="outpolic.user.contents.domain.UserPerusalContent">
+        INSERT INTO perusal_content (PC_RCD_CD, MBR_CD, CL_CD, PC_YMDT, STC_CD) 
+        VALUES (#{pcRcdCd}, #{mbrCd}, #{clCd}, NOW(), 'SD_ACTIVE')
+    </insert>
+ </mapper>
