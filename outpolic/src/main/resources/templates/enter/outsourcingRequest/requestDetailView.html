@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{enter/layout/enterLayoutkjw}">
+<head>
+    <meta charset="UTF-8">
+    <title>신청 상세 보기</title>
+    <th:block layout:fragment="css">
+        <style>
+            .request-card { background: #ffffff; border-radius: 12px; padding: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
+            .request-header h1 { font-size: 1.8rem; font-weight: 800; color: #1f2937; margin: 0 0 1rem 0; }
+            .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; padding: 1.5rem 0; margin-bottom: 1.5rem; }
+            .meta-item { font-size: 1rem; color: #4b5563; }
+            .meta-item strong { color: #111827; display: block; margin-bottom: 0.25rem; }
+            .request-body { line-height: 1.6; margin-bottom: 2rem;}
+            .request-body h3 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f3f4f6;}
+            .btn-back { display: inline-block; background-color: #6b7280; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s; }
+            .btn-back:hover { background-color: #4b5563; }
+            .status-badge { font-size: 1rem; font-weight: bold; padding: 0.4rem 0.8rem; border-radius: 9999px; color: white; }
+        </style>
+    </th:block>
+</head>
+<body>
+<th:block layout:fragment="contents">
+    <div class="container">
+        <div class="request-card" id="request-detail-card">
+            <div class="request-header"><h1 th:text="${request.ocd_ttl}"></h1></div>
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <strong>요청자</strong> 
+                    <span th:text="${request.demanderName ?: '정보 없음'}"></span>
+                </div>
+                <div class="meta-item">
+                    <strong>공급자</strong> 
+                    <span th:text="${request.supplierName}"></span>
+                </div>
+                <div class="meta-item">
+                    <strong>요청일</strong> 
+                    <span th:text="${#temporals.format(request.ocd_dmnd_ymdt, 'yyyy-MM-dd HH:mm')}"></span>
+                </div>
+                <div class="meta-item">
+                    <strong>상태</strong> 
+                    <span th:classappend="'status-' + ${request.stc_cd}" th:text="${@statusTextFormatter.getStatusText(request.stc_cd)}" class="status-badge"></span>
+                </div>
+            </div>
+            <div class="request-body">
+                <h3>상세 요청 내용</h3>
+                <p th:text="${request.ocd_expln}" style="white-space: pre-wrap;"></p>
+                <h3>희망 예산</h3>
+                <p th:text="${request.ocd_amt != null ? #numbers.formatCurrency(request.ocd_amt) + '원' : '협의'}"></p>
+                <h3>최종 제작물</h3>
+                <p th:text="${request.ocd_frctn_cmdty ?: '미정'}"></p>
+                <h3>납품 방법</h3>
+                <p th:text="${request.ocd_dlvgds_mthd ?: '미정'}"></p>
+                <h3>희망 작업 시작일</h3>
+                <p th:text="${#temporals.format(request.ocd_strt_ymdt, 'yyyy-MM-dd HH:mm')}"></p>
+                <h3>희망 작업 종료일</h3>
+                <p th:text="${#temporals.format(request.ocd_dedline, 'yyyy-MM-dd HH:mm')}"></p>
+            </div>
+            <a href="/enter/outsourcing-requests/sent" class="btn-back">목록으로 돌아가기</a>
+        </div>
+        <div id="error-message" style="display:none;" class="empty-message"></div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="jsFile">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 이 페이지는 서버에서 직접 데이터를 받아 Thymeleaf로 렌더링하므로,
+            // 별도의 AJAX fetch 요청이 필요 없습니다.
+            // 클라이언트 측에서 동적으로 데이터를 받아올 필요가 없으므로 script 내용은 최소화합니다.
+
+            // 상태 텍스트 뱃지 색상을 적용하기 위한 CSS 클래스 추가 (옵션)
+            // Thymeleaf에서 th:classappend로 이미 클래스가 추가되므로, JavaScript에서는 추가 작업이 불필요할 수 있습니다.
+            // 만약 필요한 추가 동적 처리가 있다면 여기에 구현합니다.
+        });
+    </script>
+</th:block>
+</body>
+</html>

@@ -20,4 +20,9 @@ public interface OutsourcingRequestService {
      * 신청 상세 내역 조회
      */
     RequestViewDTO getRequestDetails(String requestId);
+
+    /**
+     * 특정 공급자(기업)에게 온 외주 신청 목록 조회
+     */
+    List<RequestViewDTO> getReceivedRequests(String supplierEntCd);
 }
