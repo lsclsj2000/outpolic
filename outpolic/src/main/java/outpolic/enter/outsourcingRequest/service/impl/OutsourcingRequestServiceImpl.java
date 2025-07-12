@@ -8,7 +8,7 @@ import outpolic.enter.outsourcingRequest.service.OutsourcingRequestService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.UUID; // UUID 임포트
+// import java.util.UUID; // UUID 임포트는 더 이상 필요 없음
 
 @Service
 @RequiredArgsConstructor
@@ -19,11 +19,19 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
     @Override
     @Transactional
     public OutsourcingRequestDTO createRequest(OutsourcingRequestDTO request) {
-        request.setOcd_cd("OCD_" + UUID.randomUUID().toString().substring(0, 10).toUpperCase());
-		/*
-		 * // ★추가: 채팅방 ID 생성 및 설정 (임시 로직, 실제로는 채팅방 서비스와 연동 필요) request.setChr_cd("CR_" +
-		 * UUID.randomUUID().toString().substring(0, 10).toUpperCase());
-		 */
+        String latestOcdCd = requestMapper.findLatestOcdCd();
+        int nextNum = 1;
+        if (latestOcdCd != null && latestOcdCd.startsWith("OCD_C")) {
+            try {
+                nextNum = Integer.parseInt(latestOcdCd.substring(5)) + 1;
+            } catch (NumberFormatException e) {
+                // 파싱 실패 시, 기본값 1 또는 다른 로직으로 처리
+                nextNum = 1;
+            }
+        }
+        String newOcdCd = String.format("OCD_C%05d", nextNum);
+        request.setOcd_cd(newOcdCd);
+
         requestMapper.insertRequest(request);
         return request;
     }
@@ -35,7 +43,11 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
 
     @Override
     public RequestViewDTO getRequestDetails(String requestId) {
-        // 여기에 실제로는 해당 사용자가 이 요청을 볼 권한이 있는지 확인하는 로직이 추가되어야 합니다.
         return requestMapper.findRequestDetailById(requestId);
+    }
+    
+    @Override
+    public List<RequestViewDTO> getReceivedRequests(String supplierEntCd) {
+        return requestMapper.findReceivedRequests(supplierEntCd);
     }
 }
