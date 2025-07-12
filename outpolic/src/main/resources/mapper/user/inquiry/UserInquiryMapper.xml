@@ -114,7 +114,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		FROM
 			submission_attachment
 		WHERE
-			sa_cd = #{saCode} <!-- DTO 필드명에 맞춰 saCode로 변경 -->
+			sa_cd = #{saCode}
 	</select>
 	
 	<!-- 문의첨부파일 데이터 목록 조회 -->
@@ -123,7 +123,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			sa_cd, sa_refer_cd, sa_orgnl_nm, sa_srvr_nm, sa_path, sa_extn, sa_size, mbr_cd, sa_reg_ymdt
 		FROM
 			submission_attachment
-		ORDER BY sa_reg_ymdt DESC <!-- 등록일시 기준 정렬 추가 -->
+		ORDER BY sa_reg_ymdt DESC 
 	</select>
 	
 	<!-- 문의 등록 -->

@@ -34,133 +34,73 @@
 						<li class="nav-item">
 							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">진행 완료된 외주</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">신청 받은 외주</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">신청한 외주</a>
+						</li>
 					</ul>
 				</div>
 			</div>
 		</th:block>
 	
-		<div layout:fragment="contents">
+		<div layout:fragment="contents" class="col-md-10">
 			<div class="row justify-content-around">
 			    <div class="SR_flex SR_flex-col SR_min-h-screen">
-			        <!-- Main Content -->
-			        <main class="SR_flex-grow SR_p-8" style="padding-top:0px;">
-			            <!-- Project List Container -->
+			        <main class="SR_flex-grow SR_p-8" style="padding-top:0px; padding-right:0px;">
 			            <div class="SR_max-w-6xl SR_mx-auto SR_container-bg SR_p-8 SR_rounded-lg SR_box-shadow">
 			                <div id="project-list" class="SR_project-list-container">
-			                    <!-- Project cards are now statically defined here -->
 	                            
-	                            <!-- Project 1: 원룸 인테리어 디자인 외주 프로젝트 -->
-	                            <div class="SR_project-card" data-project-id="proj-001">
+	                            <div class="SR_project-card"
+	                            	 th:each="l : ${osstList}"
+	                            	 th:attr="data-url=@{/enter/enterOsstDetail(ocd_cd=${l.osstDetailCode})}"
+	                            	 data-project-id="proj-003" >
 	                                <div class="SR_card-content">
-	                                    <h3 class="SR_project-title">원룸 인테리어 디자인 외주 프로젝트</h3>
-	                                    <p class="SR_project-meta">담당자: <span>홍길동 (수요자)</span></p>
-	                                    <p class="SR_project-meta">현재 단계: <span>작업 진행</span></p>
+	                                    <h3 class="SR_project-title" th:text="${l.ospOcdTitle}">외주 제목</h3>
+                                        <p class="SR_project-meta">공급자: <span th:text="${l.ospEntMemberName + ' (' + l.ospEntName + ')'}">공급자이름 (공급자기업명)</span></p>
+                                        <p class="SR_project-meta">수요자: <span th:text="${l.ospMemberName}">수요자이름</span></p>
+	                                    <p class="SR_project-meta">현재 단계: <span th:text="${l.ospCustStcYn}">최종 완료</span></p>
 	                                    <div class="SR_project-progress-bar">
-	                                        <div class="SR_project-progress-fill" style="width: 75%;"></div>
+	                                        <!-- l.ospStcCode 값에 따라 진행률 바의 너비를 동적으로 설정 -->
+	                                        <div class="SR_project-progress-fill" 
+	                                             th:style="${l.ospStcCode == 'SD_CONTRACT' ? 'width: 25%;' : 
+	                                                        (l.ospStcCode == 'SD_PLANNING' ? 'width: 50%;' : 
+	                                                        (l.ospStcCode == 'SD_WORKPROGRESS' ? 'width: 75%;' : 
+	                                                        (l.ospStcCode == 'SD_COMPLETION' ? 'width: 100%;' : 'width: 0%;')))}"></div>
 	                                    </div>
-	                                    <p class="SR_project-meta">진행률: <span>75%</span></p>
-	                                    <p class="SR_project-meta">마지막 활동: <span>2025-07-07</span></p>
-	                                </div>
-	                                <div class="SR_card-footer">
-	                                    <!-- progress is not 100, so no review button -->
-	                                    <p class="SR_project-status in-progress">진행 중</p>
-	                                </div>
-	                            </div>
-	
-	                            <!-- Project 2: 웹사이트 개발 프로젝트 -->
-	                            <div class="SR_project-card" data-project-id="proj-002">
-	                                <div class="SR_card-content">
-	                                    <h3 class="SR_project-title">웹사이트 개발 프로젝트</h3>
-	                                    <p class="SR_project-meta">담당자: <span>김철수 (공급자)</span></p>
-	                                    <p class="SR_project-meta">현재 단계: <span>계약 체결</span></p>
-	                                    <div class="SR_project-progress-bar">
-	                                        <div class="SR_project-progress-fill" style="width: 20%;"></div>
-	                                    </div>
-	                                    <p class="SR_project-meta">진행률: <span>20%</span></p>
-	                                    <p class="SR_project-meta">마지막 활동: <span>2025-07-01</span></p>
-	                                </div>
-	                                <div class="SR_card-footer">
-	                                    <!-- progress is not 100, so no review button -->
-	                                    <p class="SR_project-status upcoming">예정</p>
-	                                </div>
-	                            </div>
-	
-	                            <!-- Project 3: 모바일 앱 UI/UX 개선 (Completed) -->
-	                            <div class="SR_project-card" data-project-id="proj-003">
-	                                <div class="SR_card-content">
-	                                    <h3 class="SR_project-title">모바일 앱 UI/UX 개선</h3>
-	                                    <p class="SR_project-meta">담당자: <span>이영희 (수요자)</span></p>
-	                                    <p class="SR_project-meta">현재 단계: <span>최종 완료</span></p>
-	                                    <div class="SR_project-progress-bar">
-	                                        <div class="SR_project-progress-fill" style="width: 100%;"></div>
-	                                    </div>
-	                                    <p class="SR_project-meta">진행률: <span>100%</span></p>
+	                                    <p class="SR_project-meta">진행률: 
+	                                        <span th:text="${l.ospStcCode == 'SD_CONTRACT' ? '25%' : 
+	                                                        (l.ospStcCode == 'SD_PLANNING' ? '50%' : 
+	                                                        (l.ospStcCode == 'SD_WORKPROGRESS' ? '75%' : 
+	                                                        (l.ospStcCode == 'SD_COMPLETION' ? '100%' : '0%')))}">100%</span>
+	                                    </p>
 	                                    <p class="SR_project-meta">마지막 활동: <span>2025-06-28</span></p>
 	                                </div>
-	                                <div class="SR_card-footer">
-	                                    <button class="SR_btn-secondary SR_review-btn" data-project-id="proj-003" data-project-title="모바일 앱 UI/UX 개선">리뷰 작성</button>
-	                                    <p class="SR_project-status completed">완료</p>
+	                                <div class="SR_card-footer" th:switch="${l.ospCustStcYn}">
+	                                    <!-- '단계 완료'일 때만 리뷰 작성 버튼을 노출합니다. -->
+	                                    <button th:if="${l.ospCustStcYn == '단계 완료'}" class="SR_btn-secondary SR_review-btn" data-project-id="proj-003" data-project-title="모바일 앱 UI/UX 개선">리뷰 작성</button>
+                                    	<p th:case="${'단계 완료'}" class="SR_project-status completed">완료</p>
+                                		<p th:case="${'단계 진행중'}" class="SR_project-status in-progress">진행중</p>
 	                                </div>
 	                            </div>
-	
-	                            <!-- Project 4: 로고 디자인 의뢰 -->
-	                            <div class="SR_project-card" data-project-id="proj-004">
-	                                <div class="SR_card-content">
-	                                    <h3 class="SR_project-title">로고 디자인 의뢰</h3>
-	                                    <p class="SR_project-meta">담당자: <span>박민준 (수요자)</span></p>
-	                                    <p class="SR_project-meta">현재 단계: <span>초기 기획</span></p>
-	                                    <div class="SR_project-progress-bar">
-	                                        <div class="SR_project-progress-fill" style="width: 50%;"></div>
-	                                    </div>
-	                                    <p class="SR_project-meta">진행률: <span>50%</span></p>
-	                                    <p class="SR_project-meta">마지막 활동: <span>2025-07-05</span></p>
-	                                </div>
-	                                <div class="SR_card-footer">
-	                                    <!-- progress is not 100, so no review button -->
-	                                    <p class="SR_project-status in-progress">진행 중</p>
-	                                </div>
-	                            </div>
-	
-	                            <!-- Project 5: 데이터 분석 리포트 작성 -->
-	                            <div class="SR_project-card" data-project-id="proj-005">
-	                                <div class="SR_card-content">
-	                                    <h3 class="SR_project-title">데이터 분석 리포트 작성</h3>
-	                                    <p class="SR_project-meta">담당자: <span>최지우 (공급자)</span></p>
-	                                    <p class="SR_project-meta">현재 단계: <span>예정</span></p>
-	                                    <div class="SR_project-progress-bar">
-	                                        <div class="SR_project-progress-fill" style="width: 0%;"></div>
-	                                    </div>
-	                                    <p class="SR_project-meta">진행률: <span>0%</span></p>
-	                                    <p class="SR_project-meta">마지막 활동: <span>2025-07-02</span></p>
-	                                </div>
-	                                <div class="SR_card-footer">
-	                                    <!-- progress is not 100, so no review button -->
-	                                    <p class="SR_project-status upcoming">예정</p>
-	                                </div>
-	                            </div>
-			                </div>
-	                        <!-- "진행 중인 외주 프로젝트가 없습니다." 메시지는 더 이상 필요 없으므로 제거하거나 숨김 처리 -->
-	                        <!-- <p id="no-projects-message" class="SR_text-center SR_text-gray-600 SR_mt-8 SR_hidden">
-	                            진행 중인 외주 프로젝트가 없습니다.
-	                        </p> -->
+			            	</div>
 			            </div>
 			        </main>
 			    </div>
 			</div>
+			
 			<!-- ============== 리뷰 작성 모달 시작 ============== -->
 			<div class="SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_z-50 SR_hidden" id="reviewModal">
 			    <div class="SR_bg-white SR_p-6 SR_rounded-lg SR_shadow-lg" style="width:25%;">
 			        <h3 class="SR_text-xl SR_font-bold SR_mb-4" id="reviewModalTitle">리뷰 작성</h3>
 			        
-			        <!-- 리뷰 작성 폼 -->
 			        <form id="reviewForm">
-			            <!-- 어떤 프로젝트에 대한 리뷰인지 식별하기 위한 hidden input -->
 			            <input type="hidden" id="reviewProjectId" name="projectId">
 			            
 			            <div class="SR_mb-4">
 			                <label for="reviewRating" class="SR_block SR_text-sm SR_font-medium SR_text-gray-700">별점</label>
 			                <div class="SR_mt-1">
-			                    <!-- 간단한 별점 시스템 (예시) -->
 			                    <div id="starRating" class="SR_flex SR_items-center">
 			                        <span class="star" data-value="1">★</span>
 			                        <span class="star" data-value="2">★</span>
@@ -185,7 +125,9 @@
 			    </div>
 			</div>
 			<!-- =============== 리뷰 작성 모달 끝 =============== -->
+			
 		</div>
+		
 		
 		<th:block layout:fragment="jsScript">
 		    <script>
@@ -264,14 +206,15 @@
 		        document.addEventListener('DOMContentLoaded', () => {
 	                // 프로젝트 카드 클릭 이벤트 리스너 추가
 	                document.querySelectorAll('.SR_project-card').forEach(card => {
-	                    card.addEventListener('click', (event) => {
-	                        // '리뷰 작성' 버튼 클릭 시에는 viewProjectDetails가 실행되지 않도록 방지
-	                        if (!event.target.closest('.SR_review-btn')) {
-	                            const projectId = card.dataset.projectId;
-	                            viewProjectDetails(projectId);
-	                        }
-	                    });
-	                });
+					    card.addEventListener('click', (event) => {
+					        if (!event.target.closest('.SR_review-btn')) {
+					            const url = card.dataset.url;
+					            if (url) {
+					                window.location.href = url;
+					            }
+					        }
+					    });
+					});
 	
 	                // 리뷰 작성 버튼 클릭 이벤트 리스너 추가
 	                document.querySelectorAll('.SR_review-btn').forEach(button => {
