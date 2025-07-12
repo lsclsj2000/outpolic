@@ -30,4 +30,43 @@
 			(lfh_cd, lfh_ip, lfh_attemp_ymdt, lfh_cnt, lfh_in_ymdt, lfh_out_ymdt, lfr_cd)
 		VALUES('', '', '', , '', '', '');
 	</insert> -->
+	
+	<select id="getNextLoginHistoryCode" resultType="String">
+		/* 로그인 기록 기본키 만드는 쿼리문*/
+		SELECT CONCAT('LH_', LPAD(SUBSTRING(MAX(lh_cd), 4) + 1, 7, '0')) AS nextCode
+        FROM login_history
+        WHERE lh_cd LIKE 'LH_%';
+	</select>
+	<insert id="insertLoginHistory" parameterType="LoginHistoryDTO">
+		/* 로그인 기록 테이블에 로그인 기록 insert */
+		insert into login_history
+		(lh_cd, mbr_cd, lh_in_ymdt, lh_ip)
+		VALUES(#{loginHistoryCode}, #{memberCode}, now(), #{loginIp});	
+	</insert>
+	
+	<select id="getLastLoginCode" resultType="String">
+		select lh_cd
+		from login_history
+		where mbr_cd = #{memberCode}
+		and lh_out_ymdt is null
+		order by lh_in_ymdt desc
+		limit 1;
+	</select>
+	
+	<update id="updateLogoutHistory" parameterType="LoginHistoryDTO">
+		update login_history
+		set lh_out_ymdt = now()
+		where lh_cd = #{loginHistoryCode};
+	</update>
+	
 </mapper>
+
+
+
+
+
+
+
+
+
+

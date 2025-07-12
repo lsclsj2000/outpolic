@@ -11,4 +11,8 @@ public interface UserLoginService {
 	Map<String, Object> loginUser(String memberId, String memberPw);
 	//마지막 로그인 일시 업데이트
 	public void updateLoginDate(Member member);
+	
+	public String getLastLoginCode(String memberCode);
+	
+	public void updateLogoutHistory(String loginHistoryCode);
 }
