@@ -1,0 +1,40 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="outpolic.admin.member.mapper.AdminMemberMapper">
+  	<resultMap type="outpolic.common.domain.Member" id="memberInfo">
+		<id 	column="mbr_cd" 		property="memberCode" />
+		<result column="mbr_nm" 		property="memberName" />
+		<result column="mbr_id" 		property="memberId" />
+		<result column="mbr_nicknm" 	property="memberNickname" />
+		<result column="grd_cd" 		property="gradeCode" />
+		<result column="mbr_telno" 		property="memberTelNo" />
+		<result column="mbr_addr" 		property="memberAddress" />
+		<result column="mbr_daddr" 		property="memberDAddress" />
+		<result column="mbr_zip" 		property="memberZip" />
+		<result column="mbr_eml" 		property="memberEmail" />
+		<result column="mbr_join_ymdt" 	property="memberJoinYmdt" />
+		<result column="stc_cd" 	property="statusCode" />
+		<result column="mbr_agre_yn" 	property="memberAgreeYN" />
+  	</resultMap>
+  
+  	<select id="getMemberList" resultMap="memberInfo">
+  		SELECT 
+			mbr_cd, 
+			grd_cd, 
+			mbr_id, 
+			mbr_nm, 
+			mbr_nicknm, 
+			mbr_telno, 
+			mbr_addr, 
+			mbr_daddr, 
+			mbr_zip, 
+			mbr_eml, 
+			mbr_birth,  
+			mbr_join_ymdt, 
+			stc_cd, 
+			mbr_agre_yn
+		FROM member
+		order by CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED);
+  	</select>
+  </mapper>
