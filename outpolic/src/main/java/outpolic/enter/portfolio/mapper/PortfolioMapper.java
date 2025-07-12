@@ -62,4 +62,7 @@ public interface PortfolioMapper {
 
     // 특정 외주에 아직 연결되지 않은 포트폴리오를 검색하는 메서드 (반환 EnterPortfolio)
     List<EnterPortfolio> findUnlinkedPortfolios(@Param("osCd") String osCd, @Param("entCd") String entCd, @Param("query") String query);
+    
+    int deleteOutsourcingPortfolioByPrtfCd(@Param("prtfCd") String prtfCd); 
+
 }
