@@ -11,6 +11,7 @@ public class UserContentsDetailDTO {
     private String contentsTitle;
     private String enterName;
     private LocalDateTime registrationDate;
+    private String clCd;
     
     // --- 상세 정보 필드들 ---
     private String contentsBody;
