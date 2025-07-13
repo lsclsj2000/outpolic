@@ -64,13 +64,12 @@ public class UserContentsController {
         }
 
         // ===== 2. [핵심 수정] 조회된 detailData 객체에서 실제 DB ID (cl_cd)를 가져옵니다. =====
-        //    (주의: getClCd()는 예시이며, 실제 필드명 확인이 필요합니다.)
-//        String realContentListCode = detailData.getClCd();
+        String realContentListCode = detailData.getClCd();
         
-//        log.info("조회된 실제 DB ID (cl_cd): {}", realContentListCode);
+        log.info("조회된 실제 DB ID (cl_cd): {}", realContentListCode);
 
         // 3. 이제 '올바른' ID로 조회수 및 열람 기록 서비스를 호출합니다.
-//        contentViewService.processContentView(realContentListCode, memberCode);
+        contentViewService.processContentView(realContentListCode, memberCode);
         
         // 4. 모델에 데이터를 담고 뷰를 리턴합니다.
         model.addAttribute("detail", detailData);
