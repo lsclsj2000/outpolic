@@ -26,5 +26,8 @@ public class Member {
     private String memberAgreeYN;
     private LocalDate memberLastLoginYmdt;
     private String memberSocialLoginYN;
+    
+    //회원 탈퇴 예정일
+    private LocalDate withdrawalExpectedDate;
 
 }

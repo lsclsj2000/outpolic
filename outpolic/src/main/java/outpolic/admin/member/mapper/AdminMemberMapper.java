@@ -11,4 +11,10 @@ public interface AdminMemberMapper {
 	
 	//회원 목록 조회
 	List<Member> getMemberList();
+	
+	//활성 회원 목록 조회
+	List<Member> getActiveMemberList();
+	
+	//휴면 회원 목록 조회
+	List<Member> getWithdrawMemberList();
 }

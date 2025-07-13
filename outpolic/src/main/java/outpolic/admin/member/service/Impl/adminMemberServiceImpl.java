@@ -19,5 +19,17 @@ public class adminMemberServiceImpl implements AdminMemberService {
 		List<Member> memberList = adminMemberMapper.getMemberList();
 		return memberList;
 	}
+	@Override
+	public List<Member> getActiveMemberList() {
+		List<Member> memberList = adminMemberMapper.getActiveMemberList();
+		return memberList;
+	}
+	@Override
+	public List<Member> getWithdrawMemberList() {
+		List<Member> memberList = adminMemberMapper.getWithdrawMemberList();
+		return memberList;
+	}
+	
+	
 
 }

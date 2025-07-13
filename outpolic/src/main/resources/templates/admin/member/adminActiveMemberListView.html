@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutMain}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+	
+	<body>
+		<th:block layout:fragment="contents">
+			<section class="content-main">
+                <div class="content-header">
+                	<h2 class="content-title card-title">활성 회원 목록</h2>
+                </div>
+                <div class="card mb-4">
+                    <header class="card-header">
+                        <div class="row gx-3">
+                            <div class="col-lg-4 col-md-6 me-auto">
+                                <input type="text" placeholder="Search..." class="form-control" />
+                            </div>
+                            <div class="col-lg-2 col-6 col-md-3">
+                                <select class="form-select">
+                                    <option>전체 회원</option>
+                                    <option>활성 회원</option>
+                                    <option>휴면 회원</option>
+                                    <option>탈퇴 회원</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-6 col-md-3">
+                                <select class="form-select">
+                                    <option>Show 20</option>
+                                    <option>Show 30</option>
+                                    <option>Show 40</option>
+                                </select>
+                            </div>
+                        </div>
+                    </header>
+                    <!-- card-header end// -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th scope="col">회원 코드</th>
+                                        <th scope="col">이름</th>
+                                        <th scope="col">아이디</th>
+                                        <th scope="col">닉네임</th>
+                                        <th scope="col">등급</th>
+                                        <th scope="col">연락처</th>
+                                        <th scope="col">주소</th>
+                                        <th scope="col">상세주소</th>
+                                        <th scope="col">우편번호</th>
+                                        <th scope="col">이메일</th>
+                                        <!--<th scope="col">가입일</th>-->
+                                        <th scope="col">약관동의</th>
+                                        <th scope="col">상세정보</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    <tr th:if="${not #lists.isEmpty(memberList)}"
+                                    	th:each="l : ${memberList}">
+                                       <th th:text="${l.memberCode}">회원 코드</th>
+                                       <th th:text="${l.memberName}">이름</th>
+                                       <th th:text="${l.memberId}">아이디</th>
+                                       <th th:text="${l.memberNickname}">닉네임</th>
+                                       <th th:text="${l.gradeCode}">등급</th>
+                                       <th th:text="${l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.substring(l.memberTelNo.length() - 4)}">연락처</th>
+                                       <th th:text="${l.memberAddress}">주소</th>
+                                       <th th:text="${l.memberDAddress}">상세주소</th>
+                                       <th th:text="${l.memberZip}">우편번호</th>
+                                       <th th:text="${l.memberEmail}">이메일</th>
+                                     <!--  <th th:text="${l.memberJoinYmdt}">가입일</th>-->
+                                       <th th:switch="${l.memberAgreeYN}">
+											<span th:case="1" class="badge rounded-pill alert-success">Y</span>
+											<span th:case="0" class="badge rounded-pill alert-warning">N</span>
+										</th>
+                                       <th scope="col" class="text-end"><button class="btn btn-md rounded font-sm SR_open-popup-btn">상세정보</button></th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- table-responsive //end -->
+                    </div>
+                    <!-- card-body end// -->
+                </div>
+            </section>
+		
+		</th:block>
+	</body>
+	<!-- 추가할 js file -->
+	
+</html>
