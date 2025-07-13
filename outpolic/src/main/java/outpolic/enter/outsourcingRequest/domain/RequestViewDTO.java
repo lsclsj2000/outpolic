@@ -1,7 +1,7 @@
 package outpolic.enter.outsourcingRequest.domain;
 
 import lombok.Data;
-import java.math.BigDecimal; // BigDecimal 임포트 추가
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -18,11 +18,11 @@ public class RequestViewDTO {
     private String stc_cd; // 상태 코드
     private String chr_cd; // 연결된 채팅방 ID
 
-    // ★★★ 아래 필드들을 추가해야 합니다 ★★★
-    private String ocd_expln;       // 상세 요청 내용
-    private BigDecimal ocd_amt;     // 희망 예산
+    // ★★★ 추가된 필드들 ★★★
     private String ocd_frctn_cmdty; // 최종 제작물
     private String ocd_dlvgds_mthd; // 납품 방법
+    private String ocd_expln;       // 상세 요청 내용
+    private BigDecimal ocd_amt;     // 희망 예산
     private LocalDateTime ocd_strt_ymdt; // 희망 시작일
     private LocalDateTime ocd_dedline;   // 희망 종료일
     // --- 추가 필드 끝 ---

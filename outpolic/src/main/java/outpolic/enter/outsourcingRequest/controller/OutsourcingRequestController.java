@@ -18,7 +18,7 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpSession;
 
-@Controller
+@Controller("enterOutsourcingRequestController")
 @RequestMapping("/enter/outsourcing-requests")
 @RequiredArgsConstructor
 public class OutsourcingRequestController {
