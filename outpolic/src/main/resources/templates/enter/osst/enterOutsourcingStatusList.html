@@ -54,26 +54,26 @@
 	                            
 	                            <div class="SR_project-card"
 	                            	 th:each="l : ${osstList}"
-	                            	 th:attr="data-url=@{/enter/enterOsstDetail(ocd_cd=${l.osstDetailCode})}"
+	                            	 th:attr="data-url=@{/enter/enterOsstDetail(ocd_cd=${l.ocdCode})}"
 	                            	 data-project-id="proj-003" >
 	                                <div class="SR_card-content">
-	                                    <h3 class="SR_project-title" th:text="${l.ospOcdTitle}">외주 제목</h3>
-                                        <p class="SR_project-meta">공급자: <span th:text="${l.ospEntMemberName + ' (' + l.ospEntName + ')'}">공급자이름 (공급자기업명)</span></p>
-                                        <p class="SR_project-meta">수요자: <span th:text="${l.ospMemberName}">수요자이름</span></p>
+	                                    <h3 class="SR_project-title" th:text="${l.ocdTitle}">외주 제목</h3>
+                                        <p class="SR_project-meta">공급자: <span th:text="${l.entMemberName + ' (' + l.entName + ')'}">공급자이름 (공급자기업명)</span></p>
+                                        <p class="SR_project-meta">수요자: <span th:text="${l.memberName}">수요자이름</span></p>
 	                                    <p class="SR_project-meta">현재 단계: <span th:text="${l.ospCustStcYn}">최종 완료</span></p>
 	                                    <div class="SR_project-progress-bar">
-	                                        <!-- l.ospStcCode 값에 따라 진행률 바의 너비를 동적으로 설정 -->
+	                                        <!-- l.stcCode 값에 따라 진행률 바의 너비를 동적으로 설정 -->
 	                                        <div class="SR_project-progress-fill" 
-	                                             th:style="${l.ospStcCode == 'SD_CONTRACT' ? 'width: 25%;' : 
-	                                                        (l.ospStcCode == 'SD_PLANNING' ? 'width: 50%;' : 
-	                                                        (l.ospStcCode == 'SD_WORKPROGRESS' ? 'width: 75%;' : 
-	                                                        (l.ospStcCode == 'SD_COMPLETION' ? 'width: 100%;' : 'width: 0%;')))}"></div>
+	                                             th:style="${l.stcCode == 'SD_CONTRACT' ? 'width: 25%;' : 
+	                                                        (l.stcCode == 'SD_PLANNING' ? 'width: 50%;' : 
+	                                                        (l.stcCode == 'SD_WORKPROGRESS' ? 'width: 75%;' : 
+	                                                        (l.stcCode == 'SD_COMPLETION' ? 'width: 100%;' : 'width: 0%;')))}"></div>
 	                                    </div>
 	                                    <p class="SR_project-meta">진행률: 
-	                                        <span th:text="${l.ospStcCode == 'SD_CONTRACT' ? '25%' : 
-	                                                        (l.ospStcCode == 'SD_PLANNING' ? '50%' : 
-	                                                        (l.ospStcCode == 'SD_WORKPROGRESS' ? '75%' : 
-	                                                        (l.ospStcCode == 'SD_COMPLETION' ? '100%' : '0%')))}">100%</span>
+	                                        <span th:text="${l.stcCode == 'SD_CONTRACT' ? '25%' : 
+	                                                        (l.stcCode == 'SD_PLANNING' ? '50%' : 
+	                                                        (l.stcCode == 'SD_WORKPROGRESS' ? '75%' : 
+	                                                        (l.stcCode == 'SD_COMPLETION' ? '100%' : '0%')))}">100%</span>
 	                                    </p>
 	                                    <p class="SR_project-meta">마지막 활동: <span>2025-06-28</span></p>
 	                                </div>
