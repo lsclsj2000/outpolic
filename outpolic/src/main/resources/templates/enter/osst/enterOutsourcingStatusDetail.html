@@ -15,11 +15,10 @@
 		<div layout:fragment="contents">
 	        <!-- Main Content -->
 	        <main class="SR_flex-grow">
-	            <!-- 1. 레이블: [외주명] 진행 현황 (박스 바깥) -->
 	            <div class="SR_label-container">
 	                   <div class="SR_blue-bar"></div>
 	                <h2 class="SR_text-3xl SR_font-bold SR_text-gray-800" 
-	                	th:text="${'[' + EnterOsstDetail.osstDetailTitle + '] 진행 현황'}">[외주명] 진행 현황</h2>
+	                	th:text="${'[' + EnterOsstDetail.ocdTitle + '] 진행 현황'}">[외주명] 진행 현황</h2>
 	            </div>
 	
 	            <div class="SR_max-w-6xl SR_mx-auto SR_container-bg SR_p-8 SR_rounded-lg SR_box-shadow SR_mb-8">
@@ -29,28 +28,28 @@
 	                        <div class="SR_p-3 SR_bg-gray-50 SR_rounded-md SR_border SR_border-gray-200">
 	                            <p class="SR_text-base SR_font-semibold SR_text-blue-700 SR_mb-2">
 	                                <a href="#" class="SR_underline"
-	                                   th:text="${EnterOsstDetail.osstDetailTitle}">신청제목</a>
+	                                   th:text="${EnterOsstDetail.ocdTitle}">신청제목</a>
 	                            </p>
 	                            <p class="SR_text-sm SR_text-gray-600">• 작성자:
 	                            	<span class="SR_text-sm SR_text-gray-600"
-	                            	   th:text="${EnterOsstDetail.osstDetailMemberName}"></span>
+	                            	   th:text="${EnterOsstDetail.memberName}"></span>
 	                           	</p>
 	                            <p class="SR_text-sm SR_text-gray-600">• 작성일자:
 	                            	<span class="SR_text-sm SR_text-gray-600"
-	                            	   th:text="${EnterOsstDetail.osstDetailDmndYmdt}"></span>
+	                            	   th:text="${EnterOsstDetail.ocdDmndYmdt}"></span>
 	                           	</p>
 	                           	<p class="SR_text-sm SR_text-gray-600">• 희망작업기한:
 	                            	<span class="SR_text-sm SR_text-gray-600"
-	                            	   th:text="${EnterOsstDetail.osstDetailDedline}"></span>
+	                            	   th:text="${EnterOsstDetail.ocdDedline}"></span>
 	                           	</p>
 	                           	<p class="SR_text-sm SR_text-gray-600">• 희망단가:
 	                            	<span class="SR_text-sm SR_text-gray-600"
-	                            	   th:text="${#numbers.formatInteger(EnterOsstDetail.osstDetailAmt, 0, 'COMMA')}"></span>
+	                            	   th:text="${#numbers.formatInteger(EnterOsstDetail.ocdAmt, 0, 'COMMA')}"></span>
 	                           	</p>
 	                           	<!-- 내용이 길어지면 말줄임표로 표현되도록 수정 -->
 	                           	<p class="SR_text-sm SR_text-gray-600 SR_flex SR_items-baseline">• 내용:
 	                            	<span class="SR_text-sm SR_text-gray-600 SR_flex-1 SR_truncate"
-	                            	   th:text="${EnterOsstDetail.osstDetailExpln}"></span>
+	                            	   th:text="${EnterOsstDetail.ocdExpln}"></span>
 	                           	</p>
 	                        </div>
 	                    </div>
@@ -66,19 +65,19 @@
                         <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">공급자 및 수요자</h3>
                         <div id="key-contacts-list">
                             <div class="SR_contact-card">
-                                <div class="SR_contact-avatar">PM</div>
+                                <div class="SR_contact-avatar">S</div>
                                 <div class="SR_contact-details">
-                                    <div class="SR_contact-name" th:text="${EnterOsstDetail.osstDetailEntMbrName + '(공급자)'}">공급자 이름</div>
-                                    <div class="SR_contact-role" th:text="${EnterOsstDetail.osstDetailEntName}">기업명</div>
-                                    <a href="#" class="SR_contact-email">kim.cs@example.com</a>
+                                    <div class="SR_contact-name" th:text="${EnterOsstDetail.entMbrName + '(공급자)'}">공급자 이름</div>
+                                    <div class="SR_contact-role" th:text="${EnterOsstDetail.entName}">기업명</div>
+                                    <a href="#" class="SR_contact-email" th:text="${EnterOsstDetail.entMbrEmail}">공급자 이메일</a>
                                 </div>
                             </div>
                             <div class="SR_contact-card">
-                                <div class="SR_contact-avatar">OD</div>
+                                <div class="SR_contact-avatar">C</div>
                                 <div class="SR_contact-details">
-                                    <div class="SR_contact-name" th:text="${EnterOsstDetail.osstDetailMemberName + '(수요자)'}">수요자 이름</div>
-                                    <div class="SR_contact-role">수요자 닉머ㅜ뭐쓰지</div>
-                                    <a href="#" class="SR_contact-email">lee.yh@example.com</a>
+                                    <div class="SR_contact-name" th:text="${EnterOsstDetail.memberName + '(수요자)'}">수요자 이름</div>
+                                    <!-- <div class="SR_contact-role">수요자 닉머ㅜ뭐쓰지</div> -->
+                                    <a href="#" class="SR_contact-email" th:text="${EnterOsstDetail.memberEmail}">수요자 이메일</a>
                                 </div>
                             </div>
                         </div>
@@ -104,55 +103,49 @@
 	                    <div class="SR_w-full SR_lg:w-2\/3 SR_flex SR_flex-col SR_gap-8">
 	                        <!-- progress-list: 각 단계의 보고서, 피드백, 결과물을 Thymeleaf로 렌더링 -->
 	                        <div id="progress-list">
-	                            <div th:each="step : ${progressSteps}" th:data-step-id="${step.id}" class="SR_bg-white SR_p-6 SR_rounded-lg SR_box-shadow SR_border SR_border-gray-200 SR_step-container">
-	
-	                                <!-- 단계 헤더 -->
-	                                <div class="SR_mb-4">
-	                                    <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700" th:text="${step.stepName}">단계명</h3>
-	                                    <span class="SR_text-sm SR_text-gray-500" th:text="${step.isCompleted ? '완료' : (step.isCurrentStep ? '진행 중' : '대기')}"></span>
-	                                </div>
-	
-	                                <!-- 공급자 보고서 영역 -->
-	                                <div class="SR_mb-6">
-	                                    <h4 class="SR_text-lg SR_font-semibold SR_text-gray-700 SR_mb-2">공급자 보고서</h4>
-	                                    <div th:if="${#lists.isEmpty(step.reports)}" class="SR_text-gray-600">제출된 보고서가 없습니다.</div>
-	                                    <div th:each="report : ${step.reports}" class="SR_bg-blue-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-200 SR_report-box">
-	                                        <p><strong th:text="${report.title}">보고서 제목</strong></p>
-	                                        <p th:text="${report.content}">내용</p>
-	                                        <p th:if="${report.file}"><a th:href="@{/files/{file}(file=${report.file})}" target="_blank" class="SR_text-blue-600 SR_underline">첨부 파일</a></p>
-	                                        <p class="SR_text-xs SR_text-gray-500" th:text="'작성일: ' + ${report.date}"></p>
-	                                    </div>
-	                                </div>
-	
-	                                <!-- 수요자 피드백 영역 -->
-	                                <div class="SR_mb-6">
-	                                    <h4 class="SR_text-lg SR_font-semibold SR_text-gray-700 SR_mb-2">수요자 피드백</h4>
-	                                    <div th:if="${#lists.isEmpty(step.feedbacks)}" class="SR_text-gray-600">제출된 피드백이 없습니다.</div>
-	                                    <div th:each="feedback : ${step.feedbacks}" class="SR_bg-green-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-green-200 SR_feedback-box">
-	                                        <p><strong th:text="${feedback.title}">피드백 제목</strong></p>
-	                                        <p th:text="${feedback.content}">피드백 내용</p>
-	                                        <p th:if="${feedback.file}"><a th:href="@{/files/{file}(file=${feedback.file})}" target="_blank" class="SR_text-green-600 SR_underline">첨부 파일</a></p>
-	                                        <p class="SR_text-xs SR_text-gray-500" th:text="'작성일: ' + ${feedback.date}"></p>
-	                                    </div>
-	                                </div>
-	
-	                                <!-- 최종 결과물 영역 -->
-	                                <div class="SR_mb-6" th:if="${!#lists.isEmpty(step.finalResults)}">
-	                                    <h4 class="SR_text-lg SR_font-semibold SR_text-gray-700 SR_mb-2">최종 결과물</h4>
-	                                    <ul>
-	                                        <li th:each="result : ${step.finalResults}" class="SR_bg-yellow-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-yellow-200">
-	                                            <a th:href="@{/files/{file}(file=${result.file})}" target="_blank" th:text="${result.file}" class="SR_text-yellow-700 SR_underline">결과 파일</a>
-	                                        </li>
-	                                    </ul>
-	                                </div>
-	
-	                                <!-- 버튼 영역 (진행 중인 단계만 노출) -->
-	                                <div class="SR_flex SR_justify-end SR_gap-4 SR_mt-4" th:if="${step.isCurrentStep}">
-	                                    <button type="button" class="SR_btn-primary" onclick="openModal('submitReportModal')">보고서 제출</button>
-	                                    <button type="button" class="SR_btn-primary" onclick="openModal('giveFeedbackModal')">피드백 작성</button>
-	                                </div>
-	                            </div>
-	                        </div>
+							    <div th:each="step : ${progressSteps}" th:data-step-id="${step.id}" class="SR_bg-white SR_p-6 SR_rounded-lg SR_box-shadow SR_border SR_border-gray-200 SR_step-container">
+							        <div class="SR_mb-4">
+							            <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700" th:text="${step.stepName}">단계명</h3>
+							            <span class="SR_text-sm SR_text-gray-500" th:text="${step.isCompleted ? '완료' : (step.isCurrentStep ? '진행 중' : '대기')}"></span>
+							        </div>
+							
+							        <div class="SR_mb-6">
+							            <h4 class="SR_text-lg SR_font-semibold SR_text-gray-700 SR_mb-2">공급자 보고서</h4>
+							            <div th:if="${#lists.isEmpty(step.reports)}" class="SR_text-gray-600">제출된 보고서가 없습니다.</div>
+							            <div th:each="report : ${step.reports}" class="SR_bg-blue-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-200 SR_report-box">
+							                <p><strong th:text="${report.title}">보고서 제목</strong></p>
+							                <p th:text="${report.content}">내용</p>
+							                <p th:if="${report.file}"><a th:href="@{/files/{file}(file=${report.file})}" target="_blank" class="SR_text-blue-600 SR_underline">첨부 파일</a></p>
+							                <p class="SR_text-xs SR_text-gray-500" th:text="'작성일: ' + ${report.date}"></p>
+							            </div>
+							        </div>
+							
+							        <div class="SR_mb-6">
+							            <h4 class="SR_text-lg SR_font-semibold SR_text-gray-700 SR_mb-2">수요자 피드백</h4>
+							            <div th:if="${#lists.isEmpty(step.feedbacks)}" class="SR_text-gray-600">제출된 피드백이 없습니다.</div>
+							            <div th:each="feedback : ${step.feedbacks}" class="SR_bg-green-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-green-200 SR_feedback-box">
+							                <p><strong th:text="${feedback.title}">피드백 제목</strong></p>
+							                <p th:text="${feedback.content}">피드백 내용</p>
+							                <p th:if="${feedback.file}"><a th:href="@{/files/{file}(file=${feedback.file})}" target="_blank" class="SR_text-green-600 SR_underline">첨부 파일</a></p>
+							                <p class="SR_text-xs SR_text-gray-500" th:text="'작성일: ' + ${feedback.date}"></p>
+							            </div>
+							        </div>
+							
+							        <div class="SR_mb-6" th:if="${!#lists.isEmpty(step.finalResults)}">
+							            <h4 class="SR_text-lg SR_font-semibold SR_text-gray-700 SR_mb-2">최종 결과물</h4>
+							            <ul>
+							                <li th:each="result : ${step.finalResults}" class="SR_bg-yellow-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-yellow-200">
+							                    <a th:href="@{/files/{file}(file=${result.file})}" target="_blank" th:text="${result.file}" class="SR_text-yellow-700 SR_underline">결과 파일</a>
+							                </li>
+							            </ul>
+							        </div>
+							
+							        <div class="SR_flex SR_justify-end SR_gap-4 SR_mt-4" th:if="${step.isCurrentStep}">
+							            <button type="button" class="SR_btn-primary" onclick="openModal('submitReportModal')">보고서 제출</button>
+							            <button type="button" class="SR_btn-primary" onclick="openModal('giveFeedbackModal')">피드백 작성</button>
+							        </div>
+							    </div>
+							</div>
 	                    </div>
 	                </div>
 	               <div id="step-approval-button-container" class="SR_flex SR_justify-end SR_mt-4 mt-30">

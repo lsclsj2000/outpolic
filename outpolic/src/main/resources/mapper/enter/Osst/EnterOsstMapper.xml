@@ -9,52 +9,52 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<resultMap id="enterOsstResultMap" type="outpolic.enter.osst.domain.EnterOsst">
 		<id 	column="osp_cd" 			property="ospCode"/>
 		<id 	column="ocd_cd" 			property="ocdCode"/>
-		<id 	column="ocd_cd" 			property="osstDetailCode"/>
 		
-		<result column="ocd_cd" 			property="ospOcdCode"/>
-		<result column="ocd_ttl" 			property="ospOcdTitle"/>
-		<result column="mbr_cd" 			property="ospMemberCode"/>
-		<result column="mbr_nm" 			property="ospMemberName"/>
-		<result column="ent_cd" 			property="ospEntCode"/>
-		<result column="ent_mbr_cd" 		property="ospEntMemberCode"/>
-		<result column="ent_mbr_nm" 		property="ospEntMemberName"/>
-		<result column="ent_nm" 			property="ospEntName"/>
-		<result column="stc_cd" 			property="ospStcCode"/>
-		<result column="stc_nm" 			property="ospStcName"/>
-		<result column="osp_sply_ymdt" 		property="ospSplyYmdt"/>
+		<result column="ocd_ttl" 			property="ocdTitle"/>
+		<result column="ocd_expln" 			property="ocdExpln"/>
+		<result column="ocd_dmnd_ymdt" 		property="ocdDmndYmdt"/>
+		<result column="ocd_dedline" 		property="ocdDedline"/>
+		<result column="ocd_amt" 			property="ocdAmt"/>
+
 		<result column="osp_cust_yn" 		property="ospCustYn"/>
+		<result column="osp_sply_ymdt" 		property="ospSplyYmdt"/>
 		<result column="osp_cust_ymdt" 		property="ospCustYmdt"/>
 		<result column="osp_cust_stc_yn" 	property="ospCustStcYn"/>
 		<result column="osp_stc_order" 		property="ospStcOrder"/>
 		
+		<result column="mbr_cd" 			property="memberCode"/>
+		<result column="mbr_nm" 			property="memberName"/>
+		<result column="mbr_eml" 			property="memberEmail"/>
 		
-		<result column="mbr_cd" 			property="ocdMemberCode"/>
-		<result column="ocd_ttl" 			property="ocdTitle"/>
-		<result column="ocd_expln" 			property="ocdExpln"/>
-		<result column="ocd_dmnd_ymdt" 		property="ocdDmndYmdt"/>
-		
-		<result column="mbr_cd" 			property="osstDetailMemberCode"/>
-		<result column="mbr_nm" 			property="osstDetailMemberName"/>
-		<result column="ent_cd" 			property="osstDetailEntCode"/>
-		<result column="ent_nm" 			property="osstDetailEntName"/>
-		<result column="ent_mbr_nm" 		property="osstDetailEntMbrName"/>
-		<result column="ocd_ttl" 			property="osstDetailTitle"/>
-		<result column="ocd_expln" 			property="osstDetailExpln"/>
-		<result column="ocd_dedline" 		property="osstDetailDedline"/>
-		<result column="ocd_amt" 			property="osstDetailAmt"/>
-		<result column="stc_cd" 			property="osstDetailStcCode"/>
-		<result column="ocd_dmnd_ymdt" 		property="osstDetailDmndYmdt"/>
+		<result column="ent_cd" 			property="entCode"/>
+		<result column="ent_nm" 			property="entName"/>
+		<result column="ent_mbr_nm" 		property="entMbrName"/>
+		<result column="ent_mbr_eml" 		property="entMbrEmail"/>
+		<result column="ent_mbr_cd" 		property="entMemberCode"/>
+		<result column="ent_mbr_nm" 		property="entMemberName"/>
+
+		<result column="stc_cd" 			property="stcCode"/>
+		<result column="stc_nm" 			property="stcName"/>
 	</resultMap>
 	
 	<!--EnterOsstRecord.DTO -->
 	<resultMap id="enterOsstRecordResultMap" type="outpolic.enter.osst.domain.EnterOsstRecord">
-	
-	
+		<id 	column="osr_cd" 			property="osstRecordCode"/>
+		<result column="osp_cd" 			property="osstPrograssCode"/>
+		<result column="stc_cd" 			property="osstRecordStcCode"/>
+		<result column="stc_nm" 			property="osstRecordStcName"/>
+		<result column="osr_type" 			property="osstRecordType"/>
+		<result column="mbr_cd" 			property="osstRecordMbrCode"/>
+		<result column="mbr_nm" 			property="osstRecordMbrName"/>
+		<result column="osr_ttl" 			property="osstRecordTitle"/>
+		<result column="osr_cn" 			property="osstRecordCn"/>
+		<result column="osr_reg_ymdt" 		property="osstRecordRegYmdt"/>
+		<result column="osr_up_cd" 			property="osstRecordUpCode"/>
 	</resultMap>
 
 	
 	<!-- 진행 외주 기록 조회 -->
-	<select id="getEnterOsstRecord" resultMap="enterOsstResultMap">
+	<select id="getEnterOsstRecord" resultMap="enterOsstRecordResultMap">
 		/* 진행 외주 기록 조회 */
 		select
 			osr.osr_cd as osr_cd,
@@ -82,9 +82,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			ocd.ocd_cd as ocd_cd,
 			ocd.mbr_cd as mbr_cd,
 			m.mbr_nm as mbr_nm,
+			m.mbr_eml as mbr_eml,
 			ocd.ent_cd as ent_cd,
 			e.ent_nm as ent_nm,
 			m2.mbr_nm as ent_mbr_nm,
+			m2.mbr_eml as ent_mbr_eml,
 			ocd.ocd_ttl as ocd_ttl,
 			ocd.ocd_expln as ocd_expln,	
 			ocd.ocd_dedline as ocd_dedline,
