@@ -14,8 +14,10 @@
 		<result column="mbr_zip" 		property="memberZip" />
 		<result column="mbr_eml" 		property="memberEmail" />
 		<result column="mbr_join_ymdt" 	property="memberJoinYmdt" />
-		<result column="stc_cd" 	property="statusCode" />
+		<result column="stc_cd" 		property="statusCode" />
 		<result column="mbr_agre_yn" 	property="memberAgreeYN" />
+		<result column="mbr_last_lgn_ymdt" 	property="memberLastLoginYmdt" />
+		<result column="withdrawal_expected_date" 	property="withdrawalExpectedDate" />
   	</resultMap>
   
   	<select id="getMemberList" resultMap="memberInfo">
@@ -35,6 +37,49 @@
 			stc_cd, 
 			mbr_agre_yn
 		FROM member
+		order by CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED);
+  	</select>
+  	
+	<select id="getActiveMemberList" resultMap="memberInfo">
+  		SELECT 
+			mbr_cd, 
+			grd_cd, 
+			mbr_id, 
+			mbr_nm, 
+			mbr_nicknm, 
+			mbr_telno, 
+			mbr_addr, 
+			mbr_daddr, 
+			mbr_zip, 
+			mbr_eml, 
+			mbr_birth,  
+			mbr_join_ymdt, 
+			stc_cd, 
+			mbr_agre_yn
+		FROM member
+		where stc_cd='SD_ACTIVE'
+		order by CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED);
+  	</select>
+  	
+  	<select id="getWithdrawMemberList" resultMap="memberInfo">
+  		SELECT 
+			mbr_cd, 
+			grd_cd, 
+			mbr_id, 
+			mbr_nm, 
+			mbr_nicknm, 
+			mbr_telno, 
+			mbr_addr, 
+			mbr_daddr, 
+			mbr_zip, 
+			mbr_eml, 
+			mbr_birth,  
+			mbr_join_ymdt, 
+			stc_cd, 
+			mbr_agre_yn,
+			COALESCE(DATE_ADD(mbr_last_lgn_ymdt, INTERVAL 2 YEAR), NULL) as withdrawal_expected_date 
+		FROM member
+		where stc_cd='SD_WITHDRAWN'
 		order by CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED);
   	</select>
   </mapper>
