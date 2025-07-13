@@ -53,9 +53,9 @@
                                         <th scope="col">우편번호</th>
                                         <th scope="col">이메일</th>
                                         <th scope="col">상태</th>
-                                        <th scope="col">가입일</th>
+                                        <!--<th scope="col">가입일</th>-->
                                         <th scope="col">약관동의</th>
-                                        <th scope="col" class="text-end">Action</th>
+                                        <th scope="col">상세정보</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-center">
@@ -66,7 +66,7 @@
                                        <th th:text="${l.memberId}">아이디</th>
                                        <th th:text="${l.memberNickname}">닉네임</th>
                                        <th th:text="${l.gradeCode}">등급</th>
-                                       <th th:text="${l.memberTelNo}">연락처</th>
+                                       <th th:text="${l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.substring(l.memberTelNo.length() - 4)}">연락처</th>
                                        <th th:text="${l.memberAddress}">주소</th>
                                        <th th:text="${l.memberDAddress}">상세주소</th>
                                        <th th:text="${l.memberZip}">우편번호</th>
@@ -77,12 +77,12 @@
                                            <span th:case="SD_DORMANT" class="badge rounded-pill alert-info">탈퇴</span>
                                            <span th:case="SD_LIMIT" class="badge rounded-pill alert-warning">제재</span>
                                        </th>
-                                       <th th:text="${l.memberJoinYmdt}">가입일</th>
+                                     <!--  <th th:text="${l.memberJoinYmdt}">가입일</th>-->
                                        <th th:switch="${l.memberAgreeYN}">
 											<span th:case="1" class="badge rounded-pill alert-success">Y</span>
 											<span th:case="0" class="badge rounded-pill alert-warning">N</span>
 										</th>
-                                       <th scope="col" class="text-end">Action</th>
+                                       <th scope="col" class="text-end"><button class="btn btn-md rounded font-sm SR_open-popup-btn">상세정보</button></th>
                                     </tr>
                                 </tbody>
                             </table>
@@ -90,21 +90,6 @@
                         <!-- table-responsive //end -->
                     </div>
                     <!-- card-body end// -->
-                </div>
-                <!-- card end// -->
-                <div class="pagination-area mt-15 mb-50">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-start">
-                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                            <li class="page-item"><a class="page-link" href="#">02</a></li>
-                            <li class="page-item"><a class="page-link" href="#">03</a></li>
-                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                            <li class="page-item"><a class="page-link" href="#">16</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
                 </div>
             </section>
 		
