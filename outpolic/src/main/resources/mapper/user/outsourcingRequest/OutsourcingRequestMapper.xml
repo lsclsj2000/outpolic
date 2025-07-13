@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="outpolic.enter.outsourcingRequest.mapper.EnterOutsourcingRequestMapper">
+<mapper namespace="outpolic.user.outsourcingRequest.mapper.UserOutsourcingRequestMapper">
 	
 	<insert id="insertRequest" parameterType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO">
         INSERT INTO outsourcing_contract_details (
@@ -31,12 +31,8 @@
             NOW(),
             '신청', 'SD_BEFORE'
         )
-    </insert>
+    </insert> 
     
-    <update id="updateChatRoomId">
-        UPDATE outsourcing_contract_details SET chr_cd = #{chr_cd} WHERE ocd_cd = #{ocd_cd}
-    </update>
-
     <select id="findSentRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
         SELECT 
             ocd.ocd_cd, 
@@ -54,7 +50,7 @@
         WHERE 
             ocd.mbr_cd = #{requesterId} AND ocd.ocd_req_type = '신청'
         ORDER BY ocd.ocd_dmnd_ymdt DESC
-    </select>
+    </select> 
     
     <select id="findRequestDetailById" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
         SELECT ocd.*, m.mbr_nm as demanderName, e.ent_nm as supplierName
@@ -62,7 +58,7 @@
         JOIN member m ON ocd.mbr_cd = m.mbr_cd
         JOIN enterprise e ON ocd.ent_cd = e.ent_cd
         WHERE ocd.ocd_cd = #{requestId}
-    </select>
+    </select> 
 
     <select id="findLatestOcdCd" resultType="String">
         SELECT ocd_cd
@@ -70,5 +66,5 @@
         WHERE ocd_cd LIKE 'OCD_C%'
         ORDER BY CAST(SUBSTRING(ocd_cd, 6) AS UNSIGNED) DESC
         LIMIT 1
-    </select>
+    </select> 
 </mapper>

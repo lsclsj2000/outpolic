@@ -28,10 +28,9 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     private static final Logger logger = LoggerFactory.getLogger(EnterOutsourcingServiceImpl.class);
 
     private final OutsourcingMapper outsourcingMapper;
-    private final PortfolioMapper portfolioMapper;
+    private final PortfolioMapper portfolioMapper; // 포트폴리오 매퍼도 주입되어 있어야 함 (기존 코드 유지)
 
-    // application.properties 등에서 관리하는 것을 권장합니다.
-    private final String FILE_UPLOAD_DIR = "C:/uploads"; 
+    private final String FILE_UPLOAD_DIR = "C:/uploads";
 
     // ======================================================
     // ▼▼▼ 조회 및 공통 로직 ▼▼▼
@@ -52,10 +51,20 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         return outsourcingMapper.searchTagsByName(query);
     }
 
+    @Override
+    public EnterOutsourcing getOutsourcingByOsCd(String osCd) {
+        return outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
+    }
+
+    // ★ 추가: 모든 외주 목록 조회 구현
+    @Override
+    public List<EnterOutsourcing> getAllOutsourcings() {
+        return outsourcingMapper.findAllOutsourcings();
+    }
+
     // ======================================================
     // ▼▼▼ 외주 "등록" 관련 로직 (단계별) ▼▼▼
     // ======================================================
-
     @Override
     public String saveStep1Data(OutsourcingFormDataDto formData, HttpSession session) {
         logger.info("--- saveStep1Data 시작 ---");
@@ -102,8 +111,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
                         String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
                         String savePath = uploadDir.getAbsolutePath() + File.separator + uniqueFilename;
                         file.transferTo(new File(savePath));
-                        
-                        // 웹에서 접근 가능한 경로를 저장
                         uploadedFileUrls.add("/uploads/" + uniqueFilename);
                         logger.info("파일 저장 성공: {}", savePath);
                     } catch (IOException e) {
@@ -128,7 +135,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         }
 
         EnterOutsourcing finalOutsourcing = new EnterOutsourcing();
-        // ... (formData에서 finalOutsourcing으로 데이터 복사) ...
         finalOutsourcing.setOsCd(formData.getOsCd());
         finalOutsourcing.setEntCd(formData.getEntCd());
         finalOutsourcing.setMbrCd(formData.getMbrCd());
@@ -148,7 +154,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         outsourcingMapper.insertContentList(clCd, finalOutsourcing.getOsCd());
         
         updateMappings(clCd, formData.getMbrCd(), formData.getCategoryCodes(), formData.getTags());
-
         if (formData.getReferenceFileUrls() != null && !formData.getReferenceFileUrls().isEmpty()) {
             // TODO: 파일 정보를 DB의 'outsourcing_file' 같은 테이블에 저장하는 로직
         }
@@ -159,7 +164,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     // ======================================================
     // ▼▼▼ 외주 "수정" 관련 로직 (단계별) ▼▼▼
     // ======================================================
-
     @Override
     @Transactional
     public void updateOutsourcingStep1(EnterOutsourcing outsourcingToUpdate) {
@@ -217,7 +221,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         }
         logger.info("수정 3단계 완료: {} 의 첨부 파일이 업데이트되었습니다.", osCd);
     }
-
 
     // ======================================================
     // ▼▼▼ 공통 및 기타 로직 ▼▼▼
@@ -284,11 +287,5 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     @Transactional
     public void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd) {
         outsourcingMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
-    }
-    
-    @Override
-    public EnterOutsourcing getOutsourcingByOsCd(String osCd) {
-        // Mapper에게 DB 조회를 요청하고 결과를 바로 반환합니다.
-        return outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
     }
 }

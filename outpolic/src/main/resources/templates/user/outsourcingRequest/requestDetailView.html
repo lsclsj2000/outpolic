@@ -1,92 +1,72 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{user/layout/userLayoutkjw}"> <head>
+      layout:decorate="~{user/layout/userLayout}"> <head>
     <meta charset="UTF-8">
-    <title>내가 보낸 요청 목록</title>
-    <style>
-        .main-container { max-width: 960px; margin: 40px auto; padding: 20px; }
-        .card { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .table { width: 100%; border-collapse: collapse; }
-        .table th, .table td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-        .table th { font-weight: 600; color: #333; }
-        .badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; color: #fff; }
-        .badge-info { background-color: #0dcaf0; }
-        .badge-success { background-color: #198754; }
-        .badge-danger { background-color: #dc3545; }
-        .btn-xs { padding: 5px 10px; font-size: 12px; text-decoration: none; background-color: #6c757d; color: white; border-radius: 4px; }
-    </style>
+    <title>신청 상세 보기</title>
+    <th:block layout:fragment="css">
+        <style>
+            .request-card { background: #ffffff; border-radius: 12px; padding: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
+            .request-header h1 { font-size: 1.8rem; font-weight: 800; color: #1f2937; margin: 0 0 1rem 0; }
+            .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; padding: 1.5rem 0; margin-bottom: 1.5rem; }
+            .meta-item { font-size: 1rem; color: #4b5563; }
+            .meta-item strong { color: #111827; display: block; margin-bottom: 0.25rem; }
+            .request-body { line-height: 1.6; margin-bottom: 2rem;}
+            .request-body h3 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f3f4f6;}
+            .btn-back { display: inline-block; background-color: #6b7280; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s; }
+            .btn-back:hover { background-color: #4b5563; }
+            .status-badge { font-size: 1rem; font-weight: bold; padding: 0.4rem 0.8rem; border-radius: 9999px; color: white; }
+        </style>
+    </th:block>
 </head>
-
 <body>
-<th:block layout:fragment="content"> <div class="main-container">
-        <div class="card">
-            <h2 class="mb-4">내가 보낸 외주 요청 목록</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>요청 제목</th>
-                        <th>공급자</th>
-                        <th>요청일시</th>
-                        <th>상태</th>
-                        <th>관리</th>
-                    </tr>
-                </thead>
-                <tbody id="sent-request-list-body">
-                    </tbody>
-            </table>
+<th:block layout:fragment="contents">
+    <div class="container">
+        <div class="request-card" id="request-detail-card">
+            <div class="request-header"><h1 th:text="${request.ocd_ttl}"></h1></div>
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <strong>요청자</strong> 
+                    <span th:text="${request.demanderName ?: '정보 없음'}"></span>
+                </div>
+                <div class="meta-item">
+                    <strong>공급자</strong> 
+                    <span th:text="${request.supplierName}"></span>
+                </div>
+                <div class="meta-item">
+                    <strong>요청일</strong> 
+                    <span th:text="${#temporals.format(request.ocd_dmnd_ymdt, 'yyyy-MM-dd HH:mm')}"></span>
+                </div>
+                <div class="meta-item">
+                    <strong>상태</strong> 
+                    <span th:classappend="'status-' + ${request.stc_cd}" th:text="${@statusTextFormatter.getStatusText(request.stc_cd)}" class="status-badge"></span>
+                </div>
+            </div>
+            <div class="request-body">
+                <h3>상세 요청 내용</h3>
+                <p th:text="${request.ocd_expln}" style="white-space: pre-wrap;"></p>
+                <h3>희망 예산</h3>
+                <p th:text="${request.ocd_amt != null ? #numbers.formatCurrency(request.ocd_amt) + '원' : '협의'}"></p>
+                <h3>최종 제작물</h3>
+                <p th:text="${request.ocd_frctn_cmdty ?: '미정'}"></p>
+                <h3>납품 방법</h3>
+                <p th:text="${request.ocd_dlvgds_mthd ?: '미정'}"></p>
+                <h3>희망 작업 시작일</h3>
+                <p th:text="${#temporals.format(request.ocd_strt_ymdt, 'yyyy-MM-dd HH:mm')}"></p>
+                <h3>희망 작업 종료일</h3>
+                <p th:text="${#temporals.format(request.ocd_dedline, 'yyyy-MM-dd HH:mm')}"></p>
+            </div>
+            <a href="/user/outsourcing-requests/sent" class="btn-back">목록으로 돌아가기</a>
         </div>
+        <div id="error-message" style="display:none;" class="empty-message"></div>
     </div>
 </th:block>
 
-<th:block layout:fragment="script"> <script>
+<th:block layout:fragment="jsFile">
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 페이지 로드 시 보낸 요청 목록을 AJAX로 가져옴
-            fetch('/user/requests/sent/list') // user용 컨트롤러 경로
-                .then(response => response.json())
-                .then(data => {
-                    const listBody = document.getElementById('sent-request-list-body');
-                    listBody.innerHTML = ''; // 기존 내용 비우기
-
-                    if (!data || data.length === 0) {
-                        listBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">보낸 요청이 없습니다.</td></tr>';
-                        return;
-                    }
-
-                    data.forEach(request => {
-                        // 날짜 포맷 변경 (YYYY-MM-DD HH:MM)
-                        const formattedDate = new Date(request.ocdDmndYmdt).toLocaleString('sv-SE').slice(0, 16);
-                        
-                        // 상태에 따른 뱃지 스타일
-                        let statusBadge;
-                        switch (request.stcCd) {
-                            case 'SD_APPROVED':
-                                statusBadge = `<span class="badge badge-success">${request.statusName}</span>`;
-                                break;
-                            case 'SD_REJECTED':
-                                statusBadge = `<span class="badge badge-danger">${request.statusName}</span>`;
-                                break;
-                            default:
-                                statusBadge = `<span class="badge badge-info">${request.statusName}</span>`;
-                        }
-
-                        const row = `
-                            <tr>
-                                <td>${request.ocdTtl}</td>
-                                <td>${request.supplierName}</td>
-                                <td>${formattedDate}</td>
-                                <td>${statusBadge}</td>
-                                <td><a href="/user/requests/detail/${request.ocdCd}" class="btn-xs">상세보기</a></td>
-                            </tr>
-                        `;
-                        listBody.innerHTML += row;
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching sent requests:', error);
-                    const listBody = document.getElementById('sent-request-list-body');
-                    listBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">목록을 불러오는 중 오류가 발생했습니다.</td></tr>';
-                });
+            // 이 페이지는 서버에서 직접 데이터를 받아 Thymeleaf로 렌더링하므로,
+            // 별도의 AJAX fetch 요청이 필요 없습니다.
         });
     </script>
 </th:block>

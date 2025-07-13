@@ -18,8 +18,10 @@ public interface OutsourcingMapper {
     String findClCdByOsCd(String osCd);
     String findLatestOpCd();
 
+    // ★ 추가: 모든 외주 목록을 가져오는 메서드 (findAllOutsourcings 오류 해결)
+    List<EnterOutsourcing> findAllOutsourcings();
+
     // --- 저장 (INSERT) ---
-    // useGeneratedKeys, keyProperty 속성을 제거 (osCd는 Java에서 직접 생성하여 넘김)
     int insertOutsourcing(EnterOutsourcing outsourcing);
     int insertContentList(@Param("clCd") String clCd, @Param("cntdCd") String cntdCd);
     int insertCategoryMapping(@Param("ctgryCd") String ctgryCd, @Param("clCd") String clCd, @Param("mbrCd") String mbrCd);

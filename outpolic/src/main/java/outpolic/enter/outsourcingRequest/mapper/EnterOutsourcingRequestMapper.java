@@ -7,15 +7,12 @@ import outpolic.enter.outsourcingRequest.domain.RequestViewDTO;
 import java.util.List;
 
 @Mapper
-public interface OutsourcingRequestMapper {
+public interface EnterOutsourcingRequestMapper {
     void insertRequest(OutsourcingRequestDTO request);
     void updateChatRoomId(@Param("ocd_cd") String ocd_cd, @Param("chr_cd") String chr_cd);
     List<RequestViewDTO> findSentRequests(String requesterId);
     RequestViewDTO findRequestDetailById(String requestId);
+    List<RequestViewDTO> findReceivedRequests(String supplierEntCd); // 이 줄이 있어야 함
 
-    // 추가: 가장 최근 ocd_cd를 찾는 메서드
-    String findLatestOcdCd();
-    
-    List<RequestViewDTO> findReceivedRequests(String supplierEntCd);
-
+    String findLatestOcdCd(); // 가장 최근 ocd_cd를 찾는 메서드
 }

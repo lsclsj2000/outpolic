@@ -1,19 +1,19 @@
-package outpolic.enter.outsourcingRequest.service.impl;
+package outpolic.user.outsourcingRequest.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO;
 import outpolic.enter.outsourcingRequest.domain.RequestViewDTO;
-import outpolic.enter.outsourcingRequest.mapper.EnterOutsourcingRequestMapper;
-import outpolic.enter.outsourcingRequest.service.OutsourcingRequestService;
+import outpolic.user.outsourcingRequest.mapper.UserOutsourcingRequestMapper;
+import outpolic.user.outsourcingRequest.service.OutsourcingRequestService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
-@Service("enterOutsourcingRequestService") // <-- 빈 이름을 "enterOutsourcingRequestService"로 지정
+@Service("userOutsourcingRequestService")
 @RequiredArgsConstructor
 public class OutsourcingRequestServiceImpl implements OutsourcingRequestService {
 
-    private final EnterOutsourcingRequestMapper requestMapper;
+    private final UserOutsourcingRequestMapper requestMapper;
 
     @Override
     @Transactional
@@ -44,9 +44,5 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
         return requestMapper.findRequestDetailById(requestId);
     }
 
-    // ★★★ 누락되었던 '받은 요청 조회' 메서드 구현 추가 ★★★
-    @Override
-    public List<RequestViewDTO> getReceivedRequests(String supplierEntCd) {
-        return requestMapper.findReceivedRequests(supplierEntCd);
-    }
+    // getReceivedRequests 메서드 구현부가 없는 상태여야 합니다.
 }
