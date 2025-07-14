@@ -76,7 +76,12 @@
 	    <!-- 상세 정보 -->
 	    <result column="content_body"       property="contentsBody"/>
 	    <result column="price"              property="price"/>
-	    <result column="cl_cd" 					property="clCd"/>
+	    <result column="cl_cd" 				property="clCd"/>
+	    <result column="prtf_period_start" 	property="participation_start_date"/>
+	    <result column="prtf_period_end" 	property="participation_end_date"/>
+	    <result column="prtf_client" 		property="client"/>
+	    <result column="prtf_industry" 		property="industry"/>
+	    
 	</resultMap>
 	
 	
@@ -95,7 +100,12 @@
 	        
 	        -- 가격: 포트폴리오 테이블에는 가격 정보가 없으므로 0으로 설정
 	        0                       AS price,
-	        cl.cl_cd
+	        cl.cl_cd,
+	        -- [수정] 추가된 컬럼 조회
+	        p.prtf_period_start     AS participation_start_date,
+	        p.prtf_period_end       AS participation_end_date,
+	        p.prtf_client           AS client,
+	        p.prtf_industry         AS industry
 	
 	    FROM
 	        portfolio p
@@ -122,7 +132,12 @@
 	        
 	        -- 가격: 외주 테이블의 os_amt 컬럼 사용
 	        o.os_amt                AS price,
-	        cl.cl_cd
+	        cl.cl_cd,
+	        -- [수정] 포트폴리오에만 있는 정보는 NULL로 채움
+	        NULL                    AS prtf_period_start,
+	        NULL                    AS prtf_period_end,
+	        NULL                    AS prtf_client,
+	        NULL                    AS prtf_industry
 	        
 	    FROM
 	        outsourcing o
