@@ -148,6 +148,15 @@ public class UserInquiryController {
 		return "user/inquiry/userInquiryWriteView";
 	}
 	
+//	// 문의 삭제
+//	@PostMapping("/userInquiryDelete")
+//	@ResponseBody
+//	public boolean userInquiryDelete(Map<String, String> requestMap) {
+//		
+//		
+//		
+//		return ;
+//	}
 	
 	@GetMapping("/userInquiryDetail")
 	public String userInquiryDetailView(@RequestParam("iq_cd") String inquiryCode, Model model) {

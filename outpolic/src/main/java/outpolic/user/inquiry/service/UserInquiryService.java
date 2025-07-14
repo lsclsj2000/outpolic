@@ -22,6 +22,7 @@ public interface UserInquiryService {
 	// 문의 타입 조회
 	List<UserInquiry> getUserInquiryTypeByCode(String inquiryTypeCode);
 	
+	
 	// 문의 상세내용 조회
 	UserInquiry getUserInquiryByCode(String inquiryCode);
 	

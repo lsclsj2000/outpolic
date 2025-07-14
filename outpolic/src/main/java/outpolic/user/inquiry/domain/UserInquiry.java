@@ -15,11 +15,14 @@ public class UserInquiry {
 	private String inquiryRegDate;
 	private String inquiryProcessCn;
 	private String adminCode;
+	private String admMbrCode;
 	private String inquiryTypeCode;
 	private String memberCode;
 	
 	private String inquiryTypeExpln; 
 	private String statusCode;
+	private String statusName;
+	private String inquiryProcessCode;
 	private String inquiryTypeRegAdm; 
 	private String inquiryTypeRegDate;
 	private String inquiryTypeMdfcnAdm; 
@@ -30,4 +33,6 @@ public class UserInquiry {
     private String adminName;
     
     private List<UserInquiryFile> userInquiryFiles;
+    
+    
 }
