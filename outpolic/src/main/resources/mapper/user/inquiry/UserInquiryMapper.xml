@@ -8,6 +8,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- UserInquiry.DTO -->
 	<resultMap id="userInquiryResultMap" type="outpolic.user.inquiry.domain.UserInquiry">
 		<id 	column="iq_cd" 			property="inquiryCode"/>
+		<id 	column="iqp_cd" 		property="inquiryProcessCode"/>
+
 		<result column="iqt_cd" 		property="inquiryTypeCode"/>
 		<result column="iqt_nm" 		property="inquiryTypeName"/>
 		<result column="mbr_cd" 		property="memberCode"/>
@@ -16,15 +18,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="iq_cn"		 	property="inquiryCn"/>
 		<result column="iq_secret"		property="inquirySecret"/>
 		<result column="iq_reg_ymdt" 	property="inquiryRegDate"/>
-		<!-- sa_extn 필드 추가 (문의 상세 조회 시 이미지 표시를 위해 필요) -->
-		<result column="iqt_reg_ymdt" 	property="inquiryTypeRegDate"/>
+		
 		<result column="adm_cd" 		property="adminCode"/>
+		<result column="adm_mbr_cd" 	property="admMbrCode"/>
 		<result column="adm_nm" 		property="adminName"/>
-		<result column="iqt_expln" 		property="inquiryTypeExpln"/>
 		<result column="stc_cd" 		property="statusCode"/>
+		<result column="stc_nm" 		property="statusName"/>
+		<result column="iqt_reg_ymdt" 	property="inquiryTypeRegDate"/>
+		<result column="iqt_expln" 		property="inquiryTypeExpln"/>
 		<result column="iqt_reg_adm_cd" property="inquiryTypeRegAdm"/>
 		<result column="iqt_mdfcn_adm_cd" property="inquiryTypeMdfcnAdm"/>
 		<result column="iqt_mdfcn_ymdt" property="inquiryTypeMdfcnDate"/>
+		
 		<result column="iqp_ans_cn" 	property="inquiryProcessAnsCn"/>
 		<result column="iqp_reg_ymdt" 	property="inquiryProcessRegDate"/>
 		
@@ -199,20 +204,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- 문의 상세내용 조회 -->
 	<select id="getUserInquiryByCode" parameterType="String" resultMap="userInquiryResultMap">
 		select
-			i.iq_cd,
-			m.mbr_nm,
-			sa.sa_cd,
-			sa.sa_orgnl_nm,
-			sa.sa_srvr_nm,
-			sa.sa_path,
-			sa.sa_extn, <!-- sa_extn 필드 추가 -->
-			sa.sa_size,
-			iqt.iqt_nm,
-			i.iq_ttl,
-			i.iq_cn,
-			DATE_FORMAT(i.iq_reg_ymdt, '%Y-%m-%d %H:%i:%s') as iq_reg_ymdt, ip.iqp_ans_cn,
-			DATE_FORMAT(ip.iqp_reg_ymdt, '%Y-%m-%d %H:%i:%s') as iqp_reg_ymdt, a.adm_cd,
-			m2.mbr_nm as adm_nm
+			i.iq_cd as iq_cd,
+			m.mbr_nm as mbr_nm,
+			sa.sa_cd as sa_cd,
+			sa.sa_orgnl_nm as sa_orgnl_nm,
+			sa.sa_srvr_nm as sa_srvr_nm,
+			sa.sa_path as sa_path,
+			sa.sa_extn as sa_extn,
+			sa.sa_size as sa_size,
+			iqt.iqt_nm as iqt_nm,
+			i.iq_ttl as iq_ttl,
+			i.iq_cn as iq_cn,
+			DATE_FORMAT(i.iq_reg_ymdt, '%Y-%m-%d %H:%i:%s') as iq_reg_ymdt,
+			ip.iqp_cd as iqp_cd,
+			ip.iqp_ans_cn as iqp_ans_cn,
+			DATE_FORMAT(ip.iqp_reg_ymdt, '%Y-%m-%d %H:%i:%s') as iqp_reg_ymdt,
+			a.adm_cd as adm_cd,
+			m2.mbr_nm as adm_nm,
+			sc.stc_cd as stc_cd,
+			IFNULL(sc.stc_nm, '요청중') as stc_nm
 		from
 			inquiry i
 			left join submission_attachment sa on i.iq_cd = sa.sa_refer_cd
@@ -221,6 +231,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			left join inquiry_process ip using (iq_cd)
 			left join admin a using (adm_cd)
 			left join member m2 on a.mbr_cd = m2.mbr_cd
+			left join status_code sc on ip.stc_cd = sc.stc_cd
 		where
 			i.iq_cd = #{inquiryCode}
 		order by

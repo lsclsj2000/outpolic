@@ -80,6 +80,8 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 		return userInquiryMapper.getUserInquiryTypeByCode(inquiryTypeCode);
 	}
 
+
+
 	
 	@Override
 	public UserInquiry getUserInquiryByCode(String inquiryCode) {
