@@ -188,9 +188,20 @@ public class EnterOutsourcingController {
 
     @GetMapping("/listData")
     @ResponseBody
-    public ResponseEntity<List<EnterOutsourcing>> getOutsourcingListData() {
-        String currentEntCd = "EI_C00001";
-        return ResponseEntity.ok(outsourcingService.getOutsourcingListByEntCd(currentEntCd));
+    public ResponseEntity<List<EnterOutsourcing>> getOutsourcingListData(HttpSession session) { // HttpSession 파라미터 추가
+        // 1. 세션에서 현재 로그인한 사용자의 회원 코드(mbrCd)를 가져옵니다.
+        String mbrCd = (String) session.getAttribute("SCD");
+
+        // 2. 만약 로그인 상태가 아니라면, 401 Unauthorized 응답을 보냅니다.
+        if (mbrCd == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Collections.emptyList());
+        }
+
+        // 3. mbrCd를 사용해 현재 기업의 고유 코드(entCd)를 조회합니다.
+        String entCd = outsourcingService.findEntCdByMbrCd(mbrCd);
+        
+        // 4. 조회된 현재 기업의 entCd로 외주 목록을 가져옵니다.
+        return ResponseEntity.ok(outsourcingService.getOutsourcingListByEntCd(entCd));
     }
     
     @DeleteMapping("/delete/{osCd}")

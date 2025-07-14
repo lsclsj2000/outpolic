@@ -84,6 +84,13 @@
     <select id="countPortfoliosByEntCd" resultType="int">
         SELECT COUNT(*) FROM portfolio WHERE ent_cd = #{entCd}
     </select>
+    
+    <select id="findMbrCdByClCd" resultType="String">
+    SELECT mbr_cd
+    FROM category_mapping
+    WHERE cl_cd = #{clCd}
+    LIMIT 1
+</select>
 
     <insert id="insertPortfolio" parameterType="EnterPortfolio">
         INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd)
@@ -110,13 +117,21 @@
         VALUES (#{tagCd}, #{clCd}, NOW(), #{mbrCd}, 'SD_ACTIVE')
     </insert>
 
-    <update id="updatePortfolio" parameterType="EnterPortfolio">
+    <update id="updatePortfolio" parameterType="outpolic.enter.portfolio.domain.EnterPortfolio">
         UPDATE portfolio
-        SET
-            prtf_ttl = #{prtfTtl},
-            prtf_cn = #{prtfCn},
+        <set>
+            <if test="prtfTtl != null and prtfTtl != ''">
+                prtf_ttl = #{prtfTtl},
+            </if>
+            <if test="prtfCn != null and prtfCn != ''">
+                prtf_cn = #{prtfCn},
+            </if>
+            <if test="prtfThumbnailUrl != null and prtfThumbnailUrl != ''">
+                prtf_thumbnail_url = #{prtfThumbnailUrl},
+            </if>
             prtf_mdfcn_ymdt = NOW(),
             adm_cd = #{admCd}
+        </set>
         WHERE
             prtf_cd = #{prtfCd}
     </update>

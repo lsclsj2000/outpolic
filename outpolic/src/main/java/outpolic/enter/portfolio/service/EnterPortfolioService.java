@@ -18,7 +18,7 @@ public interface EnterPortfolioService {
     void addPortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags,MultipartFile portfolioImage) throws IOException;
     void deletePortfolio(String prtfCd);
     EnterPortfolio getPortfolioByPrtfCd(String prtfCd);
-    void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags) throws IOException;
+    void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags,MultipartFile portfolioImage) throws IOException;
     
     /**
      * 포트폴리오 제목으로 포트폴리오를 검색합니다. (외주-포트폴리오 연결 기능용)
@@ -35,5 +35,5 @@ public interface EnterPortfolioService {
     void unlinkOutsourcing(String prtfCd, String osCd);
     void updateOutsourcingStep1(EnterOutsourcing outsourcingToUpdate);
     String findEntCdByMbrCd(String mbrCd);
-
+    
 }

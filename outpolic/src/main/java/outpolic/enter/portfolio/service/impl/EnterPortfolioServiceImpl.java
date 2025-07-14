@@ -1,8 +1,10 @@
 package outpolic.enter.portfolio.service.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     
     private final PortfolioMapper portfolioMapper;
     private final OutsourcingMapper outsourcingMapper; // 최신 op_cd 조회를 위해 유지
+    private final String FILE_UPLOAD_DIR = "C:/uploads";
 
     @Override
     public int countPortfoliosByEntCd(String entCd) {
@@ -56,17 +59,41 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     
     @Override
     @Transactional
-    public void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags) throws IOException {
+    public void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException {
+        
+        // 1. 새로 업로드된 이미지 파일이 있는지 확인하고, 있다면 저장합니다.
+        if (portfolioImage != null && !portfolioImage.isEmpty()) {
+            // (선택) 기존에 있던 썸네일 이미지를 서버에서 삭제하는 로직을 여기에 추가할 수 있습니다.
+
+            File uploadDir = new File(FILE_UPLOAD_DIR);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+            String originalFilename = portfolioImage.getOriginalFilename();
+            String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
+            String savePath = uploadDir.getAbsolutePath() + File.separator + uniqueFilename;
+            
+            portfolioImage.transferTo(new File(savePath));
+
+            // 저장된 파일의 URL 경로를 portfolio 객체에 설정합니다.
+            portfolio.setPrtfThumbnailUrl("/uploads/" + uniqueFilename);
+        }
+
+        // 2. 나머지 수정 로직을 수행합니다.
         portfolio.setPrtfMdfcnYmdt(LocalDateTime.now());
-        portfolioMapper.updatePortfolio(portfolio);
+        portfolioMapper.updatePortfolio(portfolio); // DB에 썸네일 URL도 함께 업데이트됩니다.
 
         String clCd = portfolioMapper.findClCdByPrtfCd(portfolio.getPrtfCd());
+        String originalMbrCd = portfolioMapper.findMbrCdByClCd(clCd);
         
-        // 기존 매핑 삭제
+        if (originalMbrCd == null) {
+            throw new IllegalStateException("포트폴리오의 원본 등록자 정보를 찾을 수 없습니다. (카테고리 매핑 부재)");
+        }
+
         portfolioMapper.deleteCategoryMappingByClCd(clCd);
         portfolioMapper.deleteTagMappingByClCd(clCd);
-        // 새로운 매핑 저장
-        updateMappings(clCd, portfolio.getMbrCd(), categoryCodes, tags);
+
+        updateMappings(clCd, originalMbrCd, categoryCodes, tags);
     }
  
     @Override

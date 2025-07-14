@@ -72,5 +72,7 @@ public interface PortfolioMapper {
     
     @Select("SELECT ent_cd FROM enterprise WHERE mbr_cd = #{mbrCd}")
     String findEntCdByMbrCd(String mbrCd); 
+    
+    String findMbrCdByClCd(String clCd);
 
 }

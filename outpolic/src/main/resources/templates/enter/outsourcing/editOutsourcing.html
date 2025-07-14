@@ -232,12 +232,16 @@
             }
         });
 
-        // 카테고리
+        // 카테고리행 추가
         $(document).on('click', '.add-row-btn', function() { addCategoryRow(); });
+        
+        // 카테고리 행 삭제 
         $(document).on('click', '.remove-category-btn', function() {
             if ($('#category-inputs-container .category-input-group').length > 1) { $(this).closest('.category-input-group').remove(); } 
             else { alert('최소 하나의 카테고리는 남겨야 합니다.'); }
         });
+        
+        // 카테고리 검색 
         $(document).on('input', '.category-name-input', function() {
             const currentInput = $(this), dropdown = currentInput.closest('.category-input-group').find('.search-results-dropdown'), query = currentInput.val();
             clearTimeout(categorySearchTimeout);
@@ -250,6 +254,8 @@
                 });
             }, 300);
         });
+        
+        // 카테고리 검색 결과 선택 
         $(document).on('click', '.search-results-dropdown .result-item', function() {
             const selectedItem = $(this);
             const group = selectedItem.closest('.category-input-group');
