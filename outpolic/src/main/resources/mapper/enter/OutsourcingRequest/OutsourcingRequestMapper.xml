@@ -36,6 +36,15 @@
     <update id="updateChatRoomId">
         UPDATE outsourcing_contract_details SET chr_cd = #{chr_cd} WHERE ocd_cd = #{ocd_cd}
     </update>
+    
+    <update id="updateStatus">
+    	UPDATE outsourcing_contract_details
+    	SET
+    		stc_cd=#{status},
+    		ocd_rspns_ymdt=NOW()
+    	WHERE
+    		ocd_cd=#{requestId}	
+    </update>
 
     <select id="findSentRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
         SELECT 
@@ -90,4 +99,30 @@
             ocd.ent_cd = #{supplierEntCd} AND ocd.ocd_req_type = '신청'
         ORDER BY ocd.ocd_dmnd_ymdt DESC
     </select>
+    
+    <select id="findEntCdByMbrCd" resultType="String">
+    	SELECT
+    		ent_cd 
+    	FROM
+    		enterprise 
+    	WHERE
+    		mbr_cd=#{mbrCd}		
+    </select>
+    
+    <select id="findLatestOspCd" resultType="String">
+    	SELECT 
+    		osp_cd
+    	FROM
+    		outsourcing_prograss	
+    	ORDER BY CAST(SUBSTRING(osp_cd, 5) AS UNSIGNED) DESC	
+    	LIMIT 1
+    </select>
+    
+    <insert id="insertInitialProgress">
+    	 INSERT INTO outsourcing_prograss
+            (osp_cd, ocd_cd, stc_cd, osp_sply_ymdt)
+        VALUES
+            (#{ospCd}, #{ocdCd}, #{stcCd}, NOW())
+    
+    </insert>
 </mapper>
