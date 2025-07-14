@@ -37,4 +37,7 @@ public interface EnterOutsourcingService {
     void updateOutsourcingStep2(String osCd, List<String> categoryCodes, String tags);
     void updateOutsourcingStep3(String osCd, MultipartFile[] files);
     EnterOutsourcing getOutsourcingByOsCd(String osCd);
+    
+    String findEntCdByMbrCd(String mbrCd);
+
 }

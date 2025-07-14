@@ -71,4 +71,23 @@
         ORDER BY CAST(SUBSTRING(ocd_cd, 6) AS UNSIGNED) DESC
         LIMIT 1
     </select>
+    
+    <select id="findReceivedRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
+        SELECT
+            ocd.ocd_cd,
+            ocd.ocd_ttl,
+            m.mbr_nm AS demanderName,
+            e.ent_nm AS supplierName,
+            ocd.ocd_dmnd_ymdt,
+            ocd.stc_cd
+        FROM
+            outsourcing_contract_details ocd
+        JOIN
+            member m ON ocd.mbr_cd = m.mbr_cd
+        JOIN
+            enterprise e ON ocd.ent_cd = e.ent_cd
+        WHERE
+            ocd.ent_cd = #{supplierEntCd} AND ocd.ocd_req_type = '신청'
+        ORDER BY ocd.ocd_dmnd_ymdt DESC
+    </select>
 </mapper>

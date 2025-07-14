@@ -85,7 +85,7 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
             // OutsourcingMapper로 이동했지만, 여기서는 Portfolio를 지울 때 관련된 연결을 지워야 합니다.
             // PortfolioMapper에 이 메서드를 유지하거나, OutsourcingMapper에서 prtfCd로 삭제하는 메서드를 호출해야 합니다.
             portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd); // 수정: 올바른 매퍼 메서드 호출
-            
+            portfolioMapper.deleteFilesByClCd(clCd);
             // 4. 콘텐츠 리스트 레코드 삭제
             portfolioMapper.deleteContentListByClCd(clCd);
         }
@@ -160,5 +160,11 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         outsourcingToUpdate.setOsMdfcnYmdt(LocalDateTime.now());
         // ▼▼▼ 호출하는 매퍼 메서드 이름을 바꿉니다. ▼▼▼
         outsourcingMapper.updateOutsourcing(outsourcingToUpdate);
+    }
+    
+    @Override
+    public String findEntCdByMbrCd(String mbrCd) {
+        // portfolioMapper를 통해 직접 호출
+        return portfolioMapper.findEntCdByMbrCd(mbrCd); 
     }
 }

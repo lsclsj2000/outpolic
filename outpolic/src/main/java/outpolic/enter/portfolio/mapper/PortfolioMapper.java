@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 
 @Mapper
@@ -42,6 +43,10 @@ public interface PortfolioMapper {
     int deleteCategoryMappingByClCd(String clCd);
     int deleteTagMappingByClCd(String clCd);
     int deleteBookmarkByClCd(String clCd); 
+    
+    int deleteFilesByClCd(String clCd);
+
+
 
     // UPDATE
     int updatePortfolio(EnterPortfolio portfolio);
@@ -64,5 +69,8 @@ public interface PortfolioMapper {
     List<EnterPortfolio> findUnlinkedPortfolios(@Param("osCd") String osCd, @Param("entCd") String entCd, @Param("query") String query);
     
     int deleteOutsourcingPortfolioByPrtfCd(@Param("prtfCd") String prtfCd); 
+    
+    @Select("SELECT ent_cd FROM enterprise WHERE mbr_cd = #{mbrCd}")
+    String findEntCdByMbrCd(String mbrCd); 
 
 }

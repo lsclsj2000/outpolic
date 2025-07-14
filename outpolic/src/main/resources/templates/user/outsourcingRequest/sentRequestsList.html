@@ -103,8 +103,8 @@
                 `;
             };
 
-            fetch('/api/user/outsourcing-requests/sent') // User용 API 엔드포인트
-                .then(res => {
+            fetch('/user/outsourcing-requests/api/sent') // 올바른 User용 API 엔드포인트로 수정
+            .then(res => {
                     if (!res.ok) {
                         if (res.status === 401) {
                             alert('세션이 만료되었거나 권한이 없습니다. 다시 로그인해주세요');
