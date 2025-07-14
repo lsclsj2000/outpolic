@@ -29,15 +29,14 @@ public class UserSearchController {
 	private final UserSearchService searchService;
 		
 	@GetMapping("/userSearch")
-	public String SearchControllerView(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, Model model) {
-		
-		List<UserContents> contentsList = searchService.getContentsList(keyword);
+	public String SearchControllerView(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+						               @RequestParam(value = "filter", required = false) String filter,
+						               Model model) {
 		
 		model.addAttribute("title", "콘텐츠목록조회");
-	    model.addAttribute("contentsList", contentsList);
 	    model.addAttribute("initialKeyword", keyword);
-
-		
+	    model.addAttribute("initialFilter", filter);
+	    
 		return "user/search/userSearchView";
 	}
 	

@@ -4,65 +4,94 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="outpolic.user.search.mapper.UserSearchMapper">
  	<resultMap type="outpolic.user.search.domain.UserContents" id="contentResultMap">
- 		<id column="content_id" 				property="contentsId"/>
- 		<result column="content_type" 			property="contentsType"/>
- 		<result column="content_title" 			property="contentsTitle"/>
- 		<result column="registrant_name" 		property="enterName"/>
- 		<result column="registration_date" 		property="registrationDate"/>
- 		<result column="cl_cd" 					property="clCd"/>
- 	</resultMap>
- 	<select id="getContentsList" resultMap="contentResultMap">
- 		WITH UnifiedContents AS (
-	    -- 포트폴리오(PO) 데이터 조회 
+	    <id column="content_id"         	property="contentsId"/>
+	    <result column="content_type"   	property="contentsType"/>
+	    <result column="content_title"  	property="contentsTitle"/>
+	    <result column="registrant_name" 	property="enterName"/>
+	    <result column="registration_date" 	property="registrationDate"/>
+	    <result column="cl_cd"          	property="clCd"/>
+	    <!-- [추가] 외주 상세 정보 매핑 -->
+	    <result column="category_name"  	property="ctgryName"/>
+	    <result column="os_amt"         	property="osAmt"/>
+	    <result column="avg_review_score" 	property="reviewScore"/>
+	</resultMap>
+	
+	<!-- [최종 수정] getContentsList 쿼리 -->
+	<select id="getContentsList" resultMap="contentResultMap">
+	    WITH UnifiedContents AS (
+	    -- 포트폴리오(PO) 데이터 조회
 	    SELECT
 	        p.prtf_cd            AS content_id,
 	        'Portfolio'          AS content_type,
 	        p.prtf_ttl           AS content_title,
 	        e.ent_nm             AS registrant_name,
 	        p.prtf_reg_ymdt 	 AS registration_date,
-	        cl.cl_cd
+	        cl.cl_cd,
+	        -- ▼▼▼ 핵심 수정 1: 외주 쿼리와 컬럼 구조를 맞추기 위한 더미(dummy) 컬럼 ▼▼▼
+	        c.ctgry_nm           AS category_name, -- 포트폴리오도 카테고리가 있다면 JOIN
+	        NULL                 AS os_amt,
+	        0.0                  AS avg_review_score
 	    FROM
 	        content_list cl
 	    JOIN
 	        portfolio p ON cl.cntd_cd = p.prtf_cd
 	    JOIN
 	        enterprise e ON p.ent_cd = e.ent_cd
+	    LEFT JOIN -- 포트폴리오도 카테고리가 있다면 JOIN을 유지하고, 없다면 이 2줄은 삭제하고 c.ctgry_nm 대신 NULL을 사용
+	        category_mapping cm on cl.cl_cd = cm.cl_cd
+	    LEFT JOIN 
+	        category c on cm.ctgry_id = c.ctgry_id
 	    WHERE
 	        cl.cl_cd LIKE 'LIST_PO_%'
+	    GROUP BY
+    		p.prtf_cd, p.prtf_ttl, e.ent_nm, p.prtf_reg_ymdt, cl.cl_cd
 	
 	    UNION ALL
 	
-	    -- 외주(OS) 데이터 조회 
+	    -- 외주(OS) 데이터 조회
+	    -- ▼▼▼ 핵심 수정 2: 랭킹 쿼리의 로직을 그대로 이식 ▼▼▼
 	    SELECT
 	        o.os_cd              AS content_id,
 	        'Outsourcing'        AS content_type,
 	        o.os_ttl             AS content_title,
 	        e.ent_nm             AS registrant_name,
 	        o.os_reg_ymdt   	 AS registration_date,
-	        cl.cl_cd			 as clCd
+	        cl.cl_cd,
+	        c.ctgry_nm           AS category_name,
+	        o.os_amt,
+	        IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score
 	    FROM
 	        content_list cl
 	    JOIN
 	        outsourcing o ON cl.cntd_cd = o.os_cd
 	    JOIN
 	        enterprise e ON o.ent_cd = e.ent_cd
+	    -- 랭킹 쿼리에서 가져온 JOIN 구문들
+	    JOIN
+	        category c ON o.ctgry_id = c.ctgry_id
+	    LEFT JOIN
+	        outsourcing_contract_details ocd ON cl.cl_cd = ocd.cl_cd
+	    LEFT JOIN
+			outsourcing_status os on ocd.ocd_cd = os.ocd_cd 
+		LEFT JOIN 
+		    outsourcing_contract oc ON os.oss_prgs_cd = oc.ocd_cd
+		LEFT JOIN
+		    review r2 ON oc.osc_id = r2.osc_id
 	    WHERE
 	        cl.cl_cd LIKE 'LIST_OS_%'
-		)
-		-- 합쳐진 결과에서 최종 검색 및 정렬 
-		SELECT
-		    content_id,
-		    content_type,
-		    content_title,
-		    registrant_name,
-		    registration_date
-		FROM
-		    UnifiedContents
-		WHERE
-		    content_title LIKE CONCAT('%', #{keyword}, '%')
-		ORDER BY
-		    registration_date DESC
- 	</select>
+	    GROUP BY
+	        o.os_cd, o.os_ttl, e.ent_nm, o.os_reg_ymdt, cl.cl_cd, c.ctgry_nm, o.os_amt
+	    )
+	    -- 최종 검색 및 정렬
+	    SELECT
+	        * -- UnifiedContents의 모든 컬럼을 그대로 선택
+	    FROM
+	        UnifiedContents
+	    WHERE
+	        content_title LIKE CONCAT('%', #{keyword}, '%')
+	    ORDER BY
+	        registration_date DESC
+	</select>
 
 	<!-- 1. 상세 정보 DTO(ContentsDetailDTO)를 위한 resultMap -->
 	<resultMap type="outpolic.user.search.domain.UserContentsDetailDTO" id="contentsDetailResultMap">
