@@ -5,8 +5,25 @@
 
 	<head>
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		
 	</head>
-	
+	<th:block layout:fragment="cssScript">
+	    <style>
+	        /* 크몽 스타일의 매우 넓은 모달을 위한 커스텀 CSS */
+	        @media (min-width: 1400px) {
+	            .modal-dialog.modal-xxl {
+	                /* XXL 사이즈(1400px 이상) 화면에서 모달의 최대 너비를 1320px로 설정합니다. */
+	                max-width: 1320px; 
+	            }
+	        }
+	        
+	        .modal-body.custom-modal-body {
+	            /* 모달 내용이 화면의 85% 높이를 넘지 않도록 하고, 넘으면 스크롤 생성 */
+	            max-height: 85vh;
+	            overflow-y: auto;
+	        }
+	    </style>
+	</th:block>
 	<th:block layout:fragment="jsScript">
 		<script>
 
@@ -29,55 +46,52 @@
 		     // @param {Array} contents - 서버에서 받은 콘텐츠 객체 배열
 		    
 		    function renderContents(contents) {
-		        // 우선, 기존에 있던 목록이나 '결과 없음' 메시지를 모두 지웁니다.
-		        contentsContainer.innerHTML = '';
-
-		        if (!contents || contents.length === 0) {
-		            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
-		            return; // 데이터가 없으면 여기서 함수를 종료합니다.
-		        }
-
-		        // map을 사용해 각 데이터 조각을 HTML 문자열로 변환하고, join으로 합쳐서 한 번에 삽입합니다.
-		        const contentsHtml = contents.map((content, index) => {
-		            const imageId1 = content.id || index + 40;
-		            const imageId2 = content.id ? content.id + 100 : index + 140;
-
-		            return `
+			    contentsContainer.innerHTML = '';
+			
+			    if (!contents || contents.length === 0) {
+			        contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
+			        return;
+			    }
+			
+			    const contentsHtml = contents.map((content, index) => {
+			        const imageId1 = content.id || index + 40;
+			        const imageId2 = content.id ? content.id + 100 : index + 140;
+			
+			        return `
 			            <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="${content.contentsType}">
-		                <div class="product-cart-wrap mb-30 position-relative">
-		                    
-		                    <!-- [복원] 이미지 관련 부분은 원래 구조와 동일하게 -->
-		                    <div class="product-img-action-wrap">
-		                        <div class="product-img product-img-zoom">
-		                            <a th:href="@{/user/contents/{id}(id=${content.contentsId})}">
-		                                <img class="default-img" src="https://picsum.photos/id/${index + 40}/300/200" alt="콘텐츠 이미지">
-		                                <img class="hover-img" src="https://picsum.photos/id/${index + 140}/300/200" alt="콘텐츠 이미지">
-		                            </a>
-		                        </div>
-		                        <div class="product-action-1">
-		                            <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
-		                            <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-		                            <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-		                        </div>
-		                    </div>
-		                    
-		                    <!-- [복원] 콘텐츠 제목 부분도 원래 구조와 동일하게 -->
-		                    <div class="product-content-wrap" style="margin-top: 15px;">
-		                        <!-- ▼▼▼ h2 안에 실제 링크를 넣고 'stretched-link' 클래스 추가 ▼▼▼ -->
-		                        <h2>
-		                            <a href="/user/contents/${content.contentsId}" class="stretched-link">${content.contentsTitle}</a>
-		                        </h2>
-		                        <div>
-		                            <span class="font-small text-muted">By <a href="#">${content.enterName}</a></span>
-		                        </div>
-		                    </div>
-		                </div>
-		            </div>
-		            `;
-		        }).join('');
-
-		        contentsContainer.innerHTML = contentsHtml;
-		    }
+			                <!-- [수정 1] 클릭 영역을 전체 카드로 확장하고, 모달 트리거 역할을 부여 -->
+			                <div class="product-cart-wrap mb-30 position-relative portfolio-modal-trigger" 
+			                     role="button" 
+			                     data-contents-id="${content.contentsId}" 
+			                     style="cursor: pointer;">
+			                    
+			                    <div class="product-img-action-wrap">
+			                        <div class="product-img product-img-zoom">
+			                             <!-- 링크는 제거하고 이미지만 남깁니다 -->
+			                            <img class="default-img" src="https://picsum.photos/id/${index + 40}/300/200" alt="콘텐츠 이미지">
+			                            <img class="hover-img" src="https://picsum.photos/id/${index + 140}/300/200" alt="콘텐츠 이미지">
+			                        </div>
+			                        <!-- [수정 2] 'Quick view' 버튼 제거 (새 모달이 이 역할을 대신함) -->
+			                        <div class="product-action-1">
+			                            <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+			                            <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+			                        </div>
+			                    </div>
+			                    
+			                    <div class="product-content-wrap" style="margin-top: 15px;">
+			                        <!-- [수정 3] 제목에서 a 태그를 제거하여 페이지 이동을 방지 -->
+			                        <h2>${content.contentsTitle}</h2>
+			                        <div>
+			                            <span class="font-small text-muted">By <a href="#">${content.enterName}</a></span>
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			        `;
+			    }).join('');
+			
+			    contentsContainer.innerHTML = contentsHtml;
+			}
 
 
 
@@ -193,93 +207,98 @@
 		            }
 		        });
 		    }
+		    contentsContainer.addEventListener('click', function(event) {
+		        // 클릭된 요소 또는 그 부모 중에 '.portfolio-modal-trigger' 클래스를 가진 가장 가까운 요소를 찾습니다.
+		        const trigger = event.target.closest('.portfolio-modal-trigger');
+
+		        // 트리거 요소를 찾았다면
+		        if (trigger) {
+		            event.preventDefault(); // 혹시 모를 기본 동작 방지
+		            
+		            // 데이터 속성에서 콘텐츠 ID를 가져옵니다.
+		            const contentsId = trigger.dataset.contentsId;
+		            
+		            // 콘텐츠 ID가 있다면 모달을 엽니다.
+		            if (contentsId) {
+		                openPortfolioModal(contentsId);
+		            }
+		        }
+		    });
 		});
 		
 		// jsScript 블록 안에 이 함수를 추가하거나 기존 함수를 교체합니다.
 
 		function openPortfolioModal(contentsId) {
-		    const modalTitle = document.getElementById('portfolioModalTitle');
-		    const modalBody = document.getElementById('portfolioModalBody');
-		    const portfolioModal = new bootstrap.Modal(document.getElementById('portfolioDetailModal'));
-
-		    // 1. 모달 내용을 '로딩 중' 상태로 초기화 후 모달을 표시
-		    modalTitle.textContent = '포트폴리오 정보 로딩 중...';
-		    modalBody.innerHTML = `
-		        <div class="text-center p-5">
-		            <div class="spinner-border" role="status">
-		                <span class="visually-hidden">Loading...</span>
-		            </div>
-		        </div>
-		    `;
+		    const modalElement = document.getElementById('portfolioDetailModal');
+		    if (!modalElement) return;
+		
+		    const infoSection = modalElement.querySelector('#modalInfoSection');
+		    const contentSection = modalElement.querySelector('#modalContentSection');
+		    const portfolioModal = new bootstrap.Modal(modalElement);
+		
+		    infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>`;
+		    contentSection.innerHTML = '';
 		    portfolioModal.show();
-
-		    // 2. 서버에 jQuery AJAX로 상세 데이터 요청
+		
 		    $.ajax({
-		        // ★★ 작성자님이 알려주신 API 경로로 수정 ★★
-		        url: `/user/api/contents/${contentsId}`, 
+		        url: `/user/api/contents/${contentsId}`,
 		        type: 'GET',
 		        dataType: 'json',
-		        success: function(data) {
-		            // 3. 요청 성공 시, DTO 데이터로 모달 내용 업데이트
-		            
-		            // 모달 제목 설정
-		            modalTitle.textContent = data.contentsTitle;
-
-		            // 모달 본문 HTML 구성 (스크린샷 레이아웃 반영)
-		            // ★★ DTO에 없는 정보(태그, 클라이언트 등)는 제외하고, 있는 정보(enterName, contentsBody 등)로 구성합니다.
-		            modalBody.innerHTML = `
-		                <div class="container-fluid">
-		                    <div class="row">
-		                        <!-- 왼쪽 정보 영역 (7) -->
-		                        <div class="col-md-7">
-		                            <div class="d-flex align-items-center mb-3">
-		                                <img src="/assets/imgs/theme/icons/icon-user.svg" alt="user" class="rounded-circle me-2" style="width: 40px; height: 40px; border: 1px solid #ddd;">
-		                                <div>
-		                                    <h6 class="mb-0">${data.enterName}</h6>
-		                                    <span class="text-muted small">MASTER</span>
-		                                </div>
-		                            </div>
-		                            
-		                            <hr>
-
-		                            <h5>프로젝트 설명</h5>
-		                            <p style="white-space: pre-wrap;">${data.contentsBody || '상세 설명이 없습니다.'}</p>
-		                            
-		                            <hr>
-
-		                            <div class="row">
-		                                <div class="col-sm-6">
-		                                    <h6>등록일</h6>
-		                                    <p>${new Date(data.registrationDate).toLocaleDateString()}</p>
-		                                </div>
-		                                <!-- DTO에 가격 정보가 있지만, 포트폴리오에서는 보통 표시하지 않으므로 주석 처리
-		                                <div class="col-sm-6">
-		                                    <h6>서비스 가격</h6>
-		                                    <p>${data.price.toLocaleString()} 원</p>
-		                                </div>
-		                                -->
-		                            </div>
-
-		                            <!-- DTO에 정보가 없으므로 '클라이언트', '업종', '스타일' 등은 현재 표시하지 않습니다. -->
-		                            <!-- 추후 DTO가 확장되면 이 곳에 추가할 수 있습니다. -->
-
-		                        </div>
-
-		                        <!-- 오른쪽 이미지 영역 (5) -->
-		                        <div class="col-md-5">
-		                             <!-- 중요: DTO에 이미지 정보가 없으므로 임시 이미지를 사용합니다. -->
-		                             <!-- 추후 DTO에 이미지 경로 필드가 추가되면 data.imageUrl 등으로 교체해야 합니다. -->
-		                            <img src="https://picsum.photos/seed/${data.contentsId}/600/800" class="img-fluid rounded" alt="${data.contentsTitle}">
-		                        </div>
+		        success: function(detail) {
+		            // [수정] 목표 디자인에 맞게 infoHtml 구조와 스타일을 대폭 변경합니다.
+		            const infoHtml = `
+		                <!-- 1. 회사 로고 및 이름 (상단) -->
+		                <div class="d-flex align-items-center mb-4">
+		                    <img src="/assets/imgs/theme/icons/icon-user.svg" alt="company logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
+		                    <div>
+		                        <h6 class="mb-0 fw-bold">${detail.enterName || '회사명 정보 없음'}</h6>
+		                        <small class="text-muted">MASTER</small>
 		                    </div>
 		                </div>
+		
+		                <!-- 2. 콘텐츠 제목 및 카테고리 -->
+		                <p class="text-muted mb-2">디자인 > 상세페이지</p>
+		                <h3 class="fw-bold mb-4">${detail.contentsTitle}</h3>
+		
+		                <!-- 3. 태그 (임시) -->
+		                <div class="mb-4">
+		                    <span class="badge bg-light text-dark border me-1 px-3 py-2">#상세페이지</span>
+		                    <span class="badge bg-light text-dark border me-1 px-3 py-2">#제품촬영</span>
+		                </div>
+		
+		                <!-- 4. 프로젝트 설명 -->
+		                <div class="mb-4">
+		                    <h6 class="fw-bold">프로젝트 설명</h6>
+		                    <p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody || '상세 설명이 없습니다.'}</p>
+		                </div>
+		
+		                <!-- 5. 참여 기간 -->
+		                <div class="mb-4">
+		                    <h6 class="fw-bold">참여 기간</h6>
+		                    <p class="text-muted">${detail.participationStartDate || ''} ~ ${detail.participationEndDate || ''}</p>
+		                </div>
+		
+		                <!-- 6. 클라이언트 -->
+		                <div class="mb-4">
+		                    <h6 class="fw-bold">클라이언트</h6>
+		                    <p class="text-muted">${detail.client || '정보 없음'}</p>
+		                </div>
+		
+		                <!-- 7. 업종 -->
+		                <div>
+		                    <h6 class="fw-bold">업종</h6>
+		                    <p class="text-muted">${detail.industry || '정보 없음'}</p>
+		                </div>
 		            `;
+		            infoSection.innerHTML = infoHtml;
+		
+		            // 오른쪽 콘텐츠 영역 채우기 (세로로 긴 이미지 예시)
+		            // picsum.photos에서 세로가 더 긴 이미지를 가져오도록 수정 (e.g., 600x1200)
+		            contentSection.innerHTML = `<img src="https://picsum.photos/seed/${detail.contentId}/800/1200" class="img-fluid" alt="포트폴리오 상세 이미지">`;
 		        },
-		        error: function(xhr, status, error) {
-		            // 4. 요청 실패 시, 에러 메시지 표시
+		        error: function(xhr) {
 		            console.error("포트폴리오 상세 정보 로딩 실패:", xhr);
-		            modalTitle.textContent = '오류 발생';
-		            modalBody.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.</p>';
+		            infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>';
 		        }
 		    });
 		}
@@ -335,17 +354,17 @@
 							                 data-wow-delay=".1s">
 							                
 							                <div class="product-img-action-wrap">
-							                    <div class="product-img product-img-zoom">
-							                        <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
-							                        <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
-							                    </div>
-							                    <div class="product-action-1">
-							                        <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
-							                        <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-							                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-							                    </div>
-							                </div>
-							                <div class="product-content-wrap" style="margin-top: 15px;">
+								                <div class="product-img product-img-zoom">
+								                    <!-- a 태그는 완전히 제거합니다. -->
+								                    <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 20) + '/400/300'}" alt="" />
+								                    <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 120) + '/400/300'}" alt="" />
+								                </div>
+								                <div class="product-action-1">
+								                    <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+								                    <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
+								                </div>
+								            </div>
+								            <div class="product-content-wrap" style="margin-top: 15px;">
 							                    <h2 th:text="${content.contentsTitle}">콘텐츠 제목</h2>
 							                    <div>
 							                        <span class="font-small text-muted">By <a th:text="${content.enterName}" href="#">회원닉네임</a></span>
@@ -365,7 +384,6 @@
 							                    <div class="product-action-1">
 							                        <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
 							                        <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-							                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
 							                    </div>
 							                </div>
 							                <div class="product-content-wrap" style="margin-top: 15px;">
@@ -396,20 +414,29 @@
 		</section>
 		<!-- body 태그가 닫히기 직전에 삽입 -->
 		<div class="modal fade" id="portfolioDetailModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
-		    <!-- modal-lg를 modal-xl로 변경하여 더 넓게 표시 -->
-		    <div class="modal-dialog modal-xl modal-dialog-centered">
-		        <div class="modal-content">
-		            <div class="modal-header">
-		                <h5 class="modal-title" id="portfolioModalTitle"></h5>
+		    
+		    <!-- 1. 핵심 수정: '.modal-xl' 이나 다른 클래스 대신 '.modal-xxl'을 사용합니다. -->
+		    <div class="modal-dialog modal-dialog-centered modal-xxl"> 
+		        <div class="modal-content"> 
+		            
+		            <div class="modal-header border-bottom-0"> <!-- 깔끔한 디자인을 위해 하단 선 제거 -->
 		                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		            </div>
-		            <div class="modal-body" id="portfolioModalBody">
-		                <!-- 이 부분은 JS가 동적으로 채워넣습니다 -->
+		
+		            <!-- 2. 핵심 수정: 모달 바디에도 커스텀 클래스를 적용합니다. -->
+		            <div class="modal-body custom-modal-body pt-0"> <!-- 위쪽 패딩 제거로 헤더와 가깝게 -->
+		                <div class="d-flex h-100">
+		                    <!-- 왼쪽 정보 영역 -->
+		                    <div id="modalInfoSection" class="p-4" style="width: 50%; overflow-y: auto;">
+		                        <!-- JS가 이 안에 내용을 채웁니다 -->
+		                    </div>
+		                    <!-- 오른쪽 이미지/콘텐츠 영역 -->
+		                    <div id="modalContentSection" class="p-3 ps-4 border-start" style="width: 60%; overflow-y: auto;">
+		                        <!-- JS가 이 안에 내용을 채웁니다 -->
+		                    </div>
+		                </div>
 		            </div>
-		            <div class="modal-footer">
-		                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-		                <!-- 필요 시 '문의하기' 등 추가 버튼 배치 가능 -->
-		            </div>
+		            
 		        </div>
 		    </div>
 		</div>
