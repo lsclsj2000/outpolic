@@ -17,4 +17,7 @@ public interface AdminMemberMapper {
 	
 	//휴면 회원 목록 조회
 	List<Member> getWithdrawMemberList();
+	
+	//특정 회원 정보 조회
+	Member selectMemberByCode(String memberCode);
 }

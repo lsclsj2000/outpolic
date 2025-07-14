@@ -14,22 +14,29 @@ import outpolic.common.domain.Member;
 public class adminMemberServiceImpl implements AdminMemberService {
 	
 	private final AdminMemberMapper adminMemberMapper;
+	
 	@Override
 	public List<Member> getMemberList() {
 		List<Member> memberList = adminMemberMapper.getMemberList();
 		return memberList;
 	}
+	
 	@Override
 	public List<Member> getActiveMemberList() {
 		List<Member> memberList = adminMemberMapper.getActiveMemberList();
 		return memberList;
 	}
+	
 	@Override
 	public List<Member> getWithdrawMemberList() {
 		List<Member> memberList = adminMemberMapper.getWithdrawMemberList();
 		return memberList;
 	}
 	
+	@Override
+	public Member getMemberByCode(String memberCode) {
+		return adminMemberMapper.selectMemberByCode(memberCode);
+	}
 	
 
 }

@@ -11,7 +11,17 @@
     <header th:replace="~{enter/fragments/enterHeader :: enterHeaderFragment}"></header>
 
     <div class="main">
-        <main layout:fragment="contents"></main>
+        
+        <div class="page-content pt-100 pb-150" >
+		    <div class="container">
+		        <div class="row">
+		            <div class="col-lg-10 m-auto">
+		            <main layout:fragment="contents"></main>
+		            </div>
+		        </div>
+		     </div>
+		 </div>           
+        
     </div>
     
     <div th:replace="~{enter/fragments/enterChatRoom :: enterChatRoomFragment}"></div>
