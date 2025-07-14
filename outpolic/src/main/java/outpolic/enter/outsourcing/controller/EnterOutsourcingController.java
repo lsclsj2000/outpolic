@@ -49,23 +49,31 @@ public class EnterOutsourcingController {
     @GetMapping("/add")
     public String showAddOutsourcingForm(Model model, HttpSession session) {
         session.removeAttribute("outsourcingFormData");
-        model.addAttribute("entCd", "EI_C00001");
-        model.addAttribute("mbrCd", "MB_C0000036");
+        
+        // 세션에서 로그인한 사용자의 mbrCd를 가져옵니다.
+        String mbrCd = (String) session.getAttribute("SCD");
+        
+        // mbrCd를 이용해 entCd를 조회합니다. (※ enterpriseService에 관련 로직 필요)
+        String entCd = outsourcingService.findEntCdByMbrCd(mbrCd); // 예시: 서비스 메서드 호출
+
+        model.addAttribute("entCd", entCd); // 세션 기반의 동적 entCd
+        model.addAttribute("mbrCd", mbrCd); // 세션 기반의 동적 mbrCd
         model.addAttribute("formData", new OutsourcingFormDataDto());
         return "enter/outsourcing/addOutsourcingListView";
     }
-
+    
     @PostMapping("/save-step1")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> saveStep1(@ModelAttribute OutsourcingFormDataDto formData, HttpSession session) {
-        String entCd = "EI_C00001";
-        String mbrCd = "MB_C0000036";
+        // 세션에서 직접 값을 가져옵니다.
+        String mbrCd = (String) session.getAttribute("SCD");
+        String entCd = outsourcingService.findEntCdByMbrCd(mbrCd); // 예시: 서비스 메서드 호출
+
         formData.setEntCd(entCd);
         formData.setMbrCd(mbrCd);
         String generatedOsCd = outsourcingService.saveStep1Data(formData, session);
         return ResponseEntity.ok(Map.of("success", true, "osCd", generatedOsCd));
     }
-
     @PostMapping("/save-step2")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> saveStep2(
@@ -207,9 +215,24 @@ public class EnterOutsourcingController {
         return ResponseEntity.ok(outsourcingService.getLinkedPortfoliosByOsCd(osCd));
     }
 
-    @GetMapping("/{osCd}/unlinked-portfolios") @ResponseBody
-    public ResponseEntity<List<EnterPortfolio>> searchUnlinkedPortfolios(@PathVariable String osCd, @RequestParam String query) {
-        String entCd = "EI_C00001";
+    @GetMapping("/{osCd}/unlinked-portfolios")
+    @ResponseBody
+    public ResponseEntity<List<EnterPortfolio>> searchUnlinkedPortfolios(
+            @PathVariable String osCd,
+            @RequestParam String query,
+            HttpSession session) { // HttpSession 파라미터 추가
+
+        // 1. 세션에서 현재 로그인한 사용자의 회원 코드(mbrCd)를 가져옵니다.
+        String mbrCd = (String) session.getAttribute("SCD");
+        if (mbrCd == null) {
+            // 로그인하지 않았다면 빈 목록을 반환합니다.
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Collections.emptyList());
+        }
+
+        // 2. mbrCd를 사용해 현재 기업의 고유 코드(entCd)를 조회합니다.
+        String entCd = outsourcingService.findEntCdByMbrCd(mbrCd);
+
+        // 3. 조회된 현재 기업의 entCd로 검색을 수행합니다.
         return ResponseEntity.ok(outsourcingService.searchUnlinkedPortfolios(osCd, entCd, query));
     }
 

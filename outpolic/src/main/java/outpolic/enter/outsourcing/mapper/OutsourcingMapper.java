@@ -3,6 +3,8 @@ package outpolic.enter.outsourcing.mapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 
@@ -52,4 +54,17 @@ public interface OutsourcingMapper {
     List<EnterPortfolio> findLinkedPortfoliosByOsCd(@Param("osCd") String osCd);
     int unlinkOutsourcingFromPortfolio(@Param("osCd") String osCd, @Param("prtfCd") String prtfCd);
     void updateOutsourcingRepresentativeCategory(@Param("osCd") String osCd, @Param("ctgryId") String ctgryId);
+    
+    
+    
+    /**
+     * 회원 코드(mbrCd)로 기업 코드(entCd)를 조회합니다.
+     * @param mbrCd
+     * @return
+     */
+    @Select("SELECT ent_cd FROM enterprise WHERE mbr_cd = #{mbrCd}")
+    String findEntCdByMbrCd(String mbrCd); // <-- 이 메서드를 추가
+    
+    String findLatestClCd();
+    
 }

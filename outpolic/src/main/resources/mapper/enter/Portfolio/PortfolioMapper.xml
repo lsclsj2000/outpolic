@@ -144,6 +144,11 @@
     <delete id="deletePortfolioByPrtfCd">
         DELETE FROM portfolio WHERE prtf_cd = #{prtfCd}
     </delete>
+    
+    <delete id="deleteFilesByClCd">
+    DELETE FROM file WHERE cl_cd = #{clCd}
+</delete>
+    
 
     <select id="findLatestPrtfCd" resultType="String">
         SELECT prtf_cd FROM portfolio WHERE prtf_cd LIKE 'PO_C%'

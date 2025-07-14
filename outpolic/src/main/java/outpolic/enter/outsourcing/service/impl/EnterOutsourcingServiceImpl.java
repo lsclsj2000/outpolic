@@ -28,14 +28,12 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     private static final Logger logger = LoggerFactory.getLogger(EnterOutsourcingServiceImpl.class);
 
     private final OutsourcingMapper outsourcingMapper;
-    private final PortfolioMapper portfolioMapper; // 포트폴리오 매퍼도 주입되어 있어야 함 (기존 코드 유지)
+    private final PortfolioMapper portfolioMapper;
 
     private final String FILE_UPLOAD_DIR = "C:/uploads";
 
-    // ======================================================
-    // ▼▼▼ 조회 및 공통 로직 ▼▼▼
-    // ======================================================
-    
+    // ... (조회 및 등록 로직은 기존과 동일) ...
+
     @Override
     public List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd) {
         return outsourcingMapper.findOutsourcingDetailsByEntCd(entCd);
@@ -56,15 +54,11 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         return outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
     }
 
-    // ★ 추가: 모든 외주 목록 조회 구현
     @Override
     public List<EnterOutsourcing> getAllOutsourcings() {
         return outsourcingMapper.findAllOutsourcings();
     }
-
-    // ======================================================
-    // ▼▼▼ 외주 "등록" 관련 로직 (단계별) ▼▼▼
-    // ======================================================
+    
     @Override
     public String saveStep1Data(OutsourcingFormDataDto formData, HttpSession session) {
         logger.info("--- saveStep1Data 시작 ---");
@@ -91,7 +85,7 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         }
         session.setAttribute("outsourcingFormData", formData);
     }
-
+    
     @Override
     public List<String> saveStep3Data(String osCd, MultipartFile[] files, HttpSession session) {
         OutsourcingFormDataDto formData = (OutsourcingFormDataDto) session.getAttribute("outsourcingFormData");
@@ -161,9 +155,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         session.removeAttribute("outsourcingFormData");
     }
 
-    // ======================================================
-    // ▼▼▼ 외주 "수정" 관련 로직 (단계별) ▼▼▼
-    // ======================================================
     @Override
     @Transactional
     public void updateOutsourcingStep1(EnterOutsourcing outsourcingToUpdate) {
@@ -180,6 +171,14 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
             throw new IllegalStateException("콘텐츠 목록 정보가 없어 카테고리/태그를 수정할 수 없습니다.");
         }
         
+        // ▼▼▼ 수정된 부분 시작 ▼▼▼
+        // 1. DB에서 원본 외주 데이터를 가져와서 원래 작성자의 mbrCd를 확보합니다.
+        EnterOutsourcing originalOutsourcing = outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
+        if (originalOutsourcing == null) {
+            throw new IllegalStateException("수정할 외주 정보를 찾을 수 없습니다.");
+        }
+        String originalMbrCd = originalOutsourcing.getMbrCd();
+
         if (categoryCodes != null && !categoryCodes.isEmpty()) {
             outsourcingMapper.updateOutsourcingRepresentativeCategory(osCd, categoryCodes.get(0));
         }
@@ -187,10 +186,14 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         outsourcingMapper.deleteCategoryMappingByClCd(clCd);
         outsourcingMapper.deleteTagMappingByClCd(clCd);
 
-        String mbrCd = "MB_C0000036"; // 예시: 실제로는 DB에서 해당 외주의 mbrCd를 조회해서 사용해야 함
-        updateMappings(clCd, mbrCd, categoryCodes, tags);
+        // 2. 하드코딩된 값 대신, 위에서 찾은 원본 작성자의 mbrCd를 사용합니다.
+        updateMappings(clCd, originalMbrCd, categoryCodes, tags);
+        // ▲▲▲ 수정된 부분 끝 ▲▲▲
+
         logger.info("수정 2단계 완료: {} 의 카테고리 및 태그가 업데이트되었습니다.", osCd);
     }
+    
+    // ... (updateOutsourcingStep3, deleteOutsourcing, updateMappings, 포트폴리오 연결 관련 메서드는 기존과 동일) ...
 
     @Override
     @Transactional
@@ -222,10 +225,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         logger.info("수정 3단계 완료: {} 의 첨부 파일이 업데이트되었습니다.", osCd);
     }
 
-    // ======================================================
-    // ▼▼▼ 공통 및 기타 로직 ▼▼▼
-    // ======================================================
-    
     @Override
     @Transactional
     public void deleteOutsourcing(String osCd) {
@@ -287,5 +286,11 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     @Transactional
     public void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd) {
         outsourcingMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
+    }
+    
+    // ▼▼▼ 구조 개선: OutsourcingMapper를 사용하도록 변경 ▼▼▼
+    @Override
+    public String findEntCdByMbrCd(String mbrCd) {
+        return outsourcingMapper.findEntCdByMbrCd(mbrCd); 
     }
 }

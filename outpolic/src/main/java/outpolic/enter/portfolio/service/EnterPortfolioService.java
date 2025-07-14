@@ -34,5 +34,6 @@ public interface EnterPortfolioService {
     void linkOutsourcing(String prtfCd, String osCd, String entCd);
     void unlinkOutsourcing(String prtfCd, String osCd);
     void updateOutsourcingStep1(EnterOutsourcing outsourcingToUpdate);
+    String findEntCdByMbrCd(String mbrCd);
 
 }

@@ -48,8 +48,20 @@ public class EnterPortfolioController {
     @GetMapping("/listData")
     @ResponseBody
     public ResponseEntity<List<EnterPortfolio>> getPortfolioListData(HttpSession session){
-        String currentEntCd = "EI_C00001"; 
-        return ResponseEntity.ok(portfolioService.getPortfolioListByEntCd(currentEntCd));
+        // 1. 세션에서 현재 로그인한 사용자의 회원 코드(mbrCd)를 가져옵니다.
+        String mbrCd = (String) session.getAttribute("SCD");
+
+        // 2. 만약 로그인 상태가 아니라면, 빈 목록을 반환합니다.
+        if (mbrCd == null) {
+            return ResponseEntity.ok(java.util.Collections.emptyList());
+        }
+
+        // 3. mbrCd를 사용해 현재 기업의 고유 코드(entCd)를 조회합니다.
+        // (이전에 만든 findEntCdByMbrCd 메서드 활용)
+        String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
+        
+        // 4. 조회된 현재 기업의 entCd로 포트폴리오 목록을 가져옵니다.
+        return ResponseEntity.ok(portfolioService.getPortfolioListByEntCd(entCd));
     }
 
     @GetMapping("/api/countByEntCd")
@@ -62,14 +74,13 @@ public class EnterPortfolioController {
 
     @GetMapping("/add")
     public String showAddPortfolioForm(Model model, HttpSession session) {
-        model.addAttribute("entCd", "EI_C00001"); 
-        model.addAttribute("mbrCd", "MB_C0000036");
+        String mbrCd = (String) session.getAttribute("SCD");
+        String entCd = portfolioService.findEntCdByMbrCd(mbrCd); // 예시: 서비스 메서드 호출
 
-        // --- 핵심 수정 부분 ---
-        model.addAttribute("portfolio", new EnterPortfolio()); 
-        // --- 핵심 수정 부분 끝 ---
-        
-        return "enter/portfolio/addPortfolio"; 
+        model.addAttribute("entCd", entCd);
+        model.addAttribute("mbrCd", mbrCd);
+        model.addAttribute("portfolio", new EnterPortfolio());
+        return "enter/portfolio/addPortfolio";
     }
     
     @GetMapping("/ContractList")
@@ -84,11 +95,15 @@ public class EnterPortfolioController {
             BindingResult bindingResult,
             @RequestParam(value="categoryCodes", required=false) String categoryCodesStr, 
             @RequestParam(value="tags", required=false) String tags,
-            @RequestParam(value="portfolioImage",required=false) MultipartFile portfolioImage) {
+            @RequestParam(value="portfolioImage",required=false) MultipartFile portfolioImage,
+            HttpSession session) { // HttpSession 파라미터 추가
+
+        // 세션에서 값을 가져와 portfolio 객체에 설정합니다.
+        String mbrCd = (String) session.getAttribute("SCD");
+        String entCd = portfolioService.findEntCdByMbrCd(mbrCd); // 예시
         
-    	// TODO: 세션에서 실제 기업/회원 코드 가져와서 portfolio에 설정
-    	portfolio.setEntCd("EI_C00001"); 
-        portfolio.setAdmCd("MB_C0000036"); // <- 이 값 'MB_C0000036'이 admin 테이블에 있어야 합니다.
+        portfolio.setEntCd(entCd); 
+        portfolio.setMbrCd(mbrCd); // <- 이 값 'MB_C0000036'이 admin 테이블에 있어야 합니다.
     	
         if (bindingResult.hasErrors()) {
             Map<String, Object> errorResponse = new HashMap<>();
