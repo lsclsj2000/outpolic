@@ -25,4 +25,10 @@ public interface OutsourcingRequestService {
      * 특정 공급자(기업)에게 온 외주 신청 목록 조회
      */
     List<RequestViewDTO> getReceivedRequests(String supplierEntCd);
+    
+    String findEntCdByMbrCd(String mbrCd);
+
+	RequestViewDTO getRequestByDetails(String requestId);
+
+	void updateRequestStatus(String requestId, String status);
 }

@@ -17,6 +17,32 @@
             .btn-back { display: inline-block; background-color: #6b7280; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s; }
             .btn-back:hover { background-color: #4b5563; }
             .status-badge { font-size: 1rem; font-weight: bold; padding: 0.4rem 0.8rem; border-radius: 9999px; color: white; }
+            .btn-success {
+            	background-color:#28a745; 
+            	color:white;
+            	padding:0.75rem 1.5rem;
+            	border:none;
+            	border-radius:6px;
+            	cursor:pointer;
+            }
+            .btn-danger{
+            	background-color:#dc3545;
+            	color:white;
+            	padding:0.75rem 1.5rem;
+            	border:none;
+            	border-radius:6px;
+            	cursor:pointer;
+            }
+            .ml-10{
+            	margin-left:10px;
+            }
+            .mt-20{
+            	margin-top:20px;
+            }
+            .mt-30{
+            	margin-top:30px;
+            }
+            
         </style>
     </th:block>
 </head>
@@ -56,23 +82,63 @@
                 <p th:text="${#temporals.format(request.ocd_strt_ymdt, 'yyyy-MM-dd HH:mm')}"></p>
                 <h3>희망 작업 종료일</h3>
                 <p th:text="${#temporals.format(request.ocd_dedline, 'yyyy-MM-dd HH:mm')}"></p>
+                
+                   <div class="actions-container mt-30" th:if="${request.stc_cd == 'SD_BEFORE'}">
+                <button type="button" class="btn btn-success" id="approve-btn">승인</button>
+                <button type="button" class="btn btn-danger ml-10" id="reject-btn">거절</button>
             </div>
-            <a href="/enter/outsourcing-requests/sent" class="btn-back">목록으로 돌아가기</a>
+            </div>
+            <a th:href="${listUrl}" class="btn-back">목록으로 돌아가기</a>
         </div>
         <div id="error-message" style="display:none;" class="empty-message"></div>
     </div>
 </th:block>
 
 <th:block layout:fragment="jsFile">
-    <script>
+    <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            // 이 페이지는 서버에서 직접 데이터를 받아 Thymeleaf로 렌더링하므로,
-            // 별도의 AJAX fetch 요청이 필요 없습니다.
-            // 클라이언트 측에서 동적으로 데이터를 받아올 필요가 없으므로 script 내용은 최소화합니다.
+            const requestId = /*[[${request.ocd_cd}]]*/ '';
+            const approveBtn = document.getElementById('approve-btn');
+            const rejectBtn = document.getElementById('reject-btn');
 
-            // 상태 텍스트 뱃지 색상을 적용하기 위한 CSS 클래스 추가 (옵션)
-            // Thymeleaf에서 th:classappend로 이미 클래스가 추가되므로, JavaScript에서는 추가 작업이 불필요할 수 있습니다.
-            // 만약 필요한 추가 동적 처리가 있다면 여기에 구현합니다.
+            const handleStatusUpdate = (newStatus) => {
+                const confirmMessage = newStatus === 'SD_APPROVED' 
+                                     ? '이 요청을 승인하시겠습니까?' 
+                                     : '이 요청을 거절하시겠습니까?';
+                
+                if (!confirm(confirmMessage)) {
+                    return;
+                }
+
+                fetch('/enter/outsourcing-requests/update-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        requestId: requestId,
+                        status: newStatus
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('상태가 성공적으로 변경되었습니다.');
+                        window.location.reload(); // 성공 시 페이지 새로고침
+                    } else {
+                        alert('상태 변경에 실패했습니다: ' + (data.message || '알 수 없는 오류'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('상태 변경 중 오류가 발생했습니다.');
+                });
+            };
+
+            if (approveBtn) {
+                approveBtn.addEventListener('click', () => handleStatusUpdate('SD_APPROVED'));
+            }
+            if (rejectBtn) {
+                rejectBtn.addEventListener('click', () => handleStatusUpdate('SD_REJECTED'));
+            }
         });
     </script>
 </th:block>

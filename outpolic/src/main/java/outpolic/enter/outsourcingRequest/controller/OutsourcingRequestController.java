@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller("enterOutsourcingRequestController")
@@ -90,15 +91,26 @@ public class OutsourcingRequestController {
      * 외주 신청 상세 페이지를 보여주는 메서드
      * URL: /enter/outsourcing-requests/{requestId}
      */
-    @GetMapping("/{requestId}")
-    public String showRequestDetail(@PathVariable String requestId, Model model) {
-        RequestViewDTO requestDetail = requestService.getRequestDetails(requestId);
-        if (requestDetail == null) {
-            return "redirect:/enter/outsourcing-requests/sent";
-        }
+    @GetMapping("/detail/{ocdCd}")
+    public String showRequestDetail(@PathVariable("ocdCd") String ocdCd, Model model, HttpServletRequest request) {
+
+        // 호출하는 서비스 메서드 이름을 'getRequestDetails'로 수정
+        RequestViewDTO requestDetail = requestService.getRequestDetails(ocdCd);
+
         model.addAttribute("request", requestDetail);
+
+        String referrer = request.getHeader("Referer");
+        String listUrl = (referrer != null && referrer.contains("/sent"))
+                       ? "/enter/outsourcing-requests/sent"
+                       : "/enter/outsourcing-requests/received";
+
+        model.addAttribute("listUrl", listUrl);
+
         return "enter/outsourcingRequest/requestDetailView";
     }
+
+     
+    
     
     @GetMapping("/check-my-role")
     @ResponseBody
@@ -141,15 +153,33 @@ public class OutsourcingRequestController {
     @GetMapping("/api/received")
     @ResponseBody
     public ResponseEntity<List<RequestViewDTO>> getReceivedRequestsApi(HttpSession session) {
-        String loggedInEntCd = (String) session.getAttribute("SCD"); // 로그인한 기업 코드
+        String loggedInMbrCd = (String) session.getAttribute("SCD");
 
-        if (loggedInEntCd == null || loggedInEntCd.isEmpty()) {
+        if (loggedInMbrCd == null || loggedInMbrCd.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // 여기서 실제 기업 코드를 가져오는 로직이 필요할 수 있습니다.
-        // 로그인 시 SGRD가 "ENTER"인 경우 SCD에 기업 코드가 저장된다고 가정합니다.
-        List<RequestViewDTO> receivedRequests = requestService.getReceivedRequests(loggedInEntCd);
+        String supplierEntCd = requestService.findEntCdByMbrCd(loggedInMbrCd);
+
+        // ▼▼▼ 이 부분의 파라미터를 'supplierEntCd'로 수정합니다. ▼▼▼
+        List<RequestViewDTO> receivedRequests = requestService.getReceivedRequests(supplierEntCd);
+        
         return ResponseEntity.ok(receivedRequests);
     }
-}
+    
+    @PostMapping("/update-status")
+    @ResponseBody
+    public ResponseEntity<Map<String,Object>> updateReqeuestStatus(@RequestBody Map<String,String> payload){
+    	try {
+    		String requestId = payload.get("requestId");
+    		String status = payload.get("status");
+    		requestService.updateRequestStatus(requestId,status);
+    		return ResponseEntity.ok(Map.of("success",true,"message","상태가 성공적으로 변경되었습니다."));
+    	
+    }catch(Exception e) {
+    	e.printStackTrace();
+    	return ResponseEntity.badRequest().body(Map.of("success",false,"message",e.getMessage()));
+    }
+    
+    
+}}
