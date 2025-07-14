@@ -16,4 +16,9 @@ public interface AdminMemberService {
 	
 	//특정 회원 정보 조회
 	Member getMemberByCode(String memberCode);
+	
+	//특정 회원 정보 수정
+	void editAdminMemberInfo(Member member);
+	
+	boolean isNicknameDuplicated(String nickname, String memberCode);
 }
