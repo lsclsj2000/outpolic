@@ -124,8 +124,12 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     public void completeOutsourcingRegistration(String osCd, HttpSession session) {
         logger.info("--- completeOutsourcingRegistration 시작, osCd: {} ---", osCd);
         OutsourcingFormDataDto formData = (OutsourcingFormDataDto) session.getAttribute("outsourcingFormData");
+        
         if (formData == null || !osCd.equals(formData.getOsCd())) {
             throw new IllegalStateException("세션 정보가 유효하지 않거나 만료되었습니다.");
+        }
+        if (formData.getCtgryId() == null || formData.getCtgryId().isEmpty()) {
+            throw new IllegalStateException("대표 카테고리가 선택되지 않았습니다. 2단계에서 카테고리를 선택해주세요.");
         }
 
         EnterOutsourcing finalOutsourcing = new EnterOutsourcing();
@@ -144,13 +148,30 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
         outsourcingMapper.insertOutsourcing(finalOutsourcing);
         
-        String clCd = "LIST_" + finalOutsourcing.getOsCd();
-        outsourcingMapper.insertContentList(clCd, finalOutsourcing.getOsCd());
+        // ▼▼▼ cl_cd 생성 로직 수정 (가장 중요) ▼▼▼
+        String latestClCd = outsourcingMapper.findLatestClCd();
+        int nextNum = 1;
+        if (latestClCd != null) {
+            try {
+                // "LIST_OS_C" 접두사(10글자)를 제외한 숫자 부분을 추출하여 1을 더합니다.
+                nextNum = Integer.parseInt(latestClCd.substring(10)) + 1;
+            } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+                // 예외 발생 시 안전하게 1부터 시작
+                logger.warn("cl_cd parsing error, starting from 1. lastestClCd: {}", latestClCd);
+                nextNum = 1;
+            }
+        }
         
-        updateMappings(clCd, formData.getMbrCd(), formData.getCategoryCodes(), formData.getTags());
+        // 새로운 cl_cd를 생성합니다. 예: LIST_OS_C00052
+        String newClCd = "LIST_OS_C" + String.format("%05d", nextNum);
+        
+        outsourcingMapper.insertContentList(newClCd, finalOutsourcing.getOsCd());
+updateMappings(newClCd, formData.getMbrCd(), formData.getCategoryCodes(), formData.getTags());
+        
         if (formData.getReferenceFileUrls() != null && !formData.getReferenceFileUrls().isEmpty()) {
             // TODO: 파일 정보를 DB의 'outsourcing_file' 같은 테이블에 저장하는 로직
         }
+
 
         session.removeAttribute("outsourcingFormData");
     }

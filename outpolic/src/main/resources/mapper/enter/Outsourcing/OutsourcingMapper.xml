@@ -172,14 +172,14 @@
             outsourcing_portfolio
         ORDER BY op_cd DESC LIMIT 1
     </select>
-	
-	<select id="findLatestClCd" resultType="String">
+    
+    <select id="findLatestClCd" resultType="String">
     SELECT cl_cd 
     FROM content_list 
     WHERE cl_cd LIKE 'LIST_OS_C%' 
     ORDER BY CAST(SUBSTRING(cl_cd, 11) AS UNSIGNED) DESC LIMIT 1
 </select>
-	
+
     <insert id="insertOutsourcingPortfolio">
         INSERT INTO outsourcing_portfolio (op_cd,os_cd,prtf_cd,op_reg_ymdt,ent_cd)
         VALUES(#{opCd},#{osCd},#{prtfCd},NOW(),#{entCd})
@@ -260,8 +260,6 @@
         ORDER BY
             p.prtf_reg_ymdt DESC
     </select>
-    
-    
 
     <delete id="unlinkOutsourcingFromPortfolio">
         DELETE FROM outsourcing_portfolio

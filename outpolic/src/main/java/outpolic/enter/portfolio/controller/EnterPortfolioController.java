@@ -47,22 +47,23 @@ public class EnterPortfolioController {
 
     @GetMapping("/listData")
     @ResponseBody
-    public ResponseEntity<List<EnterPortfolio>> getPortfolioListData(HttpSession session){
+    public ResponseEntity<List<EnterPortfolio>> getPortfolioListData(HttpSession session) { // HttpSession 파라미터 추가
         // 1. 세션에서 현재 로그인한 사용자의 회원 코드(mbrCd)를 가져옵니다.
         String mbrCd = (String) session.getAttribute("SCD");
 
-        // 2. 만약 로그인 상태가 아니라면, 빈 목록을 반환합니다.
+        // 2. 만약 로그인 상태가 아니라면, 401 Unauthorized 응답을 보냅니다.
+     // ▼▼▼ 바로 이 부분이 불필요한 DB 조회를 막아주는 핵심 코드입니다 ▼▼▼
         if (mbrCd == null) {
+            // 로그인하지 않았으면 DB 조회 없이 즉시 빈 목록을 반환합니다.
             return ResponseEntity.ok(java.util.Collections.emptyList());
         }
 
-        // 3. mbrCd를 사용해 현재 기업의 고유 코드(entCd)를 조회합니다.
-        // (이전에 만든 findEntCdByMbrCd 메서드 활용)
+        // 로그인한 사용자일 경우에만 DB 조회를 수행합니다.
         String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
-        
-        // 4. 조회된 현재 기업의 entCd로 포트폴리오 목록을 가져옵니다.
         return ResponseEntity.ok(portfolioService.getPortfolioListByEntCd(entCd));
     }
+
+    
 
     @GetMapping("/api/countByEntCd")
     @ResponseBody
@@ -93,35 +94,37 @@ public class EnterPortfolioController {
     public ResponseEntity<Map<String, Object>> addPortfolioAjax(
             @Valid @ModelAttribute EnterPortfolio portfolio,
             BindingResult bindingResult,
-            @RequestParam(value="categoryCodes", required=false) String categoryCodesStr, 
+            // 1. 파라미터를 String이 아닌 List<String>으로 직접 받도록 수정
+            @RequestParam(value="categoryCodes", required=false) List<String> categoryCodes,
             @RequestParam(value="tags", required=false) String tags,
             @RequestParam(value="portfolioImage",required=false) MultipartFile portfolioImage,
-            HttpSession session) { // HttpSession 파라미터 추가
+            HttpSession session) {
 
-        // 세션에서 값을 가져와 portfolio 객체에 설정합니다.
-        String mbrCd = (String) session.getAttribute("SCD");
-        String entCd = portfolioService.findEntCdByMbrCd(mbrCd); // 예시
+        // 2. List에 대한 유효성 검사로 하나로 통일
+        if (categoryCodes == null || categoryCodes.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "카테고리는 최소 하나 이상 선택해야 합니다."));
+        }
         
-        portfolio.setEntCd(entCd); 
-        portfolio.setMbrCd(mbrCd); // <- 이 값 'MB_C0000036'이 admin 테이블에 있어야 합니다.
-    	
+        // 폼 데이터의 다른 필드에 대한 유효성 검사
         if (bindingResult.hasErrors()) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
             errorResponse.put("message", "입력 데이터 유효성 검사에 실패했습니다.");
+            // 필요하다면 어떤 필드가 문제인지 상세 오류를 추가할 수 있습니다.
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        List<String> categoryCodes = new ArrayList<>();
-        if (categoryCodesStr != null && !categoryCodesStr.isEmpty()) {
-            categoryCodes = Arrays.asList(categoryCodesStr.split(","));
-        }
+        // 세션에서 로그인 정보를 가져와 설정
+        String mbrCd = (String) session.getAttribute("SCD");
+        String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
+        
+        portfolio.setEntCd(entCd); 
+        portfolio.setMbrCd(mbrCd);
         
         try {
+            // 3. 더 이상 문자열을 분리할 필요 없이 List를 그대로 서비스에 전달
             portfolioService.addPortfolio(portfolio, categoryCodes, tags, portfolioImage);
             return ResponseEntity.ok(Map.of("success", true, "message", "포트폴리오가 성공적으로 등록되었습니다.", "redirectUrl", "/enter/portfolio/list"));
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         } catch (Exception e) {
             e.printStackTrace(); 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -160,7 +163,9 @@ public class EnterPortfolioController {
     						@Valid @ModelAttribute EnterPortfolio portfolio,
     						BindingResult bindingResult,
     						@RequestParam(value="categoryCodes", required=false) String categoryCodesStr, 
-    						@RequestParam(value="tags", required=false) String tags) {
+    						@RequestParam(value="tags", required=false) String tags,
+    						@RequestParam(value="portfolioImage",required=false) MultipartFile portfolioImage,
+    						HttpSession session) {
     	
     	if(bindingResult.hasErrors()) {
         	Map<String, Object> errorResponse = new HashMap<>();
@@ -179,8 +184,8 @@ public class EnterPortfolioController {
         }
 
         try {
-            portfolio.setAdmCd("ADM_C004"); 
-            portfolioService.updatePortfolio(portfolio, categoryCodes, tags);
+           
+            portfolioService.updatePortfolio(portfolio, categoryCodes, tags,portfolioImage);
             return ResponseEntity.ok(Map.of("success",true,"message","수정되었습니다.","redirectUrl","/enter/portfolio/list"));
         } catch (Exception e) {
             e.printStackTrace();
