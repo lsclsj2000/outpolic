@@ -82,4 +82,17 @@
 		where stc_cd='SD_WITHDRAWN'
 		order by CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED);
   	</select>
+  	<select id="selectMemberByCode" resultMap="memberInfo">
+  		SELECT 
+			*
+		FROM member
+		where mbr_cd=#{memberCode};
+  	</select>
+  	
+  	
+  	
+  	
+  	
+  	
+  	
   </mapper>

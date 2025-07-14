@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutMain}" >
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>	
+	<body>
+		<th:block layout:fragment="contents">
+			<div class="modal fade" id="memberDetailModal" tabindex="-1" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h3 class="mb-30">회원 정보 수정</h3>
+							<button>정보 수정하기</button>
+						</div>
+						<div class="modal-body">	
+							<form class="register edit col-6" th:action="@{/userEdit}" method="post">
+								<div class="form-group">
+								    <label for="memberCode">회원 코드</label>
+								    <input type="text" id="memberCode" name="memberCode" readonly />
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberName">이름</label>
+								    <input type="text" id="modalMemberName" name="modalMemberName" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberGradeCode">등급</label>
+								    <input type="text" id="modalMemberGradeCode" name="modalMemberGradeCode" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberNickname">닉네임</label>
+								    <input type="text" id="modalMemberNickname" name="modalMemberNickname" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberEmail">이메일</label>
+								    <input type="email" id="modalMemberEmail" name="modalMemberEmail" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberTelNo">전화번호</label>
+								    <input type="text" id="modalMemberTelNo" name="modalMemberTelNo" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberBirth">생일</label>
+								    <input type="date" id="modalMemberBirth" name="modalMemberBirth" class="form-control" readonly/>
+								</div>
+								<!-- 주소 섹션 -->
+								<h4 style="color: #6c757d;" class="mb-10">주소</h4>
+								<div class="form-group">
+								    <label for="modalMemberZip">우편번호</label>
+							        <input type="text" id="modalMemberZip" name="modalMemberZip" class="form-control" readonly />
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberAddress">도로명 주소</label>
+								    <input type="text" id="modalMemberAddress" name="modalMemberAddress" class="form-control" readonly />
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberDAddress">상세 주소</label>
+								    <input type="text" id="modalMemberDAddress" name="modalMemberDAddress" class="form-control" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberAgree">선택약관 동의여부</label>
+								    <input type="text" id="modalMemberAgree" name="modalMemberAgree" class="form-control" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberJoinYmdt">가입일</label>
+								    <input type="text" id="modalMemberJoinYmdt" name="modalMemberJoinYmdt" class="form-control" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberStatusCode">상태코드</label>
+								    <input type="text" id="modalMemberStatusCode" name="modalMemberStatusCode" class="form-control" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberLastLoginYmdt">마지막 로그인 일시</label>
+								    <input type="text" id="modalMemberLastLoginYmdt" name="modalMemberLastLoginYmdt" class="form-control" readonly/>
+								</div>
+
+					
+							 	<div class="form-group btnSave">
+					                <button type="button" id="btnSave" class="btn btn-primary w-70 fw-bold">정보 수정</button>
+					            </div>
+					        </form>
+	      				</div>
+	    			</div> 
+	    		</div>
+	    	</div> 		
+		</th:block>
+	</body>
+</html>

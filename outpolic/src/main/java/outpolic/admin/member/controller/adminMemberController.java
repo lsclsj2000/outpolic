@@ -4,9 +4,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.member.service.AdminMemberService;
+import outpolic.common.domain.Member;
 
 @Controller
 @RequestMapping("/admin")
@@ -39,5 +41,11 @@ public class adminMemberController {
 		model.addAttribute("title", "회원목록");
 		model.addAttribute("memberList", memberList);				
 		return "admin/member/adminWithdrawMemberListView";		
+	}
+	
+	//회원정보 수정 디테일
+	@GetMapping("/memberList/detail")
+	public Member adminMemberDetailView(@RequestParam String memberCode) {
+		return adminMemberService.getMemberByCode(memberCode);
 	}
 }

@@ -82,7 +82,10 @@
 											<span th:case="1" class="badge rounded-pill alert-success">Y</span>
 											<span th:case="0" class="badge rounded-pill alert-warning">N</span>
 										</th>
-                                       <th scope="col" class="text-end"><button class="btn btn-md rounded font-sm SR_open-popup-btn">상세정보</button></th>
+                                       <th scope="col" class="text-end"><button class="btn btn-detail" 
+																	            th:data-code="${l.memberCode}" 
+																	            data-bs-toggle="modal" 
+																	            data-bs-target="#memberDetailModal">상세정보</button></th>
                                     </tr>
                                 </tbody>
                             </table>
@@ -92,9 +95,48 @@
                     <!-- card-body end// -->
                 </div>
             </section>
-		
 		</th:block>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+		<script>
+			$(document).ready(function () {
+				$('.btn-detail').click(function () {
+					const memberCode = $(this).data('code');
+					$.ajax({
+						url: '/admin/member/detail',  // ← 여기에 맞는 URL 매핑
+						type: 'GET',
+						data: { memberCode },
+						success: function (data) {
+							$('#modalMemberId').val(data.memberId);
+							$('#modalMemberGradeCode').val(data.gradeCode);
+							$('#modalMemberName').val(data.memberName);
+							$('#modalMemberEmail').val(data.memberEmail);
+							$('#modalMemberNickname').val(data.memberNickname);
+							$('#modalMemberTelNo').val(data.memberTelNo);
+							$('#modalMemberBirth').val(data.memberBirth);
+							$('#modalMemberZip').val(data.memberZip);
+							$('#modalMemberAddress').val(data.memberAddress);
+							$('#modalMemberDAddress').val(data.memberDAddress);
+							$('#modalMemberAgree').val(data.memberAgreeYN);
+							$('#modalMemberJoinYmdt').val(data.memberJoinYmdt);
+							$('#modalMemberStatusCode').val(data.statusCode);
+							$('#modalMemberLastLoginYmdt').val(data.memberLastLoginYmdt);
+							
+							// 모달 열기 (DOM 객체로 전달해야 함!)
+					      const modalEl = document.getElementById('memberDetailModal');
+					      if (!modalEl) {
+								alert('모달 요소를 찾을 수 없습니다.');
+								return;
+							}
+					      const modal = new bootstrap.Modal(modalEl);
+					      modal.show();
+						},
+						error: function () {
+							alert('회원 정보를 불러오지 못했습니다.');
+						}
+					});
+				});
+			});
+		</script>
 	</body>
-	<!-- 추가할 js file -->
 	
 </html>

@@ -139,6 +139,11 @@ public class enterMypageController {
     	return "redirect:/enter/mypage";
     }
     
+    // 기업 기업정보 소개 페이지
+    @GetMapping("/enterpriseInfo")
+    public String enterpriseInfoView() {
+    	return "enter/enterpriseInfo/enterpriseInfo";
+    }
 
     
     // 살짝 위탁
