@@ -125,11 +125,13 @@
 							<nav>
 								<ul>
 									<li>
-										<a th:href="@{/user/userSearch}"> 외주 </a>
-									</li>
-									<li>
-										<a th:href="@{/user/userSearch}"> 포트폴리오 </a>
-									</li>
+								        <!-- [수정] filter=Outsourcing 파라미터 추가 -->
+								        <a th:href="@{/user/userSearch(filter='Outsourcing')}"> 외주 </a>
+								    </li>
+								    <li>
+								        <!-- [수정] filter=Portfolio 파라미터 추가 -->
+								        <a th:href="@{/user/userSearch(filter='Portfolio')}"> 포트폴리오 </a>
+								    </li> 
 									<li>
 									    <a th:href="@{/userGoodsList}">서비스 상품</a>
 									</li>

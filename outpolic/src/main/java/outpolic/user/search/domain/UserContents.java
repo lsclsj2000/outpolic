@@ -11,4 +11,8 @@ public class UserContents {
 	private String contentsTitle;
     private String enterName;
     private LocalDateTime  registrationDate;
+    private String clCd;
+	private String ctgryName;
+	private String osAmt;
+    private Double reviewScore;
 }
