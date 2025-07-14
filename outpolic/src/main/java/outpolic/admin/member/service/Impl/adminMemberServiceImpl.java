@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.member.mapper.AdminMemberMapper;
 import outpolic.admin.member.service.AdminMemberService;
 import outpolic.common.domain.Member;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class adminMemberServiceImpl implements AdminMemberService {
 	
 	private final AdminMemberMapper adminMemberMapper;
@@ -36,6 +38,19 @@ public class adminMemberServiceImpl implements AdminMemberService {
 	@Override
 	public Member getMemberByCode(String memberCode) {
 		return adminMemberMapper.selectMemberByCode(memberCode);
+	}
+
+	@Override
+	public void editAdminMemberInfo(Member member) {
+		 log.info("수정 요청 받은 회원 정보: {}", member);
+		int result = adminMemberMapper.updateAdminMemberEditInfo(member);
+		log.info("업데이트 결과: {}", result);
+		
+	}
+
+	@Override
+	public boolean isNicknameDuplicated(String nickname, String memberCode) {
+		return adminMemberMapper.countNicknameDuplicate(nickname, memberCode) > 0;
 	}
 	
 

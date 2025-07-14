@@ -3,8 +3,11 @@ package outpolic.admin.member.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.member.service.AdminMemberService;
@@ -45,7 +48,23 @@ public class adminMemberController {
 	
 	//회원정보 수정 디테일
 	@GetMapping("/memberList/detail")
+	@ResponseBody
 	public Member adminMemberDetailView(@RequestParam String memberCode) {
 		return adminMemberService.getMemberByCode(memberCode);
+	}
+	
+	@GetMapping("/check/nickname")
+	@ResponseBody
+	public boolean checkNickname(@RequestParam String nickname,
+	                             @RequestParam String memberCode) {
+	    return !adminMemberService.isNicknameDuplicated(nickname, memberCode);
+	}
+	
+	@PostMapping("/memberList/detail/update")
+	@ResponseBody
+	public String adminMemberDetailEdit(@RequestBody Member member) {
+		adminMemberService.editAdminMemberInfo(member);
+	 	 
+		return "success";
 	}
 }

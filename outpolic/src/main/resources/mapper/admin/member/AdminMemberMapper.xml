@@ -9,6 +9,7 @@
 		<result column="mbr_nicknm" 	property="memberNickname" />
 		<result column="grd_cd" 		property="gradeCode" />
 		<result column="mbr_telno" 		property="memberTelNo" />
+		<result column="mbr_birth" 		property="memberBirth" />
 		<result column="mbr_addr" 		property="memberAddress" />
 		<result column="mbr_daddr" 		property="memberDAddress" />
 		<result column="mbr_zip" 		property="memberZip" />
@@ -88,9 +89,26 @@
 		FROM member
 		where mbr_cd=#{memberCode};
   	</select>
+  	<update id="updateAdminMemberEditInfo" parameterType="outpolic.common.domain.Member">
+  		UPDATE member
+ 		set
+ 			mbr_cd= #{memberCode},
+			mbr_nicknm = #{memberNickname}, 
+			mbr_addr = #{memberAddress}, 
+			mbr_daddr = #{memberDAddress}, 
+			mbr_zip = #{memberZip}, 
+			mbr_mdfcn_ymdt = curdate(),
+			stc_cd = #{statusCode},
+			grd_cd = #{gradeCode}
+		where
+			mbr_cd= #{memberCode};
+  	</update>
   	
-  	
-  	
+  	<select id="countNicknameDuplicate" resultType="int">
+  		SELECT COUNT(*) FROM member
+		WHERE mbr_nicknm = #{nickname}
+		AND mbr_cd != #{memberCode}; 
+  	</select>
   	
   	
   	

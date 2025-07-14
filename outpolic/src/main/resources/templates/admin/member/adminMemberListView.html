@@ -48,9 +48,6 @@
                                         <th scope="col">닉네임</th>
                                         <th scope="col">등급</th>
                                         <th scope="col">연락처</th>
-                                        <th scope="col">주소</th>
-                                        <th scope="col">상세주소</th>
-                                        <th scope="col">우편번호</th>
                                         <th scope="col">이메일</th>
                                         <th scope="col">상태</th>
                                         <!--<th scope="col">가입일</th>-->
@@ -67,9 +64,6 @@
                                        <th th:text="${l.memberNickname}">닉네임</th>
                                        <th th:text="${l.gradeCode}">등급</th>
                                        <th th:text="${l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.substring(l.memberTelNo.length() - 4)}">연락처</th>
-                                       <th th:text="${l.memberAddress}">주소</th>
-                                       <th th:text="${l.memberDAddress}">상세주소</th>
-                                       <th th:text="${l.memberZip}">우편번호</th>
                                        <th th:text="${l.memberEmail}">이메일</th>
                                        <th th:switch="${l.statusCode}">
                                            <span th:case="SD_ACTIVE" class="badge rounded-pill alert-success">활성</span>
@@ -82,10 +76,10 @@
 											<span th:case="1" class="badge rounded-pill alert-success">Y</span>
 											<span th:case="0" class="badge rounded-pill alert-warning">N</span>
 										</th>
-                                       <th scope="col" class="text-end"><button class="btn btn-detail" 
-																	            th:data-code="${l.memberCode}" 
-																	            data-bs-toggle="modal" 
-																	            data-bs-target="#memberDetailModal">상세정보</button></th>
+                                       <th scope="col"><button class="btn btn-detail" 
+													           th:data-code="${l.memberCode}" 
+													           data-bs-toggle="modal" 
+													           data-bs-target="#memberDetailModal">상세정보</button></th>
                                     </tr>
                                 </tbody>
                             </table>
@@ -95,48 +89,203 @@
                     <!-- card-body end// -->
                 </div>
             </section>
+            
+            <div class="modal fade" id="memberDetailModal" tabindex="-1" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h3 class="mb-30">회원 상세 정보</h3>
+							<button type="button" class="btn btnEditMember">정보 수정하기</button>
+						</div>
+						<div class="modal-body">	
+							<form class="admin memberEdit col-6" th:action="@{/admin/memberList/detail}" method="post">
+								<div class="form-group">
+								    <label for="memberCode">회원 코드</label>
+								    <input type="text" id="memberCode" name="memberCode" class="form-control" readonly />
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberName">이름</label>
+								    <input type="text" id="modalMemberName" name="modalMemberName" class="form-control" disabled/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberGradeCode">등급</label>
+								    <input type="text" id="modalMemberGradeCode" name="modalMemberGradeCode" class="form-control readonly-field" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberNickname">닉네임</label>
+								    <input type="text" id="modalMemberNickname" name="modalMemberNickname" class="form-control readonly-field" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberEmail">이메일</label>
+								    <input type="email" id="modalMemberEmail" name="modalMemberEmail" class="form-control" disabled/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberTelNo">전화번호</label>
+								    <input type="text" id="modalMemberTelNo" name="modalMemberTelNo" class="form-control" disabled/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberBirth">생일</label>
+								    <input type="text" id="modalMemberBirth" name="modalMemberBirth" class="form-control" disabled/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberZip">우편번호</label>
+							        <input type="text" id="modalMemberZip" name="modalMemberZip" class="form-control readonly-field" readonly />
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberAddress">도로명 주소</label>
+								    <input type="text" id="modalMemberAddress" name="modalMemberAddress" class="form-control readonly-field" readonly />
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberDAddress">상세 주소</label>
+								    <input type="text" id="modalMemberDAddress" name="modalMemberDAddress" class="form-control readonly-field" readonly/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberAgree">선택약관 동의여부</label>
+								    <input type="text" id="modalMemberAgree" name="modalMemberAgree" class="form-control" disabled/>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberJoinYmdt">가입일</label>
+								    <input type="text" id="modalMemberJoinYmdt" name="modalMemberJoinYmdt" class="form-control" disabled/>
+								</div>
+								<div class="form-group">
+								 <label for="modalMemberStatusCode">상태코드</label>
+								    <select id="modalMemberStatusCode" name="modalMemberStatusCode" class="form-select readonly-field" readonly>
+									    <option value="SD_ACTIVE">활성</option>
+									    <option value="SD_WITHDRAWN">휴면</option>
+									    <option value="SD_DORMANT">탈퇴</option>
+									    <option value="SD_LIMIT">제재</option>
+									  </select>
+								</div>
+								<div class="form-group">
+								    <label for="modalMemberLastLoginYmdt">마지막 로그인 일시</label>
+								    <input type="text" id="modalMemberLastLoginYmdt" name="modalMemberLastLoginYmdt" class="form-control" disabled/>
+								</div>
+
+					
+							 	<div class="form-group">
+					                <button type="button" id="btnSave" class="btn btnSave btn-primary w-70 fw-bold">정보 수정</button>
+					            </div>
+					        </form>
+	      				</div>
+	    			</div> 
+	    		</div>
+	    	</div>
 		</th:block>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+		<th:block layout:fragment="jsScript">
 		<script>
+		console.log("스크립트 로딩됨");
 			$(document).ready(function () {
-				$('.btn-detail').click(function () {
-					const memberCode = $(this).data('code');
-					$.ajax({
-						url: '/admin/member/detail',  // ← 여기에 맞는 URL 매핑
-						type: 'GET',
-						data: { memberCode },
-						success: function (data) {
-							$('#modalMemberId').val(data.memberId);
-							$('#modalMemberGradeCode').val(data.gradeCode);
-							$('#modalMemberName').val(data.memberName);
-							$('#modalMemberEmail').val(data.memberEmail);
-							$('#modalMemberNickname').val(data.memberNickname);
-							$('#modalMemberTelNo').val(data.memberTelNo);
-							$('#modalMemberBirth').val(data.memberBirth);
-							$('#modalMemberZip').val(data.memberZip);
-							$('#modalMemberAddress').val(data.memberAddress);
-							$('#modalMemberDAddress').val(data.memberDAddress);
-							$('#modalMemberAgree').val(data.memberAgreeYN);
-							$('#modalMemberJoinYmdt').val(data.memberJoinYmdt);
-							$('#modalMemberStatusCode').val(data.statusCode);
-							$('#modalMemberLastLoginYmdt').val(data.memberLastLoginYmdt);
-							
-							// 모달 열기 (DOM 객체로 전달해야 함!)
-					      const modalEl = document.getElementById('memberDetailModal');
-					      if (!modalEl) {
-								alert('모달 요소를 찾을 수 없습니다.');
-								return;
-							}
-					      const modal = new bootstrap.Modal(modalEl);
-					      modal.show();
-						},
-						error: function () {
-							alert('회원 정보를 불러오지 못했습니다.');
-						}
-					});
-				});
+			console.log("🚨 document.ready 실행됨");
+			let isSaveHandlerBound = false;
+			    // 상세정보 보기 버튼 클릭
+			    $('.btn-detail').click(function () {
+			        const memberCode = $(this).data('code');
+			
+			        $.ajax({
+			            url: '/admin/memberList/detail',
+			            type: 'GET',
+			            data: { memberCode },
+			            success: function (data) {
+			                $('#memberCode').val(data.memberCode);
+			                $('#modalMemberId').val(data.memberId);
+			                $('#modalMemberGradeCode').val(data.gradeCode);
+			                $('#modalMemberName').val(data.memberName);
+			                $('#modalMemberEmail').val(data.memberEmail);
+			                $('#modalMemberNickname').val(data.memberNickname);
+			                $('#modalMemberTelNo').val(data.memberTelNo);
+			                $('#modalMemberBirth').val(data.memberBirth);
+			                $('#modalMemberZip').val(data.memberZip);
+			                $('#modalMemberAddress').val(data.memberAddress);
+			                $('#modalMemberDAddress').val(data.memberDAddress);
+			                $('#modalMemberAgree').val(data.memberAgreeYN);
+			                $('#modalMemberJoinYmdt').val(data.memberJoinYmdt);
+			                $('#modalMemberStatusCode').val(data.statusCode);
+			                $('#modalMemberLastLoginYmdt').val(data.memberLastLoginYmdt);
+			
+			                const modalEl = document.getElementById('memberDetailModal');
+			                if (!modalEl) {
+			                    alert('모달 요소를 찾을 수 없습니다.');
+			                    console.log("모달요소가없습니다.");
+			                    return;
+			                }
+			
+			                const modal = new bootstrap.Modal(modalEl);
+			                modal.show();
+			            },
+			            error: function () {
+			                alert('회원 정보를 불러오지 못했습니다.');
+			            }
+			        });
+			    });
+			
+			    // 수정모드 활성화
+			    $('.btnEditMember').click(function () {
+			        $('.readonly-field').prop('readonly', false);
+			    });
+			
+			    // 저장 버튼 클릭 시
+			    if (!isSaveHandlerBound) {
+			        $(document).on('click', '.btnSave', function () {
+			            console.log("btnSave clicked");
+			
+			            const nickname = $('#modalMemberNickname').val().trim();
+			            const memberCode = $('#memberCode').val();
+			
+			            $.ajax({
+			                url: '/admin/check/nickname',
+			                type: 'GET',
+			                data: {
+			                    nickname: nickname,
+			                    memberCode: memberCode
+			                },
+			                success: function (isAvailable) {
+			                    if (!isAvailable) {
+			                        alert('이미 사용 중인 닉네임입니다.');
+			                        $('#modalMemberNickname').focus();
+			                        return;
+			                    }
+			
+			                    const memberData = {
+			                        memberCode: memberCode,
+			                        memberNickname: nickname,
+			                        gradeCode: $('#modalMemberGradeCode').val(),
+			                        memberZip: $('#modalMemberZip').val(),
+			                        memberAddress: $('#modalMemberAddress').val(),
+			                        memberDAddress: $('#modalMemberDAddress').val(),
+			                        statusCode: $('#modalMemberStatusCode').val()
+			                    };
+			
+			                    $.ajax({
+			                        url: '/admin/memberList/detail/update',
+			                        method: 'POST',
+			                        contentType: 'application/json',
+			                        data: JSON.stringify(memberData),
+			                        success: function (result) {
+			                            if (result === 'success') {
+			                                alert('회원 정보가 성공적으로 수정되었습니다.');
+			                                location.reload();
+			                            } else {
+			                                alert('수정에 실패했습니다.');
+			                            }
+			                        },
+			                        error: function () {
+			                            alert('서버 오류가 발생했습니다.');
+			                        }
+			                    });
+			                },
+			                error: function () {
+			                    alert('닉네임 중복 확인 중 오류가 발생했습니다.');
+			                }
+			            });
+			        });
+			
+			        isSaveHandlerBound = true;  // ✅ 등록 완료 플래그
+			    }
+			
 			});
+			
 		</script>
+		</th:block>
 	</body>
 	
 </html>
