@@ -97,57 +97,57 @@
 							<h3 class="mb-30">회원 상세 정보</h3>
 							<button type="button" class="btn btnEditMember">정보 수정하기</button>
 						</div>
-						<div class="modal-body">	
-							<form class="admin memberEdit col-6" th:action="@{/admin/memberList/detail}" method="post">
-								<div class="form-group">
+						<div class="row justify-content-center">	
+							<form class="admin memberEdit col-10" th:action="@{/admin/memberList/detail}" method="post">
+								<div class="form-group mb-10 mt-10">
 								    <label for="memberCode">회원 코드</label>
 								    <input type="text" id="memberCode" name="memberCode" class="form-control" readonly />
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberName">이름</label>
 								    <input type="text" id="modalMemberName" name="modalMemberName" class="form-control" disabled/>
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberGradeCode">등급</label>
 								    <input type="text" id="modalMemberGradeCode" name="modalMemberGradeCode" class="form-control readonly-field" readonly/>
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberNickname">닉네임</label>
 								    <input type="text" id="modalMemberNickname" name="modalMemberNickname" class="form-control readonly-field" readonly/>
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberEmail">이메일</label>
 								    <input type="email" id="modalMemberEmail" name="modalMemberEmail" class="form-control" disabled/>
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberTelNo">전화번호</label>
 								    <input type="text" id="modalMemberTelNo" name="modalMemberTelNo" class="form-control" disabled/>
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberBirth">생일</label>
 								    <input type="text" id="modalMemberBirth" name="modalMemberBirth" class="form-control" disabled/>
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberZip">우편번호</label>
 							        <input type="text" id="modalMemberZip" name="modalMemberZip" class="form-control readonly-field" readonly />
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberAddress">도로명 주소</label>
 								    <input type="text" id="modalMemberAddress" name="modalMemberAddress" class="form-control readonly-field" readonly />
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberDAddress">상세 주소</label>
 								    <input type="text" id="modalMemberDAddress" name="modalMemberDAddress" class="form-control readonly-field" readonly/>
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberAgree">선택약관 동의여부</label>
 								    <input type="text" id="modalMemberAgree" name="modalMemberAgree" class="form-control" disabled/>
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberJoinYmdt">가입일</label>
 								    <input type="text" id="modalMemberJoinYmdt" name="modalMemberJoinYmdt" class="form-control" disabled/>
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								 <label for="modalMemberStatusCode">상태코드</label>
 								    <select id="modalMemberStatusCode" name="modalMemberStatusCode" class="form-select readonly-field" readonly>
 									    <option value="SD_ACTIVE">활성</option>
@@ -156,13 +156,13 @@
 									    <option value="SD_LIMIT">제재</option>
 									  </select>
 								</div>
-								<div class="form-group">
+								<div class="form-group mb-10">
 								    <label for="modalMemberLastLoginYmdt">마지막 로그인 일시</label>
 								    <input type="text" id="modalMemberLastLoginYmdt" name="modalMemberLastLoginYmdt" class="form-control" disabled/>
 								</div>
 
 					
-							 	<div class="form-group">
+							 	<div class="form-group mb-10">
 					                <button type="button" id="btnSave" class="btn btnSave btn-primary w-70 fw-bold">정보 수정</button>
 					            </div>
 					        </form>
@@ -175,10 +175,16 @@
 		<script>
 		console.log("스크립트 로딩됨");
 			$(document).ready(function () {
+				
+				$('#memberDetailModal').on('hidden.bs.modal', function () {
+				    console.log("모달 닫힘 이벤트 실행");
+				    $('body').removeClass('modal-open');
+				    $('.modal-backdrop').remove();
+				});
 			console.log("🚨 document.ready 실행됨");
 			let isSaveHandlerBound = false;
 			    // 상세정보 보기 버튼 클릭
-			    $('.btn-detail').click(function () {
+			    $('.btn-detail').click(function () { 	
 			        const memberCode = $(this).data('code');
 			
 			        $.ajax({
