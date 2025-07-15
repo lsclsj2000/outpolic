@@ -10,7 +10,9 @@ import outpolic.user.ranking.domain.UserRankingContentsDTO;
 @Mapper
 public interface UserRankingMapper {
 	
-	List<UserPortfolioRankingContentsDTO> getUserRankingPoContents();
-
-	List<UserRankingContentsDTO> getUserRankingOsContents();
+	/*
+	 * List<UserPortfolioRankingContentsDTO> getUserRankingPoContents();
+	 * 
+	 * List<UserRankingContentsDTO> getUserRankingOsContents();
+	 */
 }
