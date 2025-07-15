@@ -265,37 +265,40 @@
 	
 	<th:block layout:fragment="contents">
 		<section class="product-tabs section-padding position-relative">
-	        <div class="container" style="width:1300px;">
-	            <div class="section-title style-2 wow animate__animated animate__fadeIn">
-					<!-- 컨트롤러에서 받은 initialKeyword 값에 따라 제목을 동적으로 변경합니다. -->
-	                <h3>
-						<span th:if="${initialKeyword == null || initialKeyword == ''}">전체 콘텐츠</span>
-						<span th:unless="${initialKeyword == null || initialKeyword == ''}">
-							'<th:block th:text="${initialKeyword}"/>' 검색 결과
-						</span>
-					</h3>
-					
-				</div>
-				<ul class="nav nav-tabs links" id="myTab" role="tablist">
-				    <li class="nav-item" role="presentation">
-				        <button class="nav-link active" data-filter="Portfolio" type="button">포트폴리오</button>
-				    </li>
-				    <li class="nav-item" role="presentation">
-				        <button class="nav-link" data-filter="Outsourcing" type="button">외주</button>
-				    </li>
-				</ul>
-				<br>
-				<!--End nav-tabs-->
-				<div class="tab-content" id="myTabContent" style="border: none;">
-				    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
-						<!-- AJAX로 결과가 채워질 컨테이너에 id="contentsListContainer" 부여 -->
-						<div class="row product-grid-4" id="contentsListContainer">
-
+			<div class="row">
+				<div class="col-lg-10 m-auto">
+		            <div class="section-title style-2 wow animate__animated animate__fadeIn">
+						<!-- 컨트롤러에서 받은 initialKeyword 값에 따라 제목을 동적으로 변경합니다. -->
+		                <h3>
+							<span th:if="${initialKeyword == null || initialKeyword == ''}">전체 콘텐츠</span>
+							<span th:unless="${initialKeyword == null || initialKeyword == ''}">
+								'<th:block th:text="${initialKeyword}"/>' 검색 결과
+							</span>
+						</h3>
+						
+					</div>
+					<ul class="nav nav-tabs links" id="myTab" role="tablist">
+					    <li class="nav-item" role="presentation">
+					        <button class="nav-link active" data-filter="Portfolio" type="button">포트폴리오</button>
+					    </li>
+					    <li class="nav-item" role="presentation">
+					        <button class="nav-link" data-filter="Outsourcing" type="button">외주</button>
+					    </li>
+					</ul>
+					<br>
+					<!--End nav-tabs-->
+					<div class="tab-content" id="myTabContent" style="border: none;">
+					    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+							<!-- AJAX로 결과가 채워질 컨테이너에 id="contentsListContainer" 부여 -->
+							<div class="row product-grid-4" id="contentsListContainer">
+	
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
+	        
 		<!-- body 태그가 닫히기 직전에 삽입 -->
 		<div class="modal fade" id="portfolioDetailModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
 		    
