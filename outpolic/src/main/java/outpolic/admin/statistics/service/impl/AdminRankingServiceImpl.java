@@ -17,15 +17,15 @@ public class AdminRankingServiceImpl implements AdminRankingService{
 	private AdminRankingMapper adminRankingMapper;
 	
 	@Override
-	public List<AdminPortfolioRankingContentsDTO> getAdminRankingPoContents() {
+	public List<AdminPortfolioRankingContentsDTO> getAdminRankingPoContents(String targetDate) {
 		
-		return adminRankingMapper.getAdminRankingPoContents();
+		return adminRankingMapper.getAdminRankingPoContents(targetDate);
 	}
 
 	@Override
-	public List<AdminRankingContentsDTO> getRankingContentsList() {
+	public List<AdminRankingContentsDTO> getRankingContentsList(String targetDate) {
 
-		return adminRankingMapper.getAdminRankingOsContents();
+		return adminRankingMapper.getAdminRankingOsContents(targetDate);
 	}
 
 }
