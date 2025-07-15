@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{admin/layout/adminLayoutMain}">
+	  layout:decorate="~{admin/layout/adminLayoutLogin}">
 
 	<head>
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
@@ -11,7 +11,7 @@
 			<section class="content-main mt-80 mb-80">
                 <div class="card mx-auto card-login">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Sign in</h4>
+                        <h4 class="card-title mb-4">로그인</h4>
                         <form action="/admin/login" method="post">
                             <div class="mb-3">
                                 <input class="form-control" placeholder="Username or email" type="text" id="memberId" name="memberId"/>
