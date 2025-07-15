@@ -4,6 +4,7 @@ import java.util.List;
 
 import outpolic.enter.osst.domain.EnterOsst;
 import outpolic.enter.osst.domain.EnterOsstRecord;
+import outpolic.enter.osst.domain.EnterStepData;
 
 public interface EnterOsstService {
 	
@@ -17,5 +18,8 @@ public interface EnterOsstService {
 	List<EnterOsst> getEnterOsstList();
 	
 	// 진행 외주 단계
-	List<EnterOsst> getEnterOsstStcCode();
+	List<EnterOsst> getEnterOsstStcCode(String ocdCd);
+	
+	// 조건별 진행 외주 단계 
+	List<EnterStepData> getGroupedStepData(String ocdCd);
 }

@@ -53,16 +53,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
 	<!-- 진행 외주 단계 조회 -->
-	<select id="getEnterOsstStcCode" resultMap="enterOsstRecordResultMap">
+	<select id="getEnterOsstStcCode" parameterType="String" resultMap="enterOsstResultMap">
 		/* 진행 외주 단계 조회 */
-		select
-			sc.stc_cd,
-			sc.stc_nm
-		from
-			status_code sc
-		where
-			sc.stc_cd = 'SD_CONTRACT'or sc.stc_cd = 'SD_PLANNING'or 
-			sc.stc_cd = 'SD_WORKPROGRESS'or sc.stc_cd = 'SD_COMPLETION';
+		SELECT
+	        op.osp_cd as osp_cd,
+	        op.ocd_cd as ocd_cd,
+	        op.stc_cd as stc_cd,
+	        sc.stc_nm as stc_nm,
+	        op.osp_sply_ymdt as osp_sply_ymdt,
+	        op.osp_cust_yn as osp_cust_yn,
+	        op.osp_cust_ymdt as osp_cust_ymdt
+	    FROM
+	        outsourcing_prograss op
+	        LEFT JOIN status_code sc ON op.stc_cd = sc.stc_cd
+	    WHERE
+	        op.ocd_cd = #{ocdCd}
 	</select>
 	
 	<!-- 진행 외주 기록 조회 -->
@@ -87,7 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			left join outsourcing_prograss op on osr.osp_cd = op.osp_cd
 			left join status_code sc on op.stc_cd = sc.stc_cd
 		where
-			op.ocd_cd="OCD_C00012";
+			op.ocd_cd=#{ocdCd};
 	</select>
 	
 	<!-- 진행 외주 상세 조회 -->

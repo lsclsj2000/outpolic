@@ -3,6 +3,7 @@ package outpolic.enter.osst.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.repository.query.Param;
 
 import outpolic.enter.osst.domain.EnterOsst;
 import outpolic.enter.osst.domain.EnterOsstRecord;
@@ -21,5 +22,8 @@ public interface EnterOsstMapper {
 	List<EnterOsst> getEnterOsstList();
 	
 	// 진행 외주 단계 조회
-	List<EnterOsst> getEnterOsstStcCode();
+	List<EnterOsst> getEnterOsstStcCode(@Param("ocdCd") String ocdCd);
+	
+	// 조건별 진행 외주 단계 조회
+	List<EnterOsstRecord> getEnterOsstRecord(@Param("ocdCd") String ocdCd);
 }
