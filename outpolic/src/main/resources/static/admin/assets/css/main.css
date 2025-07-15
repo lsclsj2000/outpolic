@@ -4507,6 +4507,22 @@ textarea.SR_form-control {
 }
 /* 유사랑 css 추가 끝 */
 
+/*신세영 css 추가합니다*/
+
+.readonly-field:not([readonly]):not([disabled]){
+	background-color : white !important;
+	color : black;
+}
+
+select.form-select:not([readonly]):not([disabled]){
+	background-color : white !important;
+	color : black;
+}
+
+
+
+
+
 
 
 /*# sourceMappingURL=main.css.map */

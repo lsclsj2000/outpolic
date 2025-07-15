@@ -11,7 +11,14 @@
 		<th:block layout:fragment="contents">
 			<section class="content-main">
                 <div class="content-header">
-                	<h2 class="content-title card-title">회원 목록</h2>
+                	<h2 class="content-title card-title">
+					    <span th:switch="${status}">
+					        <span th:case="'active'">활성</span>
+					        <span th:case="'withdrawn'">탈퇴</span>
+					        <span th:case="'dormant'">휴면</span>
+					        <span th:case="'limit'">제재</span>
+					    </span>
+                	회원 목록</h2>
                 </div>
                 <div class="card mb-4">
                     <header class="card-header">
