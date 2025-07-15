@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<div class="page-header breadcrumb-wrap" th:fragment="enterNaviFragment">
+	<div class="page-header breadcrumb-wrap" th:fragment="enterNaviFragment(title)">
 		<div class="container">
 			<div class="breadcrumb">
-				<a href="#" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-				<span></span> Vendor <span></span> Open a Store
-			</div>
+		        <a th:href="@{/enter}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+		        <span th:text="${title}"></span>
+		    </div>
 		</div>
 	</div>
 </html>
