@@ -34,9 +34,9 @@
 			</section>
 			<!--End hero-->
 			
-			<div class="container mb-30">
+			<div class="mb-30">
 				<div class="row d-flex justify-content-center">
-					<div class="col-lg-4-5">
+					<div class="col-lg-10">
 						<section class="popular-categories section-padding">
 							<div class="section-title">
 								<div class="title">
@@ -160,7 +160,7 @@
 						                       <span class="font-small ml-5 text-muted" th:text="' (' + ${#numbers.formatDecimal(content.reviewScore, 1, 1)} + ')'"> (4.5)</span>
 						                    </div>
 						                    <div class="product-price">
-						                       <span th:text="${content.osAtm}">가격 정보~</span>
+						                       <span th:text="${#numbers.formatInteger({content.osAtm}, 3, 'COMMA')} + '원'">가격 정보~</span>
 						                    </div>
 						                    <!-- stretched-link 클래스를 상위 a태그로 옮겨주는 효과 -->
 						                    <a th:href="@{/user/contents/{id}(id=${content.osCode})}" class="stretched-link"></a>
