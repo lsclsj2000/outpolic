@@ -73,7 +73,7 @@
 		
 		    // 포트폴리오 랭킹 렌더링 함수
 		    const renderPortfolio = async () => {
-		        const response = await fetch('/api/admin/rankings/portfolio');
+		        const response = await fetch('/admin/api/admin/rankings/portfolio');
 		        const data = await response.json();
 		        
 		        let html = '';

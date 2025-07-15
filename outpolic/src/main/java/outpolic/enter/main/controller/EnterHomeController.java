@@ -45,4 +45,11 @@ public class EnterHomeController {
 
         return "enterMain";
     }
+	
+    @GetMapping("/enterListpage")
+    public String userListpageView() {
+        // 이 메소드 안에는 model.addAttribute가 없지만,
+        // @ModelAttribute 덕분에 헤더는 이미 'megaMenuCategories' 데이터를 받은 상태입니다.
+        return "user/main/userListpageView";
+    }
 }

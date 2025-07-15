@@ -29,12 +29,12 @@ public class EnterSearchController {
 	private final EnterSearchService searchService;
 		
 	@GetMapping("/enterSearch")
-	public String SearchControllerView(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, Model model) {
-		
-		List<EnterContents> contentsList = searchService.getContentsList(keyword);
-		
+	public String SearchControllerView(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+						               @RequestParam(value = "filter", required = false) String filter,
+						               Model model) {
+			
 		model.addAttribute("title", "콘텐츠목록조회");
-	    model.addAttribute("contentsList", contentsList);
+		model.addAttribute("initialFilter", filter);
 	    model.addAttribute("initialKeyword", keyword);
 
 		
