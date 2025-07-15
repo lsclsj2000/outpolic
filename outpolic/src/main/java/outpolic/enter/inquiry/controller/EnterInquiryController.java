@@ -143,6 +143,7 @@ public class EnterInquiryController {
 	public String enterInquiryWriteView(Model model) {
 		// 문의 유형 목록
 		List<EnterInquiryType> inquiryTypeList = enterInquiryService.getAllInquiryTypes();
+		model.addAttribute("title", "문의 작성");
 		model.addAttribute("inquiryTypeList", inquiryTypeList);
 		model.addAttribute("inquiry", new UserInquiry());
 		
@@ -154,6 +155,7 @@ public class EnterInquiryController {
 	public String enterInquiryDetailView(@RequestParam("iq_cd") String inquiryCode, Model model) {
 		// 문의 상세내용 조회
 		EnterInquiry detail = enterInquiryService.getEnterInquiryByCode(inquiryCode);
+		model.addAttribute("title", "문의 상세내용");
 	    model.addAttribute("inquiry", detail);
 	    return "enter/inquiry/enterInquiryDetailView";
 	}
@@ -164,27 +166,33 @@ public class EnterInquiryController {
 		// 문의 목록 조회
 		var inquiryList = enterInquiryService.getEnterInquiryList();
 		
-		model.addAttribute("title", "문의");
+		model.addAttribute("title", "문의 내역");
 		model.addAttribute("inquiryList", inquiryList);
 		
 		return "enter/inquiry/enterInquiryListView";
 	}
 	
 	@GetMapping("/enterInquiryNotice")
-	public String enterInquiryNoticeView() {
+	public String enterInquiryNoticeView(Model model) {
 		// 공지사항 게시판 조회
+		model.addAttribute("title", "공지사항");
+		
 		return "enter/inquiry/enterInquiryNoticeView";
 	}
 	
 	@GetMapping("/enterInquiryTotal")
-	public String enterInquiryTotalView() {
+	public String enterInquiryTotalView(Model model) {
 		// 전체 게시판 조회
+		model.addAttribute("title", "전체 게시판");
+		
 		return "enter/inquiry/enterInquiryTotalView";
 	}
 	
 	@GetMapping("/enterInquiryFaq")
-	public String enterInquiryFaqView() {
+	public String enterInquiryFaqView(Model model) {
 		// 자주 묻는 질문
+		model.addAttribute("title", "FAQ");
+		
 		return "enter/inquiry/enterInquiryFqaView";
 	}
 	
