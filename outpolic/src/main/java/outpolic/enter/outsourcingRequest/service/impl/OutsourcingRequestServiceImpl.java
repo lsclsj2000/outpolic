@@ -7,7 +7,12 @@ import outpolic.enter.outsourcingRequest.mapper.EnterOutsourcingRequestMapper;
 import outpolic.enter.outsourcingRequest.service.OutsourcingRequestService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("enterOutsourcingRequestService") // <-- 빈 이름을 "enterOutsourcingRequestService"로 지정
 @RequiredArgsConstructor
@@ -65,34 +70,53 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
 	@Override
     @Transactional
     public void updateRequestStatus(String requestId, String status) {
-        // 1. 요청 테이블의 상태를 '승인' 또는 '거절'로 변경합니다.
+		
+		// 1. 요청 테이블의 상태를 '승인' 또는 '거절'로 변경합니다.
         requestMapper.updateStatus(requestId, status);
-
-        // 2. '승인'된 경우에만 진행 현황을 기록합니다.
+        
+        // 2. '승인'된 경우에만 4개의 진행 단계를 생성합니다. 
         if ("SD_APPROVED".equals(status)) {
             
+        	// 3. 새로운 진행 코드(osp_cd)의 시작 번호를 계산합니다.
             String latestOspCd = requestMapper.findLatestOspCd();
-            int nextNum = 1;
-
-            // ▼▼▼ 이 부분을 수정합니다. ▼▼▼
-            if (latestOspCd != null && latestOspCd.startsWith("OSP_C")) {
-                try {
-                    // 'OSP_C' (5글자) 다음부터가 숫자이므로, substring(5)로 수정합니다.
-                    nextNum = Integer.parseInt(latestOspCd.substring(5)) + 1;
-                } catch (NumberFormatException e) {
-                    // 혹시 모를 예외에 대비해 기본값으로 설정
-                    nextNum = 1; 
-                }
-            }
+            int nextNum = (latestOspCd == null || !latestOspCd.startsWith("OSP_C")) ? 1 : Integer.parseInt(latestOspCd.substring(5)) + 1;
             
-            // 새로운 코드를 생성할 때도 'OSP_C' 형식을 사용합니다.
-            String newOspCd = String.format("OSP_C%05d", nextNum);
-            // ▲▲▲ 수정 끝 ▲▲▲
+            // 4. 추가할 4개의 진행 단계 상태 코드를 정의합니다. 
+            List<String> stageStatusCodes = List.of("SD_CONTRACT", "SD_PLANNING", "SD_WORKPROGRESS", "SD_COMPLETION");
+            
+            // 5. DB에 한 번에 INSERT할 리스트를 준비합니다. 
+            List<Map<String, Object>> stageList = new ArrayList<>();
 
-            // requestMapper를 통해 outsourcing_prograss 테이블에 데이터를 추가합니다.
-            requestMapper.insertInitialProgress(newOspCd, requestId, "SD_CONTRACT");
+            for (String stageCode : stageStatusCodes) {
+                Map<String, Object> stageData = new HashMap<>();
+                
+                
+
+                // 1. 새로운 osp_cd를 생성합니다.
+                String newOspCd = String.format("OSP_C%05d", nextNum++);
+                
+                // 2. 생성한 newOspCd를 stageData Map에 추가합니다.
+                stageData.put("ospCd", newOspCd); 
+                stageData.put("ocdCd", requestId);
+                stageData.put("stcCd", stageCode);
+                
+                
+                // 5-2. 첫단계인 '계약 체결(SD_CONTRACT)'에만 완료 표시와 시간을 기록합니다.
+                if ("SD_CONTRACT".equals(stageCode)) {
+                    stageData.put("ospSplyYmdt", LocalDateTime.now());
+                    stageData.put("ospCustYn", 1);
+                } else {
+                    stageData.put("ospSplyYmdt", null);
+                    stageData.put("ospCustYn", 0);
+                }
+                
+                stageList.add(stageData);
+            }
+
+            if (!stageList.isEmpty()) {
+                requestMapper.insertInitialProgressStages(stageList);
+            }
         }
     }
-
 }
     

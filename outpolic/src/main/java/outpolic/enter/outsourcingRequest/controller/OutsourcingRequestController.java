@@ -6,6 +6,7 @@ import outpolic.enter.outsourcing.service.EnterOutsourcingService;
 import outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO;
 import outpolic.enter.outsourcingRequest.domain.RequestViewDTO;
 import outpolic.enter.outsourcingRequest.service.OutsourcingRequestService;
+import outpolic.enter.portfolio.service.EnterPortfolioService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import jakarta.servlet.http.HttpSession;
 public class OutsourcingRequestController {
 
     private final OutsourcingRequestService requestService;
+    private final EnterPortfolioService portfolioService;
     private final EnterOutsourcingService enterOutsourcingService;
 
     @GetMapping("/form/{osCd}")
@@ -180,6 +182,42 @@ public class OutsourcingRequestController {
     	e.printStackTrace();
     	return ResponseEntity.badRequest().body(Map.of("success",false,"message",e.getMessage()));
     }
+    }
+    	
+    /**
+     * 포트폴리오 문의 작성 폼을 보여주는 메서드	
+     */
+    @GetMapping("/inquiry-form/{prtfCd}")
+    public String showInquiryForm(@PathVariable String prtfCd, Model model) {
+    	// 문의 대상 포트폴리오 정보를 조회하여 모델에 담아 전달
+    	model.addAttribute("portfolio",portfolioService.getPortfolioByPrtfCd(prtfCd));
+    	return "enter/portfolioInquiry/inquiryForm";
+    	
+    }
     
-    
-}}
+    /** 
+     * 작성된 포트폴리오 문의를 서버로 전송하여 저장하는 메서드
+     */
+    @PostMapping("/inquiry/send")
+    public String sendInquiry(@ModelAttribute OutsourcingRequestDTO requestDto, HttpSession session) {
+    	String memberCode = (String) session.getAttribute("SCD");
+    	requestDto.setMbr_cd(memberCode);
+    	
+    	// 요청 타입을 '문의'로 직접 설정
+    	requestDto.setOcd_req_type("문의");
+    	
+    	requestService.createRequest(requestDto);
+    	
+    	return "redirect:/enter/outsourcing-requests/sent-inquiries";
+    }
+    /**
+     * 보낸 문의 목록을 보여주는 페이지 (기존 '보낸 신청'과 구분)
+     */
+    @GetMapping("/sent-inquiries")
+    public String showSentInquiries(Model model, HttpSession session) {
+        // 이 부분은 나중에 '문의' 타입만 필터링하는 서비스 메서드를 만들어 연결해야 합니다.
+        // 우선은 페이지만 연결합니다.
+        model.addAttribute("listTitle", "보낸 문의 목록");
+        return "enter/portfolioInquiry/inquiryList";
+    }
+}

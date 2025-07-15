@@ -22,4 +22,6 @@ public class OutsourcingRequestDTO {
     private String ocd_strt_ymdt;
     private String ocd_dedline;
     private Long ocd_amt;
+    
+    private String ocd_req_type;	// 요청 타입 ('신청' 또는 '문의')
 }

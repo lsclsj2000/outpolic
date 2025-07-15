@@ -39,5 +39,5 @@ public interface EnterOutsourcingService {
     EnterOutsourcing getOutsourcingByOsCd(String osCd);
     
     String findEntCdByMbrCd(String mbrCd);
-
+    
 }

@@ -3,6 +3,7 @@ package outpolic.enter.portfolio.mapper;
 import outpolic.enter.POAddtional.domain.CategorySearchDto;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
+import outpolic.systems.file.domain.FileMetaData;
 
 import java.util.List;
 
@@ -74,5 +75,7 @@ public interface PortfolioMapper {
     String findEntCdByMbrCd(String mbrCd); 
     
     String findMbrCdByClCd(String clCd);
+    
+    void insertFileRecord(FileMetaData fileData);
 
 }

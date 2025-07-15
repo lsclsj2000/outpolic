@@ -31,9 +31,12 @@ public interface EnterPortfolioService {
     // 외주 연결 기능을 위해 아래 4개 메서드 추가
     List<EnterOutsourcing> getLinkedOutsourcings(String prtfCd);
     List<EnterOutsourcing> searchUnlinkedOutsourcings(String prtfCd, String entCd, String query);
-    void linkOutsourcing(String prtfCd, String osCd, String entCd);
-    void unlinkOutsourcing(String prtfCd, String osCd);
+    
     void updateOutsourcingStep1(EnterOutsourcing outsourcingToUpdate);
     String findEntCdByMbrCd(String mbrCd);
+    
+    void linkOutsourcing(String prtfCd,String osCd, String entCd);
+    
+    void unlinkOutsourcing(String prtfCd, String osCd);
     
 }
