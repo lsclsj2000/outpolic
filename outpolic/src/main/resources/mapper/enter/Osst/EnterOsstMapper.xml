@@ -71,7 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<!-- 진행 외주 기록 조회 -->
-	<select id="getEnterOsstRecord" resultMap="enterOsstRecordResultMap">
+	<select id="getEnterOsstRecord" parameterType="String" resultMap="enterOsstRecordResultMap">
 		/* 진행 외주 기록 조회 */
 		select
 			osr.osr_cd as osr_cd,
