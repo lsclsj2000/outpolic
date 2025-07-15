@@ -3,7 +3,6 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-
 <mapper namespace="outpolic.enter.outsourcing.mapper.OutsourcingMapper">
 
     <resultMap id="OutsourcingSimpleResultMap" type="outpolic.enter.outsourcing.domain.EnterOutsourcing">
@@ -18,12 +17,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertOutsourcing" parameterType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
     INSERT INTO outsourcing 
-        (os_cd, ent_cd, ctgry_id, os_ttl, os_expln, os_reg_ymdt, mbr_cd, stc_cd, os_strt_ymdt, os_end_ymdt, 
-os_amt, os_flfmt_cnt, os_thumbnail_url)
-    VALUES 
-        (#{osCd}, #{entCd}, #{ctgryId}, #{osTtl}, #{osExpln}, NOW(), #{mbrCd}, 'SD_ACTIVE', #{osStrtYmdt}, #{osEndYmdt}, #{osAmt}, #{osFlfmtCnt}, #{osThumbnailUrl})
-</insert>
-
+         (os_cd, ent_cd, ctgry_id, os_ttl, os_expln, os_reg_ymdt, mbr_cd, stc_cd, os_strt_ymdt, os_end_ymdt, 
+        os_amt, os_flfmt_cnt, os_thumbnail_url) VALUES 
+        (#{osCd}, #{entCd}, #{ctgryId}, #{osTtl}, #{osExpln}, NOW(), #{mbrCd}, 'SD_ACTIVE', #{osStrtYmdt}, #{osEndYmdt}, #{osAmt}, #{osFlfmtCnt}, #{osThumbnailUrl}) </insert>
 
     <insert id="insertContentList">
         INSERT INTO content_list (cl_cd, cntd_cd, cl_reg_ymdt)
@@ -32,8 +28,7 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
 
     <insert id="insertCategoryMapping">
         INSERT INTO category_mapping (ctgry_id, cl_cd, cm_reg_ymdt, mbr_cd)
-        VALUES (#{ctgryCd}, #{clCd}, NOW(), #{mbrCd})
- 
+     VALUES (#{ctgryCd}, #{clCd}, NOW(), #{mbrCd})
     </insert>
 
     <insert id="insertTag">
@@ -47,9 +42,8 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
     </insert>
 
     <resultMap id="OutsourcingDetailResultMap" type="outpolic.enter.outsourcing.domain.EnterOutsourcing">
-        <id property="osCd" column="os_cd"/>
-     
-    <result property="entCd" column="ent_cd"/>
+       <id property="osCd" column="os_cd"/>
+        <result property="entCd" column="ent_cd"/>
         <result property="ctgryId" column="ctgry_id"/>
         <result property="osTtl" column="os_ttl"/>
         <result property="osExpln" column="os_expln"/>
@@ -57,11 +51,9 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
         <result property="mbrCd" column="mbr_cd"/>
         <result property="stcCd" column="stc_cd"/>
         <result property="osStrtYmdt" column="os_strt_ymdt"/>
-        
-    <result property="osEndYmdt" column="os_end_ymdt"/>
-        <result property="osAmt" column="os_amt"/>
-     
-    <result property="osFlfmtCnt" column="os_flfmt_cnt"/>
+        <result property="osEndYmdt" column="os_end_ymdt"/>
+       <result property="osAmt" column="os_amt"/>
+        <result property="osFlfmtCnt" column="os_flfmt_cnt"/>
         <result property="admCd" column="adm_cd"/>
         <result property="clCd" column="cl_cd"/>
         <result property="osThumbnailUrl" column="os_thumbnail_url"/> <collection property="categories" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto" javaType="java.util.ArrayList">
@@ -69,12 +61,11 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
             <result property="ctgryNm" column="category_ctgry_nm"/>
         </collection>
         <collection property="tagNames" ofType="java.lang.String" javaType="java.util.ArrayList">
-   
-          <result column="tag_tag_nm"/>
+      <result column="tag_tag_nm"/>
         </collection>
         <collection property="relatedPortfolios" javaType="java.util.ArrayList"
-                ofType="outpolic.enter.portfolio.domain.EnterPortfolio"
-    			column="os_cd" select="findLinkedPortfoliosByOsCd" />
+                    ofType="outpolic.enter.portfolio.domain.EnterPortfolio"
+        			column="os_cd" select="findLinkedPortfoliosByOsCd" />
     </resultMap>
 
 	<select id="findRelatedPortfoliosByOsCd" resultType="outpolic.enter.portfolio.domain.EnterPortfolio">
@@ -94,8 +85,7 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
     <select id="findOutsourcingDetailsByEntCd" resultMap="OutsourcingDetailResultMap">
         SELECT
             o.os_cd,
-        
-    o.ent_cd,
+   o.ent_cd,
             o.ctgry_id,
             o.os_ttl,
             o.os_expln,
@@ -103,8 +93,7 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
             o.mbr_cd,
             o.stc_cd,
             o.os_strt_ymdt,
-            
-    o.os_end_ymdt,
+       o.os_end_ymdt,
             o.os_amt,
             o.os_flfmt_cnt,
             cl.cl_cd,
@@ -112,8 +101,7 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
             c.ctgry_nm AS category_ctgry_nm,
             t.tag_nm AS tag_tag_nm
         FROM
-       
-    outsourcing o
+        outsourcing o
         LEFT JOIN
             content_list cl ON o.os_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_OS_C%'
         LEFT JOIN
@@ -121,7 +109,6 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
         LEFT JOIN
             category c ON cm.ctgry_id = c.ctgry_id
         LEFT JOIN
-   
     tag_mapping tm ON cl.cl_cd = tm.cl_cd
         LEFT JOIN
             tag t ON tm.tag_cd = t.tag_cd
@@ -132,8 +119,7 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
     </select>
 
     <select id="findLatestOsCd" resultType="String">
-      
-    SELECT os_cd FROM outsourcing WHERE os_cd LIKE 'OS_C%' ORDER BY CAST(SUBSTRING(os_cd, 5) AS UNSIGNED) DESC LIMIT 1
+       SELECT os_cd FROM outsourcing WHERE os_cd LIKE 'OS_C%' ORDER BY CAST(SUBSTRING(os_cd, 5) AS UNSIGNED) DESC LIMIT 1
     </select>
 
     <select id="findLatestTagCd" resultType="String">
@@ -146,25 +132,22 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
 
     <select id="findOutsourcingDetailsByOsCd" resultMap="OutsourcingDetailResultMap">
         SELECT
-     
-        o.os_cd, o.ent_cd, o.ctgry_id, o.os_ttl, o.os_expln, o.os_reg_ymdt,
+       o.os_cd, o.ent_cd, o.ctgry_id, o.os_ttl, o.os_expln, o.os_reg_ymdt,
             o.mbr_cd, o.stc_cd, o.os_strt_ymdt, o.os_end_ymdt, o.os_amt, o.os_flfmt_cnt,
             cl.cl_cd,
             o.os_thumbnail_url, c.ctgry_id AS category_ctgry_id,
             c.ctgry_nm AS category_ctgry_nm,
             t.tag_nm AS tag_tag_nm
         FROM
-  
-           outsourcing o
+         outsourcing o
         LEFT JOIN
             content_list cl ON o.os_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_OS_C%'
         LEFT JOIN
             category_mapping cm ON cl.cl_cd = cm.cl_cd
         LEFT JOIN
             category c ON cm.ctgry_id = c.ctgry_id
-       
-    LEFT JOIN
-            tag_mapping tm ON cl.cl_cd = tm.cl_cd
+        LEFT JOIN
+     tag_mapping tm ON cl.cl_cd = tm.cl_cd
         LEFT JOIN
             tag t ON tm.tag_cd = t.tag_cd
         WHERE
@@ -175,9 +158,8 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
         SELECT cl_cd FROM content_list WHERE cntd_cd = #{osCd} LIMIT 1
     </select>
 
-  
     <select id="searchTagsByName" resultType="String">
-        SELECT
+     SELECT
             tag_nm
         FROM
             tag
@@ -187,9 +169,9 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
     </select>
 
     <select id="findLatestOpCd" resultType="String">
-       
-    op_cd
-        FROM
+        SELECT
+            op_cd
+  FROM
             outsourcing_portfolio
         ORDER BY op_cd DESC LIMIT 1
     </select>
@@ -203,7 +185,7 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
 
     <insert id="insertOutsourcingPortfolio">
         INSERT INTO outsourcing_portfolio 
-(op_cd,os_cd,prtf_cd,op_reg_ymdt,ent_cd)
+         (op_cd,os_cd,prtf_cd,op_reg_ymdt,ent_cd)
         VALUES(#{opCd},#{osCd},#{prtfCd},NOW(),#{entCd})
     </insert>
 
@@ -214,17 +196,17 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
             os_ttl = #{osTtl},
             os_expln = #{osExpln},
             os_mdfcn_ymdt = NOW(),
-         
-    os_strt_ymdt = #{osStrtYmdt},
+        os_strt_ymdt = #{osStrtYmdt},
             os_end_ymdt = #{osEndYmdt},
             os_amt = #{osAmt},
-            os_flfmt_cnt = #{osFlfmtCnt}
-        WHERE
+            os_flfmt_cnt = #{osFlfmtCnt},
+            os_thumbnail_url = #{osThumbnailUrl} WHERE
             os_cd = #{osCd}
     </update>
 
     <delete id="deleteOutsourcingByOsCd">
-        DELETE FROM outsourcing WHERE os_cd = #{osCd}
+        DELETE FROM outsourcing WHERE os_cd = 
+#{osCd}
     </delete>
     
     <delete id="deleteContentListByClCd">
@@ -240,21 +222,20 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
         DELETE FROM bookmark WHERE cl_cd = #{clCd}
     </delete>
     <delete id="deleteOutsourcingContractDetailsByClCd">
-       
-    DELETE FROM outsourcing_contract_details WHERE cl_cd = #{clCd}
+        DELETE FROM outsourcing_contract_details WHERE cl_cd = #{clCd}
     </delete>
     <delete id="deleteOutsourcingStatusByClCd">
         DELETE os
-          FROM outsourcing_prograss AS os
-          JOIN outsourcing_contract_details AS ocd  ON os.ocd_cd = ocd.ocd_cd
+          FROM outsourcing_status AS os
+          JOIN outsourcing_contract_details AS ocd  ON os.ocd_cd = ocd.ocd_cd 
          WHERE ocd.cl_cd = #{clCd}
     </delete>
     <delete id="deleteRankingByClCd">
-        DELETE FROM ranking where cl_cd = #{clCd}
+        DELETE FROM 
+ranking where cl_cd = #{clCd}
     </delete>
 
-    <delete 
-    id="deleteTodayViewByClCd">
+    <delete id="deleteTodayViewByClCd">
         DELETE FROM today_view WHERE cl_cd = #{clCd}
     </delete>
 
@@ -267,7 +248,7 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
         FROM
             outsourcing_portfolio
         WHERE
-            os_cd =#{osCd}
+     os_cd =#{osCd}
     </delete>
  
     <delete id="deletePortfolioLinkByPrtfCd">
@@ -280,23 +261,21 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
             p.prtf_ttl
         FROM
             portfolio p
-        JOIN
-           
-    outsourcing_portfolio op ON p.prtf_cd = op.prtf_cd
+     JOIN
+            outsourcing_portfolio op ON p.prtf_cd = op.prtf_cd
         WHERE
             op.os_cd = #{osCd}
         ORDER BY
-            p.prtf_reg_ymdt DESC
+            op.op_reg_ymdt DESC
     </select>
 
     <delete id="unlinkOutsourcingFromPortfolio">
         DELETE FROM outsourcing_portfolio
         WHERE os_cd = #{osCd} AND prtf_cd = #{prtfCd}
-    </delete>
+  </delete>
 
     <update id="updateOutsourcingRepresentativeCategory">
-       
-    UPDATE
+        UPDATE
             outsourcing
         SET
             ctgry_id = #{ctgryId},
@@ -306,36 +285,38 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
     </update>
 
     <update id="updateOutsourcingStep1" parameterType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
-        UPDATE
-           
-    outsourcing
+     UPDATE
+            outsourcing
         SET
             os_ttl = #{osTtl},
             os_expln = #{osExpln},
             os_strt_ymdt = #{osStrtYmdt},
             os_end_ymdt = #{osEndYmdt},
             os_amt = #{osAmt},
-            os_flfmt_cnt = #{osFlfmtCnt},
-       
-    os_mdfcn_ymdt = NOW()
+       os_flfmt_cnt = #{osFlfmtCnt},
+            os_mdfcn_ymdt = NOW()
         WHERE
             os_cd = #{osCd}
     </update>
     
-    
-    
-    
-    
     <select id="findFilesByClCd" resultType="outpolic.systems.file.domain.FileMetaData">
-        SELECT file_idx, file_original_name, file_new_name, file_path, file_extension, file_size, cl_cd, mbr_cd FROM file WHERE cl_cd = #{clCd}
+        SELECT
+            file_cd AS fileIdx,              
+       file_orgnl_nm AS fileOriginalName, 
+            file_srvr_nm AS fileNewName,      
+            file_path AS filePath,            
+            file_extn AS fileExtension,       
+            -- file_size AS fileSize,          
+   cl_cd AS clCd,                    
+            mbr_cd AS mbrCd                   
+        FROM file
+        WHERE cl_cd = #{clCd}
     </select>
 
-    
     <update id="updateOutsourcingThumbnail">
-    UPDATE outsourcing SET os_thumbnail_url = #{thumbnailUrl} WHERE os_cd = 
-#{osCd}
-</update>
-    
+        UPDATE outsourcing SET os_thumbnail_url = #{thumbnailUrl} 
+ WHERE os_cd = #{osCd}
+    </update>
     
     <select id="findAllOutsourcings" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
         SELECT * FROM outsourcing ORDER BY os_reg_ymdt DESC
@@ -346,27 +327,11 @@ os_amt, os_flfmt_cnt, os_thumbnail_url)
             (file_cd, file_reg_ymdt, file_extn, file_orgnl_nm, file_srvr_nm, file_path, cl_cd, mbr_cd)
         VALUES
         <foreach collection="list" item="file" separator=",">
-        
-    (#{file.fileIdx}, NOW(), #{file.fileExtension}, #{file.fileOriginalName}, #{file.fileNewName}, #{file.filePath}, #{file.clCd}, #{file.mbrCd})
+     (#{file.fileIdx}, NOW(), #{file.fileExtension}, #{file.fileOriginalName}, #{file.fileNewName}, #{file.filePath}, #{file.clCd}, #{file.mbrCd})
         </foreach>
     </insert>
 
-   
     <delete id="deleteFilesByClCd" parameterType="String">
         DELETE FROM file WHERE cl_cd = #{clCd}
     </delete>
-
-   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-   
 </mapper>

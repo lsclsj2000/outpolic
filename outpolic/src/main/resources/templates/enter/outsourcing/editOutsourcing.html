@@ -5,46 +5,105 @@
 <head>
     <title>외주 수정</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- ★★★ 깔끔한 UI를 위한 최종 스타일 ★★★ -->
     <style>
-        body { font-family: "Inter", sans-serif; }
-        .main-container { max-width: 960px; margin: 0 auto; padding: 30px 20px; }
-        .section-title { font-size: 2.25rem; font-weight: 700; color: #1f2937; margin-bottom: 2.5rem; text-align: center; border-left: 5px solid #3BB77E; padding-left: 1rem; display: inline-block; }
-        .card { background-color: white; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); padding: 2.5rem; border: 1px solid #e5e7eb; }
-        .form-group { margin-bottom: 25px; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 10px; color: #253D4E; font-size: 1.05rem; }
-        .form-control { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; color: #4b5563; }
-        .flex-row { display: flex; gap: 20px; flex-wrap: wrap; }
-        .flex-row > .form-group { flex: 1; min-width: 250px; }
-        .input-with-unit { display: flex; align-items: center; width : 100%; }
-        .input-with-unit input { flex-grow: 1; border-top-right-radius: 0; border-bottom-right-radius: 0; }
-        .input-with-unit span { background-color: #f3f4f6; border: 1px solid #d1d5db; border-left: none; padding: 12px 15px; }
+        body { font-family: "Inter", sans-serif;
+ }
+        .main-container { max-width: 960px; margin: 0 auto; padding: 30px 20px;
+ }
+        .section-title { font-size: 2.25rem; font-weight: 700; color: #1f2937; margin-bottom: 2.5rem; text-align: center;
+ border-left: 5px solid #3BB77E; padding-left: 1rem; display: inline-block; }
+        .card { background-color: white;
+ border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+ padding: 2.5rem; border: 1px solid #e5e7eb; }
+        .form-group { margin-bottom: 25px;
+ }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 10px; color: #253D4E;
+ font-size: 1.05rem; }
+        .form-control { width: 100%; padding: 12px 15px;
+ border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; color: #4b5563;
+ }
+        .flex-row { display: flex; gap: 20px; flex-wrap: wrap;
+ }
+        .flex-row > .form-group { flex: 1; min-width: 250px;
+ }
+        .input-with-unit { display: flex; align-items: center; width : 100%;
+ }
+        .input-with-unit input { flex-grow: 1; border-top-right-radius: 0; border-bottom-right-radius: 0;
+ }
+        .input-with-unit span { background-color: #f3f4f6; border: 1px solid #d1d5db; border-left: none;
+ padding: 12px 15px; }
         
-        .category-input-group { display: flex; align-items: center; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 8px; overflow: visible; position: relative; }
-        .category-input-group .category-name-input { border: none; flex-grow: 1; padding: 12px 15px; box-shadow: none; border-radius: 0; background: transparent; }
-        .category-input-group .category-controls { display: flex; align-items: center; background-color: #f8f8f8; border-left: 1px solid #eee; padding: 0 5px; }
-        .category-input-group .category-controls button { background: none; border: none; padding: 10px; cursor: pointer; font-size: 1em; color: #555; }
+        .category-input-group { display: flex;
+ align-items: center; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 8px; overflow: visible; position: relative;
+ }
+        .category-input-group .category-name-input { border: none; flex-grow: 1; padding: 12px 15px; box-shadow: none;
+ border-radius: 0; background: transparent; }
+        .category-input-group .category-controls { display: flex; align-items: center;
+ background-color: #f8f8f8; border-left: 1px solid #eee; padding: 0 5px; }
+        .category-input-group .category-controls button { background: none;
+ border: none; padding: 10px; cursor: pointer; font-size: 1em; color: #555;
+ }
         
-        .search-wrapper { position: relative; }
-        .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd; background-color: #fff; z-index: 1000; max-height: 150px; overflow-y: auto; top: 100%; left: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px;}
-        .result-item { padding: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .result-item:hover { background-color: #f0f0f0; }
+        .search-wrapper { position: relative;
+ }
+        .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd;
+ background-color: #fff; z-index: 1000; max-height: 150px; overflow-y: auto; top: 100%; left: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+ border-radius: 0 0 8px 8px;}
+        .result-item { padding: 10px; cursor: pointer; display: flex;
+ justify-content: space-between; align-items: center; }
+        .result-item:hover { background-color: #f0f0f0;
+ }
 
-        .form-step { display: none; }
-        .form-step.active { display: block; }
-        .progress-indicator { display: flex; justify-content: center; margin-bottom: 30px; gap: 10px; }
-        .progress-step { width: 40px; height: 40px; border-radius: 50%; background-color: #e0e0e0; color: #333; display: flex; justify-content: center; align-items: center; font-weight: bold; }
-        .progress-step.active { background-color: #3BB77E; color: white; }
-        .form-navigation { margin-top: 30px; display: flex; justify-content: space-between; gap: 10px; }
-        .form-navigation .btn-step { background-color: #007bff; color: white; padding: 12px 25px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex-grow: 1; }
-        .form-navigation .btn-step.prev { background-color: #6c757d; }
-        .form-navigation .btn-step.submit { background-color: #28a745; }
+        .form-step { display: none;
+ }
+        .form-step.active { display: block;
+ }
+        .progress-indicator { display: flex; justify-content: center; margin-bottom: 30px; gap: 10px;
+ }
+        .progress-step { width: 40px; height: 40px; border-radius: 50%; background-color: #e0e0e0; color: #333;
+ display: flex; justify-content: center; align-items: center; font-weight: bold; }
+        .progress-step.active { background-color: #3BB77E;
+ color: white; }
+        .form-navigation { margin-top: 30px; display: flex; justify-content: space-between; gap: 10px;
+ }
+        .form-navigation .btn-step { background-color: #007bff; color: white; padding: 12px 25px; border: none;
+ border-radius: 8px; font-weight: 600; cursor: pointer; flex-grow: 1; }
+        .form-navigation .btn-step.prev { background-color: #6c757d;
+ }
+        .form-navigation .btn-step.submit { background-color: #28a745;
+ }
         
-        #linked-portfolio-list { margin-bottom: 1rem; }
-        .linked-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 5px; }
-        .btn-unlink, .btn-link { border: none; border-radius: 4px; padding: 4px 10px; cursor: pointer; color: white; }
-        .btn-unlink { background-color: #ef4444; }
-        .btn-link { background-color: #0d6efd; }
+        #linked-portfolio-list { margin-bottom: 1rem;
+ }
+        .linked-item { display: flex; justify-content: space-between; align-items: center; padding: 8px;
+ border: 1px solid #eee; border-radius: 4px; margin-bottom: 5px; }
+        .btn-unlink, .btn-link { border: none;
+ border-radius: 4px; padding: 4px 10px; cursor: pointer; color: white; }
+        .btn-unlink { background-color: #ef4444;
+ }
+        .btn-link { background-color: #0d6efd;
+ }
+        
+        /* 파일 미리보기 스타일 (addOutsourcingListView와 동일) */
+        .image-preview-container { display: flex;
+ flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem; }
+        .image-preview-item { position: relative; width: 96px;
+ height: 96px; border-radius: 0.5rem; border: 1px solid #e5e7eb; background-color: #f3f4f6; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+ padding: 4px; overflow: hidden; }
+        .image-preview-item img { width: 100%; height: 100%;
+ object-fit: cover; }
+        .image-preview-item i { font-size: 2rem; color: #6b7280;
+ }
+        .image-preview-item span { font-size: 0.75rem; color: #4b5563; word-break: break-all;
+ }
+        .remove-file-btn, .remove-existing-file-btn { position: absolute; inset: 0; display: flex; align-items: center;
+ justify-content: center; background-color: rgba(0, 0, 0, 0.5); color: white; opacity: 0; transition: opacity 0.1s ease; cursor: pointer;
+ }
+        .image-preview-item:hover .remove-file-btn, .image-preview-item:hover .remove-existing-file-btn { opacity: 1;
+ }
+        .remove-file-btn i, .remove-existing-file-btn i { font-size: 1.5em;
+ }
+
     </style>
 </head>
 <body>
@@ -55,86 +114,93 @@
             <form id="outsourcingEditForm">
                 <input type="hidden" id="osCd" name="osCd" th:value="${outsourcing.osCd}" />
                 <input type="hidden" name="entCd" th:value="${outsourcing.entCd}" />
-                <input type="hidden" name="mbrCd" th:value="${outsourcing.mbrCd}" />
+                <input 
+ type="hidden" name="mbrCd" th:value="${outsourcing.mbrCd}" />
                 
                 <div class="progress-indicator">
                     <div class="progress-step active" data-step="1">1</div>
                     <div class="progress-step" data-step="2">2</div>
-                    <div class="progress-step" data-step="3">3</div>
+                   <div class="progress-step" data-step="3">3</div>
                     <div class="progress-step" data-step="4">4</div>
                 </div>
 
-                <!-- Step 1: 기본 정보 -->
                 <div class="form-step active" id="step1">
                     <div class="form-group"><label for="osTtl">제목</label><input type="text" id="osTtl" name="osTtl" class="form-control" th:value="${outsourcing.osTtl}"></div>
-                    <div class="form-group"><label for="osExpln">내용</label><textarea id="osExpln" name="osExpln" class="form-control" rows="5" th:text="${outsourcing.osExpln}"></textarea></div>
+             <div class="form-group"><label for="osExpln">내용</label><textarea id="osExpln" name="osExpln" class="form-control" rows="5" th:text="${outsourcing.osExpln}"></textarea></div>
                     <div class="flex-row">
-                        <div class="form-group"><label>시작일</label><input type="datetime-local" id="osStrtYmdt" name="osStrtYmdt" class="form-control" th:value="${outsourcing.osStrtYmdt != null ? #temporals.format(outsourcing.osStrtYmdt, 'yyyy-MM-dd''T''HH:mm') : ''}"></div>
-                        <div class="form-group"><label>종료일</label><input type="datetime-local" id="osEndYmdt" name="osEndYmdt" class="form-control" th:value="${outsourcing.osEndYmdt != null ? #temporals.format(outsourcing.osEndYmdt, 'yyyy-MM-dd''T''HH:mm') : ''}"></div>
+                        <div class="form-group"><label>시작일</label><input type="datetime-local" id="osStrtYmdt" name="osStrtYmdt" class="form-control" th:value="${outsourcing.osStrtYmdt != null ?
+ #temporals.format(outsourcing.osStrtYmdt, 'yyyy-MM-dd''T''HH:mm') : ''}"></div>
+                        <div class="form-group"><label>종료일</label><input type="datetime-local" id="osEndYmdt" name="osEndYmdt" class="form-control" th:value="${outsourcing.osEndYmdt != null ?
+ #temporals.format(outsourcing.osEndYmdt, 'yyyy-MM-dd''T''HH:mm') : ''}"></div>
                     </div>
                     <div class="flex-row">
                         <div class="form-group"><label>금액</label><div class="input-with-unit"><input type="number" id="osAmt" name="osAmt" class="form-control" th:value="${outsourcing.osAmt}"><span>원</span></div></div>
-                        <div class="form-group"><label>인원</label><div class="input-with-unit"><input type="number" id="osFlfmtCnt" name="osFlfmtCnt" class="form-control" th:value="${outsourcing.osFlfmtCnt}"><span>명</span></div></div>
+                        <div 
+ class="form-group"><label>인원</label><div class="input-with-unit"><input type="number" id="osFlfmtCnt" name="osFlfmtCnt" class="form-control" th:value="${outsourcing.osFlfmtCnt}"><span>명</span></div></div>
                     </div>
                     <div class="form-navigation">
-                        <a th:href="@{/enter/outsourcing/list}" class="btn-step prev" style="text-align:center; text-decoration:none; line-height:2;">취소</a>
+                        <a th:href="@{/enter/outsourcing/list}" class="btn-step prev" style="text-align:center;
+ text-decoration:none; line-height:2;">취소</a>
                         <button type="button" class="btn-step next" data-step="1">다음 (기본 정보 저장)</button>
                     </div>
                 </div>
 
-                <!-- Step 2: 카테고리/태그 -->
                 <div class="form-step" id="step2">
-                    <div class="form-group">
+              <div class="form-group">
                         <label>카테고리</label>
                         <div id="category-inputs-container">
-                            <!-- JS가 여기에 카테고리 행들을 동적으로 생성합니다. -->
-                        </div>
+                            </div>
+                <div class="error-message" id="categoryCodesError"></div>
                     </div>
                     <div class="form-group">
                         <label for="tags">태그 (쉼표로 구분)</label>
-                        <div class="search-wrapper">
+                      <div class="search-wrapper">
                             <input type="text" id="tags" name="tags" class="form-control" th:value="${#strings.listJoin(outsourcing.tagNames, ', ')}">
                             <div id="tag-search-results" class="search-results-dropdown"></div>
                         </div>
-                    </div>
+        </div>
                     <div class="form-navigation">
                         <button type="button" class="btn-step prev" data-step="2">이전</button>
                         <button type="button" class="btn-step next" data-step="2">다음 (카테고리/태그 저장)</button>
-                    </div>
+         </div>
                 </div>
 
-                <!-- Step 3: 파일 첨부 -->
                 <div class="form-step" id="step3">
-                     <div class="form-group">
-                        <label for="outsourcingReferenceFiles">첨부 파일 (새로 추가하면 기존 파일은 모두 교체됩니다)</label>
-                        <input type="file" id="outsourcingReferenceFiles" name="outsourcingReferenceFiles" multiple class="form-control">
-                    </div>
+                    <div class="form-group">
+                        <label for="outsourcingReferenceFiles">대표 이미지 및 첨부 파일 (새로 추가하면 기존 파일은 
+ 모두 교체됩니다)</label>
+                        <input type="file" id="outsourcingReferenceFiles" name="outsourcingReferenceFiles" multiple class="form-control p-2">
+                        <div class="image-preview-container mt-3" id="outsourcingReferenceFiles-preview-container">
+                            </div>
+              </div>
                     <div class="form-navigation">
                         <button type="button" class="btn-step prev" data-step="3">이전</button>
                         <button type="button" class="btn-step next" data-step="3">다음 (파일 저장)</button>
-                    </div>
+               </div>
                 </div>
 
-                <!-- Step 4: 포트폴리오 연결 및 최종 완료 -->
                 <div class="form-step" id="step4">
                     <div class="form-group">
                         <label>관련 포트폴리오 관리</label>
-                        <div class="flex-row">
-                            <div style="flex: 1; min-width: 300px;">
+              <div class="flex-row">
+                            <div style="flex: 1;
+ min-width: 300px;">
                                 <h4>현재 연결된 포트폴리오</h4>
                                 <div id="linked-portfolio-list"></div>
                             </div>
-                            <div style="flex: 1; min-width: 300px;">
+    <div style="flex: 1;
+ min-width: 300px;">
                                 <h4>연결할 포트폴리오 검색</h4>
                                 <div class="search-wrapper">
-                                    <input type="text" id="portfolio-search-input" class="form-control" placeholder="연결할 포트폴리오 검색">
+                                <input type="text" id="portfolio-search-input" class="form-control" placeholder="연결할 포트폴리오 검색">
                                     <div id="portfolio-search-results" class="search-results-dropdown"></div>
                                 </div>
-                            </div>
+                    </div>
                         </div>
                     </div>
                     <div class="form-navigation">
-                        <button type="button" class="btn-step prev" data-step="4">이전</button>
+                        <button type="button" class="btn-step 
+ prev" data-step="4">이전</button>
                         <button type="button" class="btn-step submit" id="btn-edit-complete">수정 완료</button>
                     </div>
                 </div>
@@ -144,178 +210,455 @@
 </th:block>
 
 <th:block layout:fragment="jsFile">
-    <script th:inline="javascript">
+    <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
+    
+ <script th:inline="javascript">
     /*<![CDATA[*/
     $(document).ready(function() {
         let currentStepNum = 1;
-        const osCd = /*[[${outsourcing.osCd}]]*/ '';
+ const osCd = /*[[${outsourcing.osCd}]]*/ '';
         const entCd = /*[[${outsourcing.entCd}]]*/ '';
         let categorySearchTimeout, tagSearchTimeout, portfolioSearchTimeout;
-
-        // --- 헬퍼 함수 ---
-        function showStep(stepNum) {
+ // 기존 파일 URL들을 JavaScript 변수로 가져옴
+        const existingFileUrls = /*[[${existingFileUrls}]]*/ [];
+ function showStep(stepNum) {
             $('.form-step').removeClass('active');
             $(`#step${stepNum}`).addClass('active');
             $('.progress-step').removeClass('active').eq(stepNum - 1).addClass('active');
-            if (stepNum === 4) { loadLinkedPortfolios(); }
+ if (stepNum === 4) { loadLinkedPortfolios(); }
+            // Step 3으로 이동할 때 파일 미리보기 초기화
+            if (stepNum === 3) {
+                initializeFilePreview('outsourcingReferenceFiles', 'outsourcingReferenceFiles-preview-container', true, existingFileUrls);
+ }
         }
 
         function addCategoryRow(name = '', id = '') {
-            const template = `<div class="category-input-group"><input type="text" class="category-name-input form-control" placeholder="카테고리 검색 또는 입력" value="${name}"><input type="hidden" name="categoryCodes" class="category-id-input" value="${id}"><div class="category-controls"><button type="button" class="add-row-btn" title="새 행 추가"><i class="fas fa-plus"></i></button><button type="button" class="remove-category-btn" title="삭제"><i class="fas fa-times"></i></button></div><div class="search-results-dropdown"></div></div>`;
-            $('#category-inputs-container').append(template);
+            const template = `<div class="category-input-group"><input type="text" class="category-name-input form-control" placeholder="카테고리 이름 입력" value="${name}"><input type="hidden" name="categoryCodes" class="category-id-input" value="${id}"><div class="category-controls"><button type="button" class="add-row-btn" title="새 행 추가"><i class="fas fa-plus"></i></button><button type="button" class="remove-category-btn" title="삭제"><i class="fas fa-times"></i></button></div><div class="search-results-dropdown"></div></div>`;
+ $('#category-inputs-container').append(template);
         }
 
         function loadLinkedPortfolios() {
             const listDiv = $('#linked-portfolio-list').empty();
-            $.get(`/enter/outsourcing/${osCd}/linked-portfolios`, function(data) {
+ $.get(`/enter/outsourcing/${osCd}/linked-portfolios`, function(data) {
                 if(data && data.length > 0) {
                     data.forEach(p => listDiv.append(`<div class="linked-item" data-prtf-cd="${p.prtfCd}"><span>${p.prtfTtl}</span><button type="button" class="btn-unlink">해제</button></div>`));
                 } else { listDiv.append('<p>연결된 포트폴리오가 없습니다.</p>'); }
             });
-        }
+ }
         
+        // --- 파일 미리보기 초기화 함수 (재활용) ---
+        const MAX_FILES_STEP3 = 5;
+        function initializeFilePreview(fileInputId, previewContainerId, isMultiple = true, initialFiles = []) {
+            const fileInput = document.getElementById(fileInputId);
+            const previewContainer = document.getElementById(previewContainerId);
+            if (!fileInput || !previewContainer) return;
+
+            // 기존 파일 로드 (수정 모드에서 사용)
+            previewContainer.innerHTML = '';
+            initialFiles.forEach(url => {
+                const fileName = url.substring(url.lastIndexOf('/') + 1);
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'image-preview-item';
+                // 이미지 파일 확장자 확인 (간단하게)
+    if (url.match(/\.(jpeg|jpg|gif|png|jfif)$/i)) {
+                    fileDiv.innerHTML = `<img src="${url}" alt="File Preview" class="w-full h-full object-cover">
+                                         <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-existing-file-btn" data-file-url="${url}"><i class="fas fa-times-circle"></i></button>`;
+
+                } else {
+                    let iconClass = 'fas fa-file';
+                    if (url.includes('.pdf')) iconClass = 'fas fa-file-pdf';
+                    else if (url.includes('.doc') || url.includes('.docx')) iconClass = 'fas fa-file-word';
+ else if (url.includes('.ppt') || url.includes('.pptx')) iconClass = 'fas fa-file-powerpoint';
+                    else if (url.includes('.txt')) iconClass = 'fas fa-file-alt';
+ fileDiv.innerHTML = `<div class="flex flex-col items-center justify-center p-1">
+                                            <i class="${iconClass} text-3xl mb-1 text-gray-400"></i>
+                                            <span 
+ class="text-xs font-medium">${fileName}</span>
+                                         </div>
+                                         <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-existing-file-btn" data-file-url="${url}"><i class="fas fa-times-circle"></i></button>`;
+ }
+                previewContainer.appendChild(fileDiv);
+            });
+ fileInput.addEventListener('change', function (event) {
+                // 새로 선택된 파일들로 기존 미리보기를 덮어씁니다.
+                previewContainer.innerHTML = '';
+                const newlySelectedFiles = event.target.files;
+                const currentFilesDt = new DataTransfer();
+
+                for (let 
+ i = 0; i < newlySelectedFiles.length; i++) {
+                    const file = newlySelectedFiles.item(i);
+                    if (isMultiple && currentFilesDt.items.length < MAX_FILES_STEP3) { // Use MAX_FILES_STEP3
+                        currentFilesDt.items.add(file);
+                 } else if (!isMultiple && currentFilesDt.items.length < 1) { // 단일 파일
+                         currentFilesDt.items.add(file);
+                    } else {
+                        alert(`파일은 최대 ${isMultiple ? MAX_FILES_STEP3 : 1}개까지 첨부할 수 있습니다.`);
+      break;
+                    }
+                }
+                fileInput.files = currentFilesDt.files; // DataTransfer 객체의 파일을 input에 다시 설정
+
+                Array.from(fileInput.files).forEach(file => {
+      const fileDiv = document.createElement('div');
+ fileDiv.className = 'image-preview-item';
+                    const fileType = file.type;
+                    const fileName = file.name;
+ if (fileType.startsWith('image/')) {
+                        const reader = new FileReader();
+ reader.onload = (e) => {
+                            fileDiv.innerHTML = `<img src="${e.target.result}" alt="File Preview" class="w-full h-full object-cover">
+                                                 <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 
+ group-hover:opacity-100 transition-opacity remove-file-btn" data-file-name="${fileName}"><i class="fas fa-times-circle"></i></button>`;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        let iconClass = 'fas fa-file';
+                        if (fileType.includes('pdf')) iconClass = 'fas fa-file-pdf';
+                        else if (fileType.includes('word')) iconClass = 'fas fa-file-word';
+                        else if (fileType.includes('powerpoint')) iconClass = 'fas fa-file-powerpoint';
+ else if (fileType.includes('text')) iconClass = 'fas fa-file-alt';
+
+                        fileDiv.innerHTML = `<div class="flex flex-col items-center justify-center p-1">
+                                                <i class="${iconClass} text-3xl mb-1 text-gray-400"></i>
+                                  <span class="text-xs font-medium">${fileName}</span>
+                                             </div>
+                                       <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-file-btn" data-file-name="${fileName}"><i class="fas fa-times-circle"></i></button>`;
+ }
+                    previewContainer.appendChild(fileDiv);
+ });
+            });
+
+            // 새로 업로드된 파일의 삭제 버튼 이벤트 (change 이벤트로 생성된 미리보기에 적용)
+            $(document).on('click', '.remove-file-btn', function() {
+                const fileNameToRemove = $(this).data('file-name');
+                const dt = new DataTransfer();
+                const currentInputFiles = fileInput.files;
+
+              for (let j = 0; j < currentInputFiles.length; j++) {
+                    if (currentInputFiles.item(j).name !== fileNameToRemove) {
+                        dt.items.add(currentInputFiles.item(j));
+                    }
+                }
+     fileInput.files = dt.files;
+                $(this).closest('.image-preview-item').remove(); // 미리보기 아이템 삭제
+            });
+ }
+
         // --- 페이지 로드 시 초기화 ---
+        // 기존 카테고리 로드
         const initialCategories = /*[[${outsourcing.categories}]]*/ [];
-        if (initialCategories && initialCategories.length > 0) {
+ if (initialCategories && initialCategories.length > 0) {
             let uniqueCategories = new Map();
-            initialCategories.forEach(cat => { if(cat && cat.ctgryId) uniqueCategories.set(cat.ctgryId, cat.ctgryNm); });
+ initialCategories.forEach(cat => { if(cat && cat.ctgryId) uniqueCategories.set(cat.ctgryId, cat.ctgryNm); });
             uniqueCategories.forEach((name, id) => addCategoryRow(name, id));
-        } else {
+ } else {
             addCategoryRow();
-        }
+ }
         showStep(currentStepNum);
-
-        // --- 단계별 저장 로직 ---
+ // 이미지 미리보기 초기화
+        const initialExistingFileUrls = /*[[${existingFileUrls}]]*/ [];
+ initializeFilePreview('outsourcingReferenceFiles', 'outsourcingReferenceFiles-preview-container', true, initialExistingFileUrls);
+ // 이전 버튼, 다음 버튼 로직
         $('.btn-step.next').on('click', function() {
-            const step = $(this).data('step');
-            let formData = new FormData();
-            formData.append('osCd', osCd);
-            if (step === 1) {
-                formData.append('osTtl', $('#osTtl').val()); formData.append('osExpln', $('#osExpln').val()); formData.append('osStrtYmdt', $('#osStrtYmdt').val()); formData.append('osEndYmdt', $('#osEndYmdt').val()); formData.append('osAmt', $('#osAmt').val()); formData.append('osFlfmtCnt', $('#osFlfmtCnt').val());
-            } else if (step === 2) {
-                let categoryCodes = [];
-                $('.category-id-input').each(function() { if ($(this).val()) categoryCodes.push($(this).val()); });
-                formData.append('categoryCodes', categoryCodes.join(','));
-                formData.append('tags', $('#tags').val());
-            } else if (step === 3) {
-                let files = $('#outsourcingReferenceFiles')[0].files;
-                for (let i = 0; i < files.length; i++) formData.append("outsourcingReferenceFiles", files[i]);
-            }
-            $.ajax({
-                url: `/enter/outsourcing/edit/step${step}`, type: 'POST', data: formData, processData: false, contentType: false,
-                success: res => {
-                    if (res.success) {
-                        alert(res.message || `${step}단계 정보가 수정되었습니다.`);
-                        currentStepNum++; showStep(currentStepNum);
-                    } else { alert(`수정 실패: ${res.message || '알 수 없는 오류'}`); }
-                },
-                error: () => alert(`${step}단계 수정 중 서버 오류`)
-            });
+            const stepId = $(this).data('step');
+            if (stepId === 1) saveStep1AndProceed();
+            else if (stepId === 2) saveStep2AndProceed();
+            else if (stepId === 3) saveStep3AndProceed();
         });
-        $('.btn-step.prev').on('click', function() { showStep(--currentStepNum); });
-        
-        // --- 최종 완료 ---
-        $('#btn-edit-complete').on('click', function() {
-             if (!confirm('모든 수정을 완료하시겠습니까?')) return;
-             $.ajax({
-                url: '/enter/outsourcing/edit/complete', type: 'POST', contentType: 'application/json', data: JSON.stringify({ osCd: osCd }),
-                success: res => { if (res.success) { alert(res.message); window.location.href = res.redirectUrl; } },
-                error: () => alert('최종 완료 처리 중 오류 발생')
-            });
+ $('.btn-step.prev').on('click', function() {
+            currentStepNum--;
+            showStep(currentStepNum);
         });
-        
-        // --- UI 이벤트 핸들러 ---
-        // 전역 클릭 이벤트 (검색창 닫기)
-        $(document).on('click', function(event) {
-            if (!$(event.target).closest('.search-wrapper, .category-input-group').length) {
-                $('.search-results-dropdown').hide().empty();
+ $('#btn-edit-complete').on('click', function() {
+            completeEdit();
+        });
+ // 카테고리 추가/삭제 버튼 이벤트
+        $(document).on('click', '.add-row-btn', function() {
+            addCategoryRow();
+        });
+ $(document).on('click', '.remove-category-btn', function() {
+            if ($('#category-inputs-container .category-input-group').length > 1) {
+                $(this).closest('.category-input-group').remove();
+            } else {
+                alert('최소 하나의 카테고리는 남겨야 합니다.');
             }
         });
-
-        // 카테고리행 추가
-        $(document).on('click', '.add-row-btn', function() { addCategoryRow(); });
-        
-        // 카테고리 행 삭제 
-        $(document).on('click', '.remove-category-btn', function() {
-            if ($('#category-inputs-container .category-input-group').length > 1) { $(this).closest('.category-input-group').remove(); } 
-            else { alert('최소 하나의 카테고리는 남겨야 합니다.'); }
-        });
-        
-        // 카테고리 검색 
+ // 카테고리 검색 기능
         $(document).on('input', '.category-name-input', function() {
-            const currentInput = $(this), dropdown = currentInput.closest('.category-input-group').find('.search-results-dropdown'), query = currentInput.val();
+            const currentInput = $(this);
+            const dropdown = currentInput.closest('.category-input-group').find('.search-results-dropdown');
+            const query = currentInput.val();
+
             clearTimeout(categorySearchTimeout);
             currentInput.siblings('.category-id-input').val('');
-            if (query.length < 1) { dropdown.hide().empty(); return; }
+
+          if (query.length < 1) {
+                dropdown.hide().empty();
+                return;
+            }
+
             categorySearchTimeout = setTimeout(() => {
-                $.get('/enter/outsourcing/api/categories/search', { query }, data => {
+                $.get('/enter/outsourcing/api/categories/search', 
+ { query: query }, function(data) {
                     dropdown.empty().show();
-                    data.forEach(cat => dropdown.append(`<div class="result-item" data-id="${cat.ctgryId}" data-name="${cat.ctgryNm}">${cat.ctgryNm}</div>`));
+                    if (data && data.length > 0) data.forEach(cat => dropdown.append(`<div class="result-item" data-id="${cat.ctgryId}">${cat.ctgryNm}</div>`));
                 });
             }, 300);
         });
-        
-        // 카테고리 검색 결과 선택 
-        $(document).on('click', '.search-results-dropdown .result-item', function() {
+ $(document).on('click', '.search-results-dropdown .result-item', function() {
             const selectedItem = $(this);
-            const group = selectedItem.closest('.category-input-group');
-            if(group.length) { // 카테고리
-                group.find('.category-name-input').val(selectedItem.data('name'));
-                group.find('.category-id-input').val(selectedItem.data('id'));
-            }
+            const categoryInputGroup = selectedItem.closest('.category-input-group');
+            categoryInputGroup.find('.category-name-input').val(selectedItem.text());
+            categoryInputGroup.find('.category-id-input').val(selectedItem.data('id'));
             selectedItem.parent().hide().empty();
         });
-
-        // 태그
+ // 태그 검색 기능
         $('#tags').on('input', function() {
+            const query = $(this).val().split(',').pop().trim();
             clearTimeout(tagSearchTimeout);
-            const parts = $(this).val().split(','), query = parts[parts.length - 1].trim(), resultsDiv = $('#tag-search-results').empty();
-            if (query.length < 1) { resultsDiv.hide(); return; }
-            tagSearchTimeout = setTimeout(() => {
-                $.get('/enter/outsourcing/api/tags/search', { query }, data => {
-                    resultsDiv.show();
-                    data.forEach(tag => resultsDiv.append(`<div class="result-item" data-tag-name="${tag}">${tag}</div>`));
-                });
-            }, 300);
-        });
-        $(document).on('click', '#tag-search-results .result-item', function() {
-            const selectedTag = $(this).data('tag-name'), tagInput = $('#tags'), parts = tagInput.val().split(',');
-            parts[parts.length - 1] = ' ' + selectedTag;
-            tagInput.val(parts.join(',') + ', ').focus();
-            $('#tag-search-results').hide().empty();
-        });
 
-        // 포트폴리오
-        $('#portfolio-search-input').on('input', function() {
-            clearTimeout(portfolioSearchTimeout);
-            const query = $(this).val(), resultsDiv = $('#portfolio-search-results').empty();
-            if (query.length < 1) { resultsDiv.hide(); return; }
-            portfolioSearchTimeout = setTimeout(() => {
-                $.get(`/enter/outsourcing/${osCd}/unlinked-portfolios`, { query, entCd }, data => {
-                    resultsDiv.show();
-                    if(data && data.length > 0) data.forEach(p => resultsDiv.append(`<div class="result-item" data-prtf-cd="${p.prtfCd}"><span>${p.prtfTtl}</span><button type="button" class="btn-link">+ 연결</button></div>`));
-                    else resultsDiv.append('<p>검색 결과 없음</p>');
+            if (query.length < 1) {
+                $('#tag-search-results').hide().empty();
+                return;
+        }
+
+            tagSearchTimeout = setTimeout(() => {
+                $.get('/enter/outsourcing/api/tags/search', { query: query }, function(data) {
+              const resultsDiv = $('#tag-search-results').empty().show();
+                    if (data && data.length > 0) {
+         data.forEach(tag => {
+                            resultsDiv.append(`<div class="result-item-tag" data-tag="${tag}">${tag}</div>`);
+                        });
+                    } else {
+       resultsDiv.append('<div class="result-item-tag">검색 결과 없음</div>');
+                    }
                 });
             }, 300);
         });
-        $(document).on('click', '#portfolio-search-results .result-item', function() {
-            const prtfCd = $(this).data('prtf-cd');
+ $(document).on('click', '.result-item-tag', function() {
+            const selectedTag = $(this).data('tag');
+            const tagInput = $('#tags');
+            const parts = tagInput.val().split(',');
+            parts[parts.length - 1] = ' ' + selectedTag;
+            tagInput.val(parts.join(', ') + ', ').focus();
+        $('#tag-search-results').hide().empty();
+        });
+ // 포트폴리오 검색 및 연결
+        $('#portfolio-search-input').on('input', function() {
+            const query = $(this).val();
+            const resultsDiv = $('#portfolio-search-results').empty();
+            clearTimeout(portfolioSearchTimeout);
+
+            if (query.length < 1) {
+                resultsDiv.hide();
+            return;
+            }
+
+            portfolioSearchTimeout = setTimeout(() => {
+                $.get(`/enter/outsourcing/${osCd}/unlinked-portfolios`, { query: query, entCd: entCd }, function(data) {
+                    resultsDiv.show();
+                    if (data && data.length 
+ > 0) {
+                        data.forEach(p => {
+                            resultsDiv.append(`<div class="search-result-item" data-prtf-cd="${p.prtfCd}"><span>${p.prtfTtl}</span><button type="button" class="btn-link">+ 연결</button></div>`);
+                        });
+               } else {
+                        resultsDiv.append('<p style="padding: 10px; color:#888;">검색 결과 없음</p>');
+ }
+                });
+            }, 300);
+        });
+ $(document).on('click', '#portfolio-search-results .btn-link', function() {
+            const prtfCd = $(this).closest('.search-result-item').data('prtf-cd');
             $.ajax({
-                url: '/enter/outsourcing/link-portfolio', type: 'POST', contentType: 'application/json', data: JSON.stringify({ osCd, prtfCd }),
-                success: () => { loadLinkedPortfolios(); $('#portfolio-search-input').val(''); $('#portfolio-search-results').hide().empty(); },
-                error: () => alert('연결 실패')
+                url: '/enter/outsourcing/link-portfolio',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ 
+ osCd: osCd, prtfCd: prtfCd }),
+                success: function(response) {
+                    if (response.success) {
+                        alert('포트폴리오가 성공적으로 연결되었습니다.');
+                        loadLinkedPortfolios();
+ 
+                        $('#portfolio-search-input').val('').trigger('input');
+                    } else {
+                        alert('포트폴리오 연결에 실패했습니다: ' + response.message);
+                    }
+  },
+                error: function() {
+                    alert('포트폴리오 연결 중 서버 오류가 발생했습니다.');
+                }
             });
         });
-        $(document).on('click', '#linked-portfolio-list .btn-unlink', function() {
-            const prtfCd = $(this).closest('.linked-item').data('prtf-cd');
-            if (confirm('정말로 연결을 해제하시겠습니까?')) {
-                 $.ajax({
-                    url: '/enter/outsourcing/unlink-portfolio', type: 'DELETE', contentType: 'application/json', data: JSON.stringify({ osCd, prtfCd }),
-                    success: () => loadLinkedPortfolios(),
-                    error: () => alert('연결 해제 실패')
-                });
+ $(document).on('click', '#linked-portfolio-list .btn-unlink', function() {
+            if (!confirm('정말 연결을 해제하시겠습니까?')) {
+                return;
             }
+            const prtfCd = $(this).closest('.linked-item').data('prtf-cd');
+            $.ajax({
+        type: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify({ osCd: osCd, prtfCd: prtfCd }),
+                success: function(response) {
+                    if (response.success) {
+            alert('포트폴리오 연결이 해제되었습니다.');
+                        loadLinkedPortfolios();
+                    } else {
+                        alert('포트폴리오 연결 해제에 실패했습니다: ' + response.message);
+                    }
+     },
+                error: function() {
+                    alert('포트폴리오 연결 해제 중 서버 오류가 발생했습니다.');
+                }
+         });
         });
+ // 파일 삭제 버튼 이벤트 (기존 파일)
+        $(document).on('click', '.remove-existing-file-btn', function() {
+            if (!confirm('이 파일을 삭제하시겠습니까?')) {
+                return;
+            }
+            const fileUrlToRemove = $(this).data('file-url');
+            $.ajax({
+            url: `/enter/outsourcing/${osCd}/files?fileUrl=${encodeURIComponent(fileUrlToRemove)}`,
+                type: 'DELETE',
+                success: function(response) {
+                    if (response.success) {
+                        alert('파일이 성공적으로 삭제되었습니다.');
+            $(this).closest('.image-preview-item').remove();
+                    } else {
+                        alert('파일 삭제에 실패했습니다: ' + response.message);
+                    }
+                }.bind(this),
+                error: function() {
+                    alert('파일 삭제 중 서버 오류가 발생했습니다.');
+ }
+            });
+        });
+ function saveStep1AndProceed() {
+            const formData = new FormData(document.getElementById('outsourcingEditForm'));
+            $.ajax({
+                url: '/enter/outsourcing/save-step1',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    if (res.success) {
+                        currentStepNum = 2;
+                        showStep(currentStepNum);
+                    } else {
+                        alert('1단계 저장 실패: ' + (res.message || '알 수 없는 오류'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", xhr, status, error);
+             alert('1단계 저장 중 서버 오류가 발생했습니다.');
+                }
+            });
+ }
+
+        function saveStep2AndProceed() {
+            const categoryIds = [];
+ let hasValidCategorySelection = false;
+            $('#category-inputs-container .category-id-input').each(function() {
+                const ctgryId = $(this).val();
+                if (ctgryId && ctgryId !== "") {
+                    categoryIds.push(ctgryId);
+                    hasValidCategorySelection = true;
+           }
+            });
+ if (!hasValidCategorySelection) {
+                $('#categoryCodesError').text('카테고리는 최소 하나 이상 선택해야 합니다.');
+ return;
+            }
+            $('#categoryCodesError').text('');
+
+            const formData = new FormData();
+ formData.append('osCd', osCd);
+            formData.append('categoryCodes', categoryIds.join(','));
+            formData.append('tags', $('#tags').val());
+
+            $.ajax({
+                url: '/enter/outsourcing/save-step2',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+   success: function(res) {
+                    if (res.success) {
+                        currentStepNum = 3;
+                        showStep(currentStepNum);
+             } else {
+                        alert('2단계 저장 실패: ' + (res.message || '알 수 없는 오류'));
+                    }
+                },
+                error: function(xhr, status, error) {
+ console.error("AJAX Error:", xhr, status, error);
+                    alert('2단계 저장 중 서버 오류가 발생했습니다.');
+                }
+            });
+ }
+
+        function saveStep3AndProceed() {
+            const formData = new FormData();
+            formData.append('osCd', osCd);
+            const files = document.getElementById('outsourcingReferenceFiles').files;
+
+            if (files.length === 0 && existingFileUrls.length === 0) {
+                alert('대표 이미지를 포함한 첨부 파일을 하나 이상 선택해야 합니다.');
+                return;
+            }
+
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('outsourcingReferenceFiles', files[i]);
+                }
+            } else {
+                formData.append('keepExistingFiles', true);
+                // 기존 파일 URL들을 콤마로 구분된 하나의 문자열로 전송
+                if (existingFileUrls.length > 0) {
+                    formData.append('existingFileUrlsList', existingFileUrls.join(',')); // 새로운 폼 필드 이름 사용
+                }
+            }
+
+            $.ajax({
+                url: '/enter/outsourcing/edit/step3', // 외주 수정 단계별 저장 URL
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    if (res.success) { currentStepNum = 4; showStep(currentStepNum); }
+                    else { alert('3단계 저장 실패: ' + (res.message || '오류')); }
+                }, error: function(xhr, status, error) { console.error("AJAX Error:", xhr, status, error); alert('3단계 저장 중 서버 오류'); }
+            });
+        }
+
+        function completeEdit() {
+            // 모든 단계의 데이터가 이미 서버에 저장되어 있다고 가정하고 최종 완료 요청만 보냄.
+            // 또는 마지막 단계에서 모든 데이터를 한 번에 전송할 수도 있음 (백엔드 설계에 따라 다름).
+ $.ajax({
+                url: '/enter/outsourcing/complete-edit',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ osCd: osCd }),
+             success: function(res) {
+                    if (res.success) {
+                        alert(res.message || '외주 정보가 성공적으로 수정되었습니다.');
+                        window.location.href = res.redirectUrl || '/enter/outsourcing/list';
+             } else {
+                        alert('외주 정보 수정 실패: ' + (res.message || '알 수 없는 오류'));
+                    }
+                },
+                error: function(xhr, status, error) 
+ {
+                    console.error("AJAX Error:", xhr, status, error);
+                    alert('외주 정보 수정 중 서버 오류가 발생했습니다.');
+                }
+            });
+ }
     });
     /*]]>*/
     </script>

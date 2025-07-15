@@ -2,19 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{enter/layout/enterLayoutkjw}">
-      <script>
-        // 다른 스크립트가 실행되기 전에 먼저
-        // initializeFirebase를 아무것도 안하는 함수로 정의해버립니다.
-        function initializeFirebase() {
-            // 이 함수는 호출되더라도 아무 일도 하지 않으므로 오류가 발생하지 않습니다.
-            console.log("Firebase 초기화 호출을 무시했습니다.");
-        }
-    </script>
 <head>
     <title>내 외주 목록</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* 기본 레이아웃 및 여백 */
+      /* 기본 레이아웃 및 여백 */
         .page-container { padding: 20px; max-width: 1200px; margin: 0 auto; }
         
         /* 섹션 제목 스타일 */
@@ -267,7 +259,32 @@
             transition: background-color 0.2s ease;
         }
         .copy-url-btn:hover { background-color: #0056b3; }
-
+    
+        /* ... (기존 스타일 유지) ... */
+        /* 새롭게 추가하는 썸네일 관련 스타일 */
+        .outsourcing-thumbnail-wrapper {
+            width: 100%;
+            height: 180px; /* 고정 높이 */
+            overflow: hidden;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px; /* 내용과의 간격 */
+            border-radius: 8px; /* 카드 모서리와 일치 */
+        }
+        .outsourcing-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 이미지가 영역에 맞게 잘리거나 채워지도록 */
+        }
+        .outsourcing-thumbnail-placeholder {
+            color: #aaa;
+            font-size: 1em;
+            font-weight: 500;
+            text-align: center;
+        }
+        /* ... (나머지 스타일 유지) ... */
     </style>
 </head>
 <body>
@@ -279,13 +296,14 @@
         	<i class="fas fa-plus"></i> 새 외주 등록하기
         </button>
         <p id="noPortfolioMessage" style="color:red; font-weight: bold; margin-top:10px; display:none;">
-        	<i class="fas fa-exclamation-triangle"></i> 포트폴리오가 1개 이상 있어야 외주를 등록할 수 있습니다.
+        	<i class="fas fa-exclamation-triangle"></i> 포트폴리오가 1개 이상 있어야 외주를 등록할 수 있습니다. 
         </p>	 
 
         <div id="outsourcingItemsGrid" class="outsourcing-items-grid"></div>
 		
         <div id="noOutsourcingMessage" class="no-outsourcing-container hidden">
-            <p>등록된 외주가 없습니다. 새로운 외주를 등록해보세요!</p>
+            <p>등록된 외주가 없습니다.
+        새로운 외주를 등록해보세요!</p>
         </div>
     </div>
     
@@ -300,13 +318,13 @@
                     <button id="shareFacebookBtn" class="social-button"><i class="fab fa-facebook-f"></i></button>
                     <button id="shareXBtn" class="social-button"><i class="fab fa-x-twitter"></i></button>
                     <button id="shareInstagramBtn" class="social-button"><i class="fab fa-instagram"></i></button>
-                    </div>
+                </div>
                 <div class="copy-url-section">
                     <input type="text" id="shareUrlInput" class="copy-url-input" readonly>
                     <button id="modalCopyUrlBtn" class="copy-url-btn">복사</button>
                 </div>
             </div>
-    	</div>
+        </div>
     </div>
 </th:block>
 
@@ -317,11 +335,11 @@
         // 아무 내용도 없는 빈 함수
       }
 
-        $(document).ready(function() {
+       $(document).ready(function() {
             let grid = $('#outsourcingItemsGrid');
             let shareTitle = '';
             let shareUrl = '';
-            const shareModal = $('#shareModal'); // 공유 모달 요소
+            const shareModal = $('#shareModal');
 
             // "새 외주 등록하기" 버튼 클릭 이벤트
 			$('#addOutsourcingBtn').on('click',function(){
@@ -331,7 +349,6 @@
 				}
 				window.location.href='/enter/outsourcing/add';
 			});
-
             // 날짜 차이를 계산하는 헬퍼 함수
             function getDaysDifference(startDate, endDate) {
                 if (!startDate || !endDate) return null;
@@ -373,13 +390,13 @@
 				});
             }
             checkPortfolioCountAndControlButton();
-            
             // 외주 목록을 AJAX로 불러오고 화면에 렌더링하는 함수
             function loadAndRenderOutsourcingList() {
                 $.ajax({
                     url: '/enter/outsourcing/listData',
                     cache: false,
-                    success: function(outsourcings) {
+                    success: 
+function(outsourcings) {
                         grid.empty();
                         if (outsourcings && outsourcings.length > 0) {
                             $('#noOutsourcingMessage').hide(); 
@@ -390,13 +407,13 @@
                                 const durationHtml = durationDays !== null ? `<i class="far fa-calendar-alt"></i> 진행 기간 ${durationDays}일` : '';
 
                                 const categoriesHtml = o.categories && o.categories.length > 0 ?
-                                    `<span>${o.categories.map(cat => cat.ctgryNm).join(' > ')}</span>` :
+                                       `<span>${o.categories.map(cat => cat.ctgryNm).join(' > ')}</span>` :
                                     `<span>카테고리 없음</span>`;
-                                
                                 const tagsHtml = o.tagNames && o.tagNames.length > 0 ? 
                                     `<div class="tags">${o.tagNames.join(', ')}</div>` : '';
                                 
-                                const formattedAmount = o.osAmt ? o.osAmt.toLocaleString('ko-KR') + '원' : '금액 미정';
+                                const formattedAmount = o.osAmt ?
+o.osAmt.toLocaleString('ko-KR') + '원' : '금액 미정';
 
                                 let recruitmentStatusHtml = '';
                                 if (o.osStrtYmdt) {
@@ -404,8 +421,7 @@
                                     const recruitmentEndDate = new Date(o.osStrtYmdt.split('T')[0]);
                                     
                                     const diffTime = recruitmentEndDate - today;
-                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-
+                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                                     if (diffDays > 0) {
                                         recruitmentStatusHtml = `<span class="status-badge secondary">모집 D-${diffDays}</span>`;
                                     } else if (diffDays === 0) {
@@ -417,13 +433,22 @@
                                     recruitmentStatusHtml = `<span class="status-badge grey">모집 정보 없음</span>`;
                                 }
 
+                                // 썸네일 URL이 있는 경우 이미지 표시, 없는 경우 플레이스홀더 표시
+                                const thumbnailUrl = o.osThumbnailUrl ? 
+                                    `<img src="${o.osThumbnailUrl}" alt="외주 썸네일" class="outsourcing-thumbnail">` :
+                                    `<div class="outsourcing-thumbnail-placeholder"><i class="fas fa-image"></i> 이미지 없음</div>`;
+
                                 grid.append(`
                                     <div class="outsourcing-item-card" data-os-cd="${osCd}">
+                                        <div class="outsourcing-thumbnail-wrapper">
+                                            ${thumbnailUrl}
+                                        </div>
                                         <div class="card-header">
                                             <div class="card-status">
                                                 <span class="status-badge primary">외주</span>
                                                 ${recruitmentStatusHtml} </div>
-                                            <div class="card-applicant-price">
+                                            <div 
+                                                class="card-applicant-price">
                                                 <div class="applicant-count">지원자 ${o.applicantCount || 0}명</div> <div class="outsource-price">${formattedAmount}</div>
                                             </div>
                                         </div>
@@ -475,7 +500,8 @@
                                 }
                             },
                             error: function(xhr) {
-                                const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : '삭제 중 서버 오류가 발생했습니다.';
+                                const errorMsg = xhr.responseJSON ?
+xhr.responseJSON.message : '삭제 중 서버 오류가 발생했습니다.';
                                 alert('오류가 발생했습니다: ' + errorMsg);
                                 console.error("삭제 오류:", xhr.status, xhr.responseText);
                             }
@@ -486,7 +512,7 @@
                     shareUrl = `${window.location.origin}/enter/outsourcing/detail/${osCd}`; // 공유할 외주 URL
                     
                     // ✨✨✨ 모달에 URL 채워넣기 ✨✨✨
-                    $('#shareUrlInput').val(shareUrl); 
+                    $('#shareUrlInput').val(shareUrl);
                     $('#shareModalTitle').text(`'${shareTitle}' 공유하기`);
                     
                     // ✨✨✨ 모달 표시: display, opacity, visibility 모두 설정 ✨✨✨
@@ -497,7 +523,6 @@
                     });
                 }
             });
-            
             // 모달 닫기 버튼 이벤트
             shareModal.find('.modal-close-btn').on('click', function() {
                 shareModal.css({
@@ -506,7 +531,6 @@
                     'visibility': 'hidden'
                 });
             });
-
             // 모달 바깥 영역 클릭 시 모달 닫기
             shareModal.on('click', (e) => { 
                 if ($(e.target).is(shareModal)) {
@@ -517,7 +541,6 @@
                     });
                 }
             });
-
             // ✨✨✨ URL 복사 버튼 이벤트 ✨✨✨
             $('#modalCopyUrlBtn').on('click', function() {
                 const urlInput = $('#shareUrlInput')[0];
@@ -530,7 +553,6 @@
                     alert('URL 복사에 실패했습니다. 직접 복사해주세요: ' + urlInput.value);
                 });
             });
-
             // ✨✨✨ 페이스북 공유 버튼 이벤트 ✨✨✨
             $('#shareFacebookBtn').on('click', function() {
                 if (shareUrl) {
@@ -538,7 +560,6 @@
                     window.open(facebookShareUrl, '_blank', 'width=600,height=400');
                 }
             });
-
             // ✨✨✨ X.com (트위터) 공유 버튼 이벤트 ✨✨✨
             $('#shareXBtn').on('click', function() {
                 if (shareUrl) {
@@ -546,15 +567,14 @@
                     window.open(xShareUrl, '_blank', 'width=600,height=400');
                 }
             });
-
             // ✨✨✨ 인스타그램 공유 버튼 이벤트 (URL 복사 유도) ✨✨✨
-            // 인스타그램은 직접 웹 공유 API가 없으므로 URL 복사를 유도합니다.
+            // 인스타그램은 직접 공유를 지원하지 않으므로 URL 복사를 유도합니다.
             $('#shareInstagramBtn').on('click', function() {
                 const urlInput = $('#shareUrlInput')[0];
                 urlInput.select();
                 urlInput.setSelectionRange(0, 99999);
                 navigator.clipboard.writeText(urlInput.value).then(() => {
-                    alert('인스타그램은 직접 공유를 지원하지 않습니다. URL이 클립보드에 복사되었습니다. 인스타그램 앱에서 붙여넣어 공유해주세요!');
+                    alert('인스타그램은 직접 공유를 지원하지 않습니다. URL이 클립보드에 복사되었습니다. \n인스타그램 앱에서 붙여넣어 공유해주세요!');
                 }).catch(err => {
                     console.error('URL 복사 실패 (인스타그램):', err);
                     alert('URL 복사에 실패했습니다. 인스타그램 앱에서 직접 이 주소를 공유해주세요: ' + urlInput.value);
