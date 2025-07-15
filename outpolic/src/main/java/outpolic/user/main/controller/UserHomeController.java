@@ -38,12 +38,15 @@ public class UserHomeController {
         model.addAttribute("mainCategories", mainCategories);
         log.info("메인 페이지 세션 확인: {}", session.getAttribute("SID"));
         
-        List<UserPortfolioRankingContentsDTO> popularPortfolioList = userRankingService.getUserRankingPoContents();
-        model.addAttribute("findPOList", popularPortfolioList);
-        
-        // 인기 외주 리스트 불러오기
-        List<UserRankingContentsDTO> popularOutsourcingList = userRankingService.getRankingContentsList();
-        model.addAttribute("findOSList", popularOutsourcingList);
+		/*
+		 * List<UserPortfolioRankingContentsDTO> popularPortfolioList =
+		 * userRankingService.getUserRankingPoContents();
+		 * model.addAttribute("findPOList", popularPortfolioList);
+		 * 
+		 * // 인기 외주 리스트 불러오기 List<UserRankingContentsDTO> popularOutsourcingList =
+		 * userRankingService.getRankingContentsList();
+		 */
+        //model.addAttribute("findOSList", popularOutsourcingList);
 
         return "main";
     }

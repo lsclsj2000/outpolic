@@ -129,16 +129,16 @@
 									</li>
 					            </ul>
 					        </div> 
-					        <div th:if="${not #lists.isEmpty(findOSList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
+					        <!-- <div th:if="${not #lists.isEmpty(findOSList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
 					        
-						        <!-- ★★ [핵심 수정 1] th:each="content, iterStat : ${findOSList}" 로 iterStat 변수를 추가합니다. ★★ -->
+						        ★★ [핵심 수정 1] th:each="content, iterStat : ${findOSList}" 로 iterStat 변수를 추가합니다. ★★
 						        <div th:each="content, iterStat : ${findOSList}" class="slider-item">
 						        
 						            <div class="product-cart-wrap mb-30 position-relative">
 						                <div class="product-img-action-wrap">
 						                    <div class="product-img product-img-zoom">
 						                        <a th:href="@{/user/contents/{id}(id=${content.osCode})}">
-						                            <!-- ★★ [핵심 수정 2] 비어있던 a 태그 안에 랜덤 이미지 태그들을 추가합니다. ★★ -->
+						                            ★★ [핵심 수정 2] 비어있던 a 태그 안에 랜덤 이미지 태그들을 추가합니다. ★★
 						                            <img class="default-img"
 						                                 th:src="@{|https://picsum.photos/id/${iterStat.index + 320}/400/300|}" 
 						                                 alt="외주 이미지" />
@@ -153,7 +153,7 @@
 						                        <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" href="#">카테고리 | 기업명</a>
 						                    </div>
 						                    <h2>
-						                        <!-- 링크가 중복되므로, 이 a 태그는 제거하고 텍스트만 남깁니다. -->
+						                        링크가 중복되므로, 이 a 태그는 제거하고 텍스트만 남깁니다.
 						                        <span th:text="${content.osTtl}">콘텐츠 제목</span>
 						                    </h2>
 						                    <div class="product-rate-cover">
@@ -165,16 +165,16 @@
 						                    <div class="product-price">
 						                       <span th:text="${content.osAtm}">가격 정보~</span>
 						                    </div>
-						                    <!-- stretched-link 클래스를 상위 a태그로 옮겨주는 효과 -->
+						                    stretched-link 클래스를 상위 a태그로 옮겨주는 효과
 						                    <a th:href="@{/user/contents/{id}(id=${content.osCode})}" class="stretched-link"></a>
 						                </div>
 						            </div>
 						        </div> 
-						    </div>
+						    </div> -->
 					        <!-- 데이터가 없을 경우 표시할 메시지 -->
-					        <div th:if="${#lists.isEmpty(findOSList)}" class="text-center py-5">
+					        <!-- <div th:if="${#lists.isEmpty(findOSList)}" class="text-center py-5">
 					            <p>표시할 인기 콘텐츠가 없습니다.</p>
-					        </div>
+					        </div> -->
 						</section>
 						<!-- 외주 랭킹 끝 -->
 						<!--Products Tabs-->
@@ -182,11 +182,11 @@
 				</div>
 			</div>
 			<!-- 인기있는 포트폴리오 영역 시작 -->
-			<div class="container mb-30">
+			<!-- <div class="container mb-30">
 				<div class="row d-flex justify-content-center">
 					<div class="col-lg-4-5">
 						<section class="section-padding">
-							<!-- 섹션 제목 부분 -->
+							섹션 제목 부분
 					        <div class="section-title style-2 wow animate__animated animate__fadeIn">
 					            <h3>인기있는 포트폴리오</h3>
 					            <ul class="nav nav-tabs links" style="font-size: 14px;">
@@ -210,11 +210,11 @@
 									</li>
 					            </ul>
 					        </div> 
-							<!-- ★★ [수정 1] th:each에 iterStat 추가 ★★ -->
+							★★ [수정 1] th:each에 iterStat 추가 ★★
 					        <div th:if="${not #lists.isEmpty(findPOList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
 					            <div th:each="content, iterStat : ${findPOList}" class="slider-item">
 	
-									<!-- ★★ [수정 2] onclick 제거, class와 data-* 속성으로 변경 ★★ -->
+									★★ [수정 2] onclick 제거, class와 data-* 속성으로 변경 ★★
 								    <div class="product-cart-wrap mb-30 position-relative portfolio-modal-trigger"
 								         th:data-contents-id="${content.prtfCode}"
 								         role="button"
@@ -246,10 +246,10 @@
 					            <p>표시할 인기 콘텐츠가 없습니다.</p>
 					        </div>
 						</section>
-						<!--Products Tabs-->
+						Products Tabs
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<!-- 인기있는 포트폴리오 영역 끝 -->
 			<!-- 리뷰 영역 시작 -->
 			<div class="comments-area">
