@@ -17,13 +17,10 @@ public interface EnterPortfolioService {
     List<EnterOutsourcing> getLinkedOutsourcings(String prtfCd);
     List<EnterOutsourcing> searchUnlinkedOutsourcings(String prtfCd, String entCd, String query);
 
-    // ▼▼▼ 이 메서드 선언을 추가합니다. ▼▼▼
     List<EnterPortfolio> searchPortfoliosByTitle(String query);
-
     // --- CUD 관련 ---
     void addPortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException;
     void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException;
     void deletePortfolio(String prtfCd);
-    List<EnterPortfolio> getLinkedPortfoliosByOsCd(String osCd);
-    
+    List<EnterPortfolio> getLinkedOutsourcingsByOsCd(String osCd); // ★수정: 포트폴리오에서 외주 연결 가져오는 메서드 선언
 }

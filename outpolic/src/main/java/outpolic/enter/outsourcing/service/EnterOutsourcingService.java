@@ -2,6 +2,7 @@ package outpolic.enter.outsourcing.service;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.outsourcing.domain.OutsourcingFormDataDto;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
+import outpolic.systems.file.domain.FileMetaData;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,9 +15,9 @@ public interface EnterOutsourcingService {
     EnterOutsourcing findOutsourcingDetailsByOsCd(String osCd);
     List<String> searchTags(String query);
 
-    // ★ 추가: 모든 외주 목록을 가져오는 메서드 (사용자 외주 목록에 필요)
     List<EnterOutsourcing> getAllOutsourcings();
-
+    List<String> getFilesByClCd(String clCd); 
+    
     // --- 수정/삭제 관련 ---
     void deleteOutsourcing(String osCd);
     
@@ -24,8 +25,8 @@ public interface EnterOutsourcingService {
     List<EnterPortfolio> getLinkedPortfoliosByOsCd(String osCd);
     List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query);
     void linkPortfolioToOutsourcing(String osCd, String prtfCd, String entCd);
-    void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd);
-
+    void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd); // ★수정: 추상 메서드 선언 확인
+    
     // --- 단계별 등록 API ---
     String saveStep1Data(OutsourcingFormDataDto formData, HttpSession session);
     void saveStep2Data(String osCd, List<String> categoryCodes, String tags, HttpSession session);
@@ -35,9 +36,9 @@ public interface EnterOutsourcingService {
     // --- 단계별 수정 API ---
     void updateOutsourcingStep1(EnterOutsourcing outsourcing);
     void updateOutsourcingStep2(String osCd, List<String> categoryCodes, String tags);
-    void updateOutsourcingStep3(String osCd, MultipartFile[] files);
+
     EnterOutsourcing getOutsourcingByOsCd(String osCd);
-    
+    void updateOutsourcingStep3(String osCd, MultipartFile[] files, String existingFileUrlsList); // 매개변수가 추가된 경우
+
     String findEntCdByMbrCd(String mbrCd);
-    
 }

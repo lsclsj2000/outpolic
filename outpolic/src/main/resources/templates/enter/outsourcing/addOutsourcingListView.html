@@ -35,6 +35,8 @@
         .progress-indicator { display: flex; justify-content: center; margin-bottom: 30px; gap: 10px; }
         .progress-step { width: 40px; height: 40px; border-radius: 50%; background-color: #e0e0e0; color: #888; display: flex; justify-content: center; align-items: center; font-weight: bold; }
         .progress-step.active { background-color: #3BB77E; color: white; }
+        /* 에러 메시지 스타일 */
+        .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -54,9 +56,7 @@
                     <div class="progress-step" data-step="4">4</div>
                 </div>
 
-                <!-- Step 1: 기본 정보 -->
                 <div class="form-step active" id="step1">
-                    <!-- ★ 수정된 부분: outsourcing -> formData -->
                     <div class="form-group">
                         <label for="osTtl">외주 프로젝트 제목 <span style="color:red;">*</span></label>
                         <input type="text" id="osTtl" name="osTtl" class="form-control" required th:value="${formData.osTtl}">
@@ -96,16 +96,14 @@
                     </div>
                 </div>
 
-                <!-- Step 2: 카테고리/태그 -->
                 <div class="form-step" id="step2">
                     <div class="form-group">
                         <label>카테고리 <span style="color:red;">*</span></label>
                         <div id="category-inputs-container"></div>
-                    </div>
+                        <div class="error-message" id="categoryCodesError"></div> </div>
                     <div class="form-group">
                         <label for="tags">태그 (쉼표로 구분)</label>
                         <div class="tag-search-wrapper">
-                             <!-- ★ 수정된 부분: outsourcing -> formData -->
                              <input type="text" id="tags" name="tags" class="form-control" th:value="${formData.tags}">
                              <div id="tag-search-results" class="search-results-dropdown"></div>
                         </div>
@@ -116,13 +114,10 @@
                     </div>
                 </div>
 
-                <!-- Step 3: 파일 첨부 -->
                 <div class="form-step" id="step3">
                     <div class="form-group">
-                        <label for="outsourcingReferenceFiles">첨부 파일</label>
-                        <input type="file" id="outsourcingReferenceFiles" name="outsourcingReferenceFiles" multiple class="form-control p-2">
-                        <p class="form-instruction">참고 자료 등 필요한 파일을 첨부해주세요. (최대 5개)</p>
-                        <div class="image-preview-container mt-3" id="outsourcingReferenceFiles-preview-container"></div>
+                        <label for="outsourcingReferenceFiles">대표 이미지 및 첨부 파일</label> <input type="file" id="outsourcingReferenceFiles" name="outsourcingReferenceFiles" multiple class="form-control p-2">
+                        <p class="form-instruction">외주를 대표하는 이미지와 참고 자료 등 필요한 파일을 첨부해주세요. (대표 이미지는 첫 번째 파일)</p> <div class="image-preview-container mt-3" id="outsourcingReferenceFiles-preview-container"></div>
                     </div>
                     <div class="form-navigation">
                         <button type="button" class="btn-step prev" data-step="3">이전</button>
@@ -130,7 +125,6 @@
                     </div>
                 </div>
 
-                <!-- Step 4: 최종 확인 및 포트폴리오 연결 -->
                 <div class="form-step" id="step4">
                     <h3>최종 확인 및 포트폴리오 연결</h3>
                     <div class="linking-section" style="margin-top: 20px;">
@@ -151,19 +145,19 @@
 </th:block>
 
 <th:block layout:fragment="jsFile">
-    <!-- ★ 수정된 부분: outsourcing -> formData -->
-    <div id="file-url-storage" style="display: none;">
-        <span th:if="${formData.referenceFileUrls != null and !#lists.isEmpty(formData.referenceFileUrls)}"
-              th:each="url : ${formData.referenceFileUrls}"
-              th:data-url="${#strings.replace(url, '\', '')}"></span>
-    </div>
-
     <script>
     $(document).ready(function() {
-        const MAX_FILE_COUNT = 5;
+        const MAX_FILE_COUNT = 5; // 최대 파일 개수 (대표 1 + 첨부 4)
         let currentStepNum = 1;
         let currentOsCd = '';
         let categorySearchTimeout, tagSearchTimeout, portfolioSearchTimeout;
+
+        // 세션에서 기존 formData를 로드하여 currentOsCd 초기화
+        const initialFormData = /*[[${formData}]]*/ {};
+        if (initialFormData && initialFormData.osCd) {
+            currentOsCd = initialFormData.osCd;
+            $('#currentOsCd').val(currentOsCd);
+        }
 
         function setMinDateTime() {
             const now = new Date();
@@ -192,32 +186,104 @@
             $('#category-inputs-container').append(getCategoryInputTemplate(name, id));
         }
 
-        function initializeFilePreview(fileInputId, previewContainerId) {
+        // 파일 미리보기 초기화 함수 (포트폴리오와 유사하게 재활용)
+        function initializeFilePreview(fileInputId, previewContainerId, isMultiple = true, initialFiles = []) {
             const fileInput = document.getElementById(fileInputId);
             const previewContainer = document.getElementById(previewContainerId);
             if (!fileInput || !previewContainer) return;
+
+            // 기존 파일 로드 (수정 모드에서 사용)
+            previewContainer.innerHTML = ''; // 기존 미리보기 초기화
+            initialFiles.forEach(url => {
+                const fileName = url.substring(url.lastIndexOf('/') + 1);
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'image-preview-item';
+                // 이미지 파일 확장자 확인 (간단하게)
+                if (url.match(/\.(jpeg|jpg|gif|png|jfif)$/i)) {
+                    fileDiv.innerHTML = `<img src="${url}" alt="File Preview" class="w-full h-full object-cover">
+                                         <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-existing-file-btn" data-file-url="${url}"><i class="fas fa-times-circle"></i></button>`;
+                } else {
+                    let iconClass = 'fas fa-file';
+                    if (url.includes('.pdf')) iconClass = 'fas fa-file-pdf';
+                    else if (url.includes('.doc') || url.includes('.docx')) iconClass = 'fas fa-file-word';
+                    else if (url.includes('.ppt') || url.includes('.pptx')) iconClass = 'fas fa-file-powerpoint';
+                    else if (url.includes('.txt')) iconClass = 'fas fa-file-alt';
+
+                    fileDiv.innerHTML = `<div class="flex flex-col items-center justify-center p-1">
+                                            <i class="${iconClass} text-3xl mb-1 text-gray-400"></i>
+                                            <span class="text-xs font-medium">${fileName}</span>
+                                         </div>
+                                         <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-existing-file-btn" data-file-url="${url}"><i class="fas fa-times-circle"></i></button>`;
+                }
+                previewContainer.appendChild(fileDiv);
+            });
+
+
             fileInput.addEventListener('change', function (event) {
+                // 새로 선택된 파일들로 기존 미리보기를 덮어씁니다.
                 previewContainer.innerHTML = '';
                 const newlySelectedFiles = event.target.files;
                 const currentFilesDt = new DataTransfer();
+
                 for (let i = 0; i < newlySelectedFiles.length; i++) {
-                    if (currentFilesDt.items.length < MAX_FILE_COUNT) {
-                        currentFilesDt.items.add(newlySelectedFiles[i]);
+                    const file = newlySelectedFiles.item(i);
+                    if (isMultiple && currentFilesDt.items.length < MAX_FILE_COUNT) {
+                        currentFilesDt.items.add(file);
+                    } else if (!isMultiple && currentFilesDt.items.length < 1) { // 단일 파일
+                         currentFilesDt.items.add(file);
                     } else {
-                        alert(`파일은 최대 ${MAX_FILE_COUNT}개까지 첨부할 수 있습니다.`);
+                        alert(`파일은 최대 ${isMultiple ? MAX_FILE_COUNT : 1}개까지 첨부할 수 있습니다.`);
                         break;
                     }
                 }
-                fileInput.files = currentFilesDt.files;
+                fileInput.files = currentFilesDt.files; // DataTransfer 객체의 파일을 input에 다시 설정
+
                 Array.from(fileInput.files).forEach(file => {
                     const fileDiv = document.createElement('div');
                     fileDiv.className = 'image-preview-item';
-                    fileDiv.innerHTML = `<i class="fas fa-file"></i><span>${file.name}</span>`;
+                    const fileType = file.type;
+                    const fileName = file.name;
+
+                    if (fileType.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            fileDiv.innerHTML = `<img src="${e.target.result}" alt="File Preview" class="w-full h-full object-cover">
+                                                 <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-file-btn" data-file-name="${fileName}"><i class="fas fa-times-circle"></i></button>`;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        let iconClass = 'fas fa-file'; // 기본 아이콘
+                        if (fileType.includes('pdf')) iconClass = 'fas fa-file-pdf';
+                        else if (fileType.includes('word')) iconClass = 'fas fa-file-word';
+                        else if (fileType.includes('powerpoint')) iconClass = 'fas fa-file-powerpoint';
+                        else if (fileType.includes('text')) iconClass = 'fas fa-file-alt';
+
+                        fileDiv.innerHTML = `<div class="flex flex-col items-center justify-center p-1">
+                                                <i class="${iconClass} text-3xl mb-1 text-gray-400"></i>
+                                                <span class="text-xs font-medium">${fileName}</span>
+                                             </div>
+                                             <button type="button" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-file-btn" data-file-name="${fileName}"><i class="fas fa-times-circle"></i></button>`;
+                    }
                     previewContainer.appendChild(fileDiv);
                 });
             });
-        }
 
+            // 새로 업로드된 파일의 삭제 버튼 이벤트 (change 이벤트로 생성된 미리보기에 적용)
+            $(document).on('click', '.remove-file-btn', function() {
+                const fileNameToRemove = $(this).data('file-name');
+                const dt = new DataTransfer();
+                const currentInputFiles = fileInput.files;
+
+                for (let j = 0; j < currentInputFiles.length; j++) {
+                    if (currentInputFiles.item(j).name !== fileNameToRemove) {
+                        dt.items.add(currentInputFiles.item(j));
+                    }
+                }
+                fileInput.files = dt.files;
+                $(this).closest('.image-preview-item').remove(); // 미리보기 아이템 삭제
+            });
+        }
+        
         function loadLinkedPortfoliosForStep4() {
             const listDiv = $('#linked-portfolio-list').empty();
             if (!currentOsCd) {
@@ -235,21 +301,30 @@
 
         setMinDateTime();
         showStep(currentStepNum);
-        initializeFilePreview('outsourcingReferenceFiles', 'outsourcingReferenceFiles-preview-container');
+
+        // --- 기존 파일 미리보기 로드 (세션에 데이터가 있는 경우) ---
+        // formData.uploadedFiles는 FileMetaData 객체의 리스트이므로 filePath를 추출하여 전달
+        const initialFilesForPreview = initialFormData.uploadedFiles ? 
+                                       initialFormData.uploadedFiles.map(file => file.filePath) : 
+                                       [];
+        initializeFilePreview('outsourcingReferenceFiles', 'outsourcingReferenceFiles-preview-container', true, initialFilesForPreview);
+        
+        // Step 2 카테고리 로드
         if ($('#category-inputs-container .category-input-group').length === 0) {
-            addCategoryInput();
+            // formData에 기존 카테고리 정보가 있다면 로드
+            if (initialFormData.categoryCodes && initialFormData.categoryCodes.length > 0) {
+                // assumption: categoryCodes in formData is List<String> of category IDs
+                // Need to fetch category names to display
+                initialFormData.categoryCodes.forEach(id => {
+                    // This is a simplified approach. In a real app, you'd fetch the name based on the ID.
+                    // For now, we'll just show the ID or a placeholder if name isn't available.
+                    addCategoryInput('', id); // Display ID in hidden, name in visible (needs fetch)
+                });
+            } else {
+                addCategoryInput(); // 최소 하나의 빈 카테고리 입력 필드 추가
+            }
         }
-
-        (function loadInitialFiles() {
-            var fileUrls = [];
-            $('#file-url-storage span').each(function() { fileUrls.push($(this).data('url')); });
-            var previewContainer = $('#outsourcingReferenceFiles-preview-container');
-            fileUrls.forEach(function(url) {
-                var fileName = url.substring(url.lastIndexOf('/') + 1);
-                previewContainer.append(`<div class="image-preview-item"><i class="fas fa-file"></i><span>${fileName}</span></div>`);
-            });
-        })();
-
+        
         $(document).on('click', '.add-row-btn', () => addCategoryInput());
         $(document).on('click', '.remove-category-btn', function() {
             if ($('#category-inputs-container .category-input-group').length > 1) $(this).closest('.category-input-group').remove();
@@ -273,7 +348,6 @@
             categoryInputGroup.find('.category-id-input').val(selectedItem.data('id'));
             selectedItem.parent().hide().empty();
         });
-
         $('#tags').on('input', function() {
             const query = $(this).val().split(',').pop().trim();
             clearTimeout(tagSearchTimeout);
@@ -291,7 +365,6 @@
             tagInput.val(parts.join(',') + ', ').focus();
             $('#tag-search-results').hide().empty();
         });
-
         $('#portfolio-search-input').on('input', function() {
             const query = $(this).val(), entCd = $('input[name="entCd"]').val(), resultsDiv = $('#portfolio-search-results').empty();
             clearTimeout(portfolioSearchTimeout);
@@ -320,7 +393,6 @@
                 error: () => alert('해제 실패')
             });
         });
-
         $('.btn-step.next').on('click', function() {
             const stepId = $(this).data('step');
             if (stepId === 1) saveStep1AndProceed();
@@ -329,7 +401,7 @@
         });
         $('.btn-step.prev').on('click', function() { currentStepNum--; showStep(currentStepNum); });
         $('.btn-step.submit').on('click', () => completeRegistration());
-
+        
         function saveStep1AndProceed() {
             const formData = new FormData(document.getElementById('outsourcingRegistrationForm'));
             $.ajax({ url: '/enter/outsourcing/save-step1', type: 'POST', data: formData, processData: false, contentType: false,
@@ -343,10 +415,29 @@
         }
 
         function saveStep2AndProceed() {
+            // 카테고리 유효성 검사 추가
+            const categoryIds = [];
+            let hasValidCategorySelection = false; // 유효한 카테고리 선택 여부
+            $('#category-inputs-container .category-id-input').each(function() {
+                const ctgryId = $(this).val();
+                const ctgryNm = $(this).siblings('.category-name-input').val().trim();
+                if (ctgryId && ctgryId !== "") { // ID가 선택된 유효한 카테고리
+                    categoryIds.push(ctgryId);
+                    hasValidCategorySelection = true;
+                } else if (ctgryNm !== "") { // ID는 없지만 이름이 입력된 카테고리 (새로운 카테고리 또는 검색 미완료)
+                    categoryIds.push(ctgryNm); // 이름으로 넘김 (백엔드에서 처리)
+                    hasValidCategorySelection = true;
+                }
+            });
+
+            if (!hasValidCategorySelection) {
+                $('#categoryCodesError').text('카테고리는 최소 하나 이상 선택하거나 입력해야 합니다.');
+                return; // 다음 단계로 진행하지 않음
+            }
+            $('#categoryCodesError').text(''); // 에러 메시지 초기화
+
             const formData = new FormData();
             formData.append('osCd', currentOsCd);
-            const categoryIds = [];
-            $('#category-inputs-container .category-id-input').each(function() { if ($(this).val()) categoryIds.push($(this).val()); });
             formData.append('categoryCodes', categoryIds.join(','));
             formData.append('tags', $('#tags').val());
             $.ajax({ url: '/enter/outsourcing/save-step2', type: 'POST', data: formData, processData: false, contentType: false,
@@ -363,6 +454,12 @@
             const files = document.getElementById('outsourcingReferenceFiles').files;
             for (let i = 0; i < files.length; i++) formData.append('outsourcingReferenceFiles', files[i]);
             
+            // 파일이 하나도 첨부되지 않았을 때 경고 메시지
+            if (files.length === 0) {
+                alert('대표 이미지를 포함한 첨부 파일을 하나 이상 선택해야 합니다.');
+                return;
+            }
+
             $.ajax({ url: '/enter/outsourcing/save-step3', type: 'POST', data: formData, processData: false, contentType: false,
                 success: res => {
                     if (res.success) { currentStepNum = 4; showStep(currentStepNum); }

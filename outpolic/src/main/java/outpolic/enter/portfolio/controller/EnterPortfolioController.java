@@ -138,9 +138,11 @@ public class EnterPortfolioController {
             return ResponseEntity.ok(Map.of("success", true, "message", "수정되었습니다.", "redirectUrl", "/enter/portfolio/list"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "수정 중 오류 발생: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(Map.of("success", false, "message", "수정 중 오류 발생: " + e.getMessage()));
         }
     }
+
 
     // --- 포트폴리오 삭제 ---
     @DeleteMapping("/delete/{prtfCd}")

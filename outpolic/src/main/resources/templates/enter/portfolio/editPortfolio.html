@@ -6,22 +6,40 @@
     <title>포트폴리오 수정</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .portfolio-add-form-container { max-width: 800px; margin: 40px auto; padding: 30px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .portfolio-add-form-container h3 { text-align: center; margin-bottom: 30px; font-size: 1.8em; }
-        .form-group { margin-bottom: 25px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-        .form-control { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        .form-actions { text-align: right; margin-top: 30px; }
-        .btn-submit { background-color: #4CAF50; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; }
-        .btn-submit:hover { background-color: #45a049; }
-        .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 5px; }
-        .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd; background-color: #fff; z-index: 1000; max-height: 150px; overflow-y: auto; }
-        .search-results-dropdown .result-item, .search-results-dropdown .result-item-tag { padding: 10px; cursor: pointer; }
-        .search-results-dropdown .result-item:hover, .search-results-dropdown .result-item-tag:hover { background-color: #f0f0f0; }
-        .category-input-group { display: flex; align-items: center; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 8px; overflow: visible; position: relative; }
-        .category-input-group .category-name-input { border: none; flex-grow: 1; padding: 12px 15px; box-shadow: none; border-radius: 0; }
-        .category-input-group .category-controls { display: flex; align-items: center; background-color: #f8f8f8; border-left: 1px solid #eee; padding: 0 5px; }
-        .category-input-group .category-controls button { background: none; border: none; padding: 10px; cursor: pointer; font-size: 1em; color: #555; }
+        .portfolio-add-form-container { max-width: 800px;
+ margin: 40px auto; padding: 30px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+ }
+        .portfolio-add-form-container h3 { text-align: center; margin-bottom: 30px; font-size: 1.8em;
+ }
+        .form-group { margin-bottom: 25px;
+ }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600;
+ }
+        .form-control { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ddd;
+ border-radius: 4px; }
+        .form-actions { text-align: right; margin-top: 30px;
+ }
+        .btn-submit { background-color: #4CAF50; color: white; padding: 12px 25px; border: none;
+ border-radius: 5px; cursor: pointer; font-size: 1em; }
+        .btn-submit:hover { background-color: #45a049;
+ }
+        .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 5px;
+ }
+        .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd;
+ background-color: #fff; z-index: 1000; max-height: 150px; overflow-y: auto; }
+        .search-results-dropdown .result-item, .search-results-dropdown .result-item-tag { padding: 10px;
+ cursor: pointer; }
+        .search-results-dropdown .result-item:hover, .search-results-dropdown .result-item-tag:hover { background-color: #f0f0f0;
+ }
+        .category-input-group { display: flex; align-items: center; margin-bottom: 8px; border: 1px solid #ddd;
+ border-radius: 8px; overflow: visible; position: relative; }
+        .category-input-group .category-name-input { border: none;
+ flex-grow: 1; padding: 12px 15px; box-shadow: none; border-radius: 0; }
+        .category-input-group .category-controls { display: flex;
+ align-items: center; background-color: #f8f8f8; border-left: 1px solid #eee; padding: 0 5px;
+ }
+        .category-input-group .category-controls button { background: none; border: none; padding: 10px; cursor: pointer;
+ font-size: 1em; color: #555; }
     </style>
 </head>
 <body>
@@ -35,14 +53,14 @@
             <input type="hidden" th:field="*{mbrCd}" />
 
             <div class="form-group">
-                <label for="prtfTtl">제목</label>
+         <label for="prtfTtl">제목</label>
                 <input type="text" id="prtfTtl" name="prtfTtl" th:value="*{prtfTtl}" required class="form-control">
             </div>
 
             <div class="form-group">
                 <label for="prtfCn">상세 내용</label>
                 <textarea id="prtfCn" name="prtfCn" th:text="*{prtfCn}" rows="8" class="form-control"></textarea>
-            </div>
+      </div>
 
             <div class="form-group">
                 <label>카테고리 <span style="color:red;">*</span></label>
@@ -52,7 +70,8 @@
 
 			<div class="form-group">
 			    <label for="tags">태그 (쉼표로 구분)</label>
-			    <div class="tag-search-wrapper" style="position: relative;">
+			    <div class="tag-search-wrapper" 
+ style="position: relative;">
 			        <input type="text" id="tags" name="tags" class="form-control" th:value="${#strings.listJoin(portfolio.tagNames, ', ')}">
 			        <div id="tag-search-results" class="search-results-dropdown"></div>
                 </div>
@@ -61,12 +80,12 @@
             <div class="form-group">
                 <label for="portfolioImage">대표 이미지 변경</label>
                 <input type="file" id="portfolioImage" name="portfolioImage" class="form-control">
-                <div style="margin-top: 10px;">
+      <div style="margin-top: 10px;">
                     <p>현재 이미지:</p>
                     <img th:if="*{prtfThumbnailUrl}" th:src="*{prtfThumbnailUrl}" width="150" alt="Current Thumbnail"/>
                     <span th:if="*{prtfThumbnailUrl == null}">없음</span>
                 </div>
-            </div>
+   </div>
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-submit">수정 완료</button>
@@ -79,23 +98,23 @@
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
     <script>
         // --- 카테고리 입력 필드를 동적으로 생성하는 함수 ---
-        function getCategoryInputTemplate(name = '', id = '') {
+         function getCategoryInputTemplate(name = '', id = '') {
             return `
                 <div class="category-input-group">
                     <input type="text" class="form-control category-name-input" placeholder="카테고리 이름 입력" value="${name}">
                     <input type="hidden" class="category-id-input" name="categoryCodes" value="${id}">
-                    <div class="category-controls">
+            <div class="category-controls">
                         <button type="button" class="add-row-btn"><i class="fas fa-plus"></i></button>
                         <button type="button" class="remove-category-btn"><i class="fas fa-times"></i></button>
                     </div>
-                    <div class="search-results-dropdown"></div>
+               <div class="search-results-dropdown"></div>
                 </div>
             `;
-        }
+ }
 
         function addCategoryInput(name = '', id = '') {
             $('#category-inputs-container').append(getCategoryInputTemplate(name, id));
-        }
+ }
 
         $(document).ready(function() {
             let categorySearchTimeout;
@@ -104,17 +123,18 @@
             // 페이지 로드 시, 컨트롤러에서 받은 기존 카테고리 정보를 화면에 그려주는 로직
             const initialCategories = /*[[${portfolio.categories}]]*/ [];
             if (initialCategories && initialCategories.length > 0) {
-                const uniqueCategories = new Map();
+        const uniqueCategories = new Map();
                 initialCategories.forEach(cat => {
                     if (cat && cat.ctgryId) {
                         uniqueCategories.set(cat.ctgryId, cat.ctgryNm);
                     }
+ 
                 });
                 uniqueCategories.forEach((name, id) => addCategoryInput(name, id));
             } else {
                 // 기존 카테고리가 없으면 빈 입력 행을 하나 추가
                 addCategoryInput();
-            }
+           }
 
             // --- 이벤트 핸들러들 ---
 
@@ -123,37 +143,38 @@
 
             // 카테고리 행 삭제
             $(document).on('click', '.remove-category-btn', function() {
-                if ($('#category-inputs-container .category-input-group').length > 1) {
+                if ($('#category-inputs-container .category-input-group').length > 1) 
+ {
                     $(this).closest('.category-input-group').remove();
-                } else {
+ } else {
                     alert('최소 하나의 카테고리는 남겨야 합니다.');
-                }
+ }
             });
-			
-            // 카테고리 검색
+ // 카테고리 검색
             $(document).on('input', '.category-name-input', function() {
                 const currentInput = $(this);
                 const dropdown = currentInput.closest('.category-input-group').find('.search-results-dropdown');
                 const query = currentInput.val();
 
                 clearTimeout(categorySearchTimeout);
-                currentInput.siblings('.category-id-input').val('');
+          currentInput.siblings('.category-id-input').val('');
 
                 if (query.length < 1) {
                     dropdown.hide().empty();
                     return;
                 }
 
-                categorySearchTimeout = setTimeout(() => {
+                categorySearchTimeout = 
+ setTimeout(() => {
                     $.get('/enter/portfolio/api/categories/search', { query: query }, function(data) {
                         dropdown.empty().show();
                         if (data && data.length > 0) {
-                            data.forEach(cat => {
+                  data.forEach(cat => {
                                 dropdown.append(`<div class="result-item" data-id="${cat.ctgryId}" data-name="${cat.ctgryNm}">${cat.ctgryNm}</div>`);
-                            });
+ });
                         }
                     });
-                }, 300);
+ }, 300);
             });
 
             // 카테고리 검색 결과 선택
@@ -162,47 +183,46 @@
                 const group = selectedItem.closest('.category-input-group');
                if(group.length){
                 group.find('.category-name-input').val(selectedItem.data('name'));
-                group.find('.category-id-input').val(selectedItem.data('id'));
+        group.find('.category-id-input').val(selectedItem.data('id'));
                }
                 selectedItem.parent().hide().empty();
             	
                	});
-
-            // 폼 제출 로직
+ // 폼 제출 로직
             $('#portfolioEditForm').on('submit', function(e) {
                 e.preventDefault();
                 
                 // FormData에 폼 필드를 담습니다.
                 // input들의 name 속성을 사용하므로 JS에서 별도로 수집할 필요가 없습니다.
-                const formData = new FormData(this);
+      const formData = new FormData(this);
 
                 // 파일이 새로 선택되었을 경우에만 FormData에 추가합니다.
                 const imageInput = document.getElementById('portfolioImage');
                 if (imageInput.files.length > 0) {
                     formData.append('portfolioImage', imageInput.files[0]);
-                }
+    }
 
                 $.ajax({
                     url: '/enter/portfolio/edit-ajax',
                     type: 'POST',
                     data: formData,
-                    processData: false, // FormData를 사용할 때는 필수
+         processData: false, // FormData를 사용할 때는 필수
                     contentType: false, // FormData를 사용할 때는 필수
                     success: function(res) {
                         if (res.success) {
-                            alert(res.message);
+         alert(res.message);
                             window.location.href = res.redirectUrl;
-                        } else {
+ } else {
                             alert('수정 실패: ' + (res.message || '알 수 없는 오류'));
-                        }
+ }
                     },
                     error: function(xhr) {
                         alert('오류가 발생했습니다: ' + (xhr.responseJSON ? xhr.responseJSON.message : '서버 통신 실패'));
-                    }
+ }
                 });
             });
         });
-    </script>
+ </script>
 </th:block>
 </body>
 </html>

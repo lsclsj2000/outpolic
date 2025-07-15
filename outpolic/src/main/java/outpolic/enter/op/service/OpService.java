@@ -16,5 +16,4 @@ public interface OpService {
 	void linkOutsourcing(String prtfCd, String osCd, String entCd);
 	// 외주 연결 해체하기
 	void unlinkOutsourcing(String prtfCd, String osCd);
-
 }

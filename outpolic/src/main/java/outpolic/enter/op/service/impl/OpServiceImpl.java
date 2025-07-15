@@ -1,6 +1,8 @@
 package outpolic.enter.op.service.impl;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import outpolic.enter.op.mapper.OpMapper;
 import outpolic.enter.op.service.OpService;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+
 /**
  * @Service: 이 클래스가 서비스 로직을 담당하는 Spring에게 알려줍니다.
  * @RequiredArgsConstructor: final 필드를 위한 생성자를 자동으로 만듭니다.
@@ -17,6 +20,8 @@ import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 @RequiredArgsConstructor
 public class OpServiceImpl implements OpService {
 	
+	private static final Logger logger = LoggerFactory.getLogger(OpServiceImpl.class);
+
 	// 데이터베이스 작업을 위해 OpMapper를 주입받음
 	private final OpMapper opMapper;
 	@Override
@@ -44,8 +49,7 @@ public class OpServiceImpl implements OpService {
 		    try {
 		        nextNum = Integer.parseInt(latestOpCd.substring(4)) + 1;
 		    } catch (NumberFormatException e) {
-		        // 파싱 실패 시, 기본값 1 유지 또는 로그 기록
-		        // logger.warn("Failed to parse latestOpCd: {}", latestOpCd, e);
+		        logger.warn("Failed to parse latestOpCd: {}", latestOpCd, e);
 		    }
 		}
 		String newOpCd = String.format("OP_C%05d", nextNum);
