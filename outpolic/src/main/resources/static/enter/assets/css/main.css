@@ -12550,26 +12550,26 @@ p.mb-30-ssy{
 	font-family: Arial, sans-serif;
 	background: #f7f7f7;
 	padding: 100px 40px 100px 40px;
-	width: 1000px;
 }
 
 .faq-container {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 16px;
-	max-width: 900px;
+	gap: 25px;
+	max-width: 1300px;
 	margin: 0 auto;
+	justify-content: center;
 }
 
 .faq-item {
-	width: calc(50% - 8px); /* 2열 */
+	width: calc(45% - 50px); /* 2열 */
 	background: #fff;
 	border-radius: 8px;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-	display: block; /* <-- 핵심 수정 */
+	display: block;
 	overflow: hidden;
 	transition: box-shadow 0.3s ease;
-	align-self: flex-start; /* <-- 핵심 수정 */
+	align-self: flex-start;
 }
 
 .faq-item:hover {

@@ -507,10 +507,10 @@
 	</th:block>
 	
 	<th:block layout:fragment="contents">
-		<h2>문의 작성</h2>			
+		<h2 style="margin-bottom:25px;">문의 작성</h2>		
 		<div class="row">
-			<form id="addInquiryForm" method="post" action="#" enctype="multipart/form-data" style="padding-left:0px;">
-			    <div class="SR_content-input-box">
+			<form id="addInquiryForm" method="post" action="#" enctype="multipart/form-data">
+				<div class="SR_content-input-box">
 					<div class="row shipping_calculator" style="display: flex; flex-wrap: wrap; margin: 0 -15px;">
 						<div class="form-group col-lg-6" style="flex: 0 0 50%; max-width: 50%; padding: 0 15px;">
 							<div class="custom_select">
@@ -560,8 +560,8 @@
 					</div>
 				</div>
 							
-				<div style="max-width:800px; display:flex; flex-direction: row-reverse;">
-					<button id="addInquiryBtn" type="submit" class="btn btn-success text-white">문의 등록</button>
+				<div style=" display:flex; flex-direction: row-reverse;">
+					<button id="addInquiryBtn" class="btn SR_total_blue_btn">문의 등록</button>
 				</div>
 			</form>
 		</div>

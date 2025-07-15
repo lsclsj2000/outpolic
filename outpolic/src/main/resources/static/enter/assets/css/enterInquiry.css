@@ -27,6 +27,7 @@
     border-radius: 8px; /* 둥근 모서리 */
     padding: 15px; /* 내부 여백 */
     background-color: #f9f9f9; /* 배경색 */
+    max-width: 100%;
 }
 
 .SR_checkbox-container {
@@ -271,6 +272,7 @@ form#addInquiryForm {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     margin-bottom: 20px;
+    max-width: 100%;
 }
 
 /* 제목 h3에 대한 스타일 */
@@ -321,7 +323,6 @@ body {
 
 .SR_container-custom {
     max-width: 960px;
-    margin: 40px auto;
     padding: 20px;
     background-color: #fff;
     border-radius: 10px;

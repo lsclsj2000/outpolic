@@ -5,12 +5,48 @@
 
 	<head>
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+        <!-- Tailwind CSS CDN 제거됨 -->
+        <style>
+            /* Custom styles for the modal */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+            .modal-content {
+                background-color: white;
+                padding: 2rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                max-width: 400px;
+                width: 90%;
+                text-align: center;
+            }
+            /* Ensure the hidden class works without Tailwind CSS CDN */
+            .hidden {
+                display: none;
+            }
+            /* Add basic styles for cursor-not-allowed if not using Tailwind */
+            .cursor-not-allowed {
+                cursor: not-allowed;
+            }
+            /* Add basic styles for opacity-50 if not using Tailwind */
+            .opacity-50 {
+                opacity: 0.5;
+            }
+        </style>
 	</head>
 	
 	<!-- 컨텐츠 추가 -->
 	<th:block layout:fragment="contents">
-		
-		<div class="single-page pr-30">
+		<div class="single-page">
 			<div class="SR_single-content">
 				<div class="row">
 					<div class="single-header style-2 mb-5">
@@ -28,7 +64,11 @@
 										<span class="time-reading has-dot">00 views</span>
 									</div>
 									<div>
-										<button type="button" class="SR_remove">삭제</button>
+										<!-- 삭제 버튼 클릭 시 JavaScript 함수 호출 -->
+                                        <!-- '요청중'이 아닐 때 시각적으로 비활성화된 것처럼 보이도록 클래스 추가 -->
+										<button type="button" class="SR_remove" 
+                                                th:classappend="${inquiry.statusName != '요청중'} ? 'opacity-50 cursor-not-allowed' : ''"
+                                                onclick="checkDeleteStatus('${inquiry.statusName}')">삭제</button>
 									</div>
 								</div>
 							</div>
@@ -75,7 +115,7 @@
 							<div class="author-image mb-30">
 							    <a href="#"><img src="/enter/assets/imgs/blog/author-1.png" alt="" class="avatar"></a>
 							    <div class="author-infor">
-									<h5 class="mb-5" th:text="${inquiry.adminName ?: '관리자'}">ADMIN ID</h5> <p class="mb-0 text-muted font-xs">
+									<h5 class="mb-5" th:text="${inquiry.adminName ?: '관리자 답변 예정'}">ADMIN ID</h5> <p class="mb-0 text-muted font-xs">
 										<span class="mr-10" th:text="${inquiry.inquiryProcessRegDate}">YYYY-MM-DD mm:ss</span>
 										<span class="has-dot">답변 완료</span>
 									</p>
@@ -85,12 +125,77 @@
 								문의내용
 							</div>
 						</div>
-						<div class="author-bio p-30 border-radius-15 bg-white text-center text-muted" th:if="${inquiry.inquiryProcessAnsCn == null or inquiry.inquiryProcessAnsCn == ''}">
-							<p>아직 관리자 답변이 등록되지 않았습니다.</p>
+						<div class="author-bio p-30 border-radius-15 bg-white text-center text-muted" 
+							 th:if="${inquiry.inquiryProcessAnsCn == null or inquiry.inquiryProcessAnsCn == ''}">
+							 <div class="author-image mb-30">
+							    <a href="#"><img src="/enter/assets/imgs/blog/author-1.png" alt="" class="avatar"></a>
+							    <div class="author-infor">
+									<h5 class="mb-5" th:text="${inquiry.adminName ?: '관리자'}">ADMIN ID</h5> <p class="mb-0 text-muted font-xs">
+										<span class="mr-10" th:text="${inquiry.inquiryProcessRegDate}">답변일자</span>
+										<span class="has-dot" th:text="${inquiry.statusName}">처리 상태</span>
+									</p>
+							    </div>
+							</div>
+							<p class="pb-30">아직 관리자 답변이 등록되지 않았습니다.</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+
+        <!-- Custom Modal HTML -->
+        <div id="statusModal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <p id="modalMessage" class="text-lg mb-6"></p>
+                <button type="button" class="SR_btn SR_text-white SR_rounded-2 SR_modal-confirm-button-bg mt-20" onclick="closeModal()"
+                		style="width:30%; align-self:anchor-center;">확인</button>
+            </div>
+        </div>
+
+        
+	</th:block>
+	
+	<th:block layout:fragment="jsScript">
+		<script>
+			function checkDeleteStatus(status, iq_cd) {
+	            const modal = document.getElementById('statusModal');
+	            const modalMessage = document.getElementById('modalMessage');
+	
+	            modal.querySelector('button').onclick = closeModal;
+	
+	            if (status !== '요청중') {
+	                modalMessage.textContent = '처리 중이거나 처리가 완료된 문의글은 삭제가 불가합니다';
+	                modal.classList.remove('hidden');
+	            } else {
+	                $.ajax({
+	                    type: 'POST',
+	                    url: '/enter/enterInquiry/delete',
+	                    data: { iq_cd: iq_cd },
+	                    success: function(response) {
+	                        // 성공 메시지를 모달에 표시
+	                        modalMessage.textContent = '문의가 삭제되었습니다.';
+	                        modal.classList.remove('hidden');
+	                        // 모달 확인 버튼 클릭 시 페이지 리디렉션
+	                        modal.querySelector('button').onclick = function() {
+	                            closeModal();
+	                            window.location.href = '/enter/enterInquiryList';
+	                        };
+	                    },
+	                    error: function(xhr, status, error) {
+	                        modalMessage.textContent = '문의 삭제에 실패했습니다. 다시 시도해 주세요.';
+	                        modal.classList.remove('hidden');
+	                        console.error("AJAX Error: ", status, error, xhr.responseText);
+	                    }
+	                });
+	            }
+	        }
+	
+	        function closeModal() {
+	            const modal = document.getElementById('statusModal');
+	            modal.classList.add('hidden'); // Hide the modal
+	            // 모달을 닫을 때 확인 버튼의 동작을 기본 닫기 기능으로 재설정합니다.
+	            modal.querySelector('button').onclick = closeModal;
+	        }
+        </script>
 	</th:block>
 </html>
