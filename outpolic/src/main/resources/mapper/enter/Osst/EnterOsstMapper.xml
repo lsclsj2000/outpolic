@@ -8,7 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!--EnterOsst.DTO -->
 	<resultMap id="enterOsstResultMap" type="outpolic.enter.osst.domain.EnterOsst">
 		<id 	column="osp_cd" 			property="ospCode"/>
-		<id 	column="ocd_cd" 			property="ocdCode"/>
+		<id 	column="ocd_cd" 			property="ocdCd"/>
 		
 		<result column="ocd_ttl" 			property="ocdTitle"/>
 		<result column="ocd_expln" 			property="ocdExpln"/>
@@ -52,12 +52,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="osr_up_cd" 			property="osstRecordUpCode"/>
 	</resultMap>
 
+	<!-- 진행 외주 단계 조회 -->
+	<select id="getEnterOsstStcCode" resultMap="enterOsstRecordResultMap">
+		/* 진행 외주 단계 조회 */
+		select
+			sc.stc_cd,
+			sc.stc_nm
+		from
+			status_code sc
+		where
+			sc.stc_cd = 'SD_CONTRACT'or sc.stc_cd = 'SD_PLANNING'or 
+			sc.stc_cd = 'SD_WORKPROGRESS'or sc.stc_cd = 'SD_COMPLETION';
+	</select>
 	
 	<!-- 진행 외주 기록 조회 -->
 	<select id="getEnterOsstRecord" resultMap="enterOsstRecordResultMap">
 		/* 진행 외주 기록 조회 */
 		select
 			osr.osr_cd as osr_cd,
+			op.ocd_cd as ocd_cd,
 			osr.osp_cd as osp_cd,
 			op.stc_cd as stc_cd,
 			sc.stc_nm as stc_nm,
@@ -72,7 +85,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			outsourcing_record osr
 			left join member m on osr.mbr_cd = m.mbr_cd
 			left join outsourcing_prograss op on osr.osp_cd = op.osp_cd
-			left join status_code sc on op.stc_cd = sc.stc_cd;
+			left join status_code sc on op.stc_cd = sc.stc_cd
+		where
+			op.ocd_cd="OCD_C00012";
 	</select>
 	
 	<!-- 진행 외주 상세 조회 -->

@@ -23,52 +23,6 @@
 	                </div>
 	            </div>
 	            <div class="col-12">
-	            	<!-- 제재타입 목록 -->
-	            	<div class="card">
-	                	<div class="card-body">
-			                <div class="table-responsive">
-			                    <table class="table table-hover">
-			                        <thead>
-			                            <tr>
-			                                <th scope="col" class="start text-center col-1">제재타입코드</th>
-			                                <th scope="col" class="text-center col-1">제재타입명</th>
-			                                <th scope="col" class="text-center col-1">타입설명</th>
-			                                <th scope="col" class="text-center col-1">타입상태코드</th>
-			                                <th scope="col" class="text-center col-1">등록자</th>
-			                                <th scope="col" class="text-center col-1">최초등록일시</th>
-			                                <th scope="col" class="text-center col-1">수정자</th>
-			                                <th scope="col" class="text-center col-1">최종수정일시</th>
-			                                <th scope="col" class="end text-center col-1">Action</th>
-			                            </tr>
-			                        </thead>
-			                        <tbody  th:if="${adminLimitsTypeList != null}">
-										<tr class="start pt-30"
-										    style="border:0px; border-bottom: solid 1px #ececec;"
-										    th:each="dt : ${adminLimitsTypeList}">
-										    
-										    <td class="start text-center">
-										        <span th:text="${dt.limitsTypeCode}">제재타입코드</span>
-										    </td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeName}">제재타입명</td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeExpln}">타입설명</td>
-										    <td scope="col" class="text-center" th:switch="${dt.limitsTypeStcName}">
-			                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
-			                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
-			                                </td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeRegAdmCode}">등록자</td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeRegYmdt}">최초등록일시</td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeMdfcnAdmCode}">수정자</td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeMdfcnYmdt}">최종수정일시</td>
-										    <td scope="col" class="text-center">
-												<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${dt.limitsTypeCode}">수정</a>
-											</td>
-										</tr>
-									</tbody>
-			                    </table>
-			                </div>
-			            </div>
-	            	</div>
-	            	
 	            	<!-- 제재타입 등록 -->
 	                <div class="card">
 	                    <div class="card-body">
@@ -153,6 +107,52 @@
 	                    </div>
 	                    <!-- card body end// -->
 	                </div>
+	            	
+	            	<!-- 제재타입 목록 -->
+	            	<div class="card">
+	                	<div class="card-body">
+			                <div class="table-responsive">
+			                    <table class="table table-hover">
+			                        <thead>
+			                            <tr>
+			                                <th scope="col" class="start text-center col-1">제재타입코드</th>
+			                                <th scope="col" class="text-center col-1">제재타입명</th>
+			                                <th scope="col" class="text-center col-1">타입설명</th>
+			                                <th scope="col" class="text-center col-1">타입상태코드</th>
+			                                <th scope="col" class="text-center col-1">등록자</th>
+			                                <th scope="col" class="text-center col-1">최초등록일시</th>
+			                                <th scope="col" class="text-center col-1">수정자</th>
+			                                <th scope="col" class="text-center col-1">최종수정일시</th>
+			                                <th scope="col" class="end text-center col-1">Action</th>
+			                            </tr>
+			                        </thead>
+			                        <tbody  th:if="${adminLimitsTypeList != null}">
+										<tr class="start pt-30"
+										    style="border:0px; border-bottom: solid 1px #ececec;"
+										    th:each="dt : ${adminLimitsTypeList}">
+										    
+										    <td class="start text-center">
+										        <span th:text="${dt.limitsTypeCode}">제재타입코드</span>
+										    </td>
+										    <td scope="col" class="text-center" th:text="${dt.limitsTypeName}">제재타입명</td>
+										    <td scope="col" class="text-center" th:text="${dt.limitsTypeExpln}">타입설명</td>
+										    <td scope="col" class="text-center" th:switch="${dt.limitsTypeStcName}">
+			                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
+			                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
+			                                </td>
+										    <td scope="col" class="text-center" th:text="${dt.limitsTypeRegAdmCode}">등록자</td>
+										    <td scope="col" class="text-center" th:text="${dt.limitsTypeRegYmdt}">최초등록일시</td>
+										    <td scope="col" class="text-center" th:text="${dt.limitsTypeMdfcnAdmCode}">수정자</td>
+										    <td scope="col" class="text-center" th:text="${dt.limitsTypeMdfcnYmdt}">최종수정일시</td>
+										    <td scope="col" class="text-center">
+												<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${dt.limitsTypeCode}">수정</a>
+											</td>
+										</tr>
+									</tbody>
+			                    </table>
+			                </div>
+			            </div>
+	            	</div>
 	            </div>
 	        </div>
 	    </section>

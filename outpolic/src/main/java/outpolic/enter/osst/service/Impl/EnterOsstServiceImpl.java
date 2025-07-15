@@ -43,5 +43,13 @@ public class EnterOsstServiceImpl implements EnterOsstService {
 		return osstList;
 	}
 
+	@Override
+	public List<EnterOsst> getEnterOsstStcCode() {
+		// 진행 외주 단계 조회
+		List<EnterOsst> osstStcCd = enterOsstMapper.getEnterOsstStcCode();
+		
+		return osstStcCd;
+	}
+
 
 }

@@ -23,52 +23,6 @@
 	                </div>
 	            </div>
 	            <div class="col-12">
-	            	<!-- 신고타입 목록 -->
-	            	<div class="card">
-	                	<div class="card-body">
-			                <div class="table-responsive">
-			                    <table class="table table-hover">
-			                        <thead>
-			                            <tr>
-			                                <th scope="col" class="start text-center col-1">문의타입코드</th>
-			                                <th scope="col" class="text-center col-1">문의명</th>
-			                                <th scope="col" class="text-center col-1">타입설명</th>
-			                                <th scope="col" class="text-center col-1">타입상태코드</th>
-			                                <th scope="col" class="text-center col-1">등록자</th>
-			                                <th scope="col" class="text-center col-1">최초등록일시</th>
-			                                <th scope="col" class="text-center col-1">수정자</th>
-			                                <th scope="col" class="text-center col-1">최종수정일시</th>
-			                                <th scope="col" class="end text-center col-1">Action</th>
-			                            </tr>
-			                        </thead>
-			                        <tbody>
-										<tr class="start pt-30"
-										    style="border:0px; border-bottom: solid 1px #ececec;"
-										    th:each="it : ${adminInquiryTypeList}">
-										    
-										    <td class="start text-center">
-										        <span th:text="${it.inquiryTypeCode}">문의타입코드</span>
-										    </td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeName}">문의명</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeExpln}">타입설명</td>
-										    <td scope="col" class="text-center" th:switch="${it.statusName}">
-			                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
-			                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
-			                                </td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegAdm}">등록자</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegDate}">최초등록일시</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnAdm}">수정자</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnDate}">최종수정일시</td>
-										    <td scope="col" class="text-center">
-												<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${it.inquiryTypeCode}">수정</a>
-											</td>
-										</tr>
-									</tbody>
-			                    </table>
-			                </div>
-			            </div>
-	            	</div>
-	            	
 	            	<!-- 신고타입 등록 -->
 	                <div class="card">
 	                    <div class="card-body">
@@ -151,6 +105,54 @@
 	                    </div>
 	                    <!-- card body end// -->
 	                </div>
+	            
+	            	<!-- 문의타입 목록 -->
+	            	<div class="card">
+	                	<div class="card-body">
+			                <div class="table-responsive">
+			                    <table class="table table-hover">
+			                        <thead>
+			                            <tr>
+			                                <th scope="col" class="start text-center col-1">문의타입코드</th>
+			                                <th scope="col" class="text-center col-1">문의명</th>
+			                                <th scope="col" class="text-center col-1">타입설명</th>
+			                                <th scope="col" class="text-center col-1">타입상태코드</th>
+			                                <th scope="col" class="text-center col-1">등록자</th>
+			                                <th scope="col" class="text-center col-1">최초등록일시</th>
+			                                <th scope="col" class="text-center col-1">수정자</th>
+			                                <th scope="col" class="text-center col-1">최종수정일시</th>
+			                                <th scope="col" class="end text-center col-1">Action</th>
+			                            </tr>
+			                        </thead>
+			                        <tbody>
+										<tr class="start pt-30"
+										    style="border:0px; border-bottom: solid 1px #ececec;"
+										    th:each="it : ${adminInquiryTypeList}">
+										    
+										    <td class="start text-center">
+										        <span th:text="${it.inquiryTypeCode}">문의타입코드</span>
+										    </td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeName}">문의명</td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeExpln}">타입설명</td>
+										    <td scope="col" class="text-center" th:switch="${it.statusName}">
+			                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
+			                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
+			                                </td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegAdm}">등록자</td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegDate}">최초등록일시</td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnAdm}">수정자</td>
+										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnDate}">최종수정일시</td>
+										    <td scope="col" class="text-center">
+												<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${it.inquiryTypeCode}">수정</a>
+											</td>
+										</tr>
+									</tbody>
+			                    </table>
+			                </div>
+			            </div>
+	            	</div>
+	            	
+	            	
 	            </div>
 	        </div>
 	    </section>
