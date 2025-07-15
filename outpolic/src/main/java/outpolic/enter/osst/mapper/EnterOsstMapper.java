@@ -19,4 +19,7 @@ public interface EnterOsstMapper {
 	
 	// 진행 외주 목록 조회
 	List<EnterOsst> getEnterOsstList();
+	
+	// 진행 외주 단계 조회
+	List<EnterOsst> getEnterOsstStcCode();
 }

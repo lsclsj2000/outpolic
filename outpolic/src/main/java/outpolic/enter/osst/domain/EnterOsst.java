@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class EnterOsst {
 	private String ospCode;   
-	private String ocdCode;  
+	private String ocdCd;  
 	             
 	private String ocdTitle;  
 	private String ocdExpln;

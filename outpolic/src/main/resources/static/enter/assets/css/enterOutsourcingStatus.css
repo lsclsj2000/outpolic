@@ -583,3 +583,49 @@ select {
 .star.selected {
     color: #ffc107; /* 선택된 별 색상 (황금색) */
 }
+
+/* For the report and feedback display boxes */
+.SR_report-feedback-card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+    transition: transform 0.2s ease-in-out;
+}
+.SR_report-feedback-card:hover {
+    transform: translateY(-2px);
+}
+
+/* For the submission form areas within each step (these are now removed from main content, only in modals) */
+/* This rule is kept for inputs within modals */
+.SR_modal-dialog-content input[type="text"],
+.SR_modal-dialog-content textarea,
+.SR_modal-dialog-content input[type="file"],
+.SR_modal-dialog-content select {
+    padding: 0.6rem; /* Slightly less padding */
+   margin-bottom: 0.75rem; /* mb-3 */
+   border: 1px solid #a0aec0; /* A darker border for inputs */
+   border-radius: 0.375rem; /* rounded-md */
+   background-color: #ffffff; /* White background for inputs */
+}
+
+.SR_modal-dialog-content button.SR_btn-primary {
+    margin-top: 0.5rem; /* mt-2 */
+}
+
+/* For the modal content panel */
+.SR_modal-dialog-content {
+    border: 1px solid #cbd5e1; /* border-gray-300 */
+   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+}
+
+/* Ensure modal overlay covers everything */
+/* This class is applied to the modal's outermost div */
+.SR_fixed.SR_inset-0.SR_bg-opacity-50 {
+    background-color: rgba(75, 85, 99, 0.7); /* Darker overlay */
+}
+
+/* Contact Avatar Colors */
+.SR_contact-avatar.supplier {
+    background-color: #264796; /* Blue for supplier */
+}
+.SR_contact-avatar.customer {
+    background-color: #264796; /* Changed from green to blue */
+}

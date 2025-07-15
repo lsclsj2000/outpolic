@@ -37,10 +37,12 @@ public class EnterOsstController {
 		// 진행 외주 상세 조회
 		EnterOsst EnterOsstDetail = enterOsstService.getEnterOsstDetail(osstDetailCode);
 		List<EnterOsstRecord> osstRecord = enterOsstService.getEnterOsstRecord();
+		List<EnterOsst> osstStcCd = enterOsstService.getEnterOsstStcCode();
 		
 		model.addAttribute("title", "진행 외주 상세");
 		model.addAttribute("EnterOsstDetail", EnterOsstDetail);
 		model.addAttribute("osstRecord", osstRecord);
+		model.addAttribute("osstStcCd", osstStcCd);
 		
 		return "enter/osst/enterOutsourcingStatusDetail";
 	}

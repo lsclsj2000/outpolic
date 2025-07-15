@@ -54,13 +54,13 @@
 	                            
 	                            <div class="SR_project-card"
 	                            	 th:each="l : ${osstList}"
-	                            	 th:attr="data-url=@{/enter/enterOsstDetail(ocd_cd=${l.ocdCode})}"
+	                            	 th:attr="data-url=@{/enter/enterOsstDetail(ocd_cd=${l.ocdCd})}"
 	                            	 data-project-id="proj-003" >
 	                                <div class="SR_card-content">
 	                                    <h3 class="SR_project-title" th:text="${l.ocdTitle}">외주 제목</h3>
                                         <p class="SR_project-meta">공급자: <span th:text="${l.entMemberName + ' (' + l.entName + ')'}">공급자이름 (공급자기업명)</span></p>
                                         <p class="SR_project-meta">수요자: <span th:text="${l.memberName}">수요자이름</span></p>
-	                                    <p class="SR_project-meta">현재 단계: <span th:text="${l.ospCustStcYn}">최종 완료</span></p>
+	                                    <p class="SR_project-meta">현재 단계: <span th:text="${l.stcName}">최종 완료</span></p>
 	                                    <div class="SR_project-progress-bar">
 	                                        <!-- l.stcCode 값에 따라 진행률 바의 너비를 동적으로 설정 -->
 	                                        <div class="SR_project-progress-fill" 
