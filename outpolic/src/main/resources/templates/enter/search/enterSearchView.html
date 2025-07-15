@@ -62,7 +62,13 @@
 		                							</div>
 		                						</div>
 		                						<span class="font-small ml-5 text-muted"> (${reviewScore.toFixed(1)})</span></div>` : '';
-		                const priceHtml = (content.osAmt && content.osAmt.trim() !== '') ? content.osAmt : '가격문의';
+  						let formattedPrice = '가격문의';
+
+  			            if (content.osAmt && !isNaN(content.osAmt)) {
+  							const priceAsNumber = parseInt(content.osAmt, 10);
+  							formattedPrice = priceAsNumber.toLocaleString('ko-KR') + '원';
+  			            }
+		                						
 						                return `<div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="Outsourcing">
 						                			<div class="product-cart-wrap mb-30 position-relative">
 						                				<div class="product-img-action-wrap">
@@ -81,7 +87,7 @@
 						                			<span>${content.contentsTitle}</span>
 						                		</h2>${ratingHtml}
 						                		<div class="product-price">
-						                			<span>${priceHtml}</span>
+						                			<span>${formattedPrice}</span>
 						                		</div>
 						                			<a href="/enter/contents/${content.contentsId}" class="stretched-link">
 						                		</a>
