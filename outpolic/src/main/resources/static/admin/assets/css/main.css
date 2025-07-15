@@ -835,7 +835,7 @@ b {
 
 .btn-light {
   background-color: transparent;
-  border-color: #c0dbd9;
+  border-color: rgb(38, 71, 150, 0.3);
   -webkit-box-shadow: none;
           box-shadow: none;
   padding: 0.5rem 0.95rem;
@@ -1491,7 +1491,7 @@ textarea.form-control {
 
 .badge.bg-success[href]:focus,
 .badge.bg-success[href]:hover {
-  background-color: #30b383 !important;
+  background-color: #264796 !important;
 }
 
 .badge.bg-light {
@@ -1504,13 +1504,13 @@ textarea.form-control {
 }
 
 .badge-soft-success {
-  color: #34c38f;
+  color: #264796;
   background-color: rgba(52, 195, 143, 0.18);
 }
 
 .badge-soft-success[href]:focus,
 .badge-soft-success[href]:hover {
-  color: #34c38f;
+  color: #264796;
   text-decoration: none;
   background-color: rgba(52, 195, 143, 0.4);
 }
@@ -1931,7 +1931,7 @@ a.itemside:hover .title {
 .card-user .card-header {
   position: relative;
   height: 100px;
-  background-color: rgba(59, 183, 126, 0.2) !important;
+  background-color: rgba(38, 71, 150, 0.2) !important;
   text-align: center;
 }
 
@@ -2056,7 +2056,7 @@ ul.row, ul.row-sm {
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
   font-size: 12px;
-  color: #3ed092;
+  color: #264796;
   position: absolute;
   top: 2px;
   left: 0;

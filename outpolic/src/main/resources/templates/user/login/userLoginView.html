@@ -9,44 +9,42 @@
 	</head>
 	<th:block layout:fragment="contents">
 	        <!-- 로그인 기능 신세영 -->
-    	<div class="page-content w-100">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-8 col-lg-10 col-md-12 m-auto w-100">
-                        <div class="row">
-                            <div class="col-lg-6 pr-30 d-none d-lg-block">
-                                <img class="border-radius-15" th:src="@{/user/assets/imgs/page/login-1.png}" alt="" />
-                            </div>
-                            <div class="col-lg-6 col-md-8 login-page-ssy">
-                                <div class="login_wrap widget-taber-content background-white">
-                                    <div class="padding_eight_all bg-white">
-                                        <div class="heading_s1 login-heading-ssy">
-                                            <h1 class="mb-5 mb-5-ssy">Login</h1>
-                                            <p class="mb-30 mb-30-ssy">아직 회원이 아니신가요? <a th:href="@{/user/registerInfo}">회원가입</a></p>
-                                        </div>
-                                        <form id="loginForm" method="post" th:action="@{/login}">
-                                            <div class="form-group">
-                                                <input class="form-control" type="text" required name="memberId" id="memberId" placeholder="아이디를 입력해주세요"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <input class="form-control" required type="password" name="memberPw" id="memberPw" placeholder="비밀번호를 입력해주세요"/>
-                                            </div>
-                                            <th:block th:if="${error}">
-											    <p class="text-danger" th:text="${error}"></p>
-											</th:block>
-                                            <div class="form-group mt-20">
-                                                <button type="submit" class="btn btn-heading btn-block hover-up" name="login">로그인</button>
-                                            </div>
-                                        </form>
-                                                <a class="text-muted" th:href="@{/forgotPswd}">비밀번호를 잊어버리셨나요?</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    	<div class="page-content d-flex justify-content-center">
+               <div class="row col-10 mt-100 " style="padding : 20px; border:2px dotted #ececec; border-radius : 10px;">
+                   <div class="col-xl-8 col-lg-10 col-md-12 m-auto w-100">
+                       <div class="row">
+                           <div class="col-lg-6 pr-30 d-none d-lg-block" style="padding-left:150px;">
+                               <img class="border-radius-15 w-60" th:src="@{/user/assets/imgs/page/loginView.png}" alt="" />
+                           </div>
+                           <div class="col-lg-6 col-md-8 login-page-ssy">
+                               <div class="login_wrap widget-taber-content background-white">
+                                   <div class="padding_eight_all bg-white">
+                                       <div class="heading_s1 login-heading-ssy">
+                                           <h1 class="mb-5 mb-5-ssy">Login</h1>
+                                           <p class="mb-30 mb-30-ssy">아직 회원이 아니신가요? <a th:href="@{/user/registerInfo}">회원가입</a></p>
+                                       </div>
+                                       <form id="loginForm" method="post" th:action="@{/login}">
+                                           <div class="form-group">
+                                               <input class="form-control" type="text" required name="memberId" id="memberId" placeholder="아이디를 입력해주세요"/>
+                                           </div>
+                                           <div class="form-group">
+                                               <input class="form-control" required type="password" name="memberPw" id="memberPw" placeholder="비밀번호를 입력해주세요"/>
+                                           </div>
+                                           <th:block th:if="${error}">
+										    <p class="text-danger" th:text="${error}"></p>
+										</th:block>
+                                           <div class="form-group mt-20">
+                                               <button type="submit" class="btn btn-heading btn-block hover-up" name="login">로그인</button>
+                                           </div>
+                                       </form>
+                                               <a class="text-muted" th:href="@{/forgotPswd}">비밀번호를 잊어버리셨나요?</a>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
 	</th:block>        
 	<!-- 추가할 js file -->
 	<th:block layout:fragment="jsScript">
