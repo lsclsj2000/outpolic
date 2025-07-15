@@ -7,13 +7,127 @@
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 	</head>
 	
-	<body>
-		<th:block layout:fragment="contents">
-		
-			<h2>주간랭킹 페이지</h2>
-		
-		</th:block>
-	</body>
-	<!-- 추가할 js file -->
+	<th:block layout:fragment="contents">
+		<section class="content-main">
+	        <div class="content-header">
+	            <h2 class="content-title">주간 랭킹 통계</h2>
+	        </div>
 	
+	        <!-- 탭 메뉴 -->
+	        <ul class="nav nav-tabs" id="rankingTab" role="tablist">
+	            <li class="nav-item" role="presentation">
+	                <button class="nav-link active" id="portfolio-tab" data-bs-toggle="tab" data-bs-target="#portfolio-panel" type="button" role="tab">포트폴리오 TOP 10</button>
+	            </li>
+	            <li class="nav-item" role="presentation">
+	                <button class="nav-link" id="outsourcing-tab" data-bs-toggle="tab" data-bs-target="#outsourcing-panel" type="button" role="tab">외주 TOP 10</button>
+	            </li>
+	        </ul>
+	
+	        <!-- 탭 콘텐츠 -->
+	        <div class="tab-content" id="rankingTabContent">
+	            <!-- 포트폴리오 랭킹 패널 -->
+	            <div class="tab-pane fade show active" id="portfolio-panel" role="tabpanel">
+	                <div class="card mb-4">
+	                    <div class="card-body">
+	                        <table class="table table-hover">
+	                            <thead>
+	                                <tr>
+	                                    <th>순위</th><th>조회수</th><th>제목</th><th>기업명</th><th>카테고리</th><th>등록일</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody id="portfolio-ranking-body">
+	                                <!-- JS가 채울 영역 -->
+	                            </tbody>
+	                        </table>
+	                    </div>
+	                </div>
+	            </div>
+	            <!-- 외주 랭킹 패널 -->
+	            <div class="tab-pane fade" id="outsourcing-panel" role="tabpanel">
+	                 <div class="card mb-4">
+	                    <div class="card-body">
+	                        <table class="table table-hover">
+	                            <thead>
+	                                <tr>
+	                                    <th>순위</th><th>조회수</th><th>제목</th><th>기업명</th><th>카테고리</th><th>평점</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody id="outsourcing-ranking-body">
+	                                <!-- JS가 채울 영역 -->
+	                            </tbody>
+	                        </table>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </section>
+	</th:block>
+	<!-- 추가할 js file -->
+	<script layout:fragment="script">
+		document.addEventListener('DOMContentLoaded', () => {
+		    const portfolioTab = document.getElementById('portfolio-tab');
+		    const outsourcingTab = document.getElementById('outsourcing-tab');
+		
+		    const portfolioBody = document.getElementById('portfolio-ranking-body');
+		    const outsourcingBody = document.getElementById('outsourcing-ranking-body');
+		
+		    // 포트폴리오 랭킹 렌더링 함수
+		    const renderPortfolio = async () => {
+		        const response = await fetch('/api/admin/rankings/portfolio');
+		        const data = await response.json();
+		        
+		        let html = '';
+		        if(data.length === 0) {
+		            html = '<tr><td colspan="6" class="text-center">랭킹 데이터가 없습니다.</td></tr>';
+		        } else {
+		            data.forEach((item, index) => {
+		                html += `
+		                    <tr>
+		                        <td>${index + 1}</td>
+		                        <td>${item.rankingView}</td>
+		                        <td>${item.prtfTtl}</td>
+		                        <td>${item.entName}</td>
+		                        <td>${item.ctgryName || '미지정'}</td>
+		                        <td>${new Date(item.prtfDate).toLocaleDateString()}</td>
+		                    </tr>
+		                `;
+		            });
+		        }
+		        portfolioBody.innerHTML = html;
+		    };
+		
+		    // 외주 랭킹 렌더링 함수
+		    const renderOutsourcing = async () => {
+		        const response = await fetch('/api/admin/rankings/outsourcing');
+		        const data = await response.json();
+		
+		        let html = '';
+		        if(data.length === 0) {
+		            html = '<tr><td colspan="6" class="text-center">랭킹 데이터가 없습니다.</td></tr>';
+		        } else {
+		            data.forEach((item, index) => {
+		                const reviewScore = Number(item.reviewScore).toFixed(1);
+		                html += `
+		                    <tr>
+		                        <td>${index + 1}</td>
+		                        <td>${item.rankingView}</td>
+		                        <td>${item.osTtl}</td>
+		                        <td>${item.entName}</td>
+		                        <td>${item.ctgryName}</td>
+		                        <td>${reviewScore}</td>
+		                    </tr>
+		                `;
+		            });
+		        }
+		        outsourcingBody.innerHTML = html;
+		    };
+		
+		    // 탭 클릭 이벤트 리스너
+		    portfolioTab.addEventListener('click', renderPortfolio);
+		    outsourcingTab.addEventListener('click', renderOutsourcing);
+		
+		    // 페이지 최초 로딩 시 기본 탭(포트폴리오) 데이터 로드
+		    renderPortfolio();
+		});
+	</script>
 </html>
