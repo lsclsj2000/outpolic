@@ -3,6 +3,7 @@ package outpolic.admin.member.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,22 +29,14 @@ public class adminMemberController {
 		model.addAttribute("memberList", memberList);
 		return "admin/member/adminMemberListView";
 	}
-	//활성회원목록
-	@GetMapping("/activeMemberList")
-	public String adminActiveMemberList(Model model) {
-		var memberList = adminMemberService.getActiveMemberList();
+	//상태에 따른 회원목록
+	@GetMapping("/memberList/{status}")
+	public String adminMemberListByStatus(@PathVariable("status") String statusCode ,Model model) {
+		var memberList = adminMemberService.getMemberListByStatus(statusCode);
 		model.addAttribute("title", "회원목록");
 		model.addAttribute("memberList", memberList);				
-		return "admin/member/adminActiveMemberListView";		
-	}
-	
-	//휴면회원목록
-	@GetMapping("/withdrawMemberList")
-	public String adminWithdrawMemberList(Model model) {
-		var memberList = adminMemberService.getWithdrawMemberList();
-		model.addAttribute("title", "회원목록");
-		model.addAttribute("memberList", memberList);				
-		return "admin/member/adminWithdrawMemberListView";		
+		model.addAttribute("status", statusCode);				
+		return "admin/member/adminMemberListViewByStatus";		
 	}
 	
 	//회원정보 수정 디테일

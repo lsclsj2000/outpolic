@@ -41,24 +41,11 @@
 		order by CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED);
   	</select>
   	
-	<select id="getActiveMemberList" resultMap="memberInfo">
+	<select id="getMemberListByStatus" resultMap="memberInfo">
   		SELECT 
-			mbr_cd, 
-			grd_cd, 
-			mbr_id, 
-			mbr_nm, 
-			mbr_nicknm, 
-			mbr_telno, 
-			mbr_addr, 
-			mbr_daddr, 
-			mbr_zip, 
-			mbr_eml, 
-			mbr_birth,  
-			mbr_join_ymdt, 
-			stc_cd, 
-			mbr_agre_yn
+			*
 		FROM member
-		where stc_cd='SD_ACTIVE'
+		where stc_cd=#{statusCode}
 		order by CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED);
   	</select>
   	

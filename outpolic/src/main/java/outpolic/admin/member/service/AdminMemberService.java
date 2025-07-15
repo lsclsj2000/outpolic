@@ -9,7 +9,7 @@ public interface AdminMemberService {
 	List<Member> getMemberList();
 	
 	//활성 회원 목록 조회
-	List<Member> getActiveMemberList();
+	List<Member> getMemberListByStatus(String statusCode);
 	
 	//휴면 회원 목록 조회
 	List<Member> getWithdrawMemberList();
