@@ -1120,7 +1120,7 @@ button.submit:hover, button[type='submit']:hover {
 }
 
 .btn:hover, .button:hover {
-  background-color: #4BAEA0;
+  background-color: #67bcee;
 }
 
 .btn.btn-sm, .button.btn-sm {
@@ -3023,7 +3023,7 @@ input.qty-val {
 .social-icons.social-icons-colored-hover .social-rss a:hover,
 .social-icons.social-icons-colored .social-snapchat a,
 .social-icons.social-icons-colored-hover .social-snapchat a:hover {
-  background-color: #4BAEA0;
+  background-color: #67bcee;
 }
 
 .social-icons.social-icons-colored .social-facebook a,
@@ -3058,7 +3058,7 @@ input.qty-val {
 
 .social-icons.social-icons-colored .social-gplus a,
 .social-icons.social-icons-colored-hover .social-gplus a:hover {
-  background-color: #4BAEA0;
+  background-color: #67bcee;
 }
 
 .social-icons.social-icons-colored .social-stumbleupon a,
@@ -3113,7 +3113,7 @@ input.qty-val {
 
 .social-icons.social-icons-colored .social-grooveshark a,
 .social-icons.social-icons-colored-hover .social-grooveshark a:hover {
-  background-color: #4BAEA0;
+  background-color: #67bcee;
 }
 
 .social-icons.social-icons-colored .social-delicious a,
@@ -3158,7 +3158,7 @@ input.qty-val {
 
 .social-icons.social-icons-colored .social-blogger a,
 .social-icons.social-icons-colored-hover .social-blogger a:hover {
-  background-color: #4BAEA0;
+  background-color: #67bcee;
 }
 
 .social-icons.social-icons-colored .social-tumblr a,
@@ -3178,7 +3178,7 @@ input.qty-val {
 
 .social-icons.social-icons-colored .social-amazon a,
 .social-icons.social-icons-colored-hover .social-amazon a:hover {
-  background-color: #4BAEA0;
+  background-color: #67bcee;
 }
 
 .social-icons.social-icons-colored .social-xing a,
@@ -12759,7 +12759,7 @@ p.mb-30-ssy{
 }
 
 .SR_custom-file-button:hover {
-	background-color: #4BAEA0;
+	background-color: #67bcee;
 	transform: translateY(-2px);
 	box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }

@@ -9,73 +9,77 @@
 	<body>	
 	<!-- 여기부터 본문 -->
 	<!-- 회원 정보 수정 페이지 시작 -->
-	<div class="row justify-content-center">
 	<th:block layout:fragment="contents">
-		<div class="row col-6">
-			<form class="register edit" th:action="@{/enter/enterEdit}" method="post" th:object="${enterInfo}">
-			<h3 class="mb-30">내 정보 수정</h3>
-				<div class="form-group">
-					<input type="hidden" id="gradeCode" th:value="${session.SGrd}">
-				    <label for="memberId">아이디</label>
-				    <input type="text" id="memberId" name="memberId"  th:value = "*{memberId}" readonly />
-				</div>
-				<div class="form-group">
-				    <label for="memberName">이름</label>
-				    <input type="text" id="memberName" name="memberName" th:value = "*{memberName}"/>
-				</div>
-				<div class="form-group">
-				    <label for="memberNickname">닉네임</label>
-				    <input type="text" id="memberNickname" name="memberNickname" th:value = "*{memberNickname}" />
-				    <button type="button" class="btn" id="nicknmDupleBtn">중복확인</button>
-				</div>
-				<div class="form-group">
-				    <label for="memberEmail">이메일</label>
-				    <input type="email" id="memberEmail" name="memberEmail" th:value ="*{memberEmail}"  required />
-				    <button type="button" class="btn" id="emailDupleBtn">중복확인</button>
-				</div>
-				<div class="form-group">
-				    <label for="memberTelNo">전화번호</label>
-				    <input type="text" id="memberTelNo" name="memberTelNo" th:value = "*{memberTelNo}" required />
-<!-- 				    <button type="button" class="btn btn-send-code text-white" id="sendCodeBtn">인증번호 발송</button>
-				</div>
-				
-				<div class="form-group">
-				    <label for="code">인증번호 입력</label>
-				    <input type="text" id="authCodeInput" name="code" placeholder="인증번호 입력"/>
-				    <button type="button" class="btn btn-verify-code text-white">인증</button> -->
-				</div>
-				<div class="form-group">
-				    <label for="memberBirth">생일</label>
-				    <input type="date" id="memberBirth" name="memberBirth" class="form-control" th:value ="*{memberBirth}"  required/>
-				</div>
-
-				<h4 style="color: #6c757d;" class="mb-10">주소</h4>
-				<div class="form-group">
-				    <label for="sample4_postcode">우편번호</label>
-			        <input type="text" id="sample4_postcode" name="memberZip" class="form-control" th:value ="*{memberZip}" readonly />
-			        <button type="button" class="btn btn-outline-secondary" id="postcodeBtn">우편번호 찾기</button>
-				</div>
-				<div class="form-group">
-				    <label for="sample4_roadAddress">도로명 주소</label>
-				    <input type="text" id="sample4_roadAddress" name="memberAddress" class="form-control" th:value = "*{memberAddress}" readonly />
-				</div>
-				<div class="form-group">
-				    <label for="sample4_jibunAddress">지번 주소</label>
-				    <input type="text" id="sample4_jibunAddress" name="jibunAddress" class="form-control" placeholder="지번 주소" readonly />
-				</div>
-				<div class="form-group">
-				    <label for="sample4_detailAddress">상세 주소</label>
-				    <input type="text" id="sample4_detailAddress" name="memberDAddress" class="form-control" th:value ="*{memberDAddress}"  />
-				</div>
-				<span id="guide" style="color:#999; display:none"></span>
-	
-			 	<div class="form-group btnSave">
-	                <button type="button" id="btnSave" class="btn btn-primary w-70 fw-bold">정보 수정</button>
-	            </div>
-	        </form>
-		</div>			
+	<div class="container">
+		<div class="row justify-content-center">
+			<form class="register edit col-10 row g-4 p-4 border" style="border-color: #ececec; border-radius:5px;"  th:action="@{/enter/enterEdit}" method="post" th:object="${enterInfo}">
+			<h3 class="mb-30 fw-bold">내 정보 수정</h3>
+			<hr class="mb-4" style="border: none; height: 2px; background-color: #ececec;">
+				<div class="col-md-6">
+			        <label for="memberId">아이디</label>
+			        <input type="text" class="form-control" id="memberId" name="memberId" th:value="*{memberId}" readonly />
+			      </div>
+			      <div class="col-md-6">
+			        <label for="memberName">이름</label>
+			        <input type="text" class="form-control" id="memberName" name="memberName" th:value="*{memberName}" />
+			      </div>
+			      <div class="col-md-6">
+			        <label for="memberNickname">닉네임</label>
+			        <div class="input-group">
+			          <input type="text" class="form-control" id="memberNickname" name="memberNickname" th:value="*{memberNickname}" />
+			          <button type="button" class="btn btn-outline-primary" id="nicknmDupleBtn">중복확인</button>
+			        </div>
+			      </div>
+			      <div class="col-md-6">
+			        <label for="memberEmail">이메일</label>
+			        <div class="input-group">
+			          <input type="email" class="form-control" id="memberEmail" name="memberEmail" th:value="*{memberEmail}" required />
+			          <button type="button" class="btn btn-outline-primary" id="emailDupleBtn">중복확인</button>
+			        </div>
+			      </div>
+			      <div class="col-md-6">
+			        <label for="memberTelNo">전화번호</label>
+			        <input type="text" class="form-control" id="memberTelNo" name="memberTelNo" th:value="*{memberTelNo}" required />
+			      </div>
+			      <div class="col-md-6">
+			        <label for="memberBirth">생일</label>
+			        <input type="date" class="form-control" id="memberBirth" name="memberBirth" th:value="*{memberBirth}" required />
+			      </div>
+			      <div class="col-12">
+			        <h5 class="text-muted fw-bold mt-3">주소</h5>
+			      </div>
+			
+			      <div class="col-md-8">
+			        <label for="sample4_postcode">우편번호</label>
+			        <input type="text" class="form-control" id="sample4_postcode" name="memberZip" th:value="*{memberZip}" readonly />
+			      </div>
+			      <div class="col-md-4 d-flex align-items-end">
+			        <button type="button" class="btn btn-secondary w-100" id="postcodeBtn">우편번호 찾기</button>
+			      </div>
+			
+			      <div class="col-12">
+			        <label for="sample4_roadAddress">도로명 주소</label>
+			        <input type="text" class="form-control" id="sample4_roadAddress" name="memberAddress" th:value="*{memberAddress}" readonly />
+			      </div>
+			
+			      <div class="col-12">
+			        <label for="sample4_jibunAddress">지번 주소</label>
+			        <input type="text" class="form-control" id="sample4_jibunAddress" name="jibunAddress" placeholder="지번 주소" readonly />
+			      </div>
+			
+			      <div class="col-12">
+			        <label for="sample4_detailAddress">상세 주소</label>
+			        <input type="text" class="form-control" id="sample4_detailAddress" name="memberDAddress" th:value="*{memberDAddress}" />
+			      </div>
+			
+			      <!-- 저장 버튼 -->
+			      <div class="col-12 text-center mt-4">
+			        <button type="button" id="btnSave" class="btn btn-primary px-5 py-2 fw-bold">정보 수정</button>
+			      </div>
+			    </form>
+			  </div>
+			</div>				
 		</th:block>
-	</div>
 		<th:block layout:fragment="jsScript">
 			<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 		
