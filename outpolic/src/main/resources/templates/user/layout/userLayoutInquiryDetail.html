@@ -22,7 +22,7 @@
 	
 	<main class="main pages">
     	<div class="container">
-			<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+			<div th:replace="~{user/fragments/userNavi :: userNaviFragment(title=${title})}"></div>
 			<div class="page-content pt-100 pb-150">
 				<div class="row">
 					<div class="col-lg-10 m-auto">
