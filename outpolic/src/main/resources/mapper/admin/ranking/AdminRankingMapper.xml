@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="outpolic.admin.statistics.mapper.AdminRankingMapper">
+ 
+ 	<resultMap  id="PortfolioContentsRankingMap" type="outpolic.admin.statistics.domain.AdminPortfolioRankingContentsDTO">
+        <id 	property="prtfCode" 		column="prtf_cd" />
+        <result property="entCode" 			column="ent_cd" />
+        <result property="entName" 			column="ent_nm" />
+        <result property="prtfTtl" 			column="prtf_ttl" />
+        <result property="prtfDate" 		column="prtf_reg_ymdt" />
+        <result property="ctgryName" 		column="ctgry_nm" />
+        <result property="stcCode" 			column="stc_cd" />
+        <result property="rankingView" 		column="rk_view" />
+        <result property="rkDate" 			column="rk_tot_ymd" />
+    </resultMap>
+ 
+    <resultMap  id="ContentsRankingMap" type="outpolic.admin.statistics.domain.AdminRankingContentsDTO">
+        <id 	property="osCode" 			column="os_cd" />
+        <result property="rankingView" 		column="rk_view" />
+        <result property="entName"		 	column="ent_nm" />
+        <result property="ctgryName" 		column="ctgry_nm" />
+        <result property="osTtl" 			column="os_ttl" />
+        <result property="osExpln" 			column="os_expln" />
+        <result property="reviewScore" 		column="avg_review_score" ></result>
+        <result property="osAtm" 			column="os_amt" />
+        <result property="stcCode" 			column="stc_cd" />
+    </resultMap>
+    <!-- 포트폴리오 랭킹 -->
+    <select id="getAdminRankingPoContents" resultMap="PortfolioContentsRankingMap">
+    	SELECT
+            p.prtf_cd,
+            p.ent_cd,
+            e.ent_nm,
+            p.prtf_ttl,
+            p.prtf_reg_ymdt,
+            c.ctgry_nm,
+            p.stc_cd,
+            r.rk_view,
+            r.rk_tot_ymd
+        FROM
+            (
+                SELECT
+                    cl_cd, rk_view, rk_tot_ymd,
+                    ROW_NUMBER() OVER(PARTITION BY cl_cd ORDER BY rk_tot_ymd DESC) as rn
+                FROM ranking
+            ) r
+        JOIN content_list cl ON r.cl_cd = cl.cl_cd
+        JOIN portfolio p ON cl.cntd_cd = p.prtf_cd
+        JOIN enterprise e ON p.ent_cd = e.ent_cd
+        LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
+        LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
+        WHERE
+            r.rn = 1 AND cl.cntd_cd LIKE 'prtf%'
+        ORDER BY
+            r.rk_view DESC
+        LIMIT 10
+    </select>
+
+    <!-- 외주 랭킹 (resultType 적용) -->
+    <select id="getAdminRankingOsContents" resultType="outpolic.admin.statistics.domain.AdminRankingContentsDTO">
+        SELECT
+            r.rk_view,
+            o.os_cd,
+            e.ent_nm,
+            c.ctgry_nm,
+            o.os_ttl,
+            o.os_expln,
+            IFNULL(AVG(r2.rvw_evl), 0)           AS reviewScore,
+            o.os_amt,
+            o.stc_cd
+        FROM
+            (
+                SELECT
+                    cl_cd, rk_view,
+                    ROW_NUMBER() OVER (PARTITION BY cl_cd ORDER BY rk_tot_ymd DESC) AS rn
+                FROM
+                    ranking
+            ) r
+        JOIN content_list cl ON r.cl_cd = cl.cl_cd
+        JOIN outsourcing o ON cl.cntd_cd = o.os_cd
+        JOIN category c ON o.ctgry_id = c.ctgry_id
+        JOIN enterprise e ON o.ent_cd = e.ent_cd
+        LEFT JOIN outsourcing_contract_details ocd ON cl.cl_cd = ocd.cl_cd
+        LEFT JOIN outsourcing_status os ON ocd.ocd_cd = os.ocd_cd 
+        LEFT JOIN outsourcing_contract oc ON os.oss_prgs_cd = oc.ocd_cd
+        LEFT JOIN review r2 ON oc.osc_id = r2.osc_id
+        WHERE
+            r.rn = 1 AND cl.cntd_cd LIKE 'os%'
+        GROUP BY
+            o.os_cd  -- GROUP BY 키를 명확히 합니다.
+        ORDER BY
+            rankingView DESC
+        LIMIT 10
+				
+	</select>
+ </mapper>
