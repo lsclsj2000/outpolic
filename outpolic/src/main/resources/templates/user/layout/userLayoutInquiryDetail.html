@@ -24,15 +24,17 @@
     	<div class="container">
 			<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
 			<div class="page-content pt-100 pb-150">
-				<div class="col-lg-9 m-auto">
-					<th:block layout:fragment="title"></th:block>
-				   	<div class="row justify-content-around">
-						<div th:replace="~{user/fragments/userInquiryDetailSidebar :: userInquiryDetailSidebarFragment}"></div>
-						<div class="col-md-9">
-							<!-- 새로 추가할 콘텐츠 박스 -->
-				        	<th:block layout:fragment="contents"></th:block>
-				        </div>
-				    </div>
+				<div class="row">
+					<div class="col-lg-10 m-auto">
+						<th:block layout:fragment="title"></th:block>
+					   	<div class="row" style="justify-content:space-between;">
+							<div th:replace="~{user/fragments/userInquiryDetailSidebar :: userInquiryDetailSidebarFragment}"></div>
+							<div style="width:80%;">
+								<!-- 새로 추가할 콘텐츠 박스 -->
+					        	<th:block layout:fragment="contents"></th:block>
+					        </div>
+					    </div>
+					</div>
 				</div>
             </div>
         </div>
