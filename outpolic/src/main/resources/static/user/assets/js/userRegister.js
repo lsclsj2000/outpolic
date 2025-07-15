@@ -185,7 +185,7 @@ function sample4_execDaumPostcode() {
     }).open();
 }
 
-
+let isNameKorean = false;
 // 아이디, 이메일, 닉네임, 전화번호 중복 blur처리
 $(document).ready(function(){
 	// 이름 유효성검증
@@ -197,8 +197,10 @@ $(document).ready(function(){
 			}
 			if(!isValidName(name)){
 				$('#memberNameMsg').text('이름에는 한글만 사용 가능합니다.').removeClass().addClass('text-danger');
+				isNameKorean = false;
 			}else {
 			    $('#memberNameMsg').text('').removeClass('text-danger');
+				isNameKorean = true;
 			}
 		});
 	
@@ -319,6 +321,11 @@ $(document).ready(function(){
 		const name = $('#memberName').val().trim();
 		if(name === ''){
 			$('#memberNameMsg').text('이름을 입력해주세요.').removeClass().addClass('text-danger');
+			$('#memberName').focus();
+			return;
+		}
+		if(!isNameKorean){
+			$('#memberNameMsg').text('이름에는 한글만 사용 가능합니다.').removeClass().addClass('text-danger');
 			$('#memberName').focus();
 			return;
 		}
