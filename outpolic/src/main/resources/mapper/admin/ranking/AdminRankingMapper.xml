@@ -4,45 +4,23 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="outpolic.admin.statistics.mapper.AdminRankingMapper">
  
- 	<resultMap  id="PortfolioContentsRankingMap" type="outpolic.admin.statistics.domain.AdminPortfolioRankingContentsDTO">
-        <id 	property="prtfCode" 		column="prtf_cd" />
-        <result property="entCode" 			column="ent_cd" />
-        <result property="entName" 			column="ent_nm" />
-        <result property="prtfTtl" 			column="prtf_ttl" />
-        <result property="prtfDate" 		column="prtf_reg_ymdt" />
-        <result property="ctgryName" 		column="ctgry_nm" />
-        <result property="stcCode" 			column="stc_cd" />
-        <result property="rankingView" 		column="rk_view" />
-        <result property="rkDate" 			column="rk_tot_ymd" />
-    </resultMap>
- 
-    <resultMap  id="ContentsRankingMap" type="outpolic.admin.statistics.domain.AdminRankingContentsDTO">
-        <id 	property="osCode" 			column="os_cd" />
-        <result property="rankingView" 		column="rk_view" />
-        <result property="entName"		 	column="ent_nm" />
-        <result property="ctgryName" 		column="ctgry_nm" />
-        <result property="osTtl" 			column="os_ttl" />
-        <result property="osExpln" 			column="os_expln" />
-        <result property="reviewScore" 		column="avg_review_score" ></result>
-        <result property="osAtm" 			column="os_amt" />
-        <result property="stcCode" 			column="stc_cd" />
-    </resultMap>
-    <!-- 포트폴리오 랭킹 -->
-    <select id="getAdminRankingPoContents" resultMap="PortfolioContentsRankingMap">
-    	SELECT
-            p.prtf_cd,
-            p.ent_cd,
-            e.ent_nm,
-            p.prtf_ttl,
-            p.prtf_reg_ymdt,
-            c.ctgry_nm,
-            p.stc_cd,
-            r.rk_view,
-            r.rk_tot_ymd
+ 	<!-- 포트폴리오 랭킹 -->
+    <!-- ▼▼▼ 1. resultMap을 resultType으로 변경하고, 모든 컬럼에 AS 별칭을 추가합니다. ▼▼▼ -->
+    <select id="getAdminRankingPoContents" resultType="outpolic.admin.statistics.domain.AdminPortfolioRankingContentsDTO" parameterType="string">
+        SELECT
+            p.prtf_cd       AS prtfCode,
+            p.ent_cd        AS entCode,
+            e.ent_nm        AS entName,
+            p.prtf_ttl      AS prtfTtl,
+            p.prtf_reg_ymdt AS prtfDate,
+            p.stc_cd        AS stcCode,
+            c.ctgry_nm      AS ctgryName,
+            r.rk_view       AS rankingView,
+            r.rk_tot_ymd    AS rkDate
         FROM
             (
                 SELECT
-                    cl_cd, rk_view, rk_tot_ymd,
+                    cl_cd, rk_view, rk_tot_ymd, rk_fr_ymdt, rk_to_ymdt,
                     ROW_NUMBER() OVER(PARTITION BY cl_cd ORDER BY rk_tot_ymd DESC) as rn
                 FROM ranking
             ) r
@@ -52,28 +30,31 @@
         LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
         LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
         WHERE
-            r.rn = 1 AND cl.cntd_cd LIKE 'prtf%'
+            r.rn = 1 
+	        AND cl.cntd_cd LIKE 'PO%'
+	        AND #{targetDate} >= DATE(r.rk_fr_ymdt) AND #{targetDate} &lt; DATE(r.rk_to_ymdt)
         ORDER BY
             r.rk_view DESC
         LIMIT 10
     </select>
 
-    <!-- 외주 랭킹 (resultType 적용) -->
-    <select id="getAdminRankingOsContents" resultType="outpolic.admin.statistics.domain.AdminRankingContentsDTO">
+    <!-- 외주 랭킹 -->
+    <!-- ▼▼▼ 2. 모든 컬럼에 AS 별칭을 추가하여 매핑 오류를 해결합니다. ▼▼▼ -->
+    <select id="getAdminRankingOsContents" resultType="outpolic.admin.statistics.domain.AdminRankingContentsDTO" parameterType="string">
         SELECT
-            r.rk_view,
-            o.os_cd,
-            e.ent_nm,
-            c.ctgry_nm,
-            o.os_ttl,
-            o.os_expln,
+            r.rk_view                           AS rankingView,
+            o.os_cd                             AS osCode,
+            e.ent_nm                            AS entName,
+            c.ctgry_nm                          AS ctgryName,
+            o.os_ttl                            AS osTtl,
+            o.os_expln                          AS osExpln,
             IFNULL(AVG(r2.rvw_evl), 0)           AS reviewScore,
-            o.os_amt,
-            o.stc_cd
+            o.os_amt                            AS osAtm,
+            o.stc_cd                            AS stcCode
         FROM
             (
                 SELECT
-                    cl_cd, rk_view,
+                    cl_cd, rk_view, rk_fr_ymdt, rk_to_ymdt,
                     ROW_NUMBER() OVER (PARTITION BY cl_cd ORDER BY rk_tot_ymd DESC) AS rn
                 FROM
                     ranking
@@ -82,21 +63,18 @@
         JOIN outsourcing o ON cl.cntd_cd = o.os_cd
         JOIN category c ON o.ctgry_id = c.ctgry_id
         JOIN enterprise e ON o.ent_cd = e.ent_cd
-        LEFT JOIN
-		    outsourcing_contract_details ocd ON cl.cl_cd = ocd.cl_cd
-		LEFT JOIN
-			outsourcing_prograss op on op.ocd_cd = ocd.ocd_cd 
-		LEFT JOIN 
-		    outsourcing_contract oc ON op.osp_cd = oc.osp_cd
-		LEFT JOIN
-		    review r2 ON oc.osc_id = r2.osc_id
+        LEFT JOIN outsourcing_contract_details ocd ON cl.cl_cd = ocd.cl_cd
+        LEFT JOIN outsourcing_prograss op on op.ocd_cd = ocd.ocd_cd 
+        LEFT JOIN outsourcing_contract oc ON op.osp_cd = oc.osp_cd
+        LEFT JOIN review r2 ON oc.osc_id = r2.osc_id
         WHERE
-            r.rn = 1 AND cl.cntd_cd LIKE 'os%'
+            r.rn = 1 
+	        AND cl.cntd_cd LIKE 'os%'
+	        AND #{targetDate} >= DATE(r.rk_fr_ymdt) AND #{targetDate} &lt; DATE(r.rk_to_ymdt)
         GROUP BY
-            o.os_cd  -- GROUP BY 키를 명확히 합니다.
+            o.os_cd
         ORDER BY
-            rankingView DESC
+            r.rk_view DESC
         LIMIT 10
-				
-	</select>
+    </select>
  </mapper>
