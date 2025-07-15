@@ -1,9 +1,9 @@
 package outpolic.enter.outsourcing.controller;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections; // Collections import 추가
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +32,6 @@ import outpolic.enter.outsourcing.domain.OutsourcingFormDataDto;
 import outpolic.enter.outsourcing.service.EnterOutsourcingService;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.enter.portfolio.service.EnterPortfolioService;
-
 @Controller
 @RequestMapping("/enter/outsourcing")
 @RequiredArgsConstructor
@@ -41,7 +40,6 @@ public class EnterOutsourcingController {
     private final EnterOutsourcingService outsourcingService;
     private final CategorySearchService categorySearchService;
     private final EnterPortfolioService portfolioService;
-
     // ======================================================
     // ▼▼▼ 외주 "등록" 관련 로직 ▼▼▼
     // ======================================================
@@ -49,15 +47,21 @@ public class EnterOutsourcingController {
     @GetMapping("/add")
     public String showAddOutsourcingForm(Model model, HttpSession session) {
         session.removeAttribute("outsourcingFormData");
-        
         // 세션에서 로그인한 사용자의 mbrCd를 가져옵니다.
         String mbrCd = (String) session.getAttribute("SCD");
         
-        // mbrCd를 이용해 entCd를 조회합니다. (※ enterpriseService에 관련 로직 필요)
-        String entCd = outsourcingService.findEntCdByMbrCd(mbrCd); // 예시: 서비스 메서드 호출
+        // mbrCd를 이용해 entCd를 조회합니다.
+        String entCd = null;
+        if (mbrCd != null) {
+            entCd = outsourcingService.findEntCdByMbrCd(mbrCd);
+        } else {
+            // 로그인되지 않은 경우 또는 mbrCd가 없는 경우 처리
+            // 예: 로그인 페이지로 리다이렉트 또는 에러 메시지
+            return "redirect:/login"; // 또는 "error/unauthorized" 등의 뷰 반환
+        }
 
-        model.addAttribute("entCd", entCd); // 세션 기반의 동적 entCd
-        model.addAttribute("mbrCd", mbrCd); // 세션 기반의 동적 mbrCd
+        model.addAttribute("entCd", entCd);
+        model.addAttribute("mbrCd", mbrCd);
         model.addAttribute("formData", new OutsourcingFormDataDto());
         return "enter/outsourcing/addOutsourcingListView";
     }
@@ -65,9 +69,11 @@ public class EnterOutsourcingController {
     @PostMapping("/save-step1")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> saveStep1(@ModelAttribute OutsourcingFormDataDto formData, HttpSession session) {
-        // 세션에서 직접 값을 가져옵니다.
         String mbrCd = (String) session.getAttribute("SCD");
-        String entCd = outsourcingService.findEntCdByMbrCd(mbrCd); // 예시: 서비스 메서드 호출
+        if (mbrCd == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "로그인이 필요합니다."));
+        }
+        String entCd = outsourcingService.findEntCdByMbrCd(mbrCd);
 
         formData.setEntCd(entCd);
         formData.setMbrCd(mbrCd);
@@ -81,7 +87,8 @@ public class EnterOutsourcingController {
             @RequestParam(value = "categoryCodes", required = false) String categoryCodesStr,
             @RequestParam(value = "tags", required = false) String tags,
             HttpSession session) {
-        List<String> categoryCodes = (categoryCodesStr != null && !categoryCodesStr.isEmpty()) ? Arrays.asList(categoryCodesStr.split(",")) : new ArrayList<>();
+        List<String> categoryCodes = (categoryCodesStr != null && !categoryCodesStr.isEmpty()) ?
+Arrays.asList(categoryCodesStr.split(",")) : new ArrayList<>();
         outsourcingService.saveStep2Data(osCd, categoryCodes, tags, session);
         return ResponseEntity.ok(Map.of("success", true));
     }
@@ -131,6 +138,7 @@ public class EnterOutsourcingController {
             @RequestParam("osExpln") String osExpln,
             @RequestParam("osAmt") Integer osAmt,
             @RequestParam("osFlfmtCnt") Integer osFlfmtCnt,
+    
             @RequestParam("osStrtYmdt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime osStrtYmdt,
             @RequestParam("osEndYmdt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime osEndYmdt) {
         
@@ -143,7 +151,7 @@ public class EnterOutsourcingController {
         outsourcingToUpdate.setOsStrtYmdt(osStrtYmdt);
         outsourcingToUpdate.setOsEndYmdt(osEndYmdt);
         
-        outsourcingService.updateOutsourcingStep1(outsourcingToUpdate); // 서비스에 새 메서드 필요
+        outsourcingService.updateOutsourcingStep1(outsourcingToUpdate);
         return ResponseEntity.ok(Map.of("success", true, "message", "기본 정보가 수정되었습니다."));
     }
 
@@ -155,8 +163,9 @@ public class EnterOutsourcingController {
             @RequestParam(value = "categoryCodes", required = false) String categoryCodesStr,
             @RequestParam(value = "tags", required = false) String tags) {
         
-        List<String> categoryCodes = (categoryCodesStr != null && !categoryCodesStr.isEmpty()) ? Arrays.asList(categoryCodesStr.split(",")) : new ArrayList<>();
-        outsourcingService.updateOutsourcingStep2(osCd, categoryCodes, tags); // 서비스에 새 메서드 필요
+        List<String> categoryCodes = (categoryCodesStr != null 
+&& !categoryCodesStr.isEmpty()) ? Arrays.asList(categoryCodesStr.split(",")) : new ArrayList<>();
+        outsourcingService.updateOutsourcingStep2(osCd, categoryCodes, tags);
         return ResponseEntity.ok(Map.of("success", true, "message", "카테고리 및 태그가 수정되었습니다."));
     }
     
@@ -167,7 +176,7 @@ public class EnterOutsourcingController {
             @RequestParam("osCd") String osCd,
             @RequestParam(value = "outsourcingReferenceFiles", required = false) MultipartFile[] files) {
             
-        outsourcingService.updateOutsourcingStep3(osCd, files); // 서비스에 새 메서드 필요
+        outsourcingService.updateOutsourcingStep3(osCd, files);
         return ResponseEntity.ok(Map.of("success", true, "message", "첨부 파일이 수정되었습니다."));
     }
 
@@ -175,32 +184,27 @@ public class EnterOutsourcingController {
     @PostMapping("/edit/complete")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> completeEdit(@RequestBody Map<String, String> payload) {
-        // 실제로는 별다른 DB 작업이 없을 수 있으나, 최종 완료 확인용으로 사용
         String osCd = payload.get("osCd");
-        // 필요한 최종 정리 작업이 있다면 여기에 추가
         return ResponseEntity.ok(Map.of("success", true, "message", "외주 정보 수정이 완료되었습니다.", "redirectUrl", "/enter/outsourcing/list"));
     }
     // ======================================================
     // ▼▼▼ 공통 API 및 기타 로직 ▼▼▼
     // ======================================================
     @GetMapping("/list")
-    public String showOutsourcingListView() { return "enter/outsourcing/outsourcingListView"; }
+    public String showOutsourcingListView() { return "enter/outsourcing/outsourcingListView";
+    }
 
     @GetMapping("/listData")
     @ResponseBody
-    public ResponseEntity<List<EnterOutsourcing>> getOutsourcingListData(HttpSession session) { // HttpSession 파라미터 추가
-        // 1. 세션에서 현재 로그인한 사용자의 회원 코드(mbrCd)를 가져옵니다.
+    public ResponseEntity<List<EnterOutsourcing>> getOutsourcingListData(HttpSession session) {
         String mbrCd = (String) session.getAttribute("SCD");
 
-        // 2. 만약 로그인 상태가 아니라면, 401 Unauthorized 응답을 보냅니다.
         if (mbrCd == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Collections.emptyList());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.emptyList());
         }
 
-        // 3. mbrCd를 사용해 현재 기업의 고유 코드(entCd)를 조회합니다.
         String entCd = outsourcingService.findEntCdByMbrCd(mbrCd);
         
-        // 4. 조회된 현재 기업의 entCd로 외주 목록을 가져옵니다.
         return ResponseEntity.ok(outsourcingService.getOutsourcingListByEntCd(entCd));
     }
     
@@ -231,25 +235,29 @@ public class EnterOutsourcingController {
     public ResponseEntity<List<EnterPortfolio>> searchUnlinkedPortfolios(
             @PathVariable String osCd,
             @RequestParam String query,
-            HttpSession session) { // HttpSession 파라미터 추가
+            HttpSession session) {
 
-        // 1. 세션에서 현재 로그인한 사용자의 회원 코드(mbrCd)를 가져옵니다.
         String mbrCd = (String) session.getAttribute("SCD");
         if (mbrCd == null) {
-            // 로그인하지 않았다면 빈 목록을 반환합니다.
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Collections.emptyList());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.emptyList());
         }
 
-        // 2. mbrCd를 사용해 현재 기업의 고유 코드(entCd)를 조회합니다.
         String entCd = outsourcingService.findEntCdByMbrCd(mbrCd);
 
-        // 3. 조회된 현재 기업의 entCd로 검색을 수행합니다.
         return ResponseEntity.ok(outsourcingService.searchUnlinkedPortfolios(osCd, entCd, query));
     }
 
     @PostMapping("/link-portfolio") @ResponseBody
-    public ResponseEntity<?> linkPortfolio(@RequestBody Map<String, String> payload) {
-        outsourcingService.linkPortfolioToOutsourcing(payload.get("osCd"), payload.get("prtfCd"), "EI_C00001");
+    public ResponseEntity<?> linkPortfolio(@RequestBody Map<String, String> payload, HttpSession session) { // HttpSession 추가
+        String osCd = payload.get("osCd");
+        String prtfCd = payload.get("prtfCd");
+        String mbrCd = (String) session.getAttribute("SCD"); // 세션에서 mbrCd 가져오기
+        if (mbrCd == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "로그인이 필요합니다."));
+        }
+        String entCd = outsourcingService.findEntCdByMbrCd(mbrCd); // mbrCd로 entCd 조회
+
+        outsourcingService.linkPortfolioToOutsourcing(osCd, prtfCd, entCd); // entCd 전달
         return ResponseEntity.ok().build();
     }
 

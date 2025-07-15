@@ -1,5 +1,4 @@
 package outpolic.enter.outsourcingRequest.controller;
-
 import lombok.RequiredArgsConstructor;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.outsourcing.service.EnterOutsourcingService;
@@ -19,7 +18,6 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
 @Controller("enterOutsourcingRequestController")
 @RequestMapping("/enter/outsourcing-requests")
 @RequiredArgsConstructor
@@ -28,7 +26,6 @@ public class OutsourcingRequestController {
     private final OutsourcingRequestService requestService;
     private final EnterPortfolioService portfolioService;
     private final EnterOutsourcingService enterOutsourcingService;
-
     @GetMapping("/form/{osCd}")
     public String showRequestForm(@PathVariable String osCd, Model model) {
         EnterOutsourcing outsourcing = enterOutsourcingService.getOutsourcingByOsCd(osCd);
@@ -43,7 +40,6 @@ public class OutsourcingRequestController {
             HttpSession session
             ) {
         String loggedInUserCode = (String) session.getAttribute("SCD");
-
         if (loggedInUserCode == null || loggedInUserCode.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "로그인이 필요합니다."));
         }
@@ -62,7 +58,6 @@ public class OutsourcingRequestController {
     @GetMapping("/sent")
     public String showSentRequests(Model model, HttpSession session) {
         String requesterCode = (String) session.getAttribute("SCD");
-
         if (requesterCode == null || requesterCode.isEmpty()) {
             return "redirect:/login";
         }
@@ -80,7 +75,6 @@ public class OutsourcingRequestController {
     @ResponseBody
     public ResponseEntity<List<RequestViewDTO>> getSentRequestsApi(HttpSession session) {
         String requesterCode = (String) session.getAttribute("SCD");
-
         if (requesterCode == null || requesterCode.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -98,14 +92,13 @@ public class OutsourcingRequestController {
 
         // 호출하는 서비스 메서드 이름을 'getRequestDetails'로 수정
         RequestViewDTO requestDetail = requestService.getRequestDetails(ocdCd);
-
         model.addAttribute("request", requestDetail);
 
         String referrer = request.getHeader("Referer");
         String listUrl = (referrer != null && referrer.contains("/sent"))
-                       ? "/enter/outsourcing-requests/sent"
+                       ?
+"/enter/outsourcing-requests/sent"
                        : "/enter/outsourcing-requests/received";
-
         model.addAttribute("listUrl", listUrl);
 
         return "enter/outsourcingRequest/requestDetailView";
@@ -125,7 +118,7 @@ public class OutsourcingRequestController {
         }
         
         String authoritiesInfo = (grade != null) ?
-                                 "ROLE_" + grade : "권한 없음";
+"ROLE_" + grade : "권한 없음";
 
         return "<h1>로그인 정보 확인</h1>" +
                "<h2>로그인 ID: " + username + "</h2>" +
@@ -139,11 +132,10 @@ public class OutsourcingRequestController {
      */
     @GetMapping("/received")
     public String showReceivedRequests(Model model, HttpSession session) {
-        String loggedInEntCd = (String) session.getAttribute("SCD"); // 공급자는 보통 기업 코드로 식별 (예: EI_C00001)
+        String loggedInMbrCd = (String) session.getAttribute("SCD"); // 변경: entCd 대신 mbrCd를 사용하여 기업 코드 조회
 
-        if (loggedInEntCd == null || loggedInEntCd.isEmpty()) {
-            // 로그인하지 않았거나 기업 회원이 아니라면 리다이렉트
-            return "redirect:/login"; // 또는 적절한 에러 페이지
+        if (loggedInMbrCd == null || loggedInMbrCd.isEmpty()) {
+            return "redirect:/login";
         }
         // 이 뷰에서는 API를 통해 데이터를 로드하므로, 초기 모델에 데이터를 담지 않아도 됩니다.
         return "enter/outsourcingRequest/receivedRequestsList";
@@ -156,14 +148,13 @@ public class OutsourcingRequestController {
     @ResponseBody
     public ResponseEntity<List<RequestViewDTO>> getReceivedRequestsApi(HttpSession session) {
         String loggedInMbrCd = (String) session.getAttribute("SCD");
-
         if (loggedInMbrCd == null || loggedInMbrCd.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         String supplierEntCd = requestService.findEntCdByMbrCd(loggedInMbrCd);
 
-        // ▼▼▼ 이 부분의 파라미터를 'supplierEntCd'로 수정합니다. ▼▼▼
+        // ▼▼▼ 이 부분의 파라미터를 'supplierEntCd'로 수정합니다.
         List<RequestViewDTO> receivedRequests = requestService.getReceivedRequests(supplierEntCd);
         
         return ResponseEntity.ok(receivedRequests);
@@ -174,7 +165,7 @@ public class OutsourcingRequestController {
     public ResponseEntity<Map<String,Object>> updateReqeuestStatus(@RequestBody Map<String,String> payload){
     	try {
     		String requestId = payload.get("requestId");
-    		String status = payload.get("status");
+            String status = payload.get("status");
     		requestService.updateRequestStatus(requestId,status);
     		return ResponseEntity.ok(Map.of("success",true,"message","상태가 성공적으로 변경되었습니다."));
     	
@@ -191,17 +182,16 @@ public class OutsourcingRequestController {
     public String showInquiryForm(@PathVariable String prtfCd, Model model) {
     	// 문의 대상 포트폴리오 정보를 조회하여 모델에 담아 전달
     	model.addAttribute("portfolio",portfolioService.getPortfolioByPrtfCd(prtfCd));
-    	return "enter/portfolioInquiry/inquiryForm";
+        return "enter/portfolioInquiry/inquiryForm";
     	
     }
     
-    /** 
-     * 작성된 포트폴리오 문의를 서버로 전송하여 저장하는 메서드
+    /** * 작성된 포트폴리오 문의를 서버로 전송하여 저장하는 메서드
      */
     @PostMapping("/inquiry/send")
     public String sendInquiry(@ModelAttribute OutsourcingRequestDTO requestDto, HttpSession session) {
     	String memberCode = (String) session.getAttribute("SCD");
-    	requestDto.setMbr_cd(memberCode);
+        requestDto.setMbr_cd(memberCode);
     	
     	// 요청 타입을 '문의'로 직접 설정
     	requestDto.setOcd_req_type("문의");

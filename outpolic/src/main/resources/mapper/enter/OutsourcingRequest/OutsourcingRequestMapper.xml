@@ -9,7 +9,8 @@
             ent_cd,
             cl_cd,
             ocd_ttl,
-            ocd_expln,
+     
+        ocd_expln,
             ocd_frctn_cmdty,
             ocd_dlvgds_mthd,
             ocd_strt_ymdt, ocd_dedline,
@@ -17,7 +18,8 @@
             ocd_dmnd_ymdt,
             ocd_req_type,
             stc_cd
-        ) VALUES (
+        
+) VALUES (
             #{ocd_cd},
             #{mbr_cd},
             #{ent_cd},
@@ -26,6 +28,7 @@
             #{ocd_expln},
             #{ocd_frctn_cmdty},
             #{ocd_dlvgds_mthd},
+  
             #{ocd_strt_ymdt}, #{ocd_dedline},
             #{ocd_amt},
             NOW(),
@@ -38,6 +41,7 @@
     </update>
     
     <update id="updateStatus">
+ 
     	UPDATE outsourcing_contract_details
     	SET
     		stc_cd=#{status},
@@ -52,6 +56,7 @@
             ocd.ocd_ttl, 
             e.ent_nm AS supplierName, 
             ocd.ocd_dmnd_ymdt, 
+   
             ocd.stc_cd,
             m.mbr_nm AS demanderName
         FROM 
@@ -60,16 +65,34 @@
             enterprise e ON ocd.ent_cd = e.ent_cd
         JOIN 
             member m ON ocd.mbr_cd = m.mbr_cd 
+ 
         WHERE 
             ocd.mbr_cd = #{requesterId} AND ocd.ocd_req_type = '신청'
         ORDER BY ocd.ocd_dmnd_ymdt DESC
     </select>
     
     <select id="findRequestDetailById" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
-        SELECT ocd.*, m.mbr_nm as demanderName, e.ent_nm as supplierName
+        SELECT 
+            ocd.ocd_cd,
+            ocd.mbr_cd,
+            ocd.ent_cd,
+            ocd.cl_cd,
+            ocd.ocd_ttl,
+            ocd.ocd_expln,
+            ocd.ocd_frctn_cmdty,
+            ocd.ocd_dlvgds_mthd,
+            ocd.ocd_strt_ymdt,
+            ocd.ocd_dedline,
+            ocd.ocd_amt,
+            ocd.ocd_dmnd_ymdt,
+            ocd.ocd_req_type,
+            ocd.stc_cd,
+            m.mbr_nm as demanderName, 
+            e.ent_nm as supplierName
         FROM outsourcing_contract_details ocd
         JOIN member m ON ocd.mbr_cd = m.mbr_cd
-        JOIN enterprise e ON ocd.ent_cd = e.ent_cd
+        JOIN enterprise 
+e ON ocd.ent_cd = e.ent_cd
         WHERE ocd.ocd_cd = #{requestId}
     </select>
 
@@ -83,6 +106,7 @@
     
     <select id="findReceivedRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
         SELECT
+ 
             ocd.ocd_cd,
             ocd.ocd_ttl,
             m.mbr_nm AS demanderName,
@@ -91,7 +115,8 @@
             ocd.stc_cd
         FROM
             outsourcing_contract_details ocd
-        JOIN
+    
+    JOIN
             member m ON ocd.mbr_cd = m.mbr_cd
         JOIN
             enterprise e ON ocd.ent_cd = e.ent_cd
@@ -101,6 +126,7 @@
     </select>
     
     <select id="findEntCdByMbrCd" resultType="String">
+   
     	SELECT
     		ent_cd 
     	FROM
@@ -120,19 +146,21 @@
     
     <insert id="insertInitialProgress">
     	 INSERT INTO outsourcing_prograss
-            (osp_cd, ocd_cd, stc_cd, osp_sply_ymdt)
+           
+    (osp_cd, ocd_cd, stc_cd, osp_sply_ymdt)
         VALUES
             (#{ospCd}, #{ocdCd}, #{stcCd}, NOW())
     
     </insert>
     
-    <insert id="insertInitialProgressStages" useGeneratedKeys="true" keyProperty="stage.ospCd">
+    <insert id="insertInitialProgressStages">
     INSERT INTO outsourcing_prograss
-        (osp_cd,ocd_cd, stc_cd, osp_sply_ymdt, osp_cust_yn) VALUES
+        (osp_cd, ocd_cd, stc_cd, osp_sply_ymdt, osp_cust_yn) VALUES
     <foreach collection="stageList" item="stage" separator=",">
         (
         	#{stage.ospCd},
             #{stage.ocdCd},
+ 
             #{stage.stcCd},
             #{stage.ospSplyYmdt},
             #{stage.ospCustYn}
