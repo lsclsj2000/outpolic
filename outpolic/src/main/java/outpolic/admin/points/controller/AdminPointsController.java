@@ -16,14 +16,14 @@ public class AdminPointsController {
 	}
 	
 	// 마일리지 적립 내역
-	@GetMapping("/pointsUsedList")
+	@GetMapping("/earnPointsList")
 	public String earnPointsView() {
 		
 		return "admin/points/adminEarnPointsView";
 	}
 	
 	// 마일리지 기준 생성
-	@GetMapping("/pointsUsedList")
+	@GetMapping("/standardPointsAddList")
 	public String standardPointsAddView() {
 		
 		return "admin/points/adminStandardPointsAddView";
