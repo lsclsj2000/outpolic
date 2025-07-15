@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.enter.osst.domain.EnterOsst;
-import outpolic.enter.osst.domain.EnterOsstRecord;
+import outpolic.enter.osst.domain.EnterStepData;
 import outpolic.enter.osst.service.EnterOsstService;
 
 
@@ -34,16 +34,15 @@ public class EnterOsstController {
 
 	@GetMapping("/enterOsstDetail")
 	public String enterOutsourcingStatus(@RequestParam("ocd_cd") String osstDetailCode, Model model) {
+		
 		// 진행 외주 상세 조회
-		EnterOsst EnterOsstDetail = enterOsstService.getEnterOsstDetail(osstDetailCode);
-		List<EnterOsstRecord> osstRecord = enterOsstService.getEnterOsstRecord();
-		List<EnterOsst> osstStcCd = enterOsstService.getEnterOsstStcCode();
-		
+		EnterOsst enterOsstDetail = enterOsstService.getEnterOsstDetail(osstDetailCode);
+		List<EnterStepData> groupedStepData = enterOsstService.getGroupedStepData(osstDetailCode);
+
 		model.addAttribute("title", "진행 외주 상세");
-		model.addAttribute("EnterOsstDetail", EnterOsstDetail);
-		model.addAttribute("osstRecord", osstRecord);
-		model.addAttribute("osstStcCd", osstStcCd);
-		
+		model.addAttribute("EnterOsstDetail", enterOsstDetail);
+		model.addAttribute("groupedStepData", groupedStepData);
+
 		return "enter/osst/enterOutsourcingStatusDetail";
 	}
 }
