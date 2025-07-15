@@ -29,7 +29,7 @@
             #{ocd_strt_ymdt}, #{ocd_dedline},
             #{ocd_amt},
             NOW(),
-            '신청', 'SD_BEFORE'
+            #{ocd_req_type}, 'SD_BEFORE'
         )
     </insert>
     
@@ -125,4 +125,18 @@
             (#{ospCd}, #{ocdCd}, #{stcCd}, NOW())
     
     </insert>
+    
+    <insert id="insertInitialProgressStages" useGeneratedKeys="true" keyProperty="stage.ospCd">
+    INSERT INTO outsourcing_prograss
+        (osp_cd,ocd_cd, stc_cd, osp_sply_ymdt, osp_cust_yn) VALUES
+    <foreach collection="stageList" item="stage" separator=",">
+        (
+        	#{stage.ospCd},
+            #{stage.ocdCd},
+            #{stage.stcCd},
+            #{stage.ospSplyYmdt},
+            #{stage.ospCustYn}
+        )
+    </foreach>
+</insert>
 </mapper>

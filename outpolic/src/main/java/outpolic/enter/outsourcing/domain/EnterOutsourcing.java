@@ -64,5 +64,6 @@ public class EnterOutsourcing {
     private String prtfThumbnailUrl;;
     
     private String clCd;
-
+    
+    private String osThumbnailUrl;
 }

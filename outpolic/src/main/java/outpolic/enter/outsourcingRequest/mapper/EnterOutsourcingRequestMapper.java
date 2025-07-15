@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO;
 import outpolic.enter.outsourcingRequest.domain.RequestViewDTO;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface EnterOutsourcingRequestMapper {
@@ -23,4 +24,11 @@ public interface EnterOutsourcingRequestMapper {
     String findLatestOspCd();
     
     void insertInitialProgress(@Param("ospCd") String ospCd, @Param("ocdCd") String ocdCd, @Param("stcCd") String stcCd);
+    
+    /**
+     *	outsourcing_prograss 테이블에 여러 개의 초기 진행 상태를 한번에 추가합니다.
+     *	@param stageList
+     *
+     */
+    void insertInitialProgressStages(@Param("stageList") List<Map<String, Object>> stageList);
 }

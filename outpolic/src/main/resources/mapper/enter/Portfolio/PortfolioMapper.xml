@@ -93,8 +93,8 @@
 </select>
 
     <insert id="insertPortfolio" parameterType="EnterPortfolio">
-        INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd)
-        VALUES (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(),'SD_ACTIVE')
+        INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd,prtf_thumbnail_url)
+        VALUES (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(),'SD_ACTIVE',#{prtfThumbnailUrl})
     </insert>
 
     <insert id="insertContentList">
@@ -250,5 +250,18 @@
     ORDER BY
         op.op_reg_ymdt DESC
 </select>
+
+<insert id="insertFileRecord" parameterType="outpolic.systems.file.domain.FileMetaData">
+        INSERT INTO file 
+            (file_cd, file_reg_ymdt, file_extn, file_orgnl_nm, file_srvr_nm, file_path, cl_cd, mbr_cd)
+        VALUES
+            (#{fileCd}, NOW(), #{fileExtn}, #{fileOrgnlNm}, #{fileSrvrNm}, #{filePath}, #{clCd}, #{mbrCd})
+    </insert>
+
+
+
+
+
+
 
 </mapper>

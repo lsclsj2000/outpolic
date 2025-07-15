@@ -27,6 +27,7 @@ public class OutsourcingFormDataDto {
     // 2단계: 카테고리 및 태그 (ID 또는 이름 목록)
     private List<String> categoryCodes; // 카테고리 ID (또는 이름) 목록
     private String tags; // 태그 (쉼표로 구분된 문자열)
+    private String thumbnailUrl;
 
     // 3단계: 첨부 파일 정보 (업로드된 파일의 URL/ID)
     // 실제 MultipartFile은 여기서 받지 않고, 별도의 API로 업로드 후 URL만 저장
@@ -40,4 +41,5 @@ public class OutsourcingFormDataDto {
 
     // 기타 (상태 코드 등은 최종 저장 시 설정)
     private String ctgryId; // 대표 카테고리 ID (카테고리 목록에서 첫 번째 것을 사용할 예정)
+
 }
