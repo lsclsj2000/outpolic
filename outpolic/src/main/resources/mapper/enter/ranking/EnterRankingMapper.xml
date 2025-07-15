@@ -84,9 +84,9 @@
 		LEFT JOIN
 		    outsourcing_contract_details ocd ON cl.cl_cd = ocd.cl_cd
 		LEFT JOIN
-			outsourcing_status os on ocd.ocd_cd = os.ocd_cd 
+			outsourcing_prograss op on op.ocd_cd = ocd.ocd_cd 
 		LEFT JOIN 
-		    outsourcing_contract oc ON os.oss_prgs_cd = oc.ocd_cd
+		    outsourcing_contract oc ON op.osp_cd = oc.osp_cd
 		LEFT JOIN
 		    review r2 ON oc.osc_id = r2.osc_id
 		WHERE
