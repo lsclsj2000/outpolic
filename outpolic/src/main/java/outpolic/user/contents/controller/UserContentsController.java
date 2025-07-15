@@ -75,8 +75,4 @@ public class UserContentsController {
         model.addAttribute("detail", detailData);
         return "user/contentsParticular/userContentsParticularView";
     }
-
-    
-
-
 }
