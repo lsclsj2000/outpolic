@@ -77,5 +77,11 @@ public interface PortfolioMapper {
     String findMbrCdByClCd(String clCd);
     
     void insertFileRecord(FileMetaData fileData);
+    void addPortfolio(EnterPortfolio portfolio);
+    List<EnterOutsourcing> searchUnlinkedOutsourcings(@Param("prtfCd") String prtfCd, @Param("entCd") String entCd, @Param("query") String query);
+    
+    
+    List<FileMetaData> findFilesByClCd(String clCd);
+    List<EnterPortfolio> searchPortfoliosByTitle(String query);
 
 }

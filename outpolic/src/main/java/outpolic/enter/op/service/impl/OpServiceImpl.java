@@ -19,7 +19,7 @@ public class OpServiceImpl implements OpService {
 	
 	// 데이터베이스 작업을 위해 OpMapper를 주입받음
 	private final OpMapper opMapper;
-    @Override
+	@Override
 	public List<EnterOutsourcing> getLinkedOutsourcings(String prtfCd){
 		return opMapper.findLinkedOutsourcingsByPrtfCd(prtfCd);
 	}
@@ -27,7 +27,7 @@ public class OpServiceImpl implements OpService {
 	@Override
 	public List<EnterOutsourcing> searchUnlinkedOutsourcings(String prtfCd, String entCd,String query){
 		return opMapper.findUnlinkedOutsourcings(prtfCd,entCd,query);
-    }
+	}
 	
 	/**
 	 * @Transactional: 이 메서드 안의 DB작업이 실패하면, 자동으로 이전 상태로 되돌립니다.
@@ -39,9 +39,17 @@ public class OpServiceImpl implements OpService {
 	public void linkOutsourcing(String prtfCd, String osCd, String entCd) {
 		//1. 새로운 연결 코드(PK)를 생성합니다.
 		String latestOpCd = opMapper.findLatestOpCd();
-        int nextNum = (latestOpCd == null) ? 1: Integer.parseInt(latestOpCd.substring(4))+1;
+		int nextNum = 1; // 기본값 1
+		if (latestOpCd != null && latestOpCd.startsWith("OP_C")) {
+		    try {
+		        nextNum = Integer.parseInt(latestOpCd.substring(4)) + 1;
+		    } catch (NumberFormatException e) {
+		        // 파싱 실패 시, 기본값 1 유지 또는 로그 기록
+		        // logger.warn("Failed to parse latestOpCd: {}", latestOpCd, e);
+		    }
+		}
 		String newOpCd = String.format("OP_C%05d", nextNum);
-        // 2.매퍼를 호출하면 DB에 연결 정보를 저장합니다.
+		// 2.매퍼를 호출하면 DB에 연결 정보를 저장합니다.
 		opMapper.linkOutsourcingToPortfolio(newOpCd, osCd, prtfCd, entCd);
 	}
 	
@@ -49,5 +57,5 @@ public class OpServiceImpl implements OpService {
 	@Transactional
 	public void unlinkOutsourcing(String prtfCd, String osCd) {
 		opMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
-    }
+	}
 }

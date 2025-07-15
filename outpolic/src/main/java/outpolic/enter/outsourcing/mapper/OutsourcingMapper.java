@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
+import outpolic.systems.file.domain.FileMetaData;
 
 @Mapper
 public interface OutsourcingMapper {
@@ -66,5 +67,8 @@ public interface OutsourcingMapper {
     String findEntCdByMbrCd(String mbrCd); // <-- 이 메서드를 추가
     
     String findLatestClCd();
-    
+    int insertFiles(List<FileMetaData> fileList);
+    List<FileMetaData> findFilesByClCd(String clCd);
+    int deleteFilesByClCd(String clCd);
+    void updateOutsourcingThumbnail(@Param("osCd") String osCd, @Param("thumbnailUrl") String thumbnailUrl);
 }

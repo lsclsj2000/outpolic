@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor; // 기본 생성자 추가
+import outpolic.systems.file.domain.FileMetaData;
 import lombok.AllArgsConstructor; // 모든 필드를 포함한 생성자 추가
 
 // 이 DTO는 단계별로 모이는 외주 데이터를 임시로 저장하기 위한 "폼 데이터" DTO입니다.
@@ -41,5 +42,5 @@ public class OutsourcingFormDataDto {
 
     // 기타 (상태 코드 등은 최종 저장 시 설정)
     private String ctgryId; // 대표 카테고리 ID (카테고리 목록에서 첫 번째 것을 사용할 예정)
-
+    private List<FileMetaData> uploadedFiles;
 }

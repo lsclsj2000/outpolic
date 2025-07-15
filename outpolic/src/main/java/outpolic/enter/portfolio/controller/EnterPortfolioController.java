@@ -1,6 +1,7 @@
 package outpolic.enter.portfolio.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +27,9 @@ import lombok.RequiredArgsConstructor;
 import outpolic.enter.POAddtional.domain.CategorySearchDto;
 import outpolic.enter.POAddtional.service.CategorySearchService;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
-import outpolic.enter.outsourcing.service.EnterOutsourcingService; // 1. 외주 서비스 import
+import outpolic.enter.outsourcing.service.EnterOutsourcingService;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.enter.portfolio.service.EnterPortfolioService;
-
 @Controller
 @RequestMapping("/enter/portfolio")
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class EnterPortfolioController {
 
     private final EnterPortfolioService portfolioService;
     private final CategorySearchService categorySearchService;
-    private final EnterOutsourcingService outsourcingService; // 2. 외주 서비스 주입
+    private final EnterOutsourcingService outsourcingService;
 
     // --- 포트폴리오 목록 관련 ---
     @GetMapping("/list")
@@ -74,20 +74,26 @@ public class EnterPortfolioController {
             @RequestParam(value = "categoryCodes", required = false) List<String> categoryCodes,
             @RequestParam(value = "tags", required = false) String tags,
             @RequestParam(value = "portfolioImage", required = false) MultipartFile portfolioImage,
+       
             HttpSession session) {
         
-        if (categoryCodes == null || categoryCodes.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "카테고리는 최소 하나 이상 선택해야 합니다."));
+        if (categoryCodes == null || categoryCodes.isEmpty() || categoryCodes.stream().allMatch(String::isEmpty)) {
+            bindingResult.rejectValue("categories", "NotEmpty", "카테고리는 최소 하나 이상 선택해야 합니다.");
         }
+        
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "입력 데이터 유효성 검사에 실패했습니다."));
+            Map<String, Object> errors = new HashMap<>();
+            errors.put("success", false);
+            bindingResult.getFieldErrors().forEach(error -> 
+                errors.put(error.getField() + "Error", error.getDefaultMessage())
+            );
+            return ResponseEntity.badRequest().body(errors);
         }
 
         String mbrCd = (String) session.getAttribute("SCD");
         String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
         portfolio.setEntCd(entCd);
         portfolio.setMbrCd(mbrCd);
-        
         try {
             portfolioService.addPortfolio(portfolio, categoryCodes, tags, portfolioImage);
             return ResponseEntity.ok(Map.of("success", true, "message", "포트폴리오가 성공적으로 등록되었습니다.", "redirectUrl", "/enter/portfolio/list"));
@@ -113,8 +119,18 @@ public class EnterPortfolioController {
             @RequestParam(value = "tags", required = false) String tags,
             @RequestParam(value = "portfolioImage", required = false) MultipartFile portfolioImage) {
 
+        
+        if (categoryCodes == null || categoryCodes.isEmpty() || categoryCodes.stream().allMatch(String::isEmpty)) {
+            bindingResult.rejectValue("categories", "NotEmpty", "카테고리는 최소 하나 이상 선택해야 합니다.");
+        }
+
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "입력 데이터 유효성 검사에 실패했습니다."));
+            Map<String, Object> errors = new HashMap<>();
+            errors.put("success", false);
+            bindingResult.getFieldErrors().forEach(error -> 
+                errors.put(error.getField() + "Error", error.getDefaultMessage())
+            );
+            return ResponseEntity.badRequest().body(errors);
         }
 
         try {
@@ -164,8 +180,6 @@ public class EnterPortfolioController {
         String osCd = payload.get("osCd");
         String mbrCd = (String) session.getAttribute("SCD");
         String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
-        
-        // 3. portfolioService 대신 outsourcingService의 메서드를 호출
         outsourcingService.linkPortfolioToOutsourcing(osCd, prtfCd, entCd);
         return ResponseEntity.ok().build();
     }
@@ -176,7 +190,6 @@ public class EnterPortfolioController {
         String prtfCd = payload.get("prtfCd");
         String osCd = payload.get("osCd");
 
-        // 4. portfolioService 대신 outsourcingService의 메서드를 호출
         outsourcingService.unlinkPortfolioFromOutsourcing(osCd, prtfCd);
         return ResponseEntity.ok().build();
     }
@@ -198,14 +211,12 @@ public class EnterPortfolioController {
     @ResponseBody
     public ResponseEntity<Integer> countPortfoliosForEnterprise(HttpSession session){
     	String mbrCd =  (String) session.getAttribute("SCD");
-    	
-    	if(mbrCd == null) {
+        if(mbrCd == null) {
     		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(0);
     	}
     	
     	String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
-    	
-    	int count= portfolioService.countPortfoliosByEntCd(entCd);
+        int count= portfolioService.countPortfoliosByEntCd(entCd);
     	
     	return ResponseEntity.ok(count);
     	
