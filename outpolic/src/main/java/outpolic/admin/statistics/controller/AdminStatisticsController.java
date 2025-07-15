@@ -39,14 +39,14 @@ public class AdminStatisticsController {
 	}
 	
 	 // 2. 포트폴리오 랭킹 데이터 API
-    @GetMapping("/api/admin/rankings/portfolio")
+    @GetMapping("/api/rankings/portfolio")
     @ResponseBody
     public List<AdminPortfolioRankingContentsDTO> getPortfolioRankings() {
         return adminRankingService.getAdminRankingPoContents();
     }
 
     // 3. 외주 랭킹 데이터 API
-    @GetMapping("/api/admin/rankings/outsourcing")
+    @GetMapping("/api/rankings/outsourcing")
     @ResponseBody
     public List<AdminRankingContentsDTO> getOutsourcingRankings() {
         return adminRankingService.getRankingContentsList();
