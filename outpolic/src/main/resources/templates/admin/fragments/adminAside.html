@@ -24,9 +24,10 @@
 					</a>
 					<div class="submenu">
 					    <a th:href="@{/admin/memberList}">전체 회원 목록</a>
-					    <a th:href="@{/admin/activeMemberList}">활성 회원 목록</a>
-					    <a th:href="@{/admin/withdrawMemberList}">휴면 회원 목록</a>
-					    <a href="#">회원관리</a>
+					    <a th:href="@{/admin/memberList/active}">활성 회원 목록</a>
+					    <a th:href="@{/admin/memberList/withdrawn}">휴면 회원 목록</a>
+					    <a th:href="@{/admin/memberList/dormant}">탈퇴 회원 목록</a>
+					    <a th:href="@{/admin/memberList/limit}">제재 회원 목록</a>
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
