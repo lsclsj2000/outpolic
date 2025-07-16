@@ -36,9 +36,7 @@
         )
     </insert>
     
-    <update id="updateChatRoomId">
-        UPDATE outsourcing_contract_details SET chr_cd = #{chr_cd} WHERE ocd_cd = #{ocd_cd}
-    </update>
+    
     
     <update id="updateStatus">
  

@@ -14,6 +14,4 @@ public interface FileMapper {
 	List<FileMetaData> getFileList();
 	int addfile(FileMetaData fileDto);
 	int addfiles(List<FileMetaData> fileDto);
-	
-	
 }
