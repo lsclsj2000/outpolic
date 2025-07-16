@@ -46,6 +46,12 @@ public class adminLoginController {
 		boolean isMatched = (boolean) loginResult.get("isMatched");
 		if(isMatched) {
 			AdminLoginDTO adminLoginDTO = (AdminLoginDTO) loginResult.get("adminLoginDTO");
+			if (adminLoginDTO == null || adminLoginDTO.getMemberInfo() == null) {
+		        model.addAttribute("msg", "로그인 정보가 잘못되었습니다.");
+		        model.addAttribute("url", "/admin/login");
+		        return "user/mypage/alert";
+		    }
+			
 			Member memberInfo = adminLoginDTO.getMemberInfo();
 			String grade = memberInfo.getGradeCode();
             
