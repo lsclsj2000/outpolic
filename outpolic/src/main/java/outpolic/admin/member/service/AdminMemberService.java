@@ -23,4 +23,6 @@ public interface AdminMemberService {
 	boolean isNicknameDuplicated(String nickname, String memberCode);
 	
 	public List<Member> filterMembers(String statusCode, String gradeCode);
+
+	List<Member> searchMembers(String keyword);
 }

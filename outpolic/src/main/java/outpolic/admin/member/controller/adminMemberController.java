@@ -31,6 +31,7 @@ public class adminMemberController {
 		model.addAttribute("memberList", memberList);
 		return "admin/member/adminMemberListView";
 	}
+	
 	//상태에 따른 회원목록
 	@GetMapping("/memberList/{status}")
 	public String adminMemberListByStatus(@PathVariable("status") String statusCode ,Model model) {
@@ -45,7 +46,8 @@ public class adminMemberController {
 	@GetMapping("/memberList/filter")
 	@ResponseBody
 	public List<Member> filterMembers(@RequestParam(required = false) String statusCode,
-	                                  @RequestParam(required = false) String gradeCode) {
+	                                  @RequestParam(required = false) String gradeCode,
+	                                  @RequestParam(required = false) String keyword) {
 		System.out.println("🔥 필터 요청 진입");
 	    System.out.println("📦 statusCode: " + statusCode);
 	    System.out.println("📦 gradeCode: " + gradeCode);
@@ -55,6 +57,13 @@ public class adminMemberController {
 	    System.out.println("✅ 필터링 결과 개수: " + filtered.size());
 
 	    return filtered;
+	}
+	
+	// 회원 검색
+	@GetMapping("/memberList/search")
+	@ResponseBody
+	public List<Member> searchMembers(@RequestParam("keyword") String keyword) {
+	    return adminMemberService.searchMembers(keyword);
 	}
 	
 	//회원정보 수정 디테일
