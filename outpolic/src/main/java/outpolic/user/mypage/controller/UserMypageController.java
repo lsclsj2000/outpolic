@@ -22,6 +22,7 @@ import outpolic.common.domain.Member;
 import outpolic.user.login.mapper.UserLoginMapper;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.service.UserMypageEditService;
+import outpolic.user.review.dto.ReviewDTO;
 import outpolic.user.settlement.dto.UserSettlement;
 import outpolic.user.settlement.service.UserSettlementService;
 
@@ -42,7 +43,16 @@ public class UserMypageController {
  	public String myPage(HttpSession session, Model model) {
 
  		String memberCode = (String) session.getAttribute("SCD");
+ 		String gradeCode = (String) session.getAttribute("SGrd");
+ 		if(gradeCode == null ||!"USER".equals(gradeCode)) {
+ 			model.addAttribute("msg", "접근 권한이 없습니다.");
+    		model.addAttribute("url", "/");
+    		System.out.println("❌ 접근 권한 없음 → 메인으로 리다이렉트");
+    		return "user/mypage/alert";
+
+ 		}
  	    UserInfoDTO userInfo = userMypageEditService.getUserInfoByCode(memberCode);
+ 	    ReviewDTO reviewDTO = userMypageEditService.getUserReviewByCode(memberCode);
  	    model.addAttribute("userInfo", userInfo);
  	    
  	   List<UserSettlement> settlementList = new ArrayList<>(); // 기본적으로 빈 리스트로 초기화
