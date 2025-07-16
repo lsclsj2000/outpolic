@@ -26,7 +26,6 @@ public class UserContentsController {
 	
 	// final 필드들
     private final UserSearchService searchService;
-    private final UserCategoryService categoryService;
     
     // 조회수를 위한 의존성 주입
     private final UserContentViewService contentViewService;
