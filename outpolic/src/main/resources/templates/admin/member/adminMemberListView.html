@@ -20,20 +20,22 @@
                                 <input type="text" placeholder="Search..." class="form-control" />
                             </div>
                             <div class="col-lg-2 col-6 col-md-3">
-                                <select class="form-select">
-                                    <option>전체 회원</option>
-                                    <option>활성 회원</option>
-                                    <option>휴면 회원</option>
-                                    <option>탈퇴 회원</option>
-                                </select>
-                            </div>
-                            <div class="col-lg-2 col-6 col-md-3">
-                                <select class="form-select">
-                                    <option>Show 20</option>
-                                    <option>Show 30</option>
-                                    <option>Show 40</option>
-                                </select>
-                            </div>
+						    	<select id="filterStatus" class="form-select">
+							        <option value="">전체 상태</option>
+							        <option value="SD_ACTIVE">활성 회원</option>
+							        <option value="SD_DORMANT">휴면 회원</option>
+							        <option value="SD_WITHDRAWN">탈퇴 회원</option>
+							        <option value="SD_LIMIT">제재 회원</option>
+							    </select>
+							</div>
+							<div class="col-lg-2 col-6 col-md-3">
+							    <select id="filterGrade" class="form-select">
+							        <option value="">전체 등급</option>
+							        <option value="ADMIN">관리자</option>
+							        <option value="ENTER">기업회원</option>
+							        <option value="USER">일반회원</option>
+							    </select>
+							</div>
                         </div>
                     </header>
                     <!-- card-header end// -->
@@ -181,6 +183,59 @@
 		<script>
 		console.log("스크립트 로딩됨");
 			$(document).ready(function () {
+				
+				$('#filterStatus, #filterGrade').change(function () {
+			        const status = $('#filterStatus').val();
+			        const grade = $('#filterGrade').val();
+			
+			        $.ajax({
+			            url: '/admin/memberList/filter',
+			            type: 'GET',
+			            data: {
+			                statusCode: status,
+			                gradeCode: grade
+			            },
+			            dataType: 'json',
+			            success: function (data) {
+			            	console.log("🟢 응답 받은 데이터", data);
+			                const tbody = $('tbody');
+			                tbody.empty();
+			
+			                if (data.length === 0) {
+			                    tbody.append('<tr><td colspan="9" class="text-center">조회된 회원이 없습니다.</td></tr>');
+			                    return;
+			                }
+			
+			                $.each(data, function (index, l) {
+			                    const row = `
+			                    <tr class="text-center">
+			                        <th>${l.memberCode}</th>
+			                        <th>${l.memberName}</th>
+			                        <th>${l.memberId}</th>
+			                        <th>${l.memberNickname}</th>
+			                        <th>
+			                            ${l.gradeCode === 'ADMIN' ? '<span class="badge rounded-pill alert-warning">관리자</span>' :
+			                                l.gradeCode === 'ENTER' ? '<span class="badge rounded-pill alert-info">기업회원</span>' :
+			                                '<span class="badge rounded-pill alert-success">일반회원</span>'}
+			                        </th>
+			                        <th>${l.memberTelNo.substring(0, 3)}-****-${l.memberTelNo.slice(-4)}</th>
+			                        <th>
+			                            ${l.statusCode === 'SD_ACTIVE' ? '<span class="badge rounded-pill alert-success">활성</span>' :
+			                                l.statusCode === 'SD_WITHDRAWN' ? '<span class="badge rounded-pill alert-info">휴면</span>' :
+			                                l.statusCode === 'SD_DORMANT' ? '<span class="badge rounded-pill alert-info">탈퇴</span>' :
+			                                '<span class="badge rounded-pill alert-warning">제재</span>'}
+			                        </th>
+			                        <th>${l.memberAgreeYN === '1' ? 'Y' : 'N'}</th>
+			                        <th><button class="btn btn-primary w-55 fw-bold btn-detail" data-code="${l.memberCode}" data-bs-toggle="modal" data-bs-target="#memberDetailModal">상세정보</button></th>
+			                    </tr>`;
+			                    tbody.append(row);
+			                });
+			            },
+			            error: function () {
+			                alert('필터링 실패');
+			            }
+			        });
+			    });
 				
 				$('#memberDetailModal').on('hidden.bs.modal', function () {
 				    console.log("모달 닫힘 이벤트 실행");

@@ -21,4 +21,6 @@ public interface AdminMemberService {
 	void editAdminMemberInfo(Member member);
 	
 	boolean isNicknameDuplicated(String nickname, String memberCode);
+	
+	public List<Member> filterMembers(String statusCode, String gradeCode);
 }
