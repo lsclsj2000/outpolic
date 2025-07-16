@@ -1,5 +1,7 @@
 package outpolic.admin.member.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +39,22 @@ public class adminMemberController {
 		model.addAttribute("memberList", memberList);				
 		model.addAttribute("status", statusCode);				
 		return "admin/member/adminMemberListViewByStatus";		
+	}
+	
+	// 회원 목록 필터링
+	@GetMapping("/memberList/filter")
+	@ResponseBody
+	public List<Member> filterMembers(@RequestParam(required = false) String statusCode,
+	                                  @RequestParam(required = false) String gradeCode) {
+		System.out.println("🔥 필터 요청 진입");
+	    System.out.println("📦 statusCode: " + statusCode);
+	    System.out.println("📦 gradeCode: " + gradeCode);
+
+	    List<Member> filtered = adminMemberService.filterMembers(statusCode, gradeCode);
+
+	    System.out.println("✅ 필터링 결과 개수: " + filtered.size());
+
+	    return filtered;
 	}
 	
 	//회원정보 수정 디테일
