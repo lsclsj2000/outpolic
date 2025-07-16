@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.user.company.mapper.UserCompanyMapper">
+
+    <select id="getCompanyInfoById" resultType="outpolic.user.company.domain.UserCompanyProfileDTO">
+        SELECT
+            e.ent_cd         AS entCd,
+            e.ent_nm         AS entNm,
+            e.ent_expln      AS entExpln,
+            e.ent_scl        AS entScl,
+            IFNULL(AVG(r2.rvw_evl), 0) AS avgReviewScore,
+            COUNT(DISTINCT r2.rvw_cd) AS reviewCount
+        FROM
+            enterprise e 
+        LEFT JOIN
+            outsourcing_contract_details ocd ON e.ent_cd = ocd.ent_cd 
+        LEFT JOIN 
+            outsourcing_prograss op ON op.ocd_cd = ocd.ocd_cd 
+        LEFT JOIN 
+            outsourcing_contract oc ON op.osp_cd = oc.osp_cd
+        LEFT JOIN
+            review r2 ON oc.osc_id = r2.osc_id
+        WHERE
+            e.ent_cd = #{entCd}
+        GROUP BY
+            e.ent_cd, e.ent_nm, e.ent_expln, e.ent_scl
+    </select>
+
+    <!-- 이 쿼리는 resultType이 String이므로 별칭이 필요 없습니다. -->
+    <select id="getCompanyCategoriesById" resultType="String">
+        SELECT
+            c3.ctgry_nm
+        FROM
+            enterprise e 
+        JOIN 
+            content_list c ON e.ent_cd = c.cntd_cd
+        JOIN 
+            category_mapping c2 ON c.cl_cd = c2.cl_cd
+        JOIN 
+            category c3 ON c2.ctgry_id = c3.ctgry_id
+        WHERE 
+            e.ent_cd = #{entCd}
+    </select>
+    
+    <select id="getCompanyPortfoliosById" resultType="outpolic.user.company.domain.UserCompanyPortfolioDTO">
+        SELECT
+            p.prtf_cd     AS prtfCd,
+            p.prtf_ttl    AS prtfTtl
+        FROM portfolio p
+        WHERE p.ent_cd = #{entCd}
+        ORDER BY p.prtf_reg_ymdt DESC
+    </select>
+
+    <select id="getCompanyOutsourcingById" resultType="outpolic.user.company.domain.UserCompanyOutsourcingDTO">
+        SELECT
+            o.os_cd     AS osCd,
+            o.os_ttl    AS osTtl,
+            o.os_amt    AS osAmt
+        FROM outsourcing o
+        WHERE o.ent_cd = #{entCd}
+        ORDER BY o.os_reg_ymdt DESC
+    </select>
+
+    <select id="getCompanyReviewsById" resultType="outpolic.user.company.domain.UserCompanyReviewDTO">
+        SELECT
+            o.os_ttl          AS osTtl,
+            m.mbr_nicknm      AS mbrNicknm,
+            r2.rvw_cn         AS rvwCn,
+            r2.rvw_evl        AS rvwEvl,
+            r2.rvw_reg_ymdt   AS rvwRegYmdt
+        FROM
+            enterprise e 
+        JOIN 
+            outsourcing_contract_details ocd ON e.ent_cd = ocd.ent_cd 
+        left JOIN 
+            content_list c  ON ocd.cl_cd = c.cl_cd 
+        left JOIN 
+            outsourcing o ON c.cntd_cd = o.os_cd 
+        LEFT JOIN
+            outsourcing_prograss op ON op.ocd_cd = ocd.ocd_cd 
+        LEFT JOIN 
+            outsourcing_contract oc ON op.osp_cd = oc.osp_cd
+        LEFT JOIN
+            review r2 ON oc.osc_id = r2.osc_id
+        JOIN 
+            `member` m ON r2.mbr_cd = m.mbr_cd 
+        WHERE 
+            e.ent_cd = #{entCd} AND r2.rvw_cn IS NOT NULL
+        ORDER BY
+            r2.rvw_reg_ymdt DESC
+    </select>
+</mapper>

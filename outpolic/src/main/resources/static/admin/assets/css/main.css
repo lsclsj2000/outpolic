@@ -4505,6 +4505,195 @@ textarea.SR_form-control {
 	from { transform: translateY(-50px); opacity: 0; }
 	to { transform: translateY(0); opacity: 1; }
 }
+
+/* 문의 및 답변 팝업 공통 스타일 */
+			.SR_modal {
+				display: none; /* 기본적으로 숨김 */
+				position: fixed; /* 화면에 고정 */
+				z-index: 1000; /* 다른 요소 위에 표시 */
+				left: 0;
+				top: 0;
+				width: 100%; /* 전체 너비 */
+				height: 100%; /* 전체 높이 */
+				overflow: auto; /* 내용이 넘칠 경우 스크롤 허용 */
+				background-color: rgba(0,0,0,0.4); /* 반투명 검정 배경 */
+				justify-content: center; /* 가로 중앙 정렬 */
+				align-items: center; /* 세로 중앙 정렬 */
+			}
+
+			.SR_modal-content-wrapper {
+				background-color: #fefefe; /* 팝업 배경색 */
+				margin: auto; /* 중앙 정렬 */
+				padding: 20px;
+				border: 1px solid #888;
+				width: 80%; /* 반응형 너비 */
+				max-width: 700px; /* 최대 너비 */
+				border-radius: 8px; /* 둥근 모서리 */
+				box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 그림자 효과 */
+				position: relative;
+			}
+
+			.SR_popup-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				border-bottom: 1px solid #eee; /* 하단 경계선 */
+				padding-bottom: 10px;
+				margin-bottom: 20px;
+			}
+
+			.SR_popup-header h2 {
+				margin: 0;
+				font-size: 1.5em; /* 제목 글자 크기 */
+			}
+
+			.SR_close-button, .SR_close-button-answer {
+				color: #aaa; /* 닫기 버튼 색상 */
+				font-size: 28px;
+				font-weight: bold;
+				cursor: pointer;
+				background: none;
+				border: none;
+				padding: 0;
+			}
+
+			.SR_close-button:hover,
+			.SR_close-button:focus,
+			.SR_close-button-answer:hover,
+			.SR_close-button-answer:focus {
+				color: black;
+				text-decoration: none;
+				cursor: pointer;
+			}
+
+			.SR_popup-info {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 20px;
+				font-size: 0.9em;
+				color: #555;
+			}
+
+			.SR_writer-info span {
+				font-weight: bold;
+			}
+
+			.SR_form-group {
+				margin-bottom: 15px;
+				display: flex;
+				gap: 15px; /* 입력 필드 간 간격 */
+			}
+
+			.SR_input-half {
+				flex: 1; /* 절반 너비 */
+			}
+
+			.SR_full-width {
+				width: 100%; /* 전체 너비 */
+			}
+
+			.SR_form-control {
+				width: 100%;
+				padding: 8px 12px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				box-sizing: border-box; /* 패딩을 너비에 포함 */
+			}
+
+			textarea.SR_form-control {
+				resize: vertical; /* 세로 크기 조절 가능 */
+			}
+
+			.SR_file-list {
+				background-color: #f9f9f9;
+				padding: 10px;
+				border: 1px solid #eee;
+				border-radius: 4px;
+			}
+
+			.SR_popup-footer {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				border-top: 1px solid #eee; /* 상단 경계선 */
+				padding-top: 15px;
+				margin-top: 20px;
+			}
+
+			.SR_update-info {
+				font-size: 0.8em;
+				color: #777;
+			}
+
+			.SR_status-dropdown {
+				padding: 5px 10px;
+				border-radius: 4px;
+				border: 1px solid #ccc;
+			}
+
+			/* 검색 필터 스타일 (기존 테이블 스타일 참고) */
+			.search-filter-card {
+				margin-bottom: 24px; /* card mb-4와 유사 */
+				border: 1px solid #e3e6ef; /* card border와 유사 */
+				border-radius: 8px; /* card border-radius와 유사 */
+				background-color: #fff; /* card 배경색과 유사 */
+			}
+
+			.search-filter-body {
+				padding: 24px; /* card-body padding과 유사 */
+			}
+
+			.search-filter-table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-bottom: 20px;
+			}
+
+			.search-filter-table th,
+			.search-filter-table td {
+				padding: 12px 15px; /* table th, td padding과 유사 */
+				border: 1px solid #ececec; /* table border와 유사 */
+				vertical-align: middle;
+			}
+
+			.search-filter-table th {
+				background-color: #f8f9fa; /* thead 배경색과 유사 */
+				text-align: left;
+				font-weight: 600;
+				color: #343a40;
+				width: 15%; /* 검색어, 기간검색, 레벨검색 레이블 너비 */
+			}
+
+			.search-filter-table td {
+				text-align: left;
+			}
+
+			.search-filter-table .form-control,
+			.search-filter-table .form-select {
+				display: inline-block;
+				width: auto;
+				vertical-align: middle;
+				margin-right: 8px;
+			}
+
+			.search-filter-table .radio-group label {
+				margin-right: 15px;
+				font-weight: normal;
+			}
+
+			.search-filter-table .radio-group input[type="radio"] {
+				margin-right: 5px;
+			}
+
+			.search-filter-buttons {
+				text-align: center;
+				padding-top: 20px;
+			}
+
+			.search-filter-buttons .btn {
+				margin: 0 5px;
+			}
 /* 유사랑 css 추가 끝 */
 
 /*신세영 css 추가합니다*/
