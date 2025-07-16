@@ -7,23 +7,23 @@
 
   <select id="selectByMbrCd" resultType="outpolic.user.settlement.dto.UserSettlement">
     SELECT
-      stlm_cd,           -- 결제코드
-      mbr_cd,            -- 회원코드
-      gds_cd,            -- 상품코드
-      stc_cd,            -- 상태코드
-      stlm_cnt,          -- 결제 수량
-      stlm_pay_type,     -- 결제 방식
-      stlm_amt,          -- 원 결제 금액
-      stlm_used_points,  -- 사용 마일리지
-      stlm_final_amt,    -- 최종 결제 금액
-      stlm_payment_info, -- 결제 정보
-      stlm_card_nm,      -- 카드사
-      stlm_provider_nm,  -- 간편결제사
-      stlm_account_info, -- 계좌 정보
-      stlm_account_nm,   -- 결제자 이름
-      stlm_ymdt,         -- 결제일시
-      stlm_agre_yn       -- 동의 여부
-    FROM tb_settlement
+      stlm_cd AS stlmCd,
+      mbr_cd AS mbrCd,
+      gds_cd AS gdsCd,
+      stc_cd AS stcCd,
+      stlm_cnt AS stlmCnt,
+      stlm_pay_type AS stlmPayType,
+      stlm_amt AS stlmAmt,
+      stlm_used_points AS stlmUsedPoints,
+      stlm_final_amt AS stlmFinalAmt,
+      stlm_payment_info AS stlmPaymentInfo,
+      stlm_card_nm AS stlmCardNm,
+      stlm_provider_nm AS stlmProviderNm,
+      stlm_account_info AS stlmAccountInfo,
+      stlm_account_nm AS stlmAccountNm,
+      stlm_ymdt AS stlmYmdt,
+      stlm_agre_yn AS stlmAgreYn
+    FROM settlement
     WHERE mbr_cd = #{mbrCd}
     ORDER BY stlm_ymdt DESC
   </select>
