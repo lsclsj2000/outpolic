@@ -126,6 +126,13 @@
 	    </if>
 	    ORDER BY CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED)
 	</select>
-  	
+	
+  	<select id="searchMembers" resultMap="memberInfo">
+	    SELECT * FROM member
+	    WHERE mbr_id LIKE CONCAT('%', #{keyword}, '%')
+	       OR mbr_nm LIKE CONCAT('%', #{keyword}, '%')
+	       OR mbr_nicknm LIKE CONCAT('%', #{keyword}, '%')
+	       OR mbr_cd LIKE CONCAT('%', #{keyword}, '%')
+	</select>
   	
   </mapper>

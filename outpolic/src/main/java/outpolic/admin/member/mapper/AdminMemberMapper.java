@@ -28,6 +28,9 @@ public interface AdminMemberMapper {
 	//닉네임 중복 확인
 	int countNicknameDuplicate(@Param("nickname") String nickname, @Param("memberCode") String memberCode);
 	
+	//필터링
 	List<Member> selectFilteredMembers(@Param("statusCode") String statusCode,
             @Param("gradeCode") String gradeCode);
+	// 검색
+	List<Member> searchMembers(String keyword);
 }

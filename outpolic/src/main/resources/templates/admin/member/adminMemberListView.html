@@ -15,16 +15,17 @@
                 </div>
                 <div class="card mb-4">
                     <header class="card-header">
-                        <div class="row gx-3">
-                            <div class="col-lg-4 col-md-6 me-auto">
-                                <input type="text" placeholder="Search..." class="form-control" />
-                            </div>
+                        <div class="row gx-3 justify-content-center">
+            				<div class="input-group col-lg-3 col-md-4 col-sm-6" style="max-width: 500px;">
+							    <input type="text" id="searchInput" class="form-control" placeholder="이름, 아이디, 닉네임, 회원코드 검색">
+							    <button class="btn btn-primary" type="button" id="searchBtn">검색</button>
+							</div>
                             <div class="col-lg-2 col-6 col-md-3">
 						    	<select id="filterStatus" class="form-select">
 							        <option value="">전체 상태</option>
 							        <option value="SD_ACTIVE">활성 회원</option>
-							        <option value="SD_DORMANT">휴면 회원</option>
-							        <option value="SD_WITHDRAWN">탈퇴 회원</option>
+							        <option value="SD_DORMANT">탈퇴 회원</option>
+							        <option value="SD_WITHDRAWN">휴면 회원</option>
 							        <option value="SD_LIMIT">제재 회원</option>
 							    </select>
 							</div>
@@ -36,6 +37,7 @@
 							        <option value="USER">일반회원</option>
 							    </select>
 							</div>
+
                         </div>
                     </header>
                     <!-- card-header end// -->
@@ -183,60 +185,77 @@
 		<script>
 		console.log("스크립트 로딩됨");
 			$(document).ready(function () {
+				// 필터
+				 $('#filterStatus, #filterGrade').change(function () {
+				        const status = $('#filterStatus').val();
+				        const grade = $('#filterGrade').val();
+					
+				        $.ajax({
+				        url: '/admin/memberList/filter',
+				            type: 'GET',
+				            data: {
+				                statusCode: status,
+				                gradeCode: grade
+				            },
+				            dataType: 'json',
+				            success: renderMemberList,
+				            error: () => alert("필터링 실패")
+				        });
+				    });
+					
+				    // 검색
+				    $('#searchBtn').click(function () {
+				        const keyword = $('#searchInput').val().trim();
+				        if (keyword === '') {
+				            alert('검색어를 입력해주세요.');
+				            return;
+				        }
 				
-				$('#filterStatus, #filterGrade').change(function () {
-			        const status = $('#filterStatus').val();
-			        const grade = $('#filterGrade').val();
-			
-			        $.ajax({
-			            url: '/admin/memberList/filter',
-			            type: 'GET',
-			            data: {
-			                statusCode: status,
-			                gradeCode: grade
-			            },
-			            dataType: 'json',
-			            success: function (data) {
-			            	console.log("🟢 응답 받은 데이터", data);
-			                const tbody = $('tbody');
-			                tbody.empty();
-			
-			                if (data.length === 0) {
-			                    tbody.append('<tr><td colspan="9" class="text-center">조회된 회원이 없습니다.</td></tr>');
-			                    return;
-			                }
-			
-			                $.each(data, function (index, l) {
-			                    const row = `
-			                    <tr class="text-center">
-			                        <th>${l.memberCode}</th>
-			                        <th>${l.memberName}</th>
-			                        <th>${l.memberId}</th>
-			                        <th>${l.memberNickname}</th>
-			                        <th>
-			                            ${l.gradeCode === 'ADMIN' ? '<span class="badge rounded-pill alert-warning">관리자</span>' :
-			                                l.gradeCode === 'ENTER' ? '<span class="badge rounded-pill alert-info">기업회원</span>' :
-			                                '<span class="badge rounded-pill alert-success">일반회원</span>'}
-			                        </th>
-			                        <th>${l.memberTelNo.substring(0, 3)}-****-${l.memberTelNo.slice(-4)}</th>
-			                        <th>
-			                            ${l.statusCode === 'SD_ACTIVE' ? '<span class="badge rounded-pill alert-success">활성</span>' :
-			                                l.statusCode === 'SD_WITHDRAWN' ? '<span class="badge rounded-pill alert-info">휴면</span>' :
-			                                l.statusCode === 'SD_DORMANT' ? '<span class="badge rounded-pill alert-info">탈퇴</span>' :
-			                                '<span class="badge rounded-pill alert-warning">제재</span>'}
-			                        </th>
-			                        <th>${l.memberAgreeYN === '1' ? 'Y' : 'N'}</th>
-			                        <th><button class="btn btn-primary w-55 fw-bold btn-detail" data-code="${l.memberCode}" data-bs-toggle="modal" data-bs-target="#memberDetailModal">상세정보</button></th>
-			                    </tr>`;
-			                    tbody.append(row);
-			                });
-			            },
-			            error: function () {
-			                alert('필터링 실패');
-			            }
-			        });
-			    });
+				        $.ajax({
+				            url: '/admin/memberList/search',
+				            type: 'GET',
+				            data: { keyword: keyword },
+				            success: renderMemberList,
+				            error: () => alert("검색 실패")
+				        });
+				    });
 				
+				    // 회원 목록 렌더링 함수 (공통)
+				    function renderMemberList(data) {
+				        console.log("🟢 응답 받은 데이터", data);
+				        const tbody = $('tbody');
+				        tbody.empty();
+				
+				        if (data.length === 0) {
+				            tbody.append('<tr><td colspan="9" class="text-center">조회된 회원이 없습니다.</td></tr>');
+				            return;
+				        }
+				
+				        $.each(data, function (index, l) {
+				            const row = `
+				                <tr class="text-center">
+				                    <th>${l.memberCode}</th>
+				                    <th>${l.memberName}</th>
+				                    <th>${l.memberId}</th>
+				                    <th>${l.memberNickname}</th>
+				                    <th>
+				                        ${l.gradeCode === 'ADMIN' ? '<span class="badge rounded-pill alert-warning">관리자</span>' :
+				                            l.gradeCode === 'ENTER' ? '<span class="badge rounded-pill alert-info">기업회원</span>' :
+				                            '<span class="badge rounded-pill alert-success">일반회원</span>'}
+				                    </th>
+				                    <th>${l.memberTelNo.substring(0, 3)}-****-${l.memberTelNo.slice(-4)}</th>
+				                    <th>
+				                        ${l.statusCode === 'SD_ACTIVE' ? '<span class="badge rounded-pill alert-success">활성</span>' :
+				                            l.statusCode === 'SD_WITHDRAWN' ? '<span class="badge rounded-pill alert-info">휴면</span>' :
+				                            l.statusCode === 'SD_DORMANT' ? '<span class="badge rounded-pill alert-info">탈퇴</span>' :
+				                            '<span class="badge rounded-pill alert-warning">제재</span>'}
+				                    </th>
+				                    <th>${l.memberAgreeYN === '1' ? 'Y' : 'N'}</th>
+				                    <th><button class="btn btn-primary w-55 fw-bold btn-detail" data-code="${l.memberCode}" data-bs-toggle="modal" data-bs-target="#memberDetailModal">상세정보</button></th>
+				                </tr>`;
+				            tbody.append(row);
+				        });
+				    };
 				$('#memberDetailModal').on('hidden.bs.modal', function () {
 				    console.log("모달 닫힘 이벤트 실행");
 				    $('body').removeClass('modal-open');
@@ -248,7 +267,7 @@
 			console.log("🚨 document.ready 실행됨");
 			let isSaveHandlerBound = false;
 			    // 상세정보 보기 버튼 클릭
-			    $('.btn-detail').click(function () { 	
+			    $(document).on('click', '.btn-detail', function () { 	
 			        const memberCode = $(this).data('code');
 			
 			        $.ajax({
