@@ -15,6 +15,7 @@
 			    <form class="col-10 row g-4 p-4 border" 
 			          style="border-color: #ececec; border-radius:5px;" 
 			          th:action="@{/userEdit}" method="post" th:object="${userInfo}">
+			      <input type="hidden" th:field="*{memberCode}">
 			      <h3 class="mb-3 fw-bold">내 정보 수정</h3>
 			      <hr class="mb-4" style="border: none; height: 2px; background-color: #ececec;">
 			      <div class="col-md-6">

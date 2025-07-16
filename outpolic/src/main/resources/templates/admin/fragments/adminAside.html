@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 	<aside class="navbar-aside" id="offcanvas_aside" th:fragment="adminAsideFragment">
-		<div class="aside-top">
+		<div class="aside-top" style="height : 72px;">
 		    <a href="#" class="brand-wrap">
 		        <img src="/user/assets/imgs/outpolic/logo.png" class="logo" alt="Nest Dashboard" />
 		    </a>
@@ -17,18 +17,11 @@
 					    <span class="text">통계</span>
 					</a>
 				</li>
-				<li class="menu-item has-submenu">
-					<a class="menu-link" href="#">
+				<li class="menu-item">
+					<a class="menu-link" th:href="@{/admin/memberList}">
 					    <i class="icon material-icons md-shopping_bag"></i>
-					    <span class="text">회원</span>
+					    <span class="text">회원 목록</span>
 					</a>
-					<div class="submenu">
-					    <a th:href="@{/admin/memberList}">전체 회원 목록</a>
-					    <a th:href="@{/admin/memberList/active}">활성 회원 목록</a>
-					    <a th:href="@{/admin/memberList/withdrawn}">휴면 회원 목록</a>
-					    <a th:href="@{/admin/memberList/dormant}">탈퇴 회원 목록</a>
-					    <a th:href="@{/admin/memberList/limit}">제재 회원 목록</a>
-					</div>
 				</li>
 				<li class="menu-item has-submenu">
 					<a class="menu-link" th:href="@{/admin/adminInquiryList}">
