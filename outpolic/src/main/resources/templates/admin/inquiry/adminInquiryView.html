@@ -84,7 +84,7 @@
 								    <td scope="col" class="text-center" th:text="${l.inquiryRegYmdt}">작성일자</td>
 								    <td scope="col" class="text-center">
 										<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${l.inquiryCode}">수정</a>
-										<a href="#" class="btn btn-md rounded font-sm">답변</a>
+										<a href="#" class="btn btn-md rounded font-sm SR_open-answer-popup-btn" th:data-inquiry-code="${l.inquiryCode}">답변</a>
 									</td>
 								</tr>
 							</tbody>
@@ -169,27 +169,60 @@
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
 					<h2>문의 답변</h2>
-					<button class="SR_close-button-answer">&times;</button>
+					<button class="SR_close-button">&times;</button>
 				</div>
                 <div class="SR_popup-info">
                     <div class="SR_writer-info">
-                    	<span>문의 코드 : </span>
-                        <span id="SR_answerInquiryCodeDisplay"></span>
-                        <p></p>
-                        <span>제목 : </span><span id="SR_answerInquiryTitleDisplay"></span>
+                    	<span>작성자 : </span>
+                        <span id="SR_writerCode">작성자 코드</span> | <span id="SR_writerName">작성자명</span> | <span id="SR_writeDate">작성일자</span>
                     </div>
+                    <div id="inquiryStatusEdit" class="SR_form-control SR_status-dropdown"></div>
                 </div>
 
-				<form id="answerForm">
-                    <div class="SR_form-group SR_full-width">
-						<label for="answerContent">답변 내용</label>
-						<textarea id="answerContent" name="answerContent" class="SR_form-control" rows="10" placeholder="답변 내용을 입력하세요."></textarea>
+				<div id="inquiryForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label for="inquiryTitleEdit">제목</label>
+                            <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label for="inquiryTypeEdit">문의타입 이름</label>
+                            <select id="inquiryTypeEdit" name="inquiryType" class="SR_form-control">
+                                <option value="1">상품 문의</option>
+                                <option value="2">배송 문의</option>
+                                <option value="3">기술 지원</option>
+                                <option value="4">기타</option>
+                            </select>
+                        </div>
 					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label for="inquiryContentEdit">문의 내용</label>
+						<textarea id="inquiryContentEdit" name="inquiryContent" class="SR_form-control" rows="5" readonly></textarea>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+                        <label>첨부파일 목록</label>
+                        <div id="SR_fileList" class="SR_form-control SR_file-list">
+                            파일1.jpg (1.2MB) <br>
+                            파일2.pdf (3.5MB)
+                        </div>
+                    </div>
+                    
+                    <form id="answerForm">
+	                    <div class="SR_form-group SR_full-width">
+							<label for="answerContent">답변 내용</label>
+							<textarea id="answerContent" name="answerContent" class="SR_form-control" rows="10" placeholder="답변 내용을 입력하세요."></textarea>
+						</div>
+					</form>
                     
 					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                            <span id="SR_updaterName">수정자</span> | <span id="SR_updateDate">수정일시</span>
+                        </div>
 						<button type="submit" id="answerSaveButton" class="btn btn-md rounded font-sm">답변 저장</button>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	</th:block>
@@ -203,8 +236,11 @@
 		
 				// 답변 팝업 관련 요소
 			    const answerModal = document.getElementById('answerModal');
-			    const closeAnswerButton = document.querySelector('#answerModal .SR_close-button-answer');
-			    const openAnswerPopupButtons = document.querySelectorAll('.SR_open-answer-popup-btn'); // 답변 버튼 선택자 추가
+			    // HTML 구조에 맞춰 닫기 버튼 선택자 수정
+			    const closeAnswerButton = document.querySelector('#answerModal .SR_close-button'); 
+			    const openAnswerPopupButtons = document.querySelectorAll('.SR_open-answer-popup-btn');
+		
+		        let currentInquiryCodeForAnswer = null; // 답변 팝업에서 사용할 문의 코드를 저장할 변수
 		
 			    openPopupButtons.forEach(button => {
 			        button.addEventListener('click', function (event) {
@@ -384,14 +420,80 @@
 			        button.addEventListener('click', function (event) {
 			            event.preventDefault();
 			            const inquiryCode = this.getAttribute('data-inquiry-code');
+		                currentInquiryCodeForAnswer = inquiryCode; // 문의 코드를 변수에 저장
 		
 						// 문의 상세 조회 (답변 팝업에 제목과 문의 코드 표시를 위해)
 			            fetch(`/admin/adminInquiryMdfcn?inquiryCode=${inquiryCode}`)
 			                .then(response => response.json())
 			                .then(data => {
-			                    document.getElementById('SR_answerInquiryCodeDisplay').textContent = data.inquiryCode;
-			                    document.getElementById('SR_answerInquiryTitleDisplay').textContent = data.inquiryTitle;
-								document.getElementById('answerContent').value = data.inquiryAnswer || ''; // 기존 답변 내용이 있다면 불러옴
+			                    // HTML 구조에 맞춰 inquiryTitleEdit에 제목 설정
+			                    const answerModalTitleInput = answerModal.querySelector('#inquiryTitleEdit');
+			                    if (answerModalTitleInput) {
+			                        answerModalTitleInput.value = data.inquiryTitle;
+			                    }
+								// HTML 구조에 맞춰 SR_writerCode, SR_writerName, SR_writeDate에 데이터 설정
+								const writerCodeSpan = answerModal.querySelector('#SR_writerCode');
+								const writerNameSpan = answerModal.querySelector('#SR_writerName');
+								const writeDateSpan = answerModal.querySelector('#SR_writeDate');
+								if (writerCodeSpan) writerCodeSpan.textContent = data.memberCode || '-';
+								if (writerNameSpan) writerNameSpan.textContent = data.memberName || '-';
+								if (writeDateSpan) writeDateSpan.textContent = data.inquiryRegYmdt || '-';
+		
+								// HTML 구조에 맞춰 inquiryStatusEdit에 상태 설정 (select가 아닌 div이므로 textContent로)
+								const inquiryStatusEditDiv = answerModal.querySelector('#inquiryStatusEdit');
+								if (inquiryStatusEditDiv) {
+									// data.statusName이 '처리완료'인 경우만 표시하거나, 모든 상태를 표시할 수 있습니다.
+									// 현재 HTML 구조는 select가 아니므로, 단순 텍스트로 표시합니다.
+									inquiryStatusEditDiv.textContent = data.statusName || '-';
+								}
+		
+								// HTML 구조에 맞춰 inquiryTypeEdit에 문의타입 설정
+								const inquiryTypeEditSelect = answerModal.querySelector('#inquiryTypeEdit');
+								if (inquiryTypeEditSelect) {
+									// 기존 옵션 제거
+									inquiryTypeEditSelect.innerHTML = '';
+									// 문의 타입 목록을 불러와 옵션 추가 (예시)
+									fetch('/admin/inquiryType')
+										.then(res => res.json())
+										.then(typeList => {
+											typeList.forEach(type => {
+												const option = document.createElement('option');
+												option.value = type.inquiryTypeCode;
+												option.textContent = type.inquiryTypeName;
+												inquiryTypeEditSelect.appendChild(option);
+											});
+											inquiryTypeEditSelect.value = data.inquiryTypeCode || '';
+										})
+										.catch(error => console.error('문의 타입 불러오기 실패:', error));
+								}
+		
+								// HTML 구조에 맞춰 inquiryContentEdit에 문의 내용 설정
+								const inquiryContentEditArea = answerModal.querySelector('#inquiryContentEdit');
+								if (inquiryContentEditArea) {
+									if (data.inquiryCn) {
+										const tempDiv = document.createElement('div');
+										tempDiv.innerHTML = data.inquiryCn;
+										tempDiv.querySelectorAll('img').forEach(img => img.remove());
+										inquiryContentEditArea.value = (tempDiv.textContent || tempDiv.innerText || '').trim();
+									} else {
+										inquiryContentEditArea.value = '내용이 없습니다.';
+									}
+								}
+		
+								// HTML 구조에 맞춰 SR_fileList에 첨부파일 목록 설정
+								const fileListEl = answerModal.querySelector('#SR_fileList');
+								if (fileListEl) {
+									if (data.subAttchOrgnlName && data.subAttchSize) {
+										const sizeMB = (parseInt(data.subAttchSize, 10) / 1024 / 1024).toFixed(1);
+										fileListEl.innerHTML = `${data.subAttchOrgnlName} (${sizeMB}MB)`;
+									} else {
+										fileListEl.innerHTML = '첨부파일 없음';
+									}
+								}
+		
+								// 답변 내용 설정
+								document.getElementById('answerContent').value = data.inquiryAnswer || ''; 
+		
 			                    answerModal.style.display = 'flex';
 			                    document.body.style.overflow = 'hidden';
 			                })
@@ -420,8 +522,14 @@
 			    document.getElementById('answerForm').addEventListener('submit', function (event) {
 			        event.preventDefault();
 			
-			        const inquiryCode = document.getElementById('SR_answerInquiryCodeDisplay').textContent;
+			        const inquiryCode = currentInquiryCodeForAnswer; // 저장된 문의 코드 사용
 			        const answerContent = document.getElementById('answerContent').value;
+		
+		            if (!inquiryCode) {
+		                console.error('Inquiry Code is missing for answer submission.');
+		                alert('문의 코드를 찾을 수 없어 답변을 저장할 수 없습니다.');
+		                return;
+		            }
 			
 			        const payload = {
 			            inquiryCode: inquiryCode,
@@ -435,7 +543,7 @@
 			            body: JSON.stringify(payload)
 			        })
 			        .then(res => {
-			            if (!res.ok) throw new Error('답변 저장 실패');
+			            if (!res.ok) throw new Error('저장 실패');
 			            return res.text();
 			        })
 			        .then(result => {
@@ -450,6 +558,6 @@
 			        });
 			    });
 			});
-		</script>
+			</script>
 	</th:block>
 </html>
