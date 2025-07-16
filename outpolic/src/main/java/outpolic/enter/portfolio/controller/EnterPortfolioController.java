@@ -51,7 +51,7 @@ public class EnterPortfolioController {
     public ResponseEntity<List<EnterPortfolio>> getPortfolioListData(HttpSession session) {
         String mbrCd = (String) session.getAttribute("SCD");
         if (mbrCd == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Collections.emptyList());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Collections.emptyList()); // <-- 여기서 401 응답을 보냅니다.
         }
         String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
         return ResponseEntity.ok(portfolioService.getPortfolioListByEntCd(entCd));
