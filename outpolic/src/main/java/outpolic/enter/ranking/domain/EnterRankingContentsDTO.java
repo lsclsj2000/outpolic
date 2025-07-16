@@ -10,6 +10,7 @@ public class EnterRankingContentsDTO {
 	private int rankingView;
 	private String osCode;
 	private String entName;
+	private String entCode;
 	private String ctgryName;
 	private String osTtl;
 	private String osExpln;
