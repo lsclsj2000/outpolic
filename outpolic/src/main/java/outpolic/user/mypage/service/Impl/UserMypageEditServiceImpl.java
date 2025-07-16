@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.mapper.UserMypageEditMapper;
 import outpolic.user.mypage.service.UserMypageEditService;
+import outpolic.user.review.dto.ReviewDTO;
 
 @Slf4j
 @Service
@@ -50,6 +51,12 @@ public class UserMypageEditServiceImpl implements UserMypageEditService {
         default:
             return false;
 		}
+	}
+
+	@Override
+	public ReviewDTO getUserReviewByCode(String memberCode) {
+		
+		return userMypageEditMapper.getUserReviewByCode(memberCode);
 	}
 
 

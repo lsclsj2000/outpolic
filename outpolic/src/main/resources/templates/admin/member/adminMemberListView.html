@@ -15,31 +15,54 @@
                 </div>
                 <div class="card mb-4">
                     <header class="card-header">
-                        <div class="row gx-3 justify-content-center">
-            				<div class="input-group col-lg-3 col-md-4 col-sm-6" style="max-width: 500px;">
-							    <input type="text" id="searchInput" class="form-control" placeholder="이름, 아이디, 닉네임, 회원코드 검색">
-							    <button class="btn btn-primary" type="button" id="searchBtn">검색</button>
-							</div>
-                            <div class="col-lg-2 col-6 col-md-3">
-						    	<select id="filterStatus" class="form-select">
-							        <option value="">전체 상태</option>
-							        <option value="SD_ACTIVE">활성 회원</option>
-							        <option value="SD_DORMANT">탈퇴 회원</option>
-							        <option value="SD_WITHDRAWN">휴면 회원</option>
-							        <option value="SD_LIMIT">제재 회원</option>
-							    </select>
-							</div>
-							<div class="col-lg-2 col-6 col-md-3">
-							    <select id="filterGrade" class="form-select">
-							        <option value="">전체 등급</option>
-							        <option value="ADMIN">관리자</option>
-							        <option value="ENTER">기업회원</option>
-							        <option value="USER">일반회원</option>
-							    </select>
-							</div>
-
-                        </div>
+                        <div class="card mb-4 search-filter-card" style="border:none;">
+						  <div class="card-body search-filter-body" >
+						    <div class="table-responsive">
+						      <table class="search-filter-table" >
+						        <tbody>
+						          <!-- 🔍 검색바 라인 -->
+						          <tr>
+						            <th>검색</th>
+						            <td>
+						              <div class="d-flex align-items-center gap-2">
+						                <input type="text" id="searchInput" class="form-control" placeholder="이름, 아이디, 닉네임, 회원코드 검색" style="width: 300px;" />
+						                <button type="button" class="btn btn-primary btn-sm" id="searchBtn">검색</button>
+						              </div>
+						            </td>
+						          </tr>
+						
+						          <!-- 🔽 드롭다운 2개 라인 -->
+						          <tr>
+						            <th>필터</th>
+						            <td>
+						              <div class="d-flex align-items-center gap-3">
+						                <!-- 상태 필터 -->
+						                <select id="filterStatus" class="form-select form-select-sm" style="width: 180px;">
+						                  <option value="">전체 상태</option>
+						                  <option value="SD_ACTIVE">활성 회원</option>
+						                  <option value="SD_DORMANT">탈퇴 회원</option>
+						                  <option value="SD_WITHDRAWN">휴면 회원</option>
+						                  <option value="SD_LIMIT">제재 회원</option>
+						                </select>
+						
+						                <!-- 등급 필터 -->
+						                <select id="filterGrade" class="form-select form-select-sm" style="width: 180px;">
+						                  <option value="">전체 등급</option>
+						                  <option value="ADMIN">관리자</option>
+						                  <option value="ENTER">기업회원</option>
+						                  <option value="USER">일반회원</option>
+						                </select>
+						              </div>
+						            </td>
+						          </tr>
+						        </tbody>
+						      </table>
+						    </div>
+						  </div>
+						</div>
                     </header>
+                    </div>
+                    <div class="card mb-4">
                     <!-- card-header end// -->
                     <div class="card-body">
                         <div class="table-responsive">
@@ -58,34 +81,34 @@
                                         <th scope="col">상세정보</th>
                                     </tr>
                                 </thead>
-                                <tbody class="text-center">
+                                <tbody id="memberTableBody" class="text-center">
                                     <tr th:if="${not #lists.isEmpty(memberList)}"
                                     	th:each="l : ${memberList}">
-                                       <th th:text="${l.memberCode}">회원 코드</th>
-                                       <th th:text="${l.memberName}">이름</th>
-                                       <th th:text="${l.memberId}">아이디</th>
-                                       <th th:text="${l.memberNickname}">닉네임</th>
-                                       <th th:switch="${l.gradeCode}">
+                                       <td th:text="${l.memberCode}">회원 코드</td>
+                                       <td th:text="${l.memberName}">이름</td>
+                                       <td th:text="${l.memberId}">아이디</td>
+                                       <td th:text="${l.memberNickname}">닉네임</td>
+                                       <td th:switch="${l.gradeCode}">
 											<span th:case="ADMIN" class="badge rounded-pill alert-warning">관리자</span>
 											<span th:case="ENTER" class="badge rounded-pill alert-info">기업회원</span>
 											<span th:case="USER" class="badge rounded-pill alert-success">일반회원</span>
-                                       </th>
-                                       <th th:text="${l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.substring(l.memberTelNo.length() - 4)}">연락처</th>
-                                       <th th:switch="${l.statusCode}">
+                                       </td>
+                                       <td th:text="${l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.substring(l.memberTelNo.length() - 4)}">연락처</td>
+                                       <td th:switch="${l.statusCode}">
                                            <span th:case="SD_ACTIVE" class="badge rounded-pill alert-success">활성</span>
                                            <span th:case="SD_WITHDRAWN" class="badge rounded-pill alert-info">휴면</span>
                                            <span th:case="SD_DORMANT" class="badge rounded-pill alert-info">탈퇴</span>
                                            <span th:case="SD_LIMIT" class="badge rounded-pill alert-warning">제재</span>
-                                       </th>
+                                       </td>
                                      <!--  <th th:text="${l.memberJoinYmdt}">가입일</th>-->
-                                       <th th:switch="${l.memberAgreeYN}">
+                                       <td th:switch="${l.memberAgreeYN}">
 											<span th:case="1" >Y</span>
 											<span th:case="0" >N</span>
-										</th>
-                                       <th scope="col"><button class="btn btn-primary w-55 fw-bold btn-detail" 
+										</td>
+                                       <td scope="col"><button class="btn btn-primary w-55 fw-bold btn-detail" 
 													           th:data-code="${l.memberCode}" 
 													           data-bs-toggle="modal" 
-													           data-bs-target="#memberDetailModal">상세정보</button></th>
+													           data-bs-target="#memberDetailModal">상세정보</button></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -210,7 +233,8 @@
 				            alert('검색어를 입력해주세요.');
 				            return;
 				        }
-				
+						$('#filterStatus').val('');
+ 						$('#filterGrade').val('');
 				        $.ajax({
 				            url: '/admin/memberList/search',
 				            type: 'GET',
@@ -222,40 +246,53 @@
 				
 				    // 회원 목록 렌더링 함수 (공통)
 				    function renderMemberList(data) {
-				        console.log("🟢 응답 받은 데이터", data);
-				        const tbody = $('tbody');
-				        tbody.empty();
-				
-				        if (data.length === 0) {
-				            tbody.append('<tr><td colspan="9" class="text-center">조회된 회원이 없습니다.</td></tr>');
-				            return;
-				        }
-				
-				        $.each(data, function (index, l) {
-				            const row = `
-				                <tr class="text-center">
-				                    <th>${l.memberCode}</th>
-				                    <th>${l.memberName}</th>
-				                    <th>${l.memberId}</th>
-				                    <th>${l.memberNickname}</th>
-				                    <th>
-				                        ${l.gradeCode === 'ADMIN' ? '<span class="badge rounded-pill alert-warning">관리자</span>' :
-				                            l.gradeCode === 'ENTER' ? '<span class="badge rounded-pill alert-info">기업회원</span>' :
-				                            '<span class="badge rounded-pill alert-success">일반회원</span>'}
-				                    </th>
-				                    <th>${l.memberTelNo.substring(0, 3)}-****-${l.memberTelNo.slice(-4)}</th>
-				                    <th>
-				                        ${l.statusCode === 'SD_ACTIVE' ? '<span class="badge rounded-pill alert-success">활성</span>' :
-				                            l.statusCode === 'SD_WITHDRAWN' ? '<span class="badge rounded-pill alert-info">휴면</span>' :
-				                            l.statusCode === 'SD_DORMANT' ? '<span class="badge rounded-pill alert-info">탈퇴</span>' :
-				                            '<span class="badge rounded-pill alert-warning">제재</span>'}
-				                    </th>
-				                    <th>${l.memberAgreeYN === '1' ? 'Y' : 'N'}</th>
-				                    <th><button class="btn btn-primary w-55 fw-bold btn-detail" data-code="${l.memberCode}" data-bs-toggle="modal" data-bs-target="#memberDetailModal">상세정보</button></th>
-				                </tr>`;
-				            tbody.append(row);
-				        });
-				    };
+					  const tbody = $('#memberTableBody');
+					  tbody.empty();
+					
+					  if (!data || data.length === 0) {
+					    tbody.append('<tr><td colspan="9" class="text-center">조회된 회원이 없습니다.</td></tr>');
+					    return;
+					  }
+					
+					  data.forEach(l => {
+					    const gradeLabel = l.gradeCode === 'ADMIN'
+					      ? '<span class="badge rounded-pill alert-warning">관리자</span>'
+					      : l.gradeCode === 'ENTER'
+					        ? '<span class="badge rounded-pill alert-info">기업회원</span>'
+					        : '<span class="badge rounded-pill alert-success">일반회원</span>';
+					
+					    const statusLabel = l.statusCode === 'SD_ACTIVE'
+					      ? '<span class="badge rounded-pill alert-success">활성</span>'
+					      : l.statusCode === 'SD_WITHDRAWN'
+					        ? '<span class="badge rounded-pill alert-info">휴면</span>'
+					        : l.statusCode === 'SD_DORMANT'
+					          ? '<span class="badge rounded-pill alert-info">탈퇴</span>'
+					          : '<span class="badge rounded-pill alert-warning">제재</span>';
+					
+					    const telMasked = l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.slice(-4);
+					
+					    const row = `
+					      <tr class="text-center">
+					        <td>${l.memberCode}</td>
+					        <td>${l.memberName}</td>
+					        <td>${l.memberId}</td>
+					        <td>${l.memberNickname}</td>
+					        <td>${gradeLabel}</td>
+					        <td>${telMasked}</td>
+					        <td>${statusLabel}</td>
+					        <td>${l.memberAgreeYN === '1' ? 'Y' : 'N'}</td>
+					        <td>
+					          <button class="btn btn-primary w-55 fw-bold btn-detail"
+					                  data-code="${l.memberCode}"
+					                  data-bs-toggle="modal"
+					                  data-bs-target="#memberDetailModal">상세정보</button>
+					        </td>
+					      </tr>
+					    `;
+					
+					    tbody.append(row);
+					  });
+					}
 				$('#memberDetailModal').on('hidden.bs.modal', function () {
 				    console.log("모달 닫힘 이벤트 실행");
 				    $('body').removeClass('modal-open');

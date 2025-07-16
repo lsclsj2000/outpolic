@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import outpolic.user.mypage.dto.UserInfoDTO;
+import outpolic.user.review.dto.ReviewDTO;
 
 @Service
 public interface UserMypageEditService {
@@ -17,4 +18,6 @@ public interface UserMypageEditService {
 	
 	//회원 개인정보 중복검사
 	boolean isUserInfoDuple(String type, String memberCode, String memberNickname, String memberEmail, String memberTelNo);
+	
+	ReviewDTO getUserReviewByCode(String memberCode);
 }

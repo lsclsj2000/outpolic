@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import outpolic.user.mypage.dto.UserInfoDTO;
+import outpolic.user.review.dto.ReviewDTO;
 
 @Mapper
 public interface UserMypageEditMapper {
@@ -25,4 +26,6 @@ public interface UserMypageEditMapper {
 	 * 
 	 * @Param("memberId") String memberId);
 	 */
+	 
+	 ReviewDTO getUserReviewByCode(String memberCode);
 }
