@@ -19,4 +19,10 @@ public interface AdminInquiryMapper {
 	
 	// 문의 목록 조회
 	List<AdminInquiry> getAdminInquiryList();
+	
+	// 문의 테이블 수정
+    int updateInquiryTable(AdminInquiry adminInquiry);
+
+    // 문의 프로세스 테이블 수정
+    int updateInquiryProcessTable(AdminInquiry adminInquiry);
 }

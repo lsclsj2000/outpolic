@@ -105,17 +105,13 @@
 		                    </div>
 		                    
 		                    <!-- 구매 또는 문의 버튼 -->
-		                <div class="detail-extralink" th:if="${detail != null}">
-    
-    <a th:href="@{/enter/outsourcing-requests/form/{id}(id=${detail.contentsId})}" 
-       class="button button-add-to-cart w-100">
-       <i class="fi-rs-shopping-cart"></i>신청하기
-    </a>
-
-</div>
-
-
-
+		                    <div class="detail-extralink" th:if="${detail != null}">
+		                        <!-- 버튼이 꽉 차도록 w-100 클래스 추가 -->
+		                       <a th:href="@{/enter/outsourcing-requests/form/{id}(id=${detail.contentsId})}" 
+							       class="button button-add-to-cart w-100">
+							       <i class="fi-rs-shopping-cart"></i>신청하기
+							    </a>
+		                    </div>
 		                    
 		                    <!-- 타입, ID 등 추가 정보 -->
 		                    <div class="font-xs mt-30">

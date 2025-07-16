@@ -97,7 +97,35 @@
 		AND mbr_cd != #{memberCode}; 
   	</select>
   	
-  	
+	<select id="selectFilteredMembers" resultType="outpolic.common.domain.Member">
+	    SELECT 
+		    mbr_cd AS memberCode,
+	        grd_cd AS gradeCode,
+	        mbr_id AS memberId,
+	        mbr_pw AS memberPw,
+	        mbr_nm AS memberName,
+	        mbr_nicknm AS memberNickname,
+	        mbr_telno AS memberTelNo,
+	        mbr_addr AS memberAddress,
+	        mbr_daddr AS memberDAddress,
+	        mbr_zip AS memberZip,
+	        mbr_eml AS memberEmail,
+	        mbr_birth AS memberBirth,
+	        mbr_join_ymdt AS memberJoinYmdt,
+	        mbr_mdfcn_ymdt AS memberMdfcnYmdt,
+	        stc_cd AS statusCode,
+	        mbr_agre_yn AS memberAgreeYN,
+	        mbr_last_lgn_ymdt AS memberLastLoginYmdt
+	    FROM member
+	    WHERE 1=1
+	    <if test="statusCode != null and statusCode != ''">
+	        AND stc_cd = #{statusCode}
+	    </if>
+	    <if test="gradeCode != null and gradeCode != ''">
+	        AND grd_cd = #{gradeCode}
+	    </if>
+	    ORDER BY CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED)
+	</select>
   	
   	
   </mapper>

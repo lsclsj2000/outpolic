@@ -151,6 +151,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{inquiryCode}, #{memberCode}, #{inquiryTypeCode}, #{inquiryTitle}, #{inquiryCn}, #{inquirySecret}, NOW()
 		)
 	</insert>
+	
+	<!-- 문의 등록 후 문의 프로세스 등록 -->
+	<insert id="adduserInquiryProcess" parameterType="outpolic.user.inquiry.domain.UserInquiry">
+		<selectKey keyColumn="newCode" keyProperty="inquiryProcessCode" resultType="String" order="BEFORE">
+			/* 자동 코드 생성 */
+			SELECT
+				CASE
+				WHEN COUNT(*) = 0 THEN 'IQP_C1'
+				ELSE 		
+				  CONCAT('IQP_C', MAX(CAST(SUBSTRING_INDEX(ip.iqp_cd, 'IQP_C', -1) AS UNSIGNED)) + 1)
+				END AS newCode
+			FROM
+			  inquiry_process ip;
+		</selectKey>
+				
+		INSERT INTO inquiry_process (
+			iqp_cd, iq_cd, stc_cd
+		) VALUES (
+			#{inquiryProcessCode}, #{inquiryCode},'SD_BEFORE'
+		);
+	</insert>
 
 
 	<!-- 문의 타입 조회 -->

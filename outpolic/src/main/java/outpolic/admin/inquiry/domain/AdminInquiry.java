@@ -20,5 +20,10 @@ public class AdminInquiry {
 	private String inquiryProcessCode;
 	private String statusCode;
 	private String statusName;
+	
+	private String subAttchCode;
 	private String subAttchOrgnlName;
+	private String subAttchSrvrName;
+	private String subAttchPath;
+	private String subAttchSize;
 }

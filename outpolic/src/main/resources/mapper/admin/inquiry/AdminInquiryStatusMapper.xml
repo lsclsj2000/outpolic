@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="outpolic.admin.inquiry.mapper.AdminInquiryStatusMapper">
+	<!-- AdminInquiryStatus.DTO -->
+	<resultMap id="AdminInquiryStatusResultMap" type="outpolic.admin.inquiry.domain.AdminInquiryStatus">
+		<id 	column="stc_cd" 		property="statusCode"/>
+		<id 	column="iqt_cd" 		property="inquiryTypeCode"/>
+		<result column="stc_nm" 		property="statusName"/>
+		<result column="iqt_nm" 		property="inquiryTypeName"/>
+	</resultMap>
+	
+	
+	<select id="getInquiryType" resultMap="AdminInquiryStatusResultMap">
+		/* 관리자 문의 상세-문의 타입 */
+		select
+			it.iqt_cd as iqt_cd,
+			it.iqt_nm as iqt_nm
+		from
+			inquiry_type it;
+	</select>
+	
+	<select id="getInquiryStatus" resultMap="AdminInquiryStatusResultMap">
+		/* 관리자 문의 상세-처리 상태 */
+		select DISTINCT
+			CASE WHEN ip.stc_cd IS NULL THEN 'SD_BEFORE' ELSE ip.stc_cd END AS stc_cd,
+		  	CASE WHEN sc.stc_nm IS NULL THEN '확인전' ELSE sc.stc_nm END AS stc_nm
+		from
+			inquiry i
+			left join inquiry_process ip on i.iq_cd = ip.iq_cd 
+			left join status_code sc on ip.stc_cd = sc.stc_cd
+		order BY
+			stc_nm desc;
+	</select>
+	
+</mapper>

@@ -26,27 +26,38 @@ public class UserContentsController {
 	
 	// final 필드들
     private final UserSearchService searchService;
-    private final UserCategoryService categoryService;
     
     // 조회수를 위한 의존성 주입
     private final UserContentViewService contentViewService;
     
     @GetMapping("/api/contents/{contentsId}")
     @ResponseBody
-    public ResponseEntity<UserContentsDetailDTO> getContentsDetailForModal(@PathVariable("contentsId") String contentsId) {
-        log.info("모달 데이터 API 요청: ID = {}", contentsId);
+    public ResponseEntity<UserContentsDetailDTO> getContentsDetailForModal(
+            @PathVariable("contentsId") String contentsId,
+            @SessionAttribute(name = "SCD", required = false) String memberCode) {
+        
+        log.info("모달 데이터 API 요청: ID = {}, 사용자 코드 = {}", contentsId, memberCode);
 
-        // 기존 서비스 메소드를 그대로 재활용합니다.
+        // 1. URL ID로 상세 정보를 먼저 조회합니다.
         UserContentsDetailDTO detailData = searchService.getContentsDetailById(contentsId);
 
-        if (detailData != null) {
-            // 데이터가 있으면, DTO와 함께 200 OK 응답을 보냅니다.
-            return ResponseEntity.ok(detailData);
-        } else {
-            // 데이터가 없으면 404 Not Found 응답을 보냅니다.
+        // 2. 데이터 존재 여부를 확인합니다.
+        if (detailData == null) {
+            // 데이터가 없으면 404 Not Found 응답을 보내고 즉시 종료합니다.
             return ResponseEntity.notFound().build();
         }
+
+        // 3. [핵심] DTO에서 조회수 처리에 필요한 실제 ID(cl_cd)를 추출합니다.
+        String realContentListCode = detailData.getClCd();
+        log.info("조회된 실제 DB ID (cl_cd) for View Count: {}", realContentListCode);
+
+        // 4. 추출한 '올바른' ID로 조회수 및 열람 기록 서비스를 호출합니다.
+        contentViewService.processContentView(realContentListCode, memberCode);
+
+        // 5. 이미 조회했던 상세 데이터를 클라이언트에게 반환합니다.
+        return ResponseEntity.ok(detailData);
     }
+
     
     @GetMapping("/contents/{contentsId}")
     public String contentsDetailView(@PathVariable(value = "contentsId") String contentsId,

@@ -12,17 +12,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.enter.category.domain.EnterCategory;
 import outpolic.enter.category.domain.EnterCategoryGroup;
 import outpolic.enter.category.service.EnterCategoryService;
+import outpolic.enter.contents.service.EnterContentViewService;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.outsourcing.service.EnterOutsourcingService;
 import outpolic.enter.search.domain.EnterContentItemDTO;
 import outpolic.enter.search.domain.EnterContentsDetailDTO;
 import outpolic.enter.search.service.EnterSearchService;
+import outpolic.user.search.domain.UserContentsDetailDTO;
 
 
 @Controller
@@ -35,45 +38,62 @@ public class EnterContentsController {
     private final EnterSearchService searchService;
     private final EnterCategoryService categoryService;
     private final EnterOutsourcingService enterOutsourcingService;
+    
+    private final EnterContentViewService contentViewService;
 
     
     @GetMapping("/api/contents/{contentsId}")
     @ResponseBody // 이 어노테이션이 핵심!
-    public ResponseEntity<EnterContentsDetailDTO> getContentsDetailForModal(@PathVariable("contentsId") String contentsId) {
-        log.info("모달 데이터 API 요청: ID = {}", contentsId);
+    public ResponseEntity<EnterContentsDetailDTO> getContentsDetailForModal(@PathVariable("contentsId") String contentsId,
+            @SessionAttribute(name = "SCD", required = false) String memberCode) {
+        
+        log.info("모달 데이터 API 요청: ID = {}, 사용자 코드 = {}", contentsId, memberCode);
 
-        // 기존 서비스 메소드를 그대로 재활용합니다.
+        // 1. URL ID로 상세 정보를 먼저 조회합니다.
         EnterContentsDetailDTO detailData = searchService.getContentsDetailById(contentsId);
 
-        if (detailData != null) {
-            // 데이터가 있으면, DTO와 함께 200 OK 응답을 보냅니다.
-            return ResponseEntity.ok(detailData);
-        } else {
-            // 데이터가 없으면 404 Not Found 응답을 보냅니다.
+        // 2. 데이터 존재 여부를 확인합니다.
+        if (detailData == null) {
+            // 데이터가 없으면 404 Not Found 응답을 보내고 즉시 종료합니다.
             return ResponseEntity.notFound().build();
         }
+
+        // 3. [핵심] DTO에서 조회수 처리에 필요한 실제 ID(cl_cd)를 추출합니다.
+        String realContentListCode = detailData.getClCd();
+        log.info("조회된 실제 DB ID (cl_cd) for View Count: {}", realContentListCode);
+
+        // 4. 추출한 '올바른' ID로 조회수 및 열람 기록 서비스를 호출합니다.
+        contentViewService.processContentView(realContentListCode, memberCode);
+
+        // 5. 이미 조회했던 상세 데이터를 클라이언트에게 반환합니다.
+        return ResponseEntity.ok(detailData);
     }
     
     @GetMapping("/contents/{contentsId}")
-    public String contentsDetailView(@PathVariable(value = "contentsId") String contentsId, Model model) {
-    	
+    public String contentsDetailView(@PathVariable(value = "contentsId") String contentsId,
+            @SessionAttribute(name = "SCD", required = false) String memberCode,
+            Model model) {
         
-        log.info("상세 페이지 요청: ID = {}", contentsId);
+        log.info("상세 페이지 요청 (URL ID): ID = {}", contentsId);
 
-
-        // 1. 서비스에 contentsId를 넘겨서 상세 정보를 조회합니다.
+        // 1. URL ID로 상세 정보를 조회합니다.
         EnterContentsDetailDTO detailData = searchService.getContentsDetailById(contentsId);
 
-        // 2. (중요) 조회된 데이터가 없을 경우에 대한 처리
         if (detailData == null) {
             model.addAttribute("errorMessage", "해당 콘텐츠를 찾을 수 없습니다.");
-            return "error/404"; // templates/error/404.html 같은 에러 페이지
+            return "error/404";
         }
 
-        // 3. 조회된 실제 데이터를 "detail" 이라는 이름으로 모델에 담습니다.
-        model.addAttribute("detail", detailData);
+        // ===== 2. [핵심 수정] 조회된 detailData 객체에서 실제 DB ID (cl_cd)를 가져옵니다. =====
+        String realContentListCode = detailData.getClCd();
+        
+        log.info("조회된 실제 DB ID (cl_cd): {}", realContentListCode);
 
-        // 4. 상세 페이지 뷰를 리턴합니다.
+        // 3. 이제 '올바른' ID로 조회수 및 열람 기록 서비스를 호출합니다.
+        contentViewService.processContentView(realContentListCode, memberCode);
+        
+        // 4. 모델에 데이터를 담고 뷰를 리턴합니다.
+        model.addAttribute("detail", detailData);
         return "enter/contentsParticular/enterContentsParticularView";
     }
 

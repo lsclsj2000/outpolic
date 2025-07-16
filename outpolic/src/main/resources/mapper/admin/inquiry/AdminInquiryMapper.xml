@@ -23,7 +23,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="iqp_cd" 		property="inquiryProcessCode"/>
 		<result column="stc_cd" 		property="statusCode"/>
 		<result column="stc_nm" 		property="statusName"/>
+		
+		<result column="sa_cd" 	property="subAttchCode"/>
 		<result column="sa_orgnl_nm" 	property="subAttchOrgnlName"/>
+		<result column="sa_srvr_nm" 	property="subAttchSrvrName"/>
+		<result column="sa_path" 	property="subAttchPath"/>
+		<result column="sa_size" 	property="subAttchSize"/>
 	</resultMap>
 	<!-- AdminInquiryType.DTO -->
 	<resultMap id="AdminInquiryTypeMap" type="outpolic.admin.inquiry.domain.AdminInquiryType">
@@ -37,6 +42,62 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="iqt_mdfcn_adm_cd" 	property="inquiryTypeMdfcnAdm"/>
 		<result column="iqt_mdfcn_ymdt" 	property="inquiryTypeMdfcnDate"/>
 	</resultMap>
+	
+	
+	 <!-- 문의 테이블 수정 -->
+    <update id="updateInquiryTable" parameterType="outpolic.admin.inquiry.domain.AdminInquiry">
+        UPDATE inquiry
+        SET
+            iqt_cd = #{inquiryTypeCode},
+            iq_mdfcn_adm_cd = #{inquiryMdfcnAdmCode},
+            iq_mdfcn_ymdt = NOW()
+        WHERE
+            iq_cd = #{inquiryCode}
+    </update>
+
+    <!-- 문의 프로세스 테이블 수정 -->
+    <update id="updateInquiryProcessTable" parameterType="outpolic.admin.inquiry.domain.AdminInquiry">
+        UPDATE inquiry_process
+        SET
+            stc_cd = #{statusCode},
+            iqp_mdfcn_adm_cd = #{inquiryMdfcnAdmCode},
+            iqp_mdfcn_ymdt = NOW()
+        WHERE
+            iq_cd = #{inquiryCode}
+    </update>
+	
+	<select id="getAdminInquiryMdfcnList" resultMap="AdminInquiryResultMap">
+		/* 관리자 문의 상세 수정 */
+		select
+			i.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			i.iq_reg_ymdt as iq_reg_ymdt,
+			IFNULL(sc.stc_cd, 'SD_BEFORE') as stc_cd,
+			IFNULL(sc.stc_nm, '확인전') as stc_nm,
+			i.iq_cd as iq_cd,
+			i.iq_ttl as iq_ttl,
+			i.iqt_cd as iqt_cd,
+			iqt.iqt_nm as iqt_nm,
+			i.iq_cn as iq_cn,
+			sa.sa_cd as sa_cd,
+			sa.sa_orgnl_nm as sa_orgnl_nm,
+			sa.sa_srvr_nm as sa_srvr_nm,
+			sa.sa_path as sa_path,
+			sa.sa_size as sa_size,
+			i.iq_mdfcn_adm_cd as iq_mdfcn_adm_cd,
+			i.iq_mdfcn_ymdt as iq_mdfcn_ymdt
+		from
+			inquiry i
+			left join submission_attachment sa on i.iq_cd = sa.sa_refer_cd
+			inner join member m on i.mbr_cd = m.mbr_cd
+			inner join inquiry_type iqt using (iqt_cd)
+			left join inquiry_process ip using (iq_cd)
+			left join status_code sc on ip.stc_cd = sc.stc_cd
+		where
+			i.iq_cd = #{inquiryCode}
+		order by
+			m.mbr_nm desc;
+	</select>
 	
 	
 	<select id="getAdminInquiryTypeList" resultMap="AdminInquiryTypeMap">
@@ -56,33 +117,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			left join status_code sc on it.stc_cd = sc.stc_cd
 		order by
 			it.iqt_reg_ymdt;
-	</select>
-	
-	<select id="getAdminInquiryMdfcnList" resultMap="AdminInquiryResultMap">
-		/* 문의 내역 수정 팝업 조회 */
-		select
-			i.mbr_cd as mbr_cd,
-			m.mbr_nm  as mbr_nm,
-			i.iq_cd as iq_cd,
-			i.iq_ttl as iq_ttl,
-			i.iqt_cd as iqt_cd,
-			iqt.iqt_nm as iqt_nm,
-			i.iq_cn as iq_cn,
-			i.iq_reg_ymdt as iq_reg_ymdt,
-			i.iq_mdfcn_adm_cd as iq_mdfcn_adm_cd,
-			i.iq_mdfcn_ymdt as iq_mdfcn_ymdt,
-			ip.iqp_cd as iqp_cd,
-			sc.stc_nm as stc_nm,
-			sa.sa_orgnl_nm as sa_orgnl_nm
-		from
-			inquiry i
-			left join member m on i.mbr_cd = m.mbr_cd
-			left join inquiry_type iqt on i.iqt_cd = iqt.iqt_cd
-			left join inquiry_process ip on i.iq_cd = ip.iq_cd
-			left join status_code sc on ip.stc_cd = sc.stc_cd
-			left join submission_attachment sa on i.iq_cd = sa.sa_refer_cd
-		where
-			i.iq_cd = #{inquiryCode};
 	</select>
 	
 	<select id="getAdminInquiryList" resultMap="AdminInquiryResultMap">

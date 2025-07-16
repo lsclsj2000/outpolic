@@ -6,7 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import outpolic.user.contents.domain.UserPerusalContent;
 import outpolic.user.contents.domain.UserTotalView;
+import outpolic.user.contents.domain.UserTodayView;
 import outpolic.user.contents.mapper.UserContentViewMapper;
+import outpolic.user.contents.mapper.UserTodayViewMapper;
 import outpolic.user.contents.service.UserContentViewService;
 
 @Service
@@ -14,6 +16,7 @@ import outpolic.user.contents.service.UserContentViewService;
 public class UserContentViewServiceImpl implements UserContentViewService {
 	
 	private final UserContentViewMapper userContentViewMapper;
+	private final UserTodayViewMapper userTodayViewMapper;
 	
 	@Override
     @Transactional
@@ -35,6 +38,22 @@ public class UserContentViewServiceImpl implements UserContentViewService {
         } else {
             userContentViewMapper.incrementTotalView(clCd);
         }
+        
+     // --- 2. today_view 처리 로직 (모두 올바른 이름으로 수정) ---
+        int todayViewCount = userTodayViewMapper.existsInTodayView(clCd);
+        if (todayViewCount == 0) {
+            Integer maxTdvNum = userTodayViewMapper.selectMaxTdvCdNum();
+            int nextTdvNum = (maxTdvNum == null) ? 1 : maxTdvNum + 1;
+            String newTdvCd = "TDV_C" + nextTdvNum;
+
+            UserTodayView newTodayView = new UserTodayView();
+            newTodayView.setTdvCd(newTdvCd);
+            newTodayView.setClCd(clCd);
+            userTodayViewMapper.insertNewTodayView(newTodayView);
+        } else {
+        	userTodayViewMapper.incrementTodayView(clCd);
+        }
+
 
         // --- perusal_content 처리 로직 (이 부분은 이미 올바른 방식이라 수정할 필요 없음) ---
         if (mbrCd != null && !mbrCd.isEmpty()) {

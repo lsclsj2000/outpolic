@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="outpolic.admin.statistics.mapper.AdminSearchStatisticsMapper">
+
+    <!-- 다음 st_cd 생성을 위한 쿼리 -->
+    <select id="getNextStCd" resultType="String">
+        SELECT CONCAT('SST', LPAD(IFNULL(MAX(SUBSTRING(st_cd, 4)), 0) + 1, 5, '0'))
+        FROM search_terms
+    </select>
+    
+    <!-- 수정된 INSERT 쿼리 -->
+    <insert id="insertWeeklySearchStatistics">
+        INSERT INTO search_terms (
+            st_cd, st_term, st_cnt, 
+            st_fr_ymd, st_to_ymd, st_create_base_ymdt
+        )
+        SELECT
+            #{stCd}, -- Service에서 조회 후 전달받은 PK
+            A.sh_term,
+            COUNT(A.sh_term) AS st_cnt,
+            #{frYmd}, -- Service에서 계산 후 전달받은 집계 시작일
+            #{toYmd}, -- Service에서 계산 후 전달받은 집계 종료일
+            NOW()
+        FROM
+            search_history A
+        WHERE
+            A.sh_ymdt BETWEEN 
+                TIMESTAMP(#{frYmd}, '00:00:00') 
+                AND 
+                TIMESTAMP(#{toYmd}, '23:59:59')
+        GROUP BY
+            A.sh_term
+    </insert>
+
+    <!-- 조회 쿼리 (이전과 동일) -->
+    <select id="findWeeklySearchStatisticsByDate" resultType="outpolic.admin.statistics.domain.AdminSearchStatisticsDTO">
+        SELECT
+            st_term AS stTerm,
+            st_cnt  AS stCnt
+        FROM
+            search_terms
+        WHERE
+            #{targetDate} BETWEEN st_fr_ymd AND st_to_ymd
+        ORDER BY
+            st_cnt DESC
+        LIMIT 10
+    </select>
+</mapper>

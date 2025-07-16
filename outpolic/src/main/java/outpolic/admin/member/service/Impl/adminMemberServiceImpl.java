@@ -73,5 +73,10 @@ public class adminMemberServiceImpl implements AdminMemberService {
 		return memberList;
 	}
 	
+	@Override
+	public List<Member> filterMembers(String statusCode, String gradeCode) {
+	    return adminMemberMapper.selectFilteredMembers(statusCode, gradeCode);
+	}
+	
 
 }
