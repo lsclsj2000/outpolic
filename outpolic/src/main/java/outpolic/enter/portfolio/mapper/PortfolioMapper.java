@@ -69,4 +69,14 @@ public interface PortfolioMapper {
     List<EnterPortfolio> searchPortfoliosByTitle(String query);
 
 	List<EnterPortfolio> findLinkedPortfoliosByOsCd(String osCd);
+	
+	int deleteOutsourcingContractDetailsByClCd(String clCd);
+	int deleteRankingByClCd(String clCd);
+	int deleteTodayViewByClCd(String clCd);
+	int deleteTotalViewByClCd(String clCd);
+	
+	String findLatestClCdForPortfolio();
+	
+	String findMbrCdByPrtfCd(String prtfCd);
+
 }

@@ -224,12 +224,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <delete id="deleteOutsourcingContractDetailsByClCd">
         DELETE FROM outsourcing_contract_details WHERE cl_cd = #{clCd}
     </delete>
-    <delete id="deleteOutsourcingStatusByClCd">
-        DELETE os
-          FROM outsourcing_status AS os
-          JOIN outsourcing_contract_details AS ocd  ON os.ocd_cd = ocd.ocd_cd 
-         WHERE ocd.cl_cd = #{clCd}
-    </delete>
+   <delete id="deleteOutsourcingStatusByClCd">
+    DELETE op
+      FROM outsourcing_prograss AS op  JOIN outsourcing_contract_details AS ocd ON op.ocd_cd = ocd.ocd_cd
+     WHERE ocd.cl_cd = #{clCd}
+</delete>
     <delete id="deleteRankingByClCd">
         DELETE FROM 
 ranking where cl_cd = #{clCd}

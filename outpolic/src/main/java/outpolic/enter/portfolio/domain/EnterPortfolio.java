@@ -13,7 +13,7 @@ public class EnterPortfolio {
     private String prtfCd, entCd, prtfTtl, prtfCn, admCd, stcCd, mbrCd, prtfThumbnailUrl;
     private int prtfDwnld_cnt;
     private LocalDateTime prtfRegYmdt, prtfMdfcnYmdt;
-    
+    private String ctgryId;
     private List<CategorySearchDto> categories = new ArrayList<>();
     private List<String> tagNames = new ArrayList<>();
     private List<EnterOutsourcing> linkedOutsourcings = new ArrayList<>(); // 새로 추가: 연결된 외주 목록

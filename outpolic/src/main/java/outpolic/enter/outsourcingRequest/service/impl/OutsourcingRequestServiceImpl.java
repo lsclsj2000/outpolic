@@ -25,22 +25,36 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
     @Override
     @Transactional
     public OutsourcingRequestDTO createRequest(OutsourcingRequestDTO request) {
-        String latestOcdCd = requestMapper.findLatestOcdCd();
-        int nextNum = 1; // 기본값 1
-        if (latestOcdCd != null && latestOcdCd.startsWith("OCD_C")) {
+        // 1. 새로운 요청 코드(ocd_cd) 생성 (기존 로직 유지)
+        String latestOcdCd = requestMapper.findLatestOcdCd(); // [cite: 1489]
+        int nextNum = 1;
+        if (latestOcdCd != null && latestOcdCd.startsWith("OCD_C")) { // [cite: 1490]
             try {
-                nextNum = Integer.parseInt(latestOcdCd.substring(5)) + 1;
+                nextNum = Integer.parseInt(latestOcdCd.substring(5)) + 1; // [cite: 1491]
             } catch (NumberFormatException e) {
-                logger.warn("Failed to parse latestOcdCd: {}", latestOcdCd, e);
+                logger.warn("Failed to parse latestOcdCd: {}", latestOcdCd, e); // [cite: 1492]
             }
         }
-        String newOcdCd = String.format("OCD_C%05d", nextNum);
-        request.setOcd_cd(newOcdCd);
+        String newOcdCd = String.format("OCD_C%05d", nextNum); // [cite: 1493]
+        request.setOcd_cd(newOcdCd); // [cite: 1493]
 
-        requestMapper.insertRequest(request);
-        return request;
+        // 2. 외주 신청 정보 DB에 저장
+        requestMapper.insertRequest(request); // [cite: 1489]
+
+        // ▼▼▼ 수정된 부분 ▼▼▼
+        // 3. 채팅방 생성 및 연결 로직 추가
+        //    (실제로는 ChatService 등을 호출하여 채팅방을 생성하고 ID를 받아와야 합니다)
+        String newChrCd = "CHR_" + newOcdCd; // 임시로 채팅방 코드를 생성합니다.
+
+        // 4. 생성된 채팅방 ID를 outsourcing_contract_details 테이블에 업데이트합니다.
+        requestMapper.updateChatRoomId(newOcdCd, newChrCd); // [cite: 1489, 1509]
+
+        // 5. 반환될 DTO 객체에도 채팅방 코드를 설정해줍니다.
+        request.setChr_cd(newChrCd); // [cite: 1468]
+        // ▲▲▲ 수정 완료 ▲▲▲
+
+        return request; // [cite: 1489]
     }
-
     @Override
     public List<RequestViewDTO> getSentRequests(String requesterId) {
         return requestMapper.findSentRequests(requesterId);

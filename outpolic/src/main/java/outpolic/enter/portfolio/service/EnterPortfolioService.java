@@ -19,8 +19,8 @@ public interface EnterPortfolioService {
 
     List<EnterPortfolio> searchPortfoliosByTitle(String query);
     // --- CUD 관련 ---
-    void addPortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException;
-    void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException;
+    void addPortfolio(EnterPortfolio portfolio,List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException;
+    void updatePortfolio(EnterPortfolio portfolio,List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException;
     void deletePortfolio(String prtfCd);
     List<EnterPortfolio> getLinkedOutsourcingsByOsCd(String osCd); // ★수정: 포트폴리오에서 외주 연결 가져오는 메서드 선언
 }

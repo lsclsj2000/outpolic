@@ -1,4 +1,5 @@
 package outpolic.enter.outsourcing.service;
+
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.outsourcing.domain.OutsourcingFormDataDto;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
@@ -16,16 +17,14 @@ public interface EnterOutsourcingService {
     List<String> searchTags(String query);
 
     List<EnterOutsourcing> getAllOutsourcings();
-    List<String> getFilesByClCd(String clCd); 
-    
+    List<String> getFilesByClCd(String clCd);
     // --- 수정/삭제 관련 ---
     void deleteOutsourcing(String osCd);
-    
     // --- 포트폴리오 연결 관련 ---
     List<EnterPortfolio> getLinkedPortfoliosByOsCd(String osCd);
     List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query);
     void linkPortfolioToOutsourcing(String osCd, String prtfCd, String entCd);
-    void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd); // ★수정: 추상 메서드 선언 확인
+    void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd);
     
     // --- 단계별 등록 API ---
     String saveStep1Data(OutsourcingFormDataDto formData, HttpSession session);
@@ -38,7 +37,9 @@ public interface EnterOutsourcingService {
     void updateOutsourcingStep2(String osCd, List<String> categoryCodes, String tags);
 
     EnterOutsourcing getOutsourcingByOsCd(String osCd);
-    void updateOutsourcingStep3(String osCd, MultipartFile[] files, String existingFileUrlsList); // 매개변수가 추가된 경우
+    // 수정: String existingFileUrlsList 매개변수 제거
+    void updateOutsourcingStep3(String osCd, MultipartFile[] files); //
+                                                                     // [cite: 286]
 
     String findEntCdByMbrCd(String mbrCd);
 }
