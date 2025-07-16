@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.user.contents.mapper.UserTodayViewMapper">
+    
+    <select id="existsInTodayView" resultType="int">
+        SELECT COUNT(*) 
+        FROM today_view -- 정확한 테이블 이름으로 수정
+        WHERE CL_CD = #{clCd} AND TDV_TOT_YMD = CURDATE()
+    </select>
+    
+    <select id="selectMaxTdvCdNum" resultType="Integer">
+        SELECT MAX(CAST(SUBSTRING(TDV_CD, 6) AS UNSIGNED)) 
+        FROM today_view -- 정확한 테이블 이름으로 수정
+        WHERE TDV_CD LIKE 'TDV_C%'
+    </select>
+    
+    <insert id="insertNewTodayView" parameterType="outpolic.user.contents.domain.UserTodayView"> <!-- 파라미터 타입 수정 -->
+        INSERT INTO today_view ( -- 정확한 테이블 이름으로 수정
+            TDV_CD, CL_CD, TDV_TOT_YMD, TDV_PRCS_TM, TDV_VIEW_CNT
+        ) VALUES (
+            #{tdvCd}, #{clCd}, CURDATE(), CURTIME(), 1
+        )
+    </insert>
+    
+    <update id="incrementTodayView">
+        UPDATE today_view -- 정확한 테이블 이름으로 수정
+        SET TDV_VIEW_CNT = TDV_VIEW_CNT + 1, TDV_PRCS_TM = CURTIME()
+        WHERE CL_CD = #{clCd} AND TDV_TOT_YMD = CURDATE()
+    </update>
+
+</mapper>
