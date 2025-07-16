@@ -3,8 +3,10 @@ package outpolic.enter.portfolio.service;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
-import outpolic.enter.outsourcing.domain.EnterOutsourcing; // EnterOutsourcing 임포트 필요
+import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
+import outpolic.enter.portfolio.domain.PortfolioFormDataDto;
+import outpolic.systems.file.domain.FileMetaData;
 
 public interface EnterPortfolioService {
 
@@ -14,20 +16,18 @@ public interface EnterPortfolioService {
     EnterPortfolio getPortfolioByPrtfCd(String prtfCd);
     String findEntCdByMbrCd(String mbrCd);
     List<String> searchTags(String query);
-    List<EnterOutsourcing> getLinkedOutsourcings(String prtfCd); // Portfolio에 연결된 Outsourcing 조회
-    List<EnterOutsourcing> searchUnlinkedOutsourcings(String prtfCd, String entCd, String query); // Portfolio에 연결되지 않은 Outsourcing 검색
-
+    List<EnterOutsourcing> getLinkedOutsourcings(String prtfCd);
+    List<EnterOutsourcing> searchUnlinkedOutsourcings(String prtfCd, String entCd, String query);
     List<EnterPortfolio> searchPortfoliosByTitle(String query);
-
-    // 이 메서드는 "외주(Outsourcing)" 목록을 반환해야 하므로 타입을 명확히 수정합니다.
     List<EnterOutsourcing> getLinkedOutsourcingsByOsCd(String osCd);
+    List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query);
 
-    // EnterOutsourcingService에 있어야 할 메서드이므로, 여기서는 제거합니다.
-    // List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query); // <-- 이 줄 제거
-
-    // --- CUD 관련 ---
-    void addPortfolio(EnterPortfolio portfolio,List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException;
-    void updatePortfolio(EnterPortfolio portfolio,List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException;
+    // --- 수정 및 삭제 ---
+    void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException;
     void deletePortfolio(String prtfCd);
-	List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query);
+
+    // ▼▼▼ [수정] 다단계 등록을 위한 신규 메서드들 선언 ▼▼▼
+    String generateNewPrtfCd();
+    FileMetaData uploadThumbnail(MultipartFile file);
+    void registerNewPortfolio(PortfolioFormDataDto formData) throws IOException;
 }

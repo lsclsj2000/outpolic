@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
+import outpolic.enter.portfolio.domain.PortfolioFormDataDto;
 import outpolic.enter.portfolio.mapper.PortfolioMapper;
 import outpolic.enter.portfolio.service.EnterPortfolioService;
 import outpolic.systems.file.domain.FileMetaData;
@@ -25,30 +27,46 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     private static final Logger logger = LoggerFactory.getLogger(EnterPortfolioServiceImpl.class);
     private final PortfolioMapper portfolioMapper;
     private final FilesUtils filesUtils;
+    private final PortfolioAsyncService portfolioAsyncService; // 1. 비동기 서비스 주입
 
-    // @Value("${file.path}") // FilesUtils가 해당 값을 사용하므로 여기서 직접 사용하지 않습니다.
-    // private String fileRealPath; // 이 필드는 FilesUtils에 이미 존재합니다.
+    // --- 조회 관련 메서드 ---
 
+ 
+    
     @Override
-    public int countPortfoliosByEntCd(String entCd) { return portfolioMapper.countPortfoliosByEntCd(entCd); }
+    public int countPortfoliosByEntCd(String entCd) {
+        return portfolioMapper.countPortfoliosByEntCd(entCd);
+    }
+
     @Override
     public List<EnterPortfolio> getPortfolioListByEntCd(String entCd) {
-        List<EnterPortfolio> portfolios = portfolioMapper.findPortfolioDetailsByEntCd(entCd);
-        return portfolios;
+        return portfolioMapper.findPortfolioDetailsByEntCd(entCd);
     }
+
     @Override
     public EnterPortfolio getPortfolioByPrtfCd(String prtfCd) {
-        EnterPortfolio portfolio = portfolioMapper.findPortfolioDetailsByPrtfCd(prtfCd);
-        return portfolio;
+        return portfolioMapper.findPortfolioDetailsByPrtfCd(prtfCd);
     }
+
     @Override
-    public List<String> searchTags(String query) { return portfolioMapper.searchTagsByName(query); }
+    public List<String> searchTags(String query) {
+        return portfolioMapper.searchTagsByName(query);
+    }
+
     @Override
-    public String findEntCdByMbrCd(String mbrCd) { return portfolioMapper.findEntCdByMbrCd(mbrCd); }
+    public String findEntCdByMbrCd(String mbrCd) {
+        return portfolioMapper.findEntCdByMbrCd(mbrCd);
+    }
+
     @Override
-    public List<EnterOutsourcing> getLinkedOutsourcings(String prtfCd) { return portfolioMapper.findLinkedOutsourcingsByPrtfCd(prtfCd); }
+    public List<EnterOutsourcing> getLinkedOutsourcings(String prtfCd) {
+        return portfolioMapper.findLinkedOutsourcingsByPrtfCd(prtfCd);
+    }
+
     @Override
-    public List<EnterOutsourcing> searchUnlinkedOutsourcings(String prtfCd, String entCd, String query) { return portfolioMapper.searchUnlinkedOutsourcings(prtfCd, entCd, query); }
+    public List<EnterOutsourcing> searchUnlinkedOutsourcings(String prtfCd, String entCd, String query) {
+        return portfolioMapper.searchUnlinkedOutsourcings(prtfCd, entCd, query);
+    }
 
     @Override
     public List<EnterPortfolio> searchPortfoliosByTitle(String query) {
@@ -56,82 +74,146 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     }
 
     @Override
-    @Transactional
-    public void addPortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException {
+    public List<EnterOutsourcing> getLinkedOutsourcingsByOsCd(String osCd) {
+        return portfolioMapper.findLinkedOutsourcingsByOsCd(osCd);
+    }
+
+    @Override
+    public List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query) {
+        return portfolioMapper.findUnlinkedPortfolios(osCd, entCd, query);
+    }
+
+    // --- 다단계 등록 관련 신규 메서드들 ---
+
+    @Override
+    public String generateNewPrtfCd() {
         String latestPrtfCd = portfolioMapper.findLatestPrtfCd();
         int nextPrtfNum = (latestPrtfCd == null || !latestPrtfCd.startsWith("PO_C")) ? 1 : Integer.parseInt(latestPrtfCd.substring(4)) + 1;
-        String newPrtfCd = String.format("PO_C%05d", nextPrtfNum);
-        portfolio.setPrtfCd(newPrtfCd);
+        return String.format("PO_C%05d", nextPrtfNum);
+    }
 
+    @Override
+    public FileMetaData uploadThumbnail(MultipartFile file) {
+        if (file == null || file.isEmpty()) return null;
+        
+        String serviceName = "portfolio";
+        String imageTypeDir = (file.getContentType() != null && file.getContentType().startsWith("image")) ? "image" : "files";
+        String fullServicePath = serviceName + "/" + imageTypeDir;
+        
+        FileMetaData uploadedFile = filesUtils.uploadFile(file, fullServicePath);
+
+        // [최종 수정] 썸네일 경로가 '/'로 시작하지 않으면 강제로 붙여주는 로직
+        if (uploadedFile != null && uploadedFile.getFilePath() != null && !uploadedFile.getFilePath().startsWith("/")) {
+            uploadedFile.setFilePath("/" + uploadedFile.getFilePath());
+        }
+        
+        return uploadedFile;
+    }
+
+    @Override
+    @Transactional
+    public void registerNewPortfolio(PortfolioFormDataDto formData) throws IOException {
+        EnterPortfolio portfolio = new EnterPortfolio();
+        
+        // 컨트롤러에서 생성한 UUID 기반의 prtfCd를 그대로 사용합니다.
+        portfolio.setPrtfCd(formData.getPrtfCd()); 
+        
+        portfolio.setEntCd(formData.getEntCd());
+        portfolio.setMbrCd(formData.getMbrCd());
+        portfolio.setPrtfTtl(formData.getPrtfTtl());
+        portfolio.setPrtfCn(formData.getPrtfCn());
         portfolio.setStcCd("SD_ACTIVE");
+        
+        // [수정] 이제 addPortfolio는 prtf_cd 값을 처음부터 포함하여 INSERT 합니다.
+        portfolioMapper.addPortfolio(portfolio); 
 
-        String latestClCd = portfolioMapper.findLatestClCdForPortfolio();
-        int nextClNum = (latestClCd == null || !latestClCd.startsWith("LIST_PO_C")) ? 1 : Integer.parseInt(latestClCd.substring(10)) + 1;
-        String newClCd = String.format("LIST_PO_C%05d", nextClNum);
+        // prtf_cd가 고유하므로 cl_cd도 고유하게 생성됩니다.
+        String newClCd = "LIST_" + portfolio.getPrtfCd();
+        portfolioMapper.insertContentList(newClCd, portfolio.getPrtfCd());
 
-        portfolioMapper.insertContentList(newClCd, newPrtfCd);
-
-        if (portfolioImage != null && !portfolioImage.isEmpty()) {
-            // FilesUtils에 전달할 serviceName을 "모듈명/이미지타입" 형태로 구성
-            String serviceName = "portfolio"; // 기본 서비스명
-            String imageTypeDir = (portfolioImage.getContentType() != null && portfolioImage.getContentType().startsWith("image")) ? "image" : "files";
-            String fullServicePath = serviceName + "/" + imageTypeDir; // 예: "portfolio/image" 또는 "portfolio/files"
-
-            FileMetaData thumbnailMetaData = filesUtils.uploadFile(portfolioImage, fullServicePath);
-            if (thumbnailMetaData != null) {
-                portfolio.setPrtfThumbnailUrl(thumbnailMetaData.getFilePath());
-                portfolioMapper.insertFileRecord(thumbnailMetaData, newClCd, portfolio.getMbrCd());
-            }
+        if (formData.getThumbnailFile() != null) {
+            portfolioMapper.insertFileRecord(formData.getThumbnailFile(), newClCd, portfolio.getMbrCd());
         }
 
-        portfolioMapper.addPortfolio(portfolio);
-
-        updateMappings(categoryCodes, newClCd, portfolio.getMbrCd(), tags);
+        updateMappings(formData.getCategoryCodes(), newClCd, portfolio.getMbrCd(), formData.getTags());
     }
+    // --- 수정 및 삭제 메서드 ---
 
     @Override
     @Transactional
     public void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException {
         String prtfCd = portfolio.getPrtfCd();
-        String originalMbrCd = portfolioMapper.findMbrCdByPrtfCd(prtfCd);
-
-        if (originalMbrCd == null) {
-            throw new IllegalStateException("포트폴리오의 원본 등록자 정보를 찾을 수 없습니다. 포트폴리오 코드(prtfCd)가 잘못되었을 수 있습니다.");
-        }
-
         String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
-
-        if (portfolioImage != null && !portfolioImage.isEmpty()) {
-            if (clCd != null) {
-                List<FileMetaData> existingFiles = portfolioMapper.findFilesByClCd(clCd);
-                for (FileMetaData file : existingFiles) {
-                    filesUtils.deleteFileByPath(file.getFilePath());
-                }
-                portfolioMapper.deleteFilesByClCd(clCd);
-            }
-
-            // FilesUtils에 전달할 serviceName을 "모듈명/이미지타입" 형태로 구성
-            String serviceName = "portfolio";
-            String imageTypeDir = (portfolioImage.getContentType() != null && portfolioImage.getContentType().startsWith("image")) ? "image" : "files";
-            String fullServicePath = serviceName + "/" + imageTypeDir; // 예: "portfolio/image" 또는 "portfolio/files"
-
-            FileMetaData newThumbnailMetaData = filesUtils.uploadFile(portfolioImage, fullServicePath);
-            if (newThumbnailMetaData != null) {
-                portfolio.setPrtfThumbnailUrl(newThumbnailMetaData.getFilePath());
-                portfolioMapper.insertFileRecord(newThumbnailMetaData, clCd, originalMbrCd);
-            }
+        if (clCd == null) {
+            throw new IllegalStateException("콘텐츠 목록(cl_cd)을 찾을 수 없습니다.");
         }
+        String originalMbrCd = portfolioMapper.findMbrCdByClCd(clCd);
 
         portfolio.setPrtfMdfcnYmdt(LocalDateTime.now());
         portfolioMapper.updatePortfolio(portfolio);
 
-        if (clCd != null) {
-            portfolioMapper.deleteCategoryMappingByClCd(clCd);
-            portfolioMapper.deleteTagMappingByClCd(clCd);
-            updateMappings(categoryCodes, clCd, originalMbrCd, tags);
+        if (portfolioImage != null && !portfolioImage.isEmpty()) {
+            List<FileMetaData> existingFiles = portfolioMapper.findFilesByClCd(clCd);
+            for (FileMetaData file : existingFiles) {
+                filesUtils.deleteFileByPath(file.getFilePath());
+            }
+            if (!existingFiles.isEmpty()) {
+                portfolioMapper.deleteFilesByClCd(clCd);
+            }
+
+            // 수정 시에도 경로 보정 로직이 있는 uploadThumbnail 메서드 사용
+            FileMetaData newThumbnailMetaData = this.uploadThumbnail(portfolioImage);
+            
+            if (newThumbnailMetaData != null) {
+                portfolioMapper.insertFileRecord(newThumbnailMetaData, clCd, originalMbrCd);
+            }
+        }
+
+        portfolioMapper.deleteCategoryMappingByClCd(clCd);
+        portfolioMapper.deleteTagMappingByClCd(clCd);
+        updateMappings(categoryCodes, clCd, originalMbrCd, tags);
+    }
+
+    @Override
+    public void deletePortfolio(String prtfCd) {
+        logger.info("포트폴리오 삭제 요청 수신. 비동기 처리를 시작합니다. ID: {}", prtfCd);
+        // 실제 작업은 아래의 비동기 메서드에 위임
+        deletePortfolioAsync(prtfCd);
+    }
+    
+    @Async
+    @Transactional
+    public void deletePortfolioAsync(String prtfCd) {
+        logger.info("포트폴리오 비동기 삭제 작업을 시작합니다. ID: {}", prtfCd);
+        try {
+            String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
+            if (clCd != null) {
+                List<FileMetaData> filesToDelete = portfolioMapper.findFilesByClCd(clCd);
+                for (FileMetaData file : filesToDelete) {
+                    filesUtils.deleteFileByPath(file.getFilePath());
+                }
+
+                portfolioMapper.deletePerusalContentByClCd(clCd);
+                portfolioMapper.deleteCategoryMappingByClCd(clCd);
+                portfolioMapper.deleteTagMappingByClCd(clCd);
+                portfolioMapper.deleteBookmarkByClCd(clCd);
+                portfolioMapper.deleteFilesByClCd(clCd);
+                portfolioMapper.deleteOutsourcingContractDetailsByClCd(clCd);
+                portfolioMapper.deleteRankingByClCd(clCd);
+                portfolioMapper.deleteTodayViewByClCd(clCd);
+                portfolioMapper.deleteTotalViewByClCd(clCd);
+                portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd);
+                portfolioMapper.deleteContentListByClCd(clCd);
+            }
+            portfolioMapper.deletePortfolioByPrtfCd(prtfCd);
+
+            logger.info("포트폴리오 비동기 삭제 작업을 완료했습니다. ID: {}", prtfCd);
+        } catch (Exception e) {
+            logger.error("포트폴리오 비동기 삭제 중 오류 발생. ID: {}", prtfCd, e);
         }
     }
 
+    // --- 내부 헬퍼 메서드 ---
     private void updateMappings(List<String> categoryCodes, String clCd, String mbrCd, String tags) {
         if (categoryCodes != null && !categoryCodes.isEmpty()) {
             for (String ctgryId : categoryCodes) {
@@ -162,44 +244,5 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
                 portfolioMapper.insertTagMapping(tagCd, clCd, mbrCd);
             }
         }
-    }
-
-    @Override
-    @Transactional
-    public void deletePortfolio(String prtfCd) {
-        String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
-        if (clCd != null) {
-            List<FileMetaData> filesToDelete = portfolioMapper.findFilesByClCd(clCd);
-            for (FileMetaData file : filesToDelete) {
-                filesUtils.deleteFileByPath(file.getFilePath());
-            }
-            portfolioMapper.deletePerusalContentByClCd(clCd); // <-- 이 줄을 추가합니다.
-
-            portfolioMapper.deleteCategoryMappingByClCd(clCd);
-            portfolioMapper.deleteTagMappingByClCd(clCd);
-            portfolioMapper.deleteBookmarkByClCd(clCd);
-            portfolioMapper.deleteFilesByClCd(clCd);
-            portfolioMapper.deleteOutsourcingContractDetailsByClCd(clCd);
-
-            portfolioMapper.deleteRankingByClCd(clCd);
-            portfolioMapper.deleteTodayViewByClCd(clCd);
-            portfolioMapper.deleteTotalViewByClCd(clCd);
-
-            portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd);
-
-            portfolioMapper.deleteContentListByClCd(clCd);
-        }
-
-        portfolioMapper.deletePortfolioByPrtfCd(prtfCd);
-    }
-
-    @Override
-    public List<EnterOutsourcing> getLinkedOutsourcingsByOsCd(String osCd) {
-        return portfolioMapper.findLinkedOutsourcingsByOsCd(osCd);
-    }
-
-    @Override
-    public List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query) {
-        return portfolioMapper.findUnlinkedPortfolios(osCd, entCd, query);
     }
 }
