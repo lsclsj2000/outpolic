@@ -5,10 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.inquiry.domain.AdminInquiry;
 import outpolic.admin.inquiry.domain.AdminInquiryType;
@@ -31,21 +34,14 @@ public class AdminInquiryController {
 		 model.addAttribute("adminInquiryTypeList", adminInquiryTypeList);
 		 
 		 return "admin/inquiry/adminInquiryResourcesView"; }
-	 
-	 
-//	 @GetMapping("/adminInquiryProcess") public String adminInquiryProcessView() {
-//	 // 문의 처리 페이지
-//	 
-//	 return "admin/inquiry/adminInquiryProcessView"; }
-	 
-	 
 	
 	@GetMapping("/adminInquiryMdfcn")
 	@ResponseBody
 	public AdminInquiry adminInquiryMdfcn(@RequestParam("inquiryCode") String inquiryCode) {
 		// 문의 상세 수정 팝업창
+		AdminInquiry adminInquiryMdfcn = adminInquiryService.getAdminInquiryMdfcnList(inquiryCode);
 		
-		return adminInquiryService.getAdminInquiryMdfcnList(inquiryCode);
+		return adminInquiryMdfcn;
 	}
 	
 	@GetMapping("/adminInquiryList")
@@ -58,4 +54,21 @@ public class AdminInquiryController {
 		
 		return "admin/inquiry/adminInquiryView";
 	}
+	
+	@PostMapping("/updateInquiry")
+	@ResponseBody
+	public String updateInquiry(@RequestBody AdminInquiry adminInquiry, HttpSession session) {
+	    // 문의수정 저장
+	    String adminCode = (String) session.getAttribute("SCD");
+
+	    if (adminCode == null) {
+	        return "FAIL: Unauthorized";
+	    }
+
+	    adminInquiry.setInquiryMdfcnAdmCode(adminCode);
+
+	    adminInquiryService.updateInquiry(adminInquiry);
+	    return "OK";
+	}
+	
 }
