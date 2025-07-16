@@ -3,6 +3,9 @@ package outpolic.enter.outsourcing.domain;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Data;
 import lombok.NoArgsConstructor; // 기본 생성자 추가
 import outpolic.systems.file.domain.FileMetaData;
@@ -20,8 +23,10 @@ public class OutsourcingFormDataDto {
     private String mbrCd; // 등록자 코드
     private String osTtl; // 외주 제목
     private String osExpln; // 외주 설명
-    private LocalDateTime osStrtYmdt; // 희망 작업 시작일
-    private LocalDateTime osEndYmdt; // 희망 작업 종료일
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime osStrtYmdt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime osEndYmdt;
     private BigDecimal osAmt; // 희망 금액
     private int osFlfmtCnt; // 수행 가능 인원
 

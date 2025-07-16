@@ -99,6 +99,17 @@ cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
     LIMIT 1
 </select>
 
+<select id="findMbrCdByPrtfCd" resultType="String">
+    SELECT
+        e.mbr_cd
+    FROM
+        portfolio p
+    JOIN
+        enterprise e ON p.ent_cd = e.ent_cd
+    WHERE
+        p.prtf_cd = #{prtfCd}
+</select>
+
     <insert id="insertPortfolio" parameterType="EnterPortfolio">
      
     INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn, 
@@ -322,4 +333,27 @@ file
         ORDER BY
      prtf_reg_ymdt DESC
     </select>
+    
+  
+<select id="findLatestClCdForPortfolio" resultType="String">
+    SELECT cl_cd FROM content_list
+    WHERE cl_cd LIKE 'LIST_PO_C%'
+    ORDER BY CAST(SUBSTRING(cl_cd, 11) AS UNSIGNED) DESC LIMIT 1
+</select>
+
+<delete id="deleteOutsourcingContractDetailsByClCd">
+    DELETE FROM outsourcing_contract_details WHERE cl_cd = #{clCd}
+</delete>
+
+<delete id="deleteRankingByClCd">
+    DELETE FROM ranking WHERE cl_cd = #{clCd}
+</delete>
+
+<delete id="deleteTodayViewByClCd">
+    DELETE FROM today_view WHERE cl_cd = #{clCd}
+</delete>
+
+<delete id="deleteTotalViewByClCd">
+    DELETE FROM total_view WHERE cl_cd = #{clCd}
+</delete>
 </mapper>

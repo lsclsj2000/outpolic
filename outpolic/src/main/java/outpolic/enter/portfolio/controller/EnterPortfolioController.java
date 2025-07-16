@@ -30,6 +30,7 @@ import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.outsourcing.service.EnterOutsourcingService;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.enter.portfolio.service.EnterPortfolioService;
+
 @Controller
 @RequestMapping("/enter/portfolio")
 @RequiredArgsConstructor
@@ -71,22 +72,33 @@ public class EnterPortfolioController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> addPortfolioAjax(
             @Valid @ModelAttribute EnterPortfolio portfolio, BindingResult bindingResult,
+            // ▼▼▼ 이 파라미터로 여러 카테고리 ID를 받습니다. ▼▼▼
             @RequestParam(value = "categoryCodes", required = false) List<String> categoryCodes,
             @RequestParam(value = "tags", required = false) String tags,
             @RequestParam(value = "portfolioImage", required = false) MultipartFile portfolioImage,
-       
             HttpSession session) {
         
-        if (categoryCodes == null || categoryCodes.isEmpty() || categoryCodes.stream().allMatch(String::isEmpty)) {
+        // ▼▼▼ [수정된 유효성 검사] portfolio.getCtgryId() 대신 categoryCodes 목록을 검사합니다. ▼▼▼
+        if (categoryCodes == null || categoryCodes.stream().allMatch(String::isEmpty)) {
+            // 에러를 categoryError에 맞추기 위해 임의의 필드 이름(예: categories) 사용
             bindingResult.rejectValue("categories", "NotEmpty", "카테고리는 최소 하나 이상 선택해야 합니다.");
+        }
+        
+        if (portfolioImage == null || portfolioImage.isEmpty()) {
+            bindingResult.rejectValue("prtfThumbnailUrl", "NotEmpty", "대표 이미지는 필수입니다.");
         }
         
         if (bindingResult.hasErrors()) {
             Map<String, Object> errors = new HashMap<>();
             errors.put("success", false);
-            bindingResult.getFieldErrors().forEach(error -> 
-                errors.put(error.getField() + "Error", error.getDefaultMessage())
-            );
+            bindingResult.getFieldErrors().forEach(error -> {
+                // 카테고리 오류의 경우, 프론트엔드 ID("categoryError")에 맞게 키를 설정
+                if (error.getField().equals("categories")) {
+                    errors.put("categoryError", error.getDefaultMessage());
+                } else {
+                    errors.put(error.getField() + "Error", error.getDefaultMessage());
+                }
+            });
             return ResponseEntity.badRequest().body(errors);
         }
 
@@ -95,6 +107,7 @@ public class EnterPortfolioController {
         portfolio.setEntCd(entCd);
         portfolio.setMbrCd(mbrCd);
         try {
+            // 서비스 호출 시 categoryCodes 전달
             portfolioService.addPortfolio(portfolio, categoryCodes, tags, portfolioImage);
             return ResponseEntity.ok(Map.of("success", true, "message", "포트폴리오가 성공적으로 등록되었습니다.", "redirectUrl", "/enter/portfolio/list"));
         } catch (Exception e) {
@@ -103,14 +116,23 @@ public class EnterPortfolioController {
                                  .body(Map.of("success", false, "message", "포트폴리오 등록 중 서버 오류가 발생했습니다: " + e.getMessage()));
         }
     }
-
     // --- 포트폴리오 수정 관련 ---
     @GetMapping("/edit/{prtfCd}")
     public String showEditPortfolioForm(@PathVariable String prtfCd, Model model) {
-        model.addAttribute("portfolio", portfolioService.getPortfolioByPrtfCd(prtfCd));
+        // 1. 수정할 포트폴리오의 모든 정보를 조회합니다.
+        EnterPortfolio portfolio = portfolioService.getPortfolioByPrtfCd(prtfCd);
+        model.addAttribute("portfolio", portfolio);
+        
+        // 2. 포트폴리오에 저장된 대표 카테고리 ID가 있는지 확인합니다.
+        if (portfolio.getCtgryId() != null && !portfolio.getCtgryId().isEmpty()) {
+            // 3. ID가 있다면, 서비스에 요청하여 해당 카테고리의 전체 경로(1차>2차>3차)를 조회합니다.
+            List<CategorySearchDto> categoryPath = categorySearchService.getCategoryPath(portfolio.getCtgryId());
+            // 4. 조회된 경로를 "categoryPath"라는 이름으로 모델에 담아 View로 전달합니다.
+            model.addAttribute("categoryPath", categoryPath);
+        }
+        
         return "enter/portfolio/editPortfolio";
     }
-
     @PostMapping("/edit-ajax")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> editPortfolioAjax(
@@ -119,32 +141,38 @@ public class EnterPortfolioController {
             @RequestParam(value = "tags", required = false) String tags,
             @RequestParam(value = "portfolioImage", required = false) MultipartFile portfolioImage) {
 
-        
-        if (categoryCodes == null || categoryCodes.isEmpty() || categoryCodes.stream().allMatch(String::isEmpty)) {
-            bindingResult.rejectValue("categories", "NotEmpty", "카테고리는 최소 하나 이상 선택해야 합니다.");
-        }
+        Map<String, Object> errors = new HashMap<>();
 
+        // 1. 일반적인 필드 유효성 검사
         if (bindingResult.hasErrors()) {
-            Map<String, Object> errors = new HashMap<>();
-            errors.put("success", false);
             bindingResult.getFieldErrors().forEach(error -> 
                 errors.put(error.getField() + "Error", error.getDefaultMessage())
             );
+        }
+
+        // 2. 카테고리 목록에 대한 유효성 검사를 수동으로 추가
+        if (categoryCodes == null || categoryCodes.stream().allMatch(String::isEmpty)) {
+            errors.put("categoryError", "카테고리는 최소 하나 이상 선택해야 합니다.");
+        }
+
+        // 3. 오류가 하나라도 있으면 400 응답을 반환
+        if (!errors.isEmpty()) {
+            errors.put("success", false);
             return ResponseEntity.badRequest().body(errors);
         }
 
+        // 4. 오류가 없으면 서비스 호출
         try {
-            portfolioService.updatePortfolio(portfolio, categoryCodes, tags, portfolioImage);
-            return ResponseEntity.ok(Map.of("success", true, "message", "수정되었습니다.", "redirectUrl", "/enter/portfolio/list"));
+            portfolioService.updatePortfolio(portfolio, categoryCodes, tags, portfolioImage); 
+            return ResponseEntity.ok(Map.of("success", true, "message", "수정되었습니다.", "redirectUrl", "/enter/portfolio/list")); 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body(Map.of("success", false, "message", "수정 중 오류 발생: " + e.getMessage()));
+                                 .body(Map.of("success", false, "message", "수정 중 오류 발생: " + e.getMessage())); 
         }
     }
 
-
-    // --- 포트폴리오 삭제 ---
+    // --- (이하 삭제, 링크 등 나머지 코드는 동일) ---
     @DeleteMapping("/delete/{prtfCd}")
     @ResponseBody
     public ResponseEntity<?> deletePortfolio(@PathVariable String prtfCd) {
@@ -157,7 +185,6 @@ public class EnterPortfolioController {
         }
     }
 
-    // --- 외주-포폴 연결/해제 관련 (수정된 부분) ---
     @GetMapping("/{prtfCd}/linked-outsourcings")
     @ResponseBody
     public ResponseEntity<List<EnterOutsourcing>> getLinkedOutsourcings(@PathVariable String prtfCd) {
@@ -191,18 +218,10 @@ public class EnterPortfolioController {
     public ResponseEntity<?> unlinkOutsourcing(@RequestBody Map<String, String> payload) {
         String prtfCd = payload.get("prtfCd");
         String osCd = payload.get("osCd");
-
         outsourcingService.unlinkPortfolioFromOutsourcing(osCd, prtfCd);
         return ResponseEntity.ok().build();
     }
     
-    // --- 기타 API ---
-    @GetMapping("/api/categories/search")
-    @ResponseBody
-    public ResponseEntity<List<CategorySearchDto>> searchCategories(@RequestParam(value = "query", required = false, defaultValue = "") String query) {
-        return ResponseEntity.ok(categorySearchService.searchCategoriesByName(query));
-    }
-
     @GetMapping("/api/tags/search")
     @ResponseBody
     public ResponseEntity<List<String>> searchTags(@RequestParam(value = "query", required = false, defaultValue = "") String query) {
@@ -212,15 +231,12 @@ public class EnterPortfolioController {
     @GetMapping("/api/countByEntCd")
     @ResponseBody
     public ResponseEntity<Integer> countPortfoliosForEnterprise(HttpSession session){
-    	String mbrCd =  (String) session.getAttribute("SCD");
+        String mbrCd =  (String) session.getAttribute("SCD");
         if(mbrCd == null) {
-    		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(0);
-    	}
-    	
-    	String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(0);
+        }
+        String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
         int count= portfolioService.countPortfoliosByEntCd(entCd);
-    	
-    	return ResponseEntity.ok(count);
-    	
+        return ResponseEntity.ok(count);
     }
 }
