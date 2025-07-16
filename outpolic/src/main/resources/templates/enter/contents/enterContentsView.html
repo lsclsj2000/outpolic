@@ -5,6 +5,11 @@
 
 	<head>
 		<meta name="description" th:content="${currentCategory.categoryName} + ' 외주 목록'">
+		<style>
+			.section-padding {
+			    padding: 0;
+			}
+		</style>
 	</head>
 	<!-- 추가할 javaFile -->
 	<th:block layout:fragment="jsFile">

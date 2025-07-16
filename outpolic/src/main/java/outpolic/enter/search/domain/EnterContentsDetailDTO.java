@@ -13,6 +13,7 @@ public class EnterContentsDetailDTO {
     private String contentsType;
     private String contentsTitle;
     private String enterName;
+    private String enterCode;
     private LocalDateTime registrationDate;
     private String clCd;
     
