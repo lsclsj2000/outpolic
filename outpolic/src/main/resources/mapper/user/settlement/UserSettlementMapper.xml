@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="outpolic.user.settlement.mapper.UserSettlementMapper">
+
+  <select id="selectByMbrCd" resultType="outpolic.user.settlement.dto.UserSettlement">
+    SELECT
+      stlm_cd AS stlmCd,
+      mbr_cd AS mbrCd,
+      gds_cd AS gdsCd,
+      stc_cd AS stcCd,
+      stlm_cnt AS stlmCnt,
+      stlm_pay_type AS stlmPayType,
+      stlm_amt AS stlmAmt,
+      stlm_used_points AS stlmUsedPoints,
+      stlm_final_amt AS stlmFinalAmt,
+      stlm_payment_info AS stlmPaymentInfo,
+      stlm_card_nm AS stlmCardNm,
+      stlm_provider_nm AS stlmProviderNm,
+      stlm_account_info AS stlmAccountInfo,
+      stlm_account_nm AS stlmAccountNm,
+      stlm_ymdt AS stlmYmdt,
+      stlm_agre_yn AS stlmAgreYn
+    FROM settlement
+    WHERE mbr_cd = #{mbrCd}
+    ORDER BY stlm_ymdt DESC
+  </select>
+
+</mapper>

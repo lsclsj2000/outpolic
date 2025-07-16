@@ -1,5 +1,8 @@
 package outpolic.user.mypage.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,16 +17,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import outpolic.common.domain.Member;
 import outpolic.user.login.mapper.UserLoginMapper;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.service.UserMypageEditService;
+import outpolic.user.settlement.dto.UserSettlement;
+import outpolic.user.settlement.service.UserSettlementService;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class UserMypageController {
 
 	private final PasswordEncoder passwordEncoder;
+	
+	// 결제내역 데이터를 가져오기 위함
+	@Autowired
+    private UserSettlementService userSettlementService;
+
 	
  // 유저 마이페이지
  	@GetMapping("/user/mypage")
@@ -32,6 +44,23 @@ public class UserMypageController {
  		String memberCode = (String) session.getAttribute("SCD");
  	    UserInfoDTO userInfo = userMypageEditService.getUserInfoByCode(memberCode);
  	    model.addAttribute("userInfo", userInfo);
+ 	    
+ 	   List<UserSettlement> settlementList = new ArrayList<>(); // 기본적으로 빈 리스트로 초기화
+       if (memberCode != null) {
+           try {
+               settlementList = userSettlementService.userSettlementInfo(memberCode);
+               log.info("조회된 결제 내역 수 (UserMypageController): {}", settlementList != null ? settlementList.size() : 0);
+           } catch (Exception e) {
+               log.error("결제 내역 조회 중 오류 발생: {}", e.getMessage());
+               // 오류 발생 시 빈 리스트를 전달하여 템플릿 오류 방지
+               settlementList = new ArrayList<>();
+           }
+       } else {
+           log.warn("세션에 회원 코드(SCD)가 없어 결제 내역을 불러올 수 없습니다.");
+       }
+       model.addAttribute("settlementList", settlementList); // 뷰에 리스트 전달
+ 	    
+ 	    
  		return "user/mypage/userMypageView";
  	}
 
