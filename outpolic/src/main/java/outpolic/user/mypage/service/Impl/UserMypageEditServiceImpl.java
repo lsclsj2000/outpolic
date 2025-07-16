@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import outpolic.user.mypage.dto.OutsourcingReviewDTO;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.mapper.UserMypageEditMapper;
 import outpolic.user.mypage.service.UserMypageEditService;
@@ -57,6 +58,11 @@ public class UserMypageEditServiceImpl implements UserMypageEditService {
 	public ReviewDTO getUserReviewByCode(String memberCode) {
 		
 		return userMypageEditMapper.getUserReviewByCode(memberCode);
+	}
+
+	@Override
+	public List<OutsourcingReviewDTO> getOutsourcingReviewList(String memberCode) {
+		 return userMypageEditMapper.selectUserReviewList(memberCode);
 	}
 
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import outpolic.user.mypage.dto.OutsourcingReviewDTO;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.review.dto.ReviewDTO;
 
@@ -20,4 +21,6 @@ public interface UserMypageEditService {
 	boolean isUserInfoDuple(String type, String memberCode, String memberNickname, String memberEmail, String memberTelNo);
 	
 	ReviewDTO getUserReviewByCode(String memberCode);
+	
+	List<OutsourcingReviewDTO> getOutsourcingReviewList(String memberCode);
 }

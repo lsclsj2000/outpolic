@@ -2,6 +2,26 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
- <mapper namespace="outpolic.user.mypage.mapper.UserMypageMapper">
-	
+ <mapper namespace="outpolic.user.mypage.mapper.UserMypageEditMapper">
+	<select id="selectUserReviewList" parameterType="String" resultType="outpolic.user.mypage.dto.OutsourcingReviewDTO">
+        SELECT 
+            oc.osp_cd as ospCd,
+            oc.mbr_cd as mbrCd,
+            op.ocd_cd as ocdCd,
+            ocd.cl_cd as clCd,
+            r.rvw_cd as rvwCd,
+            r.rvw_cn as rvwCn,
+            r.rvw_evl as rvwEvl,
+            cl.cntd_cd as cntdCd,
+            ocd.ocd_ttl as ocdTtl,
+            o.os_cd as osCd,
+            o.os_ttl as osTtl
+        FROM outsourcing_contract oc
+        INNER JOIN outsourcing_prograss op ON oc.osp_cd = op.osp_cd
+        INNER JOIN outsourcing_contract_details ocd ON op.ocd_cd = ocd.ocd_cd
+        INNER JOIN review r ON oc.mbr_cd = r.mbr_cd
+        INNER JOIN content_list cl ON cl.cl_cd = ocd.cl_cd
+        INNER JOIN outsourcing o ON cl.cntd_cd = o.os_cd
+        WHERE oc.mbr_cd = #{memberCode}
+    </select>
  </mapper>

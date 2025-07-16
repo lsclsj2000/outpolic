@@ -1,8 +1,11 @@
 package outpolic.user.mypage.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import outpolic.user.mypage.dto.OutsourcingReviewDTO;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.review.dto.ReviewDTO;
 
@@ -28,4 +31,7 @@ public interface UserMypageEditMapper {
 	 */
 	 
 	 ReviewDTO getUserReviewByCode(String memberCode);
+	 
+	 // 리뷰 외주 연결 dto
+	 List<OutsourcingReviewDTO> selectUserReviewList(String memberCode);
 }
