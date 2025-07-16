@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="outpolic.user.settlement.mapper.UserSettlementMapper">
+
+  <select id="selectByMbrCd" resultType="outpolic.user.settlement.dto.UserSettlement">
+    SELECT
+      stlm_cd,           -- 결제코드
+      mbr_cd,            -- 회원코드
+      gds_cd,            -- 상품코드
+      stc_cd,            -- 상태코드
+      stlm_cnt,          -- 결제 수량
+      stlm_pay_type,     -- 결제 방식
+      stlm_amt,          -- 원 결제 금액
+      stlm_used_points,  -- 사용 마일리지
+      stlm_final_amt,    -- 최종 결제 금액
+      stlm_payment_info, -- 결제 정보
+      stlm_card_nm,      -- 카드사
+      stlm_provider_nm,  -- 간편결제사
+      stlm_account_info, -- 계좌 정보
+      stlm_account_nm,   -- 결제자 이름
+      stlm_ymdt,         -- 결제일시
+      stlm_agre_yn       -- 동의 여부
+    FROM tb_settlement
+    WHERE mbr_cd = #{mbrCd}
+    ORDER BY stlm_ymdt DESC
+  </select>
+
+</mapper>
