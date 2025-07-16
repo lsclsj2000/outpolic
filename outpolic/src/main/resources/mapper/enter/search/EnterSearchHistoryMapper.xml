@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="outpolic.enter.search.mapper.EnterSearchHistoryMapper">
+
+    <select id="getNextShCd" resultType="String">
+        SELECT CONCAT('SH_C', LPAD(IFNULL(MAX(SUBSTRING(sh_cd, 5)), 0) + 1, 7, '0'))
+        FROM search_history
+    </select>
+
+    <insert id="insertSearchHistory">
+        INSERT INTO search_history (
+            sh_cd, 
+            sh_term, 
+            mbr_cd, 
+            sh_ymdt, 
+            sh_dl_ymdt
+        ) VALUES (
+            #{shCd},
+            #{shTerm},
+            #{mbrCd},
+            NOW(),
+            DATE_ADD(NOW(), INTERVAL 30 DAY)
+        )
+    </insert>
+</mapper>

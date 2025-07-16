@@ -15,7 +15,6 @@
 	    <result column="os_amt"         	property="osAmt"/>
 	    <result column="avg_review_score" 	property="reviewScore"/>
 	</resultMap>
-	
 	<!-- [최종 수정] getContentsList 쿼리 -->
 	<select id="getContentsList" resultMap="contentResultMap">
 	    WITH UnifiedContents AS (
