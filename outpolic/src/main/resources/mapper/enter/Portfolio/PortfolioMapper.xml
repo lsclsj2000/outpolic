@@ -36,22 +36,26 @@
     </resultMap>
 
     <select id="findPortfolioDetailsByEntCd" resultMap="portfolioDetailResultMap">
-        SELECT
-            p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd, p.prtf_thumbnail_url,
-            cl.cl_cd, c.ctgry_id AS category_id,
-            c.ctgry_nm AS ctgry_nm, t.tag_nm AS tag_name
-        FROM
-            portfolio p
-        LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
-        LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
-        LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
-        LEFT JOIN tag_mapping tm ON cl.cl_cd = tm.cl_cd
-        LEFT JOIN tag t ON tm.tag_cd = t.tag_cd
-        WHERE
-            p.ent_cd = #{entCd}
-        ORDER BY
-            p.prtf_reg_ymdt DESC
-    </select>
+    SELECT
+        p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.stc_cd,
+        cl.cl_cd,
+        c.ctgry_id AS category_id,
+        c.ctgry_nm AS ctgry_nm,
+        t.tag_nm AS tag_name,
+        /* ▼▼▼ [수정] 서브쿼리를 이용해 file 테이블에서 썸네일 경로를 가져옵니다. ▼▼▼ */
+        (SELECT f.file_path FROM file f WHERE f.cl_cd = cl.cl_cd ORDER BY f.file_reg_ymdt ASC LIMIT 1) AS prtf_thumbnail_url
+    FROM
+        portfolio p
+    LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
+    LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
+    LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
+    LEFT JOIN tag_mapping tm ON cl.cl_cd = tm.cl_cd
+    LEFT JOIN tag t ON tm.tag_cd = t.tag_cd
+    WHERE
+        p.ent_cd = #{entCd}
+    ORDER BY
+        p.prtf_reg_ymdt DESC
+</select>
 
     <select id="findPortfolioDetailsByPrtfCd" resultMap="portfolioDetailResultMap">
         SELECT
@@ -132,16 +136,14 @@
     </insert>
 
     <update id="updatePortfolio" parameterType="EnterPortfolio">
-        UPDATE portfolio
-        <set>
-            <if test="prtfTtl != null and prtfTtl != ''"> prtf_ttl = #{prtfTtl}, </if>
-            <if test="prtfCn != null and prtfCn != ''"> prtf_cn = #{prtfCn}, </if>
-            <if test="prtfThumbnailUrl != null"> prtf_thumbnail_url = #{prtfThumbnailUrl}, </if>
-            prtf_mdfcn_ymdt = NOW(),
-            adm_cd = #{admCd}
-        </set>
-        WHERE prtf_cd = #{prtfCd}
-    </update>
+    UPDATE portfolio
+    <set>
+        <if test="prtfTtl != null and prtfTtl != ''"> prtf_ttl = #{prtfTtl}, </if>
+        <if test="prtfCn != null and prtfCn != ''"> prtf_cn = #{prtfCn}, </if>
+        prtf_mdfcn_ymdt = NOW()
+    </set>
+    WHERE prtf_cd = #{prtfCd}
+</update>
 
     <delete id="deleteCategoryMappingByClCd">
         DELETE FROM category_mapping WHERE cl_cd = #{clCd}
@@ -265,11 +267,11 @@
 
 
     <insert id="addPortfolio" parameterType="EnterPortfolio">
-        INSERT INTO portfolio
-            (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd, prtf_thumbnail_url)
-        VALUES
-            (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), #{stcCd}, #{prtfThumbnailUrl})
-    </insert>
+    INSERT INTO portfolio
+        (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd)
+    VALUES
+        (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), #{stcCd})
+</insert>
 
     <select id="searchUnlinkedOutsourcings" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
         SELECT
@@ -343,4 +345,8 @@
     <delete id="deletePerusalContentByClCd">
         DELETE FROM perusal_content WHERE cl_cd = #{clCd}
     </delete>
+    
+    <delete id="callDeletePortfolioProcedure">
+    CALL sp_delete_portfolio(#{prtfCd})
+</delete>
 </mapper>

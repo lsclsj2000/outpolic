@@ -85,6 +85,7 @@ public interface PortfolioMapper {
     String findLatestClCdForPortfolio();
 
     String findMbrCdByPrtfCd(String prtfCd);
+    void callDeletePortfolioProcedure(String prtfCd);
 
 	List<EnterOutsourcing> findLinkedOutsourcingsByOsCd(String osCd);
 }
