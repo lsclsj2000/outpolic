@@ -118,12 +118,15 @@ $(document).ready(function () {
 	$('#nicknmDupleBtn').click(function () {
 		console.log("닉네임 중복확인 버튼 눌림"); 
 	   if (!isNicknameValid()) return;
-
 	   const nickname = $('#memberNickname').val();
 	   console.log('입력된 닉네임:', nickname);
 	   const memberCode = $('#memberCode').val();
 	   console.log('현재 memberCode:', memberCode);
 
+	   if(!isValidNickname(nickname)){
+	     alert('유효한 한글 닉네임을 입력해주세요');
+	     return;
+	   }
 	   dupleUserInfoCheck("memberNickname", nickname, memberCode, function(data){
 			if (data === true || data === 'true') {
 			    alert('닉네임이 중복입니다. 다른 닉네임을 입력하세요');

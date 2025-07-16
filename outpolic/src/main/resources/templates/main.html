@@ -22,6 +22,9 @@
             max-height: 85vh;
             overflow-y: auto;
         }
+		.slick-prev, .slick-next{
+			display : none !important;
+		}
     </style>
 </th:block>
 <th:block layout:fragment="contents">
@@ -146,7 +149,7 @@
 					                </div>
 					                <div class="product-content-wrap" style="padding: 15px;">
 					                    <div class="product-category">
-					                        <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" href="#">카테고리 | 기업명</a>
+					                        <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" th:href="@{/user/company/{id}(id=${content.entCode})}">카테고리 | 기업명</a>
 					                    </div>
 					                    <h2>
 					                        <!-- 링크가 중복되므로, 이 a 태그는 제거하고 텍스트만 남깁니다. -->
@@ -228,7 +231,7 @@
 							        
 							        <div class="product-content-wrap" style="padding: 15px;">
 							            <div class="product-category">
-							                <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" href="#">카테고리 | 기업명</a>
+							                <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" th:href="@{/user/company/{id}(id=${content.entCode})}">카테고리 | 기업명</a>
 							            </div>
 							            <h2 th:text="${content.prtfTtl}">콘텐츠 제목</h2>
 							        </div>

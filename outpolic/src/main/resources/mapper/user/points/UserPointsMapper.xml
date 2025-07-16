@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 네임스페이스를 UserPointsMapper.java 인터페이스의 전체 경로로 변경 -->
+<mapper namespace="outpolic.user.points.mapper.UserPointsMapper">
+
+	<!-- UserPointsDTO와 테이블 컬럼 매핑 -->
+	<resultMap id="pointsStatusResultMap"
+		type="outpolic.user.points.dto.UserPointsDTO">
+		<id property="ptsCd" column="pts_cd" />
+		<result property="mbrCd" column="mbr_cd" />
+		<result property="ptsPoints" column="pts_points" />
+		<result property="ptsPointsDelta" column="pts_points_delta" />
+		<result property="ptsCumPoints" column="pts_cum_points" />
+		<result property="ptsStatus" column="pts_status" />
+		<result property="ptsYmdt" column="pts_ymdt" />
+	</resultMap>
+
+	<!-- 특정 회원의 가장 최근 마일리지 상태 조회 -->
+	<select id="selectLatestPointsByMbrCd"
+		resultMap="pointsStatusResultMap">
+		SELECT
+		pts_cd,
+		mbr_cd,
+		pts_points,
+		pts_points_delta,
+		pts_cum_points,
+		pts_status,
+		pts_ymdt
+		FROM points_status
+		WHERE mbr_cd = #{mbrCd}
+		ORDER BY pts_ymdt DESC
+		LIMIT 1
+	</select>
+
+	<!-- 새로운 마일리지 내역 삽입 -->
+	<insert id="insertPointsStatus"
+		parameterType="outpolic.user.points.dto.UserPointsDTO">
+		INSERT INTO points_status (
+		pts_cd,
+		mbr_cd,
+		pts_points,
+		pts_points_delta,
+		pts_cum_points,
+		pts_status,
+		pts_ymdt
+		) VALUES (
+		#{ptsCd},
+		#{mbrCd},
+		#{ptsPoints},
+		#{ptsPointsDelta},
+		#{ptsCumPoints},
+		#{ptsStatus},
+		NOW()
+		)
+	</insert>
+
+</mapper>

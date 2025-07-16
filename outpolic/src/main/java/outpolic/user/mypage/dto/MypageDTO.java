@@ -3,6 +3,7 @@ package outpolic.user.mypage.dto;
 import java.util.List;
 
 import lombok.Data;
+import outpolic.user.review.dto.ReviewDTO;
 
 
 @Data
@@ -27,7 +28,7 @@ public class MypageDTO {
 	private List<UserOsInfoDTO> userOsInfo;
 	
 	//USER 리뷰 DTO
-	
+	private List<ReviewDTO> userReview;
 	// user 즐겨찾기 dto
 	
 	// user 문의 dto

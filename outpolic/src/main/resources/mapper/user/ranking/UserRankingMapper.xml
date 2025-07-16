@@ -20,6 +20,7 @@
         <id 	property="osCode" 			column="os_cd" />
         <result property="rankingView" 		column="rk_view" />
         <result property="entName"		 	column="ent_nm" />
+        <result property="entCode"		 	column="ent_cd" />
         <result property="ctgryName" 		column="ctgry_nm" />
         <result property="osTtl" 			column="os_ttl" />
         <result property="osExpln" 			column="os_expln" />
@@ -56,6 +57,7 @@
 		    r.rk_view,
 		    o.os_cd,
 		    e.ent_nm,
+		    e.ent_cd,
 		    c.ctgry_nm,
 		    o.os_ttl,
 		    o.os_expln,

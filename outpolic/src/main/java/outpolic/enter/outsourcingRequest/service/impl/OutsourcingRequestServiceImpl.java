@@ -47,7 +47,7 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
         String newChrCd = "CHR_" + newOcdCd; // 임시로 채팅방 코드를 생성합니다.
 
         // 4. 생성된 채팅방 ID를 outsourcing_contract_details 테이블에 업데이트합니다.
-        requestMapper.updateChatRoomId(newOcdCd, newChrCd); // [cite: 1489, 1509]
+//        requestMapper.updateChatRoomId(newOcdCd, newChrCd); // [cite: 1489, 1509]
 
         // 5. 반환될 DTO 객체에도 채팅방 코드를 설정해줍니다.
         request.setChr_cd(newChrCd); // [cite: 1468]
