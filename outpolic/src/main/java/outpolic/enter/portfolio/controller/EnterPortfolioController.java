@@ -1,6 +1,8 @@
 package outpolic.enter.portfolio.controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList; // ArrayList 임포트 추가
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.format.annotation.DateTimeFormat;
+
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,7 +53,7 @@ public class EnterPortfolioController {
     private final EnterPortfolioService portfolioService;
     private final CategorySearchService categorySearchService;
     private final EnterOutsourcingService outsourcingService;
-    private final ObjectMapper objectMapper; // JSON 변환을 위한 ObjectMapper 주입
+    private final ObjectMapper objectMapper; 
 
     // --- 포트폴리오 목록 관련 ---
     @GetMapping("/list")
@@ -80,7 +84,7 @@ public class EnterPortfolioController {
 
     @PostMapping("/add/step1")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> saveStep1(PortfolioFormDataDto formData, HttpSession session) {
+    public ResponseEntity<Map<String, Object>> saveStep1(@ModelAttribute PortfolioFormDataDto formData, HttpSession session) {
         String mbrCd = (String) session.getAttribute("SCD");
         if (mbrCd == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "로그인이 필요합니다."));
@@ -96,17 +100,37 @@ public class EnterPortfolioController {
 
     @PostMapping("/add/step2")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> saveStep2(@RequestParam(value = "categoryCodes[]", required = false) List<String> categoryCodes,
-                                                          @RequestParam(value = "tags", defaultValue = "") String tags,
-                                                          @SessionAttribute("portfolioFormData") PortfolioFormDataDto formData) {
-        formData.setCategoryCodes(categoryCodes);
-        formData.setTags(tags);
+    public ResponseEntity<Map<String, Object>> saveStep2(
+            @RequestParam(value = "prtfPeriodStart", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate prtfPeriodStart, 
+            @RequestParam(value = "prtfPeriodEnd", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate prtfPeriodEnd,     
+            @RequestParam(value = "prtfClient", required = false) String prtfClient,
+            @RequestParam(value = "prtfIndustry", required = false) String prtfIndustry,
+            @SessionAttribute("portfolioFormData") PortfolioFormDataDto formData) {
+        
+        formData.setPrtfPeriodStart(prtfPeriodStart);
+        formData.setPrtfPeriodEnd(prtfPeriodEnd);
+        formData.setPrtfClient(prtfClient);
+        formData.setPrtfIndustry(prtfIndustry);
+
         return ResponseEntity.ok(Map.of("success", true));
     }
 
     @PostMapping("/add/step3")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> saveStep3(@RequestParam("portfolioImage") MultipartFile portfolioImage,
+    public ResponseEntity<Map<String, Object>> saveStep3(
+            @RequestParam(value = "categoryCodes[]", required = false) List<String> categoryCodes,
+            @RequestParam(value = "tags", defaultValue = "") String tags,
+            @SessionAttribute("portfolioFormData") PortfolioFormDataDto formData) {
+        
+        formData.setCategoryCodes(categoryCodes);
+        formData.setTags(tags);
+        
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    @PostMapping("/add/step4")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> saveStep4(@RequestParam("portfolioImage") MultipartFile portfolioImage,
                                                           @SessionAttribute("portfolioFormData") PortfolioFormDataDto formData) {
         FileMetaData uploadedFile = portfolioService.uploadThumbnail(portfolioImage);
         if (uploadedFile == null) {
@@ -129,45 +153,148 @@ public class EnterPortfolioController {
         }
     }
 
-    // --- 포트폴리오 수정 관련 ---
-    
+    // --- 포트폴리오 수정 (다단계 방식) ---
     @GetMapping("/edit/{prtfCd}")
-    public String showEditPortfolioForm(@PathVariable String prtfCd, Model model) {
+    public String showEditPortfolioForm(@PathVariable String prtfCd, Model model, HttpSession session) {
         EnterPortfolio portfolio = portfolioService.getPortfolioByPrtfCd(prtfCd);
+        if (portfolio == null) {
+            return "redirect:/enter/portfolio/list?error=notfound";
+        }
         model.addAttribute("portfolio", portfolio);
         
-        try {
-            String categoryPathJson = objectMapper.writeValueAsString(portfolio.getCategories());
-            model.addAttribute("categoryPathJson", categoryPathJson);
-        } catch (JsonProcessingException e) {
-            log.error("JSON processing error for category path", e);
-            model.addAttribute("categoryPathJson", "[]"); // 에러 발생 시 빈 배열 전달
+        // ============ 수정된 부분: 기존 포트폴리오의 모든 카테고리 경로를 가져와 JSON으로 전달 ============
+        List<List<CategorySearchDto>> allCategoryPaths = new ArrayList<>();
+        if (portfolio.getCategories() != null) {
+            for (CategorySearchDto category : portfolio.getCategories()) {
+                // 각 최종 카테고리 ID에 대해 전체 경로를 조회
+                List<CategorySearchDto> fullPath = categorySearchService.getCategoryPath(category.getCtgryId());
+                if (!fullPath.isEmpty()) {
+                    allCategoryPaths.add(fullPath);
+                }
+            }
         }
+        try {
+            // List<List<CategorySearchDto>>를 JSON 문자열로 변환
+            String categoryPathsJson = objectMapper.writeValueAsString(allCategoryPaths);
+            model.addAttribute("categoryPathsJson", categoryPathsJson); // 변수명 변경 (initialCategoryPath -> categoryPathsJson)
+        } catch (JsonProcessingException e) {
+            log.error("JSON processing error for category paths in edit form", e);
+            model.addAttribute("categoryPathsJson", "[]"); 
+        }
+        // =========================================================================================
+
+        // 세션에 임시 폼 데이터 저장 (수정 중 사용)
+        PortfolioFormDataDto formData = new PortfolioFormDataDto();
+        formData.setPrtfCd(portfolio.getPrtfCd());
+        formData.setEntCd(portfolio.getEntCd());
+        formData.setMbrCd(portfolio.getMbrCd());
+        formData.setPrtfTtl(portfolio.getPrtfTtl());
+        formData.setPrtfCn(portfolio.getPrtfCn());
+        formData.setPrtfPeriodStart(portfolio.getPrtfPeriodStart());
+        formData.setPrtfPeriodEnd(portfolio.getPrtfPeriodEnd());
+        formData.setPrtfClient(portfolio.getPrtfClient());
+        formData.setPrtfIndustry(portfolio.getPrtfIndustry());
+        
+        // formData.setCategoryCodes(portfolio.getCategories().stream().map(CategorySearchDto::getCtgryId).collect(Collectors.toList()));
+        // formData.setTags(String.join(", ", portfolio.getTagNames())); // 태그도 초기화 (뷰에서 직접 처리)
+        
+        session.setAttribute("portfolioEditFormData", formData); 
         
         return "enter/portfolio/editPortfolio";
     }
 
-    @PostMapping("/edit-ajax")
+    // 1단계 수정: 기본 정보 (제목, 내용)
+    @PostMapping("/edit/step1")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> editPortfolioAjax(
-            @Valid @ModelAttribute EnterPortfolio portfolio, BindingResult bindingResult,
-            @RequestParam(value = "categoryCodes", required = false) List<String> categoryCodes,
-            @RequestParam(value = "tags", required = false) String tags,
-            @RequestParam(value = "portfolioImage", required = false) MultipartFile portfolioImage) {
+    public ResponseEntity<Map<String, Object>> updateStep1(
+            @RequestBody Map<String, Object> payload, 
+            @SessionAttribute("portfolioEditFormData") PortfolioFormDataDto formData) {
+        
+        String prtfCd = (String) payload.get("prtfCd");
+        String prtfTtl = (String) payload.get("prtfTtl");
+        String prtfCn = (String) payload.get("prtfCn");
 
-        if (bindingResult.hasErrors() || categoryCodes == null || categoryCodes.isEmpty()) {
-             return ResponseEntity.badRequest().body(new HashMap<>());
-        }
-
-        try {
-            portfolioService.updatePortfolio(portfolio, categoryCodes, tags, portfolioImage);
-            return ResponseEntity.ok(Map.of("success", true, "message", "수정되었습니다.", "redirectUrl", "/enter/portfolio/list")); 
-        } catch (Exception e) {
-            log.error("포트폴리오 수정 중 오류", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "수정 중 오류 발생"));
-        }
+        formData.setPrtfCd(prtfCd); 
+        formData.setPrtfTtl(prtfTtl);
+        formData.setPrtfCn(prtfCn);
+        
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
+    // 2단계 수정: 참여 기간 및 클라이언트 정보
+    @PostMapping("/edit/step2")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateStep2(
+            @RequestBody Map<String, Object> payload, 
+            @SessionAttribute("portfolioEditFormData") PortfolioFormDataDto formData) {
+        
+        String prtfCd = (String) payload.get("prtfCd");
+        LocalDate prtfPeriodStart = (payload.get("prtfPeriodStart") != null && !((String)payload.get("prtfPeriodStart")).isEmpty()) ? LocalDate.parse((String) payload.get("prtfPeriodStart")) : null; 
+        LocalDate prtfPeriodEnd = (payload.get("prtfPeriodEnd") != null && !((String)payload.get("prtfPeriodEnd")).isEmpty()) ? LocalDate.parse((String) payload.get("prtfPeriodEnd")) : null;     
+        String prtfClient = (String) payload.get("prtfClient");
+        String prtfIndustry = (String) payload.get("prtfIndustry");
+
+        formData.setPrtfCd(prtfCd); 
+        formData.setPrtfPeriodStart(prtfPeriodStart);
+        formData.setPrtfPeriodEnd(prtfPeriodEnd);
+        formData.setPrtfClient(prtfClient);
+        formData.setPrtfIndustry(prtfIndustry);
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    // 3단계 수정: 카테고리 및 태그
+    @PostMapping("/edit/step3")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateStep3(
+            @RequestBody Map<String, Object> payload, 
+            @SessionAttribute("portfolioEditFormData") PortfolioFormDataDto formData) {
+        
+        String prtfCd = (String) payload.get("prtfCd");
+        @SuppressWarnings("unchecked")
+        List<String> categoryCodes = (List<String>) payload.get("categoryCodes"); 
+        String tags = (String) payload.get("tags");
+
+        formData.setPrtfCd(prtfCd); 
+        formData.setCategoryCodes(categoryCodes);
+        formData.setTags(tags);
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    // 4단계 수정: 대표 이미지
+    @PostMapping("/edit/step4")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateStep4(
+            @RequestParam("prtfCd") String prtfCd, 
+            @RequestParam(value = "portfolioImage", required = false) MultipartFile portfolioImage,
+            @SessionAttribute("portfolioEditFormData") PortfolioFormDataDto formData) { 
+        
+        if (portfolioImage != null && !portfolioImage.isEmpty()) {
+            FileMetaData uploadedFile = portfolioService.uploadThumbnail(portfolioImage);
+            if (uploadedFile == null) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "파일 업로드에 실패했습니다."));
+            }
+            formData.setThumbnailFile(uploadedFile);
+        } else {
+            formData.setThumbnailFile(null); 
+        }
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
+
+    // 최종 수정 완료 (5단계)
+    @PostMapping("/edit/complete")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> completeEdit(@SessionAttribute("portfolioEditFormData") PortfolioFormDataDto formData, HttpSession session) {
+        try {
+            portfolioService.updatePortfolioAllSteps(formData); 
+            session.removeAttribute("portfolioEditFormData"); 
+            return ResponseEntity.ok(Map.of("success", true, "message", "포트폴리오 수정이 완료되었습니다.", "redirectUrl", "/enter/portfolio/list"));
+        } catch (IOException e) {
+            log.error("포트폴리오 최종 수정 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "수정 중 오류가 발생했습니다."));
+        }
+    }
+    
     // --- 포트폴리오 삭제 (비동기 처리) ---
 
     @DeleteMapping("/delete/{prtfCd}")

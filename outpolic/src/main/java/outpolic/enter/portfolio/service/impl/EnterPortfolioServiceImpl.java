@@ -8,9 +8,8 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-// @Async // EnterPortfolioServiceImpl에서는 더 이상 필요 없음
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // @Transactional은 deletePortfolioAsync에서만 필요할 수 있음
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     private static final Logger logger = LoggerFactory.getLogger(EnterPortfolioServiceImpl.class);
     private final PortfolioMapper portfolioMapper;
     private final FilesUtils filesUtils; 
-    private final PortfolioAsyncService portfolioAsyncService; // PortfolioAsyncService 주입
+    private final PortfolioAsyncService portfolioAsyncService; 
     private final CategorySearchService categorySearchService;
 
     // 파일 경로 정리 및 복원 유틸리티 메서드
@@ -146,6 +145,12 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         portfolio.setPrtfTtl(formData.getPrtfTtl());
         portfolio.setPrtfCn(formData.getPrtfCn());
         portfolio.setStcCd("SD_ACTIVE");
+
+        // 새로 추가된 필드 설정
+        portfolio.setPrtfPeriodStart(formData.getPrtfPeriodStart());
+        portfolio.setPrtfPeriodEnd(formData.getPrtfPeriodEnd());
+        portfolio.setPrtfClient(formData.getPrtfClient());
+        portfolio.setPrtfIndustry(formData.getPrtfIndustry());
         
         if (formData.getThumbnailFile() != null) {
             portfolio.setPrtfThumbnailUrl(formData.getThumbnailFile().getFilePath());
@@ -153,11 +158,10 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
 
         // 대표 카테고리 ID를 설정하는 로직 추가
         if (formData.getCategoryCodes() != null && !formData.getCategoryCodes().isEmpty()) {
-            portfolio.setCtgryId(formData.getCategoryCodes().get(0)); // 첫 번째 카테고리를 대표 카테고리로 설정
+            portfolio.setCtgryId(formData.getCategoryCodes().get(0));
         }
 
-        portfolioMapper.addPortfolio(portfolio); 
-
+        portfolioMapper.addPortfolio(portfolio);
         String newClCd = "LIST_" + portfolio.getPrtfCd();
         portfolioMapper.insertContentList(newClCd, portfolio.getPrtfCd());
         
@@ -170,98 +174,89 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
 
     @Override
     @Transactional
-    public void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException {
-        String prtfCd = portfolio.getPrtfCd();
+    public void updatePortfolioAllSteps(PortfolioFormDataDto formData) throws IOException {
+        String prtfCd = formData.getPrtfCd();
         String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
         if (clCd == null) {
             throw new IllegalStateException("콘텐츠 목록(cl_cd)을 찾을 수 없습니다.");
         }
         String originalMbrCd = portfolioMapper.findMbrCdByClCd(clCd);
-        EnterPortfolio currentDbPortfolio = portfolioMapper.findPortfolioDetailsByPrtfCd(prtfCd);
-        String currentDbThumbnailUrl = currentDbPortfolio != null ? currentDbPortfolio.getPrtfThumbnailUrl() : null;
-
-        portfolio.setPrtfMdfcnYmdt(LocalDateTime.now());
         
-        String newThumbnailUrlForDb = currentDbThumbnailUrl;
-
-        if (portfolioImage != null && !portfolioImage.isEmpty()) {
-            List<FileMetaData> existingFiles = portfolioMapper.findFilesByClCd(clCd);
-            for (FileMetaData file : existingFiles) {
-                String fullPathToDelete = restorePathForWebOrFileSystem(file.getFilePath());
-                filesUtils.deleteFileByPath(fullPathToDelete);
-            }
-            if (!existingFiles.isEmpty()) {
-                portfolioMapper.deleteFilesByClCd(clCd);
-            }
-
-            FileMetaData newThumbnailMetaData = this.uploadThumbnail(portfolioImage);
-            if (newThumbnailMetaData != null) {
-                newThumbnailUrlForDb = newThumbnailMetaData.getFilePath();
-                portfolioMapper.insertFileRecord(newThumbnailMetaData, clCd, originalMbrCd);
-            } else {
-                newThumbnailUrlForDb = null;
-            }
-        } 
-        else if (portfolioImage != null && portfolioImage.isEmpty() && currentDbThumbnailUrl != null) { 
-            List<FileMetaData> existingFiles = portfolioMapper.findFilesByClCd(clCd);
-            for (FileMetaData file : existingFiles) {
-                String fullPathToDelete = restorePathForWebOrFileSystem(file.getFilePath());
-                filesUtils.deleteFileByPath(fullPathToDelete);
-            }
-            if (!existingFiles.isEmpty()) {
-                portfolioMapper.deleteFilesByClCd(clCd);
-            }
-            newThumbnailUrlForDb = null;
+        // 기존 포트폴리오 정보를 DB에서 다시 불러옴
+        EnterPortfolio existingPortfolio = portfolioMapper.findPortfolioDetailsByPrtfCd(prtfCd);
+        if (existingPortfolio == null) {
+            throw new IllegalArgumentException("수정할 포트폴리오를 찾을 수 없습니다: " + prtfCd);
         }
-        
-        portfolio.setPrtfThumbnailUrl(newThumbnailUrlForDb);
-        portfolioMapper.updatePortfolio(portfolio);
-        
+
+        // formData에서 넘어온 값으로 existingPortfolio 업데이트
+        existingPortfolio.setPrtfTtl(formData.getPrtfTtl());
+        existingPortfolio.setPrtfCn(formData.getPrtfCn());
+        existingPortfolio.setPrtfPeriodStart(formData.getPrtfPeriodStart());
+        existingPortfolio.setPrtfPeriodEnd(formData.getPrtfPeriodEnd());
+        existingPortfolio.setPrtfClient(formData.getPrtfClient());
+        existingPortfolio.setPrtfIndustry(formData.getPrtfIndustry());
+        existingPortfolio.setPrtfMdfcnYmdt(LocalDateTime.now());
+
+        // 썸네일 파일 처리
+        // formData.getThumbnailFile()이 null이면 새 파일이 업로드되지 않았음을 의미
+        // 이 때, initialThumbnailUrl이 null이면 썸네일을 아예 삭제한 것으로 간주 (빈 Blob 전송 시)
+        // initialThumbnailUrl이 유효하고 formData.getThumbnailFile()이 null이면 기존 썸네일 유지
+        if (formData.getThumbnailFile() != null) { // 새로운 파일이 업로드된 경우
+            // 기존 파일 삭제
+            List<FileMetaData> existingFiles = portfolioMapper.findFilesByClCd(clCd);
+            for (FileMetaData file : existingFiles) {
+                String fullPathToDelete = restorePathForWebOrFileSystem(file.getFilePath());
+                filesUtils.deleteFileByPath(fullPathToDelete);
+            }
+            if (!existingFiles.isEmpty()) {
+                portfolioMapper.deleteFilesByClCd(clCd);
+            }
+            // 새 파일 저장
+            existingPortfolio.setPrtfThumbnailUrl(formData.getThumbnailFile().getFilePath());
+            portfolioMapper.insertFileRecord(formData.getThumbnailFile(), clCd, originalMbrCd);
+        } else { // formData.getThumbnailFile()이 null인 경우 (새 파일 선택 안함, 또는 삭제 의도)
+            // edit.html에서 initialThumbnailUrl을 null로 만들고 빈 Blob을 보냈으므로,
+            // 이 경우 기존 썸네일을 DB에서 null로 만들어야 함.
+            // 기존 썸네일이 있었으나 이제는 없어야 하는 경우
+            if (existingPortfolio.getPrtfThumbnailUrl() != null) {
+                 // 기존 파일 삭제 로직 (물리적 + DB 레코드)
+                List<FileMetaData> existingFiles = portfolioMapper.findFilesByClCd(clCd);
+                for (FileMetaData file : existingFiles) {
+                    String fullPathToDelete = restorePathForWebOrFileSystem(file.getFilePath());
+                    filesUtils.deleteFileByPath(fullPathToDelete);
+                }
+                if (!existingFiles.isEmpty()) {
+                    portfolioMapper.deleteFilesByClCd(clCd);
+                }
+                existingPortfolio.setPrtfThumbnailUrl(null); // DB에서 썸네일 URL을 null로 업데이트
+            }
+            // 만약 existingPortfolio.getPrtfThumbnailUrl()이 이미 null이었고,
+            // 새 파일을 선택하지도, 삭제하지도 않았다면 이 else 블록은 아무것도 하지 않음.
+            // 즉, null 상태를 유지.
+        }
+
+        // 대표 카테고리 ID 업데이트
+        if (formData.getCategoryCodes() != null && !formData.getCategoryCodes().isEmpty()) {
+            existingPortfolio.setCtgryId(formData.getCategoryCodes().get(0));
+        } else {
+            existingPortfolio.setCtgryId(null); 
+        }
+
+        portfolioMapper.updatePortfolio(existingPortfolio); 
+
+        // 카테고리 매핑 및 태그 매핑 재처리 (기존 매핑 삭제 후 새로 삽입)
         portfolioMapper.deleteCategoryMappingByClCd(clCd);
         portfolioMapper.deleteTagMappingByClCd(clCd);
-        updateMappings(categoryCodes, clCd, originalMbrCd, tags);
+        updateMappings(formData.getCategoryCodes(), clCd, originalMbrCd, formData.getTags());
     }
 
     @Override
+    @Transactional
     public void deletePortfolio(String prtfCd) {
         logger.info("포트폴리오 삭제 요청 수신. 비동기 처리를 시작합니다. ID: {}", prtfCd);
-        // PortfolioAsyncService의 deletePortfolio 메서드를 호출하여 비동기 삭제를 위임
-        portfolioAsyncService.deletePortfolio(prtfCd); 
+        portfolioAsyncService.deletePortfolio(prtfCd);
     }
     
-    // deletePortfolioAsync 메서드는 이제 PortfolioAsyncService로 이동했으므로, 여기서는 제거됩니다.
-    // @Async
-    // @Transactional
-    // public void deletePortfolioAsync(String prtfCd) {
-    //     logger.info("포트폴리오 비동기 삭제 작업을 시작합니다. ID: {}", prtfCd);
-    //     try {
-    //         String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
-    //         if (clCd != null) {
-    //             List<FileMetaData> filesToDelete = portfolioMapper.findFilesByClCd(clCd);
-    //             for (FileMetaData file : filesToDelete) {
-    //                 String fullPathToDelete = restorePathForWebOrFileSystem(file.getFilePath());
-    //                 filesUtils.deleteFileByPath(fullPathToDelete);
-    //             }
-    //
-    //             portfolioMapper.deletePerusalContentByClCd(clCd);
-    //             portfolioMapper.deleteCategoryMappingByClCd(clCd);
-    //             portfolioMapper.deleteTagMappingByClCd(clCd);
-    //             portfolioMapper.deleteBookmarkByClCd(clCd);
-    //             portfolioMapper.deleteFilesByClCd(clCd);
-    //             portfolioMapper.deleteOutsourcingContractDetailsByClCd(clCd);
-    //             portfolioMapper.deleteRankingByClCd(clCd);
-    //             portfolioMapper.deleteTodayViewByClCd(clCd);
-    //             portfolioMapper.deleteTotalViewByClCd(clCd);
-    //             portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd);
-    //             portfolioMapper.deleteContentListByClCd(clCd);
-    //         }
-    //         portfolioMapper.deletePortfolioByPrtfCd(prtfCd);
-    //         logger.info("포트폴리오 비동기 삭제 작업을 완료했습니다. ID: {}", prtfCd);
-    //     } catch (Exception e) {
-    //         logger.error("포트폴리오 비동기 삭제 중 오류 발생. ID: {}", prtfCd, e);
-    //     }
-    // }
-
     private void updateMappings(List<String> categoryCodes, String clCd, String mbrCd, String tags) {
         if (categoryCodes != null && !categoryCodes.isEmpty()) {
             for (String ctgryId : categoryCodes) {

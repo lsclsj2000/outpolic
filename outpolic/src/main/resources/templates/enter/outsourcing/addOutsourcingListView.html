@@ -29,9 +29,30 @@
         .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 5px; }
         .category-row-new { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
         .category-select { flex-grow: 1; }
-        .remove-category-row-btn { background-color: #dc3545; border-color: #dc3545; color: white; padding: 8px 12px; line-height: 1; border: none; border-radius: 5px; cursor: pointer; }
+        .remove-category-row-btn { background-color: #dc3545; border-color: #dc3545; color: white; padding: 5px 10px; line-height: 1; border: none; border-radius: 5px; cursor: pointer; }
         .linking-section .result-item, .linking-section .linked-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; justify-content: space-between; padding: 8px; }
         .btn-link, .btn-unlink { padding: 5px 10px; cursor: pointer; border: 1px solid #ddd; background-color: #f8f8f8; border-radius: 4px; flex-shrink: 0; }
+    
+        /* 태그 검색 드롭다운 스타일 */
+        .tag-search-wrapper { position: relative; }
+        .tag-search-results-dropdown {
+            position: absolute;
+            width: 100%;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            z-index: 1000;
+            max-height: 150px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none; /* 기본 숨김 */
+        }
+        .tag-search-results-dropdown .result-item-tag {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .tag-search-results-dropdown .result-item-tag:hover {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -93,7 +114,10 @@
                     </div>
                     <div class="form-group">
                         <label for="tags">태그 (쉼표로 구분)</label>
-                        <input type="text" id="tags" name="tags" class="form-control">
+                        <div class="tag-search-wrapper">
+                            <input type="text" id="tags" name="tags" class="form-control" placeholder="예: 웹개발, 디자인, 모바일앱">
+                            <div id="tag-search-results" class="tag-search-results-dropdown"></div>
+                        </div>
                     </div>
                     <div class="form-navigation">
                         <button type="button" class="btn-step prev" data-step="2">이전</button>
@@ -139,9 +163,12 @@
     <script th:inline="javascript">
         $(document).ready(function() {
             let currentStep = 1;
-            const entCd = $('#entCd').val();
+            const entCd = /*[[${entCd}]]*/ null; 
             let portfolioSearchTimeout;
 
+            // 카테고리 행 관리를 위한 배열
+            let currentCategoryCodes = [];
+            
             function showStep(step) {
                 $('.form-step').removeClass('active');
                 $('#step' + step).addClass('active');
@@ -154,7 +181,7 @@
                 }
             }
 
-            // --- 카테고리 관련 스크립트 ---
+            // --- 카테고리 관련 스크립트 (addPortfolio와 동일하게 개선) ---
             const $categoryRowsContainer = $('#category-rows-container');
 
             function createCategoryRowHtml() {
@@ -177,7 +204,7 @@
                 $select.html(`<option value="">${level}차 선택</option>`).show();
                 if (categories && categories.length > 0) {
                     categories.forEach(cat => {
-                        $select.append(`<option value="${cat.ctgryId}">${cat.ctgryNm}</option>`);
+                        $select.append(`<option value="${cat.ctgryId}">${cat.ctgryNm}</option>`); 
                     });
                     $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: 'style', allowClear: true });
                 } else {
@@ -186,23 +213,28 @@
             }
 
             function addNewCategoryRow() {
-                $categoryRowsContainer.append(createCategoryRowHtml());
-                const $newFirstDropdown = $categoryRowsContainer.find('.category-row-new:last .category-select[data-level="1"]');
+                const uniqueId = new Date().getTime();
+                $('#category-rows-container').append(createCategoryRowHtml());
+                const $newRow = $(`div.category-row-new[data-row-id="${uniqueId}"]`);
+                const $newFirstDropdown = $newRow.find(`.category-select[data-level="1"]`);
+
                 $.get('/api/categories', { parentId: '' }, function(categories) {
                     populateDropdown($newFirstDropdown, categories);
                 });
+
+                $newRow.on('change', '.category-select', handleCategoryChange);
+                $newRow.on('click', '.remove-category-row-btn', function() {
+                    $(this).closest('.category-row-new').remove();
+                    updateCurrentCategoryCodes(); 
+                });
             }
 
-            $('#add-category-row-btn').on('click', addNewCategoryRow);
-            $categoryRowsContainer.on('click', '.remove-category-row-btn', function() {
-                $(this).closest('.category-row-new').remove();
-            });
-            $categoryRowsContainer.on('change', '.category-select', function() {
+            function handleCategoryChange() {
                 const $this = $(this);
                 const level = $this.data('level');
                 const selectedValue = $this.val();
                 const $row = $this.closest('.category-row-new');
-                const $hiddenInput = $row.find('.final-category-id');
+                const rowId = $row.data('row-id');
 
                 for (let i = level + 1; i <= 3; i++) {
                     const $nextSelect = $row.find(`.category-select[data-level='${i}']`);
@@ -212,25 +244,87 @@
                     $nextSelect.html('').hide();
                 }
 
-                $hiddenInput.val(selectedValue || (level > 1 ? $row.find(`.category-select[data-level='${level - 1}']`).val() : ''));
+                $row.find('.final-category-id').val(selectedValue || (level > 1 ? $row.find(`.category-select[data-row-id="${rowId}"][data-level="${level - 1}"]`).val() : ''));
+                
+                updateCurrentCategoryCodes(); 
 
                 if (selectedValue && level < 3) {
                     $.get('/api/categories', { parentId: selectedValue }, function(subCategories) {
                         populateDropdown($row.find(`.category-select[data-level='${level + 1}']`), subCategories);
                     });
                 }
-            });
-            addNewCategoryRow();
+            }
+
+            function updateCurrentCategoryCodes() {
+                currentCategoryCodes = [];
+                $('.category-row-new').each(function() {
+                    const finalCatIdInRow = $(this).find('.final-category-id').val();
+                    if (finalCatIdInRow && finalCatIdInRow !== "" && finalCatIdInRow !== "null" && finalCatIdInRow !== "undefined") {
+                        currentCategoryCodes.push(finalCatIdInRow);
+                    }
+                });
+            }
+
+            $('#add-category-row-btn').on('click', addNewCategoryRow);
+            // 페이지 로드 시 기본 카테고리 행 추가
+            addNewCategoryRow(); 
             
+            // --- 태그 검색 관련 스크립트 (addPortfolio와 동일하게 추가) ---
+            let tagSearchTimeout;
+            $('#tags').on('input', function() {
+                clearTimeout(tagSearchTimeout);
+                const query = $(this).val();
+                const $resultsDiv = $('#tag-search-results');
+                $resultsDiv.empty().hide();
+
+                if (query.length < 1) return; 
+
+                tagSearchTimeout = setTimeout(() => {
+                    $.get('/enter/outsourcing/api/tags/search', { query: query }, function(data) { // 외주 태그 검색 API
+                        if (data && data.length > 0) {
+                            data.forEach(tag => {
+                                $resultsDiv.append(`<div class="result-item-tag" data-tag-name="${tag}">${tag}</div>`);
+                            });
+                            $resultsDiv.show();
+                        }
+                    });
+                }, 300);
+            });
+
+            $(document).on('click', '.result-item-tag', function() {
+                const tagName = $(this).data('tag-name');
+                const $tagsInput = $('#tags');
+                let currentTags = $tagsInput.val().split(',').map(t => t.trim()).filter(t => t);
+                
+                if (!currentTags.includes(tagName)) { 
+                    currentTags.push(tagName);
+                }
+                $tagsInput.val(currentTags.join(', '));
+                $('#tag-search-results').empty().hide(); 
+            });
+
+            $('#tags').on('blur', function() {
+                setTimeout(() => {
+                    $('#tag-search-results').empty().hide();
+                }, 100); 
+            });
+
             // --- 단계별 이동 로직 ---
             $('.btn-step.next').on('click', function() {
                 let isValid = true;
                 const step = $(this).data('step');
-                let formData = new FormData(); // FormData 객체 초기화
+                let formData = new FormData(); 
 
-                // [수정] 각 단계별로 필요한 데이터만 FormData에 담도록 로직 변경
+                // osCd는 모든 요청에 포함
+                if ($('#osCd').val()) {
+                    formData.append('osCd', $('#osCd').val());
+                } else {
+                    // 첫 단계에서 osCd가 없으면 새로 생성하도록 (컨트롤러에서 처리)
+                    // 이 경우 formData에 osCd를 append하지 않음
+                }
+
+
                 if (step === 1) {
-                    // 유효성 검사
                     const osTtl = $('#osTtl').val();
                     const osExpln = $('#osExpln').val();
                     const osStrtYmdt = $('#osStrtYmdt').val();
@@ -242,7 +336,6 @@
                         alert('1단계의 모든 필수 항목을 입력해주세요.');
                         isValid = false;
                     } else {
-                        // 1단계 데이터만 FormData에 추가
                         formData.append('osTtl', osTtl);
                         formData.append('osExpln', osExpln);
                         formData.append('osStrtYmdt', osStrtYmdt);
@@ -251,14 +344,12 @@
                         formData.append('osFlfmtCnt', osFlfmtCnt);
                     }
                 } else if (step === 2) {
-                    const categoryCodes = $('.final-category-id').map((_, el) => $(el).val()).get().filter(c => c);
-                    if (categoryCodes.length === 0) {
+                    if (currentCategoryCodes.length === 0) {
                         $('#categoryError').text('카테고리는 최소 하나 이상 선택해야 합니다.');
                         isValid = false;
                     } else {
                         $('#categoryError').text('');
-                        // 2단계 데이터만 FormData에 추가
-                        categoryCodes.forEach(code => formData.append('categoryCodes[]', code));
+                        currentCategoryCodes.forEach(code => formData.append('categoryCodes[]', code));
                         formData.append('tags', $('#tags').val());
                     }
                 } else if (step === 3) {
@@ -266,21 +357,18 @@
                         alert('대표 이미지를 등록해주세요.');
                         isValid = false;
                     } else {
-                        // 3단계 데이터만 FormData에 추가
                         formData.append('outsourcingThumbnailFile', $('#outsourcingThumbnailFile')[0].files[0]);
                     }
                 }
                 
-                if (step === 4) {
+                if (step === 4) { // 최종 확인 및 포트폴리오 연결 (데이터 전송 없음)
                     currentStep++;
                     showStep(currentStep);
-                    return;
+                    return; 
                 }
 
                 if (isValid) {
                     const url = `/enter/outsourcing/save-step${step}`;
-                    // osCd는 모든 요청에 포함
-                    formData.append('osCd', $('#osCd').val());
 
                     $.ajax({
                         url: url,
@@ -299,9 +387,9 @@
                                 alert('오류: ' + (response.message || '알 수 없는 오류'));
                             }
                         },
-                        error: function(xhr) {
+                        error: function(xhr, status, error) { // error 콜백에 파라미터 추가
+                            console.error("AJAX 통신 오류 (단계 " + step + "):", status, error, xhr.responseText);
                             alert('서버 오류가 발생했습니다. (' + url + ')');
-                            console.error(xhr.responseText);
                         }
                     });
                 }
@@ -333,7 +421,8 @@
                             alert('최종 등록 실패: ' + res.message);
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) { // error 콜백에 파라미터 추가
+                        console.error("AJAX 통신 오류 (최종 등록):", status, error, xhr.responseText);
                         alert('최종 등록 중 서버 오류가 발생했습니다.');
                     }
                  });

@@ -29,7 +29,6 @@ public class PortfolioAsyncService {
                 // 물리적 파일 삭제
                 List<FileMetaData> filesToDelete = portfolioMapper.findFilesByClCd(clCd);
                 for (FileMetaData file : filesToDelete) {
-                    // FilesUtils.deleteFileByPath는 상대경로도 처리 가능하므로 직접 호출.
                     filesUtils.deleteFileByPath(file.getFilePath());
                 }
 
@@ -43,12 +42,11 @@ public class PortfolioAsyncService {
                 portfolioMapper.deleteRankingByClCd(clCd);
                 portfolioMapper.deleteTodayViewByClCd(clCd);
                 portfolioMapper.deleteTotalViewByClCd(clCd);
-                portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd); // prtfCd를 직접 사용
+                portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd); 
                 portfolioMapper.deleteContentListByClCd(clCd);
             }
-            portfolioMapper.deletePortfolioByPrtfCd(prtfCd); // 최종적으로 포트폴리오 자체 삭제
+            portfolioMapper.deletePortfolioByPrtfCd(prtfCd);
         } catch (Exception e) {
-            // @Transactional 어노테이션에 의해 예외 발생 시 자동으로 롤백됩니다.
         }
     }
 }
