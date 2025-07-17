@@ -186,9 +186,26 @@
 			
 			        // '삭제' 버튼 (API 호출 준비)
 			        if (button.classList.contains('btn-delete')) {
-			            if (confirm(`'${ctgryName}'(${ctgryId}) 카테고리를 정말 삭제하시겠습니까? 하위 카테고리가 있는 경우 함께 삭제될 수 있습니다.`)) {
-			                // TODO: 삭제 API 호출 로직 구현
-			                console.log('삭제 API 호출:', ctgryId);
+			            // ✨✨✨ 여기가 수정/추가되는 부분입니다 ✨✨✨
+			            if (confirm(`'${ctgryName}'(${ctgryId}) 카테고리를 정말 삭제하시겠습니까?\n\n※ 하위 카테고리가 있을 경우 삭제를 취소합니다`)) {
+			                
+			                fetch(`/admin/api/category/delete/${ctgryId}`, { // RESTful API 엔드포인트
+			                    method: 'DELETE' // 삭제는 DELETE 메소드 사용
+			                })
+			                .then(response => {
+			                    if (!response.ok) {
+			                        return response.text().then(text => { throw new Error(text || '서버 오류가 발생했습니다.') });
+			                    }
+			                    return response.text();
+			                })
+			                .then(result => {
+			                    alert(result); // 성공 메시지
+			                    location.reload(); // 성공 후 페이지 새로고침
+			                })
+			                .catch(error => {
+			                    console.error('Error:', error);
+			                    alert('삭제에 실패했습니다: ' + error.message);
+			                });
 			            }
 			        }
 			    });

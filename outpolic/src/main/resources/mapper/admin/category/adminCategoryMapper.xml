@@ -58,4 +58,16 @@
         WHERE
             ctgry_id = #{ctgryId}
     </update>
+    <!-- 1. 특정 카테고리를 부모로 하는 자식 카테고리의 수를 확인하는 쿼리 -->
+    <select id="countChildrenByParentId" parameterType="String" resultType="int">
+        SELECT COUNT(*) 
+        FROM category 
+        WHERE ctgry_up_id = #{parentId}
+    </select>
+
+    <!-- 2. ID를 기준으로 카테고리 하나만 삭제하는 쿼리 -->
+    <delete id="deleteCategoryById" parameterType="String">
+        DELETE FROM category 
+        WHERE ctgry_id = #{ctgryId}
+    </delete>
 </mapper>
