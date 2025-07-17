@@ -86,6 +86,10 @@
         LIMIT 10
     </select>
 
+
+<select id="selectMaxPortfolioCode" resultType="string">
+    SELECT MAX(prtf_cd) FROM portfolio
+</select>
     <select id="countPortfoliosByEntCd" resultType="int">
         SELECT COUNT(*) FROM portfolio WHERE ent_cd = #{entCd}
     </select>

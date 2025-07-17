@@ -58,7 +58,7 @@ public interface OutsourcingMapper {
     void updateOutsourcingRepresentativeCategory(@Param("osCd") String osCd, @Param("ctgryId") String ctgryId);
     
     List<EnterPortfolio> findUnlinkedPortfolios(@Param("osCd") String osCd, @Param("entCd") String entCd, @Param("query") String query);
-    void insertFiles(@Param("files") List<FileMetaData> files, @Param("clCd") String clCd, @Param("mbrCd") String mbrCd);
+    int insertFiles(@Param("files") List<FileMetaData> files, @Param("clCd") String clCd, @Param("mbrCd") String mbrCd);
 
     
     /**
