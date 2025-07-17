@@ -5,6 +5,12 @@
 
 	<head>
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<style>
+			.ms-5 {
+			    margin-left: 3rem !important;
+			    padding-right: 16px;
+			}
+		</style>
 	</head>
 	
 	<body>
@@ -67,9 +73,9 @@
                                                         <li th:each="smallCat : ${mediumCat.children}" class="list-group-item list-group-item-light border-0">
                                                             <div class="d-flex w-100 justify-content-between align-items-center ms-5">
                                                                 <span th:text="|${smallCat.ctgryNm} (${smallCat.ctgryId})|">소분류 카테고리명</span>
-                                                                <div>
+                                                                <div class="ms-auto">
                                                                     <button type="button" class="btn btn-sm btn-outline-primary btn-edit" th:data-ctgry-id="${smallCat.ctgryId}" th:data-ctgry-name="${smallCat.ctgryNm}">수정</button>
-                                                                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete" th:data-ctgry-id="${smallCat.ctgryId}" th:data-ctgry-name="${smallCat.ctgryNm}">삭제</button>
+        															<button type="button" class="btn btn-sm btn-outline-danger btn-delete" th:data-ctgry-id="${smallCat.ctgryId}" th:data-ctgry-name="${smallCat.ctgryNm}">삭제</button>
                                                                 </div>
                                                             </div>
                                                         </li>
