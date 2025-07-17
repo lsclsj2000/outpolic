@@ -23,6 +23,17 @@
 				document.getElementById("payment-button").addEventListener("click", function (e) {
 					e.preventDefault();
 					
+					// 세션에서 회원 코드 가져오기 (Thymeleaf 인라인 JS를 통해 서버에서 전달된 값)
+				    // JSON.parse와 #strings.escapeJavaScript를 사용하여 안전하게 인라인합니다.
+				    const memberCode = JSON.parse(/*[[ ${session.SCD != null ? #strings.escapeJavaScript(session.SCD) : 'null'} ]]*/ 'null');
+
+				    // 로그인 여부 확인
+				    if (!memberCode) { // memberCode가 null이거나 빈 문자열인 경우
+				        alert("로그인 후 이용해주세요.");
+				        window.location.href = '/login'; // 로그인 페이지로 이동
+				        return;
+				    }
+					
 					const usedMileage = document.getElementById('usedMileage').value || 0;
 					
 					const $productRow = document.querySelectorAll('.product-row');
@@ -220,7 +231,7 @@
 												<div class="detail-qty border radius">
 													<a href="#" class="qty-down"><i
 														class="fi-rs-angle-small-down"></i></a> <input type="text"
-														id="subsQuantity" name="subsQuantity" class="qty-val" value="0" min="1">
+														id="subsQuantity" name="subsQuantity" class="qty-val" value="0" min="0">
 													<a href="#" class="qty-up"><i
 														class="fi-rs-angle-small-up"></i></a>
 												</div>

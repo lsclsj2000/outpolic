@@ -145,12 +145,13 @@
 			<div class="tab-pane fade py-4" id="mySettList">
 			<div class="row d-flex flex-column align-items-center">
 				<h3>결제내역</h3>
-					<table class="table mt-30">
+					<table class="table mt-30 table-bordered table-striped">
 						<thead>
 							<tr>
 								<th style="text-align: center;">결제번호</th>
 								<th style="text-align: center;">결제일시</th>
-								<th style="text-align: center;">결제 상품</th>
+								<th style="text-align: center;">결제 상품명</th>
+								<th style="text-align: center;">결제한 상품의 개수</th>
 								<th style="text-align: center;">사용된 마일리지</th>
 								<th style="text-align: center;">결제 금액</th>
 								<th style="text-align: center;">환불</th>
@@ -171,6 +172,7 @@
 										<span th:case="*">[[${s.gdsCd}]]</span> <!-- 그 외의 코드일 경우 원본 gdsCd 표시 -->
 									</span>
 								</td>
+								<td style="text-align: center;" th:text="${s.stlmCnt}">상품 개수</td>
 								<td style="text-align: right; padding-right: 50px;" th:text="${s.stlmUsedPoints}">사용된 마일리지</td>
 								<!-- BigDecimal 타입을 콤마 형식으로 포맷팅하고 '원' 추가 -->
 								<td style="text-align: center;" th:text="${#numbers.formatDecimal(s.stlmFinalAmt, 0, 'COMMA', 0, 'POINT')} + '원'">결제 금액</td>
@@ -184,7 +186,7 @@
 							</tr>
 							<!-- 'settlementList'가 비어있을 경우 메시지 출력 -->
 							<tr th:if="${settlementList.isEmpty()}">
-								<td colspan="6" style="text-align: center; padding: 20px;">결제 내역이 없습니다.</td>
+								<td colspan="7" style="text-align: center; padding: 20px;">결제 내역이 없습니다.</td> <!-- colspan 7로 변경 -->
 							</tr>
 						</tbody>
 					</table>
