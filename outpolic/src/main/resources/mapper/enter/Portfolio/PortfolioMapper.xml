@@ -17,8 +17,7 @@
         <result property="admCd" column="adm_cd"/>
         <result property="prtfMdfcnYmdt" column="prtf_mdfcn_ymdt"/>
         <result property="stcCd" column="stc_cd"/>
-        <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/>
-        <collection property="categories" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto">
+        <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/> <collection property="categories" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto">
             <id property="ctgryId" column="category_id"/>
             <result property="ctgryNm" column="ctgry_nm"/>
         </collection>
@@ -33,17 +32,15 @@
     <resultMap id="simplePortfolioResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
         <id property="prtfCd" column="prtf_cd"/>
         <result property="prtfTtl" column="prtf_ttl"/>
-    </resultMap>
+        <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/> </resultMap>
 
     <select id="findPortfolioDetailsByEntCd" resultMap="portfolioDetailResultMap">
     SELECT
         p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.stc_cd,
-        cl.cl_cd,
+        p.prtf_thumbnail_url, cl.cl_cd,
         c.ctgry_id AS category_id,
         c.ctgry_nm AS ctgry_nm,
-        t.tag_nm AS tag_name,
-        /* ▼▼▼ [수정] 서브쿼리를 이용해 file 테이블에서 썸네일 경로를 가져옵니다. ▼▼▼ */
-        (SELECT f.file_path FROM file f WHERE f.cl_cd = cl.cl_cd ORDER BY f.file_reg_ymdt ASC LIMIT 1) AS prtf_thumbnail_url
+        t.tag_nm AS tag_name
     FROM
         portfolio p
     LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
@@ -59,8 +56,7 @@
 
     <select id="findPortfolioDetailsByPrtfCd" resultMap="portfolioDetailResultMap">
         SELECT
-            p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd, p.prtf_thumbnail_url,
-            cl.cl_cd, c.ctgry_id AS category_id,
+            p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd, p.prtf_thumbnail_url, cl.cl_cd, c.ctgry_id AS category_id,
             c.ctgry_nm AS ctgry_nm, t.tag_nm AS tag_name
         FROM
             portfolio p
@@ -80,7 +76,8 @@
         FROM
             portfolio
         WHERE
-            prtf_ttl LIKE CONCAT('%', #{query}, '%')
+            prtf_ttl LIKE CONCAT('%', #{query}, 
+ '%')
         ORDER BY
             prtf_reg_ymdt DESC
         LIMIT 10
@@ -97,7 +94,7 @@
     <select id="findMbrCdByClCd" resultType="String">
         SELECT mbr_cd
         FROM category_mapping
-        WHERE cl_cd = #{clCd}
+       WHERE cl_cd = #{clCd}
         LIMIT 1
     </select>
 
@@ -109,7 +106,7 @@
         JOIN
             enterprise e ON p.ent_cd = e.ent_cd
         WHERE
-            p.prtf_cd = #{prtfCd}
+   p.prtf_cd = #{prtfCd}
     </select>
 
     <insert id="insertPortfolio" parameterType="EnterPortfolio">
@@ -144,7 +141,7 @@
     <set>
         <if test="prtfTtl != null and prtfTtl != ''"> prtf_ttl = #{prtfTtl}, </if>
         <if test="prtfCn != null and prtfCn != ''"> prtf_cn = #{prtfCn}, </if>
-        prtf_mdfcn_ymdt = NOW()
+        <if test="prtfThumbnailUrl != null"> prtf_thumbnail_url = #{prtfThumbnailUrl}, </if> prtf_mdfcn_ymdt = NOW()
     </set>
     WHERE prtf_cd = #{prtfCd}
 </update>
@@ -171,7 +168,7 @@
     </delete>
 
     <delete id="deletePortfolioByPrtfCd">
-        DELETE FROM portfolio WHERE prtf_cd = #{prtfCd}
+   DELETE FROM portfolio WHERE prtf_cd = #{prtfCd}
     </delete>
 
     <delete id="deleteFilesByClCd">
@@ -187,7 +184,7 @@
     <select id="findLatestTagCd" resultType="String">
         SELECT tag_cd FROM tag WHERE tag_cd LIKE
         'T_C%'
-        ORDER BY CAST(SUBSTRING(tag_cd, 5) AS UNSIGNED) DESC LIMIT 1
+     ORDER BY CAST(SUBSTRING(tag_cd, 5) AS UNSIGNED) DESC LIMIT 1
     </select>
 
     <select id="findTagCdByName" resultType="String">
@@ -201,7 +198,7 @@
     <select id="searchTagsByName" resultType="String">
         SELECT
             tag_nm
-        FROM
+       FROM
             tag
         WHERE
             tag_nm LIKE CONCAT('%', #{query},'%')
@@ -213,7 +210,7 @@
             o.os_cd,
             o.os_ttl
         FROM
-            outsourcing o
+     outsourcing o
         JOIN
             outsourcing_portfolio op ON o.os_cd = op.os_cd
         WHERE
@@ -224,7 +221,7 @@
 
     <select id="findUnlinkedOutsourcings" resultMap="OutsourcingSimpleResultMap">
         SELECT
-            o.os_cd,
+         o.os_cd,
             o.os_ttl
         FROM
             outsourcing o
@@ -232,7 +229,7 @@
             o.ent_cd = #{entCd}
             AND o.os_ttl LIKE CONCAT('%', #{query}, '%')
             AND NOT EXISTS (
-                SELECT 1
+          SELECT 1
                 FROM outsourcing_portfolio op
                 WHERE op.prtf_cd = #{prtfCd} AND op.os_cd = o.os_cd
             )
@@ -241,7 +238,7 @@
 
     <select id="findUnlinkedPortfolios" resultMap="simplePortfolioResultMap">
         SELECT
-            p.prtf_cd,
+         p.prtf_cd,
             p.prtf_ttl
         FROM
             portfolio p
@@ -249,7 +246,7 @@
             p.ent_cd = #{entCd}
             AND p.prtf_ttl LIKE CONCAT('%', #{query}, '%')
             AND NOT EXISTS (
-                SELECT 1
+          SELECT 1
                 FROM outsourcing_portfolio op
                 WHERE op.os_cd = #{osCd} AND op.prtf_cd = p.prtf_cd
             )
@@ -272,9 +269,9 @@
 
     <insert id="addPortfolio" parameterType="EnterPortfolio">
     INSERT INTO portfolio
-        (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd)
+        (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd, prtf_thumbnail_url)
     VALUES
-        (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), #{stcCd})
+        (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), #{stcCd}, #{prtfThumbnailUrl})
 </insert>
 
 <select id="searchUnlinkedPortfolios" resultMap="simplePortfolioResultMap"> SELECT
@@ -284,7 +281,7 @@
         portfolio p
     WHERE
         p.ent_cd = #{entCd}
-        AND p.prtf_ttl LIKE CONCAT('%', #{query}, '%')
+     AND p.prtf_ttl LIKE CONCAT('%', #{query}, '%')
         AND NOT EXISTS (
             SELECT 1
             FROM outsourcing_portfolio op
@@ -295,7 +292,7 @@
 
     <select id="searchUnlinkedOutsourcings" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
         SELECT
-            os.os_cd,
+         os.os_cd,
             os.os_ttl
         FROM
             outsourcing os
@@ -303,7 +300,7 @@
             os.ent_cd = #{entCd}
             AND os.os_ttl LIKE CONCAT('%', #{query}, '%')
             AND NOT EXISTS (
-                SELECT 1
+         SELECT 1
                 FROM outsourcing_portfolio op
                 WHERE op.os_cd = os.os_cd AND op.prtf_cd = #{prtfCd}
             )
@@ -312,18 +309,16 @@
     </select>
 
     <insert id="insertFileRecord" parameterType="map">
-         INSERT INTO `file`
+       INSERT INTO `file`
             (file_cd, file_reg_ymdt, file_extn, file_orgnl_nm, file_srvr_nm, file_path, cl_cd, mbr_cd, file_size)
         VALUES
-            (#{file.fileIdx}, NOW(), #{file.fileExtension}, #{file.fileOriginalName}, #{file.fileNewName}, #{file.filePath}, #{clCd}, #{mbrCd}, #{file.fileSize})
-    </insert>
+            (#{file.fileIdx}, NOW(), #{file.fileExtension}, #{file.fileOriginalName}, #{file.fileNewName}, #{file.filePath}, #{clCd}, #{mbrCd}, #{file.fileSize}) </insert>
 
     <select id="findFilesByClCd" resultType="outpolic.systems.file.domain.FileMetaData">
         SELECT
             file_cd AS fileIdx, file_reg_ymdt AS fileRegYmdt, file_mdfcn_ymdt AS fileMdfcnYmdt,
             file_extn AS fileExtension, file_orgnl_nm AS fileOriginalName, file_srvr_nm AS fileNewName,
-            file_path AS filePath, file_size AS fileSize
-        FROM `file`
+            file_path AS filePath, file_size AS fileSize FROM `file`
         WHERE cl_cd = #{clCd}
         ORDER BY file_reg_ymdt DESC
     </select>
@@ -343,7 +338,8 @@
    <select id="findLatestClCdForPortfolio" resultType="String">
     SELECT cl_cd FROM content_list
     WHERE cl_cd LIKE 'LIST_PO_C%'
-    ORDER BY CAST(SUBSTRING(cl_cd, 11) AS UNSIGNED) DESC LIMIT 1
+    ORDER BY CAST(SUBSTRING(cl_cd, 11) AS UNSIGNED) DESC 
+ LIMIT 1
 </select>
 
     <delete id="deleteOutsourcingContractDetailsByClCd">
@@ -362,7 +358,7 @@
         DELETE FROM total_view WHERE cl_cd = #{clCd}
     </delete>
     
-    <delete id="deletePerusalContentByClCd">
+   <delete id="deletePerusalContentByClCd">
         DELETE FROM perusal_content WHERE cl_cd = #{clCd}
     </delete>
     

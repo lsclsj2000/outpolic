@@ -35,4 +35,6 @@ public interface EnterOutsourcingService {
     void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd);
 
     List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query);
+	void unlinkOutsourcingFromPortfolio(String osCd, String prtfCd);
+	List<EnterPortfolio> getLinkedOutsourcingsByOsCd(String osCd);
 }

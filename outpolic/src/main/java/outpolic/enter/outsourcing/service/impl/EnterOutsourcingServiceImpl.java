@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,26 +30,74 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     private static final Logger logger = LoggerFactory.getLogger(EnterOutsourcingServiceImpl.class);
     private final OutsourcingMapper outsourcingMapper;
     private final PortfolioMapper portfolioMapper;
-    private final FilesUtils filesUtils;
+    private final FilesUtils filesUtils; // FilesUtils는 건드리지 않음
+
+    // Utility method to clean path for DB storage (removes leading / and "attachment/" prefix)
+    private String cleanPathForDb(String filePath) {
+        if (filePath == null) return null;
+        String cleaned = filePath.startsWith("/") ? filePath.substring(1) : filePath;
+        // This assumes FilesUtils.uploadFile returns a path like "/attachment/sub/path/file.jpg"
+        // We want to store "sub/path/file.jpg" in DB
+        return cleaned.startsWith("attachment/") ? cleaned.substring("attachment/".length()) : cleaned;
+    }
+
+    // Utility method to restore path for web display or file system access (adds "/attachment/" prefix)
+    private String restorePathForWebOrFileSystem(String dbPath) {
+        if (dbPath == null) return null;
+        // This assumes DB stores "sub/path/file.jpg"
+        // We need "/attachment/sub/path/file.jpg" for web access
+        return "/attachment/" + dbPath;
+    }
 
     @Override
-    public List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd) { return outsourcingMapper.findOutsourcingDetailsByEntCd(entCd); }
+    public List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd) {
+        List<EnterOutsourcing> outsourcings = outsourcingMapper.findOutsourcingDetailsByEntCd(entCd);
+        outsourcings.forEach(o -> {
+            // Restore path for display from DB
+            o.setOsThumbnailUrl(restorePathForWebOrFileSystem(o.getOsThumbnailUrl()));
+        });
+        return outsourcings;
+    }
+
     @Override
-    public EnterOutsourcing findOutsourcingDetailsByOsCd(String osCd) { return outsourcingMapper.findOutsourcingDetailsByOsCd(osCd); }
+    public EnterOutsourcing findOutsourcingDetailsByOsCd(String osCd) {
+        EnterOutsourcing outsourcing = outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
+        if (outsourcing != null) {
+            // Restore path for display from DB
+            outsourcing.setOsThumbnailUrl(restorePathForWebOrFileSystem(outsourcing.getOsThumbnailUrl()));
+        }
+        return outsourcing;
+    }
+
     @Override
     public List<String> searchTags(String query) { return outsourcingMapper.searchTagsByName(query); }
     @Override
-    public EnterOutsourcing getOutsourcingByOsCd(String osCd) { return outsourcingMapper.findOutsourcingDetailsByOsCd(osCd); }
+    public EnterOutsourcing getOutsourcingByOsCd(String osCd) {
+        EnterOutsourcing outsourcing = outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
+        if (outsourcing != null) {
+            // Restore path for display from DB
+            outsourcing.setOsThumbnailUrl(restorePathForWebOrFileSystem(outsourcing.getOsThumbnailUrl()));
+        }
+        return outsourcing;
+    }
     @Override
     public String findEntCdByMbrCd(String mbrCd) { return outsourcingMapper.findEntCdByMbrCd(mbrCd); }
     @Override
-    public List<EnterOutsourcing> getAllOutsourcings() { return outsourcingMapper.findAllOutsourcings(); }
+    public List<EnterOutsourcing> getAllOutsourcings() {
+        List<EnterOutsourcing> outsourcings = outsourcingMapper.findAllOutsourcings();
+        outsourcings.forEach(o -> {
+            // Restore path for display from DB
+            o.setOsThumbnailUrl(restorePathForWebOrFileSystem(o.getOsThumbnailUrl()));
+        });
+        return outsourcings;
+    }
 
     @Override
     public List<String> getFilesByClCd(String clCd) {
         List<FileMetaData> fileMetaDataList = outsourcingMapper.findFilesByClCd(clCd);
+        // Restore paths for web display from DB
         return fileMetaDataList.stream()
-                               .map(FileMetaData::getFilePath)
+                               .map(file -> restorePathForWebOrFileSystem(file.getFilePath()))
                                .collect(Collectors.toList());
     }
 
@@ -85,30 +132,32 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         session.setAttribute("outsourcingFormData", formData);
     }
 
-    // 수정: referenceFiles 파라미터 제거 및 관련 로직 제거
     @Override
     @Transactional
     public void saveStep3Data(String osCd, MultipartFile thumbnailFile, HttpSession session) {
         OutsourcingFormDataDto formData = (OutsourcingFormDataDto) session.getAttribute("outsourcingFormData");
         if (formData == null) throw new IllegalStateException("세션 정보가 없습니다.");
 
-        List<FileMetaData> uploadedFiles = new ArrayList<>(); // 업로드된 파일 목록 (썸네일만 포함될 것임)
-        String thumbnailUrl = null;
+        List<FileMetaData> uploadedFiles = new ArrayList<>();
+        String thumbnailUrlForDb = null; // Path to be stored in DB
 
         // 썸네일 파일 처리
         if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
             FileMetaData thumbnailMetaData = filesUtils.uploadFile(thumbnailFile, "outsourcing/thumbnail");
             if (thumbnailMetaData != null) {
+                // Clean path for DB storage (remove / and "attachment/" prefix)
+                String cleanedPath = cleanPathForDb(thumbnailMetaData.getFilePath());
+                
+                thumbnailMetaData.setFilePath(cleanedPath); // Update FileMetaData object for DB insertion
                 uploadedFiles.add(thumbnailMetaData);
-                thumbnailUrl = thumbnailMetaData.getFilePath();
+                thumbnailUrlForDb = cleanedPath; // Set for formData
             }
         }
-        formData.setThumbnailUrl(thumbnailUrl);
-        formData.setUploadedFiles(uploadedFiles); // 썸네일 파일만 포함
+        formData.setThumbnailUrl(thumbnailUrlForDb); // Store cleaned path in formData
+        formData.setUploadedFiles(uploadedFiles); 
 
         session.setAttribute("outsourcingFormData", formData);
     }
-
 
     @Override
     @Transactional
@@ -134,7 +183,7 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
         finalOutsourcing.setOsRegYmdt(LocalDateTime.now());
         finalOutsourcing.setStcCd("SD_ACTIVE");
-        finalOutsourcing.setOsThumbnailUrl(formData.getThumbnailUrl());
+        finalOutsourcing.setOsThumbnailUrl(formData.getThumbnailUrl()); // Already cleaned path
 
         outsourcingMapper.insertOutsourcing(finalOutsourcing);
 
@@ -173,7 +222,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         }
     }
     
-    // 수정: referenceFiles 파라미터 제거 및 관련 로직 제거
     @Override
     @Transactional
     public void updateOutsourcingStep3(String osCd, MultipartFile thumbnailFile) {
@@ -183,31 +231,35 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         String clCd = outsourcingMapper.findClCdByOsCd(osCd);
         if (clCd == null) throw new IllegalStateException("콘텐츠 목록 정보를 찾을 수 없습니다. (clCd is null)");
 
-        // 1. 기존 파일 (DB 기록 및 물리적 파일) 삭제 (썸네일만 남음)
+        // 1. 기존 파일 (DB 기록 및 물리적 파일) 삭제
         List<FileMetaData> oldFiles = outsourcingMapper.findFilesByClCd(clCd);
         if (oldFiles != null && !oldFiles.isEmpty()) {
             for(FileMetaData oldFile : oldFiles) {
-                filesUtils.deleteFileByPath(oldFile.getFilePath());
+                // Restore path for FilesUtils.deleteFileByPath (expects "/attachment/..." form)
+                String fullPathToDelete = restorePathForWebOrFileSystem(oldFile.getFilePath()); 
+                filesUtils.deleteFileByPath(fullPathToDelete);
             }
-            outsourcingMapper.deleteFilesByClCd(clCd);
+            outsourcingMapper.deleteFilesByClCd(clCd); // DB 기록 삭제
         }
 
         List<FileMetaData> newUploadedFiles = new ArrayList<>();
-        String newThumbnailUrl = null;
-
+        String newThumbnailUrlForDb = null;
         // 2. 새 썸네일 파일 업로드 및 정보 저장
         if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
             FileMetaData newThumbnailMetaData = filesUtils.uploadFile(thumbnailFile, "outsourcing/thumbnail");
             if (newThumbnailMetaData != null) {
+                // Clean path for DB storage
+                String cleanedPath = cleanPathForDb(newThumbnailMetaData.getFilePath());
+                
+                newThumbnailMetaData.setFilePath(cleanedPath);
                 newUploadedFiles.add(newThumbnailMetaData);
-                newThumbnailUrl = newThumbnailMetaData.getFilePath();
+                newThumbnailUrlForDb = cleanedPath;
             }
         }
-        outsourcingMapper.updateOutsourcingThumbnail(osCd, newThumbnailUrl);
-
+        outsourcingMapper.updateOutsourcingThumbnail(osCd, newThumbnailUrlForDb); // DB stores cleaned path
         // 3. 모든 새 파일 정보 (이제 썸네일만) DB에 일괄 삽입
         if (!newUploadedFiles.isEmpty()) {
-            outsourcingMapper.insertFiles(newUploadedFiles, clCd, outsourcing.getMbrCd());
+            outsourcingMapper.insertFiles(newUploadedFiles, clCd, outsourcing.getMbrCd()); // DB stores cleaned path
         }
     }
 
@@ -216,14 +268,16 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     public void deleteOutsourcing(String osCd) {
         String clCd = outsourcingMapper.findClCdByOsCd(osCd);
         if (clCd != null) {
+            // 파일 삭제
             List<FileMetaData> filesToDelete = outsourcingMapper.findFilesByClCd(clCd);
             for (FileMetaData file : filesToDelete) {
-                filesUtils.deleteFileByPath(file.getFilePath());
+                // Restore path for FilesUtils.deleteFileByPath
+                String fullPathToDelete = restorePathForWebOrFileSystem(file.getFilePath()); 
+                filesUtils.deleteFileByPath(fullPathToDelete);
             }
+            // ... (rest of deletion logic)
             outsourcingMapper.deletePerusalContentByClCd(clCd);
-
             outsourcingMapper.deleteOutsourcingStatusByClCd(clCd);
-
             outsourcingMapper.deleteRankingByClCd(clCd);
             outsourcingMapper.deleteTodayViewByClCd(clCd);
             outsourcingMapper.deleteTotalViewByClCd(clCd);
@@ -243,7 +297,7 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     }
 
     @Override
-    public List<EnterPortfolio> getLinkedPortfoliosByOsCd(String osCd) { return portfolioMapper.findLinkedPortfoliosByOsCd(osCd); }
+    public List<EnterPortfolio> getLinkedOutsourcingsByOsCd(String osCd) { return portfolioMapper.findLinkedPortfoliosByOsCd(osCd); }
 
     @Override
     @Transactional
@@ -300,6 +354,17 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
     @Override
     public List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query) {
-        return portfolioMapper.searchUnlinkedPortfolios(osCd, entCd, query);
+        return portfolioMapper.findUnlinkedPortfolios(osCd, entCd, query);
     }
+
+	@Override
+	public List<EnterPortfolio> getLinkedPortfoliosByOsCd(String osCd) {
+		// TODO Auto-generated method stub
+		return portfolioMapper.findLinkedPortfoliosByOsCd(osCd);
+	}
+
+	@Override
+	public void unlinkOutsourcingFromPortfolio(String osCd, String prtfCd) {
+		return;
+	}
 }

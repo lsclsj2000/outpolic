@@ -25,11 +25,13 @@ public class CategoryApiController {
         List<CategorySearchDto> categories;
         if (parentId == null || parentId.isEmpty()) {
             // parentId가 없으면 1차 카테고리 조회
-            categories = categorySearchService.getTopLevelCategories();
+            categories = categorySearchService.getTopLevelCategories(); 
         } else {
             // parentId가 있으면 해당 하위 카테고리 조회
             categories = categorySearchService.getSubCategories(parentId);
         }
         return ResponseEntity.ok(categories);
     }
+    
+    
 }
