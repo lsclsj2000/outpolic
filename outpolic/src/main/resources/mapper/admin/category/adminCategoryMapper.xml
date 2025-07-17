@@ -5,17 +5,57 @@
 <mapper namespace="outpolic.admin.category.mapper.AdminCategoryMapper">
     
     <resultMap id="category_rm" type="outpolic.admin.category.domain.AdminCategory">
-        <id property="ctgryId" column="CTGRY_ID"/>
-        <result property="ctgryNm" column="CTGRY_NM"/>
-        <result property="ctgryUpId" column="CTGRY_UP_ID"/>
+        <id property="ctgryId" column="ctgry_id"/>
+        <result property="admCd" column="adm_cd"/>
+        <result property="ctgryNm" column="ctgry_nm"/>
+        <result property="ctgryUpId" column="ctgry_up_id"/>
+        <result property="ctgryRegYmdt" column="ctgry_reg_ymdt"/>
+        <result property="ctgryMdfcnYmdt" column="ctgry_mdfcn_ymdt"/>
+        <result property="ctgryAdmCd" column="ctgry_adm_cd"/>
     </resultMap>
 
     <select id="selectAllCategories" resultMap="category_rm">
         SELECT 
-	        CTGRY_ID, 
-	        CTGRY_NM, 
-	        CTGRY_UP_ID
+	        ctgry_id, adm_cd, ctgry_nm, ctgry_up_id, 
+            ctgry_reg_ymdt, ctgry_mdfcn_ymdt, ctgry_adm_cd
         FROM category
-        ORDER BY CTGRY_ID ASC
+        ORDER BY ctgry_id ASC
     </select>
+
+    <!-- ========= 아래부터 새로운 쿼리들 추가 ========= -->
+
+    <!-- 가장 큰 대분류 ID 조회. 없으면 '000' 반환 -->
+    <select id="findNextLargeCategoryId" resultType="String">
+        SELECT IFNULL(MAX(ctgry_id), '000') 
+        FROM category
+        WHERE ctgry_up_id IS NULL OR ctgry_up_id = '' OR ctgry_up_id = '-'
+    </select>
+
+    <!-- 특정 부모의 자식 중 가장 큰 ID 조회. 없으면 부모ID + '00' 반환 -->
+    <select id="findNextChildCategoryId" parameterType="String" resultType="String">
+        SELECT IFNULL(MAX(ctgry_id), CONCAT(#{parentId}, '00')) 
+        FROM category
+        WHERE ctgry_up_id = #{parentId}
+    </select>
+
+    <!-- 새로운 카테고리 삽입 -->
+    <insert id="insertCategory" parameterType="outpolic.admin.category.domain.AdminCategory">
+        INSERT INTO category (
+            ctgry_id, adm_cd, ctgry_nm, ctgry_up_id,
+            ctgry_reg_ymdt, ctgry_adm_cd
+        ) VALUES (
+            #{ctgryId}, #{admCd}, #{ctgryNm}, #{ctgryUpId},
+            NOW(), #{ctgryAdmCd}
+        )
+    </insert>
+
+    <!-- 카테고리 이름 및 수정일시 업데이트 -->
+    <update id="updateCategory" parameterType="outpolic.admin.category.domain.AdminCategory">
+        UPDATE category
+        SET
+            ctgry_nm = #{ctgryNm},
+            ctgry_mdfcn_ymdt = NOW()
+        WHERE
+            ctgry_id = #{ctgryId}
+    </update>
 </mapper>
