@@ -12,59 +12,109 @@
 	
 	<th:block layout:fragment="contents">
 		<section class="content-main">
-	        <div class="row">
-	            <div class="col-12">
-	                <div class="content-header">
-	                    <h2 class="content-title">문의 자원 관리</h2>
-	                    <div>
-	                        <button class="btn btn-md rounded font-sm hover-up">등록</button>
-	                    </div>
+        	<div class="content-header">
+				<h2 class="content-title">문의 자원 관리</h2>
+				<div>
+				    <button class="btn btn-md rounded font-sm hover-up">등록</button>
+				</div>
+            </div>
+            <!-- 검색 필터 -->
+	        <div class="card mb-4 search-filter-card">
+	            <div class="card-body search-filter-body">
+	                <div class="table-responsive">
+	                    <table class="search-filter-table">
+							<tbody>
+								<tr>
+									<th>기본검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>제목</option>
+											<option>내용</option>
+											<option>문의코드</option>
+											<option>작성자</option>
+										</select>
+										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+									</td>
+								</tr>
+								<tr>
+									<th>기간검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>작성일자</option>
+											<option>수정일자</option>
+										</select>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<span> ~ </span>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<button type="button" class="btn btn-sm btn-light">오늘</button>
+										<button type="button" class="btn btn-sm btn-light">어제</button>
+										<button type="button" class="btn btn-sm btn-light">일주일</button>
+										<button type="button" class="btn btn-sm btn-light">지난달</button>
+										<button type="button" class="btn btn-sm btn-light">1개월</button>
+										<button type="button" class="btn btn-sm btn-light">3개월</button>
+										<button type="button" class="btn btn-sm btn-light">전체</button>
+									</td>
+								</tr>
+								<tr>
+									<th>처리상태</th>
+									<td>
+										<div class="radio-group">
+											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
+											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
+											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
+											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="search-filter-buttons">
+							<button type="button" class="btn btn-primary">검색</button>
+							<button type="button" class="btn btn-secondary">초기화</button>
+						</div>
 	                </div>
 	            </div>
-	            <div class="col-12">
-	            	<!-- 문의타입 목록 -->
-	            	<div class="card">
-	                	<div class="card-body">
-			                <div class="table-responsive">
-			                    <table class="table table-hover">
-			                        <thead>
-			                            <tr>
-			                                <th scope="col" class="start text-center col-1">문의타입코드</th>
-			                                <th scope="col" class="text-center col-1">문의명</th>
-			                                <th scope="col" class="text-center col-3">타입설명</th>
-			                                <th scope="col" class="text-center col-1">타입상태코드</th>
-			                                <th scope="col" class="text-center col-1">등록자</th>
-			                                <th scope="col" class="text-center col-1">최초등록일시</th>
-			                                <th scope="col" class="end text-center col-1">Action</th>
-			                            </tr>
-			                        </thead>
-			                        <tbody>
-										<tr class="start pt-30"
-										    style="border:0px; border-bottom: solid 1px #ececec;"
-										    th:each="it : ${adminInquiryTypeList}">
-										    
-										    <td class="start text-center">
-										        <span th:text="${it.inquiryTypeCode}">문의타입코드</span>
-										    </td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeName}">문의명</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeExpln}">타입설명</td>
-										    <td scope="col" class="text-center" th:switch="${it.statusName}">
-			                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
-			                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
-			                                </td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegAdm}">등록자</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegDate}">최초등록일시</td>
-										    <td scope="col" class="text-center">
-												<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${it.inquiryTypeCode}">수정</a>
-											</td>
-										</tr>
-									</tbody>
-			                    </table>
-			                </div>
-			            </div>
-	            	</div>
-	            </div>
 	        </div>
+           	<!-- 문의타입 목록 -->
+	       	<div class="card">
+	           	<div class="card-body">
+	             	<div class="table-responsive">
+	                 	<table class="table table-hover">
+	                     	<thead>
+	                         	<tr>
+		                             <th scope="col" class="start text-center col-1">문의타입코드</th>
+		                             <th scope="col" class="text-center col-1">문의명</th>
+		                             <th scope="col" class="text-center col-3">타입설명</th>
+		                             <th scope="col" class="text-center col-1">타입상태코드</th>
+		                             <th scope="col" class="text-center col-1">등록자</th>
+		                             <th scope="col" class="text-center col-1">최초등록일시</th>
+		                             <th scope="col" class="end text-center col-1">Action</th>
+	                         	</tr>
+	                     	</thead>
+	                    	<tbody>
+								<tr class="start pt-30"
+							    	style="border:0px; border-bottom: solid 1px #ececec;"
+									th:each="it : ${adminInquiryTypeList}">
+							    	<td class="start text-center">
+							        	<span th:text="${it.inquiryTypeCode}">문의타입코드</span>
+							   		</td>
+							    	<td scope="col" class="text-center" th:text="${it.inquiryTypeName}">문의명</td>
+							    	<td scope="col" class="text-center" th:text="${it.inquiryTypeExpln}">타입설명</td>
+							    	<td scope="col" class="text-center" th:switch="${it.statusName}">
+							            <span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
+							        	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
+							        </td>
+							    	<td scope="col" class="text-center" th:text="${it.inquiryTypeRegAdm}">등록자</td>
+							    	<td scope="col" class="text-center" th:text="${it.inquiryTypeRegDate}">최초등록일시</td>
+							    	<td scope="col" class="text-center">
+										<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${it.inquiryTypeCode}">수정</a>
+									</td>
+								</tr>
+							</tbody>
+	                	</table>
+	            	</div>
+	         	</div>
+	       	</div>
 	    </section>
 	    
 	    <!-- 문의 자원 등록 모달 -->
@@ -104,9 +154,11 @@
 							</label>
 						</div>
 	               	</div>
-					<div style="display: flex; flex-direction: row-reverse;">
-				    	<button class="btn btn-primary" type="submit">등록</button>
-				    </div>
+				    <div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button class="btn btn-primary" type="submit">등록</button>
+					</div>
 				</form>
 			</div>
 		</div>

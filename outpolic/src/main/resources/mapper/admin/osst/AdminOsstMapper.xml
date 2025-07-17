@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="outpolic.admin.osst.mapper.AdminOsstMapper">
+	<!-- AdminInquiry.DTO -->
+	<resultMap id="AdminOsstResultMap" type="outpolic.admin.osst.domain.AdminOsst">
+		<id 	column="ocd_cd" 		property="ocdCode"/>
+		<result column="ocd_ttl" 		property="ocdTitle"/>
+		<result column="mbr_cd" 		property="mbrCode"/>
+		<result column="mbr_nm" 		property="mbrName"/>
+		<result column="ent_cd" 		property="entCode"/>
+		<result column="ent_nm" 		property="entName"/>
+		<result column="mbr_ent_nm" 	property="mbrEntName"/>
+		<result column="stc_cd" 		property="stcCode"/>
+		<result column="stc_nm" 		property="stcName"/>
+	</resultMap>
+	
+	<select id="getAdminOsstList" resultMap="AdminOsstResultMap">
+		/* 외주 진행 목록 조회 */
+		select
+			ocd.ocd_cd as ocd_cd,
+			ocd.ocd_ttl as ocd_ttl,
+			ocd.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			ocd.ent_cd as ent_cd,
+			e.ent_nm as ent_nm,
+			m2.mbr_nm as mbr_ent_nm,
+			op.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm
+		from
+			outsourcing_contract_details ocd 
+			left join member m on ocd.mbr_cd = m.mbr_cd
+			left join enterprise e on ocd.ent_cd = e.ent_cd
+			left join member m2 on e.mbr_cd = m2.mbr_cd
+			left join outsourcing_prograss op on ocd.ocd_cd = op.ocd_cd
+			left join status_code sc on op.stc_cd = sc.stc_cd
+		where 
+			ocd.stc_cd = 'SD_APPROVED'
+			and op.osp_sply_ymdt = (
+				select max(osp_sply_ymdt)
+				from outsourcing_prograss
+				where ocd_cd = ocd.ocd_cd
+			);
+	</select>
+	
+</mapper>

@@ -85,33 +85,28 @@
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
-                                                <th scope="col" class="start text-center col-1">진행외주 CD</th>
-                                                <th scope="col" class="text-center col-1">외주신청 CD</th>
-                                                <th scope="col" class="text-center col-1">진행단계</th>
-                                                <th scope="col" class="text-center col-1">공급자 최초요청</th>
-                                                <th scope="col" class="text-center col-1">수요자 승인 여부</th>
-                                                <th scope="col" class="text-center col-1">수요자 승인 일시</th>
+                                                <th scope="col" class="start text-center col-1">진행외주</th>
+                                                <th scope="col" class="text-center col-2">외주명</th>
+                                                <th scope="col" class="text-center col-1">공급자</th>
+                                                <th scope="col" class="text-center col-1">수요자</th>
+                                                <th scope="col" class="text-center col-1">현재 단계</th>
                                                 <th scope="col" class="text-center col-1">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td scope="col" class="text-center">452</td>
-                                                <td scope="col" class="text-center"><b>Devon Lane</b></td>
-                                                <td scope="col" class="text-center">$948.55</td>
-                                                <td scope="col" class="text-center"><span class="badge rounded-pill alert-success">Received</span></td>
-                                                <td scope="col" class="text-center">07.05.2020</td>
-                                                <td scope="col" class="text-center">07.05.2020</td>
+                                            <tr th:each="l : ${adminOsst}">
+                                                <td scope="col" class="text-center" th:text="${l.ocdCode}">진행외주</td>
+                                                <td scope="col" class="text-center" th:text="${l.ocdTitle}">외주명</td>
+                                                <td scope="col" class="text-center" th:text="${l.mbrEntName}">공급자</td>
+                                                <td scope="col" class="text-center" th:text="${l.mbrName}">수요자</td>
+                                                <td scope="col" class="text-center" th:switch="${l.stcName}">
+			                                		<span th:case="${'계약 체결'}" class="badge rounded-pill alert-secondary">계약 체결</span>
+			                                		<span th:case="${'초기 기획'}" class="badge rounded-pill alert-info">초기 기획</span>
+			                                		<span th:case="${'작업 진행'}" class="badge rounded-pill alert-warning">작업 진행</span>
+                                                	<span th:case="${'최종 완료'}" class="badge rounded-pill alert-success">최종 완료</span>
+                                                </td>
                                                 <td scope="col" class="text-center">
-                                                    <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                                    <div class="dropdown">
-                                                        <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#">View detail</a>
-                                                            <a class="dropdown-item" href="#">Edit info</a>
-                                                            <a class="dropdown-item text-danger" href="#">Delete</a>
-                                                        </div>
-                                                    </div>
+                                                    <button type="submit" id="mdfcnButton" class="btn btn-light rounded font-sm SR_open-popup-btn">수정</button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -122,11 +117,105 @@
                     </div>
                 </div>
             </section>
-
-		
+			
+			<!-- 외주 진행 단계 수정 모달 -->
+			<div id="osstModal" class="SR_modal">
+				<div class="SR_modal-content-wrapper">
+					<div class="SR_popup-header">
+						<h2>외주 진행 단계 수정</h2>
+						<button class="SR_close-button">&times;</button>
+					</div>
+	
+					<form id="inquiryForm">
+	                    <!-- 외주 진행 단계 테이블 -->
+						<div class="SR_form-group SR_full-width">
+							<div class="table-responsive">
+								<table class="table table-hover mb-0">
+									<thead>
+										<tr>
+											<th scope="col" class="px-4 text-center col-3">단계</th>
+											<th scope="col" class="px-4 text-center col-3">단계 상태</th>
+											<th scope="col" class="px-4 text-center col-2">수요자 승인 일시</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td scope="col" class="px-4 text-center">계약 체결 (SD_CONTRACT)</td>
+											<td scope="col" class="px-4 text-center">
+												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행중</button>
+												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행완료</button>
+											</td>
+											<td scope="col" class="px-4 text-center">-</td>
+										</tr>
+										<tr>
+											<td scope="col" class="px-4 text-center">초기 기획 (SD_PLANNING)</td>
+											<td scope="col" class="px-4 text-center">
+												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행중</button>
+												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행완료</button>
+											</td>
+											<td scope="col" class="px-4 text-center">-</td>
+										</tr>
+										<tr>
+											<td scope="col" class="px-4 text-center">작업 진행 (SD_WORKPROGRESS)</td>
+											<td scope="col" class="px-4 text-center">
+												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행중</button>
+												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행완료</button>
+											</td>
+											<td scope="col" class="px-4 text-center">-</td>
+										</tr>
+										<tr>
+											<td scope="col" class="px-4 text-center">최종 완료 (SD_COMPLETION)</td>
+											<td scope="col" class="px-4 text-center">
+												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행중</button>
+												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행완료</button>
+											</td>
+											<td scope="col" class="px-4 text-center">-</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="SR_popup-footer mt-0">
+	                        <div class="SR_update-info">
+	                        </div>
+							<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+						</div>
+					</form>
+				</div>
+			</div>
 		</th:block>
 	
 	<!-- 자바스크립트 추가 -->
     <th:block layout:fragment="jsScript">
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+			    const osstModal = document.getElementById('osstModal');
+			    const osstCloseBtn = document.querySelector('#osstModal .SR_close-button');
+			    const openOsstPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+			
+			    // 수정 버튼 클릭 시 팝업 열기
+			    openOsstPopupButtons.forEach(button => {
+			        button.addEventListener('click', function (event) {
+			            event.preventDefault();
+			            osstModal.style.display = 'flex';
+			            document.body.style.overflow = 'hidden';
+			        });
+			    });
+			
+			    // 팝업 닫기 버튼
+			    osstCloseBtn.addEventListener('click', () => {
+			        osstModal.style.display = 'none';
+			        document.body.style.overflow = 'auto';
+			    });
+			
+			    // 바깥 영역 클릭 시 팝업 닫기
+			    window.addEventListener('click', function (event) {
+			        if (event.target === osstModal) {
+			            osstModal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			        }
+			    });
+			});
+		</script>
 	</th:block>
 </html>
