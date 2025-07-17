@@ -23,6 +23,7 @@ public interface OutsourcingMapper {
 
     // ★ 추가: 모든 외주 목록을 가져오는 메서드 (findAllOutsourcings 오류 해결)
     List<EnterOutsourcing> findAllOutsourcings();
+    int deletePerusalContentByClCd(String clCd); // <-- 이 줄 추가
 
     // --- 저장 (INSERT) ---
     int insertOutsourcing(EnterOutsourcing outsourcing);
@@ -56,7 +57,9 @@ public interface OutsourcingMapper {
     int unlinkOutsourcingFromPortfolio(@Param("osCd") String osCd, @Param("prtfCd") String prtfCd);
     void updateOutsourcingRepresentativeCategory(@Param("osCd") String osCd, @Param("ctgryId") String ctgryId);
     
-    
+    List<EnterPortfolio> findUnlinkedPortfolios(@Param("osCd") String osCd, @Param("entCd") String entCd, @Param("query") String query);
+    void insertFiles(@Param("files") List<FileMetaData> files, @Param("clCd") String clCd, @Param("mbrCd") String mbrCd);
+
     
     /**
      * 회원 코드(mbrCd)로 기업 코드(entCd)를 조회합니다.

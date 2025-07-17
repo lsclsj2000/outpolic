@@ -21,14 +21,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="mbr_nm" 		property="memberName"/>
 		
 		<result column="iqp_cd" 		property="inquiryProcessCode"/>
+		<result column="iqp_ans_cn" 	property="inquiryProcessAnswer"/>
+		<result column="adm_cd" 		property="inquiryProcessRegAdmCode"/>
+		<result column="iqp_reg_ymdt" 	property="inquiryProcessRegYmdt"/>
+		<result column="iqp_mdfcn_adm_cd" 	property="inquiryProcessMdfcnAdmCode"/>
+		<result column="iqp_mdfcn_ymdt" property="inquiryProcessMdfcnYmdt"/>
+		
+		
 		<result column="stc_cd" 		property="statusCode"/>
 		<result column="stc_nm" 		property="statusName"/>
 		
-		<result column="sa_cd" 	property="subAttchCode"/>
+		<result column="sa_cd" 			property="subAttchCode"/>
 		<result column="sa_orgnl_nm" 	property="subAttchOrgnlName"/>
 		<result column="sa_srvr_nm" 	property="subAttchSrvrName"/>
-		<result column="sa_path" 	property="subAttchPath"/>
-		<result column="sa_size" 	property="subAttchSize"/>
+		<result column="sa_path" 		property="subAttchPath"/>
+		<result column="sa_size" 		property="subAttchSize"/>
 	</resultMap>
 	<!-- AdminInquiryType.DTO -->
 	<resultMap id="AdminInquiryTypeMap" type="outpolic.admin.inquiry.domain.AdminInquiryType">
@@ -43,9 +50,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="iqt_mdfcn_ymdt" 	property="inquiryTypeMdfcnDate"/>
 	</resultMap>
 	
+	<update id="updateInquiryAnswer" parameterType="outpolic.admin.inquiry.domain.AdminInquiry">
+	    /* 관리자 문의 답변 업데이트 */
+	    UPDATE inquiry_process
+	    SET
+	        iqp_ans_cn = #{inquiryProcessAnswer},
+	        adm_cd = #{inquiryProcessRegAdmCode},
+	        iqp_reg_ymdt = NOW(),
+	        iqp_mdfcn_adm_cd = #{inquiryProcessMdfcnAdmCode},
+	        iqp_mdfcn_ymdt = NOW(),
+	        stc_cd = 'SD_PROCESS_END'
+	    WHERE iq_cd = #{inquiryCode}
+	</update>
+	
 	
 	 <!-- 문의 테이블 수정 -->
     <update id="updateInquiryTable" parameterType="outpolic.admin.inquiry.domain.AdminInquiry">
+        /* 관리자 문의 내역 테이블 수정 */
         UPDATE inquiry
         SET
             iqt_cd = #{inquiryTypeCode},
@@ -57,6 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 문의 프로세스 테이블 수정 -->
     <update id="updateInquiryProcessTable" parameterType="outpolic.admin.inquiry.domain.AdminInquiry">
+        /* 관리자 문의 프로세스 테이블 수정 */
         UPDATE inquiry_process
         SET
             stc_cd = #{statusCode},
@@ -85,7 +107,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			sa.sa_path as sa_path,
 			sa.sa_size as sa_size,
 			i.iq_mdfcn_adm_cd as iq_mdfcn_adm_cd,
-			i.iq_mdfcn_ymdt as iq_mdfcn_ymdt
+			i.iq_mdfcn_ymdt as iq_mdfcn_ymdt,
+			ip.iqp_ans_cn as iqp_ans_cn
 		from
 			inquiry i
 			left join submission_attachment sa on i.iq_cd = sa.sa_refer_cd

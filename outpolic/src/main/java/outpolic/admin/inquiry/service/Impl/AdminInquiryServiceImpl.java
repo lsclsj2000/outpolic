@@ -60,4 +60,10 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 	    }
 	}
 
+	@Override
+	public void updateInquiryAnswer(AdminInquiry adminInquiry) {
+		// 문의답변 저장
+		adminInquiryMapper.updateInquiryAnswer(adminInquiry);
+	}
+
 }

@@ -333,4 +333,8 @@ ranking where cl_cd = #{clCd}
     <delete id="deleteFilesByClCd" parameterType="String">
         DELETE FROM file WHERE cl_cd = #{clCd}
     </delete>
+    <delete id="deletePerusalContentByClCd">
+    DELETE FROM perusal_content WHERE cl_cd = #{clCd}
+</delete>
+    
 </mapper>

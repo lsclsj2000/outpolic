@@ -19,4 +19,7 @@ public interface AdminInquiryService {
 	
 	// 문의내역 수정
 	public void updateInquiry(AdminInquiry adminInquiry);
+	
+	// 문의답변 저장
+	void updateInquiryAnswer(AdminInquiry adminInquiry);
 }

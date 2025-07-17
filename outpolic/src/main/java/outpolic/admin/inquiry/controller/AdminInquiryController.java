@@ -59,7 +59,7 @@ public class AdminInquiryController {
 	@ResponseBody
 	public String updateInquiry(@RequestBody AdminInquiry adminInquiry, HttpSession session) {
 	    // 문의수정 저장
-	    String adminCode = (String) session.getAttribute("SCD");
+	    String adminCode = (String) session.getAttribute("SACD");
 
 	    if (adminCode == null) {
 	        return "FAIL: Unauthorized";
@@ -68,6 +68,24 @@ public class AdminInquiryController {
 	    adminInquiry.setInquiryMdfcnAdmCode(adminCode);
 
 	    adminInquiryService.updateInquiry(adminInquiry);
+	    return "OK";
+	}
+	
+	@PostMapping("/updateInquiryAnswer")
+	@ResponseBody
+	public String updateInquiryAnswer(@RequestBody AdminInquiry adminInquiry, HttpSession session) {
+		
+		// 문의답변 저장
+	    String adminCode = (String) session.getAttribute("SACD");
+
+	    if (adminCode == null) {
+	        return "FAIL: Unauthorized";
+	    }
+
+	    adminInquiry.setInquiryProcessMdfcnAdmCode(adminCode);
+	    adminInquiry.setInquiryProcessRegAdmCode(adminCode);
+
+	    adminInquiryService.updateInquiryAnswer(adminInquiry);
 	    return "OK";
 	}
 	

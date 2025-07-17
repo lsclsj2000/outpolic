@@ -30,3 +30,7 @@ function isValidName(name) {
     const pattern = /^[가-힣]{2,20}$/;
     return pattern.test(name);
 }
+function isValidNickname(nickname) {
+    const pattern = /^[가-힣a-zA-Z]{2,20}$/;
+    return pattern.test(nickname);
+}
