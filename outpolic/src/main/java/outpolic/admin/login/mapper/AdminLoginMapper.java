@@ -3,7 +3,7 @@ package outpolic.admin.login.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
 
-import outpolic.admin.login.DTO.AdminLoginDTO;
+import outpolic.admin.login.dto.AdminLoginDTO;
 import outpolic.common.domain.Member;
 
 @Mapper
