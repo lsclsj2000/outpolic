@@ -15,45 +15,44 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 @Service("enterOutsourcingRequestService")
 @RequiredArgsConstructor
 public class OutsourcingRequestServiceImpl implements OutsourcingRequestService {
 
     private static final Logger logger = LoggerFactory.getLogger(OutsourcingRequestServiceImpl.class);
     private final EnterOutsourcingRequestMapper requestMapper;
-    @Override
+@Override
     @Transactional
     public OutsourcingRequestDTO createRequest(OutsourcingRequestDTO request) {
         // 1. 새로운 요청 코드(ocd_cd) 생성 (기존 로직 유지)
-        String latestOcdCd = requestMapper.findLatestOcdCd(); // [cite: 1489]
+        String latestOcdCd = requestMapper.findLatestOcdCd();
         int nextNum = 1;
-        if (latestOcdCd != null && latestOcdCd.startsWith("OCD_C")) { // [cite: 1490]
+        if (latestOcdCd != null && latestOcdCd.startsWith("OCD_C")) {
             try {
-                nextNum = Integer.parseInt(latestOcdCd.substring(5)) + 1; // [cite: 1491]
+                nextNum = Integer.parseInt(latestOcdCd.substring(5)) + 1;
             } catch (NumberFormatException e) {
-                logger.warn("Failed to parse latestOcdCd: {}", latestOcdCd, e); // [cite: 1492]
+                logger.warn("Failed to parse latestOcdCd: {}", latestOcdCd, e);
             }
         }
-        String newOcdCd = String.format("OCD_C%05d", nextNum); // [cite: 1493]
-        request.setOcd_cd(newOcdCd); // [cite: 1493]
+        String newOcdCd = String.format("OCD_C%05d", nextNum);
+        request.setOcd_cd(newOcdCd);
 
         // 2. 외주 신청 정보 DB에 저장
-        requestMapper.insertRequest(request); // [cite: 1489]
+        requestMapper.insertRequest(request);
 
         // ▼▼▼ 수정된 부분 ▼▼▼
         // 3. 채팅방 생성 및 연결 로직 추가
         //    (실제로는 ChatService 등을 호출하여 채팅방을 생성하고 ID를 받아와야 합니다)
-        String newChrCd = "CHR_" + newOcdCd; // 임시로 채팅방 코드를 생성합니다.
+        String newChrCd = "CHR_" + newOcdCd;
 
         // 4. 생성된 채팅방 ID를 outsourcing_contract_details 테이블에 업데이트합니다.
-//        requestMapper.updateChatRoomId(newOcdCd, newChrCd); // [cite: 1489, 1509]
+        requestMapper.updateChatRoomId(newOcdCd, newChrCd);
 
         // 5. 반환될 DTO 객체에도 채팅방 코드를 설정해줍니다.
-        request.setChr_cd(newChrCd); // [cite: 1468]
+        request.setChr_cd(newChrCd);
         // ▲▲▲ 수정 완료 ▲▲▲
 
-        return request; // [cite: 1489]
+        return request;
     }
     @Override
     public List<RequestViewDTO> getSentRequests(String requesterId) {
@@ -88,7 +87,7 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
     public void updateRequestStatus(String requestId, String status) {
 		
 		// 1. 요청 테이블의 상태를 '승인' 또는 '거절'로 변경합니다.
-        requestMapper.updateStatus(requestId, status);
+		requestMapper.updateStatus(requestId, status);
         
         // 2. '승인'된 경우에만 4개의 진행 단계를 생성합니다.
         if ("SD_APPROVED".equals(status)) {
@@ -103,9 +102,9 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
                     logger.warn("Failed to parse latestOspCd: {}", latestOspCd, e);
                 }
             }
-            // 4. 추가할 4개의 진행 단계 상태 코드를 정의합니다. 
+            // 4. 추가할 4개의 진행 단계 상태 코드를 정의합니다.
             List<String> stageStatusCodes = List.of("SD_CONTRACT", "SD_PLANNING", "SD_WORKPROGRESS", "SD_COMPLETION");
-            // 5. DB에 한 번에 INSERT할 리스트를 준비합니다. 
+            // 5. DB에 한 번에 INSERT할 리스트를 준비합니다.
             List<Map<String, Object>> stageList = new ArrayList<>();
             for (String stageCode : stageStatusCodes) {
                 Map<String, Object> stageData = new HashMap<>();

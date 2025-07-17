@@ -26,7 +26,7 @@ public class OutsourcingRequestController {
     private final OutsourcingRequestService requestService;
     private final EnterPortfolioService portfolioService;
     private final EnterOutsourcingService enterOutsourcingService;
-    @GetMapping("/form/{osCd}")
+@GetMapping("/form/{osCd}")
     public String showRequestForm(@PathVariable String osCd, Model model) {
         EnterOutsourcing outsourcing = enterOutsourcingService.getOutsourcingByOsCd(osCd);
         model.addAttribute("outsourcing", outsourcing);
@@ -88,16 +88,25 @@ public class OutsourcingRequestController {
      * URL: /enter/outsourcing-requests/{requestId}
      */
     @GetMapping("/detail/{ocdCd}")
-    public String showRequestDetail(@PathVariable("ocdCd") String ocdCd, Model model, HttpServletRequest request) {
+    public String showRequestDetail(@PathVariable("ocdCd") String ocdCd, Model model, HttpServletRequest request, HttpSession session) {
 
-        // 호출하는 서비스 메서드 이름을 'getRequestDetails'로 수정
         RequestViewDTO requestDetail = requestService.getRequestDetails(ocdCd);
         model.addAttribute("request", requestDetail);
 
+        String loggedInUserCode = (String) session.getAttribute("SCD"); // 현재 로그인한 사용자 코드
+
+        // ★★★ 수정된 부분: 로그인한 사용자가 요청의 공급자인지 확인하는 로직 ★★★
+        boolean isSupplier = false;
+        if (loggedInUserCode != null && requestDetail.getSupplierMemberCode() != null) {
+            isSupplier = loggedInUserCode.equals(requestDetail.getSupplierMemberCode());
+        }
+        model.addAttribute("isSupplier", isSupplier);
+        // ★★★ 수정 완료 ★★★
+
+
         String referrer = request.getHeader("Referer");
         String listUrl = (referrer != null && referrer.contains("/sent"))
-                       ?
-"/enter/outsourcing-requests/sent"
+                       ? "/enter/outsourcing-requests/sent"
                        : "/enter/outsourcing-requests/received";
         model.addAttribute("listUrl", listUrl);
 
@@ -117,8 +126,7 @@ public class OutsourcingRequestController {
             return "<h2>로그인되지 않은 상태입니다.</h2>";
         }
         
-        String authoritiesInfo = (grade != null) ?
-"ROLE_" + grade : "권한 없음";
+        String authoritiesInfo = (grade != null) ? "ROLE_" + grade : "권한 없음";
 
         return "<h1>로그인 정보 확인</h1>" +
                "<h2>로그인 ID: " + username + "</h2>" +
@@ -132,7 +140,8 @@ public class OutsourcingRequestController {
      */
     @GetMapping("/received")
     public String showReceivedRequests(Model model, HttpSession session) {
-        String loggedInMbrCd = (String) session.getAttribute("SCD"); // 변경: entCd 대신 mbrCd를 사용하여 기업 코드 조회
+        String loggedInMbrCd = (String) session.getAttribute("SCD");
+        // 변경: entCd 대신 mbrCd를 사용하여 기업 코드 조회
 
         if (loggedInMbrCd == null || loggedInMbrCd.isEmpty()) {
             return "redirect:/login";
@@ -182,7 +191,7 @@ public class OutsourcingRequestController {
     public String showInquiryForm(@PathVariable String prtfCd, Model model) {
     	// 문의 대상 포트폴리오 정보를 조회하여 모델에 담아 전달
     	model.addAttribute("portfolio",portfolioService.getPortfolioByPrtfCd(prtfCd));
-        return "enter/portfolioInquiry/inquiryForm";
+    	return "enter/portfolioInquiry/inquiryForm";
     	
     }
     

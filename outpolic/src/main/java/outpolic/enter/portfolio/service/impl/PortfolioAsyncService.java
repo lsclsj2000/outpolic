@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import outpolic.enter.portfolio.mapper.PortfolioMapper;
-// ... 필요한 import 추가 ...
 import outpolic.systems.file.domain.FileMetaData;
 import outpolic.systems.util.FilesUtils;
 
@@ -25,23 +24,31 @@ public class PortfolioAsyncService {
     @Transactional
     public void deletePortfolio(String prtfCd) {
         try {
-            // 여기에 원래 deletePortfolioAsync에 있던 모든 삭제 로직을 그대로 옮겨옵니다.
             String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
             if (clCd != null) {
                 // 물리적 파일 삭제
                 List<FileMetaData> filesToDelete = portfolioMapper.findFilesByClCd(clCd);
                 for (FileMetaData file : filesToDelete) {
+                    // FilesUtils.deleteFileByPath는 상대경로도 처리 가능하므로 직접 호출.
                     filesUtils.deleteFileByPath(file.getFilePath());
                 }
 
                 // 모든 연관 테이블 데이터 삭제
                 portfolioMapper.deletePerusalContentByClCd(clCd);
-                // ... (나머지 모든 delete 쿼리 호출)
+                portfolioMapper.deleteCategoryMappingByClCd(clCd);
+                portfolioMapper.deleteTagMappingByClCd(clCd);
+                portfolioMapper.deleteBookmarkByClCd(clCd);
+                portfolioMapper.deleteFilesByClCd(clCd);
+                portfolioMapper.deleteOutsourcingContractDetailsByClCd(clCd);
+                portfolioMapper.deleteRankingByClCd(clCd);
+                portfolioMapper.deleteTodayViewByClCd(clCd);
+                portfolioMapper.deleteTotalViewByClCd(clCd);
+                portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd); // prtfCd를 직접 사용
                 portfolioMapper.deleteContentListByClCd(clCd);
             }
-            portfolioMapper.deletePortfolioByPrtfCd(prtfCd);
-
+            portfolioMapper.deletePortfolioByPrtfCd(prtfCd); // 최종적으로 포트폴리오 자체 삭제
         } catch (Exception e) {
+            // @Transactional 어노테이션에 의해 예외 발생 시 자동으로 롤백됩니다.
         }
     }
 }

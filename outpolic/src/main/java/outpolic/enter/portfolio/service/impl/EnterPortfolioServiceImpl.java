@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
+// @Async // EnterPortfolioServiceImpl에서는 더 이상 필요 없음
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional; // @Transactional은 deletePortfolioAsync에서만 필요할 수 있음
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
@@ -31,10 +31,10 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     private static final Logger logger = LoggerFactory.getLogger(EnterPortfolioServiceImpl.class);
     private final PortfolioMapper portfolioMapper;
     private final FilesUtils filesUtils; 
-    private final PortfolioAsyncService portfolioAsyncService;
+    private final PortfolioAsyncService portfolioAsyncService; // PortfolioAsyncService 주입
     private final CategorySearchService categorySearchService;
 
-    // ... (cleanPathForDb, restorePathForWebOrFileSystem 메서드는 그대로 유지) ...
+    // 파일 경로 정리 및 복원 유틸리티 메서드
     private String cleanPathForDb(String filePath) {
         if (filePath == null) return null;
         String cleaned = filePath.startsWith("/") ? filePath.substring(1) : filePath;
@@ -45,8 +45,6 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         if (dbPath == null) return null;
         return "/attachment/" + dbPath;
     }
-
-    // ... (다른 조회 관련 메서드들은 그대로 유지) ...
 
     @Override
     public int countPortfoliosByEntCd(String entCd) {
@@ -153,7 +151,7 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
             portfolio.setPrtfThumbnailUrl(formData.getThumbnailFile().getFilePath());
         }
 
-        // [수정] 대표 카테고리 ID를 설정하는 로직 추가
+        // 대표 카테고리 ID를 설정하는 로직 추가
         if (formData.getCategoryCodes() != null && !formData.getCategoryCodes().isEmpty()) {
             portfolio.setCtgryId(formData.getCategoryCodes().get(0)); // 첫 번째 카테고리를 대표 카테고리로 설정
         }
@@ -170,7 +168,6 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         updateMappings(formData.getCategoryCodes(), newClCd, portfolio.getMbrCd(), formData.getTags());
     }
 
-    // ... (updatePortfolio, deletePortfolio 등 나머지 메서드는 그대로 유지) ...
     @Override
     @Transactional
     public void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException {
@@ -228,40 +225,42 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     @Override
     public void deletePortfolio(String prtfCd) {
         logger.info("포트폴리오 삭제 요청 수신. 비동기 처리를 시작합니다. ID: {}", prtfCd);
-        deletePortfolioAsync(prtfCd);
+        // PortfolioAsyncService의 deletePortfolio 메서드를 호출하여 비동기 삭제를 위임
+        portfolioAsyncService.deletePortfolio(prtfCd); 
     }
     
-    @Async
-    @Transactional
-    public void deletePortfolioAsync(String prtfCd) {
-        logger.info("포트폴리오 비동기 삭제 작업을 시작합니다. ID: {}", prtfCd);
-        try {
-            String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
-            if (clCd != null) {
-                List<FileMetaData> filesToDelete = portfolioMapper.findFilesByClCd(clCd);
-                for (FileMetaData file : filesToDelete) {
-                    String fullPathToDelete = restorePathForWebOrFileSystem(file.getFilePath());
-                    filesUtils.deleteFileByPath(fullPathToDelete);
-                }
-
-                portfolioMapper.deletePerusalContentByClCd(clCd);
-                portfolioMapper.deleteCategoryMappingByClCd(clCd);
-                portfolioMapper.deleteTagMappingByClCd(clCd);
-                portfolioMapper.deleteBookmarkByClCd(clCd);
-                portfolioMapper.deleteFilesByClCd(clCd);
-                portfolioMapper.deleteOutsourcingContractDetailsByClCd(clCd);
-                portfolioMapper.deleteRankingByClCd(clCd);
-                portfolioMapper.deleteTodayViewByClCd(clCd);
-                portfolioMapper.deleteTotalViewByClCd(clCd);
-                portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd);
-                portfolioMapper.deleteContentListByClCd(clCd);
-            }
-            portfolioMapper.deletePortfolioByPrtfCd(prtfCd);
-            logger.info("포트폴리오 비동기 삭제 작업을 완료했습니다. ID: {}", prtfCd);
-        } catch (Exception e) {
-            logger.error("포트폴리오 비동기 삭제 중 오류 발생. ID: {}", prtfCd, e);
-        }
-    }
+    // deletePortfolioAsync 메서드는 이제 PortfolioAsyncService로 이동했으므로, 여기서는 제거됩니다.
+    // @Async
+    // @Transactional
+    // public void deletePortfolioAsync(String prtfCd) {
+    //     logger.info("포트폴리오 비동기 삭제 작업을 시작합니다. ID: {}", prtfCd);
+    //     try {
+    //         String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
+    //         if (clCd != null) {
+    //             List<FileMetaData> filesToDelete = portfolioMapper.findFilesByClCd(clCd);
+    //             for (FileMetaData file : filesToDelete) {
+    //                 String fullPathToDelete = restorePathForWebOrFileSystem(file.getFilePath());
+    //                 filesUtils.deleteFileByPath(fullPathToDelete);
+    //             }
+    //
+    //             portfolioMapper.deletePerusalContentByClCd(clCd);
+    //             portfolioMapper.deleteCategoryMappingByClCd(clCd);
+    //             portfolioMapper.deleteTagMappingByClCd(clCd);
+    //             portfolioMapper.deleteBookmarkByClCd(clCd);
+    //             portfolioMapper.deleteFilesByClCd(clCd);
+    //             portfolioMapper.deleteOutsourcingContractDetailsByClCd(clCd);
+    //             portfolioMapper.deleteRankingByClCd(clCd);
+    //             portfolioMapper.deleteTodayViewByClCd(clCd);
+    //             portfolioMapper.deleteTotalViewByClCd(clCd);
+    //             portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd);
+    //             portfolioMapper.deleteContentListByClCd(clCd);
+    //         }
+    //         portfolioMapper.deletePortfolioByPrtfCd(prtfCd);
+    //         logger.info("포트폴리오 비동기 삭제 작업을 완료했습니다. ID: {}", prtfCd);
+    //     } catch (Exception e) {
+    //         logger.error("포트폴리오 비동기 삭제 중 오류 발생. ID: {}", prtfCd, e);
+    //     }
+    // }
 
     private void updateMappings(List<String> categoryCodes, String clCd, String mbrCd, String tags) {
         if (categoryCodes != null && !categoryCodes.isEmpty()) {
