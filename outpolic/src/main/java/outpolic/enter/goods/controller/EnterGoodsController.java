@@ -1,4 +1,4 @@
-package outpolic.user.goods.controller;
+package outpolic.enter.goods.controller;
 
 import java.math.BigDecimal;
 
@@ -8,16 +8,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import jakarta.servlet.http.HttpSession;
-import outpolic.user.points.dto.UserPointsDTO;
-import outpolic.user.points.service.UserPointsService;
+import outpolic.enter.points.dto.EnterPointsDTO;
+import outpolic.enter.points.service.EnterPointsService;
 
 @Controller
-public class userGoodsController {
+public class EnterGoodsController {
 	
 	@Autowired
-	private UserPointsService userPointsService; // UserPointsService 주입
+	private EnterPointsService enterPointsService; // EnterPointsService 주입
 	
-	@GetMapping("/userGoodsList")
+	@GetMapping("/enterGoodsList")
 	public String userGoodsListView(HttpSession session, Model model) {
 		
 		// 세션에서 회원 코드를 'memberCode' 변수에 저장합니다.
@@ -26,7 +26,7 @@ public class userGoodsController {
 		// 회원의 마일리지 정보 조회
 		// 'memberCode' 변수를 사용하여 마일리지 서비스를 호출합니다.
 		if (memberCode != null) { 
-			UserPointsDTO latestPoints = userPointsService.getLatestPointsStatus(memberCode); 
+			EnterPointsDTO latestPoints = enterPointsService.getEnterLatestPointsStatus(memberCode); 
 			if (latestPoints != null) {
 				// 조회된 누적 마일리지를 availableMileage라는 이름으로 모델에 추가
 				model.addAttribute("availableMileage", latestPoints.getPtsCumPoints());

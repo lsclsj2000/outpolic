@@ -1,4 +1,4 @@
-package outpolic.user.points.service.impl;
+package outpolic.enter.points.service.impl;
 
 import java.math.BigDecimal;
 
@@ -6,15 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import outpolic.user.points.dto.UserPointsDTO;
-import outpolic.user.points.mapper.UserPointsMapper;
-import outpolic.user.points.service.UserPointsService;
+import outpolic.enter.points.dto.EnterPointsDTO;
+import outpolic.enter.points.mapper.EnterPointsMapper;
+import outpolic.enter.points.service.EnterPointsService;
 
 @Service
-public class UserPointsServiceImpl implements UserPointsService {
-
+public class EnterPointsServiceImpl implements EnterPointsService {
 	@Autowired
-    private UserPointsMapper userPointsMapper;
+    private EnterPointsMapper enterPointsMapper;
 
     /**
      * 특정 회원의 현재 마일리지 상태를 조회합니다.
@@ -22,9 +21,10 @@ public class UserPointsServiceImpl implements UserPointsService {
      * @param mbrCd 회원 코드
      * @return 회원의 최신 마일리지 상태 DTO (없으면 null)
      */
+	
     @Override
-    public UserPointsDTO getUserLatestPointsStatus(String mbrCd) {
-        return userPointsMapper.selectLatestPointsByMbrCd(mbrCd);
+    public EnterPointsDTO getEnterLatestPointsStatus(String mbrCd) {
+        return enterPointsMapper.selectLatestPointsByMbrCd(mbrCd);
     }
 
     /**
@@ -35,19 +35,19 @@ public class UserPointsServiceImpl implements UserPointsService {
      */
     @Override
     @Transactional // 트랜잭션 관리
-    public boolean updateUserPoints(UserPointsDTO userPointsDTO) {
+    public boolean updateEnterPoints(EnterPointsDTO enterPointsDTO) {
         // 1. 현재 회원의 최신 마일리지 상태를 조회합니다.
         // 수정: userPointsDTO에서 mbrCd를 가져와야 합니다.
-    	UserPointsDTO currentPoints = userPointsMapper.selectLatestPointsByMbrCd(userPointsDTO.getMbrCd());
+    	EnterPointsDTO currentPoints = enterPointsMapper.selectLatestPointsByMbrCd(enterPointsDTO.getMbrCd());
 
         BigDecimal currentCumPoints = (currentPoints != null) ? currentPoints.getPtsCumPoints() : BigDecimal.ZERO;
-        BigDecimal ptsDelta = userPointsDTO.getPtsPointsDelta();
+        BigDecimal ptsDelta = enterPointsDTO.getPtsPointsDelta();
 
         // 2. 새로운 누적 마일리지를 계산합니다.
         BigDecimal newCumPoints;
-        if ("적립".equals(userPointsDTO.getPtsStatus())) {
+        if ("적립".equals(enterPointsDTO.getPtsStatus())) {
             newCumPoints = currentCumPoints.add(ptsDelta);
-        } else if ("사용".equals(userPointsDTO.getPtsStatus())) {
+        } else if ("사용".equals(enterPointsDTO.getPtsStatus())) {
             newCumPoints = currentCumPoints.subtract(ptsDelta);
             // 마일리지가 음수가 되지 않도록 방지 (프론트엔드에서 1차 검증하지만 백엔드에서도 방어 로직)
             if (newCumPoints.compareTo(BigDecimal.ZERO) < 0) {
@@ -61,12 +61,12 @@ public class UserPointsServiceImpl implements UserPointsService {
         }
 
         // 3. PointsStatus DTO에 계산된 누적 마일리지를 설정합니다.
-        userPointsDTO.setPtsCumPoints(newCumPoints);
+        enterPointsDTO.setPtsCumPoints(newCumPoints);
         // 현재 마일리지는 누적 마일리지와 동일하게 설정합니다.
-        userPointsDTO.setPtsPoints(newCumPoints);
+        enterPointsDTO.setPtsPoints(newCumPoints);
         
         // 4. 새로운 마일리지 내역을 DB에 삽입합니다.
-        int result = userPointsMapper.insertPointsStatus(userPointsDTO);
+        int result = enterPointsMapper.insertPointsStatus(enterPointsDTO);
 
         return result > 0;
     }

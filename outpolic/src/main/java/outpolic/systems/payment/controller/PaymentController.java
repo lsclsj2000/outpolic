@@ -28,191 +28,189 @@ import outpolic.systems.payment.mapper.PaymentMapper;
 public class PaymentController {
 
 	// 결제 카드사 매핑
-		private String getCardAcquirerName(String acquirerCode) {
-		    return switch (acquirerCode) {
-		        case "3K" -> "기업비씨";
-		        case "46" -> "광주";
-		        case "71" -> "롯데";
-		        case "30" -> "산업";
-		        case "51" -> "삼성";
-		        case "38" -> "새마을";
-		        case "41" -> "신한";
-		        case "62" -> "신협";
-		        case "36" -> "씨티";
-		        case "33" -> "우리";
-		        case "W1" -> "우리";
-		        case "37" -> "우체국";
-		        case "39" -> "저축";
-		        case "35" -> "전북";
-		        case "42" -> "제주";
-		        case "15" -> "카카오뱅크";
-		        case "3A" -> "케이뱅크";
-		        case "24" -> "토스뱅크";
-		        case "21" -> "하나";
-		        case "61" -> "현대";
-		        case "11" -> "국민";
-		        case "91" -> "농협";
-		        case "34" -> "수협";
-		        default -> "기타카드";
-		    };
+	private String getCardAcquirerName(String acquirerCode) {
+		return switch (acquirerCode) {
+		case "3K" -> "기업비씨";
+		case "46" -> "광주";
+		case "71" -> "롯데";
+		case "30" -> "산업";
+		case "51" -> "삼성";
+		case "38" -> "새마을";
+		case "41" -> "신한";
+		case "62" -> "신협";
+		case "36" -> "씨티";
+		case "33" -> "우리";
+		case "W1" -> "우리";
+		case "37" -> "우체국";
+		case "39" -> "저축";
+		case "35" -> "전북";
+		case "42" -> "제주";
+		case "15" -> "카카오뱅크";
+		case "3A" -> "케이뱅크";
+		case "24" -> "토스뱅크";
+		case "21" -> "하나";
+		case "61" -> "현대";
+		case "11" -> "국민";
+		case "91" -> "농협";
+		case "34" -> "수협";
+		default -> "기타카드";
+		};
+	}
+
+	@Autowired
+	private PaymentMapper Paymentmapper;
+
+	// 일반회원 상품결제
+	@GetMapping("/user/paymentSuccess")
+	public String userPaymentSuccessPage(String orderId, String paymentKey, String amount, HttpSession session,
+			String grdCd, Integer usedMileage, Integer orderCount, Integer originAmount) {
+		log.info("결제 성공 콜백 수신");
+		log.info("orderId: {}", orderId);
+		log.info("paymentKey: {}", paymentKey);
+		log.info("amount: {}", amount);
+		log.info("grdCd: {}", grdCd);
+		log.info("usedMileage: {}", usedMileage);
+		log.info("orderCount: {}", orderCount);
+		log.info("originAmount(원가): {}", originAmount);
+
+		try {
+			// 1. TossPayments API에 결제 승인 요청
+			HttpRequest request = HttpRequest.newBuilder()
+					.uri(URI.create("https://api.tosspayments.com/v1/payments/confirm"))
+					.header("Authorization", "Basic dGVzdF9za19qRXhQZUpXWVZRUkE5UWFnSmRwb3I0OVI1Z3ZOOg==") // 테스트 시크릿 키
+					.header("Content-Type", "application/json")
+					.method("POST", HttpRequest.BodyPublishers.ofString(String.format(
+							"{\"paymentKey\":\"%s\",\"orderId\":\"%s\",\"amount\":%s}", paymentKey, orderId, amount)))
+					.build();
+
+			HttpResponse<String> response = HttpClient.newHttpClient().send(request,
+					HttpResponse.BodyHandlers.ofString());
+
+			// 2. 응답 결과를 UserPaymentDTO로 매핑
+			ObjectMapper objectMapper = new ObjectMapper();
+			PaymentDTO userPayment = objectMapper.readValue(response.body(), PaymentDTO.class);
+			log.info("결제 응답 DTO: {}", userPayment);
+
+			String memberCode = (String) session.getAttribute("SCD");
+
+			// 3. SettlementDTO 생성 및 매핑
+			SettlementDTO settlement = new SettlementDTO();
+			settlement.setMbrCd(memberCode);
+			settlement.setGdsCd(grdCd); // 프론트에서 상품 선택 정보를 받아오는게 바람직함
+			settlement.setStcCd("SD_SUCCESS"); // 상태코드 테이블에 정의된 값
+			settlement.setStlmCnt(orderCount); // ✅ 상품 개수
+			settlement.setStlmAmt(new BigDecimal(originAmount)); // ✅ 마일리지 전 금액
+			settlement.setStlmUsedPoints(usedMileage); // 사용한 마일리지
+			settlement.setStlmFinalAmt(new BigDecimal(amount)); // ✅ 실제 결제 금액
+			settlement.setStlmPayType("카드");
+			CardDTO card = userPayment.getCard();
+			EasyPayDTO easy = userPayment.getEasyPay();
+			if (card != null) {
+				String cardCompanyName = getCardAcquirerName(card.getIssuerCode());
+				settlement.setStlmPaymentInfo(card.getNumber());
+				settlement.setStlmCardNm(cardCompanyName);
+				settlement.setStlmAccountNm("홍길동"); // 프론트에서 결제자 이름을 받아와야함
+			} else {
+				settlement.setStlmPaymentInfo("간편결제");
+				settlement.setStlmCardNm("N/A");
+				settlement.setStlmAccountNm("홍길동");
+			}
+			settlement.setStlmProviderNm(easy.getProvider());
+			settlement.setStlmAccountInfo("N/A");
+			settlement.setStlmYmdt(
+					Timestamp.valueOf(OffsetDateTime.parse(userPayment.getApprovedAt()).toLocalDateTime()));
+			settlement.setStlmAgreYn(true);
+
+			// 4. DB 저장
+			int result = Paymentmapper.insertSettlement(settlement);
+			log.info("settlement 저장 결과: {}", result);
+
+		} catch (IOException | InterruptedException e) {
+			log.error("결제 승인 처리 중 오류", e);
 		}
-	
-    @Autowired
-    private PaymentMapper Paymentmapper;
 
-    // 일반회원 상품결제
-    @GetMapping("/user/paymentSuccess")
-    public String userPaymentSuccessPage(String orderId, String paymentKey, String amount, HttpSession session, String grdCd, Integer usedMileage) {
-        log.info("결제 성공 콜백 수신");
-        log.info("orderId: {}", orderId);
-        log.info("paymentKey: {}", paymentKey);
-        log.info("amount: {}", amount);
-        log.info("grdCd: {}", grdCd);
-        log.info("usedMileage: {}", usedMileage);
+		// 알림창 표시용 (리다이렉트 후 알림 띄우는 처리 가능)
+		return "redirect:/userGoodsList"; // 나중에 JS alert 띄우는 방식으로 바꿀 수 있음
+	}
 
-        
-        try {
-            // 1. TossPayments API에 결제 승인 요청
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.tosspayments.com/v1/payments/confirm"))
-                    .header("Authorization", "Basic dGVzdF9za19qRXhQZUpXWVZRUkE5UWFnSmRwb3I0OVI1Z3ZOOg==") // 테스트 시크릿 키
-                    .header("Content-Type", "application/json")
-                    .method("POST", HttpRequest.BodyPublishers.ofString(
-                            String.format("{\"paymentKey\":\"%s\",\"orderId\":\"%s\",\"amount\":%s}",
-                                    paymentKey, orderId, amount)))
-                    .build();
+	// 기업회원 상품결제
+	@GetMapping("/enter/paymentSuccess")
+	public String enterPaymentSuccessPage(String orderId, String paymentKey, String amount, HttpSession session,
+			String grdCd, Integer usedMileage, Integer orderCount, Integer originAmount) {
+		log.info("결제 성공 콜백 수신");
+		log.info("orderId: {}", orderId);
+		log.info("paymentKey: {}", paymentKey);
+		log.info("amount: {}", amount);
+		log.info("grdCd: {}", grdCd);
+		log.info("usedMileage: {}", usedMileage);
+		log.info("orderCount: {}", orderCount);
+		log.info("originAmount(원가): {}", originAmount);
 
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+		try {
+			// 1. TossPayments API에 결제 승인 요청
+			HttpRequest request = HttpRequest.newBuilder()
+					.uri(URI.create("https://api.tosspayments.com/v1/payments/confirm"))
+					.header("Authorization", "Basic dGVzdF9za19qRXhQZUpXWVZRUkE5UWFnSmRwb3I0OVI1Z3ZOOg==") // 테스트 시크릿 키
+					.header("Content-Type", "application/json")
+					.method("POST", HttpRequest.BodyPublishers.ofString(String.format(
+							"{\"paymentKey\":\"%s\",\"orderId\":\"%s\",\"amount\":%s}", paymentKey, orderId, amount)))
+					.build();
 
-            // 2. 응답 결과를 UserPaymentDTO로 매핑
-            ObjectMapper objectMapper = new ObjectMapper();
-            PaymentDTO userPayment = objectMapper.readValue(response.body(), PaymentDTO.class);
-            log.info("결제 응답 DTO: {}", userPayment);
+			HttpResponse<String> response = HttpClient.newHttpClient().send(request,
+					HttpResponse.BodyHandlers.ofString());
 
-           
+			// 2. 응답 결과를 UserPaymentDTO로 매핑
+			ObjectMapper objectMapper = new ObjectMapper();
+			PaymentDTO userPayment = objectMapper.readValue(response.body(), PaymentDTO.class);
+			log.info("결제 응답 DTO: {}", userPayment);
 
-            
-            
-            // 3. SettlementDTO 생성 및 매핑
-            SettlementDTO settlement = new SettlementDTO();
-            settlement.setMbrCd("MB_C0000035"); // 세션 또는 로그인 정보에서 가져오는게 좋음
-            settlement.setGdsCd(grdCd); // 프론트에서 상품 선택 정보를 받아오는게 바람직함
-            settlement.setStcCd("SD_SUCCESS"); // 상태코드 테이블에 정의된 값
-            settlement.setStlmCnt(1); // 예시: 1개 구매
-            settlement.setStlmPayType("카드"); // 또는 userPayment.getCard().getCardType()
-            settlement.setStlmAmt(new BigDecimal(amount)); // 원래 금액
-            settlement.setStlmUsedPoints(usedMileage); // 마일리지 사용 안함
-            settlement.setStlmFinalAmt(new BigDecimal(amount)); // 최종 금액
-            CardDTO card = userPayment.getCard();
-            EasyPayDTO easy = userPayment.getEasyPay();
-            if (card != null) {
-            	String cardCompanyName = getCardAcquirerName(card.getIssuerCode());
-                settlement.setStlmPaymentInfo(card.getNumber());
-                settlement.setStlmCardNm(cardCompanyName);
-                settlement.setStlmAccountNm("홍길동");	// 프론트에서 결제자 이름을 받아와야함
-            } else {
-                settlement.setStlmPaymentInfo("간편결제");
-                settlement.setStlmCardNm("N/A");
-                settlement.setStlmAccountNm("홍길동");
-            }
-            settlement.setStlmProviderNm(easy.getProvider());
-            settlement.setStlmAccountInfo("N/A");
-            settlement.setStlmYmdt(Timestamp.valueOf(OffsetDateTime.parse(userPayment.getApprovedAt()).toLocalDateTime()));
-            settlement.setStlmAgreYn(true);
+			String memberCode = (String) session.getAttribute("SCD");
 
-            // 4. DB 저장
-            int result = Paymentmapper.insertSettlement(settlement);
-            log.info("settlement 저장 결과: {}", result);
+			// 3. SettlementDTO 생성 및 매핑
+			SettlementDTO settlement = new SettlementDTO();
+			settlement.setMbrCd(memberCode);
+			settlement.setGdsCd(grdCd); // 프론트에서 상품 선택 정보를 받아오는게 바람직함
+			settlement.setStcCd("SD_SUCCESS"); // 상태코드 테이블에 정의된 값
+			settlement.setStlmCnt(orderCount); // ✅ 상품 개수
+			settlement.setStlmAmt(new BigDecimal(originAmount)); // ✅ 마일리지 전 금액
+			settlement.setStlmUsedPoints(usedMileage); // 사용한 마일리지
+			settlement.setStlmFinalAmt(new BigDecimal(amount)); // ✅ 실제 결제 금액
+			settlement.setStlmPayType("카드");
+			CardDTO card = userPayment.getCard();
+			EasyPayDTO easy = userPayment.getEasyPay();
+			if (card != null) {
+				String cardCompanyName = getCardAcquirerName(card.getIssuerCode());
+				settlement.setStlmPaymentInfo(card.getNumber());
+				settlement.setStlmCardNm(cardCompanyName);
+				settlement.setStlmAccountNm("홍길동"); // 프론트에서 결제자 이름을 받아와야함
+			} else {
+				settlement.setStlmPaymentInfo("간편결제");
+				settlement.setStlmCardNm("N/A");
+				settlement.setStlmAccountNm("홍길동");
+			}
+			settlement.setStlmProviderNm(easy.getProvider());
+			settlement.setStlmAccountInfo("N/A");
+			settlement.setStlmYmdt(
+					Timestamp.valueOf(OffsetDateTime.parse(userPayment.getApprovedAt()).toLocalDateTime()));
+			settlement.setStlmAgreYn(true);
 
-        } catch (IOException | InterruptedException e) {
-            log.error("결제 승인 처리 중 오류", e);
-        }
-        
-        
-        
-        // 알림창 표시용 (리다이렉트 후 알림 띄우는 처리 가능)
-        return "redirect:/userGoodsList"; // 나중에 JS alert 띄우는 방식으로 바꿀 수 있음
-    }
-    
-    // 기업회원 상품결제
-    @GetMapping("/enter/paymentSuccess")
-    public String enterPaymentSuccessPage(String orderId, String paymentKey, String amount, HttpSession session, String grdCd, Integer usedMileage) {
-    	log.info("결제 성공 콜백 수신");
-    	log.info("orderId: {}", orderId);
-    	log.info("paymentKey: {}", paymentKey);
-    	log.info("amount: {}", amount);
-    	log.info("grdCd: {}", grdCd);
-    	log.info("usedMileage: {}", usedMileage);
-    	
-    	
-    	try {
-    		// 1. TossPayments API에 결제 승인 요청
-    		HttpRequest request = HttpRequest.newBuilder()
-    				.uri(URI.create("https://api.tosspayments.com/v1/payments/confirm"))
-    				.header("Authorization", "Basic dGVzdF9za19qRXhQZUpXWVZRUkE5UWFnSmRwb3I0OVI1Z3ZOOg==") // 테스트 시크릿 키
-    				.header("Content-Type", "application/json")
-    				.method("POST", HttpRequest.BodyPublishers.ofString(
-    						String.format("{\"paymentKey\":\"%s\",\"orderId\":\"%s\",\"amount\":%s}",
-    								paymentKey, orderId, amount)))
-    				.build();
-    		
-    		HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-    		
-    		// 2. 응답 결과를 UserPaymentDTO로 매핑
-    		ObjectMapper objectMapper = new ObjectMapper();
-    		PaymentDTO userPayment = objectMapper.readValue(response.body(), PaymentDTO.class);
-    		log.info("결제 응답 DTO: {}", userPayment);
-    		
-    		
-    		
-    		
-    		
-    		// 3. SettlementDTO 생성 및 매핑
-    		SettlementDTO settlement = new SettlementDTO();
-    		settlement.setMbrCd("MB_C0000036"); // 세션 또는 로그인 정보에서 가져오는게 좋음
-    		settlement.setGdsCd(grdCd); // 프론트에서 상품 선택 정보를 받아오는게 바람직함
-    		settlement.setStcCd("SD_SUCCESS"); // 상태코드 테이블에 정의된 값
-    		settlement.setStlmCnt(1); // 예시: 1개 구매
-    		settlement.setStlmPayType("카드"); // 또는 userPayment.getCard().getCardType()
-    		settlement.setStlmAmt(new BigDecimal(amount)); // 원래 금액
-    		settlement.setStlmUsedPoints(usedMileage); // 마일리지 사용 안함
-    		settlement.setStlmFinalAmt(new BigDecimal(amount)); // 최종 금액
-    		CardDTO card = userPayment.getCard();
-    		EasyPayDTO easy = userPayment.getEasyPay();
-    		if (card != null) {
-    			String cardCompanyName = getCardAcquirerName(card.getIssuerCode());
-    			settlement.setStlmPaymentInfo(card.getNumber());
-    			settlement.setStlmCardNm(cardCompanyName);
-    			settlement.setStlmAccountNm("홍길동");	// 프론트에서 결제자 이름을 받아와야함
-    		} else {
-    			settlement.setStlmPaymentInfo("간편결제");
-    			settlement.setStlmCardNm("N/A");
-    			settlement.setStlmAccountNm("홍길동");
-    		}
-    		settlement.setStlmProviderNm(easy.getProvider());
-    		settlement.setStlmAccountInfo("N/A");
-    		settlement.setStlmYmdt(Timestamp.valueOf(OffsetDateTime.parse(userPayment.getApprovedAt()).toLocalDateTime()));
-    		settlement.setStlmAgreYn(true);
-    		
-    		// 4. DB 저장
-    		int result = Paymentmapper.insertSettlement(settlement);
-    		log.info("settlement 저장 결과: {}", result);
-    		
-    	} catch (IOException | InterruptedException e) {
-    		log.error("결제 승인 처리 중 오류", e);
-    	}
-    	
-    	
-    	
-    	// 알림창 표시용 (리다이렉트 후 알림 띄우는 처리 가능)
-    	return "redirect:/enterGoodsList"; // 나중에 JS alert 띄우는 방식으로 바꿀 수 있음
-    }
+			// 4. DB 저장
+			int result = Paymentmapper.insertSettlement(settlement);
+			log.info("settlement 저장 결과: {}", result);
+
+		} catch (IOException | InterruptedException e) {
+			log.error("결제 승인 처리 중 오류", e);
+		}
+
+		// 알림창 표시용 (리다이렉트 후 알림 띄우는 처리 가능)
+		return "redirect:/enterGoodsList"; // 나중에 JS alert 띄우는 방식으로 바꿀 수 있음
+	}
 
 	@GetMapping("/user/paymentFail")
 	public String userPaymentFailPage() {
-	    return "user/goods/paymentFail";
+		return "user/goods/paymentFail";
 	}
-	
+
 	@GetMapping("/enter/paymentFail")
 	public String enterPaymentFailPage() {
 		return "enter/goods/paymentFail";

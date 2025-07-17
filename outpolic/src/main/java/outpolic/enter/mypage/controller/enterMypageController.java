@@ -151,13 +151,6 @@ public class enterMypageController {
     	return "enter/enterpriseInfo/enterpriseInfo";
     }
 
-    
-    // 살짝 위탁
-    @GetMapping("/enterGoodsList")
-    public String enterGoodsList() {
-    	return "enter/goods/enterGoodsList";
-    }
-
 
     @GetMapping("/bookMarkListView") // URL 경로를 더 구체적으로 변경하여 충돌 방지
 	public String showOutsourcingPage3() {
