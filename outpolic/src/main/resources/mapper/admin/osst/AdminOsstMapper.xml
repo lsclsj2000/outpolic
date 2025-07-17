@@ -16,7 +16,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="mbr_ent_nm" 	property="mbrEntName"/>
 		<result column="stc_cd" 		property="stcCode"/>
 		<result column="stc_nm" 		property="stcName"/>
+		<result column="osp_cust_yn" 		property="ospCustYn"/>
+		<result column="osp_sply_ymdt" 		property="ospSplyYmdt"/>
+		<result column="osp_cust_ymdt" 		property="ospCustYmdt"/>
 	</resultMap>
+	
+	
+	<select id="getOsstStepsByOcdCd" resultMap="AdminOsstResultMap">
+		/* 외주 진행 수정 팝업창 데이터 조회 */
+		SELECT
+			op.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			op.osp_cust_yn as osp_cust_yn,
+			op.osp_sply_ymdt as osp_sply_ymdt,
+			op.osp_cust_ymdt as osp_cust_ymdt
+		FROM
+			outsourcing_prograss op
+			LEFT JOIN status_code sc ON op.stc_cd = sc.stc_cd
+		WHERE
+			op.ocd_cd = #{ocdCd}
+		ORDER BY
+			op.osp_sply_ymdt ASC
+	</select>
 	
 	<select id="getAdminOsstList" resultMap="AdminOsstResultMap">
 		/* 외주 진행 목록 조회 */

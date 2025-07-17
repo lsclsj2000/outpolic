@@ -11,4 +11,7 @@ public interface AdminOsstMapper {
 	
 	// 외주 진행 목록 조회
 	List<AdminOsst> getAdminOsstList();
+	
+	// 외주 진행 수정 팝업창 데이터 조회
+	List<AdminOsst> getOsstStepsByOcdCd(String ocdCd);
 }

@@ -26,4 +26,11 @@ public class AdminOsstServiceImpl implements AdminOsstService {
 		return adminOsst;
 	}
 
+	@Override
+	public List<AdminOsst> getOsstStepsByOcdCd(String ocdCd) {
+		// 외주 진행 수정 팝업창 데이터 조회
+		List<AdminOsst> adminOsstMdfcn = adminOsstMapper.getOsstStepsByOcdCd(ocdCd);
+		return adminOsstMdfcn;
+	}
+
 }
