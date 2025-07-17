@@ -101,4 +101,10 @@ public class EnterInquiryServiceImpl implements EnterInquiryService {
 		// 문의 타입 조회
 		return enterInquiryMapper.getAllInquiryTypes();
 	}
+
+	// 특정 인물 문의 목록 조회
+	@Override
+	public List<EnterInquiry> getEnterInquiryListByCode(String memberCode) {
+		return enterInquiryMapper.getEnterInquiryListByCode(memberCode);
+	}
 }

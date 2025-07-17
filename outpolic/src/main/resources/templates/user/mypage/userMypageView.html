@@ -21,10 +21,10 @@
 				    <div class="row g-4 col-12">
 				        <!-- 진행중인 외주 -->
 				        <div class="col-md-6">
-				            <div class="card h-100 border-primary shadow-sm h-100" style="min-height: 220px;">
+				            <div class="card h-100 border-primary shadow-sm" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">진행중인 외주</h5>
-				                    <p class="card-text fs-4 text-primary fw-bold" th:text="${ongoingCount} + '건'">2건</p>
+				                    <p class="card-text fs-4 text-primary fw-bold" th:text="${ongoingCount != null ? ongoingCount : 0} + '건'">2건</p>
 				                    <p class="text-muted small mb-3">작업이 진행 중입니다. 상태를 확인해보세요!</p>
 				                    <a href="#" class="btn btn-outline-primary btn-sm">자세히 보기</a>
 				                </div>
@@ -36,7 +36,7 @@
 				            <div class="card h-100 border-success shadow-sm h-100" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">완료된 외주</h5>
-				                    <p class="card-text fs-4 text-success fw-bold" th:text="${completedCount} + '건'">5건</p>
+				                    <p class="card-text fs-4 text-success fw-bold"><span t th:text="${reviewList != null ? reviewList.?[ospCd != null].size() : 0} + '건'">0건</span></span></p>
 				                    <p class="text-muted small mb-3">완료된 외주를 다시 확인하거나 리뷰를 작성해보세요.</p>
 				                    <a href="#" class="btn btn-outline-success btn-sm">자세히 보기</a>
 				                </div>
@@ -48,7 +48,7 @@
 				            <div class="card h-100 border-info shadow-sm h-100" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">내가 작성한 리뷰</h5>
-				                    <p class="card-text fs-4 text-info fw-bold" th:text="${#lists.size(reviewList)} + '건'">3건</p>
+				                    <p class="card-text fs-4 text-info fw-bold" th:text="${reviewList != null ? reviewList.size() : 0} + '건'">3건</p>
 				                    <p class="text-muted small mb-3">다른 회원이 여러분의 피드백을 기다리고 있어요.</p>
 				                    <a href="#" class="btn btn-outline-info btn-sm">자세히 보기</a>
 				                </div>
@@ -60,7 +60,7 @@
 				            <div class="card h-100 border-dark shadow-sm h-100" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">전체 외주 신청 내역</h5>
-				                    <p class="card-text fs-4 fw-bold" th:text="${totalRequestCount} + '건'">10건</p>
+				                    <p class="card-text fs-4 fw-bold" th:text="${totalRequestCount != null ? totalRequestCount : 0} + '건'">10건</p>
 				                    <p class="text-muted small mb-3">.</p>
 				                    <a href="#" class="btn btn-outline-dark btn-sm">자세히 보기</a>
 				                </div>
@@ -74,8 +74,8 @@
 				<div class="row">
 					<form action="/user/userEditView" method="post"
 						class="d-flex flex-column">
-						<h3 class="mb-40">내 정보 수정</h3>
-						<div th:if="${msg}" class="alert alert-danger mb-3" role="alert" th:text="${msg}"></div>
+						<h3 class="mb-40 mt-30">내 정보 수정</h3>
+						<div th:if="${msg}" class="alert alert-danger mb-3 " role="alert" th:text="${msg}"></div>
 						<div class="d-flex" style="flex-direction: column; justify-content : center; align-items : center;">
 						<input type="password" id="passwordInput" class = "mb-40" name="password"
 							placeholder="비밀번호 입력" required />
@@ -84,15 +84,6 @@
 					</form>
 				</div>
 			</div>
-
-			<div class="tab-pane fade py-4" id="myReqOs">
-				<div class="row d-flex flex-column align-items-center">
-					<h3>내 외주 현황</h3>
-					<p>이케이케 열심히 외주를 받았대요 영차영차</p>
-					<a href="#">내 외주 현황 자세히 보기</a>
-				</div>
-			</div>
-
 			<div class="tab-pane fade py-4" id="myReview">
 				<div class="row d-flex flex-column align-items-center">
 					<h3>내가 작성한 리뷰</h3>
@@ -137,17 +128,7 @@
 					    	<div>아직 작성하신 리뷰가 없습니다.</div>
 					    </div>
 					</div>
-					<a href="#" th:if="${not #lists.isEmpty(reviewList)}"><내가 작성한 리뷰 자세히 보기></a>
-				</div>
-			</div>
-
-			<div class="tab-pane fade py-4" id="myBookmark">
-				<div class="row d-flex flex-column align-items-center">
-					<h3>즐겨찾기 한 콘텐츠</h3>
-					<p>즐겨찾기한 콘텐츠를 카드형식으로 보여줄 예정입니다.</p>
-					<p>포트폴리오 즐겨찾기</p>
-					<p>외주 즐겨찾기</p>
-					<p>기업 즐겨찾기</p>
+					<a href="#" th:if="${not #lists.isEmpty(reviewList)}">&lt;내가 작성한 리뷰 자세히 보기&gt;</a>
 				</div>
 			</div>
 			<div class="tab-pane fade py-4" id="mySettList">

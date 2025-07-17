@@ -2,8 +2,9 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
- <mapper namespace="outpolic.user.mypage.mapper.UserMypageEditMapper">
-	<select id="selectUserReviewList" parameterType="String" resultType="outpolic.common.dto.OutsourcingReviewDTO">
+  
+ <mapper namespace="outpolic.enter.mypage.mapper.EnterMypageMapper">
+	<select id="selectEnterReviewList" parameterType="String" resultType="outpolic.common.dto.OutsourcingReviewDTO">
 	    SELECT 
 	        oc.osp_cd AS ospCd,
 	        oc.mbr_cd AS mbrCd,
@@ -54,4 +55,4 @@
 	
 	    LIMIT 3;
     </select>
- </mapper>
+</mapper>    

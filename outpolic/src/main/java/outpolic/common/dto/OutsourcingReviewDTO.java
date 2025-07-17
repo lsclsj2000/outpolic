@@ -1,4 +1,4 @@
-package outpolic.user.mypage.dto;
+package outpolic.common.dto;
 
 import lombok.Data;
 

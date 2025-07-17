@@ -51,4 +51,7 @@ public interface EnterInquiryMapper {
 	
 	// 문의 목록 조회
 	List<EnterInquiry> getEnterInquiryList();
+	
+	// ssy 마이페이지용 추가 -> 특정 회원 문의 목록 조회
+	List<EnterInquiry> getEnterInquiryListByCode(String memberCode);
 }

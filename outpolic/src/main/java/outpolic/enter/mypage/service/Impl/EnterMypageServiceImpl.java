@@ -1,9 +1,12 @@
 package outpolic.enter.mypage.service.Impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import outpolic.common.dto.OutsourcingReviewDTO;
 import outpolic.enter.mypage.dto.CorpInfo;
 import outpolic.enter.mypage.dto.EnterInfo;
 import outpolic.enter.mypage.mapper.EnterMypageMapper;
@@ -73,6 +76,15 @@ public class EnterMypageServiceImpl implements EnterMypageService {
 		int result = enterpriseMapper.updateEnterpriseInfo(corpInfo);
 		log.info("수정 완료된 데이터는 {}건 있습니다", result);	
 		
+	}
+
+
+
+
+	@Override
+	public List<OutsourcingReviewDTO> getOutsourcingReviewList(String memberCode) {
+		
+		return enterMypageMapper.selectEnterReviewList(memberCode);
 	}
 
 	
