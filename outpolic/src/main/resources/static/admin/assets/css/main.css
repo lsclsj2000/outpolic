@@ -4329,7 +4329,6 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
     position: relative;
     animation: SR_slideIn 0.3s ease-out;
     box-sizing: border-box;
-    height: 660px;
     overflow-y: auto;
 }
 
