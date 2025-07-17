@@ -80,6 +80,7 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
 
     @Override
     public List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query) {
+        // Change from searchUnlinkedPortfolios to findUnlinkedPortfolios
         return portfolioMapper.findUnlinkedPortfolios(osCd, entCd, query);
     }
 

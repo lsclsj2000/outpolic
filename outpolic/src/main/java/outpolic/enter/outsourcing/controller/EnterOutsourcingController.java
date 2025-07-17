@@ -116,10 +116,12 @@ public class EnterOutsourcingController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> saveStep3(
             @RequestParam("osCd") String osCd,
-            @RequestParam(value = "outsourcingReferenceFiles", required = false) MultipartFile[] files,
+            // 수정: @RequestParam 이름과 타입 변경 (단일 썸네일 파일만 받음)
+            @RequestParam(value = "outsourcingThumbnailFile", required = false) MultipartFile thumbnailFile,
             HttpSession session) {
         
-        outsourcingService.saveStep3Data(osCd, files, session);
+        // 서비스 메서드 호출 시, 변경된 파라미터로 전달
+        outsourcingService.saveStep3Data(osCd, thumbnailFile, session);
         return ResponseEntity.ok(Map.of("success", true));
     }
 
@@ -195,10 +197,12 @@ public class EnterOutsourcingController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> updateStep3(
             @RequestParam("osCd") String osCd,
-            @RequestParam(value = "outsourcingReferenceFiles", required = false) MultipartFile[] files,
-            HttpSession session) {
+            // 수정: @RequestParam 이름과 타입 변경 (단일 썸네일 파일만 받음)
+            @RequestParam(value = "outsourcingThumbnailFile", required = false) MultipartFile thumbnailFile,
+            HttpSession session) { // HttpSession은 여기서 사용되지 않지만, 필요하면 유지
             
-        outsourcingService.updateOutsourcingStep3(osCd, files);
+        // 서비스 메서드 호출 시, 변경된 파라미터로 전달
+        outsourcingService.updateOutsourcingStep3(osCd, thumbnailFile); // HttpSession 파라미터도 제거
         return ResponseEntity.ok(Map.of("success", true, "message", "첨부 파일이 수정되었습니다."));
     }
 

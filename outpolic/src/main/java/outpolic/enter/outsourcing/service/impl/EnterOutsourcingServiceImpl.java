@@ -85,14 +85,14 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         session.setAttribute("outsourcingFormData", formData);
     }
 
-    // 이 메서드의 시그니처를 인터페이스에 맞게 정확히 수정
+    // 수정: referenceFiles 파라미터 제거 및 관련 로직 제거
     @Override
     @Transactional
-    public void saveStep3Data(String osCd, MultipartFile thumbnailFile, MultipartFile[] referenceFiles, HttpSession session) {
+    public void saveStep3Data(String osCd, MultipartFile thumbnailFile, HttpSession session) {
         OutsourcingFormDataDto formData = (OutsourcingFormDataDto) session.getAttribute("outsourcingFormData");
         if (formData == null) throw new IllegalStateException("세션 정보가 없습니다.");
 
-        List<FileMetaData> uploadedFiles = new ArrayList<>();
+        List<FileMetaData> uploadedFiles = new ArrayList<>(); // 업로드된 파일 목록 (썸네일만 포함될 것임)
         String thumbnailUrl = null;
 
         // 썸네일 파일 처리
@@ -104,15 +104,7 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
             }
         }
         formData.setThumbnailUrl(thumbnailUrl);
-
-        // 참조 파일 처리
-        if (referenceFiles != null && referenceFiles.length > 0 && !referenceFiles[0].isEmpty()) {
-            for (MultipartFile file : referenceFiles) {
-                FileMetaData metaData = filesUtils.uploadFile(file, "outsourcing/reference");
-                if (metaData != null) uploadedFiles.add(metaData);
-            }
-        }
-        formData.setUploadedFiles(uploadedFiles);
+        formData.setUploadedFiles(uploadedFiles); // 썸네일 파일만 포함
 
         session.setAttribute("outsourcingFormData", formData);
     }
@@ -150,7 +142,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         outsourcingMapper.insertContentList(clCd, finalOutsourcing.getOsCd());
 
         if (formData.getUploadedFiles() != null && !formData.getUploadedFiles().isEmpty()) {
-            // FileMetaData 객체에 직접 clCd와 mbrCd를 설정하지 않고, 매퍼에 별도 파라미터로 전달
             outsourcingMapper.insertFiles(formData.getUploadedFiles(), clCd, finalOutsourcing.getMbrCd());
         }
         updateMappings(clCd, finalOutsourcing.getMbrCd(), formData.getCategoryCodes(), formData.getTags());
@@ -164,7 +155,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         outsourcingMapper.updateOutsourcingStep1(outsourcingToUpdate);
     }
 
-    // updateOutsourcingStep2 메서드는 이미 올바른 시그니처입니다.
     @Override
     public void updateOutsourcingStep2(String osCd, List<String> categoryCodes, String tags) {
         String clCd = outsourcingMapper.findClCdByOsCd(osCd);
@@ -183,17 +173,17 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         }
     }
     
-    // 이 메서드의 시그니처를 인터페이스에 맞게 정확히 수정
+    // 수정: referenceFiles 파라미터 제거 및 관련 로직 제거
     @Override
     @Transactional
-    public void updateOutsourcingStep3(String osCd, MultipartFile thumbnailFile, MultipartFile[] referenceFiles) {
+    public void updateOutsourcingStep3(String osCd, MultipartFile thumbnailFile) {
         EnterOutsourcing outsourcing = outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
         if (outsourcing == null) throw new IllegalStateException("수정할 외주 정보가 없습니다.");
 
         String clCd = outsourcingMapper.findClCdByOsCd(osCd);
         if (clCd == null) throw new IllegalStateException("콘텐츠 목록 정보를 찾을 수 없습니다. (clCd is null)");
 
-        // 1. 기존 파일 (DB 기록 및 물리적 파일) 삭제
+        // 1. 기존 파일 (DB 기록 및 물리적 파일) 삭제 (썸네일만 남음)
         List<FileMetaData> oldFiles = outsourcingMapper.findFilesByClCd(clCd);
         if (oldFiles != null && !oldFiles.isEmpty()) {
             for(FileMetaData oldFile : oldFiles) {
@@ -215,17 +205,7 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         }
         outsourcingMapper.updateOutsourcingThumbnail(osCd, newThumbnailUrl);
 
-        // 3. 새 참조 파일 업로드 및 정보 저장
-        if (referenceFiles != null && referenceFiles.length > 0 && !referenceFiles[0].isEmpty()) {
-            for (MultipartFile file : referenceFiles) {
-                FileMetaData newMetaData = filesUtils.uploadFile(file, "outsourcing/reference");
-                if (newMetaData != null) {
-                    newUploadedFiles.add(newMetaData);
-                }
-            }
-        }
-        
-        // 4. 모든 새 파일 정보를 DB에 일괄 삽입
+        // 3. 모든 새 파일 정보 (이제 썸네일만) DB에 일괄 삽입
         if (!newUploadedFiles.isEmpty()) {
             outsourcingMapper.insertFiles(newUploadedFiles, clCd, outsourcing.getMbrCd());
         }
@@ -267,7 +247,7 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
     @Override
     @Transactional
-    public void linkPortfolioToOutsourcing(String osCd, String prtfCd, String entCd) { // 메서드명 수정
+    public void linkPortfolioToOutsourcing(String osCd, String prtfCd, String entCd) {
         String latestOpCd = outsourcingMapper.findLatestOpCd();
         int nextNum = 1;
         if (latestOpCd != null && latestOpCd.startsWith("OP_C")) {
@@ -322,19 +302,4 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     public List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query) {
         return portfolioMapper.searchUnlinkedPortfolios(osCd, entCd, query);
     }
-	@Override
-	public void saveStep3Data(String osCd, MultipartFile[] referenceFiles, HttpSession session) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void updateOutsourcingStep3(String osCd, MultipartFile[] referenceFiles) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void linkPortfolioToOutsCd(String osCd, String prtfCd, String entCd) {
-		// TODO Auto-generated method stub
-		
-	}
 }
