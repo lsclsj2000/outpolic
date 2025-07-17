@@ -16,6 +16,7 @@ import outpolic.user.inquiry.domain.UserInquiryFile;
 import outpolic.user.inquiry.domain.UserInquiryType;
 import outpolic.user.inquiry.mapper.UserInquiryMapper;
 import outpolic.user.inquiry.service.UserInquiryService;
+import outpolic.user.mypage.mapper.UserMypageEditMapper;
 
 
 
@@ -27,6 +28,7 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 	
 	private final FilesUtils filesUtils;
 	private final UserInquiryMapper userInquiryMapper;
+	private final UserMypageEditMapper userMypageEditMapper;
 	
 	// 아래 3개는 선생님꺼임.
 	/*
@@ -104,4 +106,13 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 		// 문의 타입 조회
 		return userInquiryMapper.getAllInquiryTypes();
 	}
+
+	// 특정 인물 문의 조회
+	@Override
+	public List<UserInquiry> getUserInquiryListByCode(String memberCode) {
+		return userInquiryMapper.getUserInquiryListByCode(memberCode);
+	}
+	
+	
+
 }

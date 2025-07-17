@@ -54,4 +54,12 @@ public interface UserInquiryMapper {
 	
 	// 문의 목록 조회
 	List<UserInquiry> getUserInquiryList();
+	
+	//ssy 마이페이지용 추가 -> 특정 회원 문의 목록 조회
+	List<UserInquiry> getUserInquiryListByCode(String memberCode);
+	
 }
+
+
+
+

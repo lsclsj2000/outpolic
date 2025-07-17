@@ -11,7 +11,10 @@
     </resultMap>
 
     <select id="selectAllCategories" resultMap="category_rm">
-        SELECT CTGRY_ID, CTGRY_NM, CTGRY_UP_ID
+        SELECT 
+	        CTGRY_ID, 
+	        CTGRY_NM, 
+	        CTGRY_UP_ID
         FROM category
         ORDER BY CTGRY_ID ASC
     </select>
