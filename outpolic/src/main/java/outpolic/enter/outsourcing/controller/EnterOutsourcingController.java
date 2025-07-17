@@ -47,8 +47,7 @@ import outpolic.systems.file.domain.FileMetaData;
 @RequiredArgsConstructor
 public class EnterOutsourcingController {
 	
-    private final ObjectMapper objectMapper; // 필드 선언
-
+    private final ObjectMapper objectMapper;
     private final EnterOutsourcingService outsourcingService;
     private final CategorySearchService categorySearchService;
     private final EnterPortfolioService portfolioService;
@@ -84,7 +83,6 @@ public class EnterOutsourcingController {
             String entCd = outsourcingService.findEntCdByMbrCd(mbrCd);
             formData.setEntCd(entCd);
             formData.setMbrCd(mbrCd);
-
             String generatedOsCd = outsourcingService.saveStep1Data(formData, session);
             return ResponseEntity.ok(Map.of("success", true, "osCd", generatedOsCd));
         } catch (Exception e) {
@@ -125,6 +123,11 @@ public class EnterOutsourcingController {
     @PostMapping("/complete-registration")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> completeRegistration(@SessionAttribute("outsourcingFormData") OutsourcingFormDataDto formData, HttpSession session) {
+        // categoryCodes가 비어있을 경우 예외 처리 제거 (이제 프론트엔드에서 유효성 검사 담당)
+        // if (formData.getCategoryCodes() == null || formData.getCategoryCodes().isEmpty()) {
+        //     throw new IllegalArgumentException("카테고리 ID는 필수입니다. 2단계에서 카테고리를 선택해주세요.");
+        // }
+        
         outsourcingService.completeOutsourcingRegistration(formData, session);
         session.removeAttribute("outsourcingFormData");
         return ResponseEntity.ok(Map.of("success", true, "message", "외주 등록이 완료되었습니다.", "redirectUrl", "/enter/outsourcing/list"));
@@ -160,7 +163,8 @@ public class EnterOutsourcingController {
             @RequestParam("osExpln") String osExpln,
             @RequestParam("osAmt") Integer osAmt,
             @RequestParam("osFlfmtCnt") Integer osFlfmtCnt,
-            @RequestParam("osStrtYmdt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime osStrtYmdt,
+            @RequestParam("osStrtYmdt") @DateTimeFormat(iso = 
+DateTimeFormat.ISO.DATE_TIME) LocalDateTime osStrtYmdt,
             @RequestParam("osEndYmdt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime osEndYmdt) {
         
         EnterOutsourcing outsourcingToUpdate = new EnterOutsourcing();
@@ -183,7 +187,7 @@ public class EnterOutsourcingController {
             @RequestParam(value = "categoryCodes", required = false) String categoryCodesStr,
             @RequestParam(value = "tags", required = false) String tags) {
         List<String> categoryCodes = (categoryCodesStr != null && !categoryCodesStr.isEmpty()) ?
-                Arrays.asList(categoryCodesStr.split(",")) : new ArrayList<>();
+Arrays.asList(categoryCodesStr.split(",")) : new ArrayList<>();
         outsourcingService.updateOutsourcingStep2(osCd, categoryCodes, tags);
         return ResponseEntity.ok(Map.of("success", true, "message", "카테고리 및 태그가 수정되었습니다."));
     }
@@ -226,17 +230,21 @@ public class EnterOutsourcingController {
         return ResponseEntity.ok(Map.of("success", true, "message", "삭제되었습니다."));
     }
 
-    @GetMapping("/api/categories/search") @ResponseBody
+    // 이 엔드포인트는 이미 존재하지만, 매퍼의 쿼리 수정이 필요할 수 있습니다. (아래 XML 수정 확인)
+    @GetMapping("/api/categories/search") 
+    @ResponseBody
     public ResponseEntity<List<CategorySearchDto>> searchCategories(@RequestParam(defaultValue = "") String query) {
         return ResponseEntity.ok(categorySearchService.searchCategoriesByName(query));
     }
 
-    @GetMapping("/api/tags/search") @ResponseBody
+    @GetMapping("/api/tags/search") 
+    @ResponseBody
     public ResponseEntity<List<String>> searchOutsourcingTags(@RequestParam(defaultValue = "") String query) {
         return ResponseEntity.ok(outsourcingService.searchTags(query));
     }
 
-    @GetMapping("/{osCd}/linked-portfolios") @ResponseBody
+    @GetMapping("/{osCd}/linked-portfolios") 
+    @ResponseBody
     public ResponseEntity<List<EnterPortfolio>> getLinkedPortfolios(@PathVariable String osCd) {
         return ResponseEntity.ok(outsourcingService.getLinkedPortfoliosByOsCd(osCd));
     }
@@ -255,7 +263,8 @@ public class EnterOutsourcingController {
         return ResponseEntity.ok(outsourcingService.searchUnlinkedPortfolios(osCd, entCd, query));
     }
 
-    @PostMapping("/link-portfolio") @ResponseBody
+    @PostMapping("/link-portfolio") 
+    @ResponseBody
     public ResponseEntity<?> linkPortfolio(@RequestBody Map<String, String> payload, HttpSession session) {
         String osCd = payload.get("osCd");
         String prtfCd = payload.get("prtfCd");
@@ -268,7 +277,8 @@ public class EnterOutsourcingController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/unlink-portfolio") @ResponseBody
+    @DeleteMapping("/unlink-portfolio") 
+    @ResponseBody
     public ResponseEntity<?> unlinkPortfolio(@RequestBody Map<String, String> payload) {
         outsourcingService.unlinkPortfolioFromOutsourcing(payload.get("osCd"), payload.get("prtfCd"));
         return ResponseEntity.ok().build();
