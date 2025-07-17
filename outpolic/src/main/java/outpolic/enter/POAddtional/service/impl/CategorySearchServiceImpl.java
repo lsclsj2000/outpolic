@@ -18,9 +18,9 @@ public class CategorySearchServiceImpl implements CategorySearchService {
     public List<CategorySearchDto> searchCategoriesByName(String query) {
         return categorySearchMapper.searchByName(query);
     }
-    
+
     @Override
-    public List<CategorySearchDto> getTopLevelCategories() {
+    public List<CategorySearchDto> getTopLevelCategories() { // Method exists 
         return categorySearchMapper.findTopLevelCategories();
     }
 

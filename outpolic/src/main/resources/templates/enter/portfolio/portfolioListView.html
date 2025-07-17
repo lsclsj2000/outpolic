@@ -1,54 +1,103 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{enter/layout/enterLayoutkjw}">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{enter/layout/enterLayoutkjw}">
 <head>
     <title>내 포트폴리오</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* --- 기본 스타일 --- */
-        .page-container { padding: 20px; max-width: 1200px; margin: 40px auto; }
-        .flex { display: flex; }
-        .justify-between { justify-content: space-between; }
-        .items-center { align-items: center; }
-        .mb-10 { margin-bottom: 40px; }
-        .section-title { font-size: 2em; font-weight: 700; margin-bottom: 20px !important; color: #1f2937; display: inline-block;}
+        .page-container { padding: 20px;
+ max-width: 1200px; margin: 40px auto; }
+        .flex { display: flex;
+ }
+        .justify-between { justify-content: space-between;
+ }
+        .items-center { align-items: center;
+ }
+        .mb-10 { margin-bottom: 40px;
+ }
+        .section-title { font-size: 2em; font-weight: 700; margin-bottom: 20px !important; color: #1f2937;
+ display: inline-block;}
         
-        .btn-action { background-color: #264796; border: none; color: white; padding: 10px 20px; text-align: center; display: inline-flex; align-items: center; gap: 8px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background-color 0.2s ease; margin-bottom: 30px;}
-        .btn-action:hover { background-color: #29A56C; }
+        .btn-action { background-color: #264796;
+ border: none; color: white; padding: 10px 20px; text-align: center; display: inline-flex; align-items: center; gap: 8px; font-size: 16px; cursor: pointer;
+ border-radius: 5px; transition: background-color 0.2s ease; margin-bottom: 30px;}
+        .btn-action:hover { background-color: #29A56C;
+ }
         
-        .hidden { display: none !important; }
-        .portfolio-items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; margin-top: 20px; }
-        .portfolio-item-card { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background-color: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); display: flex; flex-direction: column; height: 100%; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .portfolio-item-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); }
-        .portfolio-thumbnail-wrapper { width: 100%; height: 180px; overflow: hidden; background-color: #f3f4f6; }
-        .portfolio-thumbnail { width: 100%; height: 100%; object-fit: cover; }
-        .portfolio-thumbnail-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 1rem; }
-        .portfolio-content { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
-        .portfolio-title { font-size: 1.15em; font-weight: 600; margin-top: 0; margin-bottom: 10px; color: #111827; }
-        .portfolio-actions { display: flex; gap: 10px; margin-top: auto; border-top: 1px solid #f3f4f6; padding-top: 15px; }
-        .btn-edit, .btn-delete, .btn-share { border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 500; transition: background-color 0.2s; }
-        .btn-edit { background-color: #3b82f6; color: white; }
-        .btn-edit:hover { background-color: #2563eb; }
-        .btn-delete { background-color: #ef4444; color: white; }
-        .btn-delete:hover { background-color: #dc2626; }
-        .btn-share { background-color: #14b8a6; color: white; }
-        .btn-share:hover { background-color: #0d9488; }
-        .no-portfolio-container { text-align: center; padding: 50px 20px; border: 2px dashed #e0e0e0; border-radius: 8px; background-color: #fafafa; }
+        .hidden { display: none !important;
+ }
+        .portfolio-items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; margin-top: 20px;
+ }
+        .portfolio-item-card { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background-color: #fff;
+ box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); display: flex; flex-direction: column; height: 100%;
+ transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .portfolio-item-card:hover { transform: translateY(-5px);
+ box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+ }
+        .portfolio-thumbnail-wrapper { width: 100%; height: 180px; overflow: hidden; background-color: #f3f4f6;
+ }
+        .portfolio-thumbnail { width: 100%; height: 100%; object-fit: cover;
+ }
+        .portfolio-thumbnail-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+ color: #9ca3af; font-size: 1rem; }
+        .portfolio-content { padding: 15px; display: flex; flex-direction: column;
+ flex-grow: 1; }
+        .portfolio-title { font-size: 1.15em; font-weight: 600; margin-top: 0; margin-bottom: 10px;
+ color: #111827; }
+        .portfolio-actions { display: flex; gap: 10px; margin-top: auto;
+ border-top: 1px solid #f3f4f6; padding-top: 15px; }
+        .btn-edit, .btn-delete, .btn-share { border: none;
+ padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 500; transition: background-color 0.2s;
+ }
+        .btn-edit { background-color: #3b82f6; color: white;
+ }
+        .btn-edit:hover { background-color: #2563eb;
+ }
+        .btn-delete { background-color: #ef4444; color: white;
+ }
+        .btn-delete:hover { background-color: #dc2626;
+ }
+        .btn-share { background-color: #14b8a6; color: white;
+ }
+        .btn-share:hover { background-color: #0d9488;
+ }
+        .no-portfolio-container { text-align: center; padding: 50px 20px; border: 2px dashed #e0e0e0;
+ border-radius: 8px; background-color: #fafafa; }
         
         /* --- 공유 모달 스타일 --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s 0.3s; }
-        .modal-overlay.active { opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
-        .modal-content { background: #fff; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; text-align: center; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .modal-title { margin: 0; font-size: 1.5em; }
-        .modal-close-btn { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #999; }
-        .social-share-buttons { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
-        .social-share-buttons button { border: none; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.5em; color: white; transition: all 0.2s ease; }
-        #shareFacebookBtn { background-color: #1877F2; }
-        #shareXBtn { background-color: #000; }
-        #shareInstagramBtn { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
-        .copy-url-section { display: flex; align-items: center; gap: 10px; }
-        .copy-url-input { flex-grow: 1; padding: 8px 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 0.9em; }
-        .copy-url-btn { background-color: #007bff; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; }
+        .modal-overlay { position: fixed;
+ top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0;
+ visibility: hidden; transition: opacity 0.3s ease, visibility 0s 0.3s; }
+        .modal-overlay.active { opacity: 1;
+ visibility: visible; transition: opacity 0.3s ease; }
+        .modal-content { background: #fff; padding: 25px;
+ border-radius: 8px; width: 90%; max-width: 500px; text-align: center; }
+        .modal-header { display: flex;
+ justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;
+ }
+        .modal-title { margin: 0; font-size: 1.5em;
+ }
+        .modal-close-btn { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #999;
+ }
+        .social-share-buttons { display: flex; justify-content: center; gap: 15px; margin: 20px 0;
+ }
+        .social-share-buttons button { border: none; border-radius: 50%; width: 50px; height: 50px;
+ display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.5em; color: white; transition: all 0.2s ease;
+ }
+        #shareFacebookBtn { background-color: #1877F2;
+ }
+        #shareXBtn { background-color: #000;
+ }
+        #shareInstagramBtn { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+ }
+        .copy-url-section { display: flex; align-items: center; gap: 10px;
+ }
+        .copy-url-input { flex-grow: 1; padding: 8px 10px; border: 1px solid #ddd;
+ border-radius: 5px; font-size: 0.9em; }
+        .copy-url-btn { background-color: #007bff; color: white;
+ padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -62,8 +111,10 @@
 
         <div id="portfolioItemsGrid" class="portfolio-items-grid"></div>
         
-        <div id="noPortfolioMessage" class="no-portfolio-container hidden">
-            <p>등록된 포트폴리오가 없습니다. 새로운 포트폴리오를 등록해보세요!</p>
+        <div id="noPortfolioMessage" 
+ class="no-portfolio-container hidden">
+            <p>등록된 포트폴리오가 없습니다.
+ 새로운 포트폴리오를 등록해보세요!</p>
         </div>
     </div>
     
@@ -73,17 +124,17 @@
                 <h3 id="shareModalTitle" class="modal-title">포트폴리오 공유</h3>
                 <button class="modal-close-btn">&times;</button>
             </div>
-            <div class="modal-body">
+      <div class="modal-body">
                 <div class="social-share-buttons">
                     <button id="shareFacebookBtn" class="social-button"><i class="fab fa-facebook-f"></i></button>
                     <button id="shareXBtn" class="social-button"><i class="fab fa-x-twitter"></i></button>
                     <button id="shareInstagramBtn" class="social-button"><i class="fab fa-instagram"></i></button>
-                </div>
+    </div>
                 <div class="copy-url-section">
                     <input type="text" id="shareUrlInput" class="copy-url-input" readonly>
                     <button id="modalCopyUrlBtn" class="copy-url-btn">복사</button>
                 </div>
-            </div>
+         </div>
         </div>
     </div>
 </th:block>
@@ -96,130 +147,121 @@
             const noPortfolioMessage = $('#noPortfolioMessage');
             const shareModal = $('#shareModal');
             let shareUrl = '';
-            /* const localPath = 'file:///C:/home/teamproject'; */
             	
             // --- 포트폴리오 목록을 불러와서 화면에 그리는 함수 ---
             function loadAndRenderPortfolioList() {
                 $.ajax({
                     url: '/enter/portfolio/listData',
-                    cache: false,
+                 cache: false,
                     success: function(portfolios) {
                         grid.empty();
                         if (portfolios && portfolios.length > 0) {
-                            noPortfolioMessage.addClass('hidden');
+                               noPortfolioMessage.addClass('hidden');
                             grid.removeClass('hidden');
 
                             portfolios.forEach(p => {
-                                // [수정] 썸네일 경로 보정 로직
-                                let correctedUrl = p.prtfThumbnailUrl;
-                                if (correctedUrl && !correctedUrl.startsWith('/')) {
-                                    correctedUrl = '/' + correctedUrl;
-                                }
+                                // [수정] 서비스에서 DB에 저장할 때 "attachment/"를 제거했으므로, 여기서 다시 붙여줍니다.
+                                let thumbnailUrl = p.prtfThumbnailUrl ? p.prtfThumbnailUrl : null;
 
-                                const thumbnailUrl = correctedUrl ? 
-                                    `<img src="${correctedUrl}" alt="${p.prtfTtl} 썸네일" class="portfolio-thumbnail">` : 
+                               
+                                const thumbnailImageHtml = thumbnailUrl ? 
+                                    `<img src="${thumbnailUrl}" alt="${p.prtfTtl} 썸네일" class="portfolio-thumbnail">` : 
                                     `<div class="portfolio-thumbnail-placeholder">이미지 없음</div>`;
-                                
                                 const cardContent = `
-                                    <div class="portfolio-thumbnail-wrapper">${thumbnailUrl}</div>
+                                    <div class="portfolio-thumbnail-wrapper">${thumbnailImageHtml}</div>
                                     <div class="portfolio-content">
-                                        <h3 class="portfolio-title">${p.prtfTtl}</h3>
+                       <h3 class="portfolio-title">${p.prtfTtl}</h3>
                                         <div class="portfolio-actions">
-                                            <button class="btn-edit" data-prtf-cd="${p.prtfCd}">수정</button>
+                                         <button class="btn-edit" data-prtf-cd="${p.prtfCd}">수정</button>
                                             <button class="btn-delete" data-prtf-cd="${p.prtfCd}">삭제</button>
                                             <button class="btn-share" data-prtf-cd="${p.prtfCd}" data-prtf-ttl="${p.prtfTtl}">공유</button>
                                         </div>
                                     </div>`;
-
                                 const card = $(`<div class="portfolio-item-card">${cardContent}</div>`);
                                 grid.append(card);
                             });
                         } else {
                             noPortfolioMessage.removeClass('hidden');
-                            grid.addClass('hidden');
+ grid.addClass('hidden');
                         }
                     },
                     error: function(xhr) {
                         console.error("포트폴리오 목록 로딩 오류:", xhr.responseText);
-                        noPortfolioMessage.text('목록을 불러오는 데 실패했습니다.').removeClass('hidden');
+ noPortfolioMessage.text('목록을 불러오는 데 실패했습니다.').removeClass('hidden');
                         grid.addClass('hidden');
                     }
                 });
-            }
+ }
 
             // --- 이벤트 핸들러 설정 ---
 
             // '새 포트폴리오 등록' 버튼
             $('#addPortfolioBtn').on('click', () => window.location.href = '/enter/portfolio/add');
-
-            // '수정', '삭제', '공유' 버튼 (이벤트 위임 방식)
+ // '수정', '삭제', '공유' 버튼 (이벤트 위임 방식)
             grid.on('click', 'button', function(e) {
                 e.preventDefault();
                 const $button = $(this);
                 const prtfCd = $button.data('prtf-cd');
 
                 if ($button.hasClass('btn-edit')) {
-                    window.location.href = `/enter/portfolio/edit/${prtfCd}`;
+      window.location.href = `/enter/portfolio/edit/${prtfCd}`;
                 } 
                 else if ($button.hasClass('btn-delete')) {
                     if (confirm('정말로 삭제하시겠습니까? 관련 데이터가 모두 삭제됩니다.')) {
-                        $.ajax({
+                     $.ajax({
                             url: `/enter/portfolio/delete/${prtfCd}`,
                             type: 'DELETE',
                             success: function(res) {
-                                if (res.success) {
+         if (res.success) {
                                     alert(res.message || '삭제 요청이 접수되었습니다.');
-                                    loadAndRenderPortfolioList(); // 목록 새로고침
+                                   loadAndRenderPortfolioList(); // 목록 새로고침
                                 } else {
-                                    alert('삭제 실패: ' + (res.message || '알 수 없는 오류'));
+                                    alert('삭제 실패: ' + (res.message ||
+ '알 수 없는 오류'));
                                 }
                             },
                             error: function(xhr) {
                                 alert('삭제 중 오류가 발생했습니다.');
-                            }
+ }
                         });
-                    }
+ }
                 } 
                 else if ($button.hasClass('btn-share')) {
                     const prtfTtl = $button.data('prtf-ttl');
-                    shareUrl = `${window.location.origin}/portfolio/detail/${prtfCd}`;
+ shareUrl = `${window.location.origin}/portfolio/detail/${prtfCd}`;
                     
                     $('#shareUrlInput').val(shareUrl); 
                     $('#shareModalTitle').text(`'${prtfTtl}' 공유하기`);
                     shareModal.addClass('active');
                 }
             });
-            
-            // 모달 닫기 (X 버튼 또는 바깥 영역 클릭)
+ // 모달 닫기 (X 버튼 또는 바깥 영역 클릭)
             shareModal.find('.modal-close-btn').on('click', () => shareModal.removeClass('active'));
-            shareModal.on('click', (e) => { 
+ shareModal.on('click', (e) => { 
                 if ($(e.target).is(shareModal)) {
                     shareModal.removeClass('active');
                 }
             });
-
-            // URL 복사 버튼
+ // URL 복사 버튼
             $('#modalCopyUrlBtn').on('click', function() {
                 navigator.clipboard.writeText($('#shareUrlInput').val()).then(() => {
                     alert('URL이 클립보드에 복사되었습니다!');
                 });
             });
-
-            // 소셜 미디어 공유 버튼들
+ // 소셜 미디어 공유 버튼들
             $('#shareFacebookBtn').on('click', function() {
                 if (shareUrl) window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
             });
-            $('#shareXBtn').on('click', function() {
+ $('#shareXBtn').on('click', function() {
                 const title = $('#shareModalTitle').text().replace(/'/g, "").replace(" 공유하기", "");
                 if (shareUrl) window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`, '_blank');
             });
-            $('#shareInstagramBtn').on('click', function() {
+ $('#shareInstagramBtn').on('click', function() {
                 alert('인스타그램은 직접 공유를 지원하지 않습니다. URL을 복사하여 앱에서 직접 공유해주세요.');
             });
-
-            // --- 페이지 로드 시 초기 실행 ---
+ // --- 페이지 로드 시 초기 실행 ---
             loadAndRenderPortfolioList();
-        });
+ });
     </script>
 </th:block>
 </body>

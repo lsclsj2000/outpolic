@@ -6,23 +6,43 @@
     <title>새 포트폴리오 등록</title>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
-        .main-container { max-width: 960px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); height:900px}
-        .section-title { text-align: center; margin-bottom: 30px; font-size: 1.8em; }
-        .form-step { display: none; }
-        .form-step.active { display: block; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .progress-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; max-width: 500px; margin-left: auto; margin-right: auto; }
-        .progress-indicator::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: #e0e0e0; transform: translateY(-50%); z-index: 1; }
-        .progress-step { width: 30px; height: 30px; border-radius: 50%; background-color: #e0e0e0; color: #888; display: flex; justify-content: center; align-items: center; font-weight: bold; position: relative; z-index: 2; border: 3px solid #fff; }
-        .progress-step.active { background-color: #264796; color: white; border-color: #264796;}
-        .form-navigation { margin-top: 30px; display: flex; justify-content: space-between; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        .btn-step { background-color: #264796; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; }
-        .btn-step.prev { background-color: #6c757d; }
-        .error-message { color: #dc3545; font-size: 0.875rem; margin-top: 5px; }
-        .btn-secondary { background-color: #6c757d; border-color: #6c757d; color: white; padding: 8px 12px; border-radius: 5px; cursor: pointer; border: none; }
+        .main-container { max-width: 960px;
+ margin: 40px auto; padding: 30px; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+ height:900px}
+        .section-title { text-align: center; margin-bottom: 30px; font-size: 1.8em;
+ }
+        .form-step { display: none;
+ }
+        .form-step.active { display: block; animation: fadeIn 0.5s;
+ }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1;
+ } }
+        .progress-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative;
+ max-width: 500px; margin-left: auto; margin-right: auto; }
+        .progress-indicator::before { content: ''; position: absolute;
+ top: 50%; left: 0; width: 100%; height: 2px; background: #e0e0e0; transform: translateY(-50%); z-index: 1;
+ }
+        .progress-step { width: 30px; height: 30px; border-radius: 50%; background-color: #e0e0e0; color: #888;
+ display: flex; justify-content: center; align-items: center; font-weight: bold; position: relative; z-index: 2; border: 3px solid #fff;
+ }
+        .progress-step.active { background-color: #264796; color: white;
+ border-color: #264796;}
+        .form-navigation { margin-top: 30px; display: flex; justify-content: space-between;
+ }
+        .form-group { margin-bottom: 20px;
+ }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600;
+ }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;
+ box-sizing: border-box; }
+        .btn-step { background-color: #264796; color: white; padding: 12px 25px;
+ border: none; border-radius: 5px; cursor: pointer; font-size: 1em; }
+        .btn-step.prev { background-color: #6c757d;
+ }
+        .error-message { color: #dc3545; font-size: 0.875rem; margin-top: 5px;
+ }
+        .btn-secondary { background-color: #6c757d; border-color: #6c757d; color: white; padding: 8px 12px;
+ border-radius: 5px; cursor: pointer; border: none; }
     </style>
 </head>
 <body>
@@ -37,17 +57,18 @@
         </div>
 
         <form id="portfolioRegistrationForm" enctype="multipart/form-data">
-            <input type="hidden" id="prtfCd" name="prtfCd">
+   <input type="hidden" id="prtfCd" name="prtfCd">
 
             <div class="form-step active" id="step1">
                 <h4>기본 정보 입력</h4>
                 <div class="form-group">
                     <label for="prtfTtl">포트폴리오 제목 <span style="color:red;">*</span></label>
-                    <input type="text" id="prtfTtl" name="prtfTtl" class="form-control" required>
+              <input type="text" id="prtfTtl" name="prtfTtl" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label for="prtfCn">포트폴리오 내용 <span style="color:red;">*</span></label>
-                    <textarea id="prtfCn" name="prtfCn" class="form-control" rows="8" style="height:300px;" required></textarea>
+                    <textarea id="prtfCn" name="prtfCn" class="form-control" rows="8" style="height:300px;"
+ required></textarea>
                 </div>
                 <div class="form-navigation">
                     <span></span><button type="button" class="btn-step next" data-step="1">다음</button>
@@ -55,34 +76,37 @@
             </div>
 
             <div class="form-step" id="step2">
-                <h4>카테고리 및 태그 설정</h4>
-                <div class="form-group">
+ <div class="form-group">
                     <label>카테고리 <span style="color:red;">*</span></label>
                     <div id="category-rows-container"></div>
-                    <button type="button" id="add-category-row-btn" class="btn btn-secondary mt-2">+ 카테고리 추가</button>
+                    <button type="button" 
+ id="add-category-row-btn" class="btn btn-secondary mt-2">+ 카테고리 추가</button>
                     <div class="error-message" id="categoryError"></div>
                 </div>
                 <div class="form-group">
                     <label for="tags">태그 (쉼표로 구분)</label>
-                    <input type="text" id="tags" name="tags" class="form-control">
+                 <input type="text" id="tags" name="tags" class="form-control">
                 </div>
                 <div class="form-navigation">
                     <button type="button" class="btn-step prev" data-step="2">이전</button>
                     <button type="button" class="btn-step next" data-step="2">다음</button>
-                </div>
+            </div>
             </div>
 
             <div class="form-step" id="step3">
                 <h4>대표 이미지 등록</h4>
                 <div class="form-group">
                     <label for="portfolioImage">대표 이미지 <span style="color:red;">*</span></label>
-                    <input type="file" id="portfolioImage" name="portfolioImage" class="form-control" accept="image/*" required>
-                    <div id="image-preview" style="margin-top:15px; width: 150px; height: 150px; border: 1px solid #ddd; background-color: #f8f8f8; display: flex; align-items: center; justify-content: center; color: #aaa;">
+           <input type="file" id="portfolioImage" name="portfolioImage" class="form-control" accept="image/*" required>
+                    <div id="image-preview" style="margin-top:15px;
+ width: 150px; height: 150px; border: 1px solid #ddd; background-color: #f8f8f8; display: flex; align-items: center; justify-content: center;
+ color: #aaa;">
                         <span>이미지 없음</span>
                     </div>
                 </div>
                 <div class="form-navigation">
-                    <button type="button" class="btn-step prev" data-step="3">이전</button>
+                    <button 
+ type="button" class="btn-step prev" data-step="3">이전</button>
                     <button type="button" class="btn-step submit">등록 완료</button>
                 </div>
             </div>
@@ -95,175 +119,180 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
-            // --- 전역 변수 및 상태 관리 ---
+         // --- 전역 변수 및 상태 관리 ---
             let currentStep = 1;
 
             // --- UI 제어 함수 ---
             function showStep(step) {
                 $('.form-step').removeClass('active');
                 $('#step' + step).addClass('active');
-                $('.progress-step').removeClass('active');
+          $('.progress-step').removeClass('active');
                 for (let i = 1; i <= step; i++) {
                     $('.progress-step[data-step=' + i + ']').addClass('active');
-                }
+ }
             }
 
             // --- 단계별 AJAX 요청 처리 ---
             $('.btn-step.next').on('click', function() {
                 let isValid = true;
                 let step = $(this).data('step');
-                let ajaxOptions = {
+                let ajaxOptions 
+ = {
                     type: 'POST',
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        if(response.success) {
+              if(response.success) {
                             if(response.prtfCd) {
                                 $('#prtfCd').val(response.prtfCd);
                             }
                             currentStep++;
                             showStep(currentStep);
                         } else {
-                            alert('오류: ' + response.message);
+                  alert('오류: ' + response.message);
                         }
                     },
                     error: function() {
-                        alert('서버 오류가 발생했습니다.');
+                     alert('서버 오류가 발생했습니다.');
                     }
                 };
 
                 if (step === 1) {
-                    if (!$('#prtfTtl').val() || !$('#prtfCn').val()) {
+                    if (!$('#prtfTtl').val() ||
+ !$('#prtfCn').val()) {
                         alert('제목과 내용을 모두 입력해주세요.');
-                        isValid = false;
+ isValid = false;
                     } else {
                         ajaxOptions.url = '/enter/portfolio/add/step1';
-                        ajaxOptions.data = new FormData($('#portfolioRegistrationForm')[0]);
+ ajaxOptions.data = new FormData($('#portfolioRegistrationForm')[0]);
                     }
                 } else if (step === 2) {
                     const categoryCodes = $('input.final-category-id').map((_, el) => $(el).val()).get().filter(c => c);
-                    if (categoryCodes.length === 0) {
+ if (categoryCodes.length === 0) {
                         alert('카테고리는 최소 하나 이상 선택해야 합니다.');
-                        isValid = false;
+ isValid = false;
                     } else {
                         ajaxOptions.url = '/enter/portfolio/add/step2';
-                        let formData = new FormData();
+ let formData = new FormData();
                         categoryCodes.forEach(code => formData.append('categoryCodes[]', code));
                         formData.append('tags', $('#tags').val());
                         ajaxOptions.data = formData;
-                    }
+ }
                 }
                 
                 if (isValid) {
                     $.ajax(ajaxOptions);
-                }
+ }
             });
-
-            $('.btn-step.prev').on('click', function() {
+ $('.btn-step.prev').on('click', function() {
                 currentStep--;
                 showStep(currentStep);
             });
-
-            $('.btn-step.submit').on('click', function() {
+ $('.btn-step.submit').on('click', function() {
                 if ($('#portfolioImage')[0].files.length === 0) {
                     alert('대표 이미지를 등록해주세요.');
                     return;
                 }
                 
-                let fileData = new FormData();
+    let fileData = new FormData();
                 fileData.append('portfolioImage', $('#portfolioImage')[0].files[0]);
 
                 $.ajax({
                     url: '/enter/portfolio/add/step3',
                     type: 'POST',
-                    data: fileData,
+         data: fileData,
                     processData: false,
                     contentType: false,
                     success: function(res) {
                         if(res.success) {
+                            // 썸네일 업로드 성공 후 최종 등록 API 호출
                             $.ajax({
                                 url: '/enter/portfolio/add/complete',
                                 type: 'POST',
+                                data: JSON.stringify({ prtfCd: $('#prtfCd').val() }), // prtfCd를 넘겨줌 (세션에서도 가져갈 수 있음)
+                                contentType: 'application/json', // JSON 타입으로 변경
                                 success: function(finalRes) {
                                     if(finalRes.success) {
-                                        alert('포트폴리오가 성공적으로 등록되었습니다.');
+                                  alert('포트폴리오가 성공적으로 등록되었습니다.');
                                         window.location.href = finalRes.redirectUrl;
-                                    } else {
+ } else {
                                         alert('최종 등록 실패: ' + finalRes.message);
-                                    }
+ }
                                 },
-                                error: function() { alert('최종 등록 중 서버 오류 발생'); }
+                                error: function() { alert('최종 등록 중 서버 오류 발생');
+ }
                             });
-                        } else {
+ } else {
                             alert('파일 업로드 실패: ' + res.message);
-                        }
+ }
                     },
-                    error: function() { alert('파일 업로드 중 서버 오류 발생'); }
+                    error: function() { alert('파일 업로드 중 서버 오류 발생');
+ }
                 });
             });
-
-            // --- 카테고리 관련 스크립트 ---
+ // --- 카테고리 관련 스크립트 ---
             const $rowsContainer = $('#category-rows-container');
-
-            function createCategoryRowHtml() {
+ function createCategoryRowHtml() {
                 const uniqueId = new Date().getTime();
-                return `
+ return `
                     <div class="category-row-new" style="display: flex; gap: 10px; margin-bottom: 10px;">
                         <select class="form-control category-select" data-level="1" data-row-id="${uniqueId}"><option value="">1차 선택</option></select>
                         <select class="form-control category-select" data-level="2" data-row-id="${uniqueId}" style="width: 30%; display:none;"><option value="">2차 선택</option></select>
-                        <select class="form-control category-select" data-level="3" data-row-id="${uniqueId}" style="width: 30%; display:none;"><option value="">3차 선택</option></select>
+         <select class="form-control category-select" data-level="3" data-row-id="${uniqueId}" style="width: 30%; display:none;"><option value="">3차 선택</option></select>
                         <input type="hidden" class="final-category-id" name="categoryCodes">
                         <button type="button" class="btn btn-danger remove-category-row-btn" style="background-color:#dc3545; border:none; color:white; padding: 5px 10px;">삭제</button>
-                    </div>`;
+               </div>`;
             }
 
             function populateDropdown($select, categories) {
                 const level = $select.data('level');
+ if ($select.hasClass("select2-hidden-accessible")) { $select.select2('destroy'); }
                 $select.html(`<option value="">${level}차 선택</option>`).show();
                 if (categories && categories.length > 0) {
                     categories.forEach(cat => $select.append(`<option value="${cat.ctgryId}">${cat.ctgryNm}</option>`));
-                }
+ }
             }
 
             function addNewCategoryRow() {
                 $rowsContainer.append(createCategoryRowHtml());
-                const $newFirstDropdown = $rowsContainer.find('.category-row-new:last .category-select[data-level="1"]');
+ const $newFirstDropdown = $rowsContainer.find('.category-row-new:last .category-select[data-level="1"]');
                 $.get('/api/categories', function(categories) {
                     populateDropdown($newFirstDropdown, categories);
                 });
-            }
+ }
 
             $('#add-category-row-btn').on('click', addNewCategoryRow);
-            $rowsContainer.on('click', '.remove-category-row-btn', function() {
+ $rowsContainer.on('click', '.remove-category-row-btn', function() {
                 $(this).closest('.category-row-new').remove();
             });
-
-            $rowsContainer.on('change', '.category-select', function() {
+ $rowsContainer.on('change', '.category-select', function() {
                 const $this = $(this), selectedValue = $this.val(), level = $this.data('level'), rowId = $this.data('row-id');
                 const $hiddenInput = $this.closest('.category-row-new').find('.final-category-id');
                 for (let i = level + 1; i <= 3; i++) {
                     $(`select[data-row-id="${rowId}"][data-level="${i}"]`).html('').hide();
-                }
+   }
                 if (selectedValue) {
                     $hiddenInput.val(selectedValue);
                     if (level < 3) {
-                        $.get('/api/categories', { parentId: selectedValue }, function(subCategories) {
+                        $.get('/api/categories', 
+ { parentId: selectedValue }, function(subCategories) {
                             populateDropdown($(`select[data-row-id="${rowId}"][data-level="${level + 1}"]`), subCategories);
                         });
                     }
                 } else {
-                    $hiddenInput.val(level > 1 ? $(`select[data-row-id="${rowId}"][data-level="${level-1}"]`).val() : '');
-                }
+  $hiddenInput.val(level > 1 ? $(`select[data-row-id="${rowId}"][data-level="${level-1}"]`).val() : '');
+ }
             });
             
-            addNewCategoryRow(); // 페이지 로드 시 기본으로 한 행 추가
+            addNewCategoryRow();
+ // 페이지 로드 시 기본으로 한 행 추가
 
             // --- 이미지 미리보기 스크립트 ---
             $('#portfolioImage').on('change', function(event) {
                 const preview = $('#image-preview');
                 preview.empty();
                 const file = event.target.files[0];
-                if (file) {
+        if (file) {
                     const reader = new FileReader();
                     reader.onload = (e) => preview.html(`<img src="${e.target.result}" alt="New Preview" style="width:100%; height:100%; object-fit:cover;">`);
                     reader.readAsDataURL(file);
@@ -271,9 +300,8 @@
                     preview.html('<span>이미지 없음</span>');
                 }
             });
-        });
+ });
     </script>
 </th:block>
-
 </body>
 </html>

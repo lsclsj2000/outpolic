@@ -91,4 +91,6 @@ public interface PortfolioMapper {
 	List<EnterOutsourcing> findLinkedOutsourcingsByOsCd(String osCd);
 
 	List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query);
+
+	List<EnterOutsourcing> findUnlinkedOutsourcings(String prtfCd, String entCd, String query);
 }

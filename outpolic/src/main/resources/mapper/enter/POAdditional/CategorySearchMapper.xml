@@ -15,7 +15,7 @@
     FROM
         category
     WHERE
-        ctgry_up_id IS NULL OR ctgry_up_id = '-'
+        ctgry_up_id IS NULL OR ctgry_up_id = ''
 </select>
 
 <select id="findSubCategories" parameterType="String" resultType="outpolic.enter.POAddtional.domain.CategorySearchDto">
@@ -37,4 +37,32 @@
     WHERE
         ctgry_id = #{ctgryId}
 </select>
+
+    <select id="findCategoryPath" resultType="outpolic.enter.POAddtional.domain.CategorySearchDto">
+        SELECT ctgry_id as ctgryId, ctgry_nm as ctgryNm, ctgry_up_id as ctgryUpId
+        FROM category
+        WHERE ctgry_id = #{ctgryId}
+        
+        UNION ALL
+        
+        SELECT c1.ctgry_id, c1.ctgry_nm, c1.ctgry_up_id
+        FROM category c1
+        JOIN category c2 ON c1.ctgry_id = c2.ctgry_up_id
+        WHERE c2.ctgry_id = #{ctgryId} AND c1.ctgry_up_id IS NULL OR c1.ctgry_up_id = ''
+
+        UNION ALL
+
+        SELECT c0.ctgry_id, c0.ctgry_nm, c0.ctgry_up_id
+        FROM category c0
+        JOIN category c1 ON c0.ctgry_id = c1.ctgry_up_id
+        JOIN category c2 ON c1.ctgry_id = c2.ctgry_up_id
+        WHERE c2.ctgry_id = #{ctgryId} AND (c0.ctgry_up_id IS NULL OR c0.ctgry_up_id = '')
+        
+        ORDER BY
+            CASE
+                WHEN ctgry_up_id IS NULL OR ctgry_up_id = '' THEN 1
+                ELSE 2
+            END, ctgry_id;
+        </select>
+
 </mapper>
