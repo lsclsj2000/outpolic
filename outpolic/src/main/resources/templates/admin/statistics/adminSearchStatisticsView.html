@@ -12,12 +12,52 @@
     <section class="content-main">
         <div class="content-header">
             <h2 class="content-title">주간 검색어 통계</h2>
-            <div class="d-flex">
-                <input type="date" id="statistics-date-picker" class="form-control" style="width: 200px; margin-right: 10px;">
-                <button id="search-statistics-btn" class="btn btn-primary">조회</button>
+        </div>
+		<div class="card mb-4 search-filter-card">
+            <div class="card-body search-filter-body">
+                <div class="table-responsive">
+                    <table class="search-filter-table">
+						<tbody>
+							<tr>
+								<th>기본검색</th>
+								<td>
+									<select class="form-select" style="width: 120px;">
+										<option>제목</option>
+										<option>내용</option>
+										<option>문의코드</option>
+										<option>작성자</option>
+									</select>
+									<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+								</td>
+							</tr>
+							<tr>
+								<th>기간검색</th>
+								<td>
+									<select class="form-select" style="width: 120px;">
+										<option>작성일자</option>
+										<option>수정일자</option>
+									</select>
+									<input type="date" class="form-control" style="width: 150px;" />
+									<span> ~ </span>
+									<input type="date" class="form-control" style="width: 150px;" />
+									<button type="button" class="btn btn-sm btn-light">오늘</button>
+									<button type="button" class="btn btn-sm btn-light">어제</button>
+									<button type="button" class="btn btn-sm btn-light">일주일</button>
+									<button type="button" class="btn btn-sm btn-light">지난달</button>
+									<button type="button" class="btn btn-sm btn-light">1개월</button>
+									<button type="button" class="btn btn-sm btn-light">3개월</button>
+									<button type="button" class="btn btn-sm btn-light">전체</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="search-filter-buttons">
+						<button type="button" class="btn btn-primary">검색</button>
+						<button type="button" class="btn btn-secondary">초기화</button>
+					</div>
+                </div>
             </div>
         </div>
-
         <div class="card mb-4">
             <div class="card-header">
                 <h5>검색어 TOP 10</h5>

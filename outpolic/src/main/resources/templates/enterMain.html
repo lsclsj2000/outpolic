@@ -111,26 +111,6 @@
 							<!-- 섹션 제목 부분 -->
 					        <div class="section-title style-2 wow animate__animated animate__fadeIn">
 					            <h3>인기있는 외주</h3>
-					            <ul class="nav nav-tabs links" style="font-size: 14px;">
-									<li class="nav-item" role="presentation">
-										<button class="nav-link active" id="portfolio-nav-tab-one"
-											data-bs-toggle="tab" data-bs-target="#portfolio-tab-one"
-											type="button" role="tab" aria-controls="portfolio-tab-one"
-											aria-selected="true">전체보기</button>
-									</li>
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="portfolio-nav-tab-two"
-											data-bs-toggle="tab" data-bs-target="#portfolio-tab-two"
-											type="button" role="tab" aria-controls="portfolio-tab-two"
-											aria-selected="false">가장 최신순</button>
-									</li>
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="portfolio-nav-tab-three"
-											data-bs-toggle="tab" data-bs-target="#portfolio-tab-three"
-											type="button" role="tab" aria-controls="portfolio-tab-three"
-											aria-selected="false">가장 오래된순</button>
-									</li>
-					            </ul>
 					        </div> 
 					        <div th:if="${not #lists.isEmpty(findOSList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
 						        <div th:each="content, iterStat : ${findOSList}" class="slider-item">
@@ -189,26 +169,6 @@
 							<!-- 섹션 제목 부분 -->
 					        <div class="section-title style-2 wow animate__animated animate__fadeIn">
 					            <h3>인기있는 포트폴리오</h3>
-					            <ul class="nav nav-tabs links" style="font-size: 14px;">
-									<li class="nav-item" role="presentation">
-										<button class="nav-link active" id="portfolio-nav-tab-one"
-											data-bs-toggle="tab" data-bs-target="#portfolio-tab-one"
-											type="button" role="tab" aria-controls="portfolio-tab-one"
-											aria-selected="true">전체보기</button>
-									</li>
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="portfolio-nav-tab-two"
-											data-bs-toggle="tab" data-bs-target="#portfolio-tab-two"
-											type="button" role="tab" aria-controls="portfolio-tab-two"
-											aria-selected="false">가장 최신순</button>
-									</li>
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="portfolio-nav-tab-three"
-											data-bs-toggle="tab" data-bs-target="#portfolio-tab-three"
-											type="button" role="tab" aria-controls="portfolio-tab-three"
-											aria-selected="false">가장 오래된순</button>
-									</li>
-					            </ul>
 					        </div> 
 					        <div th:if="${not #lists.isEmpty(findPOList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
 					            <div th:each="content, iterStat : ${findPOList}" class="slider-item">
