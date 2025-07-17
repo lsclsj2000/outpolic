@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.admin.statistics.mapper.AdminViewStatMapper">
+
+    <!-- 포트폴리오 기간별 조회수 -->
+    <select id="getPortfolioViewStatsByPeriod" resultType="outpolic.admin.statistics.domain.AdminViewStatDTO">
+        SELECT
+            cl.cl_cd        AS clCd,
+            p.prtf_cd       AS prtfCode,
+            p.prtf_ttl      AS prtfTtl,
+            e.ent_nm        AS entName,
+            IFNULL(cat_names.categoryNames, '미지정') AS ctgryName, -- ✨ 합쳐진 카테고리 이름 사용
+            p.prtf_reg_ymdt AS regDate,
+            pv.period_view_count AS viewCount
+        FROM
+            (
+                SELECT cl_cd, SUM(tdv_view_cnt) AS period_view_count
+                FROM today_view
+                WHERE tdv_tot_ymd BETWEEN #{startDate} AND #{endDate}
+                GROUP BY cl_cd
+            ) AS pv
+        JOIN content_list cl ON pv.cl_cd = cl.cl_cd
+        JOIN portfolio p ON cl.cntd_cd = p.prtf_cd
+        JOIN enterprise e ON p.ent_cd = e.ent_cd
+        -- ✨✨ 핵심 변경: 카테고리 이름을 미리 합치는 서브쿼리를 JOIN 합니다 ✨✨
+        LEFT JOIN (
+            SELECT cm.cl_cd, GROUP_CONCAT(c.ctgry_nm SEPARATOR ', ') AS categoryNames
+            FROM category_mapping cm
+            JOIN category c ON cm.ctgry_id = c.ctgry_id
+            GROUP BY cm.cl_cd
+        ) AS cat_names ON cl.cl_cd = cat_names.cl_cd
+        WHERE
+            cl.cntd_cd LIKE 'PO%'
+        ORDER BY
+            viewCount DESC
+        LIMIT 20
+    </select>
+
+    <!-- 포트폴리오 전체 누적 조회수 -->
+    <select id="getPortfolioTotalViewStats" resultType="outpolic.admin.statistics.domain.AdminViewStatDTO">
+        SELECT
+            cl.cl_cd        AS clCd,
+            p.prtf_cd       AS prtfCode,
+            p.prtf_ttl      AS prtfTtl,
+            e.ent_nm        AS entName,
+            IFNULL(cat_names.categoryNames, '미지정') AS ctgryName, -- ✨ 합쳐진 카테고리 이름 사용
+            p.prtf_reg_ymdt AS regDate,
+            tv.tv_view_cnt  AS viewCount
+        FROM
+            total_view tv
+        JOIN content_list cl ON tv.cl_cd = cl.cl_cd
+        JOIN portfolio p ON cl.cntd_cd = p.prtf_cd
+        JOIN enterprise e ON p.ent_cd = e.ent_cd
+        -- ✨✨ 핵심 변경: 카테고리 이름을 미리 합치는 서브쿼리를 JOIN 합니다 ✨✨
+        LEFT JOIN (
+            SELECT cm.cl_cd, GROUP_CONCAT(c.ctgry_nm SEPARATOR ', ') AS categoryNames
+            FROM category_mapping cm
+            JOIN category c ON cm.ctgry_id = c.ctgry_id
+            GROUP BY cm.cl_cd
+        ) AS cat_names ON cl.cl_cd = cat_names.cl_cd
+        WHERE
+            cl.cntd_cd LIKE 'PO%'
+        ORDER BY
+            viewCount DESC
+        LIMIT 20
+    </select>
+    
+    <!-- 외주 기간별 조회수 (유사 구조) -->
+    <select id="getOutsourcingViewStatsByPeriod" resultType="outpolic.admin.statistics.domain.AdminViewStatDTO">
+        SELECT
+            cl.cl_cd        AS clCd,
+            o.os_cd         AS osCode,
+            o.os_ttl        AS osTtl,
+            e.ent_nm        AS entName,
+            c.ctgry_nm      AS ctgryName,
+            o.os_reg_ymdt   AS regDate,
+            pv.period_view_count AS viewCount -- 서브쿼리의 집계된 조회수 사용
+        FROM
+            (
+                -- 1. 먼저 기간 내 조회수를 콘텐츠별로 완벽하게 합산합니다.
+                SELECT
+                    cl_cd,
+                    SUM(tdv_view_cnt) AS period_view_count
+                FROM
+                    today_view
+                WHERE
+                    tdv_tot_ymd BETWEEN #{startDate} AND #{endDate}
+                GROUP BY
+                    cl_cd
+            ) AS pv -- period_views의 약자
+        -- 2. 집계된 결과를 다른 테이블과 JOIN하여 상세 정보를 가져옵니다.
+        JOIN content_list cl ON pv.cl_cd = cl.cl_cd
+        JOIN outsourcing o ON cl.cntd_cd = o.os_cd
+        JOIN enterprise e ON o.ent_cd = e.ent_cd
+        JOIN category c ON o.ctgry_id = c.ctgry_id
+        WHERE
+            cl.cntd_cd LIKE 'OS%'
+        ORDER BY
+            viewCount DESC
+        LIMIT 20
+    </select>
+
+    <!-- 외주 전체 누적 조회수 (유사 구조) -->
+    <select id="getOutsourcingTotalViewStats" resultType="outpolic.admin.statistics.domain.AdminViewStatDTO">
+        SELECT
+            cl.cl_cd        AS clCd,
+            o.os_cd         AS osCode,
+            o.os_ttl        AS osTtl,
+            e.ent_nm        AS entName,
+            c.ctgry_nm      AS ctgryName,
+            o.os_reg_ymdt   AS regDate,
+            tv.tv_view_cnt  AS viewCount
+        FROM
+            total_view tv
+        JOIN content_list cl ON tv.cl_cd = cl.cl_cd
+        JOIN outsourcing o ON cl.cntd_cd = o.os_cd
+        JOIN enterprise e ON o.ent_cd = e.ent_cd
+        JOIN category c ON o.ctgry_id = c.ctgry_id
+        WHERE
+            cl.cntd_cd LIKE 'OS%'
+        ORDER BY
+            viewCount DESC
+        LIMIT 20
+    </select>
+</mapper>

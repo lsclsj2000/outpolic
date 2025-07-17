@@ -82,70 +82,70 @@
 
 <!-- 이 페이지 전용 JavaScript 코드 추가 -->
 <script layout:fragment="jsScript">
-document.addEventListener('DOMContentLoaded', () => {
-
-    // 1. UI 요소 가져오기
-    const datePicker = document.getElementById('statistics-date-picker');
-    const searchBtn = document.getElementById('search-statistics-btn');
-    const tableBody = document.getElementById('search-statistics-body');
-
-    // 오늘 날짜를 'yyyy-MM-dd' 형식의 문자열로 반환하는 헬퍼 함수
-    const getTodayString = () => new Date().toISOString().split('T')[0];
-
-    // 2. 통계 데이터를 렌더링하는 핵심 함수
-    const renderStatistics = async (targetDate) => {
-        // 로딩 중임을 시각적으로 표시 (선택 사항)
-        tableBody.innerHTML = '<tr><td colspan="3" class="text-center">데이터를 불러오는 중...</td></tr>';
-
-        try {
-            // 백엔드 API 호출
-            const response = await fetch(`/admin/api/search-statistics?targetDate=${targetDate}`);
-            
-            // 응답이 성공적이지 않으면 오류 처리
-            if (!response.ok) {
-                throw new Error(`API 요청 실패: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            let html = '';
-            // 백엔드에서 받은 데이터가 비어있거나 배열이 아닌 경우
-            if (!data || data.length === 0) {
-                html = '<tr><td colspan="3" class="text-center">해당 주간의 검색어 통계 데이터가 없습니다.</td></tr>';
-            } else {
-                // 데이터를 기반으로 테이블 행(row)들을 생성
-                data.forEach((item, index) => {
-                    html += `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${item.stTerm}</td>
-                            <td>${item.stCnt}회</td>
-                        </tr>
-                    `;
-                });
-            }
-            // 완성된 HTML을 테이블 body에 삽입
-            tableBody.innerHTML = html;
-
-        } catch (error) {
-            console.error('통계 데이터 로딩 중 오류 발생:', error);
-            tableBody.innerHTML = '<tr><td colspan="3" class="text-center">데이터를 불러오는 중 오류가 발생했습니다.</td></tr>';
-        }
-    };
-
-    // 3. 이벤트 리스너 설정
-    searchBtn.addEventListener('click', () => {
-        const selectedDate = datePicker.value || getTodayString();
-        renderStatistics(selectedDate);
-    });
-
-    // 4. 페이지 최초 로딩 시 실행
-    // 날짜 선택기를 오늘 날짜로 초기화
-    datePicker.value = getTodayString();
-    // 오늘 날짜를 기준으로 통계 데이터를 즉시 조회하여 화면에 표시
-    renderStatistics(datePicker.value);
-
-});
+	document.addEventListener('DOMContentLoaded', () => {
+	
+	    // 1. UI 요소 가져오기
+	    const datePicker = document.getElementById('statistics-date-picker');
+	    const searchBtn = document.getElementById('search-statistics-btn');
+	    const tableBody = document.getElementById('search-statistics-body');
+	
+	    // 오늘 날짜를 'yyyy-MM-dd' 형식의 문자열로 반환하는 헬퍼 함수
+	    const getTodayString = () => new Date().toISOString().split('T')[0];
+	
+	    // 2. 통계 데이터를 렌더링하는 핵심 함수
+	    const renderStatistics = async (targetDate) => {
+	        // 로딩 중임을 시각적으로 표시 (선택 사항)
+	        tableBody.innerHTML = '<tr><td colspan="3" class="text-center">데이터를 불러오는 중...</td></tr>';
+	
+	        try {
+	            // 백엔드 API 호출
+	            const response = await fetch(`/admin/api/search-statistics?targetDate=${targetDate}`);
+	            
+	            // 응답이 성공적이지 않으면 오류 처리
+	            if (!response.ok) {
+	                throw new Error(`API 요청 실패: ${response.status}`);
+	            }
+	
+	            const data = await response.json();
+	
+	            let html = '';
+	            // 백엔드에서 받은 데이터가 비어있거나 배열이 아닌 경우
+	            if (!data || data.length === 0) {
+	                html = '<tr><td colspan="3" class="text-center">해당 주간의 검색어 통계 데이터가 없습니다.</td></tr>';
+	            } else {
+	                // 데이터를 기반으로 테이블 행(row)들을 생성
+	                data.forEach((item, index) => {
+	                    html += `
+	                        <tr>
+	                            <td>${index + 1}</td>
+	                            <td>${item.stTerm}</td>
+	                            <td>${item.stCnt}회</td>
+	                        </tr>
+	                    `;
+	                });
+	            }
+	            // 완성된 HTML을 테이블 body에 삽입
+	            tableBody.innerHTML = html;
+	
+	        } catch (error) {
+	            console.error('통계 데이터 로딩 중 오류 발생:', error);
+	            tableBody.innerHTML = '<tr><td colspan="3" class="text-center">데이터를 불러오는 중 오류가 발생했습니다.</td></tr>';
+	        }
+	    };
+	
+	    // 3. 이벤트 리스너 설정
+	    searchBtn.addEventListener('click', () => {
+	        const selectedDate = datePicker.value || getTodayString();
+	        renderStatistics(selectedDate);
+	    });
+	
+	    // 4. 페이지 최초 로딩 시 실행
+	    // 날짜 선택기를 오늘 날짜로 초기화
+	    datePicker.value = getTodayString();
+	    // 오늘 날짜를 기준으로 통계 데이터를 즉시 조회하여 화면에 표시
+	    renderStatistics(datePicker.value);
+	
+	});
 </script>
 	
 </html>
