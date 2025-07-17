@@ -27,10 +27,12 @@ function isValidTelNo(TelNo) {
 
 //이름 검사(한글만)
 function isValidName(name) {
-    const pattern = /^[가-힣]{2,20}$/;
+    const pattern = /^[가-힣]{2,6}$/;
     return pattern.test(name);
 }
+
+
 function isValidNickname(nickname) {
-    const pattern = /^[가-힣a-zA-Z]{2,20}$/;
+    const pattern = /^[가-힣a-zA-Z]{2,15}$/;
     return pattern.test(nickname);
 }

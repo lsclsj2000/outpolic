@@ -22,7 +22,7 @@ import outpolic.common.domain.Member;
 import outpolic.user.inquiry.domain.UserInquiry;
 import outpolic.user.inquiry.service.UserInquiryService;
 import outpolic.user.login.mapper.UserLoginMapper;
-import outpolic.user.mypage.dto.OutsourcingReviewDTO;
+import outpolic.common.dto.OutsourcingReviewDTO;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.service.UserMypageEditService;
 import outpolic.user.review.dto.ReviewDTO;
@@ -55,6 +55,7 @@ public class UserMypageController {
     		return "user/mypage/alert";
 
  		}
+ 		//회원정보
  	    UserInfoDTO userInfo = userMypageEditService.getUserInfoByCode(memberCode);
  	    model.addAttribute("userInfo", userInfo);
  	    

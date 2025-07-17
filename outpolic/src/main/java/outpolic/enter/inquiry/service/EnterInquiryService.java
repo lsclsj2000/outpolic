@@ -28,4 +28,7 @@ public interface EnterInquiryService {
 	
 	// 문의 목록 조회
 	List<EnterInquiry> getEnterInquiryList();
+	
+	//특정 인물 문의 목록 조회
+	List<EnterInquiry> getEnterInquiryListByCode(String memberCode);
 }
