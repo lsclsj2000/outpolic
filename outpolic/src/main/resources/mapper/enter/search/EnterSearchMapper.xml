@@ -185,6 +185,7 @@
         <result column="ent_nm"        property="enterName"/>
         <result column="os_reg_ymdt"   property="registrationDate"/>
         <result column="os_amt"        property="price"/>
+        <result column="cl_cd"        property="clCode"/>
     </resultMap>
 
     <!-- [핵심] 카테고리 ID로 외주(Outsourcing) 콘텐츠 목록을 조회하는 쿼리 -->
@@ -194,11 +195,17 @@
 	        o.os_ttl,
 	        o.os_reg_ymdt,
 	        o.os_amt,
-	        e.ent_nm
+	        e.ent_nm,
+	        cl.cl_cd,
+	        CASE WHEN bm.bm_cd IS NOT NULL THEN 1 ELSE 0 END AS isBookmarked
 	    FROM
 	        outsourcing o
 	    LEFT JOIN
 	        enterprise e ON o.ent_cd = e.ent_cd
+	    LEFT JOIN
+	    	content_list cl on o.os_cd = cl.cntd_cd
+	    LEFT JOIN 
+	    	bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
 	    WHERE
 	        o.ctgry_id LIKE CONCAT(#{categoryId}, '%')
 	    ORDER BY
