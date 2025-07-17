@@ -2,13 +2,20 @@ package outpolic.admin.category.controller;
 
 
 import java.util.List;
-import org.springframework.ui.Model;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.category.domain.AdminCategory;
+import outpolic.admin.category.domain.AdminCategorySaveRequest;
 import outpolic.admin.category.service.AdminCategoryService;
 
 @Controller
@@ -18,15 +25,32 @@ public class AdminCategoryController {
 	
 	private final AdminCategoryService adminCategoryService;
 	
-	@GetMapping("/addCategory")
-	public String addCategoryView() {
-		return "admin/category/adminCategoryAddView";
-	}
 	
-	@GetMapping("/deleteCategory")
-	public String deleteCategoryView() {
-		return "admin/category/adminCategoryeDeleteView";
-	}
+	@PostMapping("/api/category/save")
+    @ResponseBody
+    public ResponseEntity<String> saveCategory(@RequestBody AdminCategorySaveRequest request) {
+        try {
+            switch (request.getMode()) {
+                case "addLarge":
+                case "addChild":
+                    adminCategoryService.addCategory(request);
+                    return ResponseEntity.ok("카테고리가 성공적으로 추가되었습니다.");
+                
+                case "edit":
+                    adminCategoryService.updateCategory(request);
+                    return ResponseEntity.ok("카테고리가 성공적으로 수정되었습니다.");
+                
+                default:
+                    return ResponseEntity.badRequest().body("알 수 없는 요청 모드입니다.");
+            }
+        } catch (Exception e) {
+            // 운영에서는 e.printStackTrace() 대신 로그 라이브러리(slf4j) 사용 권장
+            e.printStackTrace(); 
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("작업 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+	
+	
 	
 	@GetMapping("/selectCategory")
 	public String selectCategoryView(Model model) {
@@ -38,9 +62,5 @@ public class AdminCategoryController {
 		return "admin/category/adminCategorySelectView";
 	}
 	
-	@GetMapping("/editCategory")
-	public String editCategoryView() {
-		return "admin/category/adminCategoryEditView";
-	}
 
 }
