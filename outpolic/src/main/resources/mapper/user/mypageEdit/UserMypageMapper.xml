@@ -23,5 +23,6 @@
         INNER JOIN content_list cl ON cl.cl_cd = ocd.cl_cd
         INNER JOIN outsourcing o ON cl.cntd_cd = o.os_cd
         WHERE oc.mbr_cd = #{memberCode}
+        limit 5;
     </select>
  </mapper>
