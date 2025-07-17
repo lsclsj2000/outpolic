@@ -3,25 +3,29 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.admin.login.mapper.AdminLoginMapper">
-	<resultMap type="outpolic.common.domain.Member" id="AdminLoginResultMap">
-		<id column="mbr_id" property="memberId"/>
- 		<result column="mbr_pw" property="memberPw"/>
- 		<result column="grd_cd" property="gradeCode"/>
- 		<result column="mbr_cd" property="memberCode"/>
- 		<result column="stc_cd" property="statusCode"/>
- 		<result column="mbr_last_lgn_ymdt" property="memberLastLoginYmdt"/>
+	<resultMap type="outpolic.admin.login.DTO.AdminLoginDTO" id="AdminLoginResultMap">
+		<result property="adminCode" column="adm_cd" />
+		<association property="memberInfo" javaType="outpolic.common.domain.Member">
+			<id column="mbr_id" property="memberId"/>
+	 		<result column="mbr_pw" property="memberPw"/>
+	 		<result column="grd_cd" property="gradeCode"/>
+	 		<result column="mbr_cd" property="memberCode"/>
+	 		<result column="stc_cd" property="statusCode"/>
+	 		<result column="mbr_last_lgn_ymdt" property="memberLastLoginYmdt"/>
+	 	</association>
 	</resultMap>
 
 	<select id="findAdminMemberById" resultMap="AdminLoginResultMap">
-	    SELECT mbr_id, mbr_pw, grd_cd, mbr_cd, stc_cd
-	    FROM member 
-	    WHERE mbr_id = #{memberId};
+	    SELECT m.mbr_id, m.mbr_pw, m.grd_cd, m.mbr_cd, m.stc_cd, ad.adm_cd
+	    FROM member m inner join admin ad
+	    on m.mbr_cd = ad.mbr_cd
+	    WHERE mbr_id = #{memberInfo.memberId};
 	</select>
 	
-	<update id="updateAdminMemberLoginDate" parameterType="Member">
+	<update id="updateAdminMemberLoginDate" parameterType="AdminLoginDTO">
 		UPDATE member
 		set mbr_last_lgn_ymdt = NOW()
-		where mbr_cd = #{memberCode};
+		where mbr_cd = #{memberInfo.memberCode};
 	</update>
 	
 <!-- 	<insert id="insertFailHistory" parameterType="LoginFailHistoryDTO">

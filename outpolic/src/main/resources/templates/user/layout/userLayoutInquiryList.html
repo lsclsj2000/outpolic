@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+	<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
@@ -22,7 +22,7 @@
 	
 	<main class="main">
 		<div class="container">
-			<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+			<div th:replace="~{user/fragments/userNavi :: userNaviFragment(title=${title})}"></div>
 			
 			<th:block layout:fragment="contents"></th:block>
 		</div>

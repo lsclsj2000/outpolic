@@ -1,95 +1,138 @@
 package outpolic.enter.outsourcingRequest.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import lombok.RequiredArgsConstructor;
+import outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO;
+import outpolic.enter.outsourcingRequest.domain.RequestViewDTO;
+import outpolic.enter.outsourcingRequest.mapper.EnterOutsourcingRequestMapper;
+import outpolic.enter.outsourcingRequest.service.OutsourcingRequestService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
-import outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO;
-import outpolic.enter.outsourcingRequest.domain.ReplyDTO;
-import outpolic.enter.outsourcingRequest.domain.RequestDetailDTO;
-import outpolic.enter.outsourcingRequest.domain.RequestViewDTO;
-import outpolic.enter.outsourcingRequest.mapper.OutsourcingRequestMapper;
-import outpolic.enter.outsourcingRequest.service.OutsourcingRequestService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-
-
-@Service
+@Service("enterOutsourcingRequestService")
 @RequiredArgsConstructor
-public class OutsourcingRequestServiceImpl  implements OutsourcingRequestService {
-	
-	private final OutsourcingRequestMapper requestMapper;
-	
-    // private final ContentListMapper contentListMapper;
+public class OutsourcingRequestServiceImpl implements OutsourcingRequestService {
 
-    // 생성자를 통한 의존성 주입
-  
-
-    @Override
-    public List<Map<String, Object>> searchEnterprises(String query) {
-        return requestMapper.searchEnterprises(query);
-    }
-
+    private static final Logger logger = LoggerFactory.getLogger(OutsourcingRequestServiceImpl.class);
+    private final EnterOutsourcingRequestMapper requestMapper;
     @Override
     @Transactional
-    public void createRequest(OutsourcingRequestDTO request) {
-        // 1. 새로운 ocd_cd (요청코드)와 cl_cd (콘텐츠 목록 코드)를 생성
-        // UUID 등을 활용하여 고유한 코드를 생성하는 것이 좋습니다.
-        String newOcdCd = "OCD_" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        
-        // 요청 타입(문의/신청)에 따라 cl_cd 접두사 변경
-        String prefix = "LIST_OS_"; // '신청'이 기본이라고 가정
-        if ("문의".equals(request.getOcd_req_type())) {
-            prefix = "LIST_PO_";
+    public OutsourcingRequestDTO createRequest(OutsourcingRequestDTO request) {
+        // 1. 새로운 요청 코드(ocd_cd) 생성 (기존 로직 유지)
+        String latestOcdCd = requestMapper.findLatestOcdCd(); // [cite: 1489]
+        int nextNum = 1;
+        if (latestOcdCd != null && latestOcdCd.startsWith("OCD_C")) { // [cite: 1490]
+            try {
+                nextNum = Integer.parseInt(latestOcdCd.substring(5)) + 1; // [cite: 1491]
+            } catch (NumberFormatException e) {
+                logger.warn("Failed to parse latestOcdCd: {}", latestOcdCd, e); // [cite: 1492]
+            }
         }
-        String newClCd = prefix + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String newOcdCd = String.format("OCD_C%05d", nextNum); // [cite: 1493]
+        request.setOcd_cd(newOcdCd); // [cite: 1493]
 
-        // 2. content_list 테이블에 먼저 데이터 삽입 (필요한 경우)
-        // ContentListDTO clDto = new ContentListDTO(newClCd, newOcdCd);
-        // contentListMapper.insertContentList(clDto);
+        // 2. 외주 신청 정보 DB에 저장
+        requestMapper.insertRequest(request); // [cite: 1489]
 
-        // 3. 생성된 코드를 DTO에 담아서 최종 저장
-        request.setOcd_cd(newOcdCd);
-        request.setCl_cd(newClCd); // 이 부분은 content_list를 어떻게 관리하느냐에 따라 달라질 수 있습니다.
-        
-        requestMapper.insertRequest(request);
+        // ▼▼▼ 수정된 부분 ▼▼▼
+        // 3. 채팅방 생성 및 연결 로직 추가
+        //    (실제로는 ChatService 등을 호출하여 채팅방을 생성하고 ID를 받아와야 합니다)
+        String newChrCd = "CHR_" + newOcdCd; // 임시로 채팅방 코드를 생성합니다.
+
+        // 4. 생성된 채팅방 ID를 outsourcing_contract_details 테이블에 업데이트합니다.
+//        requestMapper.updateChatRoomId(newOcdCd, newChrCd); // [cite: 1489, 1509]
+
+        // 5. 반환될 DTO 객체에도 채팅방 코드를 설정해줍니다.
+        request.setChr_cd(newChrCd); // [cite: 1468]
+        // ▲▲▲ 수정 완료 ▲▲▲
+
+        return request; // [cite: 1489]
+    }
+    @Override
+    public List<RequestViewDTO> getSentRequests(String requesterId) {
+        return requestMapper.findSentRequests(requesterId);
     }
 
+   
+    // ★★★ 누락되었던 '받은 요청 조회' 메서드 구현 추가 ★★★
     @Override
-    public List<RequestViewDTO> getMyAllRequests(String userId) {
-        return requestMapper.findAllRequestsByUserId(userId);
+    public List<RequestViewDTO> getReceivedRequests(String supplierEntCd) {
+        return requestMapper.findReceivedRequests(supplierEntCd);
+    }
+    
+    @Override
+    public String findEntCdByMbrCd(String mbrCd) {
+    	return requestMapper.findEntCdByMbrCd(mbrCd);
+    }
+    
+    @Override
+    public RequestViewDTO getRequestDetails(String requestId) {
+    	return requestMapper.findRequestDetailById(requestId);
     }
 
-    @Override
-    public RequestDetailDTO getRequestWithReplies(String requestId) {
-        // 1. 요청 원본 정보 조회
-        RequestViewDTO requestInfo = requestMapper.findRequestDetailById(requestId);
-        
-        // 2. 해당 요청의 모든 답변 목록 조회
-        List<ReplyDTO> replies = requestMapper.findRepliesByRequestId(requestId);
-        
-        // 3. 두 정보를 합쳐서 하나의 DTO로 만들어 반환
-        RequestDetailDTO detailDTO = new RequestDetailDTO();
-        detailDTO.setRequest(requestInfo);
-        detailDTO.setReplies(replies);
-        
-        return detailDTO;
-    }
-
-    @Override
+	@Override
+	public RequestViewDTO getRequestByDetails(String requestId) {
+		// TODO Auto-generated method stub
+		return requestMapper.findRequestDetailById(requestId);
+	}
+	
+	@Override
     @Transactional
-    public void addReply(ReplyDTO reply) {
-        // 답변 ID 생성, 답변자 정보 설정 등 추가 로직...
-        requestMapper.insertReply(reply);
-        // 답변이 추가되었으니, 원본 요청의 상태(stc_cd)를 '답변완료' 등으로 변경하는 로직 추가 가능
-        // requestMapper.updateRequestStatus(reply.getRequestId(), "SD_REPLIED");
-    }
-    @Override
-    public List<ReplyDTO> findRepliesRequestId(String requestId) {
-        // TODO: 매퍼를 호출하여 답변 목록을 조회하는 로직을 구현해야 합니다.
-        return requestMapper.findRepliesByRequestId(requestId);
+    public void updateRequestStatus(String requestId, String status) {
+		
+		// 1. 요청 테이블의 상태를 '승인' 또는 '거절'로 변경합니다.
+        requestMapper.updateStatus(requestId, status);
+        
+        // 2. '승인'된 경우에만 4개의 진행 단계를 생성합니다.
+        if ("SD_APPROVED".equals(status)) {
+            
+        	// 3. 새로운 진행 코드(osp_cd)의 시작 번호를 계산합니다.
+            String latestOspCd = requestMapper.findLatestOspCd();
+            int nextNum = 1; // 기본값 1
+            if (latestOspCd != null && latestOspCd.startsWith("OSP_C")) {
+                try {
+                    nextNum = Integer.parseInt(latestOspCd.substring(5)) + 1;
+                } catch (NumberFormatException e) {
+                    logger.warn("Failed to parse latestOspCd: {}", latestOspCd, e);
+                }
+            }
+            // 4. 추가할 4개의 진행 단계 상태 코드를 정의합니다. 
+            List<String> stageStatusCodes = List.of("SD_CONTRACT", "SD_PLANNING", "SD_WORKPROGRESS", "SD_COMPLETION");
+            // 5. DB에 한 번에 INSERT할 리스트를 준비합니다. 
+            List<Map<String, Object>> stageList = new ArrayList<>();
+            for (String stageCode : stageStatusCodes) {
+                Map<String, Object> stageData = new HashMap<>();
+                // 1. 새로운 osp_cd를 생성합니다.
+                String newOspCd = String.format("OSP_C%05d", nextNum++);
+                
+                // 2. 생성한 newOspCd를 stageData Map에 추가합니다.
+                stageData.put("ospCd", newOspCd);
+                stageData.put("ocdCd", requestId);
+                stageData.put("stcCd", stageCode);
+                
+                
+                // 5-2. 첫단계인 '계약 체결(SD_CONTRACT)'에만 완료 표시와 시간을 기록합니다.
+                if ("SD_CONTRACT".equals(stageCode)) {
+                    stageData.put("ospSplyYmdt", LocalDateTime.now());
+                    stageData.put("ospCustYn", 1);
+                } else {
+                    stageData.put("ospSplyYmdt", null);
+                    stageData.put("ospCustYn", 0);
+                }
+                
+                stageList.add(stageData);
+            }
+
+            if (!stageList.isEmpty()) {
+                requestMapper.insertInitialProgressStages(stageList);
+            }
+        }
     }
 }

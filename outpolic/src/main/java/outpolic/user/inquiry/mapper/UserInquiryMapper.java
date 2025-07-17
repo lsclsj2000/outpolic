@@ -40,6 +40,9 @@ public interface UserInquiryMapper {
 	// 문의 등록
 	int adduserInquiryWrite(UserInquiry inquiry);
 	
+	// 문의 프로세스 등록
+	int adduserInquiryProcess(UserInquiry inquiry);
+	
 	// 모든 문의 유형 조회
 	List<UserInquiryType> getAllInquiryTypes();
 	

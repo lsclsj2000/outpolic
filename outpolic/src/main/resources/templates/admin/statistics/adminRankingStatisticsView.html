@@ -7,13 +7,187 @@
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 	</head>
 	
-	<body>
-		<th:block layout:fragment="contents">
-		
-			<h2>주간랭킹 페이지</h2>
-		
-		</th:block>
-	</body>
-	<!-- 추가할 js file -->
+	<th:block layout:fragment="contents">
+		<section class="content-main">
+	        <div class="content-header">
+	            <h2 class="content-title">주간 랭킹 통계</h2>
+	            <div class="d-flex">
+			        <input type="date" id="ranking-date-picker" class="form-control" style="width: 200px; margin-right: 10px;">
+			        <button id="search-ranking-btn" class="btn btn-primary">조회</button>
+			    </div>
+	        </div>
 	
+	        <!-- 탭 메뉴 -->
+	        <ul class="nav nav-tabs" id="rankingTab" role="tablist">
+	            <li class="nav-item" role="presentation">
+	                <button class="nav-link active" id="portfolio-tab" data-bs-toggle="tab" data-bs-target="#portfolio-panel" type="button" role="tab">포트폴리오 TOP 10</button>
+	            </li>
+	            <li class="nav-item" role="presentation">
+	                <button class="nav-link" id="outsourcing-tab" data-bs-toggle="tab" data-bs-target="#outsourcing-panel" type="button" role="tab">외주 TOP 10</button>
+	            </li>
+	        </ul>
+	
+	        <!-- 탭 콘텐츠 -->
+	        <div class="tab-content" id="rankingTabContent">
+	            <!-- 포트폴리오 랭킹 패널 -->
+	            <div class="tab-pane fade show active" id="portfolio-panel" role="tabpanel">
+	                <div class="card mb-4">
+	                    <div class="card-body">
+	                        <table class="table table-hover">
+	                            <thead>
+	                                <tr>
+	                                    <th>순위</th><th>조회수</th><th>제목</th><th>기업명</th><th>카테고리</th><th>등록일</th>
+	                                    <th>상태</th><th>관리</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody id="portfolio-ranking-body">
+	                                <!-- JS가 채울 영역 -->
+	                            </tbody>
+	                        </table>
+	                    </div>
+	                </div>
+	            </div>
+	            <!-- 외주 랭킹 패널 -->
+	            <div class="tab-pane fade" id="outsourcing-panel" role="tabpanel">
+	                 <div class="card mb-4">
+	                    <div class="card-body">
+	                        <table class="table table-hover">
+	                            <thead>
+	                                <tr>
+	                                    <th>순위</th><th>조회수</th><th>제목</th><th>기업명</th><th>카테고리</th><th>평점</th>
+	                                    <th>상태</th><th>관리</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody id="outsourcing-ranking-body">
+	                                <!-- JS가 채울 영역 -->
+	                            </tbody>
+	                        </table>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </section>
+	</th:block>
+	<!-- 추가할 js file -->
+	<script layout:fragment="jsScript">
+		document.addEventListener('DOMContentLoaded', () => {
+			// UI부분
+			const datePicker = document.getElementById('ranking-date-picker');
+		    const searchBtn = document.getElementById('search-ranking-btn');
+		 	// 포트폴리오/외주 탭 및 테이블 body (기존 코드)
+		    const portfolioTab = document.getElementById('portfolio-tab');
+		    const outsourcingTab = document.getElementById('outsourcing-tab');
+		    const portfolioBody = document.getElementById('portfolio-ranking-body');
+		    const outsourcingBody = document.getElementById('outsourcing-ranking-body');
+		
+		    const getTodayString = () => new Date().toISOString().split('T')[0];
+		    // 포트폴리오 랭킹 렌더링 함수
+		    const renderPortfolio = async (targetDate) => {
+		    	const response = await fetch(`/admin/api/rankings/portfolio?targetDate=${targetDate}`);
+		        const data = await response.json();
+		        
+		        let html = '';
+		        if(data.length === 0) {
+		            html = '<tr><td colspan="6" class="text-center">랭킹 데이터가 없습니다.</td></tr>';
+		        } else {
+		            data.forEach((item, index) => {
+
+		            	const statusText = item.stcCode === 'STC01' ? '활성' : '비활성';
+		                const buttonHtml = item.stcCode === 'STC01' 
+		                    ? `<button class="btn btn-sm btn-danger btn-deactivate" data-type="portfolio" data-id="${item.prtfCode}">비활성화</button>`
+		                    : ''; // 비활성 상태면 버튼 없음
+		                html += `
+		                    <tr>
+			                	<td>${index + 1}</td>
+			                    <td>${item.rankingView}</td>
+			                    <td>${item.prtfTtl}</td>
+			                    <td>${item.entName}</td>
+			                    <td>${item.ctgryName || '미지정'}</td>
+			                    <td>${new Date(item.prtfDate).toLocaleDateString()}</td>
+			                    <td>${statusText}</td>
+			                    <td>${buttonHtml}</td>
+		                    </tr>
+		                `;
+		            });
+		        }
+		        portfolioBody.innerHTML = html;
+		    };
+		
+		    // 외주 랭킹 렌더링 함수
+		    const renderOutsourcing = async (targetDate) => {
+		    	const response = await fetch(`/admin/api/rankings/outsourcing?targetDate=${targetDate}`);
+		        const data = await response.json();
+		
+		        let html = '';
+		        if(data.length === 0) {
+		            html = '<tr><td colspan="6" class="text-center">랭킹 데이터가 없습니다.</td></tr>';
+		        } else {
+		            data.forEach((item, index) => {
+		            	const statusText = item.stcCode === 'STC01' ? '활성' : '비활성';
+		                const buttonHtml = item.stcCode === 'STC01' 
+		                    ? `<button class="btn btn-sm btn-danger btn-deactivate" data-type="portfolio" data-id="${item.prtfCode}">비활성화</button>`
+		                    : ''; // 비활성 상태면 버튼 없음
+		                const reviewScore = Number(item.reviewScore).toFixed(1);
+		                html += `
+		                    <tr>
+		                        <td>${index + 1}</td>
+		                        <td>${item.rankingView}</td>
+		                        <td>${item.osTtl}</td>
+		                        <td>${item.entName}</td>
+		                        <td>${item.ctgryName}</td>
+		                        <td>${reviewScore}</td>
+		                        <td>${statusText}</td>
+			                    <td>${buttonHtml}</td>
+		                    </tr>
+		                `;
+		            });
+		        }
+		        outsourcingBody.innerHTML = html;
+		    };
+		    
+		    searchBtn.addEventListener('click', () => {
+		        const selectedDate = datePicker.value || getTodayString();
+		        // 현재 활성화된 탭에 따라 해당 랭킹만 다시 불러옴
+		        if (portfolioTab.classList.contains('active')) {
+		            renderPortfolio(selectedDate);
+		        } else {
+		            renderOutsourcing(selectedDate);
+		        }
+		    });
+		
+		    // 탭 클릭 이벤트 리스너
+		    portfolioTab.addEventListener('click', renderPortfolio);
+		    outsourcingTab.addEventListener('click', renderOutsourcing);
+		    
+		    datePicker.value = getTodayString(); // 날짜 선택기를 오늘 날짜로 설정
+		    renderPortfolio(datePicker.value); // 기본으로 포트폴리오 랭킹을 오늘 날짜 기준으로 조회
+		    
+		    document.getElementById('rankingTabContent').addEventListener('click', async (e) => {
+		        // 클릭된 요소가 '비활성화' 버튼이 아니면 무시
+		        if (!e.target.classList.contains('btn-deactivate')) {
+		            return;
+		        }
+
+		        const contentId = e.target.dataset.id;
+		        if (confirm(`'${contentId}' 콘텐츠를 정말로 비활성화하시겠습니까?`)) {
+		            try {
+		                const response = await fetch(`/admin/api/contents/${contentId}/deactivate`, {
+		                    method: 'POST'
+		                });
+
+		                if (response.ok) {
+		                    alert('비활성화 처리되었습니다.');
+		                    // 현재 활성화된 탭의 목록을 새로고침하여 상태 변경을 반영
+		                    searchBtn.click();
+		                } else {
+		                    alert('처리 중 오류가 발생했습니다.');
+		                }
+		            } catch (error) {
+		                console.error('Error:', error);
+		                alert('처리 중 오류가 발생했습니다.');
+		            }
+		        }
+		    });
+		});
+	</script>
 </html>

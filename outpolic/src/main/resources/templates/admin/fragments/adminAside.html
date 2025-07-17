@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 	<aside class="navbar-aside" id="offcanvas_aside" th:fragment="adminAsideFragment">
-		<div class="aside-top">
+		<div class="aside-top" style="height : 72px;">
 		    <a href="#" class="brand-wrap">
-		        <img src="/admin/assets/imgs/theme/logo.svg" class="logo" alt="Nest Dashboard" />
+		        <img src="/user/assets/imgs/outpolic/logo.png" class="logo" alt="Nest Dashboard" />
 		    </a>
 		    <div>
 		        <button class="btn btn-icon btn-aside-minimize"><i class="text-muted material-icons md-menu_open"></i></button>
@@ -11,23 +11,17 @@
 		</div>
 		<nav>
 			<ul class="menu-aside">
-				<li class="menu-item active">
+				<li class="menu-item">
 					<a class="menu-link" th:href="@{/admin}">
 					    <i class="icon material-icons md-home"></i>
 					    <span class="text">통계</span>
 					</a>
 				</li>
-				<li class="menu-item has-submenu">
-					<a class="menu-link" href="#">
+				<li class="menu-item">
+					<a class="menu-link" th:href="@{/admin/memberList}">
 					    <i class="icon material-icons md-shopping_bag"></i>
-					    <span class="text">회원</span>
+					    <span class="text">회원 목록</span>
 					</a>
-					<div class="submenu">
-					    <a th:href="@{/admin/memberList}">활동회원리스트</a>
-					    <a href="#">휴면회원리스트</a>
-					    <a href="#">탈퇴회원리스트</a>
-					    <a href="#">회원관리</a>
-					</div>
 				</li>
 				<li class="menu-item has-submenu">
 					<a class="menu-link" th:href="@{/admin/adminInquiryList}">
@@ -114,9 +108,9 @@
 					    <span class="text">마일리지 관리</span>
 					</a>
 					<div class="submenu">
-				        <a th:href="@{#}">회원별 마일리지 사용 내역</a>
-				        <a th:href="@{#}">회원별 마일리지 적립 내역</a>
-				        <a th:href="@{#}">마일리지 기준 생성</a>
+				        <a th:href="@{/admin/usedPointsList}">회원별 마일리지 사용 내역</a>
+				        <a th:href="@{/admin/earnPointsList}">회원별 마일리지 적립 내역</a>
+				        <a th:href="@{/admin/standardPointsAddList}">마일리지 기준 생성</a>
 				    </div>
 				</li>
 				<li class="menu-item">

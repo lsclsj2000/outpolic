@@ -18,7 +18,19 @@ public class AdminInquiry {
 	private String memberName;
 
 	private String inquiryProcessCode;
+	private String inquiryProcessAnswer;
+	private String inquiryProcessRegAdmCode;
+	private String inquiryProcessRegYmdt;
+	private String inquiryProcessMdfcnAdmCode;
+	private String inquiryProcessMdfcnYmdt;
+	
 	private String statusCode;
 	private String statusName;
+	
+	private String subAttchCode;
 	private String subAttchOrgnlName;
+	private String subAttchSrvrName;
+	private String subAttchPath;
+	private String subAttchSize;
+	  
 }

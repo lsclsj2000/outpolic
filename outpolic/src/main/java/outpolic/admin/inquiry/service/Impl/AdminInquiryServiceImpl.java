@@ -26,8 +26,8 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 	@Override
 	public AdminInquiry getAdminInquiryMdfcnList(String inquiryCode) {
 		// 문의 상세 수정 팝업창
-		AdminInquiry admininquiry = adminInquiryMapper.getAdminInquiryMdfcnList(inquiryCode);
-		return admininquiry;
+		AdminInquiry adminInquiryMdfcn = adminInquiryMapper.getAdminInquiryMdfcnList(inquiryCode);
+		return adminInquiryMdfcn;
 	}
 	
 	@Override
@@ -42,6 +42,28 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 		// 문의 타입 자원 조회
 		List<AdminInquiryType> adminInquiryTypeList = adminInquiryMapper.getAdminInquiryTypeList();
 		return adminInquiryTypeList;
+	}
+
+	@Override
+	public void updateInquiry(AdminInquiry adminInquiry) {
+		int count1 = adminInquiryMapper.updateInquiryTable(adminInquiry);
+	    int count2 = adminInquiryMapper.updateInquiryProcessTable(adminInquiry);
+
+	    System.out.println("🟢 update count: inquiry = " + count1 + ", process = " + count2);
+
+	    // 혹시 두 update 중 하나라도 실패했는지 로그로 확인
+	    if (count1 == 0) {
+	        System.err.println("⚠️ [inquiry] 테이블 업데이트 실패: " + adminInquiry.getInquiryCode());
+	    }
+	    if (count2 == 0) {
+	        System.err.println("⚠️ [inquiry_process] 테이블 업데이트 실패: " + adminInquiry.getInquiryCode());
+	    }
+	}
+
+	@Override
+	public void updateInquiryAnswer(AdminInquiry adminInquiry) {
+		// 문의답변 저장
+		adminInquiryMapper.updateInquiryAnswer(adminInquiry);
 	}
 
 }

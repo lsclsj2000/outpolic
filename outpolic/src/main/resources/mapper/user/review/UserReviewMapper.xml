@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="outpolic.user.mypage.mapper.UserMypageEditMapper">
+	<resultMap type="ReviewDTO" id="UserReviewResultMap">
+		<id column="rvw_cd" property="reviewCode"></id>
+		<result column="osc_id" property="outsourcingContractId"/>
+		<result column="mbr_cd" property="memberCode"/>
+		<result column="rvw_cn" property="reviewContent"/>
+		<result column="rvw_evl" property="reviewRating"/>
+		<result column="rvw_reg_ymdt" property="reviewRegYmdt"/>
+		<result column="rvw_mdfcn_ymdt" property="reviewModificationYmdt"/>
+	</resultMap>
+
+<select id="getUserReviewByCode" parameterType="String" resultMap="UserReviewResultMap">
+	SELECT 
+		rvw_cd, 
+		osc_id, 
+		mbr_cd, 
+		rvw_cn, 
+		rvw_evl, 
+		rvw_reg_ymdt, 
+		rvw_mdfcn_ymdt
+	FROM review
+	WHERE mbr_cd=#{memberCode};
+</select>	
+<!-- select *
+from outsourcing_contract oc inner join outsourcing_prograss op 
+on oc.osp_cd = op.osp_cd
+inner join outsourcing_contract_details ocd 
+on op.ocd_cd = ocd.ocd_cd
+inner join review r 
+on oc.mbr_cd = r.mbr_cd
+inner join content_list cl 
+on cl.cl_cd = ocd.cl_cd
+inner join outsourcing o 
+on cl.cntd_cd = o.os_cd
+where oc.mbr_cd = 'MB_C0000007';
+ -->
+ </mapper>
+ 
+

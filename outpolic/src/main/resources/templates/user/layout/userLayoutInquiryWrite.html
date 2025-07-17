@@ -20,7 +20,7 @@
 	<header th:replace="~{user/fragments/userHeader :: userHeaderFragment}"></header>
 	<!-- header end -->
 	
-	<div th:replace="~{user/fragments/userNavi :: userNaviFragment}"></div>
+	<div th:replace="~{user/fragments/userNavi :: userNaviFragment(title=${title})}"></div>
 	<main class="main pages">
 		<div class="page-content pt-100 pb-150">
             <div class="container">

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutMain}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+	
+	<body>
+		<th:block layout:fragment="contents">
+			<section class="content-main">
+                <div class="content-header">
+                	<h2 class="content-title card-title">
+					    <span th:switch="${status}">
+					        <span th:case="'active'">활성</span>
+					        <span th:case="'withdrawn'">휴면</span>
+					        <span th:case="'dormant'">탈퇴</span>
+					        <span th:case="'limit'">제재</span>
+					    </span>
+                	회원 목록</h2>
+                </div>
+                <div class="card mb-4">
+                    <header class="card-header">
+                       <!--  <div class="row gx-3">
+                            <div class="col-lg-4 col-md-6 me-auto">
+                                <input type="text" placeholder="Search..." class="form-control" />
+                            </div>
+                            <div class="col-lg-2 col-6 col-md-3">
+                                <select class="form-select">
+                                    <option>전체 회원</option>
+                                    <option>활성 회원</option>
+                                    <option>휴면 회원</option>
+                                    <option>탈퇴 회원</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-6 col-md-3">
+                                <select class="form-select">
+                                    <option>Show 20</option>
+                                    <option>Show 30</option>
+                                    <option>Show 40</option>
+                                </select>
+                            </div>
+                        </div> -->
+                    </header>
+                    <!-- card-header end// -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th scope="col">회원 코드</th>
+                                        <th scope="col">이름</th>
+                                        <th scope="col">아이디</th>
+                                        <th scope="col">닉네임</th>
+                                        <th scope="col">등급</th>
+                                        <th scope="col">연락처</th>
+                                        <th scope="col">상태</th>
+                                        <!--<th scope="col">가입일</th>-->
+                                        <th scope="col">약관동의</th>
+                                        <th scope="col">상세정보</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    <tr th:if="${not #lists.isEmpty(memberList)}"
+                                    	th:each="l : ${memberList}">
+                                       <th th:text="${l.memberCode}">회원 코드</th>
+                                       <th th:text="${l.memberName}">이름</th>
+                                       <th th:text="${l.memberId}">아이디</th>
+                                       <th th:text="${l.memberNickname}">닉네임</th>
+                                       <th th:switch="${l.gradeCode}">
+											<span th:case="ADMIN" class="badge rounded-pill alert-warning">관리자</span>
+											<span th:case="ENTER" class="badge rounded-pill alert-info">기업회원</span>
+											<span th:case="USER" class="badge rounded-pill alert-success">일반회원</span>
+                                       </th>
+                                       <th th:text="${l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.substring(l.memberTelNo.length() - 4)}">연락처</th>
+                                       <th th:switch="${l.statusCode}">
+                                           <span th:case="SD_ACTIVE" class="badge rounded-pill alert-success">활성</span>
+                                           <span th:case="SD_WITHDRAWN" class="badge rounded-pill alert-info">휴면</span>
+                                           <span th:case="SD_DORMANT" class="badge rounded-pill alert-info">탈퇴</span>
+                                           <span th:case="SD_LIMIT" class="badge rounded-pill alert-warning">제재</span>
+                                       </th>
+                                     <!--  <th th:text="${l.memberJoinYmdt}">가입일</th>-->
+                                       <th th:switch="${l.memberAgreeYN}">
+											<span th:case="1" >Y</span>
+											<span th:case="0" >N</span>
+										</th>
+                                       <th scope="col"><button class="btn btn-primary w-55 fw-bold btn-detail" 
+													           th:data-code="${l.memberCode}" 
+													           data-bs-toggle="modal" 
+													           data-bs-target="#memberDetailModal">상세정보</button></th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- table-responsive //end -->
+                    </div>
+                    <!-- card-body end// -->
+                </div>
+            </section>
+            
+            <div class="modal fade p-10" id="memberDetailModal" tabindex="-1" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h3 >회원 상세 정보</h3>
+							<button type="button" class="btn btnEditMember btn-primary w-70 fw-bold">정보 수정하기</button>
+						</div>
+						<div class="row justify-content-center">	
+							<form class="admin memberEdit col-10" th:action="@{/admin/memberList/detail}" method="post">
+								<div class="form-group mb-10 mt-10">
+								    <label for="memberCode">회원 코드</label>
+								    <input type="text" id="memberCode" name="memberCode" class="form-control" disabled />
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberName">이름</label>
+								    <input type="text" id="modalMemberName" name="modalMemberName" class="form-control" disabled/>
+								</div>
+								<div class="form-group mb-10">
+									<label for="modalMemberGradeCode">등급</label>
+									<select id="modalMemberGradeCode" name="modalMemberGradeCode" class="form-select readonly-field" disabled>
+									  <option value="ADMIN">관리자</option>
+									  <option value="ENTER">기업회원</option>
+									  <option value="USER">일반회원</option>
+									</select>
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberNickname">닉네임</label>
+								    <input type="text" id="modalMemberNickname" name="modalMemberNickname" class="form-control readonly-field" readonly/>
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberEmail">이메일</label>
+								    <input type="email" id="modalMemberEmail" name="modalMemberEmail" class="form-control" disabled/>
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberTelNo">전화번호</label>
+								    <input type="text" id="modalMemberTelNo" name="modalMemberTelNo" class="form-control" disabled/>
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberBirth">생일</label>
+								    <input type="text" id="modalMemberBirth" name="modalMemberBirth" class="form-control" disabled/>
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberZip">우편번호</label>
+							        <input type="text" id="modalMemberZip" name="modalMemberZip" class="form-control readonly-field" readonly />
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberAddress">도로명 주소</label>
+								    <input type="text" id="modalMemberAddress" name="modalMemberAddress" class="form-control readonly-field" readonly />
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberDAddress">상세 주소</label>
+								    <input type="text" id="modalMemberDAddress" name="modalMemberDAddress" class="form-control readonly-field" readonly/>
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberAgree">선택약관 동의여부</label>
+								    <input type="text" id="modalMemberAgree" name="modalMemberAgree" class="form-control" disabled/>
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberJoinYmdt">가입일</label>
+								    <input type="text" id="modalMemberJoinYmdt" name="modalMemberJoinYmdt" class="form-control" disabled/>
+								</div>
+								<div class="form-group mb-10">
+								 <label for="modalMemberStatusCode">상태</label>
+								    <select id="modalMemberStatusCode" name="modalMemberStatusCode" class="form-select readonly-field" disabled>
+									    <option value="SD_ACTIVE">활성</option>
+									    <option value="SD_WITHDRAWN">휴면</option>
+									    <option value="SD_DORMANT">탈퇴</option>
+									    <option value="SD_LIMIT">제재</option>
+									  </select>
+								</div>
+								<div class="form-group mb-10">
+								    <label for="modalMemberLastLoginYmdt">마지막 로그인 일시</label>
+								    <input type="text" id="modalMemberLastLoginYmdt" name="modalMemberLastLoginYmdt" class="form-control" disabled/>
+								</div>
+
+					
+							 	<div class="form-group mb-30">
+					                <button type="button" id="btnSave" class="btn btnSave btn-primary w-70 fw-bold">정보 수정</button>
+					            </div>
+					        </form>
+	      				</div>
+	    			</div> 
+	    		</div>
+	    	</div>
+		</th:block>
+		<th:block layout:fragment="jsScript">
+		<script>
+		console.log("스크립트 로딩됨");
+			$(document).ready(function () {
+				
+				$('#memberDetailModal').on('hidden.bs.modal', function () {
+				    console.log("모달 닫힘 이벤트 실행");
+				    $('body').removeClass('modal-open');
+				    $('.modal-backdrop').remove();
+				     $('.readonly-field').prop('readonly', true);
+			        $('#modalMemberStatusCode').prop('disabled', true);
+			        $('#modalMemberGradeCode').prop('disabled', true);
+				});
+			console.log("🚨 document.ready 실행됨");
+			let isSaveHandlerBound = false;
+			    // 상세정보 보기 버튼 클릭
+			    $('.btn-detail').click(function () { 	
+			        const memberCode = $(this).data('code');
+			
+			        $.ajax({
+			            url: '/admin/memberList/detail',
+			            type: 'GET',
+			            data: { memberCode },
+			            success: function (data) {
+			                $('#memberCode').val(data.memberCode);
+			                $('#modalMemberId').val(data.memberId);
+			                $('#modalMemberGradeCode').val(data.gradeCode);
+			                $('#modalMemberName').val(data.memberName);
+			                $('#modalMemberEmail').val(data.memberEmail);
+			                $('#modalMemberNickname').val(data.memberNickname);
+			                $('#modalMemberTelNo').val(data.memberTelNo);
+			                $('#modalMemberBirth').val(data.memberBirth);
+			                $('#modalMemberZip').val(data.memberZip);
+			                $('#modalMemberAddress').val(data.memberAddress);
+			                $('#modalMemberDAddress').val(data.memberDAddress);
+			                $('#modalMemberAgree').val(data.memberAgreeYN);
+			                $('#modalMemberJoinYmdt').val(data.memberJoinYmdt);
+			                $('#modalMemberStatusCode').val(data.statusCode);
+			                $('#modalMemberLastLoginYmdt').val(data.memberLastLoginYmdt);
+			
+			                const modalEl = document.getElementById('memberDetailModal');
+			                if (!modalEl) {
+			                    alert('모달 요소를 찾을 수 없습니다.');
+			                    console.log("모달요소가없습니다.");
+			                    return;
+			                }
+			
+			                const modal = new bootstrap.Modal(modalEl);
+			                modal.show();
+			            },
+			            error: function () {
+			                alert('회원 정보를 불러오지 못했습니다.');
+			            }
+			        });
+			    });
+			
+			    // 수정모드 활성화
+			    $('.btnEditMember').click(function () {
+			        $('.readonly-field').prop('readonly', false);
+			        $('#modalMemberStatusCode').prop('disabled', false);
+			        $('#modalMemberGradeCode').prop('disabled', false);
+			    });
+			
+			    // 저장 버튼 클릭 시
+			    if (!isSaveHandlerBound) {
+			        $(document).on('click', '.btnSave', function () {
+			            console.log("btnSave clicked");
+			
+			            const nickname = $('#modalMemberNickname').val().trim();
+			            const memberCode = $('#memberCode').val();
+			            
+				        if (nickname !== "") { // 빈 문자열 검사
+				            $.ajax({
+				                url: '/admin/check/nickname',
+				                type: 'GET',
+				                data: {
+				                    nickname: nickname,
+				                    memberCode: memberCode
+				                },
+				                success: function (isAvailable) {
+				                    if (!isAvailable) {
+				                        alert('이미 사용 중인 닉네임입니다.');
+				                        $('#modalMemberNickname').focus();
+				                        return;
+				                    }
+				
+				                    const memberData = {
+				                        memberCode: memberCode,
+				                        memberNickname: nickname,
+				                        gradeCode: $('#modalMemberGradeCode').val(),
+				                        memberZip: $('#modalMemberZip').val(),
+				                        memberAddress: $('#modalMemberAddress').val(),
+				                        memberDAddress: $('#modalMemberDAddress').val(),
+				                        statusCode: $('#modalMemberStatusCode').val()
+				                    };
+				
+				                    $.ajax({
+				                        url: '/admin/memberList/detail/update',
+				                        method: 'POST',
+				                        contentType: 'application/json',
+				                        data: JSON.stringify(memberData),
+				                        success: function (result) {
+				                            if (result === 'success') {
+				                                alert('회원 정보가 성공적으로 수정되었습니다.');
+				                                location.reload();
+				                            } else {
+				                                alert('수정에 실패했습니다.');
+				                            }
+				                        },
+				                        error: function () {
+				                            alert('서버 오류가 발생했습니다.');
+				                        }
+				                    });
+				                },
+				                error: function () {
+				                    alert('닉네임 중복 확인 중 오류가 발생했습니다.');
+				                }
+				            });
+				            isSaveHandlerBound = true;
+				        } else {
+				            alert('닉네임을 입력해주세요');
+				            $('#modalMemberNickname').focus();
+				        }
+				    });	
+			    }
+			
+			});
+			
+		</script>
+		</th:block>
+	</body>
+	
+</html>

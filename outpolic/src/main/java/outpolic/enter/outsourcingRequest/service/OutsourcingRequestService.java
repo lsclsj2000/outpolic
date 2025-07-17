@@ -1,28 +1,34 @@
-package outpolic.enter.outsourcingRequest.service; // ✅ 패키지 이름 수정
-
-import java.util.List;
-import java.util.Map;
+package outpolic.enter.outsourcingRequest.service;
 
 import outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO;
-import outpolic.enter.outsourcingRequest.domain.ReplyDTO;
-import outpolic.enter.outsourcingRequest.domain.RequestDetailDTO;
 import outpolic.enter.outsourcingRequest.domain.RequestViewDTO;
+import java.util.List;
 
 public interface OutsourcingRequestService {
-   /** 전문가(기업) 검색 */
-	List<Map<String,Object>> searchEnterprises(String query);
-	
-	/** 새 외주 신청 또는 문의 생성 */
-	void createRequest(OutsourcingRequestDTO request);
-	
-	/** 나의 모든 요청 목록 조회 */
-	 List<RequestViewDTO> getMyAllRequests(String userId);
-	 
-	 /** 특정 요청 상세 정보와 모든 답변 조회 */
-	 RequestDetailDTO getRequestWithReplies(String requestId);
-	 
-	 /** 새 답변 추가 */
-	 void addReply(ReplyDTO reply);
-	 
-	 List<ReplyDTO> findRepliesRequestId(String requestId);
+
+    /**
+     * 외주 신청서 생성
+     */
+    OutsourcingRequestDTO createRequest(OutsourcingRequestDTO request);
+
+    /**
+     * 보낸 신청 목록 조회
+     */
+    List<RequestViewDTO> getSentRequests(String requesterId);
+
+    /**
+     * 신청 상세 내역 조회
+     */
+    RequestViewDTO getRequestDetails(String requestId);
+
+    /**
+     * 특정 공급자(기업)에게 온 외주 신청 목록 조회
+     */
+    List<RequestViewDTO> getReceivedRequests(String supplierEntCd);
+    
+    String findEntCdByMbrCd(String mbrCd);
+
+	RequestViewDTO getRequestByDetails(String requestId);
+
+	void updateRequestStatus(String requestId, String status);
 }

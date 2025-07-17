@@ -18,33 +18,65 @@
 	                <h2 class="content-title card-title">문의 내역 조회</h2>
 	                <p>사용자 문의 내역 조회</p>
 	            </div>
-	            <div>
-	                <input type="text" placeholder="Search order ID" class="form-control bg-white" />
+	        </div>
+	        <!-- 검색 필터 -->
+	        <div class="card mb-4 search-filter-card">
+	            <div class="card-body search-filter-body">
+	                <div class="table-responsive">
+	                    <table class="search-filter-table">
+							<tbody>
+								<tr>
+									<th>기본검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>제목</option>
+											<option>내용</option>
+											<option>문의코드</option>
+											<option>작성자</option>
+										</select>
+										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+									</td>
+								</tr>
+								<tr>
+									<th>기간검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>작성일자</option>
+											<option>수정일자</option>
+										</select>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<span> ~ </span>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<button type="button" class="btn btn-sm btn-light">오늘</button>
+										<button type="button" class="btn btn-sm btn-light">어제</button>
+										<button type="button" class="btn btn-sm btn-light">일주일</button>
+										<button type="button" class="btn btn-sm btn-light">지난달</button>
+										<button type="button" class="btn btn-sm btn-light">1개월</button>
+										<button type="button" class="btn btn-sm btn-light">3개월</button>
+										<button type="button" class="btn btn-sm btn-light">전체</button>
+									</td>
+								</tr>
+								<tr>
+									<th>처리상태</th>
+									<td>
+										<div class="radio-group">
+											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
+											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
+											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
+											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="search-filter-buttons">
+							<button type="button" class="btn btn-primary">검색</button>
+							<button type="button" class="btn btn-secondary">초기화</button>
+						</div>
+	                </div>
 	            </div>
 	        </div>
 	        <div class="card mb-4">
-	            <header class="card-header">
-	                <div class="row gx-3">
-	                    <div class="col-lg-4 col-md-6 me-auto">
-	                        <input type="text" placeholder="Search..." class="form-control" />
-	                    </div>
-	                    <div class="col-lg-2 col-6 col-md-3">
-	                        <select class="form-select">
-	                            <option>Status</option>
-	                            <option>Active</option>
-	                            <option>Disabled</option>
-	                            <option>Show all</option>
-	                        </select>
-	                    </div>
-	                    <div class="col-lg-2 col-6 col-md-3">
-	                        <select class="form-select">
-	                            <option>Show 20</option>
-	                            <option>Show 30</option>
-	                            <option>Show 40</option>
-	                        </select>
-	                    </div>
-	                </div>
-	            </header>
 	            <div class="card-body">
 	                <div class="table-responsive">
 	                    <table class="table table-hover">
@@ -84,7 +116,7 @@
 								    <td scope="col" class="text-center" th:text="${l.inquiryRegYmdt}">작성일자</td>
 								    <td scope="col" class="text-center">
 										<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${l.inquiryCode}">수정</a>
-										<a href="#" class="btn btn-md rounded font-sm">답변</a>
+										<a href="#" class="btn btn-md rounded font-sm SR_open-answer-popup-btn" th:data-inquiry-code="${l.inquiryCode}">답변</a>
 									</td>
 								</tr>
 							</tbody>
@@ -102,12 +134,14 @@
 				</div>
                 <div class="SR_popup-info">
                     <div class="SR_writer-info">
-                        <span id="SR_writerCode">작성자 코드</span> | <span id="SR_writerName">작성자명</span> | <span id="SR_writeDate">작성일자</span>
+                    	<span>작성자 : </span>
+                        <span id="SR_writerCode">작성자 코드</span> | <span id="SR_writerName">작성자명</span>
+                        <p></p>
+                        <span>작성일자 : </span><span id="SR_writeDate">작성일자</span>
                     </div>
                     <select id="inquiryStatusEdit" name="status" class="SR_form-control SR_status-dropdown">
-                        <option value="CONFIRMED">확인전</option>
-                        <option value="PROCESSING">처리중</option>
-                        <option value="COMPLETED">처리완료</option>
+                        <option value="SD_BEFORE">확인전</option>
+                        <option value="SD_PROCESS_ING">처리중</option>
                     </select>
                 </div>
 
@@ -156,51 +190,331 @@
                         <div class="SR_update-info">
                             <span id="SR_updaterName">수정자</span> | <span id="SR_updateDate">수정일시</span>
                         </div>
-						<button type="submit" id="saveButton" class="SR_btn-primary">저장</button>
+						<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
 					</div>
 				</form>
 			</div>
 		</div>
-		</th:block>
+		
+		<!-- 답변 팝업창 추가 -->
+		<div id="answerModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>문의 답변</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+                <div class="SR_popup-info">
+                    <div class="SR_writer-info">
+                    	<span>작성정보 : </span>
+                        <span id="SR_writerCode">작성자 코드</span> | <span id="SR_writerName">작성자명</span> | <span id="SR_writeDate">작성일자</span>
+                    </div>
+                    <div id="inquiryStatusEdit" class="badge rounded-pill alert-warning mr-20"></div>
+                </div>
+
+				<div id="inquiryForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half" style="width:30%;">
+                            <label for="inquiryTypeEdit">문의타입 이름</label>
+                            <input id="inquiryTypeEdit" name="inquiryType" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half" style="width:66%;">
+                            <label for="inquiryTitleEdit">제목</label>
+                            <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label for="inquiryContentEdit">문의 내용</label>
+						<textarea id="inquiryContentEdit" name="inquiryContent" class="SR_form-control" rows="5" readonly></textarea>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+                        <label>첨부파일 목록</label>
+                        <div id="SR_fileList" class="SR_form-control SR_file-list">
+                            파일1.jpg (1.2MB) <br>
+                            파일2.pdf (3.5MB)
+                        </div>
+                    </div>
+                    	
+                    <form id="answerForm">
+	                    <div class="SR_form-group SR_full-width">
+							<label for="answerContent">답변 내용</label>
+							<textarea id="answerContent" name="answerContent" class="SR_form-control" rows="10" placeholder="답변 내용을 입력하세요."></textarea>
+						</div>
+					</form>
+                    
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        	<span>수정정보 : </span>
+                            <span id="SR_updaterName">수정자</span> | <span id="SR_updateDate">수정일시</span>
+                        </div>
+						<button type="submit" id="answerSaveButton" class="btn btn-md rounded font-sm">답변 저장</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</th:block>
 
     <th:block layout:fragment="jsScript">
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 			    const modal = document.getElementById('inquiryModal');
 			    const closeButton = document.querySelector('#inquiryModal .SR_close-button');
-			    const saveButton = document.getElementById('saveButton');
 			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
-	
-			    // 팝업 열기
+		
+				// 답변 팝업 관련 요소
+			    const answerModal = document.getElementById('answerModal');
+			    const closeAnswerButton = document.querySelector('#answerModal .SR_close-button'); 
+			    const openAnswerPopupButtons = document.querySelectorAll('.SR_open-answer-popup-btn');
+		
+		        let currentInquiryCodeForAnswer = null;
+		
 			    openPopupButtons.forEach(button => {
 			        button.addEventListener('click', function (event) {
 			            event.preventDefault();
-			            modal.style.display = 'flex';
-			            document.body.style.overflow = 'hidden';
+			            const inquiryCode = this.getAttribute('data-inquiry-code');
+		
+			            fetch(`/admin/adminInquiryMdfcn?inquiryCode=${inquiryCode}`)
+			                .then(response => response.json())
+			                .then(data => {
+			                    fetch('/admin/inquiryStatus')
+			                        .then(res => res.json())
+			                        .then(statusList => {
+			                            const select = document.getElementById('inquiryStatusEdit');
+			                            select.innerHTML = '';
+		
+			                            if (data.statusName === '처리완료') {
+			                                const option = document.createElement('option');
+			                                option.value = data.statusCode;
+			                                option.textContent = data.statusName;
+			                                option.selected = true;
+			                                select.appendChild(option);
+			                                select.disabled = true;
+			                            } else {
+			                                statusList.filter(status => status.statusName !== '처리완료')
+			                                    .forEach(status => {
+			                                        const option = document.createElement('option');
+			                                        option.value = status.statusCode;
+			                                        option.textContent = status.statusName;
+			                                        select.appendChild(option);
+			                                    });
+			                                select.value = data.statusCode || '';
+			                                select.disabled = false;
+			                            }
+		
+			                            const titleInput = document.getElementById('inquiryTitleEdit');
+			                            const contentInput = document.getElementById('inquiryContentEdit');
+			                            const typeSelect = document.getElementById('inquiryTypeEdit');
+			                            const saveButton = document.getElementById('saveButton');
+		
+			                            if (data.statusName === '처리완료') {
+			                                titleInput.readOnly = true;
+			                                contentInput.readOnly = true;
+			                                typeSelect.disabled = true;
+			                                saveButton.style.display = 'none';
+			                            } else {
+			                                titleInput.readOnly = true;
+			                                contentInput.readOnly = true;
+			                                typeSelect.disabled = false;
+			                                saveButton.style.display = 'inline-block';
+			                            }
+			                        });
+		
+			                    fetch('/admin/inquiryType')
+			                        .then(res => res.json())
+			                        .then(typeList => {
+			                            const select = document.getElementById('inquiryTypeEdit');
+			                            select.innerHTML = '';
+			                            typeList.forEach(type => {
+			                                const option = document.createElement('option');
+			                                option.value = type.inquiryTypeCode;
+			                                option.textContent = type.inquiryTypeName;
+			                                select.appendChild(option);
+			                            });
+			                            select.value = data.inquiryTypeCode || '';
+			                        });
+		
+			                    document.getElementById('inquiryCodeDisplay').value = data.inquiryCode;
+			                    document.getElementById('inquiryTitleEdit').value = data.inquiryTitle;
+			                    document.getElementById('inquiryTypeCodeDisplay').value = data.inquiryTypeCode;
+			                    const contentArea = document.getElementById('inquiryContentEdit');
+		
+			                    if (data.inquiryCn) {
+			                        const tempDiv = document.createElement('div');
+			                        tempDiv.innerHTML = data.inquiryCn;
+			                        tempDiv.querySelectorAll('img').forEach(img => img.remove());
+			                        const plainText = tempDiv.textContent || tempDiv.innerText || '';
+			                        contentArea.value = plainText.trim();
+			                    } else {
+			                        contentArea.value = '내용이 없습니다.';
+			                    }
+		
+			                    document.getElementById('SR_writerCode').textContent = data.memberCode;
+			                    document.getElementById('SR_writerName').textContent = data.memberName;
+			                    document.getElementById('SR_writeDate').textContent = data.inquiryRegYmdt;
+		
+			                    document.getElementById('SR_updaterName').textContent = data.inquiryMdfcnAdmCode || '-';
+			                    document.getElementById('SR_updateDate').textContent = data.inquiryMdfcnYmdt || '-';
+		
+			                    const fileListEl = document.getElementById('SR_fileList');
+			                    if (data.subAttchOrgnlName && data.subAttchSize) {
+			                        const sizeMB = (parseInt(data.subAttchSize, 10) / 1024 / 1024).toFixed(1);
+			                        fileListEl.innerHTML = `${data.subAttchOrgnlName} (${sizeMB}MB)`;
+			                    } else {
+			                        fileListEl.innerHTML = '첨부파일 없음';
+			                    }
+		
+			                    modal.style.display = 'flex';
+			                    document.body.style.overflow = 'hidden';
+			                });
 			        });
 			    });
-	
-			    // 팝업 닫기 (닫기 버튼)
+		
 			    closeButton.addEventListener('click', function () {
 			        modal.style.display = 'none';
 			        document.body.style.overflow = 'auto';
 			    });
-	
-			    // 팝업 닫기 (바깥 클릭 시)
+		
 			    window.addEventListener('click', function (event) {
 			        if (event.target === modal) {
 			            modal.style.display = 'none';
 			            document.body.style.overflow = 'auto';
 			        }
 			    });
-	
-			    // 저장 버튼 클릭
-			    const inquiryForm = document.getElementById('inquiryForm');
-			    inquiryForm.addEventListener('submit', function (event) {
+		
+			    document.getElementById('inquiryForm').addEventListener('submit', function (event) {
 			        event.preventDefault();
-			        alert('저장 버튼이 클릭되었습니다! (저장 로직은 필요 시 추가)');
-			        modal.style.display = 'none';
+			        const payload = {
+			            inquiryCode: document.getElementById('inquiryCodeDisplay').value,
+			            inquiryTypeCode: document.getElementById('inquiryTypeEdit').value,
+			            statusCode: document.getElementById('inquiryStatusEdit').value
+			        };
+			        fetch('/admin/updateInquiry', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(payload)
+			        })
+			        .then(res => res.ok ? res.text() : Promise.reject('저장 실패'))
+			        .then(result => {
+			            alert('저장이 완료되었습니다.');
+			            modal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			            location.reload();
+			        })
+			        .catch(error => {
+			            console.error('저장 오류:', error);
+			            alert('저장 중 오류가 발생했습니다.');
+			        });
+			    });
+		
+			    document.getElementById('inquiryTypeEdit').addEventListener('change', function () {
+			        document.getElementById('inquiryTypeCodeDisplay').value = this.value;
+			    });
+		
+				// ✅ 수정된 답변 팝업 열기
+				openAnswerPopupButtons.forEach(button => {
+			        button.addEventListener('click', function (event) {
+			            event.preventDefault();
+			            const inquiryCode = this.getAttribute('data-inquiry-code');
+		                currentInquiryCodeForAnswer = inquiryCode;
+		
+			            fetch(`/admin/adminInquiryMdfcn?inquiryCode=${inquiryCode}`)
+			                .then(response => response.json())
+			                .then(data => {
+			                    answerModal.querySelector('#inquiryTitleEdit').value = data.inquiryTitle || '';
+			                    answerModal.querySelector('#SR_writerCode').textContent = data.memberCode || '-';
+			                    answerModal.querySelector('#SR_writerName').textContent = data.memberName || '-';
+			                    answerModal.querySelector('#SR_writeDate').textContent = data.inquiryRegYmdt || '-';
+		
+			                    const statusEl = answerModal.querySelector('#inquiryStatusEdit');
+			                    statusEl.textContent = data.statusName || '-';
+			                    statusEl.className = 'badge rounded-pill ' +
+			                        (data.statusName === '처리완료' ? 'alert-success' :
+			                         data.statusName === '처리중' ? 'alert-info' :
+			                         'alert-warning') + ' mr-20';
+		
+			                    answerModal.querySelector('#inquiryTypeEdit').value = data.inquiryTypeName || '';
+			                    const contentArea = answerModal.querySelector('#inquiryContentEdit');
+			                    if (data.inquiryCn) {
+			                        const tempDiv = document.createElement('div');
+			                        tempDiv.innerHTML = data.inquiryCn;
+			                        tempDiv.querySelectorAll('img').forEach(img => img.remove());
+			                        contentArea.value = (tempDiv.textContent || tempDiv.innerText || '').trim();
+			                    } else {
+			                        contentArea.value = '내용이 없습니다.';
+			                    }
+		
+			                    const fileListEl = answerModal.querySelector('#SR_fileList');
+			                    if (data.subAttchOrgnlName && data.subAttchSize) {
+			                        const sizeMB = (parseInt(data.subAttchSize, 10) / 1024 / 1024).toFixed(1);
+			                        fileListEl.innerHTML = `${data.subAttchOrgnlName} (${sizeMB}MB)`;
+			                    } else {
+			                        fileListEl.innerHTML = '첨부파일 없음';
+			                    }
+		
+			                    const answerTextarea = document.getElementById('answerContent');
+			                    answerTextarea.value = data.inquiryProcessAnswer || '';
+			                    const answerSaveButton = document.getElementById('answerSaveButton');
+			                    if (data.statusName === '처리완료') {
+			                        answerTextarea.readOnly = true;
+			                        answerSaveButton.style.display = 'none';
+			                    } else {
+			                        answerTextarea.readOnly = false;
+			                        answerSaveButton.style.display = 'inline-block';
+			                    }
+		
+			                    answerModal.querySelector('#SR_updaterName').textContent = data.inquiryMdfcnAdmCode || '-';
+			                    answerModal.querySelector('#SR_updateDate').textContent = data.inquiryMdfcnYmdt || '-';
+			                    answerModal.style.display = 'flex';
+			                    document.body.style.overflow = 'hidden';
+			                });
+			        });
+			    });
+		
+			    closeAnswerButton.addEventListener('click', function () {
+			        answerModal.style.display = 'none';
 			        document.body.style.overflow = 'auto';
+			    });
+		
+			    window.addEventListener('click', function (event) {
+			        if (event.target === answerModal) {
+			            answerModal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			        }
+			    });
+		
+			    document.getElementById('answerSaveButton').addEventListener('click', function () {
+			        const inquiryCode = currentInquiryCodeForAnswer;
+			        const answerContent = document.getElementById('answerContent').value.trim();
+			        if (!inquiryCode || answerContent === '') {
+			            alert('답변 내용을 입력하세요.');
+			            return;
+			        }
+			        const payload = {
+			            inquiryCode,
+			            inquiryProcessAnswer: answerContent,
+			            statusCode: 'SD_PROCESS_END'
+			        };
+			        fetch('/admin/updateInquiryAnswer', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(payload)
+			        })
+			        .then(response => response.ok ? response.text() : Promise.reject('서버 응답 오류'))
+			        .then(result => {
+			            if (result === 'OK') {
+			                alert('답변이 저장되었습니다.');
+			                answerModal.style.display = 'none';
+			                document.body.style.overflow = 'auto';
+			                location.reload();
+			            } else {
+			                alert('저장 실패: ' + result);
+			            }
+			        })
+			        .catch(error => {
+			            console.error('답변 저장 오류:', error);
+			            alert('답변 저장 중 문제가 발생했습니다.');
+			        });
 			    });
 			});
 		</script>

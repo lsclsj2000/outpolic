@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="outpolic.admin.statistics.mapper.AdminRankingMapper">
+ 
+ 	<!-- 포트폴리오 랭킹 -->
+    <!-- ▼▼▼ 1. resultMap을 resultType으로 변경하고, 모든 컬럼에 AS 별칭을 추가합니다. ▼▼▼ -->
+    <select id="getAdminRankingPoContents" resultType="outpolic.admin.statistics.domain.AdminPortfolioRankingContentsDTO" parameterType="string">
+        SELECT
+            p.prtf_cd       AS prtfCode,
+            p.ent_cd        AS entCode,
+            e.ent_nm        AS entName,
+            p.prtf_ttl      AS prtfTtl,
+            p.prtf_reg_ymdt AS prtfDate,
+            p.stc_cd        AS stcCode,
+            c.ctgry_nm      AS ctgryName,
+            r.rk_view       AS rankingView,
+            r.rk_tot_ymd    AS rkDate
+        FROM
+            (
+                SELECT
+                    cl_cd, rk_view, rk_tot_ymd, rk_fr_ymdt, rk_to_ymdt,
+                    ROW_NUMBER() OVER(PARTITION BY cl_cd ORDER BY rk_tot_ymd DESC) as rn
+                FROM ranking
+            ) r
+        JOIN content_list cl ON r.cl_cd = cl.cl_cd
+        JOIN portfolio p ON cl.cntd_cd = p.prtf_cd
+        JOIN enterprise e ON p.ent_cd = e.ent_cd
+        LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
+        LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
+        WHERE
+            r.rn = 1 
+	        AND cl.cntd_cd LIKE 'PO%'
+	        AND #{targetDate} >= DATE(r.rk_fr_ymdt) AND #{targetDate} &lt; DATE(r.rk_to_ymdt)
+        ORDER BY
+            r.rk_view DESC
+        LIMIT 10
+    </select>
+
+    <!-- 외주 랭킹 -->
+    <!-- ▼▼▼ 2. 모든 컬럼에 AS 별칭을 추가하여 매핑 오류를 해결합니다. ▼▼▼ -->
+    <select id="getAdminRankingOsContents" resultType="outpolic.admin.statistics.domain.AdminRankingContentsDTO" parameterType="string">
+        SELECT
+            r.rk_view                           AS rankingView,
+            o.os_cd                             AS osCode,
+            e.ent_nm                            AS entName,
+            c.ctgry_nm                          AS ctgryName,
+            o.os_ttl                            AS osTtl,
+            o.os_expln                          AS osExpln,
+            IFNULL(AVG(r2.rvw_evl), 0)           AS reviewScore,
+            o.os_amt                            AS osAtm,
+            o.stc_cd                            AS stcCode
+        FROM
+            (
+                SELECT
+                    cl_cd, rk_view, rk_fr_ymdt, rk_to_ymdt,
+                    ROW_NUMBER() OVER (PARTITION BY cl_cd ORDER BY rk_tot_ymd DESC) AS rn
+                FROM
+                    ranking
+            ) r
+        JOIN content_list cl ON r.cl_cd = cl.cl_cd
+        JOIN outsourcing o ON cl.cntd_cd = o.os_cd
+        JOIN category c ON o.ctgry_id = c.ctgry_id
+        JOIN enterprise e ON o.ent_cd = e.ent_cd
+        LEFT JOIN outsourcing_contract_details ocd ON cl.cl_cd = ocd.cl_cd
+        LEFT JOIN outsourcing_prograss op on op.ocd_cd = ocd.ocd_cd 
+        LEFT JOIN outsourcing_contract oc ON op.osp_cd = oc.osp_cd
+        LEFT JOIN review r2 ON oc.osc_id = r2.osc_id
+        WHERE
+            r.rn = 1 
+	        AND cl.cntd_cd LIKE 'os%'
+	        AND #{targetDate} >= DATE(r.rk_fr_ymdt) AND #{targetDate} &lt; DATE(r.rk_to_ymdt)
+        GROUP BY
+            o.os_cd
+        ORDER BY
+            r.rk_view DESC
+        LIMIT 10
+    </select>
+ </mapper>

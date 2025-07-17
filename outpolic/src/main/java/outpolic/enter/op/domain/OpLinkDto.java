@@ -12,10 +12,8 @@ public class OpLinkDto {
 	
 	private String opCd; 	// 연결 코드 (outsourcing_portfolio 테이블의 PK)
 	private String osCd;	// 외주 코드
-	private String osTtl; 	// 외주 제목
+	private String osTtl;	// 외주 제목
 	private String prtfCd;	// 포트폴리오 코드
 	private String prtfTtl;	//포트폴리오 제목
 	private String entCd;	//기업 코드
-	
-
 }

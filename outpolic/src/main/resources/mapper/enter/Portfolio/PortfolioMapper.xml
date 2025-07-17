@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org/dtd/Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.enter.portfolio.mapper.PortfolioMapper">
 
     <resultMap id="OutsourcingSimpleResultMap" type="outpolic.enter.outsourcing.domain.EnterOutsourcing">
@@ -17,9 +17,10 @@
         <result property="admCd" column="adm_cd"/>
         <result property="prtfMdfcnYmdt" column="prtf_mdfcn_ymdt"/>
         <result property="stcCd" column="stc_cd"/>
+        <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/>
         <collection property="categories" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto">
             <id property="ctgryId" column="category_id"/>
-            <result property="ctgryNm" column="ctgry_nm"/> 
+            <result property="ctgryNm" column="ctgry_nm"/>
         </collection>
         <collection property="tagNames" ofType="java.lang.String">
             <result column="tag_name"/>
@@ -35,27 +36,31 @@
     </resultMap>
 
     <select id="findPortfolioDetailsByEntCd" resultMap="portfolioDetailResultMap">
-        SELECT
-            p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd,
-            c.ctgry_id AS category_id,
-            c.ctgry_nm AS ctgry_nm, t.tag_nm AS tag_name
-        FROM
-            portfolio p
-        LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
-        LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
-        LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
-        LEFT JOIN tag_mapping tm ON cl.cl_cd = tm.cl_cd
-        LEFT JOIN tag t ON tm.tag_cd = t.tag_cd
-        WHERE
-            p.ent_cd = #{entCd}
-        ORDER BY
-            p.prtf_reg_ymdt DESC
-    </select>
+    SELECT
+        p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.stc_cd,
+        cl.cl_cd,
+        c.ctgry_id AS category_id,
+        c.ctgry_nm AS ctgry_nm,
+        t.tag_nm AS tag_name,
+        /* ▼▼▼ [수정] 서브쿼리를 이용해 file 테이블에서 썸네일 경로를 가져옵니다. ▼▼▼ */
+        (SELECT f.file_path FROM file f WHERE f.cl_cd = cl.cl_cd ORDER BY f.file_reg_ymdt ASC LIMIT 1) AS prtf_thumbnail_url
+    FROM
+        portfolio p
+    LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
+    LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
+    LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
+    LEFT JOIN tag_mapping tm ON cl.cl_cd = tm.cl_cd
+    LEFT JOIN tag t ON tm.tag_cd = t.tag_cd
+    WHERE
+        p.ent_cd = #{entCd}
+    ORDER BY
+        p.prtf_reg_ymdt DESC
+</select>
 
     <select id="findPortfolioDetailsByPrtfCd" resultMap="portfolioDetailResultMap">
         SELECT
-            p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd,
-            c.ctgry_id AS category_id,
+            p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd, p.prtf_thumbnail_url,
+            cl.cl_cd, c.ctgry_id AS category_id,
             c.ctgry_nm AS ctgry_nm, t.tag_nm AS tag_name
         FROM
             portfolio p
@@ -85,9 +90,28 @@
         SELECT COUNT(*) FROM portfolio WHERE ent_cd = #{entCd}
     </select>
 
+    <select id="findMbrCdByClCd" resultType="String">
+        SELECT mbr_cd
+        FROM category_mapping
+        WHERE cl_cd = #{clCd}
+        LIMIT 1
+    </select>
+
+    <select id="findMbrCdByPrtfCd" resultType="String">
+        SELECT
+            e.mbr_cd
+        FROM
+            portfolio p
+        JOIN
+            enterprise e ON p.ent_cd = e.ent_cd
+        WHERE
+            p.prtf_cd = #{prtfCd}
+    </select>
+
     <insert id="insertPortfolio" parameterType="EnterPortfolio">
-        INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd)
-        VALUES (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(),'SD_ACTIVE')
+        INSERT INTO portfolio (prtf_cd, ent_cd, prtf_ttl, prtf_cn,
+        prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd,prtf_thumbnail_url)
+        VALUES (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(),'SD_ACTIVE',#{prtfThumbnailUrl})
     </insert>
 
     <insert id="insertContentList">
@@ -100,30 +124,31 @@
         VALUES (#{ctgryCd}, #{clCd}, NOW(), #{mbrCd})
     </insert>
 
+
     <insert id="insertTag">
         INSERT INTO tag (tag_cd, tag_nm, mbr_cd, tag_reg_ymdt)
         VALUES (#{tagCd}, #{tagName}, #{mbrCd}, NOW())
     </insert>
-    
+
     <insert id="insertTagMapping">
         INSERT INTO tag_mapping (tag_cd, cl_cd, tm_reg_ymdt, mbr_cd, stc_cd)
         VALUES (#{tagCd}, #{clCd}, NOW(), #{mbrCd}, 'SD_ACTIVE')
     </insert>
 
     <update id="updatePortfolio" parameterType="EnterPortfolio">
-        UPDATE portfolio
-        SET
-            prtf_ttl = #{prtfTtl},
-            prtf_cn = #{prtfCn},
-            prtf_mdfcn_ymdt = NOW(),
-            adm_cd = #{admCd}
-        WHERE
-            prtf_cd = #{prtfCd}
-    </update>
+    UPDATE portfolio
+    <set>
+        <if test="prtfTtl != null and prtfTtl != ''"> prtf_ttl = #{prtfTtl}, </if>
+        <if test="prtfCn != null and prtfCn != ''"> prtf_cn = #{prtfCn}, </if>
+        prtf_mdfcn_ymdt = NOW()
+    </set>
+    WHERE prtf_cd = #{prtfCd}
+</update>
 
     <delete id="deleteCategoryMappingByClCd">
         DELETE FROM category_mapping WHERE cl_cd = #{clCd}
     </delete>
+
 
     <delete id="deleteTagMappingByClCd">
         DELETE FROM tag_mapping WHERE cl_cd = #{clCd}
@@ -132,7 +157,7 @@
     <delete id="deleteOutsourcingPortfolioByPrtfCd">
         DELETE FROM outsourcing_portfolio WHERE prtf_cd = #{prtfCd}
     </delete>
-    
+
     <delete id="deleteBookmarkByClCd">
         DELETE FROM bookmark WHERE cl_cd = #{clCd}
     </delete>
@@ -145,28 +170,37 @@
         DELETE FROM portfolio WHERE prtf_cd = #{prtfCd}
     </delete>
 
+    <delete id="deleteFilesByClCd">
+        DELETE FROM `file` WHERE cl_cd = #{clCd}
+    </delete>
+
+
     <select id="findLatestPrtfCd" resultType="String">
-        SELECT prtf_cd FROM portfolio WHERE prtf_cd LIKE 'PO_C%'
-        ORDER BY CAST(SUBSTRING(prtf_cd, 5) AS UNSIGNED) DESC LIMIT 1
-    </select>
+    SELECT prtf_cd FROM portfolio WHERE prtf_cd LIKE 'PO_C%'
+    ORDER BY CAST(SUBSTRING(prtf_cd, 5) AS UNSIGNED) DESC LIMIT 1
+</select>
 
     <select id="findLatestTagCd" resultType="String">
-        SELECT tag_cd FROM tag WHERE tag_cd LIKE 'T_C%'
+        SELECT tag_cd FROM tag WHERE tag_cd LIKE
+        'T_C%'
         ORDER BY CAST(SUBSTRING(tag_cd, 5) AS UNSIGNED) DESC LIMIT 1
     </select>
 
     <select id="findTagCdByName" resultType="String">
         SELECT tag_cd FROM tag WHERE tag_nm = #{tagName}
     </select>
-    
+
     <select id="findClCdByPrtfCd" resultType="String">
         SELECT cl_cd FROM content_list WHERE cntd_cd = #{prtfCd} LIMIT 1
     </select>
-    
+
     <select id="searchTagsByName" resultType="String">
-        SELECT tag_nm
-        FROM tag
-        WHERE tag_nm LIKE CONCAT('%', #{query},'%')
+        SELECT
+            tag_nm
+        FROM
+            tag
+        WHERE
+            tag_nm LIKE CONCAT('%', #{query},'%')
         LIMIT 10
     </select>
 
@@ -217,5 +251,102 @@
             )
         LIMIT 10
     </select>
+    <select id="findLinkedPortfoliosByOsCd" resultMap="simplePortfolioResultMap">
+        SELECT
+            p.prtf_cd,
+            p.prtf_ttl
+        FROM
+            portfolio p
+        JOIN
+            outsourcing_portfolio op ON p.prtf_cd = op.prtf_cd
+        WHERE
+            op.os_cd = #{osCd}
+        ORDER BY
+            op.op_reg_ymdt DESC
+    </select>
 
+
+    <insert id="addPortfolio" parameterType="EnterPortfolio">
+    INSERT INTO portfolio
+        (prtf_cd, ent_cd, prtf_ttl, prtf_cn, prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd)
+    VALUES
+        (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), #{stcCd})
+</insert>
+
+    <select id="searchUnlinkedOutsourcings" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
+        SELECT
+            os.os_cd,
+            os.os_ttl
+        FROM
+            outsourcing os
+        WHERE
+            os.ent_cd = #{entCd}
+            AND os.os_ttl LIKE CONCAT('%', #{query}, '%')
+            AND NOT EXISTS (
+                SELECT 1
+                FROM outsourcing_portfolio op
+                WHERE op.os_cd = os.os_cd AND op.prtf_cd = #{prtfCd}
+            )
+        ORDER BY
+            os.os_reg_ymdt DESC
+    </select>
+
+    <insert id="insertFileRecord" parameterType="map">
+         INSERT INTO `file`
+            (file_cd, file_reg_ymdt, file_extn, file_orgnl_nm, file_srvr_nm, file_path, cl_cd, mbr_cd, file_size)
+        VALUES
+            (#{file.fileIdx}, NOW(), #{file.fileExtension}, #{file.fileOriginalName}, #{file.fileNewName}, #{file.filePath}, #{clCd}, #{mbrCd}, #{file.fileSize})
+    </insert>
+
+    <select id="findFilesByClCd" resultType="outpolic.systems.file.domain.FileMetaData">
+        SELECT
+            file_cd AS fileIdx, file_reg_ymdt AS fileRegYmdt, file_mdfcn_ymdt AS fileMdfcnYmdt,
+            file_extn AS fileExtension, file_orgnl_nm AS fileOriginalName, file_srvr_nm AS fileNewName,
+            file_path AS filePath, file_size AS fileSize
+        FROM `file`
+        WHERE cl_cd = #{clCd}
+        ORDER BY file_reg_ymdt DESC
+    </select>
+
+    <select id="searchPortfoliosByTitle" resultType="outpolic.enter.portfolio.domain.EnterPortfolio">
+        SELECT
+            prtf_cd,
+            prtf_ttl
+        FROM
+            portfolio
+        WHERE
+            prtf_ttl LIKE CONCAT('%', #{query}, '%')
+        ORDER BY
+            prtf_reg_ymdt DESC
+    </select>
+
+   <select id="findLatestClCdForPortfolio" resultType="String">
+    SELECT cl_cd FROM content_list
+    WHERE cl_cd LIKE 'LIST_PO_C%'
+    ORDER BY CAST(SUBSTRING(cl_cd, 11) AS UNSIGNED) DESC LIMIT 1
+</select>
+
+    <delete id="deleteOutsourcingContractDetailsByClCd">
+        DELETE FROM outsourcing_contract_details WHERE cl_cd = #{clCd}
+    </delete>
+
+    <delete id="deleteRankingByClCd">
+        DELETE FROM ranking WHERE cl_cd = #{clCd}
+    </delete>
+
+    <delete id="deleteTodayViewByClCd">
+        DELETE FROM today_view WHERE cl_cd = #{clCd}
+    </delete>
+
+    <delete id="deleteTotalViewByClCd">
+        DELETE FROM total_view WHERE cl_cd = #{clCd}
+    </delete>
+    
+    <delete id="deletePerusalContentByClCd">
+        DELETE FROM perusal_content WHERE cl_cd = #{clCd}
+    </delete>
+    
+    <delete id="callDeletePortfolioProcedure">
+    CALL sp_delete_portfolio(#{prtfCd})
+</delete>
 </mapper>

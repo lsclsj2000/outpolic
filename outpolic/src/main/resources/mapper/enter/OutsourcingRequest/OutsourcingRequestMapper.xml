@@ -1,30 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="outpolic.enter.outsourcingRequest.mapper.OutsourcingRequestMapper">
+<mapper namespace="outpolic.enter.outsourcingRequest.mapper.EnterOutsourcingRequestMapper">
 	
-	<select id="searchEnterprises" resultType="map">
-		SELECT
-			ent_cd as id, ent_nm as name
-		FROM
-			enterprise
-		WHERE
-			ent_nm LIKE CONCAT('%',#{query},'%')		
-	</select>
-	<insert id="insertRequest" parameterType="OutsourcingRequestDTO">
+	<insert id="insertRequest" parameterType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO">
         INSERT INTO outsourcing_contract_details (
-            ocd_cd, ocd_req_type, mbr_cd, ent_cd, cl_cd, ocd_ttl, 
-            ocd_expln, ocd_frctn_cmdty, ocd_dlvgds_mthd, ocd_dedline, 
-            ocd_amt, stc_cd, ocd_dmnd_ymdt, ocd_yn
-        ) VALUES (
-            #{ocd_cd}, #{ocd_req_type}, #{mbr_cd}, #{ent_cd}, #{cl_cd}, #{ocd_ttl},
-            #{ocd_expln}, #{ocd_frctn_cmdty}, #{ocd_dlvgds_mthd}, #{ocd_dedline},
-            #{ocd_amt}, 'SD_BEFORE', NOW(), 'N'
+            ocd_cd,
+            mbr_cd,
+            ent_cd,
+            cl_cd,
+            ocd_ttl,
+     
+        ocd_expln,
+            ocd_frctn_cmdty,
+            ocd_dlvgds_mthd,
+            ocd_strt_ymdt, ocd_dedline,
+            ocd_amt,
+            ocd_dmnd_ymdt,
+            ocd_req_type,
+            stc_cd
+        
+) VALUES (
+            #{ocd_cd},
+            #{mbr_cd},
+            #{ent_cd},
+            #{cl_cd},
+            #{ocd_ttl},
+            #{ocd_expln},
+            #{ocd_frctn_cmdty},
+            #{ocd_dlvgds_mthd},
+  
+            #{ocd_strt_ymdt}, #{ocd_dedline},
+            #{ocd_amt},
+            NOW(),
+            #{ocd_req_type}, 'SD_BEFORE'
         )
     </insert>
-    <select id="findAllRequestsByUserId" resultType="RequestViewDTO">
-        SELECT
+    
+    
+    
+    <update id="updateStatus">
+ 
+    	UPDATE outsourcing_contract_details
+    	SET
+    		stc_cd=#{status},
+    		ocd_rspns_ymdt=NOW()
+    	WHERE
+    		ocd_cd=#{requestId}	
+    </update>
+
+    <select id="findSentRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
+        SELECT 
+            ocd.ocd_cd, 
+            ocd.ocd_ttl, 
+            e.ent_nm AS supplierName, 
+            ocd.ocd_dmnd_ymdt, 
+   
+            ocd.stc_cd,
+            m.mbr_nm AS demanderName
+        FROM 
+            outsourcing_contract_details ocd 
+        JOIN 
+            enterprise e ON ocd.ent_cd = e.ent_cd
+        JOIN 
+            member m ON ocd.mbr_cd = m.mbr_cd 
+ 
+        WHERE 
+            ocd.mbr_cd = #{requesterId} AND ocd.ocd_req_type = '신청'
+        ORDER BY ocd.ocd_dmnd_ymdt DESC
+    </select>
+    
+    <select id="findRequestDetailById" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
+        SELECT 
             ocd.ocd_cd,
+            ocd.mbr_cd,
+            ocd.ent_cd,
+            ocd.cl_cd,
+            ocd.ocd_ttl,
+            ocd.ocd_expln,
+            ocd.ocd_frctn_cmdty,
+            ocd.ocd_dlvgds_mthd,
+            ocd.ocd_strt_ymdt,
+            ocd.ocd_dedline,
+            ocd.ocd_amt,
+            ocd.ocd_dmnd_ymdt,
             ocd.ocd_req_type,
+            ocd.stc_cd,
+            m.mbr_nm as demanderName, 
+            e.ent_nm as supplierName
+        FROM outsourcing_contract_details ocd
+        JOIN member m ON ocd.mbr_cd = m.mbr_cd
+        JOIN enterprise 
+e ON ocd.ent_cd = e.ent_cd
+        WHERE ocd.ocd_cd = #{requestId}
+    </select>
+
+    <select id="findLatestOcdCd" resultType="String">
+        SELECT ocd_cd
+        FROM outsourcing_contract_details
+        WHERE ocd_cd LIKE 'OCD_C%'
+        ORDER BY CAST(SUBSTRING(ocd_cd, 6) AS UNSIGNED) DESC
+        LIMIT 1
+    </select>
+    
+    <select id="findReceivedRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
+        SELECT
+ 
+            ocd.ocd_cd,
             ocd.ocd_ttl,
             m.mbr_nm AS demanderName,
             e.ent_nm AS supplierName,
@@ -32,16 +113,56 @@
             ocd.stc_cd
         FROM
             outsourcing_contract_details ocd
-        JOIN
+    
+    JOIN
             member m ON ocd.mbr_cd = m.mbr_cd
         JOIN
             enterprise e ON ocd.ent_cd = e.ent_cd
         WHERE
-            ocd.mbr_cd = #{userId} OR ocd.ent_cd = #{userId}
-        ORDER BY
-            ocd.ocd_dmnd_ymdt DESC
+            ocd.ent_cd = #{supplierEntCd} AND ocd.ocd_req_type = '신청'
+        ORDER BY ocd.ocd_dmnd_ymdt DESC
     </select>
     
+    <select id="findEntCdByMbrCd" resultType="String">
+   
+    	SELECT
+    		ent_cd 
+    	FROM
+    		enterprise 
+    	WHERE
+    		mbr_cd=#{mbrCd}		
+    </select>
     
-	
+    <select id="findLatestOspCd" resultType="String">
+    	SELECT 
+    		osp_cd
+    	FROM
+    		outsourcing_prograss	
+    	ORDER BY CAST(SUBSTRING(osp_cd, 5) AS UNSIGNED) DESC	
+    	LIMIT 1
+    </select>
+    
+    <insert id="insertInitialProgress">
+    	 INSERT INTO outsourcing_prograss
+           
+    (osp_cd, ocd_cd, stc_cd, osp_sply_ymdt)
+        VALUES
+            (#{ospCd}, #{ocdCd}, #{stcCd}, NOW())
+    
+    </insert>
+    
+    <insert id="insertInitialProgressStages">
+    INSERT INTO outsourcing_prograss
+        (osp_cd, ocd_cd, stc_cd, osp_sply_ymdt, osp_cust_yn) VALUES
+    <foreach collection="stageList" item="stage" separator=",">
+        (
+        	#{stage.ospCd},
+            #{stage.ocdCd},
+ 
+            #{stage.stcCd},
+            #{stage.ospSplyYmdt},
+            #{stage.ospCustYn}
+        )
+    </foreach>
+</insert>
 </mapper>

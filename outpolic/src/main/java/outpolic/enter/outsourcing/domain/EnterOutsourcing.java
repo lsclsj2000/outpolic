@@ -45,11 +45,11 @@ public class EnterOutsourcing {
 
     @NotNull(message = "희망 작업 시작일은 필수입니다.")
     @FutureOrPresent(message="시작일은 현재 또는 미래의 날짜여야 합니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime osStrtYmdt;
 
     @NotNull(message = "희망 작업 종료일은 필수입니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime osEndYmdt;
 
     @NotNull(message = "희망 금액은 필수입니다.")
@@ -62,4 +62,8 @@ public class EnterOutsourcing {
     private List<EnterPortfolio> relatedPortfolios = new ArrayList<>();
     
     private String prtfThumbnailUrl;;
+    
+    private String clCd;
+    
+    private String osThumbnailUrl;
 }

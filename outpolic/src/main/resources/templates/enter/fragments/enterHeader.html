@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 	<header class="header-area header-style-1 header-height-2" th:fragment="enterHeaderFragment">
-		<div class="mobile-promotion">
-		    <span>Grand opening, <strong>up to 15%</strong> off all items. Only <strong>3 days</strong> left</span>
-		</div>
 		<div class="header-middle header-middle-ptb-1 d-none d-lg-block">
 			<div class="container">
 				<div class="header-wrap">
@@ -19,7 +16,7 @@
 						</div>
 						<div class="header-action-right">
 							<div class="header-action-2">
-							    <div class="header-action-icon-2">
+							    <div class="header-action-icon-2" th:if="${session.SCD != null}">
 									<a class="mini-cart-icon" href="#">
 										<img style="max-width:30px;" src="/user/assets/imgs/outpolic/bell.png" />
 										<span class="pro-count blue">1</span>
@@ -47,14 +44,14 @@
 									<a href="#">
 									    <img class="svgInject" alt="Nest" src="/user/assets/imgs/theme/icons/icon-user.svg" />
 									</a>
-									<a th:href="@{/#}"><span class="lable ml-0">마이페이지</span></a>
+									<a th:href="${session.SCD != null} ? @{/enter/mypage} : @{/login}"><span class="lable ml-0" th:text="${session.SCD != null} ? '내 정보' : '로그인'"></span></a>
 									<div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
 										<ul>
-										    <li><a th:href="@{/enter/mypage}"><i class="fi fi-rs-user mr-10"></i>내정보</a></li>
-										    <li><a th:href="@{/login}"><i class="fi fi-rs-log-in mr-10"></i>로그인</a></li>
-										    <li><a th:href="@{/logout}"><i class="fi fi-rs-log-out mr-10"></i>로그아웃</a></li>
+										    <li th:if="${session.SCD != null}"><a th:href="@{/enter/mypage}"><i class="fi fi-rs-user mr-10"></i>내정보</a></li>
+										    <li  th:if="${session.SCD == null}"><a th:href="@{/login}"><i class="fi fi-rs-log-in mr-10"></i>로그인</a></li>
+										    <li th:if="${session.SCD != null}"><a th:href="@{/logout}"><i class="fi fi-rs-log-out mr-10"></i>로그아웃</a></li>
 										    <li><a th:href="@{/forgotPswd}"><i class="fi fi-rs-log-out mr-10"></i>비밀번호찾기</a></li>
-										    <li><a th:href="@{/user/registerInfo}"><i class="fi fi-rs-log-out mr-10"></i>회원가입</a></li>
+										    <li  th:if="${session.SCD == null}"><a th:href="@{/user/registerInfo}"><i class="fi fi-rs-log-out mr-10"></i>회원가입</a></li>
 										</ul>
 									</div>
 								</div>
@@ -71,7 +68,7 @@
 			  <div class="container">
 				 <div class="header-wrap header-space-between position-relative">
 					<div class="logo logo-width-1 d-block d-lg-none">
-					    <a th:href="@{/}"><img src="/user/assets/imgs/theme/logo.svg" alt="logo" /></a>
+					    <a th:href="@{/enter}"><img src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
 					</div>
 					<div class="header-nav d-none d-lg-flex">
 						<div class="main-categori-wrap d-none d-lg-block">
@@ -131,17 +128,21 @@
 							<nav>
 								<ul>
 									<li>
-										<a th:href="@{/enter/enterSearch}"> 외주 </a>
-									</li>
-									<li>
-										<a th:href="@{/enter/enterSearch}"> 포트폴리오 </a>
-									</li>
+								        <!-- [수정] filter=Outsourcing 파라미터 추가 -->
+								        <a th:href="@{/enter/enterSearch(filter='Outsourcing')}"> 외주 </a>
+								    </li>
+								    <li>
+								        <!-- [수정] filter=Portfolio 파라미터 추가 -->
+								        <a th:href="@{/enter/enterSearch(filter='Portfolio')}"> 포트폴리오 </a>
+								    </li> 
 									<li>
 									    <a href="#">콘텐츠<i class="fi-rs-angle-down"></i></a>
 									    <ul class="sub-menu">
 									        <li><a th:href="@{/enter/portfolio/list}">내 포트폴리오</a></li>
 									        <li><a th:href="@{/enter/outsourcing/list}">내 외주</a></li>
 									        <li><a th:href="@{/enter/enterOsstList}">내 진행 외주</a></li>
+									        <li><a th:href="@{/enter/outsourcing-requests/sent}">보낸 외주 신청 목록</a></li>							        
+									        <li><a th:href="@{/enter/outsourcing-requests/received}">받은 외주 신청 목록</a></li>
 									    </ul>
 									</li>
 									<li>
@@ -159,7 +160,7 @@
 							</nav>
 						</div>
 					</div>
-					<div class="hotline d-none d-lg-flex">
+					<div class="hotline d-none d-lg-flex" th:if="${session.SCD != null}">
 					    <a th:href="@{/enter/portfolio/add}"><button class="btn mr-20">포트폴리오 올리기</button></a>
 					    <a th:href="@{/enter/outsourcing/add}"><button class="btn">외주 올리기</button></a>
 					</div>

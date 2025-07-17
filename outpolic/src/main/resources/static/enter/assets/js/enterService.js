@@ -104,7 +104,7 @@ function collectEnterInfo() {
 }
 // 클릭 이벤트 시작
 $(document).ready(function () {
-	
+
 	// 우편번호 찾기 호출    
 	$('#postcodeBtn').click(function () {
 	    sample4_execDaumPostcode();  

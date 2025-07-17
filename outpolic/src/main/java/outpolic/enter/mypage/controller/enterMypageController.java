@@ -26,6 +26,12 @@ public class enterMypageController {
     @GetMapping("/enter/mypage")
     public String myPage(HttpSession session, Model model) {
     	String memberCode = (String) session.getAttribute("SCD");
+    	String gradeCode = (String) session.getAttribute("SGrd");
+    	if(gradeCode == null ||!"ENTER".equals(gradeCode)) {
+    		model.addAttribute("msg", "접근 권한이 없습니다.");
+    		model.addAttribute("url", "/");
+    		return "enter/mypage/alert";
+    	}
  	    EnterInfo enterInfo = enterMypageService.getEnterInfoByCode(memberCode);
  	    model.addAttribute("enterInfo", enterInfo);
     	return "enter/mypage/enterMypageView";
@@ -139,6 +145,11 @@ public class enterMypageController {
     	return "redirect:/enter/mypage";
     }
     
+    // 기업 기업정보 소개 페이지
+    @GetMapping("/enterpriseInfo")
+    public String enterpriseInfoView() {
+    	return "enter/enterpriseInfo/enterpriseInfo";
+    }
 
     
     // 살짝 위탁

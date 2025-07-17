@@ -4,48 +4,141 @@
       layout:decorate="~{enter/layout/enterLayoutkjw}">
 <head>
     <meta charset="UTF-8">
-    <title>보낸 신청 목록</title>
-    <style>
-        
-        .request-item { border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
-        .item-info .item-title a { font-size: 1.2rem; font-weight: 600; color: #1f2937; text-decoration: none; }
-        .item-info .item-meta { font-size: 0.9rem; color: #6b7280; margin-top: 0.5rem; }
-        .item-status .status-badge { font-size: 0.8rem; font-weight: bold; padding: 0.3rem 0.75rem; border-radius: 9999px; color: white; }
-        .status-before { background-color: #6b7280; }
-        .status-approved { background-color: #16a34a; }
-        .empty-message { text-align: center; padding: 3rem; color: #6b7280; }
-    </style>
+    <title>신청 상세 보기</title>
+    <th:block layout:fragment="css">
+        <style>
+            .request-card { background: #ffffff; border-radius: 12px; padding: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
+            .request-header h1 { font-size: 1.8rem; font-weight: 800; color: #1f2937; margin: 0 0 1rem 0; }
+            .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; padding: 1.5rem 0; margin-bottom: 1.5rem; }
+            .meta-item { font-size: 1rem; color: #4b5563; }
+            .meta-item strong { color: #111827; display: block; margin-bottom: 0.25rem; }
+            .request-body { line-height: 1.6; margin-bottom: 2rem;}
+            .request-body h3 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f3f4f6;}
+            .btn-back { display: inline-block; background-color: #6b7280; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s; }
+            .btn-back:hover { background-color: #4b5563; }
+            .status-badge { font-size: 1rem; font-weight: bold; padding: 0.4rem 0.8rem; border-radius: 9999px; color: white; }
+            .btn-success {
+            	background-color:#28a745; 
+            	color:white;
+            	padding:0.75rem 1.5rem;
+            	border:none;
+            	border-radius:6px;
+            	cursor:pointer;
+            }
+            .btn-danger{
+            	background-color:#dc3545;
+            	color:white;
+            	padding:0.75rem 1.5rem;
+            	border:none;
+            	border-radius:6px;
+            	cursor:pointer;
+            }
+            .ml-10{
+            	margin-left:10px;
+            }
+            .mt-20{
+            	margin-top:20px;
+            }
+            .mt-30{
+            	margin-top:30px;
+            }
+            
+        </style>
+    </th:block>
 </head>
 <body>
 <th:block layout:fragment="contents">
     <div class="container">
-        <h1>보낸 신청 목록</h1>
-        <div id="request-list-container">
+        <div class="request-card" id="request-detail-card">
+            <div class="request-header"><h1 th:text="${request.ocd_ttl}"></h1></div>
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <strong>요청자</strong> 
+                    <span th:text="${request.demanderName ?: '정보 없음'}"></span>
+                </div>
+                <div class="meta-item">
+                    <strong>공급자</strong> 
+                    <span th:text="${request.supplierName}"></span>
+                </div>
+                <div class="meta-item">
+                    <strong>요청일</strong> 
+                    <span th:text="${#temporals.format(request.ocd_dmnd_ymdt, 'yyyy-MM-dd HH:mm')}"></span>
+                </div>
+                <div class="meta-item">
+                    <strong>상태</strong> 
+                    <span th:classappend="'status-' + ${request.stc_cd}" th:text="${@statusTextFormatter.getStatusText(request.stc_cd)}" class="status-badge"></span>
+                </div>
             </div>
+            <div class="request-body">
+                <h3>상세 요청 내용</h3>
+                <p th:text="${request.ocd_expln}" style="white-space: pre-wrap;"></p>
+                <h3>희망 예산</h3>
+                <p th:text="${request.ocd_amt != null ? #numbers.formatCurrency(request.ocd_amt) + '원' : '협의'}"></p>
+                <h3>최종 제작물</h3>
+                <p th:text="${request.ocd_frctn_cmdty ?: '미정'}"></p>
+                <h3>납품 방법</h3>
+                <p th:text="${request.ocd_dlvgds_mthd ?: '미정'}"></p>
+                <h3>희망 작업 시작일</h3>
+                <p th:text="${#temporals.format(request.ocd_strt_ymdt, 'yyyy-MM-dd HH:mm')}"></p>
+                <h3>희망 작업 종료일</h3>
+                <p th:text="${#temporals.format(request.ocd_dedline, 'yyyy-MM-dd HH:mm')}"></p>
+                
+                   <div class="actions-container mt-30" th:if="${request.stc_cd == 'SD_BEFORE'}">
+                <button type="button" class="btn btn-success" id="approve-btn">승인</button>
+                <button type="button" class="btn btn-danger ml-10" id="reject-btn">거절</button>
+            </div>
+            </div>
+            <a th:href="${listUrl}" class="btn-back">목록으로 돌아가기</a>
+        </div>
+        <div id="error-message" style="display:none;" class="empty-message"></div>
     </div>
 </th:block>
 
 <th:block layout:fragment="jsFile">
-    <script>
+    <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            const listContainer = document.getElementById('request-list-container');
+            const requestId = /*[[${request.ocd_cd}]]*/ '';
+            const approveBtn = document.getElementById('approve-btn');
+            const rejectBtn = document.getElementById('reject-btn');
 
-            // 목록 아이템 HTML 생성 함수 (재사용)
-            const createListHtml = (items) => { /* ... 이전과 동일 ... */ };
+            const handleStatusUpdate = (newStatus) => {
+                const confirmMessage = newStatus === 'SD_APPROVED' 
+                                     ? '이 요청을 승인하시겠습니까?' 
+                                     : '이 요청을 거절하시겠습니까?';
+                
+                if (!confirm(confirmMessage)) {
+                    return;
+                }
 
-            fetch('/api/my/all-requests')
-                .then(response => response.ok ? response.json() : Promise.reject('서버 오류'))
-                .then(data => {
-                    const myUserId = 'EI_C00003'; // 예시: 현재 로그인한 사용자 ID
-
-                    // [핵심] 내가 보낸(demander) 요청 중에서 '신청' 타입인 것만 필터링
-                    const sentRequests = data.filter(item => 
-                        item.mbr_cd === myUserId && item.ocd_req_type === '신청'
-                    );
-
-                    listContainer.innerHTML = createListHtml(sentRequests);
+                fetch('/enter/outsourcing-requests/update-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        requestId: requestId,
+                        status: newStatus
+                    })
                 })
-                .catch(error => { /* ... 오류 처리 ... */ });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('상태가 성공적으로 변경되었습니다.');
+                        window.location.reload(); // 성공 시 페이지 새로고침
+                    } else {
+                        alert('상태 변경에 실패했습니다: ' + (data.message || '알 수 없는 오류'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('상태 변경 중 오류가 발생했습니다.');
+                });
+            };
+
+            if (approveBtn) {
+                approveBtn.addEventListener('click', () => handleStatusUpdate('SD_APPROVED'));
+            }
+            if (rejectBtn) {
+                rejectBtn.addEventListener('click', () => handleStatusUpdate('SD_REJECTED'));
+            }
         });
     </script>
 </th:block>

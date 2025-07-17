@@ -51,7 +51,7 @@ public class WebConfig implements WebMvcConfigurer{
 		String rootPath = getOSFilePath();
 		
 		registry.addResourceHandler("/attachment/**")
-				.addResourceLocations(rootPath + fileRealPath + "/attachment/")
+				.addResourceLocations(rootPath + fileRealPath.trim() + "/attachment/")
 				.setCachePeriod(3600)
 				.resourceChain(true)
 				.addResolver(new PathResourceResolver());
@@ -64,7 +64,7 @@ public class WebConfig implements WebMvcConfigurer{
 		String os = System.getProperty("os.name").toLowerCase();
 		
 		if(os.contains("win")) {
-			rootPath = "file:///c:";
+			rootPath = "file:///";
 		}else if(os.contains("linux")) {
 			rootPath = "file://";
 		}else if(os.contains("mac")) {			

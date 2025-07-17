@@ -13,18 +13,20 @@ import outpolic.user.ranking.service.UserRankingService;
 @Service
 public class UserRankingServiceImpl implements UserRankingService{
 
-	@Autowired
-	private UserRankingMapper userRankingMapper;
 
-	public List<UserRankingContentsDTO> getRankingContentsList() {
-
-		return userRankingMapper.getUserRankingOsContents();
-	}
-
-	
-	@Override
-	public List<UserPortfolioRankingContentsDTO> getUserRankingPoContents() {
-		return userRankingMapper.getUserRankingPoContents();
-	}
+	 @Autowired 
+	 private UserRankingMapper userRankingMapper;
+	  
+	 public List<UserRankingContentsDTO> getRankingContentsList() {
+	 
+		 return userRankingMapper.getUserRankingOsContents(); 
+	 }
+	 
+	 
+	 
+	 @Override public List<UserPortfolioRankingContentsDTO> getUserRankingPoContents() { 
+		 
+		 return userRankingMapper.getUserRankingPoContents(); 
+	 }
 
 }

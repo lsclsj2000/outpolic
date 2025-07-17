@@ -7,4 +7,34 @@
         WHERE ctgry_nm LIKE CONCAT('%', #{query}, '%')
         LIMIT 10
     </select>
+    
+    <select id="findTopLevelCategories" resultType="outpolic.enter.POAddtional.domain.CategorySearchDto">
+    SELECT
+        ctgry_id as ctgryId,
+        ctgry_nm as ctgryNm
+    FROM
+        category
+    WHERE
+        ctgry_up_id IS NULL OR ctgry_up_id = '-'
+</select>
+
+<select id="findSubCategories" parameterType="String" resultType="outpolic.enter.POAddtional.domain.CategorySearchDto">
+    SELECT
+        ctgry_id as ctgryId,
+        ctgry_nm as ctgryNm
+    FROM
+        category
+    WHERE
+        ctgry_up_id = #{parentId}
+</select>
+
+<select id="findCategoryById" resultType="outpolic.enter.POAddtional.domain.CategorySearchDto">
+    SELECT
+        ctgry_id as ctgryId,
+        ctgry_nm as ctgryNm,
+        ctgry_up_id as ctgryUpId FROM
+        category
+    WHERE
+        ctgry_id = #{ctgryId}
+</select>
 </mapper>

@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.login.service.AdminLoginService;
 import outpolic.common.domain.Member;
+import outpolic.admin.login.DTO.AdminLoginDTO;
 
 @Controller
 @RequestMapping(value="/admin")
@@ -44,7 +45,14 @@ public class adminLoginController {
 		Map<String, Object> loginResult = adminLoginService.loginAdmin(memberId, memberPw);
 		boolean isMatched = (boolean) loginResult.get("isMatched");
 		if(isMatched) {
-			Member memberInfo = (Member) loginResult.get("memberInfo");
+			AdminLoginDTO adminLoginDTO = (AdminLoginDTO) loginResult.get("adminLoginDTO");
+			if (adminLoginDTO == null || adminLoginDTO.getMemberInfo() == null) {
+		        model.addAttribute("msg", "로그인 정보가 잘못되었습니다.");
+		        model.addAttribute("url", "/admin/login");
+		        return "user/mypage/alert";
+		    }
+			
+			Member memberInfo = adminLoginDTO.getMemberInfo();
 			String grade = memberInfo.getGradeCode();
             
             if("ADMIN".equals(grade)) {
@@ -53,6 +61,7 @@ public class adminLoginController {
                 session.setAttribute("SName", memberInfo.getMemberName());
                 session.setAttribute("SGrd", memberInfo.getGradeCode());
                 session.setAttribute("SCD", memberInfo.getMemberCode());
+                session.setAttribute("SACD", adminLoginDTO.getAdminCode());
                 
                 redirectAttributes.addFlashAttribute("success", "로그인에 성공하였습니다");
 

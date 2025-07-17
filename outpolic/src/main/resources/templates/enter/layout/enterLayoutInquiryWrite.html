@@ -20,7 +20,7 @@
 	<header th:replace="~{enter/fragments/enterHeader :: enterHeaderFragment}"></header>
 	<!-- header end -->
 	
-	<div th:replace="~{enter/fragments/enterNavi :: enterNaviFragment}"></div>
+	<div th:replace="~{enter/fragments/enterNavi :: enterNaviFragment(title=${title})}"></div>
 	<main class="main pages">
 		<div class="page-content pt-100 pb-150">
             <div class="container">

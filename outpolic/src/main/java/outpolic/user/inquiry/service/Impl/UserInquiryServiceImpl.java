@@ -69,6 +69,7 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 			
 			userInquiryMapper.addUserInquiryFiles(userInquiryFileList);			
 		}
+		userInquiryMapper.adduserInquiryProcess(inquiry);
 		
 	}
 	
@@ -79,6 +80,8 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 		// 문의 타입 조회	
 		return userInquiryMapper.getUserInquiryTypeByCode(inquiryTypeCode);
 	}
+
+
 
 	
 	@Override

@@ -142,17 +142,28 @@ public class UserInquiryController {
 	public String userInquiryWriteView(Model model) {
 		// 문의 유형 목록
 		List<UserInquiryType> inquiryTypeList = userInquiryService.getAllInquiryTypes();
+		model.addAttribute("title", "문의 작성");
 		model.addAttribute("inquiryTypeList", inquiryTypeList);
 		model.addAttribute("inquiry", new UserInquiry());
 		
 		return "user/inquiry/userInquiryWriteView";
 	}
 	
+//	// 문의 삭제
+//	@PostMapping("/userInquiryDelete")
+//	@ResponseBody
+//	public boolean userInquiryDelete(Map<String, String> requestMap) {
+//		
+//		
+//		
+//		return ;
+//	}
 	
 	@GetMapping("/userInquiryDetail")
 	public String userInquiryDetailView(@RequestParam("iq_cd") String inquiryCode, Model model) {
 		// 문의 상세내용 조회
 		UserInquiry detail = userInquiryService.getUserInquiryByCode(inquiryCode);
+		model.addAttribute("title", "문의 상세내용");
 	    model.addAttribute("inquiry", detail);
 	    return "user/inquiry/userInquiryDetailView";
 	}
@@ -163,27 +174,33 @@ public class UserInquiryController {
 		// 문의 목록 조회
 		var inquiryList = userInquiryService.getUserInquiryList();
 		
-		model.addAttribute("title", "문의");
+		model.addAttribute("title", "문의 내역");
 		model.addAttribute("inquiryList", inquiryList);
 		
 		return "user/inquiry/userInquiryListView";
 	}
 	
 	@GetMapping("/userInquiryNotice")
-	public String userInquiryNoticeView() {
+	public String userInquiryNoticeView(Model model) {
 		// 공지사항 게시판 조회
+		model.addAttribute("title", "공지사항");
+		
 		return "user/inquiry/userInquiryNoticeView";
 	}
 	
 	@GetMapping("/userInquiryTotal")
-	public String userInquiryTotalView() {
+	public String userInquiryTotalView(Model model) {
 		// 전체 게시판 조회
+		model.addAttribute("title", "전체 게시판");
+		
 		return "user/inquiry/userInquiryTotalView";
 	}
 	
 	@GetMapping("/userInquiryFaq")
-	public String userInquiryFaqView() {
+	public String userInquiryFaqView(Model model) {
 		// 자주 묻는 질문
+		model.addAttribute("title", "FAQ");
+		
 		return "user/inquiry/userInquiryFqaView";
 	}
 	

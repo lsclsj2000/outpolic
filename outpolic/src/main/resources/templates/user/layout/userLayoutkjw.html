@@ -7,13 +7,13 @@
     <link rel="stylesheet" th:href="@{/user/assets/css/main.css?v=5.6}" />
 </head>
 <body>
-    <header th:replace="~{user/fragments/enterHeader :: userHeaderFragment}"></header>
+    <header th:replace="~{user/fragments/userHeader :: userHeaderFragment}"></header>
 
     <div class="main">
         <main layout:fragment="contents"></main>
     </div>
     
-    <footer th:replace="~{user/fragments/enterFooter :: enterFooterFragment}"></footer>
+    <footer th:replace="~{user/fragments/userFooter :: userFooterFragment}"></footer>
     
     <script th:src="@{/user/assets/js/vendor/jquery-3.6.0.min.js}"></script>
     <th:block layout:fragment="jsFile"></th:block>

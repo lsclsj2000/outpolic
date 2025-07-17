@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{enter/layout/enterLayoutkjw}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${listTitle}">문의 목록</title>
+    <th:block layout:fragment="css">
+        <style>
+            .inquiry-item { border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+            .item-info .item-title a { font-size: 1.2rem; font-weight: 600; color: #1f2937; text-decoration: none; }
+            .item-info .item-meta { font-size: 0.9rem; color: #6b7280; margin-top: 0.5rem; }
+            .item-status .status-badge { font-size: 0.8rem; font-weight: bold; padding: 0.3rem 0.75rem; border-radius: 9999px; color: white; }
+            .status-SD_BEFORE { background-color: #6b7280; }
+            .status-SD_ANSWERED { background-color: #16a34a; } /* 예시: 답변완료 상태 */
+            .empty-message { text-align: center; padding: 3rem; color: #6b7280; border: 2px dashed #e5e7eb; border-radius: 8px; }
+        </style>
+    </th:block>
+</head>
+<body>
+<th:block layout:fragment="contents">
+    <div class="container">
+        <h1 th:text="${listTitle}">문의 목록</h1>
+
+        <div id="inquiry-list-container">
+            <!-- Thymeleaf가 서버에서 받은 데이터로 이 영역을 채웁니다. -->
+            <th:block th:if="${not #lists.isEmpty(inquiries)}">
+                <div th:each="inquiry : ${inquiries}" class="inquiry-item">
+                    <div class="item-info">
+                        <h3 class="item-title">
+                            <!-- 상세 페이지로 이동하는 링크 -->
+                            <a th:href="@{/enter/outsourcing-requests/detail/{id}(id=${inquiry.ocd_cd})}" th:text="${inquiry.ocd_ttl}"></a>
+                        </h3>
+                        <div class="item-meta">
+                            <!-- 보낸 문의/받은 문의에 따라 상대방 정보를 다르게 표시 -->
+                            <span th:if="${inquiry.supplierName}">To: <strong th:text="${inquiry.supplierName}"></strong></span>
+                            <span th:if="${inquiry.demanderName}">From: <strong th:text="${inquiry.demanderName}"></strong></span>
+                            | <span>문의일: <span th:text="${#temporals.format(inquiry.ocd_dmnd_ymdt, 'yyyy-MM-dd')}"></span></span>
+                        </div>
+                    </div>
+                    <div class="item-status">
+                        <!-- 상태 뱃지 -->
+                        <span class="status-badge" th:classappend="'status-' + ${inquiry.stc_cd}" th:text="${@statusTextFormatter.getStatusText(inquiry.stc_cd)}"></span>
+                    </div>
+                </div>
+            </th:block>
+
+            <!-- 문의 내역이 없을 경우 메시지 표시 -->
+            <div th:if="${#lists.isEmpty(inquiries)}" class="empty-message">
+                <p>관련 문의 내역이 없습니다.</p>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="jsFile">
+    <!-- 이 페이지는 서버 사이드 렌더링으로 목록을 표시하므로, 특별한 JS 로직이 필요하지 않습니다. -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("문의 목록 페이지가 로드되었습니다.");
+            // 향후 필터링이나 정렬 같은 동적 기능을 여기에 추가할 수 있습니다.
+        });
+    </script>
+</th:block>
+</body>
+</html>

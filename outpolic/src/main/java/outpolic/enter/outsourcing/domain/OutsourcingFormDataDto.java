@@ -3,8 +3,12 @@ package outpolic.enter.outsourcing.domain;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Data;
 import lombok.NoArgsConstructor; // 기본 생성자 추가
+import outpolic.systems.file.domain.FileMetaData;
 import lombok.AllArgsConstructor; // 모든 필드를 포함한 생성자 추가
 
 // 이 DTO는 단계별로 모이는 외주 데이터를 임시로 저장하기 위한 "폼 데이터" DTO입니다.
@@ -19,14 +23,17 @@ public class OutsourcingFormDataDto {
     private String mbrCd; // 등록자 코드
     private String osTtl; // 외주 제목
     private String osExpln; // 외주 설명
-    private LocalDateTime osStrtYmdt; // 희망 작업 시작일
-    private LocalDateTime osEndYmdt; // 희망 작업 종료일
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime osStrtYmdt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime osEndYmdt;
     private BigDecimal osAmt; // 희망 금액
     private int osFlfmtCnt; // 수행 가능 인원
 
     // 2단계: 카테고리 및 태그 (ID 또는 이름 목록)
     private List<String> categoryCodes; // 카테고리 ID (또는 이름) 목록
     private String tags; // 태그 (쉼표로 구분된 문자열)
+    private String thumbnailUrl;
 
     // 3단계: 첨부 파일 정보 (업로드된 파일의 URL/ID)
     // 실제 MultipartFile은 여기서 받지 않고, 별도의 API로 업로드 후 URL만 저장
@@ -40,4 +47,5 @@ public class OutsourcingFormDataDto {
 
     // 기타 (상태 코드 등은 최종 저장 시 설정)
     private String ctgryId; // 대표 카테고리 ID (카테고리 목록에서 첫 번째 것을 사용할 예정)
+    private List<FileMetaData> uploadedFiles;
 }

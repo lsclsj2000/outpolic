@@ -4,7 +4,7 @@
       layout:decorate="~{enter/layout/enterLayoutkjw}">
 <head>
     <title>포트폴리오 수정</title>
-    <link rel="stylesheet" th:href="@{/enter/assets/css/main.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         .portfolio-add-form-container { max-width: 800px; margin: 40px auto; padding: 30px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
         .portfolio-add-form-container h3 { text-align: center; margin-bottom: 30px; font-size: 1.8em; }
@@ -12,116 +12,231 @@
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
         .form-control { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
         .form-actions { text-align: right; margin-top: 30px; }
-        .btn-submit { background-color: #4CAF50; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; }
-        .btn-submit:hover { background-color: #45a049; }
-        .category-search-wrapper { position: relative; }
-        .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd; background-color: #fff; z-index: 1000; max-height: 200px; overflow-y: auto; }
-        .search-results-dropdown .result-item { padding: 10px; cursor: pointer; }
-        .search-results-dropdown .result-item:hover { background-color: #f0f0f0; }
-        .selected-items-area {display:flex; flex-wrap: wrap; padding:5px; border:1px solid #ced4da; border-radius: .25rem; }
-        .selected-item-badge { display: flex; align-items: center; background-color: #0d6efd; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
-        .selected-item-badge .remove-btn { margin-left: 8px; background: none; border: none; color: white; font-size: 1.2em; cursor: pointer; padding: 0; line-height: 1; }
+        .btn-submit { background-color: #3BB77E; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; }
         .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 5px; }
+        .image-preview-item { width: 150px; height: 150px; border: 1px solid #ddd; background-color: #f8f8f8; }
+        .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd; background-color: #fff; z-index: 1000; max-height: 150px; overflow-y: auto; }
+        .result-item-tag { padding: 8px 12px; cursor: pointer; }
+        .result-item-tag:hover { background-color: #f0f0f0; }
     </style>
 </head>
 <body>
 <th:block layout:fragment="contents">
     <div class="portfolio-add-form-container">
         <h3>포트폴리오 수정</h3>
-        <form id="portfolioEditForm" th:object="${portfolio}" enctype="multipart/form-data">
-            
+        <form id="portfolioEditForm" th:object="${portfolio}" method="post" enctype="multipart/form-data">
             <input type="hidden" th:field="*{prtfCd}" />
             <input type="hidden" th:field="*{entCd}" />
             <input type="hidden" th:field="*{mbrCd}" />
-            <div class="form-group">
-			   
-			</div>
-            
+
             <div class="form-group">
                 <label for="prtfTtl">제목</label>
-                <input type="text" id="prtfTtl" th:field="*{prtfTtl}" required class="form-control">
-                <div id="prtfTtlError" class="error-message"></div>
+                <input type="text" id="prtfTtl" name="prtfTtl" th:value="*{prtfTtl}" required class="form-control">
             </div>
-            
-            <div class="form-group">
-                <label>카테고리</label>
-                <div id="selected-categories-area" class="selected-items-area">
-                    <th:block th:each="cat : *{categories}">
-                        <span class="selected-item-badge" th:data-id="${cat.ctgryId}">
-                            <span th:text="${cat.ctgryNm}"></span>
-                            <button type="button" class="remove-btn">&times;</button>
-                        </span>
-                    </th:block>
-                </div>
-                <div class="category-search-wrapper">
-                    <input type="text" id="category-search-input" class="form-control" placeholder="카테고리를 검색하여 더 추가하세요">
-                    <div id="category-search-results" class="search-results-dropdown"></div>
-                </div>
-                <div id="hidden-category-inputs">
-                    <th:block th:each="cat : *{categories}">
-                         <input type="hidden" name="categoryCodes" th:value="${cat.ctgryId}">
-                    </th:block>
-                </div>
-                 <div id="categoryCodesError" class="error-message"></div>
-            </div>
-
-			<div class="form-group">
-			    <label for="tags">태그 (쉼표로 구분)</label>
-			    <div class="tag-search-wrapper" style="position: relative;"> 
-			    <input type="text" id="tags" name="tags" class="form-control" th:value="${#strings.listJoin(portfolio.tagNames, ', ')}">
-			        <div id="tag-search-results" class="search-results-dropdown"></div> </div>
-			</div>
 
             <div class="form-group">
                 <label for="prtfCn">상세 내용</label>
-                <textarea id="prtfCn" th:field="*{prtfCn}" rows="8" class="form-control"></textarea>
-                 <div id="prtfCnError" class="error-message"></div>
+                <textarea id="prtfCn" name="prtfCn" th:text="*{prtfCn}" rows="8" class="form-control"></textarea>
             </div>
 
             <div class="form-group">
-                <label for="portfolioFiles">대표 이미지 변경</label>
-                <input type="file" id="portfolioFiles" name="portfolioFiles" multiple>
-                <div style="margin-top: 10px;">
-                    <p>현재 이미지:</p>
-                    <img th:if="*{prtfThumbnailUrl}" th:src="*{prtfThumbnailUrl}" width="150" alt="Current Thumbnail"/>
-                    <span th:if="*{prtfThumbnailUrl == null}">없음</span>
+                <label>카테고리 <span style="color:red;">*</span></label>
+                <div id="category-rows-container">
+                    <th:block th:if="${portfolio.categories != null and !portfolio.categories.empty}">
+                        <div th:each="cat : ${portfolio.categories}" class="category-row-existing" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                            <input type="text" class="form-control" th:value="${cat.ctgryNm}" readonly>
+                            <input type="hidden" class="final-category-id" name="categoryCodes" th:value="${cat.ctgryId}">
+                            <button type="button" class="btn btn-danger remove-category-row-btn" style="background-color:#dc3545; border-color:#dc3545; color:white; padding: 5px 10px;">삭제</button>
+                        </div>
+                    </th:block>
+                </div>
+                <button type="button" id="add-category-row-btn" class="btn btn-secondary mt-2" style="background-color: #6c757d; border-color: #6c757d;">+ 새 카테고리 추가</button>
+                <div class="error-message" id="categoryError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">태그 (쉼표로 구분)</label>
+                <div class="tag-search-wrapper" style="position: relative;">
+                    <input type="text" id="tags" name="tags" class="form-control" th:value="${#strings.listJoin(portfolio.tagNames, ', ')}">
+                    <div id="tag-search-results" class="search-results-dropdown"></div>
                 </div>
             </div>
-            
+
+            <div class="form-group">
+                <label for="portfolioImage">대표 이미지 변경</label>
+                <input type="file" id="portfolioImage" name="portfolioImage" class="form-control" accept="image/*">
+                <div style="margin-top: 10px;">
+                    <p>현재 이미지:</p>
+                    <div class="image-preview-item" id="portfolioImage-preview-container">
+                       </div>
+                </div>
+            </div>
+
             <div class="form-actions">
-                <button type="submit" class="btn btn-submit">수정 완료</button>
+                <button type="submit" class="btn-submit">수정 완료</button>
             </div>
         </form>
     </div>
 </th:block>
 
-
-
-
 <th:block layout:fragment="jsFile">
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
-    <script>
+    <script th:inline="javascript">
+        /**
+         * 헬퍼 함수: 파일 미리보기
+         */
+        function initializeFilePreview(fileInputId, previewContainerId, initialFiles = []) {
+            const fileInput = document.getElementById(fileInputId);
+            const previewContainer = document.getElementById(previewContainerId);
+            if (!fileInput || !previewContainer) return;
+
+            previewContainer.innerHTML = '';
+            if(initialFiles.length > 0 && initialFiles[0]) {
+                 const fileDiv = document.createElement('div');
+                 fileDiv.className = 'image-preview-item';
+                 fileDiv.innerHTML = `<img src="${initialFiles[0]}" alt="Current Thumbnail" style="width:100%; height:100%; object-fit:cover;">`;
+                 previewContainer.appendChild(fileDiv);
+            } else {
+                 previewContainer.innerHTML = '<span>없음</span>';
+            }
+
+            fileInput.addEventListener('change', function (event) {
+                previewContainer.innerHTML = ''; 
+                const file = event.target.files[0];
+                if (file) {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'image-preview-item';
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        fileDiv.innerHTML = `<img src="${e.target.result}" alt="New Preview" style="width:100%; height:100%; object-fit:cover;">`;
+                    };
+                    reader.readAsDataURL(file);
+                    previewContainer.appendChild(fileDiv);
+                }
+            });
+        }
+        
+        // --- 페이지 로드 완료 후 모든 스크립트 실행 ---
         $(document).ready(function() {
-            // --- 전역 변수 및 초기화 ---
-            const prtfCd = $('input[name="prtfCd"]').val(); // 현재 포트폴리오의 고유 코드
+            const $rowsContainer = $('#category-rows-container');
+            const $tagsInput = $('#tags');
+            const $tagResultsDiv = $('#tag-search-results');
+            const $portfolioForm = $('#portfolioEditForm');
+            const existingThumbnailUrl = /*[[${portfolio.prtfThumbnailUrl}]]*/ null;
 
-            // 검색용 타임아웃 변수들
-            let categorySearchTimeout;
-            let tagSearchTimeout;
-            let outsourcingSearchTimeout;
+            // --- 1. 카테고리 행 추가/삭제 관련 로직 ---
 
+            function createCategoryRowHtml() {
+                const uniqueId = new Date().getTime(); 
+                return `
+                    <div class="category-row-new" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <select class="form-control category-select" data-level="1" data-row-id="${uniqueId}" style="width: 30%;"><option value="">1차 선택</option></select>
+                        <select class="form-control category-select" data-level="2" data-row-id="${uniqueId}" style="width: 30%; display:none;"><option value="">2차 선택</option></select>
+                        <select class="form-control category-select" data-level="3" data-row-id="${uniqueId}" style="width: 30%; display:none;"><option value="">3차 선택</option></select>
+                        <input type="hidden" class="final-category-id" name="categoryCodes" value="">
+                        <button type="button" class="btn btn-danger remove-category-row-btn" style="background-color:#dc3545; border-color:#dc3545; color:white; padding: 5px 10px;">삭제</button>
+                    </div>`;
+            }
 
-            // --- 1. 메인 폼(포트폴리오 수정) 제출 로직 ---
-            $('#portfolioEditForm').on('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(this);
+            function populateDropdown($select, categories) {
+                const level = $select.data('level');
+                $select.html(`<option value="">${level}차 선택</option>`);
+                if (categories && categories.length > 0) {
+                    categories.forEach(cat => {
+                        $select.append(`<option value="${cat.ctgryId}">${cat.ctgryNm}</option>`);
+                    });
+                    $select.show();
+                }
+            }
 
-                // 해결책 2: 카테고리 코드를 쉼표로 구분된 문자열로 만들어 전송
-                const categoryIds = [];
-                $('#hidden-category-inputs input[name="categoryCodes"]').each(function() {
-                    categoryIds.push($(this).val());
+            $('#add-category-row-btn').on('click', function() {
+                const newRowHtml = createCategoryRowHtml();
+                $rowsContainer.append(newRowHtml);
+                const $newFirstDropdown = $rowsContainer.find('.category-row-new:last .category-select[data-level="1"]');
+                $.get('/api/categories', function(categories) {
+                    populateDropdown($newFirstDropdown, categories);
                 });
-                formData.set('categoryCodes', categoryIds.join(',')); // 기존 'categoryCodes'를 덮어쓰거나 새로 추가
+            });
+
+            $rowsContainer.on('click', '.remove-category-row-btn', function() {
+                $(this).closest('.category-row-existing, .category-row-new').remove();
+            });
+
+            $rowsContainer.on('change', '.category-select', function() {
+                const $this = $(this);
+                const selectedValue = $this.val();
+                const level = $this.data('level');
+                const rowId = $this.data('row-id');
+                const $row = $this.closest('.category-row-new');
+                const $hiddenInput = $row.find('.final-category-id');
+
+                for (let i = level + 1; i <= 3; i++) {
+                    $(`select[data-row-id="${rowId}"][data-level="${i}"]`).html('<option value=""></option>').hide();
+                }
+                $hiddenInput.val('');
+
+                if (selectedValue) {
+                    $hiddenInput.val(selectedValue);
+                    if (level < 3) {
+                        $.get('/api/categories', { parentId: selectedValue }, function(subCategories) {
+                            populateDropdown($(`select[data-row-id="${rowId}"][data-level="${level + 1}"]`), subCategories);
+                        });
+                    }
+                } else {
+                    if (level > 1) {
+                        $hiddenInput.val($(`select[data-row-id="${rowId}"][data-level="${level - 1}"]`).val());
+                    }
+                }
+            });
+
+            // --- 2. 이미지 미리보기 초기화 ---
+            initializeFilePreview('portfolioImage', 'portfolioImage-preview-container', [existingThumbnailUrl]);
+
+            // --- 3. 태그 검색 로직 ---
+            let tagSearchTimeout;
+            $tagsInput.on('input', function() {
+                clearTimeout(tagSearchTimeout);
+                const parts = $(this).val().split(',');
+                const query = parts[parts.length - 1].trim(); 
+
+                if (query.length < 1) {
+                    $tagResultsDiv.hide().empty();
+                    return;
+                }
+                tagSearchTimeout = setTimeout(() => {
+                    $.get('/enter/portfolio/api/tags/search', { query: query }, function(data) {
+                        $tagResultsDiv.empty().show();
+                        if (data && data.length > 0) {
+                            data.forEach(tag => {
+                                $tagResultsDiv.append(`<div class="result-item-tag" data-tag="${tag}">${tag}</div>`);
+                            });
+                        }
+                    });
+                }, 300);
+            });
+
+            $(document).on('click', '.result-item-tag', function() {
+                const selectedTag = $(this).data('tag');
+                const parts = $tagsInput.val().split(',');
+                parts[parts.length - 1] = ' ' + selectedTag;
+                $tagsInput.val(parts.join(',') + ', ');
+                $tagResultsDiv.hide().empty();
+                $tagsInput.focus();
+            });
+
+            // --- 4. 폼 제출 로직 ---
+            $portfolioForm.on('submit', function(e) {
+                e.preventDefault();
+                $('.error-message').text('');
+
+                // FormData 생성
+                const formData = new FormData(this);
+                
+                // 유효성 검사: 남아있는 카테고리가 하나도 없는지 확인
+                if (formData.getAll('categoryCodes').length === 0) {
+                     $('#categoryError').text('카테고리는 최소 하나 이상 선택해야 합니다.');
+                     return;
+                }
 
                 $.ajax({
                     url: '/enter/portfolio/edit-ajax',
@@ -134,135 +249,14 @@
                             alert(res.message);
                             window.location.href = res.redirectUrl;
                         } else {
-                            // 상세 오류 처리 로직 (필요시 구현)
                             alert('수정 실패: ' + (res.message || '알 수 없는 오류'));
                         }
                     },
-                    error: function(xhr) {
-                        const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : '서버 통신에 실패했습니다.';
-                        alert('오류가 발생했습니다: ' + errorMsg);
+                    error: function() {
+                        alert('수정 중 서버 오류가 발생했습니다.');
                     }
                 });
             });
-
-
-            // --- 2. 카테고리 검색 및 관리 로직 ---
-            $('#category-search-input').on('input', function() {
-                clearTimeout(categorySearchTimeout);
-                const query = $(this).val();
-                if (query.length < 1) { $('#category-search-results').hide(); return; }
-                categorySearchTimeout = setTimeout(() => {
-                    $.get('/enter/portfolio/api/categories/search', { query: query }, function(data) {
-                        const resultsDiv = $('#category-search-results').empty().show();
-                        data.forEach(cat => resultsDiv.append(`<div class="result-item" data-id="${cat.ctgryId}">${cat.ctgryNm}</div>`));
-                    });
-                }, 300);
-            });
-
-            $(document).on('click', '#category-search-results .result-item', function() {
-                const catId = $(this).data('id');
-                const catName = $(this).text();
-                if ($(`#hidden-category-inputs input[value="${catId}"]`).length > 0) {
-                    alert('이미 추가된 카테고리입니다.');
-                    return;
-                }
-                $('#selected-categories-area').append(`<span class="selected-item-badge" data-id="${catId}">${catName} <button type="button" class="remove-btn">&times;</button></span>`);
-                $('#hidden-category-inputs').append(`<input type="hidden" name="categoryCodes" value="${catId}">`);
-                $('#category-search-input').val('');
-                $('#category-search-results').hide();
-            });
-
-            $('#selected-categories-area').on('click', '.remove-btn', function() {
-                const badge = $(this).parent();
-                const catId = badge.data('id');
-                badge.remove();
-                $(`#hidden-category-inputs input[value="${catId}"]`).remove();
-            });
-
-
-            // --- 3. 관련 외주 관리 로직 ---
-
-            // A. 페이지 로딩 시, 현재 연결된 외주 목록을 불러오는 함수
-            function loadLinkedOutsourcings() {
-                const listDiv = $('#linked-outsourcing-list').empty();
-                $.get(`/enter/portfolio/${prtfCd}/linked-outsourcings`, function(data) {
-                    if (data && data.length > 0) {
-                        data.forEach(os => {
-                            listDiv.append(`
-                                <div class="linked-item" style="display:flex; justify-content:space-between; align-items:center; padding: 5px 0;">
-                                    <span>${os.osTtl}</span>
-                                    <button type="button" class="btn-unlink" data-os-cd="${os.osCd}">연결 해제</button>
-                                </div>`);
-                        });
-                    } else {
-                        listDiv.append('<p style="color:#888;">연결된 외주가 없습니다.</p>');
-                    }
-                });
-            }
-
-            // B. 외주 검색 로직
-            $('#outsourcing-search-input').on('input', function() {
-                clearTimeout(outsourcingSearchTimeout);
-                const query = $(this).val();
-                if (query.length < 1) { $('#outsourcing-search-results').empty(); return; }
-
-                outsourcingSearchTimeout = setTimeout(() => {
-                    $.get(`/enter/portfolio/${prtfCd}/unlinked-outsourcings`, { query: query }, function(data) {
-                        const resultsDiv = $('#outsourcing-search-results').empty();
-                        if (data && data.length > 0) {
-                            data.forEach(os => {
-                                resultsDiv.append(`
-                                    <div class="search-result-item" style="display:flex; justify-content:space-between; align-items:center; padding: 5px 0;">
-                                        <span>${os.osTtl}</span>
-                                        <button type="button" class="btn-link" data-os-cd="${os.osCd}">+ 연결하기</button>
-                                    </div>`);
-                            });
-                        } else {
-                            resultsDiv.append('<p style="color:#888;">검색 결과가 없습니다.</p>');
-                        }
-                    });
-                }, 300);
-            });
-
-            // C. '연결하기' 버튼 클릭 이벤트
-            $(document).on('click', '.btn-link', function() {
-                const osCd = $(this).parent().data('os-cd');
-                const payload = { prtfCd: prtfCd, osCd: osCd };
-
-                $.ajax({
-                    url: '/enter/portfolio/link-outsourcing',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(payload),
-                    success: function() {
-                        loadLinkedOutsourcings(); // 연결된 목록 새로고침
-                        $('#outsourcing-search-input').val('').trigger('input'); // 검색창 초기화
-                    },
-                    error: () => alert('연결에 실패했습니다.')
-                });
-            });
-
-            // D. '연결 해제' 버튼 클릭 이벤트
-            $(document).on('click', '.btn-unlink', function() {
-                const osCd = $(this).parent().data('os-cd');
-                const payload = { prtfCd: prtfCd, osCd: osCd };
-
-                if (confirm('정말로 연결을 해제하시겠습니까?')) {
-                    $.ajax({
-                        url: '/enter/portfolio/unlink-outsourcing',
-                        type: 'DELETE',
-                        contentType: 'application/json',
-                        data: JSON.stringify(payload),
-                        success: function() {
-                            loadLinkedOutsourcings(); // 연결된 목록 새로고침
-                        },
-                        error: () => alert('연결 해제에 실패했습니다.')
-                    });
-                }
-            });
-
-            // 최초 로딩 시 연결된 외주 목록 불러오기
-            loadLinkedOutsourcings();
         });
     </script>
 </th:block>

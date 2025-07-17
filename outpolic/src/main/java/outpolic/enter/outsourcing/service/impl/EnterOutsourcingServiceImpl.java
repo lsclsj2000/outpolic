@@ -1,296 +1,135 @@
 package outpolic.enter.outsourcing.service.impl;
 
-import java.io.IOException;
+import java.io.IOException; // IOException은 이제 직접 throws하지 않지만, 여전히 다른 곳에서 사용될 수 있으므로 임포트 유지
+import java.nio.file.Files; // 이 임포트는 이제 storeFile/deleteFile이 FilesUtils를 사용하므로 불필요할 수 있습니다.
+import java.nio.file.Path; // 이 임포트는 이제 storeFile/deleteFile이 FilesUtils를 사용하므로 불필요할 수 있습니다.
+import java.nio.file.Paths; // 이 임포트는 이제 storeFile/deleteFile이 FilesUtils를 사용하므로 불필요할 수 있습니다.
+import java.time.LocalDate; // 이 임포트는 이제 storeFile/deleteFile이 FilesUtils를 사용하므로 불필요할 수 있습니다.
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile; // MultipartFile 임포트 추가
-import org.springframework.util.StringUtils; // StringUtils 임포트 추가 (파일 경로 추출 등)
-
-import jakarta.servlet.http.HttpSession; // HttpSession 임포트 추가
-
-import lombok.RequiredArgsConstructor;
-import outpolic.enter.outsourcing.domain.EnterOutsourcing;
-import outpolic.enter.outsourcing.domain.OutsourcingFormDataDto; // 새로 정의한 DTO 임포트
-import outpolic.enter.outsourcing.mapper.OutsourcingMapper;
-import outpolic.enter.outsourcing.service.EnterOutsourcingService;
-import outpolic.enter.portfolio.mapper.PortfolioMapper;
-import outpolic.enter.portfolio.domain.EnterPortfolio;
+import java.util.UUID; // 이 임포트는 이제 storeFile/deleteFile이 FilesUtils를 사용하므로 불필요할 수 있습니다.
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-// 파일 저장을 위한 유틸리티 (실제 경로 설정 필요)
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID; // 고유 ID 생성
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.outsourcing.domain.OutsourcingFormDataDto;
+import outpolic.enter.outsourcing.mapper.OutsourcingMapper;
+import outpolic.enter.outsourcing.service.EnterOutsourcingService;
+import outpolic.enter.portfolio.domain.EnterPortfolio;
+import outpolic.enter.portfolio.mapper.PortfolioMapper;
+import outpolic.systems.file.domain.FileMetaData;
+import outpolic.systems.util.FilesUtils; // FilesUtils를 사용하므로 이 임포트는 유지되어야 합니다.
 
 @Service
 @RequiredArgsConstructor
 public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
     private static final Logger logger = LoggerFactory.getLogger(EnterOutsourcingServiceImpl.class);
-
     private final OutsourcingMapper outsourcingMapper;
     private final PortfolioMapper portfolioMapper;
+    private final FilesUtils filesUtils; // FilesUtils 주입
 
-    // TODO: 실제 파일 저장 경로 설정 (application.properties 등에서 가져오는 것이 좋음)
-    private final String FILE_UPLOAD_DIR = "/home/teamproject/outsourcing_files"; 
+    @Value("${file.path}")
+    private String fileRealPath; // 이 필드는 FilesUtils가 사용하므로 여기서 직접 사용하지 않습니다.
 
-    // --- 기존 API 유지 ---
     @Override
-    public List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd) {
-        return outsourcingMapper.findOutsourcingDetailsByEntCd(entCd);
+    public List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd) { return outsourcingMapper.findOutsourcingDetailsByEntCd(entCd); }
+    @Override
+    public EnterOutsourcing findOutsourcingDetailsByOsCd(String osCd) { return outsourcingMapper.findOutsourcingDetailsByOsCd(osCd); }
+    @Override
+    public List<String> searchTags(String query) { return outsourcingMapper.searchTagsByName(query); }
+    @Override
+    public EnterOutsourcing getOutsourcingByOsCd(String osCd) { return outsourcingMapper.findOutsourcingDetailsByOsCd(osCd); }
+    @Override
+    public String findEntCdByMbrCd(String mbrCd) { return outsourcingMapper.findEntCdByMbrCd(mbrCd); }
+    @Override
+    public List<EnterOutsourcing> getAllOutsourcings() { return outsourcingMapper.findAllOutsourcings(); }
+
+    @Override
+    public List<String> getFilesByClCd(String clCd) {
+        List<FileMetaData> fileMetaDataList = outsourcingMapper.findFilesByClCd(clCd);
+        return fileMetaDataList.stream()
+                               .map(FileMetaData::getFilePath)
+                               .collect(Collectors.toList());
     }
 
     @Override
-    public EnterOutsourcing getOutsourcingByOsCd(String osCd) {
-        return outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
-    }
-
-    @Override
-    @Transactional
-    public void updateOutsourcing(EnterOutsourcing outsourcing, List<String> categoryCodes, String tags) throws IOException {
-        outsourcing.setOsMdfcnYmdt(LocalDateTime.now());
-        if (categoryCodes != null && !categoryCodes.isEmpty()) {
-            outsourcing.setCtgryId(categoryCodes.get(0));
-        } else {
-            throw new IllegalStateException("업데이트 시 최소 하나 이상의 카테고리를 선택해야 합니다.");
-        }
-        outsourcingMapper.updateOutsourcing(outsourcing);
-
-        String clCd = outsourcingMapper.findClCdByOsCd(outsourcing.getOsCd());
-        if (clCd != null) {
-            outsourcingMapper.deleteCategoryMappingByClCd(clCd);
-            outsourcingMapper.deleteTagMappingByClCd(clCd);
-        }
-        updateMappings(clCd, outsourcing.getMbrCd(), categoryCodes, tags);
-    }
-
-    @Override
-    @Transactional
-    public void deleteOutsourcing(String osCd) {
-        String clCd = outsourcingMapper.findClCdByOsCd(osCd);
-
-        if (clCd != null) {
-            outsourcingMapper.deleteBookmarkByClCd(clCd);
-            outsourcingMapper.deleteOutsourcingStatusByClCd(clCd);
-            outsourcingMapper.deleteOutsourcingContractDetailsByClCd(clCd);
-            outsourcingMapper.deleteRankingByClCd(clCd);
-            outsourcingMapper.deleteTodayViewByClCd(clCd);
-            outsourcingMapper.deleteTotalViewByClCd(clCd);
-            outsourcingMapper.deleteCategoryMappingByClCd(clCd);
-            outsourcingMapper.deleteTagMappingByClCd(clCd);
-            outsourcingMapper.deleteOutsourcingPortfolioByOsCd(osCd);
-            outsourcingMapper.deleteContentListByClCd(clCd);
-        }
-        outsourcingMapper.deleteOutsourcingByOsCd(osCd);
-    }
-
-    private void updateMappings(String clCd, String mbrCd, List<String> categoryCodes, String tags) {
-        logger.info("updateMappings 시작. clCd: {}, mbrCd: {}, categoryCodes: {}, tags: {}", clCd, mbrCd, categoryCodes, tags);
-        if (categoryCodes != null) {
-            for (String ctgryIdOrName : categoryCodes) {
-                if(ctgryIdOrName != null && !ctgryIdOrName.trim().isEmpty()) {
-                    try {
-                        // TODO: 프론트에서 이름으로 보냈다면 여기서 ID를 찾아야 함. 현재는 ID로 가정.
-                        int insertedCatMapRows = outsourcingMapper.insertCategoryMapping(ctgryIdOrName, clCd, mbrCd);
-                        if (insertedCatMapRows == 0) {
-                             logger.warn("카테고리 매핑 삽입 실패 (0행 삽입됨): ctgryIdOrName={}, clCd={}", ctgryIdOrName, clCd);
-                        } else {
-                             logger.info("카테고리 매핑 삽입 성공: ctgryIdOrName={}, clCd={}", ctgryIdOrName, clCd);
-                        }
-                    } catch (Exception e) {
-                        logger.error("카테고리 매핑 삽입 중 오류 발생: {}. ctgryIdOrName={}", e.getMessage(), ctgryIdOrName, e);
-                        throw e;
-                    }
-                }
+    public String saveStep1Data(OutsourcingFormDataDto formData, HttpSession session) {
+        try {
+            if (formData.getOsCd() == null || formData.getOsCd().isEmpty()) {
+                String latestOsCd = outsourcingMapper.findLatestOsCd();
+                int nextNum = (latestOsCd == null || !latestOsCd.startsWith("OS_C")) ? 1 : Integer.parseInt(latestOsCd.substring(5)) + 1;
+                formData.setOsCd(String.format("OS_C%05d", nextNum));
             }
+            session.setAttribute("outsourcingFormData", formData);
+            return formData.getOsCd();
+        } catch (Exception e) {
+            logger.error("saveStep1Data 처리 중 오류 발생: {}", e.getMessage(), e);
+            e.printStackTrace();
+            throw new RuntimeException("Error processing saveStep1Data", e);
         }
-        if (tags != null && !tags.trim().isEmpty()) {
-            for (String tagName : tags.split(",")) {
-                String trimmedTagName = tagName.trim();
-                if (trimmedTagName.isEmpty()) continue;
-                try {
-                    String tagCd = outsourcingMapper.findTagCdByName(trimmedTagName);
-                    if (tagCd == null) {
-                        String latestTagCd = outsourcingMapper.findLatestTagCd();
-                        int nextNum = (latestTagCd == null) ? 1 : Integer.parseInt(latestTagCd.substring(4)) + 1;
-                        tagCd = String.format("T_C%05d", nextNum);
-                        int insertedTagRows = outsourcingMapper.insertTag(tagCd, trimmedTagName, mbrCd);
-                        if (insertedTagRows == 0) {
-                            logger.warn("태그 삽입 실패 (0행 삽입됨): tagName={}", trimmedTagName);
-                        } else {
-                            logger.info("새 태그 삽입 성공: tagName={}, tagCd={}", trimmedTagName, tagCd);
-                        }
-                    }
-                    int insertedTagMapRows = outsourcingMapper.insertTagMapping(tagCd, clCd, mbrCd);
-                    if (insertedTagMapRows == 0) {
-                         logger.warn("태그 매핑 삽입 실패 (0행 삽입됨): tagCd={}, clCd={}", tagCd, clCd);
-                    } else {
-                         logger.info("태그 매핑 삽입 성공: tagCd={}, clCd={}", tagCd, clCd);
-                    }
-                } catch (Exception e) {
-                    logger.error("태그 매핑 삽입 중 오류 발생: {}. tagName={}", e.getMessage(), trimmedTagName, e);
-                    throw e;
-                }
-            }
-        }
-        logger.info("updateMappings 종료.");
     }
 
     @Override
-    public List<String> searchTags(String query){
-        return outsourcingMapper.searchTagsByName(query);
-    }
-
-    @Override
-    public List<EnterPortfolio> getLinkedPortfoliosByOsCd(String osCd) {
-        return portfolioMapper.findLinkedPortfoliosByOsCd(osCd);
-    }
-
-    @Override
-    public List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query) {
-        return portfolioMapper.findUnlinkedPortfolios(osCd, entCd, query);
-    }
-
-    @Override
-    @Transactional
-    public void linkPortfolioToOutsourcing(String osCd, String prtfCd, String entCd) {
-        String latestOpCd = outsourcingMapper.findLatestOpCd();
-        int nextNum = (latestOpCd == null) ? 1 : Integer.parseInt(latestOpCd.substring(4)) + 1;
-        String newOpCd = String.format("OP_C%05d", nextNum);
-        
-        outsourcingMapper.insertOutsourcingPortfolio(newOpCd, osCd, prtfCd, entCd);
-    }
-
-    @Override
-    @Transactional
-    public void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd) {
-        outsourcingMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
-    }
-
-    // --- 새로운 단계별 등록 API 구현 ---
-
-    // 1단계: 기본 정보 저장 (세션에 임시 저장 및 osCd 생성)
-    @Override
-    public String saveStep1Data(OutsourcingFormDataDto formData, HttpSession session) throws IOException {
-        logger.info("--- saveStep1Data 메서드 시작 ---");
-        logger.info("1단계 폼 데이터 수신: {}", formData);
-
-        // osCd 생성 (최초 진입 시)
-        if (formData.getOsCd() == null || formData.getOsCd().isEmpty()) {
-            String latestOsCd = outsourcingMapper.findLatestOsCd();
-            int nextNum = (latestOsCd == null || latestOsCd.isEmpty() || !latestOsCd.startsWith("OS_C")) ? 1 : Integer.parseInt(latestOsCd.substring(4)) + 1;
-            String newOsCd = String.format("OS_C%05d", nextNum);
-            formData.setOsCd(newOsCd);
-            logger.info("새로운 osCd 생성 및 설정: {}", newOsCd);
-        } else {
-            logger.info("기존 osCd 재사용: {}", formData.getOsCd());
-        }
-
-        // 세션에 데이터 임시 저장
-        session.setAttribute("outsourcingFormData", formData);
-        logger.info("1단계 데이터 세션에 저장 완료. osCd: {}", formData.getOsCd());
-        logger.info("--- saveStep1Data 메서드 종료 ---");
-        return formData.getOsCd();
-    }
-    
-    // 2단계: 카테고리 및 태그 저장 (세션에 임시 저장)
-    @Override
-    public void saveStep2Data(String osCd, List<String> categoryCodes, String tags, HttpSession session) throws IOException {
-        logger.info("--- saveStep2Data 메서드 시작 ---");
-        logger.info("2단계 데이터 수신 - osCd: {}, categoryCodes: {}, tags: {}", osCd, categoryCodes, tags);
-
+    public void saveStep2Data(String osCd, List<String> categoryCodes, String tags, HttpSession session) {
         OutsourcingFormDataDto formData = (OutsourcingFormDataDto) session.getAttribute("outsourcingFormData");
-        if (formData == null || !osCd.equals(formData.getOsCd())) {
-            logger.error("세션 데이터 불일치 또는 없음. osCd: {}", osCd);
-            throw new IllegalStateException("세션 데이터가 만료되었거나 유효하지 않습니다.");
-        }
-
+        if (formData == null) throw new IllegalStateException("세션 정보가 없습니다.");
         formData.setCategoryCodes(categoryCodes);
         formData.setTags(tags);
-        
-        // 대표 카테고리 ID 설정 (categoryCodes 목록에서 첫 번째 것을 사용)
         if (categoryCodes != null && !categoryCodes.isEmpty()) {
-            formData.setCtgryId(categoryCodes.get(0));
+             formData.setCtgryId(categoryCodes.get(0));
         } else {
-            // 카테고리 필수이므로, 없으면 에러 발생
-            logger.error("2단계 저장 실패: 카테고리가 선택되지 않음.");
-            throw new IllegalStateException("최소 하나 이상의 카테고리를 선택해야 합니다.");
+             formData.setCtgryId(null);
         }
-
-        session.setAttribute("outsourcingFormData", formData); // 세션 업데이트
-        logger.info("2단계 데이터 세션에 저장 완료. osCd: {}, 대표 카테고리: {}", formData.getOsCd(), formData.getCtgryId());
-        logger.info("--- saveStep2Data 메서드 종료 ---");
+        session.setAttribute("outsourcingFormData", formData);
     }
 
-    // 3단계: 첨부 파일 업로드 (세션에 URL 저장, 실제 파일 저장)
     @Override
-    public List<String> saveStep3Data(String osCd, MultipartFile[] files, HttpSession session) throws IOException {
-        logger.info("--- saveStep3Data 메서드 시작 ---");
-        logger.info("3단계 파일 업로드 요청 - osCd: {}, 파일 개수: {}", osCd, files != null ? files.length : 0);
-
+    public List<String> saveStep3Data(String osCd, MultipartFile[] files, HttpSession session) {
         OutsourcingFormDataDto formData = (OutsourcingFormDataDto) session.getAttribute("outsourcingFormData");
-        if (formData == null || !osCd.equals(formData.getOsCd())) {
-            logger.error("세션 데이터 불일치 또는 없음 (파일 업로드). osCd: {}", osCd);
-            throw new IllegalStateException("세션 데이터가 만료되었거나 유효하지 않습니다.");
-        }
+        if (formData == null) throw new IllegalStateException("세션 정보가 없습니다.");
 
-        List<String> uploadedFileUrls = new ArrayList<>();
-        List<String> currentReferenceFileUrls = new ArrayList<>();
-        if (formData.getReferenceFileUrls() != null) {
-            currentReferenceFileUrls.addAll(formData.getReferenceFileUrls());
-        }
-
-        // 파일 저장 디렉토리 생성 (없을 경우)
-        Path uploadPath = Paths.get(FILE_UPLOAD_DIR);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-            logger.info("파일 업로드 디렉토리 생성: {}", FILE_UPLOAD_DIR);
-        }
-
-        if (files != null && files.length > 0) {
+        List<FileMetaData> uploadedFiles = new ArrayList<>();
+        if (files != null && files.length > 0 && !files[0].isEmpty()) {
             for (MultipartFile file : files) {
-                if (!file.isEmpty()) {
-                    String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
-                    // 파일명 중복 방지를 위한 UUID 추가
-                    String newFileName = UUID.randomUUID().toString() + "_" + originalFileName;
-                    Path filePath = uploadPath.resolve(newFileName);
-                    
-                    // 파일 저장
-                    Files.copy(file.getInputStream(), filePath);
-                    String fileUrl = "/files/outsourcing/" + newFileName; // TODO: 실제 서비스 URL 경로로 변경
-                    uploadedFileUrls.add(fileUrl);
-                    currentReferenceFileUrls.add(fileUrl); // 세션에 저장할 목록에 추가
-                    logger.info("파일 저장 완료: {}", fileUrl);
-                }
+                // try { // <-- try 블록 유지 (FilesUtils.uploadFile이 IOException을 던지도록 설정했다면)
+                    // FileMetaData metaData = storeFile(file, "outsourcing"); // storeFile 헬퍼 메서드가 이제 IOException을 던지지 않으므로 try-catch 제거
+                    FileMetaData metaData = filesUtils.uploadFile(file, "outsourcing"); // FilesUtils에서 던지지 않으면 이대로
+                    if (metaData != null) uploadedFiles.add(metaData);
+                // } catch (IOException e) { // <-- catch 블록 제거
+                //    logger.error("파일 저장 중 오류 발생", e);
+                // }
             }
         }
-        formData.setReferenceFileUrls(currentReferenceFileUrls); // 세션 DTO에 파일 URL 목록 업데이트
 
-        session.setAttribute("outsourcingFormData", formData); // 세션 업데이트
-        logger.info("3단계 파일 업로드 데이터 세션에 저장 완료. osCd: {}", formData.getOsCd());
-        logger.info("--- saveStep3Data 메서드 종료 ---");
-        return uploadedFileUrls; // 업로드된 새 파일 URL만 반환
+        if (!uploadedFiles.isEmpty()) {
+            formData.setUploadedFiles(uploadedFiles);
+            formData.setThumbnailUrl(uploadedFiles.get(0).getFilePath());
+        } else {
+            formData.setUploadedFiles(null);
+            formData.setThumbnailUrl(null);
+        }
+        session.setAttribute("outsourcingFormData", formData);
+        return uploadedFiles.stream().map(FileMetaData::getFilePath).collect(Collectors.toList());
     }
 
-    // 4단계: 최종 등록 완료 (세션 데이터 DB 저장)
     @Override
     @Transactional
-    public void completeOutsourcingRegistration(HttpSession session) throws IOException {
-        logger.info("--- completeOutsourcingRegistration 메서드 시작 ---");
+    public void completeOutsourcingRegistration(String osCd, HttpSession session) {
         OutsourcingFormDataDto formData = (OutsourcingFormDataDto) session.getAttribute("outsourcingFormData");
+        if (formData == null) throw new IllegalStateException("세션 정보가 없습니다.");
 
-        if (formData == null || formData.getOsCd() == null || formData.getOsCd().isEmpty()) {
-            logger.error("최종 등록 실패: 세션 데이터가 없거나 osCd가 없음.");
-            throw new IllegalStateException("등록할 외주 데이터가 유효하지 않습니다. 다시 시도해주세요.");
-        }
-
-        // EnterOutsourcing 객체 생성 및 데이터 채우기
         EnterOutsourcing finalOutsourcing = new EnterOutsourcing();
         finalOutsourcing.setOsCd(formData.getOsCd());
         finalOutsourcing.setEntCd(formData.getEntCd());
@@ -301,66 +140,188 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         finalOutsourcing.setOsEndYmdt(formData.getOsEndYmdt());
         finalOutsourcing.setOsAmt(formData.getOsAmt());
         finalOutsourcing.setOsFlfmtCnt(formData.getOsFlfmtCnt());
-        finalOutsourcing.setCtgryId(formData.getCtgryId()); // 2단계에서 설정된 대표 카테고리
-        finalOutsourcing.setOsRegYmdt(LocalDateTime.now()); // 등록일시
-        finalOutsourcing.setStcCd("SD_ACTIVE"); // 초기 상태 활성
 
-        // 1. 외주 기본 정보 삽입 (addOutsourcing에서 복사해옴. useGeneratedKeys 없음)
-        try {
-            int insertedRows = outsourcingMapper.insertOutsourcing(finalOutsourcing);
-            if (insertedRows == 0) {
-                logger.error("최종 등록 실패: outsourcing 기본 정보 삽입 실패 (0행). osCd: {}", finalOutsourcing.getOsCd());
-                throw new IllegalStateException("외주 기본 정보 저장 실패.");
-            }
-            logger.info("최종 등록: outsourcing 기본 정보 삽입 성공. osCd: {}", finalOutsourcing.getOsCd());
-        } catch (Exception e) {
-            logger.error("최종 등록: outsourcing 기본 정보 삽입 중 오류 발생: {}", e.getMessage(), e);
-            throw e;
+        if (formData.getCtgryId() == null || formData.getCtgryId().isEmpty()) {
+             throw new IllegalArgumentException("카테고리 ID는 필수입니다. 2단계에서 카테고리를 선택해주세요.");
         }
-        
-        // 2. content_list 등록
+        finalOutsourcing.setCtgryId(formData.getCtgryId());
+
+        finalOutsourcing.setOsRegYmdt(LocalDateTime.now());
+        finalOutsourcing.setStcCd("SD_ACTIVE");
+        finalOutsourcing.setOsThumbnailUrl(formData.getThumbnailUrl());
+
+        outsourcingMapper.insertOutsourcing(finalOutsourcing);
         String clCd = "LIST_" + finalOutsourcing.getOsCd();
-        try {
-            int insertedClRows = outsourcingMapper.insertContentList(clCd, finalOutsourcing.getOsCd());
-             if (insertedClRows == 0) {
-                logger.error("최종 등록 실패: content_list 삽입 실패 (0행). clCd: {}", clCd);
-                throw new IllegalStateException("콘텐츠 목록 저장 실패.");
-            }
-            logger.info("최종 등록: content_list 삽입 성공. clCd: {}", clCd);
-        } catch (Exception e) {
-            logger.error("최종 등록: content_list 삽입 중 오류 발생: {}", e.getMessage(), e);
-            throw e;
+        outsourcingMapper.insertContentList(clCd, finalOutsourcing.getOsCd());
+        if (formData.getUploadedFiles() != null && !formData.getUploadedFiles().isEmpty()) {
+            outsourcingMapper.insertFiles(formData.getUploadedFiles(), clCd, finalOutsourcing.getMbrCd());
         }
-
-        // 3. 카테고리 및 태그 매핑
-        // updateMappings 메서드는 clCd와 mbrCd가 필요. mbrCd는 formData에서 가져옴.
-        try {
-            updateMappings(clCd, formData.getMbrCd(), formData.getCategoryCodes(), formData.getTags());
-            logger.info("최종 등록: 카테고리/태그 매핑 완료. clCd: {}", clCd);
-        } catch (Exception e) {
-            logger.error("최종 등록: 카테고리/태그 매핑 중 오류 발생: {}", e.getMessage(), e);
-            throw e;
-        }
-
-        // 4. 첨부 파일 정보 DB 저장 (OutsourcingFile 테이블이 있다면 여기에 삽입)
-        if (formData.getReferenceFileUrls() != null && !formData.getReferenceFileUrls().isEmpty()) {
-            // TODO: OutsourcingFile 테이블에 파일 URL/경로를 저장하는 로직 필요
-            // 예시: outsourcingMapper.insertOutsourcingFile(osCd, fileUrl);
-            logger.info("최종 등록: {}개의 첨부 파일 URL 확인. DB 저장 로직 필요.", formData.getReferenceFileUrls().size());
-            // 실제 파일 관리: 임시 경로에서 영구 경로로 이동/복사 로직도 여기에서 처리될 수 있음.
-        }
-
-        // 5. 세션 데이터 제거 (최종 등록 성공 시)
+        updateMappings(clCd, finalOutsourcing.getMbrCd(), formData.getCategoryCodes(), formData.getTags());
         session.removeAttribute("outsourcingFormData");
-        logger.info("--- completeOutsourcingRegistration 메서드 종료 (최종 등록 완료) ---");
     }
 
-    // --- 기존 addOutsourcing 메서드는 이제 completeOutsourcingRegistration에서 활용되므로 제거합니다. ---
-    /*
     @Override
     @Transactional
-    public void addOutsourcing(EnterOutsourcing outsourcing, List<String> categoryCodes, String tags) throws IOException {
-        // ... (기존 addOutsourcing 로직) ...
+    public void updateOutsourcingStep1(EnterOutsourcing outsourcingToUpdate) {
+        outsourcingToUpdate.setOsMdfcnYmdt(LocalDateTime.now());
+        outsourcingMapper.updateOutsourcingStep1(outsourcingToUpdate);
     }
-    */
+
+    @Override
+    @Transactional
+    public void updateOutsourcingStep2(String osCd, List<String> categoryCodes, String tags) {
+        String clCd = outsourcingMapper.findClCdByOsCd(osCd);
+        if (clCd == null) throw new IllegalStateException("콘텐츠 목록 정보가 없습니다.");
+        EnterOutsourcing originalOutsourcing = outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
+        if (originalOutsourcing == null) throw new IllegalStateException("수정할 외주 정보를 찾을 수 없습니다.");
+
+        outsourcingMapper.deleteCategoryMappingByClCd(clCd);
+        outsourcingMapper.deleteTagMappingByClCd(clCd);
+
+        updateMappings(clCd, originalOutsourcing.getMbrCd(), categoryCodes, tags);
+        if (categoryCodes != null && !categoryCodes.isEmpty()) {
+            outsourcingMapper.updateOutsourcingRepresentativeCategory(osCd, categoryCodes.get(0));
+        } else {
+            outsourcingMapper.updateOutsourcingRepresentativeCategory(osCd, null);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateOutsourcingStep3(String osCd, MultipartFile[] files) {
+        EnterOutsourcing outsourcing = outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
+        if (outsourcing == null) throw new IllegalStateException("수정할 외주 정보가 없습니다.");
+
+        String clCd = outsourcingMapper.findClCdByOsCd(osCd);
+
+        if (files != null && files.length > 0 && !files[0].isEmpty()) {
+            List<FileMetaData> oldFiles = outsourcingMapper.findFilesByClCd(clCd);
+            if (oldFiles != null) {
+                for(FileMetaData oldFile : oldFiles) {
+                    filesUtils.deleteFileByPath(oldFile.getFilePath()); // FilesUtils 사용
+                }
+            }
+            outsourcingMapper.deleteFilesByClCd(clCd);
+
+            List<FileMetaData> newFiles = new ArrayList<>();
+            for (MultipartFile file : files) {
+                // try { // <-- try 블록 유지 (FilesUtils.uploadFile이 IOException을 던지도록 설정했다면)
+                    // FileMetaData newMetaData = storeFile(file, "outsourcing"); // storeFile 헬퍼 메서드가 이제 IOException을 던지지 않으므로 try-catch 제거
+                    FileMetaData newMetaData = filesUtils.uploadFile(file, "outsourcing"); // FilesUtils에서 던지지 않으면 이대로
+                    if (newMetaData != null) newFiles.add(newMetaData);
+                // } catch (IOException e) { // <-- catch 블록 제거
+                //    logger.error("파일 수정 중 오류", e);
+                // }
+            }
+
+            if (!newFiles.isEmpty()) {
+                outsourcingMapper.insertFiles(newFiles, clCd, outsourcing.getMbrCd());
+                outsourcingMapper.updateOutsourcingThumbnail(osCd, newFiles.get(0).getFilePath());
+            } else {
+                outsourcingMapper.updateOutsourcingThumbnail(osCd, null);
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteOutsourcing(String osCd) {
+        String clCd = outsourcingMapper.findClCdByOsCd(osCd);
+        if (clCd != null) {
+            List<FileMetaData> filesToDelete = outsourcingMapper.findFilesByClCd(clCd);
+            for (FileMetaData file : filesToDelete) {
+                filesUtils.deleteFileByPath(file.getFilePath()); // FilesUtils 사용
+            }
+            outsourcingMapper.deletePerusalContentByClCd(clCd); // <-- 이 줄을 추가합니다.
+
+            outsourcingMapper.deleteOutsourcingStatusByClCd(clCd);
+
+            outsourcingMapper.deleteRankingByClCd(clCd);
+            outsourcingMapper.deleteTodayViewByClCd(clCd);
+            outsourcingMapper.deleteTotalViewByClCd(clCd);
+            outsourcingMapper.deleteBookmarkByClCd(clCd);
+            outsourcingMapper.deleteFilesByClCd(clCd);
+
+            outsourcingMapper.deleteTagMappingByClCd(clCd);
+            outsourcingMapper.deleteCategoryMappingByClCd(clCd);
+
+            outsourcingMapper.deleteOutsourcingPortfolioByOsCd(osCd);
+
+            outsourcingMapper.deleteOutsourcingContractDetailsByClCd(clCd);
+
+            outsourcingMapper.deleteContentListByClCd(clCd);
+        }
+        outsourcingMapper.deleteOutsourcingByOsCd(osCd);
+    }
+
+    @Override
+    public List<EnterPortfolio> getLinkedPortfoliosByOsCd(String osCd) { return portfolioMapper.findLinkedPortfoliosByOsCd(osCd); }
+
+    @Override
+    @Transactional
+    public void linkPortfolioToOutsourcing(String osCd, String prtfCd, String entCd) {
+        String latestOpCd = outsourcingMapper.findLatestOpCd();
+        int nextNum = 1;
+        if (latestOpCd != null && latestOpCd.startsWith("OP_C")) {
+            try {
+                nextNum = Integer.parseInt(latestOpCd.substring(4)) + 1;
+            } catch (NumberFormatException e) {
+                logger.warn("Failed to parse latestOpCd for linking portfolio: {}", latestOpCd, e);
+            }
+        }
+        outsourcingMapper.insertOutsourcingPortfolio(String.format("OP_C%05d", nextNum), osCd, prtfCd, entCd);
+    }
+
+    @Override
+    @Transactional
+    public void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd) {
+        outsourcingMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
+    }
+
+    private void updateMappings(String clCd, String mbrCd, List<String> categoryCodes, String tags) {
+        if (categoryCodes != null && !categoryCodes.isEmpty()) {
+            for (String ctgryId : categoryCodes) {
+                if (ctgryId != null && !ctgryId.trim().isEmpty()) {
+                    outsourcingMapper.insertCategoryMapping(ctgryId, clCd, mbrCd);
+                }
+            }
+        }
+
+        if (tags != null && !tags.trim().isEmpty()) {
+            for (String tagName : tags.split(",")) {
+                String trimmedTagName = tagName.trim();
+                if (trimmedTagName.isEmpty()) continue;
+                String tagCd = outsourcingMapper.findTagCdByName(trimmedTagName);
+                if (tagCd == null) {
+                    String latestTagCd = outsourcingMapper.findLatestTagCd();
+                    int nextNum = 1;
+                    if (latestTagCd != null && latestTagCd.startsWith("T_C")) {
+                        try {
+                            nextNum = Integer.parseInt(latestTagCd.substring(4)) + 1;
+                        } catch (NumberFormatException e) {
+                            logger.warn("Failed to parse latestTagCd: {}", latestTagCd, e);
+                        }
+                    }
+                    tagCd = String.format("T_C%05d", nextNum);
+                    outsourcingMapper.insertTag(tagCd, trimmedTagName, mbrCd);
+                }
+                outsourcingMapper.insertTagMapping(tagCd, clCd, mbrCd);
+            }
+        }
+    }
+
+    // private storeFile 메서드는 FilesUtils.uploadFile()이 IOException을 던지지 않는다고 가정하고 제거합니다.
+    // private FileMetaData storeFile(MultipartFile file, String serviceName) throws IOException {
+    //    return filesUtils.uploadFile(file, serviceName);
+    // }
+
+    // private deleteFile 메서드는 FilesUtils.deleteFileByPath()가 boolean을 반환하므로 boolean으로 변경
+    private boolean deleteFile(String fileUrl) {
+        return filesUtils.deleteFileByPath(fileUrl);
+    }
+
+    @Override
+    public List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query) {
+        return portfolioMapper.findUnlinkedPortfolios(osCd, entCd, query);
+    }
 }
