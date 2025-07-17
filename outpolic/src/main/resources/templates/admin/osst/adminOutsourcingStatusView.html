@@ -20,32 +20,66 @@
                         <p>사용자 외주 진행 현황 List</p>
                     </div>
                 </div>
+                <!-- 검색 필터 -->
+	        <div class="card mb-4 search-filter-card">
+	            <div class="card-body search-filter-body">
+	                <div class="table-responsive">
+	                    <table class="search-filter-table">
+							<tbody>
+								<tr>
+									<th>기본검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>제목</option>
+											<option>내용</option>
+											<option>문의코드</option>
+											<option>작성자</option>
+										</select>
+										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+									</td>
+								</tr>
+								<tr>
+									<th>기간검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>작성일자</option>
+											<option>수정일자</option>
+										</select>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<span> ~ </span>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<button type="button" class="btn btn-sm btn-light">오늘</button>
+										<button type="button" class="btn btn-sm btn-light">어제</button>
+										<button type="button" class="btn btn-sm btn-light">일주일</button>
+										<button type="button" class="btn btn-sm btn-light">지난달</button>
+										<button type="button" class="btn btn-sm btn-light">1개월</button>
+										<button type="button" class="btn btn-sm btn-light">3개월</button>
+										<button type="button" class="btn btn-sm btn-light">전체</button>
+									</td>
+								</tr>
+								<tr>
+									<th>처리상태</th>
+									<td>
+										<div class="radio-group">
+											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
+											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
+											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
+											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="search-filter-buttons">
+							<button type="button" class="btn btn-primary">검색</button>
+							<button type="button" class="btn btn-secondary">초기화</button>
+						</div>
+	                </div>
+	            </div>
+	        </div>
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-12">
                         <div class="card mb-4">
-                            <header class="card-header">
-                                <div class="row gx-3">
-                                    <div class="col-lg-4 col-md-6 me-auto">
-                                        <input type="text" placeholder="Search..." class="form-control" />
-                                    </div>
-                                    <div class="col-lg-2 col-md-3 col-6">
-                                        <select class="form-select">
-                                            <option>Status</option>
-                                            <option>Active</option>
-                                            <option>Disabled</option>
-                                            <option>Show all</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-2 col-md-3 col-6">
-                                        <select class="form-select">
-                                            <option>Show 20</option>
-                                            <option>Show 30</option>
-                                            <option>Show 40</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </header>
-                            <!-- card-header end// -->
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-hover">
@@ -78,56 +112,13 @@
                                                             <a class="dropdown-item text-danger" href="#">Delete</a>
                                                         </div>
                                                     </div>
-                                                    <!-- dropdown //end -->
                                                 </td>
                                             </tr>
-                                            
                                         </tbody>
                                     </table>
                                 </div>
-                                <!-- table-responsive //end -->
-                            </div>
-                            <!-- card-body end// -->
-                        </div>
-                        <!-- card end// -->
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5 class="mb-3">Filter by</h5>
-                                <form>
-                                    <div class="mb-4">
-                                        <label for="order_id" class="form-label">공급자 ID</label>
-                                        <input type="text" placeholder="Type here" class="form-control" id="order_id" />
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="order_customer" class="form-label">수요자 ID</label>
-                                        <input type="text" placeholder="Type here" class="form-control" id="order_customer" />
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="order_total" class="form-label">진행외주 코드</label>
-                                        <input type="text" placeholder="Type here" class="form-control" id="order_total" />
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="form-label">단계</label>
-                                        <select class="form-select">
-                                            <option>계약 체결</option>
-                                            <option>초기 기획</option>
-                                            <option>작업 진행</option>
-                                            <option>최종 완료</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="form-label">승인 여부</label>
-                                        <select class="form-select">
-                                            <option>yes</option>
-                                            <option>no</option>
-                                        </select>
-                                    </div>
-                                </form>
                             </div>
                         </div>
-                        <!-- card end// -->
                     </div>
                 </div>
             </section>
