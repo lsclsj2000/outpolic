@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.common.domain.Member;
+import outpolic.user.inquiry.domain.UserInquiry;
 import outpolic.user.inquiry.service.UserInquiryService;
 import outpolic.user.login.mapper.UserLoginMapper;
 import outpolic.user.mypage.dto.OutsourcingReviewDTO;
@@ -61,8 +62,8 @@ public class UserMypageController {
  	    List<OutsourcingReviewDTO> reviewList = userMypageEditService.getOutsourcingReviewList(memberCode);
  	    model.addAttribute("reviewList", reviewList);
  	    
- 	    // 인쿼리
-		var inquiryList = userInquiryService.getUserInquiryList();
+ 	    // 문의
+		List <UserInquiry> inquiryList = userInquiryService.getUserInquiryListByCode(memberCode);
 		
 		model.addAttribute("title", "문의 내역");
 		model.addAttribute("inquiryList", inquiryList);
