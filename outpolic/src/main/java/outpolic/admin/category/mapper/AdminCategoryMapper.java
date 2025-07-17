@@ -18,9 +18,13 @@ public interface AdminCategoryMapper {
     
     String findNextChildCategoryId(@Param("parentId") String parentId);
 	
-    // ✨ 수정된 부분: 파라미터 타입을 AdminCategory로 변경
+    // 파라미터 타입을 AdminCategory로 변경
 	void insertCategory(AdminCategory category);
 
-    // ✨ 수정된 부분: 파라미터 타입을 AdminCategory로 변경
+    // 파라미터 타입을 AdminCategory로 변경
     void updateCategory(AdminCategory category);
+    
+    // 삭제 관련 메소드를 아래 내용으로 교체/추가합니다 
+    int countChildrenByParentId(@Param("parentId") String parentId);
+    void deleteCategoryById(@Param("ctgryId") String ctgryId);
 }

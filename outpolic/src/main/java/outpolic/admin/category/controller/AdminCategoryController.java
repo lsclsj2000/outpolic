@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +52,23 @@ public class AdminCategoryController {
         }
     }
 	
+	@DeleteMapping("/api/category/delete/{ctgryId}")
+    @ResponseBody
+    public ResponseEntity<String> deleteCategory(@PathVariable String ctgryId) {
+        try {
+            adminCategoryService.deleteCategory(ctgryId);
+            return ResponseEntity.ok("카테고리가 성공적으로 삭제되었습니다.");
+        } catch (RuntimeException e) { 
+        	//  서비스에서 던진 예외를 받습니다.
+            // 비즈니스 규칙 위반(자식 존재)은 서버 오류가 아닌 클라이언트 요청 충돌로 처리합니다.
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            // 그 외 예측하지 못한 오류는 서버 오류로 처리합니다.
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("삭제 중 오류가 발생했습니다.");
+        }
+    }
 	
 	
 	@GetMapping("/selectCategory")

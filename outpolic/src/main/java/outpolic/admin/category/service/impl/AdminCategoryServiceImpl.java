@@ -97,4 +97,19 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
 		
 	}
 
+	@Override
+	public void deleteCategory(String ctgryId) {
+		// 1. 삭제하려는 카테고리에 자식이 있는지 확인합니다.
+		int childCount = mapper.countChildrenByParentId(ctgryId);
+
+        // 2. 자식이 한 명이라도 있으면, 예외를 발생시켜 작업을 중단시킵니다.
+        if (childCount > 0) {
+            throw new RuntimeException("하위 카테고리가 존재하여 삭제할 수 없습니다.");
+        }
+
+        // 3. 자식이 없으면, 안전하게 해당 카테고리만 삭제합니다.
+        mapper.deleteCategoryById(ctgryId);
+		
+	}
+
 }
