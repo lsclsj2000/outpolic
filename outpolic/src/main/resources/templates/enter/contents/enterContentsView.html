@@ -9,6 +9,10 @@
 			.section-padding {
 			    padding: 0;
 			}
+			.product-action-1 .action-btn i.fi-rs-heart.active {
+			    color: #F15412; /* 찜 했을 때의 색상 */
+			    font-weight: 900; /* 채워진 아이콘처럼 보이게 */
+			}
 		</style>
 	</head>
 	<!-- 추가할 javaFile -->
@@ -16,7 +20,53 @@
 	</th:block>
 	
 	<!-- 추가할 script -->
-	<th:block layout:fragment="jsScript"></th:block>
+		<script layout:fragment="jsScript">
+    document.addEventListener('DOMContentLoaded', () => {
+        // 이벤트 위임을 사용하여 모든 찜 버튼 클릭을 효율적으로 처리
+        // ✨✨✨ '.product-grid'를 '.product-grid-4'로 수정합니다 ✨✨✨
+        const productGrid = document.querySelector('.product-grid-4');
+
+        // ✨ 방어 코드 추가: productGrid가 없을 경우를 대비합니다.
+        if (productGrid) {
+            productGrid.addEventListener('click', function(e) {
+                const bookmarkBtn = e.target.closest('.bookmark-btn');
+                if (!bookmarkBtn) return; // 찜 버튼이 아니면 무시
+        
+                // ✨✨✨ JavaScript 변수명을 clCode로 통일합니다 ✨✨✨
+                const clCd = bookmarkBtn.dataset.clCd; 
+                const heartIcon = bookmarkBtn.querySelector('i.fi-rs-heart');
+                const isBookmarked = heartIcon.classList.contains('active');
+                
+                const apiUrl = `/api/enter/bookmarks`;
+                let options;
+        
+                if (isBookmarked) {
+                    // 찜 해제 (DELETE)
+                    options = { method: 'DELETE' };
+                    fetch(`${apiUrl}/${clCd}`, options)
+                        .then(response => {
+                            if (!response.ok) throw new Error('찜 해제 실패');
+                            heartIcon.classList.remove('active');
+                        })
+                        .catch(error => console.error(error));
+                } else {
+                    // 찜 추가 (POST)
+                    options = {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ clCd: clCd }) // ✨ clCode -> clCode
+                    };
+                    fetch(apiUrl, options)
+                        .then(response => {
+                            if (!response.ok) throw new Error('찜 추가 실패');
+                            heartIcon.classList.add('active');
+                        })
+                        .catch(error => console.error(error));
+                }
+            });
+        }
+    });
+</script>
 	
 	
 	<th:block layout:fragment="contents">
@@ -46,7 +96,9 @@
                                         </a>
                                     </div>
                                     <div class="product-action-1">
-                                        <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+                                        <a th:attr="data-cl-cd=${content.clCode}" aria-label="Add To Wishlist" class="action-btn bookmark-btn" href="javascript:void(0);">
+									        <i class="fi-rs-heart" th:classappend="${content.isBookmarked ? 'active' : ''}"></i>
+									    </a>
                                     </div>
                                 </div>
                                 <div class="product-content-wrap" style="margin-top: 15px;">
@@ -75,4 +127,5 @@
             </div>
 	    </section>
 	</th:block>
+	
 </html>
