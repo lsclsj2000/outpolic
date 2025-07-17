@@ -12,5 +12,5 @@ public class AdminCategory {
 	private String ctgryNm;
 	private String ctgryUpId;
 	
-	private transient List<AdminCategory> children = new ArrayList<>(); 
+	private transient List<AdminCategory> children = new ArrayList<>();
 }
