@@ -3,6 +3,7 @@ package outpolic.admin.inquiry.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.repository.query.Param;
 
 import outpolic.admin.inquiry.domain.AdminInquiry;
 import outpolic.admin.inquiry.domain.AdminInquiryType;
@@ -10,6 +11,15 @@ import outpolic.admin.inquiry.domain.AdminInquiryType;
 
 @Mapper
 public interface AdminInquiryMapper {
+	
+	// 문의 자원 수정
+	void updateInquiryType(AdminInquiryType inquiryType);
+	
+	// 문의 자원 수정_원본 조회
+	AdminInquiryType getAdminInquiryTypeByCode(@Param("code") String code);
+	
+	// 문의 자원 등록 프로세스
+	void insertInquiryType(AdminInquiryType inquiryType);
 	
 	// 문의 타입 자원 조회
 	List<AdminInquiryType> getAdminInquiryTypeList();
