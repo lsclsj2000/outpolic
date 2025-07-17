@@ -3,6 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{enter/layout/enterLayoutkjw}">
 <head>
+    <meta charset="UTF-8">
     <title>포트폴리오 수정</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -10,7 +11,7 @@
         body { font-family: "Inter", sans-serif; }
         .main-container { max-width: 960px; margin: 0 auto; padding: 30px 20px; }
         .section-title { font-size: 2.25rem; font-weight: 700; color: #1f2937; margin-bottom: 2.5rem; text-align: center;
-            border-left: 5px solid #264796; padding-left: 1rem; display: inline-block; } /* 포트폴리오 섹션 타이틀 색상 변경 */
+            border-left: 5px solid #264796; padding-left: 1rem; display: inline-block; }
         .card { background-color: white; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             padding: 2.5rem; border: 1px solid #e5e7eb; }
         .form-group { margin-bottom: 25px; }
@@ -24,7 +25,6 @@
         .btn-submit:hover { background-color: #218838; }
         .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 5px; }
         
-        /* Select2 높이 및 정렬 조정 */
         .select2-container { width: 100% !important; }
         .select2-container .select2-selection--single { height: calc(2.25rem + 14px); border-radius: 8px;
             border: 1px solid #d1d5db; display: flex; align-items: center; }
@@ -32,35 +32,25 @@
             padding-left: 15px; }
         .select2-container--default .select2-selection--single .select2-selection__arrow { height: calc(2.25rem + 12px); }
 
-        /* 카테고리 동적 입력 필드 그룹 */
         .category-row-group {
             display: flex; gap: 10px; margin-bottom: 10px; align-items: center;
         }
         .category-row-group .category-select { flex-grow: 1; min-width: 150px; }
-        .category-controls button {
-            background-color: #6c757d; color: white; border: none; border-radius: 5px;
-            padding: 8px 12px; cursor: pointer; font-size: 0.9em; line-height: 1;
-            transition: background-color 0.2s;
-        }
-        .category-controls button:hover { background-color: #5a6268; }
-        .category-controls button.remove-category-btn { background-color: #dc3545; }
-        .category-controls button.remove-category-btn:hover { background-color: #c82333; }
         .tag-search-wrapper { position: relative; }
         .search-results-dropdown { display: none; position: absolute; width: 100%; border: 1px solid #ddd;
             background-color: #fff; z-index: 1000; max-height: 150px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .search-results-dropdown .result-item, .search-results-dropdown .result-item-tag { padding: 8px 12px; cursor: pointer; }
         .search-results-dropdown .result-item:hover, .search-results-dropdown .result-item-tag:hover { background-color: #f0f0f0; }
 
-        /* 이미지 미리보기 스타일 */
         #image-preview {
             margin-top:15px; width: 150px; height: 150px; border: 1px solid #ddd; background-color: #f8f8f8;
             display: flex; align-items: center; justify-content: center; color: #aaa; overflow: hidden;
-            position: relative; /* 삭제 버튼 위치를 위해 */
+            position: relative; 
         }
         #image-preview img {
             width: 100%; height: 100%; object-fit: cover;
         }
-        #image-preview span { /* 이미지 없음 텍스트 */
+        #image-preview span {
             text-align: center;
         }
         .remove-image-btn {
@@ -73,13 +63,13 @@
         }
     </style>
 </head>
+
 <body>
 <th:block layout:fragment="contents">
     <div class="main-container">
         <h1 class="section-title">포트폴리오 수정</h1>
         <div class="card">
             <form id="portfolioEditForm" th:object="${portfolio}">
-
                 <input type="hidden" th:field="*{prtfCd}" />
                 <input type="hidden" th:field="*{entCd}" />
                 <input type="hidden" th:field="*{mbrCd}" />
@@ -97,10 +87,13 @@
                 <div class="form-group">
                     <label>카테고리 <span style="color:red;">*</span></label>
                     <div id="category-inputs-container">
+                        <div class="category-row-group">
+                            <select class="form-control category-select" data-level="1"><option value="">1차 선택</option></select>
+                            <select class="form-control category-select" data-level="2" style="display:none;"><option value="">2차 선택</option></select>
+                            <select class="form-control category-select" data-level="3" style="display:none;"><option value="">3차 선택</option></select>
+                            <input type="hidden" class="final-category-id" name="categoryCodes" value="">
                         </div>
-                    <button type="button" id="add-category-row-btn" class="btn btn-secondary mt-2">
-                        <i class="fas fa-plus"></i> 카테고리 추가
-                    </button>
+                    </div>
                     <div class="error-message" id="categoryError"></div>
                 </div>
 
@@ -115,8 +108,7 @@
                 <div class="form-group">
                     <label for="portfolioImage">대표 이미지 변경</label>
                     <input type="file" id="portfolioImage" name="portfolioImage" class="form-control" accept="image/*">
-                    <div id="image-preview">
-                        </div>
+                    <div id="image-preview"></div>
                 </div>
 
                 <div class="form-actions">
@@ -132,248 +124,168 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script th:inline="javascript">
         $(document).ready(function() {
-            // Thymeleaf 모델에서 초기 데이터 가져오기
-            // portfolio.categories는 이제 List<CategorySearchDto> (단일 경로) 형태를 가짐
-            const initialCategoryPath = /*[[${portfolio.categories}]]*/ []; 
-            let initialThumbnailUrl = /*[[${portfolio.prtfThumbnailUrl}]]*/ null; // let으로 변경하여 나중에 null로 변경할 수 있도록 함
+            // =================================================================
+            // 1. 초기 데이터 설정
+            // =================================================================
+            const categoryJson = /*[[${categoryPathJson}]]*/ '[]';
+            const initialCategoryPath = JSON.parse(categoryJson);
+            let initialThumbnailUrl = /*[[${portfolio.prtfThumbnailUrl}]]*/ null;
+            
+            // =================================================================
+            // 2. 함수 정의
+            // =================================================================
 
-            let categorySearchTimeout;
-            let tagSearchTimeout;
-
-            // --- 이미지 미리보기 및 삭제 관련 함수 (스코프 문제 해결 위해 상단으로 이동) ---
+            /**
+             * 이미지 미리보기를 업데이트하는 함수
+             * @param {string|null} url - 표시할 이미지의 URL
+             */
             function updateImagePreview(url = null) {
                 const previewContainer = $('#image-preview');
-                previewContainer.empty(); // 기존 내용 비우기
+                previewContainer.empty();
 
                 if (url) {
+                    const displayUrl = url.startsWith('/attachment/') ? url : '/attachment' + url.replace(/^\/+/, '');
                     previewContainer.html(`
-                        <img src="${url}" alt="Thumbnail">
+                        <img src="${displayUrl}" alt="Thumbnail">
                         <button type="button" class="remove-image-btn"><i class="fas fa-times"></i></button>
                     `);
                 } else {
                     previewContainer.html('<span>이미지 없음</span>');
                 }
             }
-            
-            // 페이지 로드 시 초기 이미지 미리보기 설정
-            updateImagePreview(initialThumbnailUrl);
 
-            // --- 카테고리 드롭다운을 동적으로 생성하고 채우는 함수 ---
-            function createCategoryRowHtml(uniqueId) {
-                let html = `
-                    <div class="category-row-group" data-row-id="${uniqueId}">
-                        <select class="form-control category-select" data-level="1" data-row-id="${uniqueId}"><option value="">1차 선택</option></select>
-                        <select class="form-control category-select" data-level="2" data-row-id="${uniqueId}" style="display:none;"><option value="">2차 선택</option></select>
-                        <select class="form-control category-select" data-level="3" data-row-id="${uniqueId}" style="display:none;"><option value="">3차 선택</option></select>
-                        <input type="hidden" class="final-category-id" name="categoryCodes" value="">
-                        <div class="category-controls">
-                            <button type="button" class="add-row-btn"><i class="fas fa-plus"></i></button>
-                            <button type="button" class="remove-category-btn"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                `;
-                return html;
-            }
-
-            function populateDropdown($select, categories, selectedValue = '') {
-                const level = $select.data('level');
-                if ($select.hasClass("select2-hidden-accessible")) { $select.select2('destroy'); } // 기존 select2 인스턴스 파괴
-                $select.html(`<option value="">${level}차 선택</option>`); // 기본 옵션 추가
-                if (categories && categories.length > 0) {
-                    categories.forEach(cat => {
-                        const isSelected = (cat.ctgryId === selectedValue) ? 'selected' : '';
-                        $select.append(`<option value="${cat.ctgryId}" ${isSelected}>${cat.ctgryNm}</option>`);
-                    });
+            /**
+             * 특정 레벨의 드롭다운을 API에서 받아온 데이터로 채우는 함수
+             * @param {number} level - 채울 드롭다운의 레벨 (1, 2, 3)
+             * @param {string} parentId - 부모 카테고리 ID (1차는 '')
+             * @param {string|null} selectedId - 미리 선택할 카테고리 ID
+             * @returns {Promise} - AJAX 요청의 Promise 객체
+             */
+            function populateDropdown(level, parentId, selectedId = null) {
+                const $select = $(`.category-select[data-level='${level}']`);
+                if ($select.hasClass("select2-hidden-accessible")) {
+                    $select.select2('destroy');
                 }
-                $select.show().select2({ placeholder: `${level}차 분류 검색...`, width: 'style', allowClear: true }); // allowClear 옵션 추가
-            }
+                $select.html('').hide();
 
-            function addCategoryRow(path = []) { // path는 단일 카테고리 경로 (List<CategorySearchDto>)
-                const uniqueId = new Date().getTime();
-                $('#category-inputs-container').append(createCategoryRowHtml(uniqueId));
-                const $rowGroup = $(`div[data-row-id="${uniqueId}"]`);
-
-                // 1차 카테고리 로드
-                $.get('/api/categories', { parentId: '' }, function(categories) { // parentId를 빈 문자열로 보내서 1차 카테고리 요청
-                    populateDropdown($rowGroup.find('select[data-level="1"]'), categories, path[0] ? path[0].ctgryId : '');
-
-                    // 기존 경로에 따라 하위 드롭다운 채우기
-                    if (path.length > 1) {
-                        // 첫 번째 드롭다운은 이미 채웠으므로, 두 번째부터 시작
-                        for (let i = 0; i < path.length - 1; i++) {
-                            const parentId = path[i].ctgryId;
-                            const childId = path[i+1].ctgryId;
-                            const currentLevel = i + 1;
-                            const nextLevel = i + 2;
-                            const $nextSelect = $rowGroup.find(`select[data-level="${nextLevel}"]`);
-
-                            $.get('/api/categories', { parentId: parentId }, function(subCategories) {
-                                populateDropdown($nextSelect, subCategories, childId);
-                            });
+                return $.get('/api/categories', { parentId: parentId }, function(categories) {
+                    if (categories && categories.length > 0) {
+                        $select.html(`<option value="">${level}차 선택</option>`);
+                        categories.forEach(cat => {
+                            const isSelected = (cat.ctgryId === selectedId) ? 'selected' : '';
+                            $select.append(`<option value="${cat.ctgryId}" ${isSelected}>${cat.ctgryNm}</option>`);
+                        });
+                        $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: 'style', allowClear: true });
+                        if (selectedId) {
+                            $select.val(selectedId).trigger('change.select2');
                         }
-                    }
-                    // 최종 선택된 카테고리 ID를 hidden input에 설정 (초기 로드 시)
-                    if (path.length > 0) {
-                        $rowGroup.find('.final-category-id').val(path[path.length - 1].ctgryId);
                     }
                 });
             }
-            
-            // 페이지 로드 시 기존 카테고리 정보 표시
-            // initialCategoryPath는 이제 List<CategorySearchDto> (단일 경로) 형태임.
-            // 포트폴리오는 단 하나의 대표 카테고리만 가질 것이므로, 첫 번째 줄에만 이 경로를 채움.
-            if (initialCategoryPath && initialCategoryPath.length > 0) {
-                addCategoryRow(initialCategoryPath); 
-            } else {
-                addCategoryRow(); // 초기에는 빈 카테고리 줄 하나 추가
+
+            /**
+             * 카테고리 드롭다운 변경 시 하위 드롭다운을 로드하는 함수
+             */
+            function handleCategoryChange() {
+                const $this = $(this);
+                const level = $this.data('level');
+                const selectedValue = $this.val();
+
+                // 하위 레벨 드롭다운 초기화
+                for (let i = level + 1; i <= 3; i++) {
+                    const $nextSelect = $(`.category-select[data-level='${i}']`);
+                    if ($nextSelect.hasClass("select2-hidden-accessible")) {
+                        $nextSelect.select2('destroy');
+                    }
+                    $nextSelect.html('').hide();
+                }
+
+                // 최종 선택된 ID 업데이트
+                let finalId = selectedValue;
+                if (!finalId && level > 1) {
+                    finalId = $(`.category-select[data-level='${level - 1}']`).val();
+                }
+                $('.final-category-id').val(finalId);
+
+                // 하위 카테고리 로드
+                if (selectedValue && level < 3) {
+                    populateDropdown(level + 1, selectedValue);
+                }
             }
 
-            // --- 이벤트 핸들러들 ---
-
-            // 카테고리 행 추가 버튼
-            $(document).on('click', '#add-category-row-btn', function() { addCategoryRow(); });
-
-            // 카테고리 행 삭제 버튼
-            $(document).on('click', '.remove-category-btn', function() {
-                if ($('#category-inputs-container .category-row-group').length > 1) {
-                    $(this).closest('.category-row-group').remove();
-                } else {
-                    alert('최소 하나의 카테고리는 남겨야 합니다.');
-                }
-            });
-
-            // 카테고리 드롭다운 변경 이벤트 (동적으로 하위 드롭다운 로드)
-            $(document).on('change', '.category-select', function() {
-                const $this = $(this);
-                const selectedValue = $this.val();
-                const level = $this.data('level');
-                const rowId = $this.data('row-id');
-                const $rowGroup = $(`div[data-row-id="${rowId}"]`);
-                const $hiddenInput = $rowGroup.find('.final-category-id');
-
-                // 현재 선택된 드롭다운의 하위 드롭다운 초기화 및 숨기기
-                for (let i = level + 1; i <= 3; i++) {
-                    const $nextSelect = $rowGroup.find(`select[data-level="${i}"]`);
-                    if ($nextSelect.data('select2')) { $nextSelect.select2('destroy'); }
-                    $nextSelect.html(`<option value="">${i}차 선택</option>`).hide(); // option value 추가
-                }
-
-                // 최종 카테고리 ID 설정: 현재 선택된 값 또는 상위 레벨의 값
-                if (selectedValue) {
-                    $hiddenInput.val(selectedValue);
-                    // 하위 카테고리 로드
-                    if (level < 3) {
-                        $.get('/api/categories', { parentId: selectedValue }, function(subCategories) {
-                            populateDropdown($rowGroup.find(`select[data-level="${level + 1}"]`), subCategories);
-                        });
-                    }
-                } else {
-                    // 선택 해제 시, 해당 레벨의 값으로 설정 (상위가 있다면 상위 값으로)
-                    const prevLevelValue = (level > 1) ? $rowGroup.find(`select[data-level="${level - 1}"]`).val() : '';
-                    $hiddenInput.val(prevLevelValue);
-                }
-            });
-
-
-            // 태그 검색 (input 이벤트 위임)
-            $('#tags').on('input', function() {
-                clearTimeout(tagSearchTimeout);
-                const parts = $(this).val().split(',');
-                const query = parts[parts.length - 1].trim(); // 마지막 태그만 검색어
-                const $tagResultsDiv = $('#tag-search-results');
-
-                if (query.length < 1) {
-                    $tagResultsDiv.hide().empty();
+            /**
+             * 페이지 로드 시, 기존에 저장된 카테고리 경로를 따라 드롭다운을 설정하는 함수
+             */
+            async function initializeCategorySelectors() {
+                if (!initialCategoryPath || initialCategoryPath.length === 0) {
+                    await populateDropdown(1, '');
                     return;
                 }
 
-                tagSearchTimeout = setTimeout(() => {
-                    $.get('/enter/portfolio/api/tags/search', { query: query }, function(data) {
-                        $tagResultsDiv.empty().show();
-                        if (data && data.length > 0) {
-                            data.forEach(tag => $tagResultsDiv.append(`<div class="result-item-tag" data-tag="${tag}">${tag}</div>`));
-                        } else {
-                            $tagResultsDiv.append('<div class="result-item-tag">검색 결과 없음</div>');
-                        }
-                    });
-                }, 300);
-            });
+                // 1차 카테고리부터 순차적으로 로드 및 선택
+                await populateDropdown(1, '', initialCategoryPath[0]?.ctgryId);
 
-            // 태그 검색 결과 선택 (click 이벤트 위임)
-            $(document).on('click', '#tag-search-results .result-item-tag', function() {
-                const selectedTag = $(this).data('tag');
-                const $tagsInput = $('#tags');
-                let parts = $tagsInput.val().split(',');
-                parts[parts.length - 1] = ' ' + selectedTag; // 마지막 부분 대체
-                $tagsInput.val(parts.join(', ') + ', '); // 쉼표와 공백 추가
-                $('#tag-search-results').hide().empty();
-                $tagsInput.focus();
-            });
+                for (let i = 0; i < initialCategoryPath.length - 1; i++) {
+                    const parentId = initialCategoryPath[i].ctgryId;
+                    const childId = initialCategoryPath[i + 1]?.ctgryId;
+                    await populateDropdown(i + 2, parentId, childId);
+                }
+                
+                // 최종 카테고리 ID 설정
+                $('.final-category-id').val(initialCategoryPath[initialCategoryPath.length - 1].ctgryId);
+            }
 
-            // 파일 입력 변경 시 미리보기 업데이트
+            // =================================================================
+            // 3. 이벤트 리스너 바인딩
+            // =================================================================
+
+            // 카테고리 드롭다운 변경
+            $('#category-inputs-container').on('change', '.category-select', handleCategoryChange);
+
+            // 이미지 미리보기 및 삭제
             $('#portfolioImage').on('change', function(event) {
                 const file = event.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = (e) => {
-                        updateImagePreview(e.target.result); // Base64 URL로 미리보기
-                    };
+                    reader.onload = (e) => updateImagePreview(e.target.result);
                     reader.readAsDataURL(file);
                 } else {
-                    // 파일 선택 취소 시, initialThumbnailUrl (원래 DB에 있던 경로)로 복원
                     updateImagePreview(initialThumbnailUrl); 
                 }
             });
-
-            // 이미지 삭제 버튼 클릭 시
             $(document).on('click', '#image-preview .remove-image-btn', function() {
                 if (confirm('현재 대표 이미지를 삭제하시겠습니까? (수정 완료 시 반영됩니다)')) {
-                    $('#portfolioImage').val(''); // 파일 input 초기화
-                    initialThumbnailUrl = null; // **핵심**: 이 변수를 null로 만들어 서버에 이미지 삭제를 알리는 플래그로 사용
-                    updateImagePreview(null); // 미리보기 비우기
-                    alert('대표 이미지가 삭제 대기 중입니다. 수정 완료 시 반영됩니다.');
+                    $('#portfolioImage').val('');
+                    initialThumbnailUrl = null;
+                    updateImagePreview(null);
                 }
             });
-
-            // 폼 제출 로직
+            
+            // 폼 제출
             $('#portfolioEditForm').on('submit', function(e) {
                 e.preventDefault();
                 
-                const formData = new FormData(this); // 폼 데이터 자동 수집
+                const formData = new FormData(this);
 
-                // 카테고리 유효성 검사 (최소 1개 선택)
-                const categoryCodes = $('input.final-category-id').map((_, el) => $(el).val()).get().filter(c => c);
-                if (categoryCodes.length === 0) {
+                if (!$('.final-category-id').val()) {
                     $('#categoryError').text('카테고리는 최소 하나 이상 선택해야 합니다.');
                     return;
-                } else {
-                    $('#categoryError').empty(); // 에러 메시지 초기화
                 }
-                
-                // --- 이미지 전송 로직 보강 ---
+                $('#categoryError').empty();
+
                 const imageInput = document.getElementById('portfolioImage');
-                const newFileSelected = imageInput.files.length > 0;
-
-                if (newFileSelected) {
-                    formData.append('portfolioImage', imageInput.files[0]); // 새 파일 선택 시 파일 추가
+                if (imageInput.files.length > 0) {
+                    formData.append('portfolioImage', imageInput.files[0]);
                 } else if (initialThumbnailUrl === null) { 
-                    // 사용자가 기존 이미지를 삭제했고 새 이미지를 선택하지 않은 경우
-                    // 서버에 "이미지 삭제"를 명시적으로 알리기 위해 빈 문자열을 보냄
-                    formData.append('portfolioImage', new Blob([]), ''); // 빈 Blob으로 빈 파일 전송
+                    formData.append('portfolioImage', new Blob([]), '');
                 } 
-                // else if (!newFileSelected && initialThumbnailUrl !== null) {
-                //    // 파일 선택 없는데 initialThumbnailUrl이 null이 아니면 기존 이미지 유지
-                //    // 이 경우는 폼데이터에 portfolioImage를 추가하지 않음으로써 서버에서 기존 이미지 유지
-                // }
-                // --- 이미지 전송 로직 보강 끝 ---
-
 
                 $.ajax({
                     url: '/enter/portfolio/edit-ajax',
                     type: 'POST',
                     data: formData,
-                    processData: false, // FormData를 사용할 때는 필수
-                    contentType: false, // FormData를 사용할 때는 필수
+                    processData: false,
+                    contentType: false,
                     success: function(res) {
                         if (res.success) {
                             alert(res.message);
@@ -384,10 +296,16 @@
                     },
                     error: function(xhr) {
                         alert('오류가 발생했습니다: ' + (xhr.responseJSON ? xhr.responseJSON.message : '서버 통신 실패'));
-                        console.error("AJAX Error:", xhr.status, xhr.responseText);
                     }
                 });
             });
+
+            // =================================================================
+            // 4. 초기화 실행
+            // =================================================================
+            updateImagePreview(initialThumbnailUrl);
+            initializeCategorySelectors();
+
         });
     </script>
 </th:block>

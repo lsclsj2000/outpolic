@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +40,6 @@ import outpolic.enter.portfolio.domain.PortfolioFormDataDto;
 import outpolic.enter.portfolio.service.EnterPortfolioService;
 import outpolic.systems.file.domain.FileMetaData;
 
-
 @Slf4j
 @Controller
 @RequestMapping("/enter/portfolio")
@@ -47,6 +49,7 @@ public class EnterPortfolioController {
     private final EnterPortfolioService portfolioService;
     private final CategorySearchService categorySearchService;
     private final EnterOutsourcingService outsourcingService;
+    private final ObjectMapper objectMapper; // JSON 변환을 위한 ObjectMapper 주입
 
     // --- 포트폴리오 목록 관련 ---
     @GetMapping("/list")
@@ -67,9 +70,6 @@ public class EnterPortfolioController {
 
     // --- 포트폴리오 등록 (다단계 방식) ---
     
-    /**
-     * 포트폴리오 등록 폼을 보여주는 메서드. 세션을 초기화합니다.
-     */
     @GetMapping("/add")
     public String showAddPortfolioForm(Model model, HttpSession session) {
         session.removeAttribute("portfolioFormData");
@@ -78,9 +78,6 @@ public class EnterPortfolioController {
         return "enter/portfolio/addPortfolio";
     }
 
-    /**
-     * 1단계: 기본 정보(제목, 내용)를 세션에 저장합니다.
-     */
     @PostMapping("/add/step1")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> saveStep1(PortfolioFormDataDto formData, HttpSession session) {
@@ -97,9 +94,6 @@ public class EnterPortfolioController {
         return ResponseEntity.ok(Map.of("success", true, "prtfCd", newPrtfCd));
     }
 
-    /**
-     * 2단계: 카테고리, 태그 정보를 세션에 저장합니다.
-     */
     @PostMapping("/add/step2")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> saveStep2(@RequestParam(value = "categoryCodes[]", required = false) List<String> categoryCodes,
@@ -110,9 +104,6 @@ public class EnterPortfolioController {
         return ResponseEntity.ok(Map.of("success", true));
     }
 
-    /**
-     * 3단계: 썸네일 이미지를 업로드하고 파일 정보를 세션에 저장합니다.
-     */
     @PostMapping("/add/step3")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> saveStep3(@RequestParam("portfolioImage") MultipartFile portfolioImage,
@@ -125,15 +116,12 @@ public class EnterPortfolioController {
         return ResponseEntity.ok(Map.of("success", true));
     }
 
-    /**
-     * 최종 등록: 세션에 저장된 모든 정보로 DB에 저장합니다.
-     */
     @PostMapping("/add/complete")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> completeRegistration(@SessionAttribute("portfolioFormData") PortfolioFormDataDto formData, HttpSession session) {
         try {
             portfolioService.registerNewPortfolio(formData);
-            session.removeAttribute("portfolioFormData"); // 등록 완료 후 세션 데이터 삭제
+            session.removeAttribute("portfolioFormData");
             return ResponseEntity.ok(Map.of("success", true, "redirectUrl", "/enter/portfolio/list"));
         } catch (IOException e) {
             log.error("포트폴리오 최종 등록 실패", e);
@@ -148,9 +136,12 @@ public class EnterPortfolioController {
         EnterPortfolio portfolio = portfolioService.getPortfolioByPrtfCd(prtfCd);
         model.addAttribute("portfolio", portfolio);
         
-        if (portfolio.getCtgryId() != null && !portfolio.getCtgryId().isEmpty()) {
-            List<CategorySearchDto> categoryPath = categorySearchService.getCategoryPath(portfolio.getCtgryId());
-            model.addAttribute("categoryPath", categoryPath);
+        try {
+            String categoryPathJson = objectMapper.writeValueAsString(portfolio.getCategories());
+            model.addAttribute("categoryPathJson", categoryPathJson);
+        } catch (JsonProcessingException e) {
+            log.error("JSON processing error for category path", e);
+            model.addAttribute("categoryPathJson", "[]"); // 에러 발생 시 빈 배열 전달
         }
         
         return "enter/portfolio/editPortfolio";
@@ -164,10 +155,8 @@ public class EnterPortfolioController {
             @RequestParam(value = "tags", required = false) String tags,
             @RequestParam(value = "portfolioImage", required = false) MultipartFile portfolioImage) {
 
-        // ... 유효성 검사 로직 ...
         if (bindingResult.hasErrors() || categoryCodes == null || categoryCodes.isEmpty()) {
-             // ... 에러 처리 ...
-             return ResponseEntity.badRequest().body(new HashMap<>()); // 간단히 처리
+             return ResponseEntity.badRequest().body(new HashMap<>());
         }
 
         try {
@@ -185,7 +174,7 @@ public class EnterPortfolioController {
     @ResponseBody
     public ResponseEntity<?> deletePortfolio(@PathVariable String prtfCd) {
         try {
-            portfolioService.deletePortfolio(prtfCd); // 비동기 삭제를 호출하는 동기 메서드
+            portfolioService.deletePortfolio(prtfCd);
             return ResponseEntity.ok(Map.of("success", true, "message", "삭제 요청이 접수되었습니다. 잠시 후 반영됩니다."));
         } catch (Exception e) {
             log.error("포트폴리오 삭제 요청 실패", e);
@@ -201,23 +190,17 @@ public class EnterPortfolioController {
         return ResponseEntity.ok(portfolioService.searchTags(query));
     }
     
-    
-    
     @GetMapping("/api/countByEntCd")
     @ResponseBody
     public ResponseEntity<Integer> countPortfoliosForEnterprise(HttpSession session) {
-        // 세션에서 로그인한 사용자 정보를 가져옵니다.
         String mbrCd = (String) session.getAttribute("SCD");
         if (mbrCd == null) {
-            // 로그인되지 않은 경우 401 오류와 함께 0을 반환합니다.
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(0);
         }
         
-        // 기업 코드를 찾아 포트폴리오 개수를 조회합니다.
         String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
         int count = portfolioService.countPortfoliosByEntCd(entCd);
         
-        // 조회된 개수를 반환합니다.
         return ResponseEntity.ok(count);
     }
 }
