@@ -50,6 +50,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="iqt_mdfcn_ymdt" 	property="inquiryTypeMdfcnDate"/>
 	</resultMap>
 	
+	<update id="updateInquiryType" parameterType="outpolic.admin.inquiry.domain.AdminInquiryType">
+	    /* 관리자 문의 타입 수정 */
+	    UPDATE inquiry_type
+	    SET
+	        iqt_nm = #{inquiryTypeName},
+	        iqt_expln = #{inquiryTypeExpln},
+	        stc_cd = #{statusCode},
+	        iqt_mdfcn_adm_cd = #{inquiryTypeMdfcnAdm},
+	        iqt_mdfcn_ymdt = NOW()
+	    WHERE
+	        iqt_cd = #{inquiryTypeCode}
+	</update>
+	
+	<select id="getAdminInquiryTypeByCode" resultMap="AdminInquiryTypeMap">
+	    /* 관리자 문의 타입_원본 조회 */
+	    SELECT
+			it.iqt_cd as iqt_cd,
+			it.iqt_nm as iqt_nm,
+			it.iqt_expln as iqt_expln,
+			it.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			it.iqt_reg_adm_cd as iqt_reg_adm_cd,
+			it.iqt_reg_ymdt as iqt_reg_ymdt,
+			it.iqt_mdfcn_adm_cd as iqt_mdfcn_adm_cd,
+			it.iqt_mdfcn_ymdt as iqt_mdfcn_ymdt
+		FROM 
+			inquiry_type it
+			LEFT JOIN status_code sc ON it.stc_cd = sc.stc_cd
+	    WHERE iqt_cd = #{code}
+	</select>
+	
+	<insert id="insertInquiryType" parameterType="outpolic.admin.inquiry.domain.AdminInquiryType">
+	    /* 관리자 문의 타입 등록 */
+	    INSERT INTO inquiry_type (
+			iqt_cd, iqt_nm, iqt_expln, stc_cd, iqt_reg_adm_cd, iqt_reg_ymdt
+		) VALUES (
+			#{inquiryTypeCode}, #{inquiryTypeName}, #{inquiryTypeExpln}, #{statusCode}, #{inquiryTypeRegAdm}, NOW()
+		);
+	</insert>
+	
 	<update id="updateInquiryAnswer" parameterType="outpolic.admin.inquiry.domain.AdminInquiry">
 	    /* 관리자 문의 답변 업데이트 */
 	    UPDATE inquiry_process

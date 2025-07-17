@@ -31,12 +31,10 @@
 			                            <tr>
 			                                <th scope="col" class="start text-center col-1">문의타입코드</th>
 			                                <th scope="col" class="text-center col-1">문의명</th>
-			                                <th scope="col" class="text-center col-1">타입설명</th>
+			                                <th scope="col" class="text-center col-3">타입설명</th>
 			                                <th scope="col" class="text-center col-1">타입상태코드</th>
 			                                <th scope="col" class="text-center col-1">등록자</th>
 			                                <th scope="col" class="text-center col-1">최초등록일시</th>
-			                                <th scope="col" class="text-center col-1">수정자</th>
-			                                <th scope="col" class="text-center col-1">최종수정일시</th>
 			                                <th scope="col" class="end text-center col-1">Action</th>
 			                            </tr>
 			                        </thead>
@@ -56,8 +54,6 @@
 			                                </td>
 										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegAdm}">등록자</td>
 										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegDate}">최초등록일시</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnAdm}">수정자</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnDate}">최종수정일시</td>
 										    <td scope="col" class="text-center">
 												<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${it.inquiryTypeCode}">수정</a>
 											</td>
@@ -71,53 +67,43 @@
 	        </div>
 	    </section>
 	    
+	    <!-- 문의 자원 등록 모달 -->
 	    <div id="inquiryModal" class="SR_modal">
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
 					<h2>문의 자원 등록</h2>
 					<button class="SR_close-button">&times;</button>
 				</div>
-                <form>
-                	<div class="row mb-4">
-				       <label class="col-lg-3 col-form-label">등록자</label>
-				       <div class="col-lg-4">
-				           <input type="number" class="form-control" placeholder="자동 입력. 관리자 코드" readonly/>
-				       </div>
-				       <!-- col.// -->
+                <form id="inquiryRegisterForm">
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">문의타입코드*</label>
+                            <input type="text" id="inquiryCodeDisplay" name="inquiryTypeCode" class="SR_form-control"  placeholder="문의 타입 코드 영문명을 입력하세요">
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTitleEdit">문의명*</label>
+                            <input type="text" id="inquiryTitleEdit" name="inquiryTypeTitle" class="SR_form-control" placeholder="문의 타입명을 입력하세요">
+                        </div>
+					</div>
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="inquiryContentEdit">타입 설명*</label>
+						<textarea id="inquiryContentEdit" name="inquiryTypeContent" class="SR_form-control" rows="5"  placeholder="문의 타입에 대해 설명하세요"></textarea>
 					</div>
 					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">문의타입코드*</label>
-					    <div class="col-lg-9">
-					        <input type="text" class="form-control" placeholder="문의 타입 코드 영문명을 입력하세요"/>
-					    </div>
-					</div>
-					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">문의명*</label>
-					    <div class="col-lg-9">
-					        <input type="text" class="form-control" placeholder="문의 타입명을 입력하세요"/>
-					    </div>
-					</div>
-					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">타입설명*</label>
-					    <div class="col-lg-9">
-					        <textarea class="form-control" placeholder="타입에 대한 설명을 입력하세요" rows="4"></textarea>
-					    </div>
-					    <!-- col.// -->
-					</div>
-					<!-- row.// -->
-					<div class="row mb-4">
-						<label class="col-lg-3 col-form-label">Status</label>
-						<div class="col-lg-9" style="display: flex; flex-direction: row;">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status*</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
 							<label class="form-check my-2">
-								<input type="radio" class="form-check-input" name="status" value="active" />
+								<input type="radio" class="form-check-input" name="status" value="SD_ACTIVE" />
 								<span class="form-check-label">활성</span>
 							</label>
 							<label class="form-check my-2 ml-20">
-								<input type="radio" class="form-check-input" name="status" value="inactive" />
+								<input type="radio" class="form-check-input" name="status" value="SD_INACTIVE" />
 								<span class="form-check-label">비활성</span>
 							</label>
 						</div>
-					</div>
+	               	</div>
 					<div style="display: flex; flex-direction: row-reverse;">
 				    	<button class="btn btn-primary" type="submit">등록</button>
 				    </div>
@@ -125,54 +111,55 @@
 			</div>
 		</div>
 		
+		<!-- 문의 자원 수정 모달 -->		
 		<div id="inquiryMdfcnModal" class="SR_modal">
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
 					<h2>문의 자원 수정</h2>
 					<button class="SR_close-button">&times;</button>
 				</div>
-				<form>
-                    <div>
+				<form id="inquiryEditForm">
+                    <div class="SR_form-group">
                         <div class="SR_input-half">
                             <label class="col-lg-3 col-form-label">등록자</label>
-                            <input type="text" id="inquiryCodeDisplay" name="inquiryCode" class="SR_form-control" readonly>
+                            <input type="text" id="editRegAdm" name="editRegAdm" class="SR_form-control" readonly>
                         </div>
                         <div class="SR_input-half">
                             <label class="col-lg-3 col-form-label" for="inquiryTitleEdit">등록일시</label>
-                            <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
+                            <input type="text" id="editRegDate" name="editRegDate" class="SR_form-control" readonly>
                         </div>
 					</div>
 
                     <div class="SR_form-group">
                         <div class="SR_input-half">
                             <label class="col-lg-3 col-form-label" for="inquiryTypeCodeDisplay">문의타입 코드</label>
-                            <input type="text" id="inquiryTypeCodeDisplay" name="inquiryTypeCode" class="SR_form-control">
+                            <input type="text" id="editCode" name="editCode" class="SR_form-control" readonly>
                         </div>
                         <div class="SR_input-half">
                             <label class="col-lg-3 col-form-label" for="inquiryTypeEdit">문의타입명</label>
-                            <input type="text" id="inquiryTypeCodeDisplay" name="inquiryTypeCode" class="SR_form-control">
+                            <input type="text" id="editName" name="editName" class="SR_form-control">
                         </div>
 					</div>
 
                     <div class="SR_form-group SR_full-width">
 						<label class="col-lg-3 col-form-label" for="inquiryContentEdit">타입 설명</label>
-						<textarea id="inquiryContentEdit" name="inquiryContent" class="SR_form-control" rows="5"></textarea>
+						<textarea id="editExpln" name="editExpln" class="SR_form-control" rows="5"></textarea>
 					</div>
-					<div class="SR_form-group SR_full-width">
-						<label class="col-lg-3 col-form-label" for="inquiryContentEdit">Status</label>
-						<div class="col-lg-9" style="display: flex; flex-direction: row;">
-							<label class="col-lg-3 col-form-label">
-								<input type="radio" class="form-check-input" name="status" value="active" />
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="editStatus" value="SD_ACTIVE" />
 								<span class="form-check-label">활성</span>
 							</label>
-							<label class="col-lg-3 col-form-label">
-								<input type="radio" class="form-check-input" name="status" value="inactive" />
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="editStatus" value="SD_INACTIVE" />
 								<span class="form-check-label">비활성</span>
 							</label>
 						</div>
-					</div>
-
-                    
+	               	</div>
 					<div class="SR_popup-footer">
                         <div class="SR_update-info">
                         </div>
@@ -188,70 +175,175 @@
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 			    const registerModal = document.getElementById('inquiryModal');
-			    const registerCloseBtn = document.querySelector('#inquiryModal .SR_close-button');
 			    const registerButton = document.querySelector('.content-header .btn');
+			    const registerCloseBtn = registerModal?.querySelector('.SR_close-button');
 			
 			    const editModal = document.getElementById('inquiryMdfcnModal');
-			    const editCloseBtn = document.querySelector('#inquiryMdfcnModal .SR_close-button');
+			    const editCloseBtn = editModal?.querySelector('.SR_close-button');
 			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
 			
-			    // 등록 버튼 클릭 시 등록 모달 열기
-			    if (registerButton) {
-			        registerButton.addEventListener('click', function () {
-			            registerModal.style.display = 'flex';
-			            document.body.style.overflow = 'hidden';
-			        });
-			    }
+			    registerButton?.addEventListener('click', () => {
+			        registerModal.style.display = 'flex';
+			        document.body.style.overflow = 'hidden';
+			    });
 			
-			    // 등록 모달 닫기
-			    registerCloseBtn?.addEventListener('click', function () {
+			    registerCloseBtn?.addEventListener('click', () => {
 			        registerModal.style.display = 'none';
 			        document.body.style.overflow = 'auto';
 			    });
 			
-			    // 수정 모달 관련 처리
 			    openPopupButtons.forEach(button => {
-					button.addEventListener('click', function (event) {
-						event.preventDefault();
-				
-						// const inquiryCode = this.getAttribute('data-inquiry-code');
-						// 아직 데이터를 불러오지 않으므로, fetch는 주석 처리하고 팝업만 열기
-				
-						console.log("수정 버튼 클릭됨 - 팝업 열기 테스트");
-				
-						// 팝업 열기
-						editModal.style.display = 'flex';
-						document.body.style.overflow = 'hidden';
-				
-						// 👉 필요하면 여기에 더미 데이터 삽입도 가능
-						document.getElementById('inquiryCodeDisplay').value = 'TEST_CODE';
-						document.getElementById('inquiryTitleEdit').value = '테스트 제목';
-						document.getElementById('inquiryTypeCodeDisplay').value = 'TYPE_001';
-						document.getElementById('inquiryContentEdit').value = '이곳은 테스트용 문의 내용입니다.';
-						document.getElementById('SR_writerCode').textContent = 'ADM_001';
-						document.getElementById('SR_writerName').textContent = '관리자';
-						document.getElementById('SR_writeDate').textContent = '2025-07-17';
-						document.getElementById('SR_updaterName').textContent = '-';
-						document.getElementById('SR_updateDate').textContent = '-';
-						document.getElementById('SR_fileList').innerHTML = '첨부파일 없음';
-						
-						editCloseBtn?.addEventListener('click', function () {
-						    editModal.style.display = 'none';
-						    document.body.style.overflow = 'auto';
-						});
-						
-						window.addEventListener('click', function (event) {
-						    if (event.target === registerModal) {
-						        registerModal.style.display = 'none';
-						        document.body.style.overflow = 'auto';
-						    } else if (event.target === editModal) {
-						        editModal.style.display = 'none';
-						        document.body.style.overflow = 'auto';
-						    }
-						});
-					});
-				});
+			        button.addEventListener('click', function (event) {
+			            event.preventDefault();
+			            const inquiryCode = button.getAttribute('data-inquiry-code');
+			            fetch(`/admin/getInquiryTypeDetail?code=${inquiryCode}`)
+			                .then(res => res.json())
+			                .then(data => {
+			                    document.getElementById('editRegAdm').value = data.inquiryTypeRegAdm || '';
+			                    document.getElementById('editRegDate').value = data.inquiryTypeRegDate || '';
+			                    document.getElementById('editCode').value = data.inquiryTypeCode || '';
+			                    document.getElementById('editName').value = data.inquiryTypeName || '';
+			                    document.getElementById('editExpln').value = data.inquiryTypeExpln || '';
+			                    const statusRadios = document.querySelectorAll('input[name="editStatus"]');
+			                    statusRadios.forEach(radio => {
+			                        radio.checked = radio.value === data.statusCode;
+			                    });
+			                    editModal.style.display = 'flex';
+			                    document.body.style.overflow = 'hidden';
+			                })
+			                .catch(err => {
+			                    console.error('데이터 조회 오류:', err);
+			                    alert('데이터를 불러오지 못했습니다.');
+			                });
+			        });
+			    });
+			
+			    editCloseBtn?.addEventListener('click', () => {
+			        editModal.style.display = 'none';
+			        document.body.style.overflow = 'auto';
+			    });
+			
+			    window.addEventListener('click', function (event) {
+			        if (event.target === registerModal) {
+			            registerModal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			        }
+			        if (event.target === editModal) {
+			            editModal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			        }
+			    });
+			
+			    const registerForm = document.getElementById('inquiryRegisterForm');
+			    registerForm?.addEventListener('submit', function (event) {
+			        event.preventDefault();
+			        const inquiryTypeCode = document.getElementById('inquiryCodeDisplay').value.trim();
+			        const inquiryTypeName = document.getElementById('inquiryTitleEdit').value.trim();
+			        const inquiryTypeExpln = document.getElementById('inquiryContentEdit').value.trim();
+			        const statusValue = document.querySelector('#inquiryModal input[name="status"]:checked')?.value;
+			
+			        const codeRegex = /^IQT_[A-Z]{1,16}$/;
+			        const nameRegex = /^[가-힣\s]{1,30}$/;
+			        const explnMaxLength = 255;
+			
+			        if (!inquiryTypeCode || !inquiryTypeName || !inquiryTypeExpln || !statusValue) {
+			            alert('모든 항목을 입력해주세요.');
+			            return;
+			        }
+			
+			        if (!codeRegex.test(inquiryTypeCode)) {
+			            alert('문의타입코드는 "IQT_"로 시작하며 대문자 영문만 사용할 수 있고, 최대 20자입니다.');
+			            return;
+			        }
+			
+			        if (!nameRegex.test(inquiryTypeName)) {
+			            alert('문의타입명은 한글과 공백만 입력 가능합니다. (최대 30자)');
+			            return;
+			        }
+			
+			        if (inquiryTypeExpln.length > explnMaxLength) {
+			            alert('문의타입설명은 최대 255자까지 입력할 수 있습니다.');
+			            return;
+			        }
+			
+			        const payload = {
+			            inquiryTypeCode,
+			            inquiryTypeName,
+			            inquiryTypeExpln,
+			            statusCode: statusValue
+			        };
+			
+			        fetch('/admin/adminAddInquiryType', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(payload)
+			        })
+			        .then(res => res.ok ? res.text() : Promise.reject(res.statusText))
+			        .then(() => {
+			            alert('등록이 완료되었습니다.');
+			            registerModal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			            location.reload();
+			        })
+			        .catch(err => {
+			            console.error('등록 오류:', err);
+			            alert('등록 중 오류가 발생했습니다.');
+			        });
+			    });
+			
+			    const editForm = document.getElementById('inquiryEditForm');
+			    editForm?.addEventListener('submit', function (event) {
+			        event.preventDefault();
+			        const inquiryTypeCode = document.getElementById('editCode').value.trim();
+			        const inquiryTypeName = document.getElementById('editName').value.trim();
+			        const inquiryTypeExpln = document.getElementById('editExpln').value.trim();
+			        const statusValue = document.querySelector('input[name="editStatus"]:checked')?.value;
+			
+			        const nameRegex = /^[가-힣\s]{1,30}$/;
+			        const explnMaxLength = 255;
+			
+			        if (!inquiryTypeCode || !inquiryTypeName || !inquiryTypeExpln || !statusValue) {
+			            alert('모든 항목을 입력해주세요.');
+			            return;
+			        }
+			
+			        if (!nameRegex.test(inquiryTypeName)) {
+			            alert('문의타입명은 한글과 공백만 입력 가능합니다. (최대 30자)');
+			            return;
+			        }
+			
+			        if (inquiryTypeExpln.length > explnMaxLength) {
+			            alert('문의타입설명은 최대 255자까지 입력할 수 있습니다.');
+			            return;
+			        }
+			
+			        const payload = {
+			            inquiryTypeCode,
+			            inquiryTypeName,
+			            inquiryTypeExpln,
+			            statusCode: statusValue
+			        };
+			
+			        fetch('/admin/updateInquiryType', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(payload)
+			        })
+			        .then(res => res.ok ? res.text() : Promise.reject(res.statusText))
+			        .then(() => {
+			            alert('수정이 완료되었습니다.');
+			            editModal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			            location.reload();
+			        })
+			        .catch(err => {
+			            console.error('수정 오류:', err);
+			            alert('수정 중 오류가 발생했습니다.');
+			        });
+			    });
 			});
 		</script>
 	</th:block>
+
+
 </html>

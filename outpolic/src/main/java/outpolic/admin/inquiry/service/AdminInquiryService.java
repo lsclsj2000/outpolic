@@ -8,6 +8,15 @@ import outpolic.admin.inquiry.domain.AdminInquiryType;
 
 public interface AdminInquiryService {
 	
+	// 문의 자원 수정
+	void updateInquiryType(AdminInquiryType inquiryType);
+	
+	// 문의 자원 수정_원본 조회
+	AdminInquiryType getAdminInquiryTypeByCode(String code);
+	
+	// 문의 자원 등록 프로세스
+	void insertInquiryType(AdminInquiryType inquiryType);
+	
 	// 문의 타입 자원 조회
 	List<AdminInquiryType> getAdminInquiryTypeList();
 
