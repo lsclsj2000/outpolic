@@ -88,8 +88,7 @@ public class EnterPortfolioController {
         if (mbrCd == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "로그인이 필요합니다."));
         }
-        
-        String newPrtfCd = "PO_C_" + UUID.randomUUID().toString();
+        String newPrtfCd = portfolioService.generateNewPrtfCd();
         formData.setPrtfCd(newPrtfCd);
         formData.setMbrCd(mbrCd);
         formData.setEntCd(portfolioService.findEntCdByMbrCd(mbrCd));
@@ -200,5 +199,25 @@ public class EnterPortfolioController {
     @ResponseBody
     public ResponseEntity<List<String>> searchTags(@RequestParam(value = "query", defaultValue = "") String query) {
         return ResponseEntity.ok(portfolioService.searchTags(query));
+    }
+    
+    
+    
+    @GetMapping("/api/countByEntCd")
+    @ResponseBody
+    public ResponseEntity<Integer> countPortfoliosForEnterprise(HttpSession session) {
+        // 세션에서 로그인한 사용자 정보를 가져옵니다.
+        String mbrCd = (String) session.getAttribute("SCD");
+        if (mbrCd == null) {
+            // 로그인되지 않은 경우 401 오류와 함께 0을 반환합니다.
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(0);
+        }
+        
+        // 기업 코드를 찾아 포트폴리오 개수를 조회합니다.
+        String entCd = portfolioService.findEntCdByMbrCd(mbrCd);
+        int count = portfolioService.countPortfoliosByEntCd(entCd);
+        
+        // 조회된 개수를 반환합니다.
+        return ResponseEntity.ok(count);
     }
 }

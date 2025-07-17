@@ -1,16 +1,9 @@
 package outpolic.enter.outsourcing.service.impl;
 
-import java.io.IOException; // IOException은 이제 직접 throws하지 않지만, 여전히 다른 곳에서 사용될 수 있으므로 임포트 유지
-import java.nio.file.Files; // 이 임포트는 이제 storeFile/deleteFile이 FilesUtils를 사용하므로 불필요할 수 있습니다.
-import java.nio.file.Path; // 이 임포트는 이제 storeFile/deleteFile이 FilesUtils를 사용하므로 불필요할 수 있습니다.
-import java.nio.file.Paths; // 이 임포트는 이제 storeFile/deleteFile이 FilesUtils를 사용하므로 불필요할 수 있습니다.
-import java.time.LocalDate; // 이 임포트는 이제 storeFile/deleteFile이 FilesUtils를 사용하므로 불필요할 수 있습니다.
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID; // 이 임포트는 이제 storeFile/deleteFile이 FilesUtils를 사용하므로 불필요할 수 있습니다.
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -29,7 +22,7 @@ import outpolic.enter.outsourcing.service.EnterOutsourcingService;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.enter.portfolio.mapper.PortfolioMapper;
 import outpolic.systems.file.domain.FileMetaData;
-import outpolic.systems.util.FilesUtils; // FilesUtils를 사용하므로 이 임포트는 유지되어야 합니다.
+import outpolic.systems.util.FilesUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -38,10 +31,7 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     private static final Logger logger = LoggerFactory.getLogger(EnterOutsourcingServiceImpl.class);
     private final OutsourcingMapper outsourcingMapper;
     private final PortfolioMapper portfolioMapper;
-    private final FilesUtils filesUtils; // FilesUtils 주입
-
-    @Value("${file.path}")
-    private String fileRealPath; // 이 필드는 FilesUtils가 사용하므로 여기서 직접 사용하지 않습니다.
+    private final FilesUtils filesUtils;
 
     @Override
     public List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd) { return outsourcingMapper.findOutsourcingDetailsByEntCd(entCd); }
@@ -95,34 +85,38 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         session.setAttribute("outsourcingFormData", formData);
     }
 
+    // 이 메서드의 시그니처를 인터페이스에 맞게 정확히 수정
     @Override
-    public List<String> saveStep3Data(String osCd, MultipartFile[] files, HttpSession session) {
+    @Transactional
+    public void saveStep3Data(String osCd, MultipartFile thumbnailFile, MultipartFile[] referenceFiles, HttpSession session) {
         OutsourcingFormDataDto formData = (OutsourcingFormDataDto) session.getAttribute("outsourcingFormData");
         if (formData == null) throw new IllegalStateException("세션 정보가 없습니다.");
 
         List<FileMetaData> uploadedFiles = new ArrayList<>();
-        if (files != null && files.length > 0 && !files[0].isEmpty()) {
-            for (MultipartFile file : files) {
-                // try { // <-- try 블록 유지 (FilesUtils.uploadFile이 IOException을 던지도록 설정했다면)
-                    // FileMetaData metaData = storeFile(file, "outsourcing"); // storeFile 헬퍼 메서드가 이제 IOException을 던지지 않으므로 try-catch 제거
-                    FileMetaData metaData = filesUtils.uploadFile(file, "outsourcing"); // FilesUtils에서 던지지 않으면 이대로
-                    if (metaData != null) uploadedFiles.add(metaData);
-                // } catch (IOException e) { // <-- catch 블록 제거
-                //    logger.error("파일 저장 중 오류 발생", e);
-                // }
+        String thumbnailUrl = null;
+
+        // 썸네일 파일 처리
+        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+            FileMetaData thumbnailMetaData = filesUtils.uploadFile(thumbnailFile, "outsourcing/thumbnail");
+            if (thumbnailMetaData != null) {
+                uploadedFiles.add(thumbnailMetaData);
+                thumbnailUrl = thumbnailMetaData.getFilePath();
             }
         }
+        formData.setThumbnailUrl(thumbnailUrl);
 
-        if (!uploadedFiles.isEmpty()) {
-            formData.setUploadedFiles(uploadedFiles);
-            formData.setThumbnailUrl(uploadedFiles.get(0).getFilePath());
-        } else {
-            formData.setUploadedFiles(null);
-            formData.setThumbnailUrl(null);
+        // 참조 파일 처리
+        if (referenceFiles != null && referenceFiles.length > 0 && !referenceFiles[0].isEmpty()) {
+            for (MultipartFile file : referenceFiles) {
+                FileMetaData metaData = filesUtils.uploadFile(file, "outsourcing/reference");
+                if (metaData != null) uploadedFiles.add(metaData);
+            }
         }
+        formData.setUploadedFiles(uploadedFiles);
+
         session.setAttribute("outsourcingFormData", formData);
-        return uploadedFiles.stream().map(FileMetaData::getFilePath).collect(Collectors.toList());
     }
+
 
     @Override
     @Transactional
@@ -151,9 +145,12 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         finalOutsourcing.setOsThumbnailUrl(formData.getThumbnailUrl());
 
         outsourcingMapper.insertOutsourcing(finalOutsourcing);
+
         String clCd = "LIST_" + finalOutsourcing.getOsCd();
         outsourcingMapper.insertContentList(clCd, finalOutsourcing.getOsCd());
+
         if (formData.getUploadedFiles() != null && !formData.getUploadedFiles().isEmpty()) {
+            // FileMetaData 객체에 직접 clCd와 mbrCd를 설정하지 않고, 매퍼에 별도 파라미터로 전달
             outsourcingMapper.insertFiles(formData.getUploadedFiles(), clCd, finalOutsourcing.getMbrCd());
         }
         updateMappings(clCd, finalOutsourcing.getMbrCd(), formData.getCategoryCodes(), formData.getTags());
@@ -167,8 +164,8 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         outsourcingMapper.updateOutsourcingStep1(outsourcingToUpdate);
     }
 
+    // updateOutsourcingStep2 메서드는 이미 올바른 시그니처입니다.
     @Override
-    @Transactional
     public void updateOutsourcingStep2(String osCd, List<String> categoryCodes, String tags) {
         String clCd = outsourcingMapper.findClCdByOsCd(osCd);
         if (clCd == null) throw new IllegalStateException("콘텐츠 목록 정보가 없습니다.");
@@ -185,41 +182,52 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
             outsourcingMapper.updateOutsourcingRepresentativeCategory(osCd, null);
         }
     }
-
+    
+    // 이 메서드의 시그니처를 인터페이스에 맞게 정확히 수정
     @Override
     @Transactional
-    public void updateOutsourcingStep3(String osCd, MultipartFile[] files) {
+    public void updateOutsourcingStep3(String osCd, MultipartFile thumbnailFile, MultipartFile[] referenceFiles) {
         EnterOutsourcing outsourcing = outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
         if (outsourcing == null) throw new IllegalStateException("수정할 외주 정보가 없습니다.");
 
         String clCd = outsourcingMapper.findClCdByOsCd(osCd);
+        if (clCd == null) throw new IllegalStateException("콘텐츠 목록 정보를 찾을 수 없습니다. (clCd is null)");
 
-        if (files != null && files.length > 0 && !files[0].isEmpty()) {
-            List<FileMetaData> oldFiles = outsourcingMapper.findFilesByClCd(clCd);
-            if (oldFiles != null) {
-                for(FileMetaData oldFile : oldFiles) {
-                    filesUtils.deleteFileByPath(oldFile.getFilePath()); // FilesUtils 사용
-                }
+        // 1. 기존 파일 (DB 기록 및 물리적 파일) 삭제
+        List<FileMetaData> oldFiles = outsourcingMapper.findFilesByClCd(clCd);
+        if (oldFiles != null && !oldFiles.isEmpty()) {
+            for(FileMetaData oldFile : oldFiles) {
+                filesUtils.deleteFileByPath(oldFile.getFilePath());
             }
             outsourcingMapper.deleteFilesByClCd(clCd);
+        }
 
-            List<FileMetaData> newFiles = new ArrayList<>();
-            for (MultipartFile file : files) {
-                // try { // <-- try 블록 유지 (FilesUtils.uploadFile이 IOException을 던지도록 설정했다면)
-                    // FileMetaData newMetaData = storeFile(file, "outsourcing"); // storeFile 헬퍼 메서드가 이제 IOException을 던지지 않으므로 try-catch 제거
-                    FileMetaData newMetaData = filesUtils.uploadFile(file, "outsourcing"); // FilesUtils에서 던지지 않으면 이대로
-                    if (newMetaData != null) newFiles.add(newMetaData);
-                // } catch (IOException e) { // <-- catch 블록 제거
-                //    logger.error("파일 수정 중 오류", e);
-                // }
-            }
+        List<FileMetaData> newUploadedFiles = new ArrayList<>();
+        String newThumbnailUrl = null;
 
-            if (!newFiles.isEmpty()) {
-                outsourcingMapper.insertFiles(newFiles, clCd, outsourcing.getMbrCd());
-                outsourcingMapper.updateOutsourcingThumbnail(osCd, newFiles.get(0).getFilePath());
-            } else {
-                outsourcingMapper.updateOutsourcingThumbnail(osCd, null);
+        // 2. 새 썸네일 파일 업로드 및 정보 저장
+        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+            FileMetaData newThumbnailMetaData = filesUtils.uploadFile(thumbnailFile, "outsourcing/thumbnail");
+            if (newThumbnailMetaData != null) {
+                newUploadedFiles.add(newThumbnailMetaData);
+                newThumbnailUrl = newThumbnailMetaData.getFilePath();
             }
+        }
+        outsourcingMapper.updateOutsourcingThumbnail(osCd, newThumbnailUrl);
+
+        // 3. 새 참조 파일 업로드 및 정보 저장
+        if (referenceFiles != null && referenceFiles.length > 0 && !referenceFiles[0].isEmpty()) {
+            for (MultipartFile file : referenceFiles) {
+                FileMetaData newMetaData = filesUtils.uploadFile(file, "outsourcing/reference");
+                if (newMetaData != null) {
+                    newUploadedFiles.add(newMetaData);
+                }
+            }
+        }
+        
+        // 4. 모든 새 파일 정보를 DB에 일괄 삽입
+        if (!newUploadedFiles.isEmpty()) {
+            outsourcingMapper.insertFiles(newUploadedFiles, clCd, outsourcing.getMbrCd());
         }
     }
 
@@ -230,9 +238,9 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         if (clCd != null) {
             List<FileMetaData> filesToDelete = outsourcingMapper.findFilesByClCd(clCd);
             for (FileMetaData file : filesToDelete) {
-                filesUtils.deleteFileByPath(file.getFilePath()); // FilesUtils 사용
+                filesUtils.deleteFileByPath(file.getFilePath());
             }
-            outsourcingMapper.deletePerusalContentByClCd(clCd); // <-- 이 줄을 추가합니다.
+            outsourcingMapper.deletePerusalContentByClCd(clCd);
 
             outsourcingMapper.deleteOutsourcingStatusByClCd(clCd);
 
@@ -259,7 +267,7 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
     @Override
     @Transactional
-    public void linkPortfolioToOutsourcing(String osCd, String prtfCd, String entCd) {
+    public void linkPortfolioToOutsourcing(String osCd, String prtfCd, String entCd) { // 메서드명 수정
         String latestOpCd = outsourcingMapper.findLatestOpCd();
         int nextNum = 1;
         if (latestOpCd != null && latestOpCd.startsWith("OP_C")) {
@@ -310,18 +318,23 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         }
     }
 
-    // private storeFile 메서드는 FilesUtils.uploadFile()이 IOException을 던지지 않는다고 가정하고 제거합니다.
-    // private FileMetaData storeFile(MultipartFile file, String serviceName) throws IOException {
-    //    return filesUtils.uploadFile(file, serviceName);
-    // }
-
-    // private deleteFile 메서드는 FilesUtils.deleteFileByPath()가 boolean을 반환하므로 boolean으로 변경
-    private boolean deleteFile(String fileUrl) {
-        return filesUtils.deleteFileByPath(fileUrl);
-    }
-
     @Override
     public List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query) {
-        return portfolioMapper.findUnlinkedPortfolios(osCd, entCd, query);
+        return portfolioMapper.searchUnlinkedPortfolios(osCd, entCd, query);
     }
+	@Override
+	public void saveStep3Data(String osCd, MultipartFile[] referenceFiles, HttpSession session) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void updateOutsourcingStep3(String osCd, MultipartFile[] referenceFiles) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void linkPortfolioToOutsCd(String osCd, String prtfCd, String entCd) {
+		// TODO Auto-generated method stub
+		
+	}
 }

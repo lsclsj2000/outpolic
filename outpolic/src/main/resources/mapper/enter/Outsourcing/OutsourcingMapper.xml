@@ -321,12 +321,14 @@ ranking where cl_cd = #{clCd}
         SELECT * FROM outsourcing ORDER BY os_reg_ymdt DESC
     </select>
     
-    <insert id="insertFiles" parameterType="java.util.List">
-        INSERT INTO file 
+        <insert id="insertFiles">
+        INSERT INTO file
             (file_cd, file_reg_ymdt, file_extn, file_orgnl_nm, file_srvr_nm, file_path, cl_cd, mbr_cd)
         VALUES
-        <foreach collection="list" item="file" separator=",">
-     (#{file.fileIdx}, NOW(), #{file.fileExtension}, #{file.fileOriginalName}, #{file.fileNewName}, #{file.filePath}, #{file.clCd}, #{file.mbrCd})
+        <foreach collection="files" item="file" separator=",">
+            (
+                #{file.fileIdx},        NOW(),
+                #{file.fileExtension},  #{file.fileOriginalName},#{file.fileNewName},    #{file.filePath},       #{clCd},                #{mbrCd}                )
         </foreach>
     </insert>
 
