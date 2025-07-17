@@ -48,7 +48,7 @@
 				            <div class="card h-100 border-info shadow-sm h-100" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">내가 작성한 리뷰</h5>
-				                    <p class="card-text fs-4 text-info fw-bold" th:text="${myReviewCount} + '건'">3건</p>
+				                    <p class="card-text fs-4 text-info fw-bold" th:text="${#lists.size(reviewList)} + '건'">3건</p>
 				                    <p class="text-muted small mb-3">다른 회원이 여러분의 피드백을 기다리고 있어요.</p>
 				                    <a href="#" class="btn btn-outline-info btn-sm">자세히 보기</a>
 				                </div>
@@ -97,15 +97,21 @@
 				<div class="row d-flex flex-column align-items-center">
 					<h3>내가 작성한 리뷰</h3>
 					<div id="reviewBox" class=" mt-30">
-					    <div th:each="r : ${reviewList}" 
+					    <div th:each="r : ${reviewList}" th:if="${not #lists.isEmpty(reviewList)}"
 					         class="SR_bg-white SR_p-6 SR_rounded-lg" 
 					         style="border:solid 3px #ececec; border-radius : 10px; padding : 15px; margin-top : 15px; cursor:pointer;">
 					         
 					        <!-- 숨겨진 프로젝트 ID -->
-					        <input type="hidden" name="projectId" th:value="${r.osCd}" />
+					        <input type="hidden" name="projectId" th:value="${r.ospCd}" />
 
 					        <!-- 외주 제목 -->
-					        <h5>외주 제목 : <span th:text="${r.osTtl}"></span ></h5>
+					        <h5 th:if="${r.contentType == 'OUTSOURCING'}">
+							    외주 제목 : <span th:text="${r.osTtl}"></span>
+							</h5>
+							
+							<h5 th:if="${r.contentType == 'PORTFOLIO'}">
+							    포트폴리오 제목 : <span th:text="${r.prtfTtl}"></span>
+							</h5>
 
 					        <!-- 별점 -->
 					        <div class="SR_mb-4">
@@ -114,25 +120,24 @@
 					                <div class="SR_flex SR_items-center">
 					                    <!-- 별점 동적 표시 -->
 					                    <span th:each="i : ${#numbers.sequence(1, 5)}"
-					                          th:text="'★'"
-					                          th:classappend="${i <= r.rvwEvl} ? 'text-yellow-400' : 'text-gray-300'"
-					                          style="font-size: 20px;"></span>
+										      th:text="'★'"
+										      th:style="${(i <= r.rvwEvl) ? 'color: gold;' : 'color: lightgray;'}"
+										      style="font-size: 20px;"></span>
 					                </div>
 					            </div>
 					        </div>
-
 					        <!-- 리뷰 내용 -->
 					        <div class="SR_mb-4">
-					            <label class="SR_block SR_text-sm SR_font-medium">리뷰 내용</label>
 					            <div th:text="${r.rvwCn}">리뷰 텍스트</div>
-					            
-					            
-					            
 					        </div>
-							<a href="#" class="btn btn-primary" style="border:none;">관련 외주로 이동</a>
+							<a href="#" class="btn btn-primary" style="border:none;">관련 콘텐츠로 이동</a>
+					    </div>
+					    <div th:if="${#lists.isEmpty(reviewList)}"class="SR_bg-white SR_p-6 SR_rounded-lg" 
+					         style="border:solid 3px #ececec; border-radius : 10px; padding : 15px; margin-top : 15px; cursor:pointer; height : 150px;">
+					    	<div>아직 작성하신 리뷰가 없습니다.</div>
 					    </div>
 					</div>
-					<a href="#">내가 작성한 리뷰 자세히 보기</a>
+					<a href="#" th:if="${not #lists.isEmpty(reviewList)}"><내가 작성한 리뷰 자세히 보기></a>
 				</div>
 			</div>
 
