@@ -12,5 +12,8 @@ public class AdminOsst {
 	private String entName;
 	private String mbrEntName;
 	private String stcCode;
-	private String stcName; 
+	private String stcName;
+	private Integer ospCustYn;
+	private String ospSplyYmdt;
+	private String ospCustYmdt;
 }

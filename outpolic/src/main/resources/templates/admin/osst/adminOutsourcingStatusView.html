@@ -8,6 +8,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 		<title>외주 진행 현황</title>
+		<style>
+			button.active {
+			    background-color: #007bff;
+			    color: #fff;
+			    font-weight: bold;
+			}
+		</style>
 	</head>
 	
 	
@@ -106,7 +113,8 @@
                                                 	<span th:case="${'최종 완료'}" class="badge rounded-pill alert-success">최종 완료</span>
                                                 </td>
                                                 <td scope="col" class="text-center">
-                                                    <button type="submit" id="mdfcnButton" class="btn btn-light rounded font-sm SR_open-popup-btn">수정</button>
+                                                    <button type="button" class="btn btn-light rounded font-sm SR_open-popup-btn"
+													        th:attr="data-ocd-cd=${l.ocdCode}">수정</button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -120,102 +128,164 @@
 			
 			<!-- 외주 진행 단계 수정 모달 -->
 			<div id="osstModal" class="SR_modal">
-				<div class="SR_modal-content-wrapper">
-					<div class="SR_popup-header">
-						<h2>외주 진행 단계 수정</h2>
-						<button class="SR_close-button">&times;</button>
-					</div>
-	
-					<form id="inquiryForm">
-	                    <!-- 외주 진행 단계 테이블 -->
-						<div class="SR_form-group SR_full-width">
-							<div class="table-responsive">
-								<table class="table table-hover mb-0">
-									<thead>
-										<tr>
-											<th scope="col" class="px-4 text-center col-3">단계</th>
-											<th scope="col" class="px-4 text-center col-3">단계 상태</th>
-											<th scope="col" class="px-4 text-center col-2">수요자 승인 일시</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td scope="col" class="px-4 text-center">계약 체결 (SD_CONTRACT)</td>
-											<td scope="col" class="px-4 text-center">
-												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행중</button>
-												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행완료</button>
-											</td>
-											<td scope="col" class="px-4 text-center">-</td>
-										</tr>
-										<tr>
-											<td scope="col" class="px-4 text-center">초기 기획 (SD_PLANNING)</td>
-											<td scope="col" class="px-4 text-center">
-												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행중</button>
-												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행완료</button>
-											</td>
-											<td scope="col" class="px-4 text-center">-</td>
-										</tr>
-										<tr>
-											<td scope="col" class="px-4 text-center">작업 진행 (SD_WORKPROGRESS)</td>
-											<td scope="col" class="px-4 text-center">
-												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행중</button>
-												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행완료</button>
-											</td>
-											<td scope="col" class="px-4 text-center">-</td>
-										</tr>
-										<tr>
-											<td scope="col" class="px-4 text-center">최종 완료 (SD_COMPLETION)</td>
-											<td scope="col" class="px-4 text-center">
-												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행중</button>
-												<button type="button" class="btn btn-sm btn-light" style="font-size: smaller !important;">진행완료</button>
-											</td>
-											<td scope="col" class="px-4 text-center">-</td>
-										</tr>
+			    <div class="SR_modal-content-wrapper">
+			        <div class="SR_popup-header">
+			            <h2>외주 진행 단계 수정</h2>
+			            <button class="SR_close-button">&times;</button>
+			        </div>
+			
+			        <form id="inquiryForm">
+			            <!-- 외주 진행 단계 테이블 -->
+			            <div class="SR_form-group SR_full-width">
+			                <div class="table-responsive">
+			                    <table class="table table-hover mb-0">
+			                        <thead>
+			                            <tr>
+			                                <th scope="col" class="px-4 text-center col-3">단계</th>
+			                                <th scope="col" class="px-4 text-center col-3">단계 상태</th>
+			                                <th scope="col" class="px-4 text-center col-2">수요자 승인 일시</th>
+			                            </tr>
+			                        </thead>
+			                        <tbody>
+									    <tr>
+									        <td class="px-4 text-center" id="stepName1">-</td>
+									        <td class="px-4 text-center" id="stepStatus1">-</td>
+									        <td class="px-4 text-center" id="stepDate1">-</td>
+									    </tr>
+									    <tr>
+									        <td class="px-4 text-center" id="stepName2">-</td>
+									        <td class="px-4 text-center" id="stepStatus2">-</td>
+									        <td class="px-4 text-center" id="stepDate2">-</td>
+									    </tr>
+									    <tr>
+									        <td class="px-4 text-center" id="stepName3">-</td>
+									        <td class="px-4 text-center" id="stepStatus3">-</td>
+									        <td class="px-4 text-center" id="stepDate3">-</td>
+									    </tr>
+									    <tr>
+									        <td class="px-4 text-center" id="stepName4">-</td>
+									        <td class="px-4 text-center" id="stepStatus4">-</td>
+									        <td class="px-4 text-center" id="stepDate4">-</td>
+									    </tr>
 									</tbody>
-								</table>
-							</div>
-						</div>
-						<div class="SR_popup-footer mt-0">
-	                        <div class="SR_update-info">
-	                        </div>
-							<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
-						</div>
-					</form>
-				</div>
+			                    </table>
+			                </div>
+			            </div>
+			            <div class="SR_popup-footer mt-0">
+			                <div class="SR_update-info"></div>
+			                <button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+			            </div>
+			        </form>
+			    </div>
 			</div>
 		</th:block>
 	
 	<!-- 자바스크립트 추가 -->
     <th:block layout:fragment="jsScript">
 		<script>
-			document.addEventListener('DOMContentLoaded', function () {
-			    const osstModal = document.getElementById('osstModal');
-			    const osstCloseBtn = document.querySelector('#osstModal .SR_close-button');
-			    const openOsstPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+		document.addEventListener('DOMContentLoaded', function () {
+		    const osstModal = document.getElementById('osstModal');
+		    const osstCloseBtn = document.querySelector('#osstModal .SR_close-button');
+		    const openOsstPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+
+		    // 수정 버튼 클릭 시 팝업 열기 및 데이터 요청
+		    openOsstPopupButtons.forEach(button => {
+		        button.addEventListener('click', function (event) {
+		            event.preventDefault();
+		            const ocdCd = this.getAttribute('data-ocd-cd');
+
+		            fetch(`/admin/osstSteps?ocdCd=${ocdCd}`)
+		                .then(response => {
+		                    if (!response.ok) throw new Error("데이터 요청 실패");
+		                    return response.json();
+		                })
+		                .then(data => {
+		                    console.log("📦 받아온 단계 데이터:", data);
+		                    renderStepTable(data);
+		                    osstModal.style.display = 'flex';
+		                    document.body.style.overflow = 'hidden';
+		                })
+		                .catch(error => {
+		                    console.error("오류 발생:", error);
+		                    alert("데이터를 불러오지 못했습니다.");
+		                });
+		        });
+		    });
+
+		    // 팝업 닫기 버튼
+		    osstCloseBtn.addEventListener('click', () => {
+		        osstModal.style.display = 'none';
+		        document.body.style.overflow = 'auto';
+		    });
+
+		    // 바깥 영역 클릭 시 팝업 닫기
+		    window.addEventListener('click', function (event) {
+		        if (event.target === osstModal) {
+		            osstModal.style.display = 'none';
+		            document.body.style.overflow = 'auto';
+		        }
+		    });
+
+		    // 날짜 포맷 함수
+		    function formatDateTime(isoString) {
+		        if (!isoString) return '-';
+		        const date = new Date(isoString);
+		        const yyyy = date.getFullYear();
+		        const mm = String(date.getMonth() + 1).padStart(2, '0');
+		        const dd = String(date.getDate()).padStart(2, '0');
+		        const hh = String(date.getHours()).padStart(2, '0');
+		        const min = String(date.getMinutes()).padStart(2, '0');
+		        return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+		    }
+
+		    // 팝업 테이블 렌더링
+		    function renderStepTable(stepList) {
+			    const STEP_ORDER = ["SD_CONTRACT", "SD_PLANNING", "SD_WORKPROGRESS", "SD_COMPLETION"];
 			
-			    // 수정 버튼 클릭 시 팝업 열기
-			    openOsstPopupButtons.forEach(button => {
-			        button.addEventListener('click', function (event) {
-			            event.preventDefault();
-			            osstModal.style.display = 'flex';
-			            document.body.style.overflow = 'hidden';
-			        });
+			    // 단계 순서대로 정렬
+			    stepList.sort((a, b) => {
+			        return STEP_ORDER.indexOf(a.stcCode) - STEP_ORDER.indexOf(b.stcCode);
 			    });
 			
-			    // 팝업 닫기 버튼
-			    osstCloseBtn.addEventListener('click', () => {
-			        osstModal.style.display = 'none';
-			        document.body.style.overflow = 'auto';
-			    });
+			    for (let i = 0; i < 4; i++) {
+			        const step = stepList[i];
+			        const nameCell = document.getElementById(`stepName${i + 1}`);
+			        const statusCell = document.getElementById(`stepStatus${i + 1}`);
+			        const dateCell = document.getElementById(`stepDate${i + 1}`);
 			
-			    // 바깥 영역 클릭 시 팝업 닫기
-			    window.addEventListener('click', function (event) {
-			        if (event.target === osstModal) {
-			            osstModal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
+			        if (step) {
+			            // 단계명 출력
+			            nameCell.textContent = `${step.stcName} (${step.stcCode})`;
+			
+			            // 단계 상태 출력
+			            if (step.ospCustYn == 1) {
+			                // ✅ 진행완료 상태: 진행중 + 진행완료 버튼 (진행완료 active)
+			                statusCell.innerHTML = `
+			                    <button type="button" class="btn btn-sm btn-light" style="font-size: smaller;">진행중</button>
+			                    <button type="button" class="btn btn-sm btn-light active" style="font-size: smaller;">진행완료</button>
+			                `;
+			            } else if (step.ospSplyYmdt) {
+			                // ✅ 진행중 상태: 진행중 + 진행완료 버튼 (진행중 active)
+			                statusCell.innerHTML = `
+			                    <button type="button" class="btn btn-sm btn-light active" style="font-size: smaller;">진행중</button>
+			                    <button type="button" class="btn btn-sm btn-light" style="font-size: smaller;">진행완료</button>
+			                `;
+			            } else {
+			                // ✅ 예정 상태: 텍스트만 표시
+			                statusCell.innerHTML = `<span>예정</span>`;
+			            }
+			
+			            // 승인일시 출력
+			            dateCell.textContent = step.ospCustYmdt ? formatDateTime(step.ospCustYmdt) : '-';
+			        } else {
+			            // 데이터가 없을 경우 초기화
+			            nameCell.textContent = '-';
+			            statusCell.textContent = '-';
+			            dateCell.textContent = '-';
 			        }
-			    });
-			});
+			    }
+			}
+		});
 		</script>
 	</th:block>
 </html>
