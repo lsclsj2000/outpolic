@@ -87,9 +87,14 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
 
     @Override
     public String generateNewPrtfCd() {
-        String latestPrtfCd = portfolioMapper.findLatestPrtfCd();
-        int nextPrtfNum = (latestPrtfCd == null || !latestPrtfCd.startsWith("PO_C")) ? 1 : Integer.parseInt(latestPrtfCd.substring(4)) + 1;
-        return String.format("PO_C%05d", nextPrtfNum);
+        String maxCode = portfolioMapper.selectMaxPortfolioCode(); // 예: "PO_C00063"
+
+        int nextNumber = 1;
+        if (maxCode != null && maxCode.startsWith("PO_C")) {
+            nextNumber = Integer.parseInt(maxCode.substring(5)) + 1; // "00063" → 64
+        }
+
+        return String.format("PO_C%05d", nextNumber); // → PO_C00064
     }
 
     @Override

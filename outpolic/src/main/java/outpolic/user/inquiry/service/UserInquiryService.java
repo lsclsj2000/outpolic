@@ -28,4 +28,8 @@ public interface UserInquiryService {
 	
 	// 문의 목록 조회
 	List<UserInquiry> getUserInquiryList();
+	
+	//특정 인물 문의 목록 조회
+	List<UserInquiry> getUserInquiryListByCode(String memberCode);
+	
 }

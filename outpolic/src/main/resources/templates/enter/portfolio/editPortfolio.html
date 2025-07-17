@@ -28,6 +28,7 @@
             <input type="hidden" th:field="*{prtfCd}" />
             <input type="hidden" th:field="*{entCd}" />
             <input type="hidden" th:field="*{mbrCd}" />
+            
 
             <div class="form-group">
                 <label for="prtfTtl">제목</label>
@@ -62,15 +63,22 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="portfolioImage">대표 이미지 변경</label>
-                <input type="file" id="portfolioImage" name="portfolioImage" class="form-control" accept="image/*">
-                <div style="margin-top: 10px;">
-                    <p>현재 이미지:</p>
-                    <div class="image-preview-item" id="portfolioImage-preview-container">
-                       </div>
-                </div>
-            </div>
+          <div class="form-group">
+    <label>대표 이미지</label>
+    
+    <div id="current-image-info" style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
+        <div class="image-preview-item">
+             <img th:if="*{prtfThumbnailUrl}" th:src="*{prtfThumbnailUrl}" alt="Current Thumbnail" style="width:100%; height:100%; object-fit:cover;">
+             <span th:unless="*{prtfThumbnailUrl}">이미지 없음</span>
+        </div>
+        <button type="button" id="change-file-btn" class="btn btn-secondary">이미지 변경</button>
+    </div>
+
+    <div id="file-input-wrapper" style="display:none; margin-top:15px;">
+        <label for="portfolioImage">새 이미지 선택:</label>
+        <input type="file" id="portfolioImage" name="portfolioImage" class="form-control" accept="image/*">
+    </div>
+</div>
 
             <div class="form-actions">
                 <button type="submit" class="btn-submit">수정 완료</button>
@@ -191,7 +199,9 @@
 
             // --- 2. 이미지 미리보기 초기화 ---
             initializeFilePreview('portfolioImage', 'portfolioImage-preview-container', [existingThumbnailUrl]);
-
+		
+            
+            
             // --- 3. 태그 검색 로직 ---
             let tagSearchTimeout;
             $tagsInput.on('input', function() {
