@@ -26,4 +26,10 @@ public class OutsourcingReviewDTO {
     // outsourcing
     private String osCd;
     private String osTtl;
+    
+    //portfolio
+    private String prtfCd;
+    private String prtfTtl;
+    
+    private String contentType;
 }

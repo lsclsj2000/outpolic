@@ -59,11 +59,11 @@ public class UserLoginController {
         	log.info("로그인 등급: {}", grade);
         	
         	// 세션등록
-    		session.setAttribute("SID", memberInfo.getMemberId());
-            session.setAttribute("SName", memberInfo.getMemberName());
-            session.setAttribute("SGrd", memberInfo.getGradeCode());
-            session.setAttribute("SCD", memberInfo.getMemberCode());
             if("SD_ACTIVE".equals(status)) {
+            	session.setAttribute("SID", memberInfo.getMemberId());
+            	session.setAttribute("SName", memberInfo.getMemberName());
+            	session.setAttribute("SGrd", memberInfo.getGradeCode());
+            	session.setAttribute("SCD", memberInfo.getMemberCode());
                 //날짜 업데이트
                 userLoginService.updateLoginDate(memberInfo);    
                 log.info("로그인 날짜 업데이트 호출: {}", member.getMemberId());
