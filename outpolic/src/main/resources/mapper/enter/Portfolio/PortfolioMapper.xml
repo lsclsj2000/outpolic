@@ -277,6 +277,22 @@
         (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), #{stcCd})
 </insert>
 
+<select id="searchUnlinkedPortfolios" resultMap="simplePortfolioResultMap"> SELECT
+        p.prtf_cd,
+        p.prtf_ttl
+    FROM
+        portfolio p
+    WHERE
+        p.ent_cd = #{entCd}
+        AND p.prtf_ttl LIKE CONCAT('%', #{query}, '%')
+        AND NOT EXISTS (
+            SELECT 1
+            FROM outsourcing_portfolio op
+            WHERE op.os_cd = #{osCd} AND op.prtf_cd = p.prtf_cd
+        )
+    LIMIT 10
+</select>
+
     <select id="searchUnlinkedOutsourcings" resultType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
         SELECT
             os.os_cd,

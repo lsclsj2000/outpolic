@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import outpolic.admin.login.DTO.AdminLoginDTO;
+import outpolic.admin.login.dto.AdminLoginDTO;
 import outpolic.admin.login.mapper.AdminLoginMapper;
 import outpolic.admin.login.service.AdminLoginService;
 import outpolic.common.domain.Member;

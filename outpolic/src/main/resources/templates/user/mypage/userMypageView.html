@@ -96,7 +96,7 @@
 			<div class="tab-pane fade py-4" id="myReview">
 				<div class="row d-flex flex-column align-items-center">
 					<h3>내가 작성한 리뷰</h3>
-					<div id="reviewBox">
+					<div id="reviewBox" class=" mt-30">
 					    <div th:each="r : ${reviewList}" 
 					         class="SR_bg-white SR_p-6 SR_rounded-lg" 
 					         style="border:solid 3px #ececec; border-radius : 10px; padding : 15px; margin-top : 15px; cursor:pointer;">
@@ -125,8 +125,11 @@
 					        <div class="SR_mb-4">
 					            <label class="SR_block SR_text-sm SR_font-medium">리뷰 내용</label>
 					            <div th:text="${r.rvwCn}">리뷰 텍스트</div>
+					            
+					            
+					            
 					        </div>
-							<a href="#">관련 외주로 이동</a>
+							<a href="#" class="btn btn-primary" style="border:none;">관련 외주로 이동</a>
 					    </div>
 					</div>
 					<a href="#">내가 작성한 리뷰 자세히 보기</a>
@@ -228,36 +231,37 @@
 				</div>
 			</div>
 
-			<div class="tab-pane fade py-4 row d-flex justify-content-center" id="myNotific">
-				<div class="row d-flex flex-column align-items-center" style="width:75%;">
+			<div class="tab-pane fade py-4 row d-flex" id="myNotific">
+				<div class="row d-flex flex-column align-items-center" style="width:100%;">
 					<h3>문의내역</h3>
-					<div class="table-responsive shopping-summery">
-						<table class="table table-wishlist mb-60">
-							<thead>
-								<tr class="main-heading" style="border:0px;">
-									<th scope="col" class="col-6">제목</th>
-									<th scope="col" class="text-center col-2">문의타입</th>
-									<th scope="col" class="end text-center col-2">작성일자</th>
+					<div class="table-responsive shopping-summery mt-30">
+						<table class="table table-bordered text-center" style="border-collapse: separate; border-spacing: 0;">
+							<thead class="table-light" style="border: none !important;">
+								<tr>
+									<th style="width:60%; border-top-left-radius: 20px;  border-bottom-left-radius: 20px;">제목</th>
+									<th style="width:20%">문의타입</th>
+									<th style="width:20%; border-top-right-radius: 10px; border-bottom-right-radius: 20px;">작성일자</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="start pt-30"
-								    style="border:0px; border-bottom: solid 1px #ececec;"
-								    th:each="l, stat : ${inquiryList}">
-								    <td scope="col">
-								        <span>
-								        	<i th:if="${l.inquirySecret == 1}" class="fas fa-lock" style="color: #6c757d; font-size: 0.9em; margin-right: 5px;" title="비밀글"></i>
-								            <a th:href="@{/user/userInquiryDetail(iq_cd=${l.inquiryCode})}"
-											   th:text="${l.inquiryTitle}"
-											   style="color: black; text-decoration: none;"
-											   onmouseover="this.style.color='#3BB77E'"
-											   onmouseout="this.style.color='black'">
-											   제목
-											</a>
-								        </span>
-								    </td>
-								    <td scope="col" class="text-center" th:text="${l.inquiryTypeName}">문의타입</td>
-								    <td scope="col" class="text-center" th:text="${l.inquiryRegDate}">등록일자</td>
+								<tr th:each="l : ${inquiryList}" th:if="${not #lists.isEmpty(inquiryList)}">
+									<td class="start pt-20" style="border:0px; border-bottom: solid 1px #ececec;">
+										<i th:if="${l.inquirySecret == 1}" class="fas fa-lock" style="color: #6c757d; font-size: 1em; margin-right: 5px;" title="비밀글"></i>
+										<a th:href="@{/user/userInquiryDetail(iq_cd=${l.inquiryCode})}"
+										   th:text="${l.inquiryTitle}"
+										   class="text-dark text-decoration-none"
+										   onmouseover="this.style.color='#3BB77E'"
+										   onmouseout="this.style.color='black'">
+										   제목
+										</a>
+									</td>
+									<td th:text="${l.inquiryTypeName}" style="border:0px; border-bottom: solid 1px #ececec;">문의타입</td>
+									<td th:text="${l.inquiryRegDate}" style="border:0px; border-bottom: solid 1px #ececec;">등록일자</td>
+								</tr>
+								<tr th:if="${#lists.isEmpty(inquiryList)}">
+									<td colspan="3" class="text-center py-4 text-muted fs-5">
+										문의하신 내용이 없습니다.
+									</td>
 								</tr>
 							</tbody>
 						</table>

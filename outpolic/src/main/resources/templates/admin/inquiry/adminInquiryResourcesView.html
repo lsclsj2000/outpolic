@@ -59,7 +59,7 @@
 										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnAdm}">수정자</td>
 										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnDate}">최종수정일시</td>
 										    <td scope="col" class="text-center">
-												<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" th:data-declaration-code="${it.inquiryTypeCode}">수정</a>
+												<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${it.inquiryTypeCode}">수정</a>
 											</td>
 										</tr>
 									</tbody>
@@ -78,6 +78,13 @@
 					<button class="SR_close-button">&times;</button>
 				</div>
                 <form>
+                	<div class="row mb-4">
+				       <label class="col-lg-3 col-form-label">등록자</label>
+				       <div class="col-lg-4">
+				           <input type="number" class="form-control" placeholder="자동 입력. 관리자 코드" readonly/>
+				       </div>
+				       <!-- col.// -->
+					</div>
 					<div class="row mb-4">
 					    <label class="col-lg-3 col-form-label">문의타입코드*</label>
 					    <div class="col-lg-9">
@@ -117,173 +124,133 @@
 				</form>
 			</div>
 		</div>
+		
+		<div id="inquiryMdfcnModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>문의 자원 수정</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+				<form>
+                    <div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">등록자</label>
+                            <input type="text" id="inquiryCodeDisplay" name="inquiryCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTitleEdit">등록일시</label>
+                            <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTypeCodeDisplay">문의타입 코드</label>
+                            <input type="text" id="inquiryTypeCodeDisplay" name="inquiryTypeCode" class="SR_form-control">
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTypeEdit">문의타입명</label>
+                            <input type="text" id="inquiryTypeCodeDisplay" name="inquiryTypeCode" class="SR_form-control">
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="inquiryContentEdit">타입 설명</label>
+						<textarea id="inquiryContentEdit" name="inquiryContent" class="SR_form-control" rows="5"></textarea>
+					</div>
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="inquiryContentEdit">Status</label>
+						<div class="col-lg-9" style="display: flex; flex-direction: row;">
+							<label class="col-lg-3 col-form-label">
+								<input type="radio" class="form-check-input" name="status" value="active" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="col-lg-3 col-form-label">
+								<input type="radio" class="form-check-input" name="status" value="inactive" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+					</div>
+
+                    
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</th:block>
 	
 	
-    <th:block layout:fragment="jsScript">
+	<th:block layout:fragment="jsScript">
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
-			    const modal = document.getElementById('inquiryModal');
-			    const closeButton = document.querySelector('#inquiryModal .SR_close-button');
-			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+			    const registerModal = document.getElementById('inquiryModal');
+			    const registerCloseBtn = document.querySelector('#inquiryModal .SR_close-button');
 			    const registerButton = document.querySelector('.content-header .btn');
-		
-			    // 등록 버튼 클릭 시 모달 열기
+			
+			    const editModal = document.getElementById('inquiryMdfcnModal');
+			    const editCloseBtn = document.querySelector('#inquiryMdfcnModal .SR_close-button');
+			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+			
+			    // 등록 버튼 클릭 시 등록 모달 열기
 			    if (registerButton) {
 			        registerButton.addEventListener('click', function () {
-			            modal.style.display = 'flex';
+			            registerModal.style.display = 'flex';
 			            document.body.style.overflow = 'hidden';
 			        });
 			    }
-		
-				// 답변 팝업 관련 요소
-			    const answerModal = document.getElementById('answerModal');
-			    const closeAnswerButton = document.querySelector('#answerModal .SR_close-button'); 
-			    const openAnswerPopupButtons = document.querySelectorAll('.SR_open-answer-popup-btn');
-		
-		        let currentInquiryCodeForAnswer = null;
-		
-			    openPopupButtons.forEach(button => {
-			        button.addEventListener('click', function (event) {
-			            event.preventDefault();
-			            const inquiryCode = this.getAttribute('data-inquiry-code');
-		
-			            fetch(`/admin/adminInquiryMdfcn?inquiryCode=${inquiryCode}`)
-			                .then(response => response.json())
-			                .then(data => {
-			                    fetch('/admin/inquiryStatus')
-			                        .then(res => res.json())
-			                        .then(statusList => {
-			                            const select = document.getElementById('inquiryStatusEdit');
-			                            select.innerHTML = '';
-		
-			                            if (data.statusName === '처리완료') {
-			                                const option = document.createElement('option');
-			                                option.value = data.statusCode;
-			                                option.textContent = data.statusName;
-			                                option.selected = true;
-			                                select.appendChild(option);
-			                                select.disabled = true;
-			                            } else {
-			                                statusList.filter(status => status.statusName !== '처리완료')
-			                                    .forEach(status => {
-			                                        const option = document.createElement('option');
-			                                        option.value = status.statusCode;
-			                                        option.textContent = status.statusName;
-			                                        select.appendChild(option);
-			                                    });
-			                                select.value = data.statusCode || '';
-			                                select.disabled = false;
-			                            }
-		
-			                            const titleInput = document.getElementById('inquiryTitleEdit');
-			                            const contentInput = document.getElementById('inquiryContentEdit');
-			                            const typeSelect = document.getElementById('inquiryTypeEdit');
-			                            const saveButton = document.getElementById('saveButton');
-		
-			                            if (data.statusName === '처리완료') {
-			                                titleInput.readOnly = true;
-			                                contentInput.readOnly = true;
-			                                typeSelect.disabled = true;
-			                                saveButton.style.display = 'none';
-			                            } else {
-			                                titleInput.readOnly = true;
-			                                contentInput.readOnly = true;
-			                                typeSelect.disabled = false;
-			                                saveButton.style.display = 'inline-block';
-			                            }
-			                        });
-		
-			                    fetch('/admin/inquiryType')
-			                        .then(res => res.json())
-			                        .then(typeList => {
-			                            const select = document.getElementById('inquiryTypeEdit');
-			                            select.innerHTML = '';
-			                            typeList.forEach(type => {
-			                                const option = document.createElement('option');
-			                                option.value = type.inquiryTypeCode;
-			                                option.textContent = type.inquiryTypeName;
-			                                select.appendChild(option);
-			                            });
-			                            select.value = data.inquiryTypeCode || '';
-			                        });
-		
-			                    document.getElementById('inquiryCodeDisplay').value = data.inquiryCode;
-			                    document.getElementById('inquiryTitleEdit').value = data.inquiryTitle;
-			                    document.getElementById('inquiryTypeCodeDisplay').value = data.inquiryTypeCode;
-			                    const contentArea = document.getElementById('inquiryContentEdit');
-		
-			                    if (data.inquiryCn) {
-			                        const tempDiv = document.createElement('div');
-			                        tempDiv.innerHTML = data.inquiryCn;
-			                        tempDiv.querySelectorAll('img').forEach(img => img.remove());
-			                        const plainText = tempDiv.textContent || tempDiv.innerText || '';
-			                        contentArea.value = plainText.trim();
-			                    } else {
-			                        contentArea.value = '내용이 없습니다.';
-			                    }
-		
-			                    document.getElementById('SR_writerCode').textContent = data.memberCode;
-			                    document.getElementById('SR_writerName').textContent = data.memberName;
-			                    document.getElementById('SR_writeDate').textContent = data.inquiryRegYmdt;
-		
-			                    document.getElementById('SR_updaterName').textContent = data.inquiryMdfcnAdmCode || '-';
-			                    document.getElementById('SR_updateDate').textContent = data.inquiryMdfcnYmdt || '-';
-		
-			                    const fileListEl = document.getElementById('SR_fileList');
-			                    if (data.subAttchOrgnlName && data.subAttchSize) {
-			                        const sizeMB = (parseInt(data.subAttchSize, 10) / 1024 / 1024).toFixed(1);
-			                        fileListEl.innerHTML = `${data.subAttchOrgnlName} (${sizeMB}MB)`;
-			                    } else {
-			                        fileListEl.innerHTML = '첨부파일 없음';
-			                    }
-		
-			                    modal.style.display = 'flex';
-			                    document.body.style.overflow = 'hidden';
-			                });
-			        });
-			    });
-		
-			    closeButton.addEventListener('click', function () {
-			        modal.style.display = 'none';
+			
+			    // 등록 모달 닫기
+			    registerCloseBtn?.addEventListener('click', function () {
+			        registerModal.style.display = 'none';
 			        document.body.style.overflow = 'auto';
 			    });
-		
-			    window.addEventListener('click', function (event) {
-			        if (event.target === modal) {
-			            modal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			        }
-			    });
-		
-			    document.getElementById('inquiryForm').addEventListener('submit', function (event) {
-			        event.preventDefault();
-			        const payload = {
-			            inquiryCode: document.getElementById('inquiryCodeDisplay').value,
-			            inquiryTypeCode: document.getElementById('inquiryTypeEdit').value,
-			            statusCode: document.getElementById('inquiryStatusEdit').value
-			        };
-			        fetch('/admin/updateInquiry', {
-			            method: 'POST',
-			            headers: { 'Content-Type': 'application/json' },
-			            body: JSON.stringify(payload)
-			        })
-			        .then(res => res.ok ? res.text() : Promise.reject('저장 실패'))
-			        .then(result => {
-			            alert('저장이 완료되었습니다.');
-			            modal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			            location.reload();
-			        })
-			        .catch(error => {
-			            console.error('저장 오류:', error);
-			            alert('저장 중 오류가 발생했습니다.');
-			        });
-			    });
-		
-			    document.getElementById('inquiryTypeEdit').addEventListener('change', function () {
-			        document.getElementById('inquiryTypeCodeDisplay').value = this.value;
-			    });
+			
+			    // 수정 모달 관련 처리
+			    openPopupButtons.forEach(button => {
+					button.addEventListener('click', function (event) {
+						event.preventDefault();
+				
+						// const inquiryCode = this.getAttribute('data-inquiry-code');
+						// 아직 데이터를 불러오지 않으므로, fetch는 주석 처리하고 팝업만 열기
+				
+						console.log("수정 버튼 클릭됨 - 팝업 열기 테스트");
+				
+						// 팝업 열기
+						editModal.style.display = 'flex';
+						document.body.style.overflow = 'hidden';
+				
+						// 👉 필요하면 여기에 더미 데이터 삽입도 가능
+						document.getElementById('inquiryCodeDisplay').value = 'TEST_CODE';
+						document.getElementById('inquiryTitleEdit').value = '테스트 제목';
+						document.getElementById('inquiryTypeCodeDisplay').value = 'TYPE_001';
+						document.getElementById('inquiryContentEdit').value = '이곳은 테스트용 문의 내용입니다.';
+						document.getElementById('SR_writerCode').textContent = 'ADM_001';
+						document.getElementById('SR_writerName').textContent = '관리자';
+						document.getElementById('SR_writeDate').textContent = '2025-07-17';
+						document.getElementById('SR_updaterName').textContent = '-';
+						document.getElementById('SR_updateDate').textContent = '-';
+						document.getElementById('SR_fileList').innerHTML = '첨부파일 없음';
+						
+						editCloseBtn?.addEventListener('click', function () {
+						    editModal.style.display = 'none';
+						    document.body.style.overflow = 'auto';
+						});
+						
+						window.addEventListener('click', function (event) {
+						    if (event.target === registerModal) {
+						        registerModal.style.display = 'none';
+						        document.body.style.overflow = 'auto';
+						    } else if (event.target === editModal) {
+						        editModal.style.display = 'none';
+						        document.body.style.overflow = 'auto';
+						    }
+						});
+					});
+				});
 			});
 		</script>
 	</th:block>
