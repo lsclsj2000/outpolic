@@ -29,6 +29,8 @@ public class UserSearchServiceImpl implements UserSearchService{
 		
 		List<UserContents> contentsList = searchMapper.getContentsList(keyword);		
 		
+		log.info("검색 완료: 총 {}개의 결과를 찾았습니다.", contentsList.size());
+		
 		return contentsList;
 	}
 

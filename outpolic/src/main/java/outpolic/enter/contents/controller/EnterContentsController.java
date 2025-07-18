@@ -44,13 +44,14 @@ public class EnterContentsController {
     
     @GetMapping("/api/contents/{contentsId}")
     @ResponseBody // 이 어노테이션이 핵심!
-    public ResponseEntity<EnterContentsDetailDTO> getContentsDetailForModal(@PathVariable("contentsId") String contentsId,
+    public ResponseEntity<EnterContentsDetailDTO> getContentsDetailForModal(
+    		@PathVariable("contentsId") String contentsId,
             @SessionAttribute(name = "SCD", required = false) String memberCode) {
         
-        log.info("모달 데이터 API 요청: ID = {}, 사용자 코드 = {}", contentsId, memberCode);
+    	log.info("모달 데이터 API 요청: ID = {}, 사용자 코드 = {}", contentsId, memberCode);
 
         // 1. URL ID로 상세 정보를 먼저 조회합니다.
-        EnterContentsDetailDTO detailData = searchService.getContentsDetailById(contentsId);
+        EnterContentsDetailDTO detailData = searchService.getContentsDetailById(contentsId, memberCode);
 
         // 2. 데이터 존재 여부를 확인합니다.
         if (detailData == null) {
@@ -77,7 +78,7 @@ public class EnterContentsController {
         log.info("상세 페이지 요청 (URL ID): ID = {}", contentsId);
 
         // 1. URL ID로 상세 정보를 조회합니다.
-        EnterContentsDetailDTO detailData = searchService.getContentsDetailById(contentsId);
+        EnterContentsDetailDTO detailData = searchService.getContentsDetailById(contentsId, memberCode);
 
         if (detailData == null) {
             model.addAttribute("errorMessage", "해당 콘텐츠를 찾을 수 없습니다.");

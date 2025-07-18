@@ -1,6 +1,8 @@
 package outpolic.enter.ranking.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,15 +18,21 @@ public class EnterRankingServiceImpl implements EnterRankingService{
 	@Autowired
 	private EnterRankingMapper enterRankingMapper;
 
-	public List<EnterRankingContentsDTO> getRankingContentsList() {
+	public List<EnterRankingContentsDTO> getRankingContentsList(String userId) {
+		Map<String, Object> params = new HashMap<>();
+	    params.put("userId", userId);
 
-		return enterRankingMapper.getEnterRankingOsContents();
+		return enterRankingMapper.getEnterRankingOsContents(params);
 	}
 
 	
 	@Override
-	public List<EnterPortfolioRankingContentsDTO> getEnterRankingPoContents() {
-		return enterRankingMapper.getEnterRankingPoContents();
+	public List<EnterPortfolioRankingContentsDTO> getEnterRankingPoContents(String userId) {
+		Map<String, Object> params = new HashMap<>();
+	    params.put("userId", userId);
+		return enterRankingMapper.getEnterRankingPoContents(params);
 	}
+
+
 
 }

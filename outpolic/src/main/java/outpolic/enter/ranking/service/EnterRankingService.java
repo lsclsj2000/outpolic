@@ -7,7 +7,7 @@ import outpolic.enter.ranking.domain.EnterRankingContentsDTO;
 
 public interface EnterRankingService {
 	
-	List<EnterPortfolioRankingContentsDTO> getEnterRankingPoContents();
+	List<EnterPortfolioRankingContentsDTO> getEnterRankingPoContents(String userId);
 
-	List<EnterRankingContentsDTO> getRankingContentsList();
+	List<EnterRankingContentsDTO> getRankingContentsList(String userId);
 }

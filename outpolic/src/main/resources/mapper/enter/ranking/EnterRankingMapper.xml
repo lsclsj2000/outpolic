@@ -3,7 +3,6 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="outpolic.enter.ranking.mapper.EnterRankingMapper">
- 
  	<resultMap  id="PortfolioContentsRankingMap" type="outpolic.enter.ranking.domain.EnterPortfolioRankingContentsDTO">
         <id     property="prtfCode"     column="prtf_cd" />
         <result property="entCode"      column="ent_cd" />
@@ -17,7 +16,6 @@
         <result property="clCd"         column="cl_cd" />
         <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
- 
     <resultMap  id="ContentsRankingMap" type="outpolic.enter.ranking.domain.EnterRankingContentsDTO">
         <id     property="osCode"       column="os_cd" />
         <result property="rankingView"  column="rk_view" />
@@ -31,15 +29,12 @@
         <result property="clCd"         column="cl_cd" />
         <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
-    
     <sql id="bookmarkJoinSql">
         LEFT JOIN bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
     </sql>
-
     <sql id="isBookmarkedSelectSql">
         , CASE WHEN bm.bm_cd IS NOT NULL THEN 1 ELSE 0 END AS isBookmarked
     </sql>
-    
     <!-- 포트폴리오 랭킹 -->
     <select id="getEnterRankingPoContents" resultMap="PortfolioContentsRankingMap">
     	SELECT
@@ -112,7 +107,6 @@
             o.os_cd, r.rk_view, e.ent_nm, e.ent_cd, c.ctgry_nm, o.os_ttl, o.os_expln, o.os_amt, cl.cl_cd
         ORDER BY
             r.rk_view DESC
-        LIMIT 10
-				
+        LIMIT 10		
 	</select>
  </mapper>
