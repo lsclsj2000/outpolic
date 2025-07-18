@@ -54,4 +54,25 @@
 	
 	    LIMIT 3;
     </select>
+    <select id="selectUserEndedOsByCode" parameterType="String" resultType="int">
+    	select count(*)
+    	from outsourcing_contract oc
+    	where oc.mbr_cd = #{memberCode};
+    </select>
+    
+<!--     <select name="" id="">
+    
+    </select>
+     -->
+    
+    
+    
  </mapper>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

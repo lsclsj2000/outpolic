@@ -11,23 +11,57 @@
 	<div class="tab-content">
 			<!-- 마이페이지 기본 페이지 -->
 		<div class="tab-pane fade show active " id="enterOverview" th:object="${enterInfo}">		
-			<div class="container py-4">
+			<div class="container">
 			    <div class="row mb-3">
 			        <div class="col-12">
-			            <h3 class="mb-30"><span th:text="*{memberNickname}"></span>님의 마이페이지입니다</h3>
+			            <h3 class="mb-30"><span th:text="*{memberNickname}"></span> 님의 마이페이지입니다</h3>
 			        </div>
 			    </div>
 			    
 			    <div class="row g-4 col-12">
 			    
+			        <!-- 포트폴리오 글 수 -->
+			        <div class="col-md-6">
+			            <div class="card h-100 border-primary shadow-sm" style="min-height: 220px;">
+			                <div class="card-body text-center" style="align-content: space-around;">
+			                    <h5 class="card-title">포트폴리오</h5>
+			                    <p class="card-text fs-4 fw-bold" th:classappend="${portfolioList != null} ? 'text-primary' : ''" th:text="${portfolioList != null ? portfolioList.size() : 0} + '건'">2건</p>
+			                    <p class="text-muted small mb-3">경험을 담은 포트폴리오로 신뢰를 쌓아보세요.</p>
+			                    <a th:href="@{/enter/portfolio/list}" class="btn btn-primary btn-sm">자세히 보기</a>
+			                </div>
+			            </div>
+			        </div>
+			
+			        <!-- 외주글 수 -->
+			        <div class="col-md-6">
+			            <div class="card h-100 border-success shadow-sm h-100" style="min-height: 220px;">
+			                <div class="card-body text-center" style="align-content: space-around;">
+			                    <h5 class="card-title">외주 글</h5>
+			                    <p class="card-text fs-4 fw-bold" th:classappend="${outsourcingList !=null} ? 'text-primary' : '' " th:text="${outsourcingList != null ? outsourcingList.size() : 0} + '건'">0건</p>
+			                    
+			                    <p class="text-muted small mb-3">외주글로 소통의 문을 열어보세요.</p>
+			                    <a th:href="@{/enter/outsourcing/list}" class="btn btn-primary btn-sm">자세히 보기</a>
+			                </div>
+			            </div>
+			        </div>
+			        <div class="col-md-6">
+			            <div class="card h-100 border-success shadow-sm h-100" style="min-height: 220px;">
+			                <div class="card-body text-center" style="align-content: space-around;">
+			                    <h5 class="card-title">확인하지 않은 외주 신청</h5>
+			                    <p class="card-text fs-4 fw-bold" th:classappend="${incomeOs !=0} ? 'text-primary' : ''" th:text="${incomeOs != null ? incomeOs : 0} + '건'">0건</p>
+			                    <p class="text-muted small mb-3">지금 확인하고 프로젝트를 시작해보세요.</p>
+			                    <a th:href="@{/enter/outsourcing-requests/received}" class="btn btn-primary btn-sm">자세히 보기</a>
+			                </div>
+			            </div>
+			        </div>
 			        <!-- 진행중인 외주 -->
 			        <div class="col-md-6">
 			            <div class="card h-100 border-primary shadow-sm" style="min-height: 220px;">
 			                <div class="card-body text-center" style="align-content: space-around;">
 			                    <h5 class="card-title">진행중인 외주</h5>
-			                    <p class="card-text fs-4 text-primary fw-bold" th:text="${ongoingCount != null ? ongoingCount : 0} + '건'">2건</p>
-			                    <p class="text-muted small mb-3">작업이 진행 중입니다. 상태를 확인해보세요!</p>
-			                    <a href="#" class="btn btn-outline-primary btn-sm">자세히 보기</a>
+			                    <p class="card-text fs-4 fw-bold" th:classappend="${ingOs !=0} ? 'text-primary' : ''" th:text="${ingOs != null ? ingOs : 0} + '건'">2건</p>
+			                    <p class="text-muted small mb-3">작업이 진행 중입니다. 상태를 확인해보세요.</p>
+			                    <a th:href="@{/enter/enterOsstList}" class="btn btn-primary btn-sm">자세히 보기</a>
 			                </div>
 			            </div>
 			        </div>
@@ -37,9 +71,9 @@
 			            <div class="card h-100 border-success shadow-sm h-100" style="min-height: 220px;">
 			                <div class="card-body text-center" style="align-content: space-around;">
 			                    <h5 class="card-title">완료된 외주</h5>
-			                    <p class="card-text fs-4 text-success fw-bold"><span th:text="${reviewList != null ? reviewList.?[ospCd != null].size() : 0} + '건'">0건</span></p>
+			                    <p class="card-text fs-4 fw-bold" th:classappend="${endedOs!=null} ? 'text-primary' : ''" th:text="${endedOs != null ? endedOs : 0} + '건'">0건</p>
 			                    <p class="text-muted small mb-3">완료된 외주를 다시 확인하거나 리뷰를 작성해보세요.</p>
-			                    <a href="#" class="btn btn-outline-success btn-sm">자세히 보기</a>
+			                    <a th:href="@{/enter/enterOsstList}" class="btn btn-primary btn-sm">자세히 보기</a>
 			                </div>
 			            </div>
 			        </div>
@@ -49,21 +83,9 @@
 			            <div class="card h-100 border-info shadow-sm h-100" style="min-height: 220px;">
 			                <div class="card-body text-center" style="align-content: space-around;">
 			                    <h5 class="card-title">내가 작성한 리뷰</h5>
-			                    <p class="card-text fs-4 text-info fw-bold" th:text="${reviewList != null ? reviewList.size() : 0} + '건'">3건</p>
+			                    <p class="card-text fs-4 fw-bold" th:classappend="${reviewList !=null} ? 'text-primary': ''" th:text="${reviewList != null ? reviewList.size() : 0} + '건'">3건</p>
 			                    <p class="text-muted small mb-3">다른 회원이 여러분의 피드백을 기다리고 있어요.</p>
-			                    <a href="#" class="btn btn-outline-info btn-sm">자세히 보기</a>
-			                </div>
-			            </div>
-			        </div>
-			
-			        <!-- 전체 외주 신청 내역 -->
-			        <div class="col-md-6">
-			            <div class="card h-100 border-dark shadow-sm h-100" style="min-height: 220px;">
-			                <div class="card-body text-center" style="align-content: space-around;">
-			                    <h5 class="card-title">전체 외주 신청 내역</h5>
-			                    <p class="card-text fs-4 fw-bold" th:text="${totalRequestCount != null ? totalRequestCount : 0} + '건'">10건</p>
-			                    <p class="text-muted small mb-3">.</p>
-			                    <a href="#" class="btn btn-outline-dark btn-sm">자세히 보기</a>
+			                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
 			                </div>
 			            </div>
 			        </div>
@@ -76,6 +98,7 @@
 				<form action="/enterEditChoice" method="post"
 					class="d-flex flex-column">
 					<h3 class="mb-30">정보 수정</h3>
+					<p class="text-muted small mb-3">기업정보와 개인정보를 수정하기 위해 비밀번호를 입력해주세요.</p>
 					<div th:if="${msg}" class="alert alert-danger mb-3" role="alert" th:text="${msg}"></div>
 					<div class="d-flex" style="flex-direction: column; justify-content : center; align-items : center;">
 						<input type="password" id="passwordInput" class = "mb-40" name="password"
@@ -91,18 +114,80 @@
 		<div class="tab-pane fade" id="myportfolio">
 			<div class="row d-flex flex-column align-items-center">
 				<h3 class="mb-30">내 포트폴리오</h3>
-				<p>내가 작성한 포트폴리오를 약 3개정도 보여주고, 자세히 보기 링크를 통해 내 포트폴리오를 모아볼 수 있는 페이지를 제공하기.</p>
-				<a href="#">내 포트폴리오 자세히 보기</a>
+				<p class="text-muted small mb-3">제목을 누르면 해당 포트폴리오 페이지로 이동합니다.</p>
+				<div class="table-responsive shopping-summery" style=" background-color : white !important;">
+						<table class="table table-bordered text-center" style="border-collapse: separate; border-spacing: 0;">
+							<thead class="table" style="border: none !important;">
+								<tr>
+									<th style="width:20%; border-top-left-radius: 20px;  border-bottom-left-radius: 20px;">no.</th>
+									<th style="width:60%; ">제목</th>
+									<th style="width:20%; border-top-right-radius: 10px; border-bottom-right-radius: 20px;">작성일자</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="p, stat : ${portfolioList}" th:if="${not #lists.isEmpty(portfolioList)}">
+									<td th:text="${stat.count}" style="border:0px; border-bottom: solid 1px #ececec;">1</td>
+									<td class="start pt-20" style="border:0px; border-bottom: solid 1px #ececec;">
+										<a th:href="@{/#}"
+										   th:text="${p.prtfTtl}"
+										   class="text-dark text-decoration-none"
+										   onmouseover="this.style.color='#3BB77E'"
+										   onmouseout="this.style.color='black'">
+										   제목
+										</a>
+									</td>
+									<td th:text="${#temporals.format(p.prtfRegYmdt, 'yyyy-MM-dd HH:mm:ss')}" style="border:0px; border-bottom: solid 1px #ececec;">등록일자</td>
+								</tr>
+								<tr th:if="${#lists.isEmpty(portfolioList)}">
+									<td colspan="3" class="text-center py-4 text-muted fs-5">
+										작성하신 포트폴리오 글이 없습니다.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				<a href="#" class="btn btn-primary w-25" style="border:none;">내 포트폴리오 모아보기</a>
 			</div>
 		</div>
 		<div class="tab-pane fade" id="myOutsorcing">
 			<div class="row d-flex flex-column align-items-center">
 				<h3 class="mb-30">내 외주글</h3>
-				<p>내가 작성한 외주글을 약 3개정도 보여주고, 자세히 보기 링크를 통해 내가 작성한 외주글을 모아볼 수 있는 페이지를 제공하기.</p>
-				<a href="#">내 외주글 자세히 보기</a>
+				<p class="text-muted small mb-3">제목을 누르면 해당 외주글로 이동합니다.</p>
+				<div class="table-responsive shopping-summery">
+						<table class="table table-bordered text-center" style="border-collapse: separate; border-spacing: 0;">
+							<thead class="table-light" style="border: none !important;">
+								<tr>
+									<th style="width:20%; border-top-left-radius: 20px;  border-bottom-left-radius: 20px;">no.</th>
+									<th style="width:60%; ">제목</th>
+									<th style="width:20%; border-top-right-radius: 10px; border-bottom-right-radius: 20px;">작성일자</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="o, stat : ${outsourcingList}" th:if="${not #lists.isEmpty(outsourcingList)}">
+									<td th:text="${stat.count}" style="border:0px; border-bottom: solid 1px #ececec;">1</td>
+									<td class="start pt-20" style="border:0px; border-bottom: solid 1px #ececec;">
+										<a th:href="@{/#}"
+										   th:text="${o.osTtl}"
+										   class="text-dark text-decoration-none"
+										   onmouseover="this.style.color='#3BB77E'"
+										   onmouseout="this.style.color='black'">
+										   제목
+										</a>
+									</td>
+									<td th:text="${#temporals.format(o.osRegYmdt, 'yyyy-MM-dd HH:mm:ss')}" style="border:0px; border-bottom: solid 1px #ececec;">등록일자</td>
+								</tr>
+								<tr th:if="${#lists.isEmpty(outsourcingList)}">
+									<td colspan="3" class="text-center py-4 text-muted fs-5">
+										작성하신 외주글이 없습니다.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				<a href="#" class="btn btn-primary w-25" style="border:none;" >내 외주글 모아보기</a>
 			</div>
 		</div>
-		<div class="tab-pane fade py-4" id="myReview">
+		<div class="tab-pane fade" id="myReview">
 			<div class="row d-flex flex-column align-items-center">
 				<h3 class="mb-30">내가 작성한 리뷰</h3>
 				<div id="reviewBox">
@@ -143,13 +228,13 @@
 				    </div>
 				    <div th:if="${#lists.isEmpty(reviewList)}"class="SR_bg-white SR_p-6 SR_rounded-lg" 
 				         style="border:solid 3px #ececec; border-radius : 10px; padding : 15px; margin-top : 15px; cursor:pointer; height : 150px;">
-				    	<div>아직 작성하신 리뷰가 없습니다.</div>
+				    	<div>아직 작성하신 리뷰가 없습니다. 외주를 진행하고 리뷰를 작성해보세요.</div>
 				    </div>
+				<a href="#" class="btn btn-primary w-25" style="border:none;" th:if="${not #lists.isEmpty(reviewList)}">내가 작성한 리뷰 자세히 보기</a>
 				</div>
-				<a href="#" th:if="${not #lists.isEmpty(reviewList)}">&lt;내가 작성한 리뷰 자세히 보기&gt;</a>
 			</div>
 		</div>
-		<div class="tab-pane fade " id="mySettList">
+		<div class="tab-pane fade" id="mySettList">
 			<div class="row d-flex flex-column align-items-center">
 				<h3>결제내역</h3>
 					<table class="table mt-30">
@@ -240,9 +325,10 @@
 					</table>
 				</div>
 			</div>
-			<div class="tab-pane fade py-4 row d-flex" id="myNotific">
+			<div class="tab-pane fade row d-flex" id="myNotific">
 				<div class="row d-flex flex-column align-items-center" style="width:100%;">
 					<h3 class="mb-30">문의내역</h3>
+					<p class="text-muted small mb-3">제목을 누르면 해당 문의 페이지로 이동합니다.</p>
 					<div class="table-responsive shopping-summery">
 						<table class="table table-bordered text-center" style="border-collapse: separate; border-spacing: 0;">
 							<thead class="table-light" style="border: none !important;">
@@ -252,11 +338,11 @@
 									<th style="width:20%; border-top-right-radius: 10px; border-bottom-right-radius: 20px;">작성일자</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr th:each="l : ${inquiryList}" th:if="${not #lists.isEmpty(inquiryList)}">
+							<tbody th:if="${not #lists.isEmpty(inquiryList)}">
+								<tr th:each="l : ${inquiryList}" >
 									<td class="start pt-20" style="border:0px; border-bottom: solid 1px #ececec;">
 										<i th:if="${l.inquirySecret == 1}" class="fas fa-lock" style="color: #6c757d; font-size: 1em; margin-right: 5px;" title="비밀글"></i>
-										<a th:href="@{/enter/userInquiryDetail(iq_cd=${l.inquiryCode})}"
+										<a th:href="@{/enter/enterInquiryDetail(iq_cd=${l.inquiryCode})}"
 										   th:text="${l.inquiryTitle}"
 										   class="text-dark text-decoration-none"
 										   onmouseover="this.style.color='#3BB77E'"
@@ -267,11 +353,13 @@
 									<td th:text="${l.inquiryTypeName}" style="border:0px; border-bottom: solid 1px #ececec;">문의타입</td>
 									<td th:text="${l.inquiryRegDate}" style="border:0px; border-bottom: solid 1px #ececec;">등록일자</td>
 								</tr>
-								<tr th:if="${#lists.isEmpty(inquiryList)}">
-									<td colspan="3" class="text-center py-4 text-muted fs-5">
-										문의하신 내용이 없습니다.
-									</td>
-								</tr>
+								<tbody th:if="${#lists.isEmpty(inquiryList)}">
+									<tr>
+										<td colspan="3" class="text-center py-4 text-muted fs-5">
+											문의하신 내용이 없습니다.
+										</td>
+									</tr>
+								</tbody>
 							</tbody>
 						</table>
 					</div>

@@ -69,6 +69,10 @@ public class UserMypageController {
 		model.addAttribute("title", "문의 내역");
 		model.addAttribute("inquiryList", inquiryList);
 		
+		// 완료 외주 수
+		int endedOs = userMypageEditService.selectUserEndedOsByCode(memberCode);
+		model.addAttribute("endedOs", endedOs);
+		
  	    
  	   List<UserSettlement> settlementList = new ArrayList<>(); // 기본적으로 빈 리스트로 초기화
        if (memberCode != null) {
