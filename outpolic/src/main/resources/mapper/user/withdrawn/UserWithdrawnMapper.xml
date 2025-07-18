@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.user.withdrawn.mapper.UserWithdrawnMapper">
+	<resultMap type="outpolic.user.withdrawn.dto.UserWithdrawnDTO" id="UserWithrawnResultMap">
+		<id column="mbr_cd" property="memberCode"/>
+ 		<result column="mbr_pw" property="memberPw"/>
+ 		<result column="grd_cd" property="gradeCode"/>
+ 		<result column="mbr_id" property="memberId"/>
+ 		<result column="stc_cd" property="statusCode"/>
+ 		<result column="mbr_last_lgn_ymdt" property="memberLastLoginYmdt"/>
+	</resultMap>
+
+	<!-- 회원 조회 -->
+	<select id="getWithdrawnMemberInfoByCode" resultMap="UserWithrawnResultMap">
+		select
+			mbr_cd,
+			mbr_pw,
+			mbr_id, 
+			grd_cd,
+			stc_cd
+		from member
+		where mbr_cd=#{memberCode}	
+	</select>
+	
+	<!-- 권한 삭제 -->
+	<delete id="deleteAuthorityByCode" parameterType="String">
+    	DELETE 
+    	FROM member_authority 
+    	WHERE mbr_cd = #{memberCode};
+	</delete>
+	<!-- 북마크 삭제 -->
+	<delete id="deleteBookmarkByCode" parameterType="String">
+		DELETE 
+		FROM bookmark
+		WHERE mbr_cd=#{memberCode}; 
+	</delete>
+	<!-- 마일리지내역 날리기 -->
+	<delete id="deletePointByCode" parameterType="String">
+		DELETE FROM points_status
+		WHERE mbr_cd=#{memberCode};
+	</delete>
+	<!-- 구독권 보유 회원목록에서 날리기 -->
+	<delete id="deleteSubscriptionByCode" parameterType="String">
+		DELETE FROM subscripted_member
+		WHERE mbr_cd=#{memberCode};
+	</delete>	
+	<!-- 이용권 보유 회원목록에서 날리기 -->
+	<delete id="deleteTicketByCode" parameterType="String">
+		DELETE FROM ticket_member
+		WHERE mbr_cd=#{memberCode};
+	</delete>
+	<!-- 회원 상태 변경하기 -->
+	<update id="updateMemberSttToWithdrawn" parameterType="String">
+		update member
+		set stc_cd = 'SD_WITHDRAWN'
+		where mbr_cd=#{memberCode};
+	</update>
+	<!-- 탈퇴회원 테이블 기본키 생성 -->
+	<select id="getNextWithdrawnCode" resultType="String">
+        SELECT CONCAT('WM_C', LPAD(SUBSTRING(MAX(wm_cd), 5) + 1, 5, '0')) AS nextCode
+        FROM withdrawn_member
+        WHERE wm_cd LIKE 'WM_C%';
+    </select>
+    <!-- 탈퇴회원 활동일수 계산 -->
+    <select id="getMemberActiveDays" parameterType="String" resultType="int">
+    	select DATEDIFF(CURDATE(), mbr_join_ymdt)
+	    FROM member
+	    WHERE mbr_cd = #{memberCode}
+    </select>
+	<!-- 탈퇴회원 테이블에 데이터 삽입 -->
+	<insert id="insertWithMember" parameterType="outpolic.user.withdrawn.dto.UserWithdrawnDTO">
+		INSERT INTO withdrawn_member
+			(wm_cd, 
+			wm_mbr_cd, 
+			wm_grd_cd, 
+			wm_rsn, 
+			wm_ymdt, 
+			wm_active_days, 
+			wm_type)
+		VALUES
+			(#{wmCd},#{memberCode},#{gradeCode},#{wmRsn}, NOW(), #{wmActiveDays},'자진탈퇴');
+	</insert>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
