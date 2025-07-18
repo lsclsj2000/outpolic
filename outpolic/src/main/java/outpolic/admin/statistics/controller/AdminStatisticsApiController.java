@@ -2,6 +2,7 @@ package outpolic.admin.statistics.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,8 +49,18 @@ public class AdminStatisticsApiController {
     }
 
     @GetMapping("/search-statistics")
-    public List<AdminSearchStatisticsDTO> getSearchStatistics(@RequestParam("targetDate") String targetDate) {
-        return searchStatisticsService.getWeeklySearchStatistics(targetDate);
+    // ★★ 반환 타입을 ResponseEntity<List<...>> 로 수정합니다. ★★
+    public ResponseEntity<List<AdminSearchStatisticsDTO>> getSearchStatistics(
+                                          @RequestParam(value = "startDate", required = false) String startDate,
+                                          @RequestParam(value = "endDate", required = false) String endDate,
+                                          @RequestParam(value = "type", required = false) String type,
+                                          @RequestParam(value = "minCount", defaultValue = "1") int minCount) {
+    
+        // 서비스 메소드 이름은 getWeeklySearchStatistics 이지만, 내부 로직은 기간별 조회를 수행합니다.
+        List<AdminSearchStatisticsDTO> stats = searchStatisticsService.getWeeklySearchStatistics(startDate, endDate, type, minCount);
+    
+        // 이제 타입이 일치하여 정상적으로 동작합니다.
+        return ResponseEntity.ok(stats);
     }
 
     @GetMapping("/rankings/portfolio")
