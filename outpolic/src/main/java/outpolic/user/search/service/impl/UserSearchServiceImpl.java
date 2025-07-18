@@ -1,6 +1,8 @@
 package outpolic.user.search.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +29,17 @@ public class UserSearchServiceImpl implements UserSearchService{
 		
 		List<UserContents> contentsList = searchMapper.getContentsList(keyword);		
 		
+		log.info("검색 완료: 총 {}개의 결과를 찾았습니다.", contentsList.size());
+		
 		return contentsList;
 	}
 
 	@Override
-	public UserContentsDetailDTO getContentsDetailById(String contentsId) {
-		log.info("상세 정보 조회 서비스 실행: ID = {}", contentsId);
-        // 매퍼에 있는 동일한 이름의 메서드를 호출하여 결과를 반환합니다.
-        return searchMapper.getContentsDetailById(contentsId);
+	public UserContentsDetailDTO getContentsDetailById(String contentsId, String userId) {
+		Map<String, Object> params = new HashMap<>();
+        params.put("contentsId", contentsId);
+        params.put("userId", userId);
+        return searchMapper.getContentsDetailById(params);
 	}
 
 	

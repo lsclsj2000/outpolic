@@ -8,7 +8,7 @@ import outpolic.user.ranking.domain.UserRankingContentsDTO;
 public interface UserRankingService {
 
 
-	List<UserPortfolioRankingContentsDTO> getUserRankingPoContents();
-	List<UserRankingContentsDTO> getRankingContentsList();
+	List<UserPortfolioRankingContentsDTO> getUserRankingPoContents(String userId);
+	List<UserRankingContentsDTO> getRankingContentsList(String userId);
 
 }

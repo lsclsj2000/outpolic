@@ -82,7 +82,14 @@
 	
 <!-- 	<select id="EnterMypageOSResultMap">
 		select 
-	</select> -->
+			os_cd,
+			mbr_cd,
+			ent_cd,
+			os_ttl,
+			os_expln,
+			os_reg_ymdt
+			
+	</select>  -->
 	<resultMap type="outpolic.enter.portfolio.domain.EnterPortfolio" id="EnterMypagePFResultMap">
 		<id property="prtfCd" column="prtf_cd"/>
 		<result property="entCd" column="ent_cd"/>

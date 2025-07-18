@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,7 +25,7 @@ public class AdminOsstController {
 	private final AdminOsstService adminOsstService; 
 	
 	
-	@GetMapping("/osstSteps")
+	@GetMapping("/adminOsstSteps")
 	@ResponseBody
 	public List<AdminOsst> getOsstSteps(@RequestParam String ocdCd, Model model) {
 		// 외주 진행 수정 팝업창 데이터 조회
@@ -42,6 +44,14 @@ public class AdminOsstController {
 		model.addAttribute("adminOsst", adminOsst);
 		
 		return "admin/osst/adminOutsourcingStatusView";
+	}
+	
+	@PostMapping("/adminUpdateStepStatus")
+	@ResponseBody
+	public String updateStepStatus(@RequestBody AdminOsst step) {
+		// 외주 진행 수정 팝업창 업데이트
+	    adminOsstService.updateStepStatus(step.getOcdCode(), step.getStcCode(), step.getOspCustYn());
+	    return "success";
 	}
 	
 }

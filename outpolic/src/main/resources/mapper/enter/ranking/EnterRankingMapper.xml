@@ -3,108 +3,110 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="outpolic.enter.ranking.mapper.EnterRankingMapper">
- 
  	<resultMap  id="PortfolioContentsRankingMap" type="outpolic.enter.ranking.domain.EnterPortfolioRankingContentsDTO">
-        <id 	property="prtfCode" 		column="prtf_cd" />
-        <result property="entCode" 			column="ent_cd" />
-        <result property="entName" 			column="ent_nm" />
-        <result property="prtfTtl" 			column="prtf_ttl" />
-        <result property="prtfDate" 		column="prtf_reg_ymdt" />
-        <result property="ctgryName" 		column="ctgry_nm" />
-        <result property="stcCode" 			column="stc_cd" />
-        <result property="rankingView" 		column="rk_view" />
-        <result property="rkDate" 			column="rk_tot_ymd" />
+        <id     property="prtfCode"     column="prtf_cd" />
+        <result property="entCode"      column="ent_cd" />
+        <result property="entName"      column="ent_nm" />
+        <result property="prtfTtl"      column="prtf_ttl" />
+        <result property="prtfDate"     column="prtf_reg_ymdt" />
+        <result property="ctgryName"    column="ctgry_nm" />
+        <result property="stcCode"      column="stc_cd" />
+        <result property="rankingView"  column="rk_view" />
+        <result property="rkDate"       column="rk_tot_ymd" />
+        <result property="clCd"         column="cl_cd" />
+        <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
- 
     <resultMap  id="ContentsRankingMap" type="outpolic.enter.ranking.domain.EnterRankingContentsDTO">
-        <id 	property="osCode" 			column="os_cd" />
-        <result property="rankingView" 		column="rk_view" />
-        <result property="entName"		 	column="ent_nm" />
-        <result property="entCode"		 	column="ent_cd" />
-        <result property="ctgryName" 		column="ctgry_nm" />
-        <result property="osTtl" 			column="os_ttl" />
-        <result property="osExpln" 			column="os_expln" />
-        <result property="reviewScore" 		column="avg_review_score" />
-        <result property="osAtm" 			column="os_amt" />
+        <id     property="osCode"       column="os_cd" />
+        <result property="rankingView"  column="rk_view" />
+        <result property="entName"      column="ent_nm" />
+        <result property="entCode"      column="ent_cd" />
+        <result property="ctgryName"    column="ctgry_nm" />
+        <result property="osTtl"        column="os_ttl" />
+        <result property="osExpln"      column="os_expln" />
+        <result property="reviewScore"  column="avg_review_score" />
+        <result property="osAtm"        column="os_amt" />
+        <result property="clCd"         column="cl_cd" />
+        <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
+    <sql id="bookmarkJoinSql">
+        LEFT JOIN bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
+    </sql>
+    <sql id="isBookmarkedSelectSql">
+        , CASE WHEN bm.bm_cd IS NOT NULL THEN 1 ELSE 0 END AS isBookmarked
+    </sql>
     <!-- 포트폴리오 랭킹 -->
     <select id="getEnterRankingPoContents" resultMap="PortfolioContentsRankingMap">
-    	select
-			p.prtf_cd,
-			p.ent_cd,
-			e.ent_nm,
-			p.prtf_ttl,
-			p.prtf_reg_ymdt,
-			p.stc_cd,
-			c.ctgry_nm,
-			r.rk_view,
-			r.rk_tot_ymd
-		from
-			ranking r join content_list cl 
-			USING (cl_cd)
-			join portfolio p on cl.cntd_cd = p.prtf_cd
-			join enterprise e USING(ent_cd)
-			left join category_mapping cm on cl.cl_cd = cm.cl_cd
-			left join category c on cm.ctgry_id = c.ctgry_id
-		group by p.prtf_cd
-		ORDER BY 
-			r.rk_tot_ymd DESC, r.rk_view DESC
-		LIMIT 10;
+    	SELECT
+            p.prtf_cd,
+            p.ent_cd,
+            e.ent_nm,
+            p.prtf_ttl,
+            p.prtf_reg_ymdt,
+            p.stc_cd,
+            -- ✨ 카테고리 중복 문제를 GROUP_CONCAT으로 해결
+            IFNULL(GROUP_CONCAT(c.ctgry_nm SEPARATOR ', '), '미지정') AS ctgry_nm,
+            r.rk_view,
+            r.rk_tot_ymd,
+            cl.cl_cd
+            <!-- 찜 여부 SELECT 절 포함 -->
+            <include refid="isBookmarkedSelectSql"/>
+        FROM
+            ranking r 
+        JOIN content_list cl ON r.cl_cd = cl.cl_cd
+        JOIN portfolio p ON cl.cntd_cd = p.prtf_cd
+        JOIN enterprise e ON p.ent_cd = e.ent_cd
+        LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
+        LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
+        <!-- 찜 테이블 JOIN 절 포함 -->
+        <include refid="bookmarkJoinSql"/>
+        GROUP BY 
+            p.prtf_cd, r.rk_tot_ymd, r.rk_view, cl.cl_cd
+        ORDER BY 
+            r.rk_tot_ymd DESC, r.rk_view DESC
+        LIMIT 10
     </select>
     <!-- 외주랭킹 -->
 	<select id="getEnterRankingOsContents" resultMap="ContentsRankingMap">
 		SELECT
-		    r.rk_view,
-		    o.os_cd,
-		    e.ent_nm,
-		    e.ent_cd,
-		    c.ctgry_nm,
-		    o.os_ttl,
-		    o.os_expln,
-		    IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score,
-		    o.os_amt
-		FROM
-		    -- ▼▼▼ 핵심 변경점 1: 그냥 ranking 테이블 대신, 서브쿼리를 사용합니다 ▼▼▼
-		    (
-		        SELECT
-		            cl_cd,
-		            rk_view,
-		            -- 각 cl_cd 그룹 내에서 rk_date를 기준으로 내림차순 정렬하여 순번을 매깁니다.
-		            -- 가장 최신 날짜가 1번이 됩니다.
-		            ROW_NUMBER() OVER (PARTITION BY cl_cd ORDER BY rk_tot_ymd DESC) AS rn
-		        FROM
-		            ranking
-		    ) r 
-		JOIN
-		    content_list cl ON r.cl_cd = cl.cl_cd
-		JOIN
-		    outsourcing o ON cl.cntd_cd = o.os_cd
-		JOIN
-		    category c ON o.ctgry_id = c.ctgry_id
-		JOIN
-		    enterprise e ON o.ent_cd = e.ent_cd
-		LEFT JOIN
-		    outsourcing_contract_details ocd ON cl.cl_cd = ocd.cl_cd
-		LEFT JOIN
-			outsourcing_prograss op on op.ocd_cd = ocd.ocd_cd 
-		LEFT JOIN 
-		    outsourcing_contract oc ON op.osp_cd = oc.osp_cd
-		LEFT JOIN
-		    review r2 ON oc.osc_id = r2.osc_id
-		WHERE
-		    -- ▼▼▼ 핵심 변경점 2: 서브쿼리에서 매긴 순번(rn)이 1인 것만 필터링 ▼▼▼
-		    r.rn = 1 
-		    AND cl.cntd_cd LIKE 'os%' -- '외주' 콘텐츠만 필터링
-		GROUP BY
-		    r.rk_view,
-		    o.os_cd,
-		    e.ent_nm,
-		    c.ctgry_nm,
-		    o.os_ttl,
-		    o.os_expln
-		ORDER BY
-		    r.rk_view DESC
-		LIMIT 10;
-				
+            r.rk_view,
+            o.os_cd,
+            e.ent_nm,
+            e.ent_cd,
+            c.ctgry_nm,
+            o.os_ttl,
+            o.os_expln,
+            IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score,
+            o.os_amt,
+            cl.cl_cd
+            <!-- 찜 여부 SELECT 절 포함 -->
+            <include refid="isBookmarkedSelectSql"/>
+        FROM
+            (
+                SELECT
+                    cl_cd,
+                    rk_view,
+                    ROW_NUMBER() OVER (PARTITION BY cl_cd ORDER BY rk_tot_ymd DESC) AS rn
+                FROM
+                    ranking
+            ) r 
+        JOIN content_list cl ON r.cl_cd = cl.cl_cd
+        JOIN outsourcing o ON cl.cntd_cd = o.os_cd
+        JOIN category c ON o.ctgry_id = c.ctgry_id
+        JOIN enterprise e ON o.ent_cd = e.ent_cd
+        LEFT JOIN outsourcing_contract_details ocd ON cl.cl_cd = ocd.cl_cd
+        LEFT JOIN outsourcing_prograss op ON op.ocd_cd = ocd.ocd_cd 
+        LEFT JOIN outsourcing_contract oc ON op.osp_cd = oc.osp_cd
+        LEFT JOIN review r2 ON oc.osc_id = r2.osc_id
+        <!-- 찜 테이블 JOIN 절 포함 -->
+        <include refid="bookmarkJoinSql"/>
+        WHERE
+            r.rn = 1 
+            AND cl.cntd_cd LIKE 'os%'
+        GROUP BY
+            o.os_cd, r.rk_view, e.ent_nm, e.ent_cd, c.ctgry_nm, o.os_ttl, o.os_expln, o.os_amt, cl.cl_cd
+        ORDER BY
+            r.rk_view DESC
+        LIMIT 10		
 	</select>
  </mapper>

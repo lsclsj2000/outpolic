@@ -34,7 +34,7 @@
 		ORDER BY pts_ymdt DESC
 		LIMIT 1
 	</select>
-
+	
 	<!-- 새로운 마일리지 내역 삽입 -->
 	<insert id="insertPointsStatus"
 		parameterType="outpolic.user.points.dto.UserPointsDTO">

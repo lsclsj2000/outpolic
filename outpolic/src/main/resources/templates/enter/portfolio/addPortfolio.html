@@ -211,6 +211,8 @@
             // 전역 스코프(또는 $(document).ready()의 최상위 스코프)에 currentStep 변수 선언
             let currentStep = 1;
             
+            let currentCategoryCodes = []; 
+            
             // 모든 단계의 데이터를 임시로 저장할 객체 (세션 데이터와 동일한 구조를 가짐)
             let currentFormData = {
                 prtfCd: null, // 초기에는 null, 1단계 성공 후 할당
@@ -432,19 +434,18 @@
             // =================================================================
 
             // '다음' 버튼 클릭 이벤트
-            $('.btn-step.next').on('click', function() {
+         $('.btn-step.next').on('click', function() {
                 let isValid = true;
                 const step = $(this).data('step');
                 
-                let requestData = new FormData(); // 각 단계에서 전송할 FormData
+                let ajaxData; // AJAX 요청의 'data' 파라미터에 들어갈 값 (객체 또는 FormData)
+                let ajaxContentType = 'application/json'; // 기본 Content-Type (JSON)
+                let ajaxProcessData = false; // 기본 processData (JSON 직렬화 시)
 
-                // prtfCd는 모든 요청에 포함 (1단계에서 생성된 후부터)
-                if (currentFormData.prtfCd) {
-                    requestData.append('prtfCd', currentFormData.prtfCd);
-                }
+                // prtfCd는 모든 요청에 포함 (1단계 성공 후부터)
+                const prtfCdValue = currentFormData.prtfCd;
 
-
-                if (step === 1) { // 1단계: 기본 정보
+                if (step === 1) { // 1단계: 기본 정보 (JSON)
                     const prtfTtl = $('#prtfTtl').val();
                     const prtfCn = $('#prtfCn').val();
                     if (!prtfTtl || !prtfCn) {
@@ -453,11 +454,18 @@
                     } else {
                         currentFormData.prtfTtl = prtfTtl;
                         currentFormData.prtfCn = prtfCn;
-                        // FormData에 데이터 추가
-                        requestData.append('prtfTtl', prtfTtl);
-                        requestData.append('prtfCn', prtfCn);
+                        // ajaxData를 일반 객체로 구성
+                        ajaxData = { 
+                            prtfTtl: prtfTtl,
+                            prtfCn: prtfCn
+                        };
+                        // Note: prtfCd, entCd, mbrCd는 서버에서 세션을 통해 받거나,
+                        // 첫 요청(saveStep1) 성공 후 응답으로 받아와서 currentFormData에 저장하고,
+                        // 이후 요청 시 FormData에 포함하여 전송하는 방식이어야 합니다.
+                        // 현재 코드는 saveStep1에서 prtfCd를 생성하므로, 첫 요청에서는 prtfCd를 보내지 않습니다.
+                        // 컨트롤러에서 @RequestBody Map<String, Object>를 받을 것이므로, JSON으로 보냅니다.
                     }
-                } else if (step === 2) { // 2단계: 참여 기간 및 클라이언트 정보
+                } else if (step === 2) { // 2단계: 참여 기간 및 클라이언트 정보 (JSON)
                     const prtfPeriodStart = $('#prtfPeriodStart').val();
                     const prtfPeriodEnd = $('#prtfPeriodEnd').val();
                     if (prtfPeriodStart && prtfPeriodEnd && (new Date(prtfPeriodStart) > new Date(prtfPeriodEnd))) {
@@ -469,87 +477,89 @@
                         currentFormData.prtfClient = $('#prtfClient').val() || ''; 
                         currentFormData.prtfIndustry = $('#prtfIndustry').val() || ''; 
                         
-                        // FormData에 데이터 추가 (null 값은 append 하지 않거나, 명시적으로 빈 문자열로 보냄)
-                        if (currentFormData.prtfPeriodStart) requestData.append('prtfPeriodStart', currentFormData.prtfPeriodStart);
-                        if (currentFormData.prtfPeriodEnd) requestData.append('prtfPeriodEnd', currentFormData.prtfPeriodEnd);
-                        requestData.append('prtfClient', currentFormData.prtfClient);
-                        requestData.append('prtfIndustry', currentFormData.prtfIndustry);
+                        ajaxData = { // 일반 JS 객체로 데이터 구성
+                            prtfCd: prtfCdValue, // prtfCd 포함
+                            prtfPeriodStart: currentFormData.prtfPeriodStart,
+                            prtfPeriodEnd: currentFormData.prtfPeriodEnd,
+                            prtfClient: currentFormData.prtfClient,
+                            prtfIndustry: currentFormData.prtfIndustry
+                        };
+                        // JSON 전송을 위한 기본 contentType과 processData는 유지됨
                     }
-                } else if (step === 3) { // 3단계: 카테고리 및 태그
-                    // currentFormData.categoryCodes는 handleCategoryChange에서 이미 업데이트됨
+                } else if (step === 3) { // 3단계: 카테고리 및 태그 (JSON)
+                	updateCurrentFormDataCategoryCodes();
+                
                     if (currentFormData.categoryCodes.length === 0) {
                         alert('카테고리는 최소 하나 이상 선택해야 합니다.');
                         isValid = false;
                     } else {
-                        $('#categoryError').text(''); // 오류 메시지 초기화
-                        currentFormData.tags = $('#tags').val();
-                        // FormData에 데이터 추가 (배열은 append() 반복 사용)
-                        currentFormData.categoryCodes.forEach(code => requestData.append('categoryCodes[]', code));
-                        requestData.append('tags', currentFormData.tags);
+                        $('#categoryError').text(''); 
+                        currentFormData.tags = $('#tags').val(); 
+                        ajaxData = { // 일반 JS 객체로 데이터 구성
+                            prtfCd: prtfCdValue, // prtfCd 포함
+                            categoryCodes: currentFormData.categoryCodes, // 배열 전송
+                            tags: currentFormData.tags
+                        };
+                        // JSON 전송을 위한 기본 contentType과 processData는 유지됨
+                        ajaxContentType = 'application/json';
+                        ajaxProcessData = false;
                     }
-                } else if (step === 4) { // 4단계: 대표 이미지
+                } else if (step === 4) { // 4단계: 대표 이미지 등록 (FormData)
                     const portfolioImageFile = $('#portfolioImage')[0].files[0];
-                    
-                    if (!portfolioImageFile) { // 파일이 필수인데 선택 안 한 경우
+                    if (!portfolioImageFile) { 
                         alert('대표 이미지를 등록해주세요.');
                         isValid = false;
-                    } else { // 새 파일이 선택된 경우
-                        currentFormData.thumbnailFile = portfolioImageFile;
-                        requestData.append('portfolioImage', portfolioImageFile);
-                    }
+                    } else { 
+                        // ▼▼▼ 이 한 줄을 추가해주세요! ▼▼▼
+                        currentFormData.thumbnailFile = portfolioImageFile; 
 
-                    // 4단계는 파일이 포함되므로 FormData로 전송
-                    if (isValid) {
-                        $.ajax({
-                            url: '/enter/portfolio/add/step4',
-                            type: 'POST',
-                            data: requestData, 
-                            processData: false, 
-                            contentType: false, 
-                            success: function(response) {
-                                if(response.success) {
-                                    currentStep++;
-                                    showStep(currentStep);
-                                } else {
-                                    alert('오류: ' + response.message);
-                                }
-                            },
-                            error: function() {
-                                alert('서버 오류가 발생했습니다. (이미지 업로드)');
-                            }
-                        });
+                        ajaxData = new FormData();
+                        ajaxData.append('portfolioImage', portfolioImageFile);
+                        ajaxData.append('prtfCd', prtfCdValue);
+
+                        ajaxContentType = false;
+                        ajaxProcessData = false;
                     }
-                    return; // 파일 처리 단계는 여기서 종료
+                }
+                
+                if (step === 5) { // 5단계: 최종 확인 및 등록 (이 단계에서는 AJAX 요청을 보내지 않음, 요약만 보여줌)
+                    updateFinalSummary(); // 요약 정보 업데이트
+                    currentStep++;
+                    showStep(currentStep);
+                    return; 
                 }
 
-                // 파일이 포함되지 않는 단계 (1, 2, 3)는 여기서 공통적으로 처리 (FormData로 전송)
                 if (isValid) {
+                    const url = `/enter/portfolio/add/step${step}`;
+                    // ajaxData가 JSON 객체라면 JSON.stringify()를 적용하여 문자열로 변환
+                    const dataToSend = (ajaxContentType === 'application/json') ? JSON.stringify(ajaxData) : ajaxData;
+
                     $.ajax({
-                        url: '/enter/portfolio/add/step' + step,
+                        url: url,
                         type: 'POST',
-                        data: requestData, // FormData 전송
-                        processData: false, 
-                        contentType: false, 
+                        data: dataToSend,
+                        processData: ajaxProcessData,
+                        contentType: ajaxContentType,
                         success: function(response) {
-                            if(response.success) {
-                                // prtfCd가 처음 생성되는 1단계에서만 응답으로 받아와서 currentFormData에 저장
+                            if (response.success) {
+                                // 1단계에서만 prtfCd를 응답으로 받아서 currentFormData에 저장
                                 if (step === 1 && response.prtfCd) {
                                     currentFormData.prtfCd = response.prtfCd;
                                 }
                                 currentStep++;
                                 showStep(currentStep);
                             } else {
-                                alert('오류: ' + response.message);
+                                alert('오류: ' + (response.message || '알 수 없는 오류'));
                             }
                         },
-                        error: function(xhr) {
-                            alert('서버 오류가 발생했습니다. (단계 ' + step + ')');
-                            console.error("AJAX error for step " + step + ":", xhr.responseText);
+                        error: function(xhr, status, error) { 
+                            console.error("AJAX 통신 오류 (단계 " + step + "):", status, error, xhr.responseText, xhr.responseJSON);
+                            // XHR.responseJSON에서 서버가 보낸 오류 메시지를 확인할 수 있습니다.
+                            alert('서버 오류가 발생했습니다. (' + url + ')');
                         }
                     });
                 }
             });
-
             // '이전' 버튼 클릭 이벤트
             $('.btn-step.prev').on('click', function() {
                 currentStep--;
