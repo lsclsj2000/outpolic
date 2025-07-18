@@ -515,7 +515,10 @@
 		            //    (API 응답이 null일 경우를 대비하여 기본값(false, '')을 설정합니다.)
 		            const isBookmarked = detail.isBookmarked || false; 
 		            const clCd = detail.clCd || '';
-		
+		            const prtfCd = detail.contentsId; 
+
+		            
+					
 		            const infoHtml = `
 		                <div class="d-flex align-items-center mb-3">
 		                    <img src="/user/assets/imgs/theme/icons/icon-user.svg" alt="logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
@@ -524,7 +527,7 @@
 		                        <small class="text-muted">MASTER</small>
 		                    </div>
 		                    <div class="ms-auto">
-		                        <a href="#" class="btn btn-warning">문의하기</a>
+	                        <a href="/user/portfolio-inquiry/form/${prtfCd}" class="btn btn-warning">문의하기</a>
 		                    </div>
 		                </div>
 		
