@@ -166,7 +166,6 @@
             const entCd = /*[[${entCd}]]*/ null; 
             let portfolioSearchTimeout;
 
-            // 카테고리 행 관리를 위한 배열
             let currentCategoryCodes = [];
             
             function showStep(step) {
@@ -177,11 +176,15 @@
                     $('.progress-step[data-step=' + i + ']').addClass('active');
                 }
                 if (step === 4) {
-                    loadLinkedPortfolios();
+                    const osCdValue = $('#osCd').val();
+                    if (osCdValue) { 
+                         loadLinkedPortfolios(osCdValue);
+                    } else {
+                         $('#linked-portfolio-list').html('<p>외주 정보 등록 전에는 포트폴리오를 연결할 수 없습니다.</p>');
+                    }
                 }
             }
 
-            // --- 카테고리 관련 스크립트 (addPortfolio와 동일하게 개선) ---
             const $categoryRowsContainer = $('#category-rows-container');
 
             function createCategoryRowHtml() {
@@ -266,10 +269,8 @@
             }
 
             $('#add-category-row-btn').on('click', addNewCategoryRow);
-            // 페이지 로드 시 기본 카테고리 행 추가
             addNewCategoryRow(); 
             
-            // --- 태그 검색 관련 스크립트 (addPortfolio와 동일하게 추가) ---
             let tagSearchTimeout;
             $('#tags').on('input', function() {
                 clearTimeout(tagSearchTimeout);
@@ -280,7 +281,7 @@
                 if (query.length < 1) return; 
 
                 tagSearchTimeout = setTimeout(() => {
-                    $.get('/enter/outsourcing/api/tags/search', { query: query }, function(data) { // 외주 태그 검색 API
+                    $.get('/enter/outsourcing/api/tags/search', { query: query }, function(data) {
                         if (data && data.length > 0) {
                             data.forEach(tag => {
                                 $resultsDiv.append(`<div class="result-item-tag" data-tag-name="${tag}">${tag}</div>`);
@@ -313,18 +314,14 @@
             $('.btn-step.next').on('click', function() {
                 let isValid = true;
                 const step = $(this).data('step');
-                let formData = new FormData(); 
+                
+                let ajaxData; 
+                let ajaxContentType; 
+                let ajaxProcessData; 
 
-                // osCd는 모든 요청에 포함
-                if ($('#osCd').val()) {
-                    formData.append('osCd', $('#osCd').val());
-                } else {
-                    // 첫 단계에서 osCd가 없으면 새로 생성하도록 (컨트롤러에서 처리)
-                    // 이 경우 formData에 osCd를 append하지 않음
-                }
+                const osCdValue = $('#osCd').val(); 
 
-
-                if (step === 1) {
+                if (step === 1) { // 1단계: 텍스트 데이터만 전송 (JSON)
                     const osTtl = $('#osTtl').val();
                     const osExpln = $('#osExpln').val();
                     const osStrtYmdt = $('#osStrtYmdt').val();
@@ -336,28 +333,44 @@
                         alert('1단계의 모든 필수 항목을 입력해주세요.');
                         isValid = false;
                     } else {
-                        formData.append('osTtl', osTtl);
-                        formData.append('osExpln', osExpln);
-                        formData.append('osStrtYmdt', osStrtYmdt);
-                        formData.append('osEndYmdt', osEndYmdt);
-                        formData.append('osAmt', osAmt);
-                        formData.append('osFlfmtCnt', osFlfmtCnt);
+                        ajaxData = { // 일반 JS 객체로 데이터 구성
+                            osCd: osCdValue, 
+                            osTtl: osTtl,
+                            osExpln: osExpln,
+                            osStrtYmdt: osStrtYmdt,
+                            osEndYmdt: osEndYmdt,
+                            osAmt: osAmt,
+                            osFlfmtCnt: osFlfmtCnt
+                        };
+                        ajaxContentType = 'application/json'; // JSON 전송 명시
+                        ajaxProcessData = false; // JSON 전송 시 필수
                     }
-                } else if (step === 2) {
+                } else if (step === 2) { // 2단계: 텍스트 데이터만 전송 (JSON)
                     if (currentCategoryCodes.length === 0) {
                         $('#categoryError').text('카테고리는 최소 하나 이상 선택해야 합니다.');
                         isValid = false;
                     } else {
                         $('#categoryError').text('');
-                        currentCategoryCodes.forEach(code => formData.append('categoryCodes[]', code));
-                        formData.append('tags', $('#tags').val());
+                        ajaxData = { // 일반 JS 객체로 데이터 구성
+                            osCd: osCdValue,
+                            categoryCodes: currentCategoryCodes, 
+                            tags: $('#tags').val()
+                        };
+                        ajaxContentType = 'application/json'; // JSON 전송 명시
+                        ajaxProcessData = false; // JSON 전송 시 필수
                     }
-                } else if (step === 3) {
-                     if ($('#outsourcingThumbnailFile')[0].files.length === 0) {
+                } else if (step === 3) { // 3단계: 파일 업로드 (FormData)
+                     const file = $('#outsourcingThumbnailFile')[0].files[0];
+                    if (!file) {
                         alert('대표 이미지를 등록해주세요.');
                         isValid = false;
                     } else {
-                        formData.append('outsourcingThumbnailFile', $('#outsourcingThumbnailFile')[0].files[0]);
+                        ajaxData = new FormData(); // FormData 객체 사용
+                        ajaxData.append('outsourcingThumbnailFile', file);
+                        ajaxData.append('osCd', osCdValue); 
+
+                        ajaxContentType = false; // FormData 사용 시 필수
+                        ajaxProcessData = false; // FormData 사용 시 필수
                     }
                 }
                 
@@ -369,13 +382,15 @@
 
                 if (isValid) {
                     const url = `/enter/outsourcing/save-step${step}`;
+                    // ajaxData가 'application/json'으로 전송될 경우에만 JSON.stringify 적용
+                    const dataToSend = (ajaxContentType === 'application/json') ? JSON.stringify(ajaxData) : ajaxData;
 
                     $.ajax({
                         url: url,
                         type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
+                        data: dataToSend,
+                        processData: ajaxProcessData,
+                        contentType: ajaxContentType,
                         success: function(response) {
                             if (response.success) {
                                 if (response.osCd) {
@@ -387,7 +402,7 @@
                                 alert('오류: ' + (response.message || '알 수 없는 오류'));
                             }
                         },
-                        error: function(xhr, status, error) { // error 콜백에 파라미터 추가
+                        error: function(xhr, status, error) {
                             console.error("AJAX 통신 오류 (단계 " + step + "):", status, error, xhr.responseText);
                             alert('서버 오류가 발생했습니다. (' + url + ')');
                         }
@@ -411,7 +426,7 @@
                  $.ajax({
                     url: '/enter/outsourcing/complete-registration',
                     type: 'POST',
-                    contentType: 'application/json',
+                    contentType: 'application/json', // 서버 컨트롤러는 @RequestBody Map<String, String>을 받으므로
                     data: JSON.stringify({ osCd: osCdValue }),
                     success: function(res) {
                         if (res.success) {
@@ -421,7 +436,7 @@
                             alert('최종 등록 실패: ' + res.message);
                         }
                     },
-                    error: function(xhr, status, error) { // error 콜백에 파라미터 추가
+                    error: function(xhr, status, error) {
                         console.error("AJAX 통신 오류 (최종 등록):", status, error, xhr.responseText);
                         alert('최종 등록 중 서버 오류가 발생했습니다.');
                     }
@@ -442,36 +457,44 @@
             });
 
             // --- 포트폴리오 연결 관련 JS ---
-            function loadLinkedPortfolios() {
-                const osCd = $('#osCd').val();
-                if (!osCd) return;
-
+            // 이 함수는 osCd를 인자로 받아 해당 외주에 연결된 포트폴리오를 로드합니다.
+            function loadLinkedPortfolios(targetOsCd) { 
                 const $list = $('#linked-portfolio-list').empty();
-                $.get(`/enter/outsourcing/${osCd}/linked-portfolios`, function(data) {
+                if (!targetOsCd) { 
+                    $list.html('<p>외주 코드 없음 - 포트폴리오를 연결할 수 없습니다.</p>');
+                    return;
+                }
+
+                $.get(`/enter/outsourcing/${targetOsCd}/linked-portfolios`, function(data) {
                     if (data && data.length > 0) {
                         data.forEach(p => {
+                            // "btn-unlink" 클래스에 직접 이벤트 리스너를 달아주세요. (아래에서)
                             $list.append(`<div class="linked-item" data-prtf-cd="${p.prtfCd}"><span>${p.prtfTtl}</span><button type="button" class="btn-unlink">해제</button></div>`);
                         });
                     } else {
-                        $list.append('<p>연결된 포트폴리오가 없습니다.</p>');
+                        $list.html('<p>연결된 포트폴리오가 없습니다.</p>');
                     }
-                });
+                }).fail(() => $list.html('<p>포트폴리오를 불러오는데 실패했습니다.</p>'));
             }
 
             $('#portfolio-search-input').on('input', function() {
                 clearTimeout(portfolioSearchTimeout);
                 const query = $(this).val();
-                const osCd = $('#osCd').val();
+                const osCd = $('#osCd').val(); // 현재 페이지의 osCd (임시 또는 실제)
                 const $resultsDiv = $('#portfolio-search-results').empty().hide();
 
-                if (query.length < 1 || !osCd) return;
+                if (query.length < 1 || !osCd) return; // osCd 없으면 검색 불가
 
                 portfolioSearchTimeout = setTimeout(() => {
                     $.get(`/enter/outsourcing/${osCd}/unlinked-portfolios`, { query, entCd }, function(data) {
+                        $resultsDiv.empty().hide();
                         if (data && data.length > 0) {
                             data.forEach(p => {
                                 $resultsDiv.append(`<div class="result-item" data-prtf-cd="${p.prtfCd}"><span>${p.prtfTtl}</span><button type="button" class="btn-link">+ 연결</button></div>`);
                             });
+                            $resultsDiv.show();
+                        } else {
+                            $resultsDiv.append(`<div class="result-item">검색 결과 없음</div>`);
                             $resultsDiv.show();
                         }
                     });
@@ -480,33 +503,61 @@
             
             $(document).on('click', '#portfolio-search-results .btn-link', function() {
                 const prtfCd = $(this).closest('.result-item').data('prtf-cd');
-                const osCd = $('#osCd').val();
+                const osCd = $('#osCd').val(); // 현재 페이지의 osCd (임시 또는 실제)
+                if (!prtfCd || !osCd) return; // 필수값 확인
+
                 $.ajax({
                     url: '/enter/outsourcing/link-portfolio',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({ osCd, prtfCd }),
-                    success: () => {
-                        loadLinkedPortfolios();
-                        $('#portfolio-search-input').val('');
-                        $('#portfolio-search-results').empty().hide();
+                    success: (res) => {
+                        if (res.success) {
+                            alert('포트폴리오가 연결되었습니다.');
+                            loadLinkedPortfolios(osCd); // 현재 osCd로 목록 갱신
+                            $('#portfolio-search-input').val('');
+                            $('#portfolio-search-results').empty().hide();
+                        } else {
+                            alert('연결 실패: ' + (res.message || '알 수 없는 오류'));
+                        }
                     },
-                    error: () => alert('연결에 실패했습니다.')
+                    error: (xhr) => {
+                        console.error("AJAX 통신 오류 (link-portfolio):", xhr.responseText, xhr);
+                        alert('연결 중 오류가 발생했습니다.');
+                    }
                 });
             });
 
+            // 현재 연결된 포트폴리오 목록에서 '해제' 버튼 클릭 시
             $(document).on('click', '#linked-portfolio-list .btn-unlink', function() {
                 if (!confirm('연결을 해제하시겠습니까?')) return;
                 const prtfCd = $(this).closest('.linked-item').data('prtf-cd');
-                const osCd = $('#osCd').val();
+                const osCd = $('#osCd').val(); // 현재 페이지의 osCd (임시 또는 실제)
+                if (!prtfCd || !osCd) return; // 필수값 확인
+
                 $.ajax({
                     url: '/enter/outsourcing/unlink-portfolio',
                     type: 'DELETE',
                     contentType: 'application/json',
                     data: JSON.stringify({ osCd, prtfCd }),
-                    success: () => loadLinkedPortfolios(),
-                    error: () => alert('연결 해제에 실패했습니다.')
+                    success: (res) => {
+                        // 서버 컨트롤러에서 return ResponseEntity.ok(Map.of("success", true, "message", "...")); 로 응답해야 합니다.
+                        if (res && res.success) { // res가 존재하고 success 속성이 true인지 확인
+                            alert('연결이 해제되었습니다.');
+                            loadLinkedPortfolios(osCd); // 현재 osCd로 목록 갱신
+                        } else {
+                            alert('해제 실패: ' + (res && res.message ? res.message : '알 수 없는 오류'));
+                        }
+                    },
+                    error: (xhr) => {
+                        console.error("AJAX 통신 오류 (unlink-portfolio):", xhr.responseText, xhr);
+                        alert('해제 중 오류가 발생했습니다.');
+                    }
                 });
+            });
+
+            $('#tags, #portfolio-search-input').on('blur', function() {
+                setTimeout(() => $(this).next('div').empty().hide(), 150);
             });
         });
     </script>
