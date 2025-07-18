@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{user/layout/userLayoutMain}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<title>회원 탈퇴</title>
+	</head>
+	<th:block layout:fragment="contents">
+        <div class="container py-5 col-10">
+	        <h2 class="mb-4">회원 탈퇴</h2>
+	
+	        <div class="alert alert-warning">
+	            <p>회원 탈퇴 시 아래 내용을 확인해 주세요</p>
+	            <ul>
+	                <li>회원님의 계정은 즉시 비활성화됩니다.</li>
+	                <li>회원 탈퇴 이후에도 관련 법령 및 이용약관에 따라 일정 기간 정보가 보관될 수 있습니다.</li>
+	                <li>작성한 리뷰글은 삭제되지 않습니다. 필요 시 탈퇴 전 직접 삭제해주시기 바랍니다.</li>
+	                <li>재가입 시 동일한 아이디 사용이 불가능할 수 있습니다.</li>
+	                <li>진행중인 외주가 있을 경우 탈퇴가 제한될 수 있습니다.</li>
+	                <li>보유 중인 포인트 및 이용권, 구독권은 탈퇴 시 자동 소멸되며 환불되지 않습니다.</li>
+	                <li>탈퇴 후에는 결제 내역, 환불 관련 문의가 불가능할 수 있습니다.</li>
+	                <li>탈퇴 후에도 프로젝트 관련 법적 책임은 유효할 수 있습니다.</li>
+	            </ul>
+	        </div>
+	
+	        <form id="withdrawForm" th:action="@{/user/withdrawn}" method="POST">
+	            <div class="form-check mb-3">
+	                <input type="checkbox" class="form-check-input" id="agreeWithdraw">
+	                <label class="form-check-label" for="agreeWithdraw">
+	                    위 내용을 모두 확인하였으며, 탈퇴에 동의합니다.
+	                </label>
+	            </div>
+	
+	            <div class="mb-3">
+	                <label for="password" class="form-label">비밀번호 확인</label>
+	                <input type="password" class="form-control" id="memberPw" name="memberPw" placeholder="비밀번호를 입력하세요" required>
+	            </div>
+	
+	            <!-- 선택 사항: 탈퇴 사유 -->
+	            <div class="mb-3">
+	                <label for="reason" class="form-label">탈퇴 사유 (선택)</label>
+	                <textarea class="form-control" id="reason" name="wmRsn" rows="3" placeholder="탈퇴 사유를 입력해주세요 (선택)"></textarea>
+	            </div>
+	
+	            <button type="button" class="btn btn-danger" onclick="withdraw()">회원 탈퇴</button>
+	        </form>
+	    </div>
+	</th:block>        
+	<!-- 추가할 js file -->
+	<th:block layout:fragment="jsScript">
+		<script>
+			function withdraw(){
+			
+				const agree = document.getElementById("agreeWithdraw");
+				const form = document.getElementById("withdrawForm");
+				const pw = document.getElementById("memberPw");
+				
+				if (!agree.checked) {
+			        alert("탈퇴 약관에 동의해야 탈퇴가 가능합니다.");
+			        return;
+			    }
+			    if (pw.value.trim() === "") {
+			        alert("비밀번호를 입력해주세요.");
+			        pw.focus();
+			        return;
+			    }
+			    
+			    document.getElementById("withdrawForm").submit();
+			}
+		</script>
+		
+	</th:block>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
