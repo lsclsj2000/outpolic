@@ -2,7 +2,6 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="outpolic.admin.goods.mapper.AdminGoodsMapper">
 	<!-- <resultMap id="goodsResultMap" type="AdminGoodsDTO"> 필요하면 사용할것
 	    <id column="gds_cd" property="gdsCd" />
@@ -50,16 +49,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<update id="updateGoods" parameterType="AdminGoodsDTO">
 	/* 상품 수정 */
-		UPDATE goods
-		SET gds_nm = #{gdsNm},
-		    gds_amt = #{gdsAmt},
-		    gds_type = #{gdsType},
-		    gds_period_quantity = #{gdsPeriodQuantity},
-		    gds_unit = #{gdsUnit},
-		    gds_mdfcn_adm_cd = #{gdsMdfcnAdmCd},
-		    gds_mdfcn_ymdt = #{gdsMdfcnYmdt},
-		    gds_status = #{gdsStatus}
-		WHERE gds_cd = #{gdsCd}
+		UPDATE
+			goods
+		SET 
+			gds_status = #{gdsStatus}
+		WHERE
+			gds_cd = #{gdsCd}
 	</update>
 
 	<select id="selectAllGoods" resultType="outpolic.admin.goods.dto.AdminGoodsDTO">
