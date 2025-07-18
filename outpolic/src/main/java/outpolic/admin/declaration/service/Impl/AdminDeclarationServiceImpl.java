@@ -1,5 +1,6 @@
 package outpolic.admin.declaration.service.Impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -65,5 +66,40 @@ public class AdminDeclarationServiceImpl implements AdminDeclarationService {
     	// 신고처리결과 등록
     	adminDeclarationMapper.insertDeclarationResult(declaration);
     }
+
+    @Override
+    public void updateDeclarationType(AdminDeclaration adminDeclaration) {
+        adminDeclarationMapper.updateDeclarationType(adminDeclaration);
+    }
+
+	@Override
+	public AdminDeclaration getDeclarationTypeByCode(String code) {
+		// 신고 타입 수정팝업창 조회
+		return adminDeclarationMapper.getDeclarationTypeByCode(code);
+	}
+
+	@Override
+	public void updateDeclarationReason(AdminDeclaration adminDeclaration) {
+		// 신고 사유 수정
+		adminDeclarationMapper.updateDeclarationReason(adminDeclaration);
+	}
+
+	@Override
+	public void updateDeclarationResult(AdminDeclaration adminDeclaration) {
+		// 신고처리결과코드 수정
+		adminDeclarationMapper.updateDeclarationResult(adminDeclaration);
+	}
+	
+	@Override
+	public AdminDeclaration getDeclarationReasonByCode(String code) {
+		// 신고 사유 수정팝업창 조회
+	    return adminDeclarationMapper.getDeclarationReasonByCode(code);
+	}
+
+	@Override
+	public AdminDeclaration getDeclarationResultByCode(String code) {
+		// 신고처리결과코드 수정팝업창 조회
+	    return adminDeclarationMapper.getDeclarationResultByCode(code);
+	}
 	
 }

@@ -496,11 +496,11 @@
 
                     <div class="SR_form-group">
                         <div class="SR_input-half">
-                            <label class="col-lg-3 col-form-label" for="resultCodeEdit">신고처리결과 코드</label>
+                            <label class="col-lg-3 col-form-label" for="resultCodeEdit" style="width: 50%;">신고처리결과 코드</label>
                             <input type="text" id="resultEditCode" name="resultEditCode" class="SR_form-control" readonly>
                         </div>
                         <div class="SR_input-half">
-                            <label class="col-lg-3 col-form-label" for="resultNameEdit">신고처리결과명</label>
+                            <label class="col-lg-3 col-form-label" for="resultNameEdit" style="width: 50%;">신고처리결과명</label>
                             <input type="text" id="resultEditName" name="resultEditName" class="SR_form-control">
                         </div>
 					</div>
@@ -538,7 +538,9 @@
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 			    const registerBtn = document.getElementById('tab-register-button');
-	
+				
+			    const openEditButtons = document.querySelectorAll('.SR_open-popup-btn');
+			    
 			    const modals = {
 			        type: {
 			            register: document.getElementById('typeModal'),
@@ -584,7 +586,6 @@
 			            modal.style.display = 'flex';
 			            document.body.style.overflow = 'hidden';
 	
-			            // ✅ 신고 사유 등록 모달이면 드롭박스 채우기
 			            if (currentTab === 'reason') {
 			                loadDeclarationTypes('declarationTypeEdit');
 			            }
@@ -611,19 +612,70 @@
 			        });
 			    });
 	
-			    const openEditButtons = document.querySelectorAll('.SR_open-popup-btn');
 			    openEditButtons.forEach(button => {
 			        button.addEventListener('click', e => {
 			            e.preventDefault();
-			            const modal = modals[currentTab]?.edit;
-			            if (modal) {
-			                modal.style.display = 'flex';
-			                document.body.style.overflow = 'hidden';
+			            const declarationCode = button.getAttribute('data-declaration-code');
+			            const currentTab = document.querySelector('.nav-link.active')?.getAttribute('data-tab');
+
+			            if (currentTab === 'type') {
+			                fetch(`/admin/getDeclarationType?code=${declarationCode}`)
+			                    .then(res => res.json())
+			                    .then(data => {
+			                        document.getElementById('typeEditCode').value = data.declarationTypeCode;
+			                        document.getElementById('typeEditName').value = data.declarationTypeName;
+			                        document.getElementById('typeEditExpln').value = data.declarationTypeExpln;
+			                        document.getElementById('typeEditRegAdm').value = data.declarationTypeRegAdmCode || '';
+			                        document.getElementById('typeEditRegYmdt').value = data.declarationTypeRegYmdt || '';
+			                        const radio = document.querySelector(`input[name="typeEditStatus"][value="${data.declarationTypeStcCode}"]`);
+			                        if (radio) radio.checked = true;
+
+			                        modals.type.edit.style.display = 'flex';
+			                        document.body.style.overflow = 'hidden';
+			                    })
+			                    .catch(err => alert('데이터 조회 실패: ' + err));
+			            }
+
+			            if (currentTab === 'reason') {
+			                fetch(`/admin/getDeclarationReason?code=${declarationCode}`)
+			                    .then(res => res.json())
+			                    .then(data => {
+			                        document.getElementById('reasonEditCode').value = data.drCode;
+			                        document.getElementById('reasonEditName').value = data.drName;
+			                        document.getElementById('reasonEditExpln').value = data.drExpln;
+			                        document.getElementById('reasonEditRegAdm').value = data.drRegAdmCode || '';
+			                        document.getElementById('reasonEditRegYmdt').value = data.drRegYmdt || '';
+			                        loadDeclarationTypes('declarationTypeEdit', data.drDtCode);
+			                        const radio = document.querySelector(`input[name="reasonEditStatus"][value="${data.drStcCode}"]`);
+			                        if (radio) radio.checked = true;
+
+			                        modals.reason.edit.style.display = 'flex';
+			                        document.body.style.overflow = 'hidden';
+			                    })
+			                    .catch(err => alert('데이터 조회 실패: ' + err));
+			            }
+
+			            if (currentTab === 'result') {
+			                fetch(`/admin/getDeclarationResult?code=${declarationCode}`)
+			                    .then(res => res.json())
+			                    .then(data => {
+			                        document.getElementById('resultEditCode').value = data.drcCode;
+			                        document.getElementById('resultEditName').value = data.drcName;
+			                        document.getElementById('resultEditExpln').value = data.drcExpln;
+			                        document.getElementById('resultEditRegAdm').value = data.drcRegAdmCode || '';
+			                        document.getElementById('resultEditRegYmdt').value = data.drcRegYmdt || '';
+			                        const radio = document.querySelector(`input[name="resultEditStatus"][value="${data.drcStcCode}"]`);
+			                        if (radio) radio.checked = true;
+
+			                        modals.result.edit.style.display = 'flex';
+			                        document.body.style.overflow = 'hidden';
+			                    })
+			                    .catch(err => alert('데이터 조회 실패: ' + err));
 			            }
 			        });
 			    });
+
 	
-			    // ✅ 신고 타입 드롭박스 로드 함수
 			    function loadDeclarationTypes(selectElementId, selectedCode = null) {
 			        fetch('/admin/declarationTypes')
 			            .then(res => res.json())
@@ -644,7 +696,6 @@
 			            .catch(err => console.error('신고 타입 목록 불러오기 실패:', err));
 			    }
 	
-			    // 신고 타입 유효성 검사
 			    function validateDeclarationTypeForm() {
 			        const code = document.getElementById('typeCode').value.trim();
 			        const name = document.getElementById('typeName').value.trim();
@@ -669,55 +720,33 @@
 	
 			        return true;
 			    }
-			    
-			 	// 신고 사유 유효성 검사
-			    function validateDeclarationReasonForm() {
-			        const reasonName = document.getElementById('reasonName').value.trim();
-			        const reasonExpln = document.getElementById('reasonExpln').value.trim();
-
-			        // 1. reasonName 유효성: 한글 + 공백만 허용, 특수기호 금지, 최대 30자
-			        const reasonNameRegex = /^[가-힣\s]{1,30}$/;
-			        if (!reasonNameRegex.test(reasonName)) {
-			            alert("신고사유명은 한글과 공백만 허용되며, 특수기호 없이 30자 이내여야 합니다.");
-			            return false;
-			        }
-
-			        // 2. 설명 길이 제한
-			        if (reasonExpln.length > 255) {
-			            alert("사유설명은 255자 이내여야 합니다.");
-			            return false;
-			        }
-
-			        return true;
-			    }
-			 	
-			 	// 신고 처리 결과 유효성 검사
+	
 			    function validateDeclarationResultForm() {
 			        const code = document.getElementById('resultCode').value.trim();
 			        const name = document.getElementById('resultName').value.trim();
 			        const expln = document.getElementById('resultExpln').value.trim();
-
+	
 			        const codeRegex = /^DRC_[A-Z]{0,16}$/;
 			        if (!codeRegex.test(code)) {
 			            alert("신고처리결과코드는 'DRC_'로 시작하고 대문자 영문자만 포함하며 20자 이하이어야 합니다.");
 			            return false;
 			        }
-
+	
 			        const nameRegex = /^[가-힣\s]{1,30}$/;
 			        if (!nameRegex.test(name)) {
 			            alert("신고처리결과명은 한글과 공백만 허용되며, 특수기호 없이 30자 이내여야 합니다.");
 			            return false;
 			        }
-
+	
 			        if (expln.length > 255) {
 			            alert("코드설명은 255자 이내여야 합니다.");
 			            return false;
 			        }
-
+	
 			        return true;
 			    }
 	
-			    // 신고 타입 등록
+			    // 신고타입 등록
 			    document.getElementById('typeRegisterForm')?.addEventListener('submit', function (e) {
 			        e.preventDefault();
 			        if (!validateDeclarationTypeForm()) return;
@@ -743,43 +772,18 @@
 			        }).catch(err => alert('에러 발생: ' + err));
 			    });
 	
-			    // 신고 사유 등록
-			    document.getElementById('reasonRegisterForm')?.addEventListener('submit', function (e) {
-			        e.preventDefault();
-			        const payload = {
-			            declarationReasonCode: 'DR_' + Date.now(),
-			            drDtCode: document.getElementById('declarationTypeEdit').value,
-			            declarationReasonName: document.getElementById('reasonName').value.trim(),
-			            drExpln: document.getElementById('reasonExpln').value.trim(),
-			            drStcCode: document.querySelector('input[name="reasonStatus"]:checked')?.value
-			        };
-	
-			        fetch('/admin/addDeclarationReason', {
-			            method: 'POST',
-			            headers: { 'Content-Type': 'application/json' },
-			            body: JSON.stringify(payload)
-			        }).then(res => res.text()).then(result => {
-			            if (result === 'OK') {
-			                alert('신고 사유 등록 완료');
-			                location.reload();
-			            } else {
-			                alert('등록 실패: ' + result);
-			            }
-			        }).catch(err => alert('에러 발생: ' + err));
-			    });
-	
-				// 신고 처리 결과 등록 이벤트
+			    // 신고 처리 결과 등록
 			    document.getElementById('resultRegisterForm')?.addEventListener('submit', function (e) {
 			        e.preventDefault();
 			        if (!validateDeclarationResultForm()) return;
-
+	
 			        const payload = {
 			            declarationResultCode: document.getElementById('resultCode').value.trim(),
 			            declarationResultName: document.getElementById('resultName').value.trim(),
 			            drcExpln: document.getElementById('resultExpln').value.trim(),
 			            drcStcCode: document.querySelector('input[name="resultStatus"]:checked')?.value
 			        };
-
+	
 			        fetch('/admin/addDeclarationResult', {
 			            method: 'POST',
 			            headers: { 'Content-Type': 'application/json' },
@@ -790,6 +794,177 @@
 			                location.reload();
 			            } else {
 			                alert('등록 실패: ' + result);
+			            }
+			        }).catch(err => alert('에러 발생: ' + err));
+			    });
+			    
+			    
+			 // 수정 버튼 클릭 시 신고타입 단건 조회 및 모달 오픈
+			    document.querySelectorAll('.SR_open-popup-btn').forEach(button => {
+			    	button.addEventListener('click', e => {
+			    		e.preventDefault();
+			    		const declarationCode = button.getAttribute('data-declaration-code');
+
+			    		// 현재 탭이 'type'인 경우에만 작동
+			    		if (document.querySelector('.nav-link.active')?.getAttribute('data-tab') === 'type') {
+			    			fetch(`/admin/getDeclarationType?code=${declarationCode}`)
+			    				.then(res => res.json())
+			    				.then(data => {
+			    					// 조회된 데이터를 수정 모달에 채움
+			    					document.getElementById('typeEditCode').value = data.declarationTypeCode;
+			    					document.getElementById('typeEditName').value = data.declarationTypeName;
+			    					document.getElementById('typeEditExpln').value = data.declarationTypeExpln;
+			    					document.getElementById('typeEditRegAdm').value = data.declarationTypeRegAdmCode || '';
+			    					document.getElementById('typeEditRegYmdt').value = data.declarationTypeRegYmdt || '';
+
+			    					// 상태 라디오 버튼 선택
+			    					const radio = document.querySelector(`input[name="typeEditStatus"][value="${data.declarationTypeStcCode}"]`);
+			    					if (radio) radio.checked = true;
+
+			    					// 모달 열기
+			    					document.getElementById('typeMdfcnModal').style.display = 'flex';
+			    					document.body.style.overflow = 'hidden';
+			    				})
+			    				.catch(err => {
+			    					alert('데이터 조회 실패: ' + err);
+			    				});
+			    		}
+			    	});
+			    });
+			 	
+			    function validateEditDeclarationTypeForm() {
+			        const name = document.getElementById('typeEditName').value.trim();
+			        const expln = document.getElementById('typeEditExpln').value.trim();
+
+			        if (!name) {
+			            alert("신고타입명을 입력하세요.");
+			            return false;
+			        }
+
+			        if (!expln) {
+			            alert("타입 설명을 입력하세요.");
+			            return false;
+			        }
+
+			        return true;
+			    }
+			    
+			    // 수정 저장 버튼 클릭 시 서버로 수정 요청
+			    document.getElementById('typeEditForm')?.addEventListener('submit', function (e) {
+			    	e.preventDefault();
+			    	if (!validateEditDeclarationTypeForm()) return;
+
+			    	const payload = {
+			    		declarationTypeCode: document.getElementById('typeEditCode').value.trim(),
+			    		declarationTypeName: document.getElementById('typeEditName').value.trim(),
+			    		declarationTypeExpln: document.getElementById('typeEditExpln').value.trim(),
+			    		declarationTypeStcCode: document.querySelector('input[name="typeEditStatus"]:checked')?.value
+			    	};
+
+			    	fetch('/admin/updateDeclarationType', {
+			    		method: 'POST',
+			    		headers: { 'Content-Type': 'application/json' },
+			    		body: JSON.stringify(payload)
+			    	})	
+			    	.then(res => res.text())
+			    	.then(result => {
+			    		if (result === 'OK') {
+			    			alert('신고 타입 수정 완료');
+			    			location.reload();
+			    		} else {
+			    			alert('수정 실패: ' + result);
+			    		}
+			    	})
+			    	.catch(err => alert('에러 발생: ' + err));
+			    });
+			    
+			 	// reason 유효성 검증
+			    function validateEditDeclarationReasonForm() {
+			        const name = document.getElementById('reasonEditName').value.trim();
+			        const expln = document.getElementById('reasonEditExpln').value.trim();
+			        const dtCode = document.getElementById('declarationTypeEdit').value;
+
+			        if (!dtCode) {
+			            alert("상위 신고타입을 선택하세요.");
+			            return false;
+			        }
+
+			        if (!name) {
+			            alert("신고사유명을 입력하세요.");
+			            return false;
+			        }
+
+			        if (!expln) {
+			            alert("사유 설명을 입력하세요.");
+			            return false;
+			        }
+
+			        return true;
+			    }
+
+			 	// reason 수정 저장
+			    document.getElementById('reasonEditForm')?.addEventListener('submit', function (e) {
+			        e.preventDefault();
+			        if (!validateEditDeclarationReasonForm()) return;
+			        const payload = {
+			            drCode: document.getElementById('reasonEditCode').value.trim(),
+			            drName: document.getElementById('reasonEditName').value.trim(),
+			            drExpln: document.getElementById('reasonEditExpln').value.trim(),
+			            drStcCode: document.querySelector('input[name="reasonEditStatus"]:checked')?.value,
+			            drDtCode: document.getElementById('declarationTypeEdit').value.trim()
+			        };
+			        fetch('/admin/updateDeclarationReason', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(payload)
+			        }).then(res => res.text()).then(result => {
+			            if (result === 'OK') {
+			                alert('신고 사유 수정 완료');
+			                location.reload();
+			            } else {
+			                alert('수정 실패: ' + result);
+			            }
+			        }).catch(err => alert('에러 발생: ' + err));
+			    });
+				
+			 	// result 수정 유효성 검증
+			    function validateEditDeclarationResultForm() {
+			        const name = document.getElementById('resultEditName').value.trim();
+			        const expln = document.getElementById('resultEditExpln').value.trim();
+
+			        if (!name) {
+			            alert("신고처리결과명을 입력하세요.");
+			            return false;
+			        }
+
+			        if (!expln) {
+			            alert("코드 설명을 입력하세요.");
+			            return false;
+			        }
+
+			        return true;
+			    }
+			 	
+			    // result 수정 저장
+			    document.getElementById('resultEditForm')?.addEventListener('submit', function (e) {
+			        e.preventDefault();
+			        if (!validateEditDeclarationResultForm()) return;
+			        const payload = {
+			            drcCode: document.getElementById('resultEditCode').value.trim(),
+			            drcName: document.getElementById('resultEditName').value.trim(),
+			            drcExpln: document.getElementById('resultEditExpln').value.trim(),
+			            drcStcCode: document.querySelector('input[name="resultEditStatus"]:checked')?.value
+			        };
+			        fetch('/admin/updateDeclarationResult', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(payload)
+			        }).then(res => res.text()).then(result => {
+			            if (result === 'OK') {
+			                alert('신고 처리 결과 수정 완료');
+			                location.reload();
+			            } else {
+			                alert('수정 실패: ' + result);
 			            }
 			        }).catch(err => alert('에러 발생: ' + err));
 			    });

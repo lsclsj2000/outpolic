@@ -8,20 +8,79 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.declaration.domain.AdminDeclaration;
 import outpolic.admin.declaration.service.AdminDeclarationService;
-import outpolic.admin.inquiry.domain.AdminInquiryType;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping(value="/admin")
 public class AdminDeclarationController {
 	
 	private final AdminDeclarationService adminDeclarationService;
+	
+	
+	@GetMapping("/getDeclarationReason")
+	@ResponseBody
+	public AdminDeclaration getDeclarationReason(@RequestParam("code") String code) {
+		// 신고 사유 수정팝업창 조회
+	    return adminDeclarationService.getDeclarationReasonByCode(code);
+	}
+
+	@GetMapping("/getDeclarationResult")
+	@ResponseBody
+	public AdminDeclaration getDeclarationResult(@RequestParam("code") String code) {
+		// 신고처리결과코드 수정팝업창 조회
+	    return adminDeclarationService.getDeclarationResultByCode(code);
+	}
+	
+	@PostMapping("/updateDeclarationReason")
+	@ResponseBody
+	public String updateDeclarationReason(@RequestBody AdminDeclaration adminDeclaration, HttpSession session) {
+		// 신고 사유 수정
+	    String adminCode = (String) session.getAttribute("SACD");
+	    if (adminCode == null) return "FAIL: Unauthorized";
+	    adminDeclaration.setDrMdfcnAdmCode(adminCode);
+	    adminDeclarationService.updateDeclarationReason(adminDeclaration);
+	    return "OK";
+	}
+
+	@PostMapping("/updateDeclarationResult")
+	@ResponseBody
+	public String updateDeclarationResult(@RequestBody AdminDeclaration adminDeclaration, HttpSession session) {
+		// 신고처리결과코드 수정
+	    String adminCode = (String) session.getAttribute("SACD");
+	    if (adminCode == null) return "FAIL: Unauthorized";
+	    adminDeclaration.setDrcMdfcnAdmCode(adminCode);
+	    adminDeclarationService.updateDeclarationResult(adminDeclaration);
+	    return "OK";
+	}
+	
+	
+	@PostMapping("/updateDeclarationType")
+	@ResponseBody
+	public String updateDeclarationType(@RequestBody AdminDeclaration adminDeclaration, HttpSession session) {
+		// 신고 타입 수정
+	    String adminCode = (String) session.getAttribute("SACD");
+	    if (adminCode == null) return "FAIL: Unauthorized";
+
+	    adminDeclaration.setDeclarationTypeMdfcnAdmCode(adminCode);
+	    adminDeclarationService.updateDeclarationType(adminDeclaration);
+	    return "OK";
+	}
+	
+	@GetMapping("/getDeclarationType")
+	@ResponseBody
+	public AdminDeclaration getDeclarationType(@RequestParam("code") String code) {
+		// 신고 타입 수정팝업창 조회
+	    return adminDeclarationService.getDeclarationTypeByCode(code);
+	}
 	
 	@PostMapping("/addDeclarationType")
 	@ResponseBody

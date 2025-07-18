@@ -113,6 +113,7 @@
 	                                </td>
 	                                <td scope="col" class="text-center" th:text="${d.declarationResultName}">처리결과</td>
 								    <td scope="col" class="text-center">
+								    	<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${d.declarationCode}">수정</a>
 										<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${d.declarationCode}">처리</a>
 									</td>
 								</tr>
