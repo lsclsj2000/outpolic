@@ -28,12 +28,16 @@ public class LogInterceptor implements HandlerInterceptor{
 			param.add(key + ": " + request.getParameter(key));
 		}
 		
+		String ip = request.getHeader("X-Real-IP");
+		
+		ip = (ip != null) ? ip : request.getRemoteAddr();
+		
 		log.info("========== Access LOG START ==========================");
 		log.info("PORT 			:::: 		{}", request.getLocalPort());
 		log.info("SERVERNAME 		:::: 		{}", request.getServerName());
 		log.info("HTTP METHOD 		:::: 		{}", request.getMethod());
 		log.info("URI 			:::: 		{}		", request.getRequestURI());
-		log.info("CLIENT IP 		:::: 		{}	", request.getRemoteAddr());
+		log.info("CLIENT IP 		:::: 		{}	", ip);
 		if(param.length() > 0) {			
 			log.info("PARAMETER 		:::: 		{}", param);
 		}
