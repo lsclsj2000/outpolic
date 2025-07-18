@@ -7,7 +7,7 @@
         <result property="osTtl" column="os_ttl"/>
     </resultMap>
 
-    <resultMap id="portfolioDetailResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
+   <resultMap id="portfolioDetailResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
         <id property="prtfCd" column="prtf_cd"/>
         <result property="entCd" column="ent_cd"/>
         <result property="prtfTtl" column="prtf_ttl"/>
@@ -17,6 +17,9 @@
         <result property="admCd" column="adm_cd"/>
         <result property="prtfMdfcnYmdt" column="prtf_mdfcn_ymdt"/>
         <result property="stcCd" column="stc_cd"/>
+        
+        <result property="clCd" column="cl_cd"/>
+
         <result property="prtfPeriodStart" column="prtf_period_start"/> 
         <result property="prtfPeriodEnd" column="prtf_period_end"/>     
         <result property="prtfClient" column="prtf_client"/>           
@@ -30,7 +33,7 @@
             <result column="tag_name"/>
         </collection>
         <collection property="linkedOutsourcings" javaType="java.util.ArrayList"
-                    ofType="outpolic.enter.outsourcing.domain.EnterOutsourcing"
+                     ofType="outpolic.enter.outsourcing.domain.EnterOutsourcing"
         			column="prtf_cd" select="findLinkedOutsourcingsByPrtfCd" />
     </resultMap>
 

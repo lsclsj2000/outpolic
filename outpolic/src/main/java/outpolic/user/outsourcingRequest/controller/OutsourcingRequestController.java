@@ -1,11 +1,15 @@
+// [전체 수정] /user/outsourcingRequest/controller/OutsourcingRequestController.java
+
 package outpolic.user.outsourcingRequest.controller;
 
 import lombok.RequiredArgsConstructor;
-import outpolic.enter.outsourcing.domain.EnterOutsourcing; // 기존 도메인 재사용
-import outpolic.enter.outsourcing.service.EnterOutsourcingService; // 기존 서비스 재사용 (외주 상세 정보 조회용)
-import outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO; // 기존 DTO 재사용
-import outpolic.enter.outsourcingRequest.domain.RequestViewDTO; // 기존 DTO 재사용
-import outpolic.user.outsourcingRequest.service.OutsourcingRequestService; // User용 서비스 사용
+import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.outsourcing.service.EnterOutsourcingService;
+import outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO;
+import outpolic.enter.outsourcingRequest.domain.RequestViewDTO;
+import outpolic.user.outsourcingRequest.service.OutsourcingRequestService;
+import outpolic.enter.portfolio.domain.EnterPortfolio;
+import outpolic.enter.portfolio.service.EnterPortfolioService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,83 +22,115 @@ import java.util.Map;
 import jakarta.servlet.http.HttpSession;
 
 @Controller("userOutsourcingRequestController")
-@RequestMapping("/user/outsourcing-requests") // 사용자용 기본 URL 경로
+@RequestMapping("/user/outsourcing-requests")
 @RequiredArgsConstructor
 public class OutsourcingRequestController {
 
-    private final OutsourcingRequestService outsourcingRequestService; // User용 서비스
-    private final EnterOutsourcingService enterOutsourcingService; // 외주 상세 정보를 가져오는 기존 서비스
+    private final OutsourcingRequestService outsourcingRequestService;
+    private final EnterOutsourcingService enterOutsourcingService;
+    private final EnterPortfolioService enterPortfolioService;
 
-    // 외주 신청 폼 페이지
+    // 외주 '신청' 폼 페이지
     @GetMapping("/form/{osCd}")
     public String showRequestForm(@PathVariable String osCd, Model model) {
-        EnterOutsourcing outsourcing = enterOutsourcingService.findOutsourcingDetailsByOsCd(osCd); 
+        EnterOutsourcing outsourcing = enterOutsourcingService.findOutsourcingDetailsByOsCd(osCd);
         if (outsourcing == null) {
-            return "redirect:/user/outsourcing/list"; // 해당 외주가 없으면 목록으로 리다이렉트
+            return "redirect:/user/outsourcing/list";
         }
-        model.addAttribute("outsourcing", outsourcing); 
-        return "user/outsourcingRequest/requestForm"; 
+        model.addAttribute("outsourcing", outsourcing);
+        return "user/outsourcingRequest/requestForm";
     }
 
-    // 외주 신청 폼 제출 처리
+    // 포트폴리오 '문의' 폼 페이지
+    @GetMapping("/inquiry-form/{prtfCd}")
+    public String showInquiryForm(@PathVariable String prtfCd, Model model, HttpSession session) {
+        if (session.getAttribute("SCD") == null) {
+            return "redirect:/login";
+        }
+        EnterPortfolio portfolio = enterPortfolioService.getPortfolioByPrtfCd(prtfCd);
+        if (portfolio == null) {
+            return "redirect:/portfolio/list?error=notfound";
+        }
+        model.addAttribute("portfolio", portfolio);
+        return "user/portfolioInquiry/inquiryForm";
+    }
+
+
+    // '신청' 및 '문의' 제출 처리 통합
     @PostMapping
     @ResponseBody
     public ResponseEntity<Map<String, Object>> createRequest(
             @ModelAttribute OutsourcingRequestDTO requestDto,
             HttpSession session) {
         
-        String loggedInUserCode = (String) session.getAttribute("SCD"); // 사용자(일반 회원)의 회원 코드
-
+        String loggedInUserCode = (String) session.getAttribute("SCD");
         if (loggedInUserCode == null || loggedInUserCode.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "로그인이 필요합니다.")); 
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "로그인이 필요합니다."));
         }
         
-        requestDto.setMbr_cd(loggedInUserCode); // 수요자(사용자)의 회원 코드 설정
+        requestDto.setMbr_cd(loggedInUserCode);
         
-        outsourcingRequestService.createRequest(requestDto); 
+        outsourcingRequestService.createRequest(requestDto);
+        
+        boolean isInquiry = "문의".equals(requestDto.getOcd_req_type());
+        String message = isInquiry ? "문의가 성공적으로 전송되었습니다." : "외주 신청이 완료되었습니다.";
+        String redirectUrl = isInquiry ? "/user/outsourcing-requests/sent-inquiries" : "/user/outsourcing-requests/sent";
+        
         return ResponseEntity.ok(Map.of(
             "success", true,
-            "message", "외주 신청이 완료되었습니다."
-        )); 
+            "message", message,
+            "redirectUrl", redirectUrl
+        ));
     }
 
     // 보낸 외주 신청 목록 페이지
     @GetMapping("/sent")
     public String showSentRequests(Model model, HttpSession session) {
-        String requesterCode = (String) session.getAttribute("SCD"); // 사용자(일반 회원)의 회원 코드
-
+        String requesterCode = (String) session.getAttribute("SCD");
         if (requesterCode == null || requesterCode.isEmpty()) {
-            return "redirect:/login"; 
+            return "redirect:/login";
         }
-        List<RequestViewDTO> sentRequests = outsourcingRequestService.getSentRequests(requesterCode); 
-        model.addAttribute("requests", sentRequests); 
-        return "user/outsourcingRequest/sentRequestsList"; 
+        return "user/outsourcingRequest/sentRequestsList";
     }
 
-    // (수정) 보낸 외주 신청 목록 데이터를 JSON 형태로 반환하는 API 엔드포인트
-    @GetMapping("/api/sent") // 템플릿의 fetch 요청 경로와 일치시킴
+    // 보낸 외주 신청 목록 API
+    @GetMapping("/api/sent")
     @ResponseBody
     public ResponseEntity<List<RequestViewDTO>> getSentRequestsApi(HttpSession session) {
-        String requesterCode = (String) session.getAttribute("SCD"); // 사용자(일반 회원)의 회원 코드
-
+        String requesterCode = (String) session.getAttribute("SCD");
         if (requesterCode == null || requesterCode.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); 
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         List<RequestViewDTO> sentRequests = outsourcingRequestService.getSentRequests(requesterCode); 
-        return ResponseEntity.ok(sentRequests); 
+        return ResponseEntity.ok(sentRequests);
+    }
+    
+    // 보낸 문의 목록 페이지
+    @GetMapping("/sent-inquiries")
+    public String showSentInquiries(Model model) {
+        return "user/outsourcingRequest/sentInquiriesList";
+    }
+    
+    // 보낸 문의 목록 API
+    @GetMapping("/api/sent-inquiries")
+    @ResponseBody
+    public ResponseEntity<List<RequestViewDTO>> getSentInquiriesApi(HttpSession session) {
+        String requesterCode = (String) session.getAttribute("SCD");
+        if (requesterCode == null || requesterCode.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<RequestViewDTO> sentInquiries = outsourcingRequestService.getSentInquiries(requesterCode);
+        return ResponseEntity.ok(sentInquiries);
     }
 
-    // 보낸 외주 신청 상세 페이지
+    // 보낸 신청/문의 상세 페이지
     @GetMapping("/{requestId}")
     public String showRequestDetail(@PathVariable String requestId, Model model) {
-        RequestViewDTO requestDetail = outsourcingRequestService.getRequestDetails(requestId); 
+        RequestViewDTO requestDetail = outsourcingRequestService.getRequestDetails(requestId);
         if (requestDetail == null) {
-            return "redirect:/user/outsourcing-requests/sent"; // 요청이 없으면 목록으로 리다이렉트
+            return "redirect:/user/outsourcing-requests/sent"; 
         }
-        model.addAttribute("request", requestDetail); 
+        model.addAttribute("request", requestDetail);
         return "user/outsourcingRequest/requestDetailView"; 
     }
-    
-    
-  
 }
