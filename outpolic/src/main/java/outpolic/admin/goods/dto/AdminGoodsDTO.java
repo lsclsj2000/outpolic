@@ -17,5 +17,5 @@ public class AdminGoodsDTO {
     private Timestamp gdsRegYmdt;
     private String gdsMdfcnAdmCd;
     private Timestamp gdsMdfcnYmdt;
-
+    private int gdsStatus;
 }
