@@ -3,7 +3,6 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.user.ranking.mapper.UserRankingMapper">
- 
     <!-- ========================================================================= -->
     <!-- ✨✨ 1. resultMap에 isBookmarked 필드 매핑 추가 ✨✨ -->
     <!-- ========================================================================= -->
@@ -20,7 +19,6 @@
         <result property="clCd"         column="cl_cd" />
         <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
- 
     <resultMap id="ContentsRankingMap" type="outpolic.user.ranking.domain.UserRankingContentsDTO">
         <id     property="osCode"       column="os_cd" />
         <result property="rankingView"  column="rk_view" />
@@ -34,15 +32,12 @@
         <result property="clCd"         column="cl_cd" />
         <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
-    
     <sql id="bookmarkJoinSql">
         LEFT JOIN bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
     </sql>
-
     <sql id="isBookmarkedSelectSql">
         , CASE WHEN bm.bm_cd IS NOT NULL THEN 1 ELSE 0 END AS isBookmarked
     </sql>
-
     <!-- 포트폴리오 랭킹 -->
     <select id="getUserRankingPoContents" parameterType="map" resultMap="PortfolioContentsRankingMap">
         SELECT
@@ -74,7 +69,6 @@
             r.rk_tot_ymd DESC, r.rk_view DESC
         LIMIT 10
     </select>
-
     <!-- 외주랭킹 -->
     <select id="getUserRankingOsContents" parameterType="map" resultMap="ContentsRankingMap">
         SELECT

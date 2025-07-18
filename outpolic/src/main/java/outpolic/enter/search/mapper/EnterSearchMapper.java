@@ -2,6 +2,7 @@ package outpolic.enter.search.mapper;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
@@ -21,7 +22,7 @@ public interface EnterSearchMapper {
 	List<EnterContents> getContentsList(@Param("keyword") String keyword);
 	
 	// 콘텐츠 상세정보 
-	EnterContentsDetailDTO getContentsDetailById(String contentsId);
+	EnterContentsDetailDTO getContentsDetailById(Map<String, Object> params);
 	
 	List<EnterContentItemDTO> findContentsByCategoryId(String categoryId);
 }

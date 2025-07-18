@@ -28,7 +28,8 @@ public class UserRankingServiceImpl implements UserRankingService{
 	 
 	 
 	 
-	 @Override public List<UserPortfolioRankingContentsDTO> getUserRankingPoContents(String userId) { 
+	 @Override 
+	 public List<UserPortfolioRankingContentsDTO> getUserRankingPoContents(String userId) { 
 		 Map<String, Object> params = new HashMap<>();
 	     params.put("userId", userId);
 		 

@@ -498,12 +498,10 @@
 			    const modalElement = document.getElementById('portfolioDetailModal');
 			    if (!modalElement) return;
 			
-			    // 최종 모달 디자인의 ID를 정확히 참조합니다.
 			    const infoSection = modalElement.querySelector('#modalInfoSection');
 			    const contentSection = modalElement.querySelector('#modalContentSection');
 			    const portfolioModal = new bootstrap.Modal(modalElement);
 			
-			    // 로딩 스피너 표시
 			    infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
 			    contentSection.innerHTML = '';
 			    portfolioModal.show();
@@ -513,12 +511,13 @@
 			        type: 'GET',
 			        dataType: 'json',
 			        success: function(detail) {
+			            // 이제 detail 객체 안에는 detail.isBookmarked (true/false) 값이 들어있습니다.
 			            const title = detail.contentsTitle || detail.enterName || '제목 없음';
-			
-			            // [수정] 찜 여부 확인을 위한 isBookmarked 변수 (API 응답에 따라 필드명 확인 필요)
+			            
+			            // ★★ 핵심 수정 1: isBookmarked와 clCd 값을 변수로 추출합니다 ★★
+			            //    (API 응답이 null일 경우를 대비하여 기본값(false, '')을 설정합니다.)
 			            const isBookmarked = detail.isBookmarked || false; 
-			            // [수정] 찜 대상 고유 ID (API 응답에 따라 필드명 확인 필요)
-			            const clCd = detail.clCd || ''; 
+			            const clCd = detail.clCd || '';
 			
 			            const infoHtml = `
 			                <div class="d-flex align-items-center mb-3">
@@ -534,16 +533,17 @@
 			
 			                <hr class="my-3">
 			
-			                <p class="text-muted mb-2">디자인 > 상세페이지</p>
+			                <p class="text-muted mb-2">${detail.ctgryName || '카테고리 정보 없음'}</p>
 			                <h3 class="fw-bold mb-3">${title}</h3>
 			                
-			                <!-- ★★ [추가] 찜하기 / 공유하기 버튼 섹션 ★★ -->
 			                <div class="d-flex align-items-center mb-4">
 			                    <a href="javascript:void(0);" 
 			                       class="btn btn-outline-secondary d-flex align-items-center me-2 action-btn bookmark-btn" 
-			                       data-cl-cd="${clCd}"  /* [확인 필요] clCd 필드명 확인 */
+			                       data-cl-cd="${clCd}" 
 			                       aria-label="Add To Wishlist">
-			                        <i class="fi-rs-heart me-2 ${isBookmarked ? 'active' : ''}" /* [확인 필요] isBookmarked 필드명 확인 */></i> 찜하기
+			                        
+			                        <!-- ★★ 핵심 수정 2: isBookmarked 값에 따라 active 클래스를 동적으로 추가합니다 ★★ -->
+			                        <i class="fi-rs-heart me-2 ${isBookmarked ? 'active' : ''}"></i> 찜하기
 			                    </a>
 			                    <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center">
 			                        <i class="fi-rs-share me-2"></i> 공유하기
@@ -559,7 +559,7 @@
 			                </div>
 			                <div class="mb-4">
 			                    <h6 class="fw-bold">참여 기간</h6>
-			                    <p class="text-muted">${(detail.participationStartDate || '') + ' ~ ' + (detail.participationEndDate || '')}</p>
+			                    <p class="text-muted">${(detail.participation_start_date || '') + ' ~ ' + (detail.participation_end_date || '')}</p>
 			                </div>
 			                <div class="mb-4">
 			                    <h6 class="fw-bold">클라이언트</h6>
@@ -571,7 +571,7 @@
 			                </div>
 			            `;
 			            infoSection.innerHTML = infoHtml;
-			            contentSection.innerHTML = `<img src="https://picsum.photos/seed/${detail.contentId}/800/1200" class="img-fluid" alt="상세 이미지">`;
+			            contentSection.innerHTML = `<img src="https://picsum.photos/seed/${contentsId}/800/1200" class="img-fluid" alt="상세 이미지">`;
 			        },
 			        error: function(xhr) {
 			            infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>';
