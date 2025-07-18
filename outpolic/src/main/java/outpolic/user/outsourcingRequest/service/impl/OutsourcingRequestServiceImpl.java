@@ -36,10 +36,11 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
         // 2. 요청 내역(outsourcing_contract_details) DB에 삽입
         requestMapper.insertRequest(request);
 
-        // 3. [수정] 채팅방 ID만 생성하여 요청 내역 테이블에 업데이트
-        String newChrCd = "CR_" + newOcdCd; // 채팅방 코드 생성 (실제 채팅방은 만들지 않음)
+        /* ▼▼▼ [삭제할 부분] chr_cd를 업데이트하는 아래 3줄의 코드를 삭제하거나 주석 처리하세요. ▼▼▼
+        String newChrCd = "CHR_" + newOcdCd; 
         requestMapper.updateChatRoomId(newOcdCd, newChrCd);
         request.setChr_cd(newChrCd);
+        */
 
         return request;
     }

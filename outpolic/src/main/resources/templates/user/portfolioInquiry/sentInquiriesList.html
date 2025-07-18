@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{user/layout/userLayout}">
+      layout:decorate="~{user/layout/userLayoutkjw}">
 <head>
     <meta charset="UTF-8">
     <title>보낸 문의 목록</title>
@@ -9,7 +9,8 @@
         <style>
             .list-container { max-width: 960px; margin: 2rem auto; }
             .item-card {
-                border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem;
+                border: 1px solid #e9ecef;
+                border-radius: 8px; padding: 1.5rem;
                 margin-bottom: 1rem; display: flex; justify-content: space-between;
                 align-items: center; transition: box-shadow 0.2s, border-color 0.2s;
             }
@@ -18,13 +19,14 @@
             .item-info .item-title a:hover { text-decoration: underline; color: #4f46e5; }
             .item-info .item-meta { font-size: 0.9rem; color: #6b7280; margin-top: 0.5rem; }
             .item-status .status-badge {
-                font-size: 0.8rem; font-weight: bold; padding: 0.3rem 0.75rem;
+                font-size: 0.8rem;
+                font-weight: bold; padding: 0.3rem 0.75rem;
                 border-radius: 9999px; color: white;
             }
             .status-SD_BEFORE { background-color: #6b7280; } /* 확인 전 */
             .status-SD_PROCESS_ING { background-color: #f59e0b; } /* 처리 중 */
-            .status-SD_APPROVED { background-color: #16a34a; } /* 승인됨 */
-            .status-SD_REJECTED { background-color: #dc2626; } /* 거절됨 */
+            .status-SD_APPROVED { background-color: #16a34a; } /* 승인/답변완료 */
+            .status-SD_REJECTED { background-color: #dc2626; } /* 거절 */
             .empty-message { text-align: center; padding: 3rem; color: #6b7280; border: 2px dashed #e5e7eb; border-radius: 8px; }
         </style>
     </th:block>
@@ -38,7 +40,7 @@
     </div>
 </th:block>
 
-<th:block layout:fragment="js">
+<th:block layout:fragment="jsFile">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const listContainer = document.getElementById('inquiry-list-container');
@@ -47,7 +49,7 @@
                 const statuses = {
                     'SD_BEFORE': '확인 전',
                     'SD_PROCESS_ING': '처리 중',
-                    'SD_APPROVED': '답변 완료', // 문의의 경우 '승인'보다 '답변 완료'가 적절할 수 있습니다.
+                    'SD_APPROVED': '답변 완료',
                     'SD_REJECTED': '거절됨'
                 };
                 return statuses[statusCode] || statusCode;
@@ -56,9 +58,8 @@
             const createInquiryItemHtml = (inquiry) => {
                 const requestedDate = new Date(inquiry.ocd_dmnd_ymdt).toLocaleDateString();
                 const statusText = getStatusText(inquiry.stc_cd);
-                // 문의 상세 페이지는 기존의 requestDetailView를 함께 사용합니다.
                 const detailUrl = `/user/outsourcing-requests/${inquiry.ocd_cd}`;
-                
+
                 return `
                     <div class="item-card">
                         <div class="item-info">
@@ -77,7 +78,7 @@
                 `;
             };
 
-            // API 호출하여 보낸 문의 목록 데이터 가져오기
+            // API를 호출하여 보낸 문의 목록 데이터를 가져옵니다.
             fetch('/user/outsourcing-requests/api/sent-inquiries')
                 .then(res => {
                     if (!res.ok) {

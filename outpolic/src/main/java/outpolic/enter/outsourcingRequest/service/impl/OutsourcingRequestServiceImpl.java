@@ -38,12 +38,14 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
         String newOcdCd = String.format("OCD_C%05d", nextNum);
         request.setOcd_cd(newOcdCd);
 
+        // 이 부분만 남기고 chr_cd 관련 코드는 모두 삭제합니다.
         requestMapper.insertRequest(request);
-        
-        // 채팅방 ID만 생성하여 요청 내역 테이블에 업데이트
+
+        /* ▼▼▼ [삭제할 부분] chr_cd를 업데이트하는 아래 3줄의 코드를 삭제하거나 주석 처리하세요. ▼▼▼
         String newChrCd = "CHR_" + newOcdCd;
         requestMapper.updateChatRoomId(newOcdCd, newChrCd);
         request.setChr_cd(newChrCd);
+        */
 
         return request;
     }
