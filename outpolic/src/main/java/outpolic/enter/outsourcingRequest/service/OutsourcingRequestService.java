@@ -26,4 +26,6 @@ public interface OutsourcingRequestService {
 	RequestViewDTO getRequestByDetails(String requestId);
 
 	void updateRequestStatus(String requestId, String status);
+	
+	List<RequestViewDTO> getReceivedInquiries(String supplierEntCd);
 }

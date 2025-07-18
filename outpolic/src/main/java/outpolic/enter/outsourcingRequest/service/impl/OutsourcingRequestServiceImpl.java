@@ -21,7 +21,7 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
 
     private static final Logger logger = LoggerFactory.getLogger(OutsourcingRequestServiceImpl.class);
     private final EnterOutsourcingRequestMapper requestMapper;
-@Override
+    @Override
     @Transactional
     public OutsourcingRequestDTO createRequest(OutsourcingRequestDTO request) {
         // 1. 새로운 요청 코드(ocd_cd) 생성 (기존 로직 유지)
@@ -54,6 +54,16 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
 
         return request;
     }
+    
+    // '받은 요청 조회'
+   
+    
+    // 받은 '문의' 목록 조회를 위한 메소드 구현
+    @Override
+    public List<RequestViewDTO> getReceivedInquiries(String supplierEntCd){
+    	return requestMapper.findReceivedRequests(supplierEntCd);
+    }
+    
     @Override
     public List<RequestViewDTO> getSentRequests(String requesterId) {
         return requestMapper.findSentRequests(requesterId);

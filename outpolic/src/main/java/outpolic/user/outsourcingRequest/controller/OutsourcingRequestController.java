@@ -94,4 +94,7 @@ public class OutsourcingRequestController {
         model.addAttribute("request", requestDetail); 
         return "user/outsourcingRequest/requestDetailView"; 
     }
+    
+    
+  
 }

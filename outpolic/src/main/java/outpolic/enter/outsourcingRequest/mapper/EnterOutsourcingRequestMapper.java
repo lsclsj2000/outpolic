@@ -27,4 +27,6 @@ public interface EnterOutsourcingRequestMapper {
      *
      */
     void insertInitialProgressStages(@Param("stageList") List<Map<String, Object>> stageList);
+    
+    List<RequestViewDTO> findReceivedInquiries(String supplierEntCd);
 }

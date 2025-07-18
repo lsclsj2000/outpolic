@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +25,7 @@ public class OutsourcingRequestController {
     private final OutsourcingRequestService requestService;
     private final EnterPortfolioService portfolioService;
     private final EnterOutsourcingService enterOutsourcingService;
+    
 @GetMapping("/form/{osCd}")
     public String showRequestForm(@PathVariable String osCd, Model model) {
         EnterOutsourcing outsourcing = enterOutsourcingService.getOutsourcingByOsCd(osCd);
@@ -219,4 +219,46 @@ public class OutsourcingRequestController {
         model.addAttribute("listTitle", "보낸 문의 목록");
         return "enter/portfolioInquiry/inquiryList";
     }
+    
+    @GetMapping("/received-inquiries")
+    public String showReceivedInquiries(Model model) {
+    	model.addAttribute("listTitle","받은 포트폴리오 문의 목록");
+    	return "enter/portfolioInquiry/receivedInquiryList";
+    }
+    
+    /**
+     * 받은 포트폴리오 문의 목록 데이터를 JSON 형태로 반환하는 API 엔드포인트
+     */
+    @GetMapping("/api/received-inquiries")
+    @ResponseBody
+    public ResponseEntity<List<RequestViewDTO>> getReceivedInquiriesApi(HttpSession session){
+    	String loggedInMbrCd = (String) session.getAttribute("SCD");
+    	if(loggedInMbrCd == null || loggedInMbrCd.isEmpty()) {
+    		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    	}
+    	
+    	// 현재 로그인한 기업 회원의 기업 코드를 조회
+    	String supplierEntCd = requestService.findEntCdByMbrCd(loggedInMbrCd);
+    	
+    	// '문의' 타입의 데이터만 조회하는 새로운 서비스 메소드 호출
+    	List<RequestViewDTO> receivedInquiries = requestService.getReceivedInquiries(supplierEntCd);
+    	
+    	return ResponseEntity.ok(receivedInquiries);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
