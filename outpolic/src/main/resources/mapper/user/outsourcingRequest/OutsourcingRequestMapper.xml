@@ -50,7 +50,7 @@
            ocd.ocd_frctn_cmdty, ocd.ocd_dlvgds_mthd,
            ocd.ocd_strt_ymdt, ocd.ocd_dedline,
            ocd.ocd_amt, ocd.ocd_dmnd_ymdt,
-           ocd.stc_cd, ocd.chr_cd, ocd.ocd_req_type,
+           ocd.stc_cd, ocd.ocd_req_type,
            ocd.mbr_cd, ocd.ent_cd,
            m.mbr_nm as demanderName, 
            e.ent_nm as supplierName

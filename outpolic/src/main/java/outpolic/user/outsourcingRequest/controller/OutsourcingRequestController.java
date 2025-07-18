@@ -108,7 +108,7 @@ public class OutsourcingRequestController {
     // 보낸 문의 목록 페이지
     @GetMapping("/sent-inquiries")
     public String showSentInquiries(Model model) {
-        return "user/outsourcingRequest/sentInquiriesList";
+        return "user/portfolioInquiry/sentInquiriesList";
     }
     
     // 보낸 문의 목록 API
@@ -128,9 +128,12 @@ public class OutsourcingRequestController {
     public String showRequestDetail(@PathVariable String requestId, Model model) {
         RequestViewDTO requestDetail = outsourcingRequestService.getRequestDetails(requestId);
         if (requestDetail == null) {
-            return "redirect:/user/outsourcing-requests/sent"; 
+            // 데이터가 없으면 보낸 문의 목록으로 리다이렉트
+            return "redirect:/user/outsourcing-requests/sent-inquiries"; 
         }
         model.addAttribute("request", requestDetail);
-        return "user/outsourcingRequest/requestDetailView"; 
+        
+        // ▼▼▼ 이 부분의 경로를 수정합니다. ▼▼▼
+        return "user/portfolioInquiry/requestDetailView"; 
     }
 }

@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller("enterRequestController")
-@RequestMapping("/enter/requests")
+@RequestMapping("/enter/outsourcing-requests")
 @RequiredArgsConstructor
 public class EnterRequestController {
 
@@ -59,9 +59,11 @@ public class EnterRequestController {
     // [복원 및 유지] 포트폴리오 '문의' 작성 폼으로 이동
     @GetMapping("/inquiry-form/{prtfCd}")
     public String showInquiryForm(@PathVariable String prtfCd, Model model) {
-    	// 문의 대상 포트폴리오 정보를 조회하여 모델에 담아 전달
-    	model.addAttribute("portfolio",portfolioService.getPortfolioByPrtfCd(prtfCd));
-    	return "enter/portfolioInquiry/inquiryForm";
+        // 문의 대상 포트폴리오 정보를 조회하여 모델에 담아 전달
+        model.addAttribute("portfolio", portfolioService.getPortfolioByPrtfCd(prtfCd));
+        
+        // ▼▼▼ 이 return 값이 "inquiryForm"을 정확히 가리키도록 수정합니다. ▼▼▼
+        return "enter/portfolioInquiry/inquiryForm"; 
     }
     
     // [복원 및 유지] 작성된 포트폴리오 '문의' 전송
@@ -106,12 +108,14 @@ public class EnterRequestController {
     @GetMapping("/sent-inquiries")
     public String showSentInquiries(Model model, HttpSession session) {
         model.addAttribute("listTitle", "보낸 문의 목록");
-        // 이 페이지는 서버사이드 렌더링으로 구현되어 있으므로, 서비스에서 직접 데이터를 조회합니다.
         String memberCode = (String) session.getAttribute("SCD");
         if(memberCode != null) {
+            // 서비스가 DB에서 데이터를 조회합니다.
             List<RequestViewDTO> inquiries = requestService.getSentInquiries(memberCode);
+            // 조회된 결과를 모델에 담아 View로 전달합니다.
             model.addAttribute("inquiries", inquiries);
         }
+        // 이 View 파일로 렌더링합니다.
         return "enter/portfolioInquiry/inquiryList";
     }
 
