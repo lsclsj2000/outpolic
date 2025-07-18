@@ -40,6 +40,20 @@
         <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/>
     </resultMap>
 
+ <select id="findPortfoliosByTitleAndEntCd" resultType="outpolic.enter.portfolio.domain.EnterPortfolio">
+        SELECT
+            prtf_cd,
+            prtf_ttl
+            <!-- 필요하다면 더 많은 컬럼을 추가할 수 있습니다 -->
+        FROM
+            portfolio
+        WHERE
+            ent_cd = #{entCd}
+            AND prtf_ttl LIKE CONCAT('%', #{query}, '%')
+        ORDER BY
+            prtf_reg_ymdt DESC
+    </select>
+
     <select id="findPortfolioDetailsByEntCd" resultMap="portfolioDetailResultMap">
     SELECT
         p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.stc_cd,

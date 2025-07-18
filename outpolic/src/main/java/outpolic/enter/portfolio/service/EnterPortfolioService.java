@@ -34,5 +34,5 @@ public interface EnterPortfolioService {
     // ▼▼▼ [수정] 다단계 등록을 위한 신규 메서드들 선언 ▼▼▼
     String generateNewPrtfCd();
     FileMetaData uploadThumbnail(MultipartFile file);
-    void registerNewPortfolio(PortfolioFormDataDto formData) throws IOException; 
-}
+    void registerNewPortfolio(PortfolioFormDataDto formData) throws IOException;
+    List<EnterPortfolio> searchByTitleForLinking(String query, String entCd);}
