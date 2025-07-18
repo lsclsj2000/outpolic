@@ -33,4 +33,10 @@ public class AdminOsstServiceImpl implements AdminOsstService {
 		return adminOsstMdfcn;
 	}
 
+	@Override
+	public void updateStepStatus(String ocdCd, String stcCd, Integer ospCustYn) {
+		// 외주 진행 수정 팝업창 업데이트
+		adminOsstMapper.updateStepStatus(ocdCd, stcCd, ospCustYn);
+	}
+
 }
