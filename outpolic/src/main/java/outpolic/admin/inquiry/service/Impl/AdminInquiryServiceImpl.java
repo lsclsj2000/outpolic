@@ -66,4 +66,23 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 		adminInquiryMapper.updateInquiryAnswer(adminInquiry);
 	}
 
+	@Override
+	public void insertInquiryType(AdminInquiryType inquiryType) {
+		// 문의 자원 등록 프로세스
+		adminInquiryMapper.insertInquiryType(inquiryType);
+		
+	}
+
+	@Override
+	public AdminInquiryType getAdminInquiryTypeByCode(String code) {
+		// 문의 자원 수정_원본 조회
+		return adminInquiryMapper.getAdminInquiryTypeByCode(code);
+	}
+
+	@Override
+	public void updateInquiryType(AdminInquiryType inquiryType) {
+		// 문의 자원 수정
+		adminInquiryMapper.updateInquiryType(inquiryType);
+	}
+
 }

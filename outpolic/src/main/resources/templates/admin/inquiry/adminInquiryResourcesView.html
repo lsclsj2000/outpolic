@@ -12,279 +12,390 @@
 	
 	<th:block layout:fragment="contents">
 		<section class="content-main">
-	        <div class="row">
-	            <div class="col-12">
-	                <div class="content-header">
-	                    <h2 class="content-title">문의 자원 관리</h2>
-	                    <div>
-	                        <button class="btn btn-md rounded font-sm hover-up">등록</button>
-	                    </div>
+        	<div class="content-header">
+				<h2 class="content-title">문의 자원 관리</h2>
+				<div>
+				    <button class="btn btn-md rounded font-sm hover-up">등록</button>
+				</div>
+            </div>
+            <!-- 검색 필터 -->
+	        <div class="card mb-4 search-filter-card">
+	            <div class="card-body search-filter-body">
+	                <div class="table-responsive">
+	                    <table class="search-filter-table">
+							<tbody>
+								<tr>
+									<th>기본검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>제목</option>
+											<option>내용</option>
+											<option>문의코드</option>
+											<option>작성자</option>
+										</select>
+										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+									</td>
+								</tr>
+								<tr>
+									<th>기간검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>작성일자</option>
+											<option>수정일자</option>
+										</select>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<span> ~ </span>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<button type="button" class="btn btn-sm btn-light">오늘</button>
+										<button type="button" class="btn btn-sm btn-light">어제</button>
+										<button type="button" class="btn btn-sm btn-light">일주일</button>
+										<button type="button" class="btn btn-sm btn-light">지난달</button>
+										<button type="button" class="btn btn-sm btn-light">1개월</button>
+										<button type="button" class="btn btn-sm btn-light">3개월</button>
+										<button type="button" class="btn btn-sm btn-light">전체</button>
+									</td>
+								</tr>
+								<tr>
+									<th>처리상태</th>
+									<td>
+										<div class="radio-group">
+											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
+											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
+											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
+											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="search-filter-buttons">
+							<button type="button" class="btn btn-primary">검색</button>
+							<button type="button" class="btn btn-secondary">초기화</button>
+						</div>
 	                </div>
 	            </div>
-	            <div class="col-12">
-	            	<!-- 문의타입 목록 -->
-	            	<div class="card">
-	                	<div class="card-body">
-			                <div class="table-responsive">
-			                    <table class="table table-hover">
-			                        <thead>
-			                            <tr>
-			                                <th scope="col" class="start text-center col-1">문의타입코드</th>
-			                                <th scope="col" class="text-center col-1">문의명</th>
-			                                <th scope="col" class="text-center col-1">타입설명</th>
-			                                <th scope="col" class="text-center col-1">타입상태코드</th>
-			                                <th scope="col" class="text-center col-1">등록자</th>
-			                                <th scope="col" class="text-center col-1">최초등록일시</th>
-			                                <th scope="col" class="text-center col-1">수정자</th>
-			                                <th scope="col" class="text-center col-1">최종수정일시</th>
-			                                <th scope="col" class="end text-center col-1">Action</th>
-			                            </tr>
-			                        </thead>
-			                        <tbody>
-										<tr class="start pt-30"
-										    style="border:0px; border-bottom: solid 1px #ececec;"
-										    th:each="it : ${adminInquiryTypeList}">
-										    
-										    <td class="start text-center">
-										        <span th:text="${it.inquiryTypeCode}">문의타입코드</span>
-										    </td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeName}">문의명</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeExpln}">타입설명</td>
-										    <td scope="col" class="text-center" th:switch="${it.statusName}">
-			                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
-			                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
-			                                </td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegAdm}">등록자</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeRegDate}">최초등록일시</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnAdm}">수정자</td>
-										    <td scope="col" class="text-center" th:text="${it.inquiryTypeMdfcnDate}">최종수정일시</td>
-										    <td scope="col" class="text-center">
-												<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" th:data-declaration-code="${it.inquiryTypeCode}">수정</a>
-											</td>
-										</tr>
-									</tbody>
-			                    </table>
-			                </div>
-			            </div>
-	            	</div>
-	            </div>
 	        </div>
+           	<!-- 문의타입 목록 -->
+	       	<div class="card">
+	           	<div class="card-body">
+	             	<div class="table-responsive">
+	                 	<table class="table table-hover">
+	                     	<thead>
+	                         	<tr>
+		                             <th scope="col" class="start text-center col-1">문의타입코드</th>
+		                             <th scope="col" class="text-center col-1">문의명</th>
+		                             <th scope="col" class="text-center col-3">타입설명</th>
+		                             <th scope="col" class="text-center col-1">타입상태코드</th>
+		                             <th scope="col" class="text-center col-1">등록자</th>
+		                             <th scope="col" class="text-center col-1">최초등록일시</th>
+		                             <th scope="col" class="end text-center col-1">Action</th>
+	                         	</tr>
+	                     	</thead>
+	                    	<tbody>
+								<tr class="start pt-30"
+							    	style="border:0px; border-bottom: solid 1px #ececec;"
+									th:each="it : ${adminInquiryTypeList}">
+							    	<td class="start text-center">
+							        	<span th:text="${it.inquiryTypeCode}">문의타입코드</span>
+							   		</td>
+							    	<td scope="col" class="text-center" th:text="${it.inquiryTypeName}">문의명</td>
+							    	<td scope="col" class="text-center" th:text="${it.inquiryTypeExpln}">타입설명</td>
+							    	<td scope="col" class="text-center" th:switch="${it.statusName}">
+							            <span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
+							        	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
+							        </td>
+							    	<td scope="col" class="text-center" th:text="${it.inquiryTypeRegAdm}">등록자</td>
+							    	<td scope="col" class="text-center" th:text="${it.inquiryTypeRegDate}">최초등록일시</td>
+							    	<td scope="col" class="text-center">
+										<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${it.inquiryTypeCode}">수정</a>
+									</td>
+								</tr>
+							</tbody>
+	                	</table>
+	            	</div>
+	         	</div>
+	       	</div>
 	    </section>
 	    
+	    <!-- 문의 자원 등록 모달 -->
 	    <div id="inquiryModal" class="SR_modal">
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
 					<h2>문의 자원 등록</h2>
 					<button class="SR_close-button">&times;</button>
 				</div>
-                <form>
-					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">문의타입코드*</label>
-					    <div class="col-lg-9">
-					        <input type="text" class="form-control" placeholder="문의 타입 코드 영문명을 입력하세요"/>
-					    </div>
+                <form id="inquiryRegisterForm">
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">문의타입코드*</label>
+                            <input type="text" id="inquiryCodeDisplay" name="inquiryTypeCode" class="SR_form-control"  placeholder="문의 타입 코드 영문명을 입력하세요">
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTitleEdit">문의명*</label>
+                            <input type="text" id="inquiryTitleEdit" name="inquiryTypeTitle" class="SR_form-control" placeholder="문의 타입명을 입력하세요">
+                        </div>
+					</div>
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="inquiryContentEdit">타입 설명*</label>
+						<textarea id="inquiryContentEdit" name="inquiryTypeContent" class="SR_form-control" rows="5"  placeholder="문의 타입에 대해 설명하세요"></textarea>
 					</div>
 					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">문의명*</label>
-					    <div class="col-lg-9">
-					        <input type="text" class="form-control" placeholder="문의 타입명을 입력하세요"/>
-					    </div>
-					</div>
-					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">타입설명*</label>
-					    <div class="col-lg-9">
-					        <textarea class="form-control" placeholder="타입에 대한 설명을 입력하세요" rows="4"></textarea>
-					    </div>
-					    <!-- col.// -->
-					</div>
-					<!-- row.// -->
-					<div class="row mb-4">
-						<label class="col-lg-3 col-form-label">Status</label>
-						<div class="col-lg-9" style="display: flex; flex-direction: row;">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status*</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
 							<label class="form-check my-2">
-								<input type="radio" class="form-check-input" name="status" value="active" />
+								<input type="radio" class="form-check-input" name="status" value="SD_ACTIVE" />
 								<span class="form-check-label">활성</span>
 							</label>
 							<label class="form-check my-2 ml-20">
-								<input type="radio" class="form-check-input" name="status" value="inactive" />
+								<input type="radio" class="form-check-input" name="status" value="SD_INACTIVE" />
 								<span class="form-check-label">비활성</span>
 							</label>
 						</div>
+	               	</div>
+				    <div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button class="btn btn-primary" type="submit">등록</button>
 					</div>
-					<div style="display: flex; flex-direction: row-reverse;">
-				    	<button class="btn btn-primary" type="submit">등록</button>
-				    </div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 문의 자원 수정 모달 -->		
+		<div id="inquiryMdfcnModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>문의 자원 수정</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+				<form id="inquiryEditForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">등록자</label>
+                            <input type="text" id="editRegAdm" name="editRegAdm" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTitleEdit">등록일시</label>
+                            <input type="text" id="editRegDate" name="editRegDate" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTypeCodeDisplay">문의타입 코드</label>
+                            <input type="text" id="editCode" name="editCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTypeEdit">문의타입명</label>
+                            <input type="text" id="editName" name="editName" class="SR_form-control">
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="inquiryContentEdit">타입 설명</label>
+						<textarea id="editExpln" name="editExpln" class="SR_form-control" rows="5"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="editStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="editStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+					</div>
 				</form>
 			</div>
 		</div>
 	</th:block>
 	
 	
-    <th:block layout:fragment="jsScript">
+	<th:block layout:fragment="jsScript">
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
-			    const modal = document.getElementById('inquiryModal');
-			    const closeButton = document.querySelector('#inquiryModal .SR_close-button');
-			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+			    const registerModal = document.getElementById('inquiryModal');
 			    const registerButton = document.querySelector('.content-header .btn');
-		
-			    // 등록 버튼 클릭 시 모달 열기
-			    if (registerButton) {
-			        registerButton.addEventListener('click', function () {
-			            modal.style.display = 'flex';
-			            document.body.style.overflow = 'hidden';
-			        });
-			    }
-		
-				// 답변 팝업 관련 요소
-			    const answerModal = document.getElementById('answerModal');
-			    const closeAnswerButton = document.querySelector('#answerModal .SR_close-button'); 
-			    const openAnswerPopupButtons = document.querySelectorAll('.SR_open-answer-popup-btn');
-		
-		        let currentInquiryCodeForAnswer = null;
-		
+			    const registerCloseBtn = registerModal?.querySelector('.SR_close-button');
+			
+			    const editModal = document.getElementById('inquiryMdfcnModal');
+			    const editCloseBtn = editModal?.querySelector('.SR_close-button');
+			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+			
+			    registerButton?.addEventListener('click', () => {
+			        registerModal.style.display = 'flex';
+			        document.body.style.overflow = 'hidden';
+			    });
+			
+			    registerCloseBtn?.addEventListener('click', () => {
+			        registerModal.style.display = 'none';
+			        document.body.style.overflow = 'auto';
+			    });
+			
 			    openPopupButtons.forEach(button => {
 			        button.addEventListener('click', function (event) {
 			            event.preventDefault();
-			            const inquiryCode = this.getAttribute('data-inquiry-code');
-		
-			            fetch(`/admin/adminInquiryMdfcn?inquiryCode=${inquiryCode}`)
-			                .then(response => response.json())
+			            const inquiryCode = button.getAttribute('data-inquiry-code');
+			            fetch(`/admin/getInquiryTypeDetail?code=${inquiryCode}`)
+			                .then(res => res.json())
 			                .then(data => {
-			                    fetch('/admin/inquiryStatus')
-			                        .then(res => res.json())
-			                        .then(statusList => {
-			                            const select = document.getElementById('inquiryStatusEdit');
-			                            select.innerHTML = '';
-		
-			                            if (data.statusName === '처리완료') {
-			                                const option = document.createElement('option');
-			                                option.value = data.statusCode;
-			                                option.textContent = data.statusName;
-			                                option.selected = true;
-			                                select.appendChild(option);
-			                                select.disabled = true;
-			                            } else {
-			                                statusList.filter(status => status.statusName !== '처리완료')
-			                                    .forEach(status => {
-			                                        const option = document.createElement('option');
-			                                        option.value = status.statusCode;
-			                                        option.textContent = status.statusName;
-			                                        select.appendChild(option);
-			                                    });
-			                                select.value = data.statusCode || '';
-			                                select.disabled = false;
-			                            }
-		
-			                            const titleInput = document.getElementById('inquiryTitleEdit');
-			                            const contentInput = document.getElementById('inquiryContentEdit');
-			                            const typeSelect = document.getElementById('inquiryTypeEdit');
-			                            const saveButton = document.getElementById('saveButton');
-		
-			                            if (data.statusName === '처리완료') {
-			                                titleInput.readOnly = true;
-			                                contentInput.readOnly = true;
-			                                typeSelect.disabled = true;
-			                                saveButton.style.display = 'none';
-			                            } else {
-			                                titleInput.readOnly = true;
-			                                contentInput.readOnly = true;
-			                                typeSelect.disabled = false;
-			                                saveButton.style.display = 'inline-block';
-			                            }
-			                        });
-		
-			                    fetch('/admin/inquiryType')
-			                        .then(res => res.json())
-			                        .then(typeList => {
-			                            const select = document.getElementById('inquiryTypeEdit');
-			                            select.innerHTML = '';
-			                            typeList.forEach(type => {
-			                                const option = document.createElement('option');
-			                                option.value = type.inquiryTypeCode;
-			                                option.textContent = type.inquiryTypeName;
-			                                select.appendChild(option);
-			                            });
-			                            select.value = data.inquiryTypeCode || '';
-			                        });
-		
-			                    document.getElementById('inquiryCodeDisplay').value = data.inquiryCode;
-			                    document.getElementById('inquiryTitleEdit').value = data.inquiryTitle;
-			                    document.getElementById('inquiryTypeCodeDisplay').value = data.inquiryTypeCode;
-			                    const contentArea = document.getElementById('inquiryContentEdit');
-		
-			                    if (data.inquiryCn) {
-			                        const tempDiv = document.createElement('div');
-			                        tempDiv.innerHTML = data.inquiryCn;
-			                        tempDiv.querySelectorAll('img').forEach(img => img.remove());
-			                        const plainText = tempDiv.textContent || tempDiv.innerText || '';
-			                        contentArea.value = plainText.trim();
-			                    } else {
-			                        contentArea.value = '내용이 없습니다.';
-			                    }
-		
-			                    document.getElementById('SR_writerCode').textContent = data.memberCode;
-			                    document.getElementById('SR_writerName').textContent = data.memberName;
-			                    document.getElementById('SR_writeDate').textContent = data.inquiryRegYmdt;
-		
-			                    document.getElementById('SR_updaterName').textContent = data.inquiryMdfcnAdmCode || '-';
-			                    document.getElementById('SR_updateDate').textContent = data.inquiryMdfcnYmdt || '-';
-		
-			                    const fileListEl = document.getElementById('SR_fileList');
-			                    if (data.subAttchOrgnlName && data.subAttchSize) {
-			                        const sizeMB = (parseInt(data.subAttchSize, 10) / 1024 / 1024).toFixed(1);
-			                        fileListEl.innerHTML = `${data.subAttchOrgnlName} (${sizeMB}MB)`;
-			                    } else {
-			                        fileListEl.innerHTML = '첨부파일 없음';
-			                    }
-		
-			                    modal.style.display = 'flex';
+			                    document.getElementById('editRegAdm').value = data.inquiryTypeRegAdm || '';
+			                    document.getElementById('editRegDate').value = data.inquiryTypeRegDate || '';
+			                    document.getElementById('editCode').value = data.inquiryTypeCode || '';
+			                    document.getElementById('editName').value = data.inquiryTypeName || '';
+			                    document.getElementById('editExpln').value = data.inquiryTypeExpln || '';
+			                    const statusRadios = document.querySelectorAll('input[name="editStatus"]');
+			                    statusRadios.forEach(radio => {
+			                        radio.checked = radio.value === data.statusCode;
+			                    });
+			                    editModal.style.display = 'flex';
 			                    document.body.style.overflow = 'hidden';
+			                })
+			                .catch(err => {
+			                    console.error('데이터 조회 오류:', err);
+			                    alert('데이터를 불러오지 못했습니다.');
 			                });
 			        });
 			    });
-		
-			    closeButton.addEventListener('click', function () {
-			        modal.style.display = 'none';
+			
+			    editCloseBtn?.addEventListener('click', () => {
+			        editModal.style.display = 'none';
 			        document.body.style.overflow = 'auto';
 			    });
-		
+			
 			    window.addEventListener('click', function (event) {
-			        if (event.target === modal) {
-			            modal.style.display = 'none';
+			        if (event.target === registerModal) {
+			            registerModal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			        }
+			        if (event.target === editModal) {
+			            editModal.style.display = 'none';
 			            document.body.style.overflow = 'auto';
 			        }
 			    });
-		
-			    document.getElementById('inquiryForm').addEventListener('submit', function (event) {
+			
+			    const registerForm = document.getElementById('inquiryRegisterForm');
+			    registerForm?.addEventListener('submit', function (event) {
 			        event.preventDefault();
+			        const inquiryTypeCode = document.getElementById('inquiryCodeDisplay').value.trim();
+			        const inquiryTypeName = document.getElementById('inquiryTitleEdit').value.trim();
+			        const inquiryTypeExpln = document.getElementById('inquiryContentEdit').value.trim();
+			        const statusValue = document.querySelector('#inquiryModal input[name="status"]:checked')?.value;
+			
+			        const codeRegex = /^IQT_[A-Z]{1,16}$/;
+			        const nameRegex = /^[가-힣\s]{1,30}$/;
+			        const explnMaxLength = 255;
+			
+			        if (!inquiryTypeCode || !inquiryTypeName || !inquiryTypeExpln || !statusValue) {
+			            alert('모든 항목을 입력해주세요.');
+			            return;
+			        }
+			
+			        if (!codeRegex.test(inquiryTypeCode)) {
+			            alert('문의타입코드는 "IQT_"로 시작하며 대문자 영문만 사용할 수 있고, 최대 20자입니다.');
+			            return;
+			        }
+			
+			        if (!nameRegex.test(inquiryTypeName)) {
+			            alert('문의타입명은 한글과 공백만 입력 가능합니다. (최대 30자)');
+			            return;
+			        }
+			
+			        if (inquiryTypeExpln.length > explnMaxLength) {
+			            alert('문의타입설명은 최대 255자까지 입력할 수 있습니다.');
+			            return;
+			        }
+			
 			        const payload = {
-			            inquiryCode: document.getElementById('inquiryCodeDisplay').value,
-			            inquiryTypeCode: document.getElementById('inquiryTypeEdit').value,
-			            statusCode: document.getElementById('inquiryStatusEdit').value
+			            inquiryTypeCode,
+			            inquiryTypeName,
+			            inquiryTypeExpln,
+			            statusCode: statusValue
 			        };
-			        fetch('/admin/updateInquiry', {
+			
+			        fetch('/admin/adminAddInquiryType', {
 			            method: 'POST',
 			            headers: { 'Content-Type': 'application/json' },
 			            body: JSON.stringify(payload)
 			        })
-			        .then(res => res.ok ? res.text() : Promise.reject('저장 실패'))
-			        .then(result => {
-			            alert('저장이 완료되었습니다.');
-			            modal.style.display = 'none';
+			        .then(res => res.ok ? res.text() : Promise.reject(res.statusText))
+			        .then(() => {
+			            alert('등록이 완료되었습니다.');
+			            registerModal.style.display = 'none';
 			            document.body.style.overflow = 'auto';
 			            location.reload();
 			        })
-			        .catch(error => {
-			            console.error('저장 오류:', error);
-			            alert('저장 중 오류가 발생했습니다.');
+			        .catch(err => {
+			            console.error('등록 오류:', err);
+			            alert('등록 중 오류가 발생했습니다.');
 			        });
 			    });
-		
-			    document.getElementById('inquiryTypeEdit').addEventListener('change', function () {
-			        document.getElementById('inquiryTypeCodeDisplay').value = this.value;
+			
+			    const editForm = document.getElementById('inquiryEditForm');
+			    editForm?.addEventListener('submit', function (event) {
+			        event.preventDefault();
+			        const inquiryTypeCode = document.getElementById('editCode').value.trim();
+			        const inquiryTypeName = document.getElementById('editName').value.trim();
+			        const inquiryTypeExpln = document.getElementById('editExpln').value.trim();
+			        const statusValue = document.querySelector('input[name="editStatus"]:checked')?.value;
+			
+			        const nameRegex = /^[가-힣\s]{1,30}$/;
+			        const explnMaxLength = 255;
+			
+			        if (!inquiryTypeCode || !inquiryTypeName || !inquiryTypeExpln || !statusValue) {
+			            alert('모든 항목을 입력해주세요.');
+			            return;
+			        }
+			
+			        if (!nameRegex.test(inquiryTypeName)) {
+			            alert('문의타입명은 한글과 공백만 입력 가능합니다. (최대 30자)');
+			            return;
+			        }
+			
+			        if (inquiryTypeExpln.length > explnMaxLength) {
+			            alert('문의타입설명은 최대 255자까지 입력할 수 있습니다.');
+			            return;
+			        }
+			
+			        const payload = {
+			            inquiryTypeCode,
+			            inquiryTypeName,
+			            inquiryTypeExpln,
+			            statusCode: statusValue
+			        };
+			
+			        fetch('/admin/updateInquiryType', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(payload)
+			        })
+			        .then(res => res.ok ? res.text() : Promise.reject(res.statusText))
+			        .then(() => {
+			            alert('수정이 완료되었습니다.');
+			            editModal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			            location.reload();
+			        })
+			        .catch(err => {
+			            console.error('수정 오류:', err);
+			            alert('수정 중 오류가 발생했습니다.');
+			        });
 			    });
 			});
 		</script>
 	</th:block>
+
+
 </html>

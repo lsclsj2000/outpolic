@@ -70,5 +70,30 @@
 	    WHERE mbr_telno = #{memberTelNo}
 	      AND mbr_cd != #{memberCode}
 	</select>
+	
+	<resultMap type="outpolic.enter.outsourcing.domain.EnterOutsourcing" id="EnterMypageOSResultMap">
+		<id property="osCd" column="os_cd"/>
+		<result column="mbr_cd" property="memberCode"/>
+		<result property="entCd" column="ent_cd"/>
+		<result property="osTtl" column="os_ttl"/>
+		<result property="osExpln" column="os_expln"/>
+		<result property="osRegYmdt" column="os_reg_ymdt"/>
+	</resultMap>
+	
+<!-- 	<select id="EnterMypageOSResultMap">
+		select 
+	</select> -->
+	<resultMap type="outpolic.enter.portfolio.domain.EnterPortfolio" id="EnterMypagePFResultMap">
+		<id property="prtfCd" column="prtf_cd"/>
+		<result property="entCd" column="ent_cd"/>
+		<result property="prtfTtl" column="prtf_ttl"/>
+		<result property="prtfCn" column="prtf_cn"/>
+		<result property="prtfRegYmdt" column="prtf_reg_ymdt"/>
+	</resultMap>
+	
+	
+	
+	
+	
  	
 </mapper>

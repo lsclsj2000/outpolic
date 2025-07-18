@@ -3,114 +3,203 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  layout:decorate="~{admin/layout/adminLayoutMain}">
 
-	<head>
-		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
-	</head>
+<head>
+    <meta name="description" content="조회수 통계 페이지" />
+</head>
+
+<body>
+	<th:block layout:fragment="contents">
+	    <section class="content-main">
+	        <div class="content-header">
+	            <h2 class="content-title">조회수 통계</h2>
+	        </div>
 	
-	<body>
-		<th:block layout:fragment="contents">
-			<section class="content-main">
-		        <div class="content-header">
-		            <h2 class="content-title">조회수 통계</h2>
-		        </div>
-		
-				<div class="card mb-4 search-filter-card">
-		            <div class="card-body search-filter-body">
-		                <div class="table-responsive">
-		                    <table class="search-filter-table">
-								<tbody>
-									<tr>
-										<th>기본검색</th>
-										<td>
-											<select class="form-select" style="width: 120px;">
-												<option>제목</option>
-												<option>내용</option>
-												<option>문의코드</option>
-												<option>작성자</option>
-											</select>
-											<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
-										</td>
-									</tr>
-									<tr>
-										<th>기간검색</th>
-										<td>
-											<select class="form-select" style="width: 120px;">
-												<option>작성일자</option>
-												<option>수정일자</option>
-											</select>
-											<input type="date" class="form-control" style="width: 150px;" />
-											<span> ~ </span>
-											<input type="date" class="form-control" style="width: 150px;" />
-											<button type="button" class="btn btn-sm btn-light">오늘</button>
-											<button type="button" class="btn btn-sm btn-light">어제</button>
-											<button type="button" class="btn btn-sm btn-light">일주일</button>
-											<button type="button" class="btn btn-sm btn-light">지난달</button>
-											<button type="button" class="btn btn-sm btn-light">1개월</button>
-											<button type="button" class="btn btn-sm btn-light">3개월</button>
-											<button type="button" class="btn btn-sm btn-light">전체</button>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-							<div class="search-filter-buttons">
-								<button type="button" class="btn btn-primary">검색</button>
-								<button type="button" class="btn btn-secondary">초기화</button>
-							</div>
-		                </div>
-		            </div>
-		        </div>
-		        <!-- 탭 메뉴 -->
-		        <ul class="nav nav-tabs" id="rankingTab" role="tablist">
-		            <li class="nav-item" role="presentation">
-		                <button class="nav-link active" id="portfolio-tab" data-bs-toggle="tab" data-bs-target="#portfolio-panel" type="button" role="tab">포트폴리오 TOP 10</button>
-		            </li>
-		            <li class="nav-item" role="presentation">
-		                <button class="nav-link" id="outsourcing-tab" data-bs-toggle="tab" data-bs-target="#outsourcing-panel" type="button" role="tab">외주 TOP 10</button>
-		            </li>
-		        </ul>
-		
-		        <!-- 탭 콘텐츠 -->
-		        <div class="tab-content" id="rankingTabContent">
-		            <!-- 포트폴리오 랭킹 패널 -->
-		            <div class="tab-pane fade show active" id="portfolio-panel" role="tabpanel">
-		                <div class="card mb-4">
-		                    <div class="card-body">
-		                        <table class="table table-hover">
-		                            <thead>
-		                                <tr>
-		                                    <th>순위</th><th>조회수</th><th>제목</th><th>기업명</th><th>카테고리</th><th>등록일</th>
-		                                    <th>상태</th><th>관리</th>
-		                                </tr>
-		                            </thead>
-		                            <tbody id="portfolio-ranking-body">
-		                                <!-- JS가 채울 영역 -->
-		                            </tbody>
-		                        </table>
-		                    </div>
-		                </div>
-		            </div>
-		            <!-- 외주 랭킹 패널 -->
-		            <div class="tab-pane fade" id="outsourcing-panel" role="tabpanel">
-		                 <div class="card mb-4">
-		                    <div class="card-body">
-		                        <table class="table table-hover">
-		                            <thead>
-		                                <tr>
-		                                    <th>순위</th><th>조회수</th><th>제목</th><th>기업명</th><th>카테고리</th><th>평점</th>
-		                                    <th>상태</th><th>관리</th>
-		                                </tr>
-		                            </thead>
-		                            <tbody id="outsourcing-ranking-body">
-		                                <!-- JS가 채울 영역 -->
-		                            </tbody>
-		                        </table>
-		                    </div>
-		                </div>
-		            </div>
-		        </div>
-		    </section>
-		</th:block>
-	</body>
+	        <div class="card mb-4 search-filter-card">
+	            <div class="card-body search-filter-body">
+	                <div class="table-responsive">
+	                    <table class="search-filter-table">
+	                        <tbody>
+	                            <tr>
+	                                <th>기간검색</th>
+	                                <td>
+	                                    <!-- ✨ 기간 검색 UI 개선 -->
+	                                    <input type="date" id="start-date" class="form-control" style="width: 150px;" />
+	                                    <span> ~ </span>
+	                                    <input type="date" id="end-date" class="form-control" style="width: 150px;" />
+	                                    <button type="button" class="btn btn-sm btn-light date-btn" data-period="today">오늘</button>
+	                                    <button type="button" class="btn btn-sm btn-light date-btn" data-period="yesterday">어제</button>
+	                                    <button type="button" class="btn btn-sm btn-light date-btn" data-period="week">최근 7일</button>
+	                                    <button type="button" class="btn btn-sm btn-light date-btn" data-period="month">최근 30일</button>
+	                                </td>
+	                            </tr>
+	                        </tbody>
+	                    </table>
+	                    <div class="search-filter-buttons">
+	                        <button type="button" id="search-btn" class="btn btn-primary">기간 조회</button>
+	                        <button type="button" id="search-total-btn" class="btn btn-secondary">전체 누적 조회</button>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	
+	        <!-- 탭 메뉴 (구조는 동일) -->
+	        <ul class="nav nav-tabs" id="viewStatsTab" role="tablist">
+	            <li class="nav-item" role="presentation">
+	                <button class="nav-link active" id="portfolio-tab" data-bs-toggle="tab" data-bs-target="#portfolio-panel" type="button" role="tab">포트폴리오 조회수</button>
+	            </li>
+	            <li class="nav-item" role="presentation">
+	                <button class="nav-link" id="outsourcing-tab" data-bs-toggle="tab" data-bs-target="#outsourcing-panel" type="button" role="tab">외주 조회수</button>
+	            </li>
+	        </ul>
+	
+	        <!-- 탭 콘텐츠 (ID 및 테이블 헤더 수정) -->
+	        <div class="tab-content" id="viewStatsTabContent">
+	            <div class="tab-pane fade show active" id="portfolio-panel" role="tabpanel">
+	                <div class="card mb-4">
+	                    <div class="card-body">
+	                        <table class="table table-hover text-center">
+	                            <thead>
+	                                <tr>
+	                                    <th>순위</th><th>조회수</th><th>제목</th><th>기업명</th><th>카테고리</th><th>등록일</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody id="portfolio-stats-body"></tbody>
+	                        </table>
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="tab-pane fade" id="outsourcing-panel" role="tabpanel">
+	                 <div class="card mb-4">
+	                    <div class="card-body">
+	                        <table class="table table-hover text-center">
+	                            <thead>
+	                                <tr>
+	                                    <th>순위</th><th>조회수</th><th>제목</th><th>기업명</th><th>카테고리</th><th>등록일</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody id="outsourcing-stats-body"></tbody>
+	                        </table>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </section>
+	</th:block>
 	<!-- 추가할 js file -->
+	<script layout:fragment="jsScript">
+		document.addEventListener('DOMContentLoaded', () => {
+		    // UI 요소
+		    const startDateInput = document.getElementById('start-date');
+		    const endDateInput = document.getElementById('end-date');
+		    const searchBtn = document.getElementById('search-btn');
+		    const searchTotalBtn = document.getElementById('search-total-btn');
+		    const dateBtns = document.querySelectorAll('.date-btn');
+	
+		    const portfolioTab = document.getElementById('portfolio-tab');
+		    const outsourcingTab = document.getElementById('outsourcing-tab');
+		    const portfolioBody = document.getElementById('portfolio-stats-body');
+		    const outsourcingBody = document.getElementById('outsourcing-stats-body');
+	
+		    // 날짜 포맷팅 함수
+		    const formatDate = (date) => date.toISOString().split('T')[0];
+	
+		    // 테이블 렌더링 함수
+		    const renderTable = (tbody, data, type) => {
+		        let html = '';
+		        if (!data || data.length === 0) {
+		            html = '<tr><td colspan="6" class="text-center">조회수 데이터가 없습니다.</td></tr>';
+		        } else {
+		            data.forEach((item, index) => {
+		                html += `
+		                    <tr>
+		                        <td>${index + 1}</td>
+		                        <td>${item.viewCount.toLocaleString()}</td>
+		                        <td>${type === 'portfolio' ? item.prtfTtl : item.osTtl}</td>
+		                        <td>${item.entName}</td>
+		                        <td>${item.ctgryName || '미지정'}</td>
+		                        <td>${formatDate(new Date(item.regDate))}</td>
+		                    </tr>
+		                `;
+		            });
+		        }
+		        tbody.innerHTML = html;
+		    };
+	
+		    // 데이터 로드 및 렌더링 함수
+		    const loadData = async (type, params) => {
+		        const url = new URL(`/admin/api/views/${type}`, window.location.origin);
+		        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+	
+		        try {
+		            const response = await fetch(url);
+		            if (!response.ok) throw new Error('데이터 로딩 실패');
+		            const data = await response.json();
+		            
+		            if (type === 'portfolio') {
+		                renderTable(portfolioBody, data, 'portfolio');
+		            } else {
+		                renderTable(outsourcingBody, data, 'outsourcing');
+		            }
+		        } catch (error) {
+		            console.error('Error fetching data:', error);
+		            const targetBody = type === 'portfolio' ? portfolioBody : outsourcingBody;
+		            targetBody.innerHTML = '<tr><td colspan="6" class="text-center">데이터를 불러오는 중 오류가 발생했습니다.</td></tr>';
+		        }
+		    };
+		    
+		    // 현재 활성화된 탭 종류 반환
+		    const getActiveTabType = () => portfolioTab.classList.contains('active') ? 'portfolio' : 'outsourcing';
+	
+		    // 이벤트 리스너 설정
+		    searchBtn.addEventListener('click', () => {
+		        const params = {
+		            startDate: startDateInput.value,
+		            endDate: endDateInput.value
+		        };
+		        if (!params.startDate || !params.endDate) {
+		            alert('시작일과 종료일을 모두 선택해주세요.');
+		            return;
+		        }
+		        loadData(getActiveTabType(), params);
+		    });
+	
+		    searchTotalBtn.addEventListener('click', () => {
+		        loadData(getActiveTabType(), { type: 'total' });
+		    });
+		    
+		    dateBtns.forEach(btn => {
+		        btn.addEventListener('click', () => {
+		            const period = btn.dataset.period;
+		            const today = new Date();
+		            let startDate = new Date();
+	
+		            endDateInput.value = formatDate(today);
+	
+		            if (period === 'today') {
+		                startDate = today;
+		            } else if (period === 'yesterday') {
+		                startDate.setDate(today.getDate() - 1);
+		                endDateInput.value = formatDate(startDate);
+		            } else if (period === 'week') {
+		                startDate.setDate(today.getDate() - 6);
+		            } else if (period === 'month') {
+		                startDate.setDate(today.getDate() - 29);
+		            }
+		            startDateInput.value = formatDate(startDate);
+		        });
+		    });
+	
+		    portfolioTab.addEventListener('click', () => {
+		        if(portfolioBody.innerHTML.trim() === '') searchTotalBtn.click();
+		    });
+		    outsourcingTab.addEventListener('click', () => {
+		        if(outsourcingBody.innerHTML.trim() === '') loadData('outsourcing', { type: 'total' });
+		    });
+	
+		    // 페이지 로드 시 기본값으로 전체 누적 조회
+		    searchTotalBtn.click();
+		});
+	</script>
+</body>
 	
 </html>

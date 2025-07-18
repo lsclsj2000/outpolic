@@ -1,5 +1,7 @@
 package outpolic.systems.config;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -8,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import lombok.RequiredArgsConstructor;
+import outpolic.systems.interceptor.LogInterceptor;
 import outpolic.user.login.interceptor.LoginInterceptor;
 import outpolic.user.login.interceptor.LoginUserBlockInterceptor;
 
@@ -22,8 +25,22 @@ public class WebConfig implements WebMvcConfigurer{
 	
 	private final LoginUserBlockInterceptor loginUserBlockInterceptor;
 	
+	private final LogInterceptor logInterceptor;
+	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
+		List<String> logExcludePath = List.of(
+												  "/admin/assets/**"
+												, "/common/assets/**"
+												, "/enter/assets/**" 
+												, "/team/css/**" 
+												, "/team/img/**" 
+												, "/user/assets/**"
+											  );
+		
+		registry.addInterceptor(logInterceptor)
+				.addPathPatterns("/**")
+				.excludePathPatterns(logExcludePath);
 		
 		/*
 		 * // 로그인 안한 이용자 접근 차단 registry.addInterceptor(loginInterceptor)
@@ -64,7 +81,7 @@ public class WebConfig implements WebMvcConfigurer{
 		String os = System.getProperty("os.name").toLowerCase();
 		
 		if(os.contains("win")) {
-			rootPath = "file:///";
+			rootPath = "file:///c:";
 		}else if(os.contains("linux")) {
 			rootPath = "file://";
 		}else if(os.contains("mac")) {			

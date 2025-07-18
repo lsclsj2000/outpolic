@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.enter.outsourcing.mapper.OutsourcingMapper">
 
     <resultMap id="OutsourcingSimpleResultMap" type="outpolic.enter.outsourcing.domain.EnterOutsourcing">
@@ -44,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap id="OutsourcingDetailResultMap" type="outpolic.enter.outsourcing.domain.EnterOutsourcing">
        <id property="osCd" column="os_cd"/>
         <result property="entCd" column="ent_cd"/>
-        <result property="ctgryId" column="ctgry_id"/>
+       <result property="ctgryId" column="ctgry_id"/>
         <result property="osTtl" column="os_ttl"/>
         <result property="osExpln" column="os_expln"/>
         <result property="osRegYmdt" column="os_reg_ymdt"/>
@@ -54,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="osEndYmdt" column="os_end_ymdt"/>
        <result property="osAmt" column="os_amt"/>
         <result property="osFlfmtCnt" column="os_flfmt_cnt"/>
-        <result property="admCd" column="adm_cd"/>
+   <result property="admCd" column="adm_cd"/>
         <result property="clCd" column="cl_cd"/>
         <result property="osThumbnailUrl" column="os_thumbnail_url"/> <collection property="categories" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto" javaType="java.util.ArrayList">
             <id property="ctgryId" column="category_ctgry_id"/>
@@ -63,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <collection property="tagNames" ofType="java.lang.String" javaType="java.util.ArrayList">
       <result column="tag_tag_nm"/>
         </collection>
-        <collection property="relatedPortfolios" javaType="java.util.ArrayList"
+       <collection property="relatedPortfolios" javaType="java.util.ArrayList"
                     ofType="outpolic.enter.portfolio.domain.EnterPortfolio"
         			column="os_cd" select="findLinkedPortfoliosByOsCd" />
     </resultMap>
@@ -87,7 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             o.os_cd,
    o.ent_cd,
             o.ctgry_id,
-            o.os_ttl,
+          o.os_ttl,
             o.os_expln,
             o.os_reg_ymdt,
             o.mbr_cd,
@@ -96,7 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
        o.os_end_ymdt,
             o.os_amt,
             o.os_flfmt_cnt,
-            cl.cl_cd,
+       cl.cl_cd,
             o.os_thumbnail_url, c.ctgry_id AS category_ctgry_id,
             c.ctgry_nm AS category_ctgry_nm,
             t.tag_nm AS tag_tag_nm
@@ -104,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         outsourcing o
         LEFT JOIN
             content_list cl ON o.os_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_OS_C%'
-        LEFT JOIN
+     LEFT JOIN
             category_mapping cm ON cl.cl_cd = cm.cl_cd
         LEFT JOIN
             category c ON cm.ctgry_id = c.ctgry_id
@@ -143,7 +140,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LEFT JOIN
             content_list cl ON o.os_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_OS_C%'
         LEFT JOIN
-            category_mapping cm ON cl.cl_cd = cm.cl_cd
+            category_mapping cm 
+ ON cl.cl_cd = cm.cl_cd
         LEFT JOIN
             category c ON cm.ctgry_id = c.ctgry_id
         LEFT JOIN
@@ -194,7 +192,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SET
             ctgry_id = #{ctgryId},
             os_ttl = #{osTtl},
-            os_expln = #{osExpln},
+        os_expln = #{osExpln},
             os_mdfcn_ymdt = NOW(),
         os_strt_ymdt = #{osStrtYmdt},
             os_end_ymdt = #{osEndYmdt},
@@ -217,7 +215,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
     <delete id="deleteTagMappingByClCd">
         DELETE FROM tag_mapping WHERE cl_cd = #{clCd}
-    </delete>
+   </delete>
     <delete id="deleteBookmarkByClCd">
         DELETE FROM bookmark WHERE cl_cd = #{clCd}
     </delete>
@@ -248,7 +246,7 @@ ranking where cl_cd = #{clCd}
             outsourcing_portfolio
         WHERE
      os_cd =#{osCd}
-    </delete>
+  </delete>
  
     <delete id="deletePortfolioLinkByPrtfCd">
         DELETE FROM outsourcing_portfolio WHERE prtf_cd = #{prtfCd}
@@ -261,7 +259,7 @@ ranking where cl_cd = #{clCd}
         FROM
             portfolio p
      JOIN
-            outsourcing_portfolio op ON p.prtf_cd = op.prtf_cd
+          outsourcing_portfolio op ON p.prtf_cd = op.prtf_cd
         WHERE
             op.os_cd = #{osCd}
         ORDER BY
@@ -286,7 +284,7 @@ ranking where cl_cd = #{clCd}
     <update id="updateOutsourcingStep1" parameterType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
      UPDATE
             outsourcing
-        SET
+   SET
             os_ttl = #{osTtl},
             os_expln = #{osExpln},
             os_strt_ymdt = #{osStrtYmdt},
@@ -294,7 +292,7 @@ ranking where cl_cd = #{clCd}
             os_amt = #{osAmt},
        os_flfmt_cnt = #{osFlfmtCnt},
             os_mdfcn_ymdt = NOW()
-        WHERE
+  WHERE
             os_cd = #{osCd}
     </update>
     
@@ -305,9 +303,9 @@ ranking where cl_cd = #{clCd}
             file_srvr_nm AS fileNewName,      
             file_path AS filePath,            
             file_extn AS fileExtension,       
-            -- file_size AS fileSize,          
+            file_size AS fileSize,          
    cl_cd AS clCd,                    
-            mbr_cd AS mbrCd                   
+   mbr_cd AS mbrCd                   
         FROM file
         WHERE cl_cd = #{clCd}
     </select>
@@ -321,19 +319,26 @@ ranking where cl_cd = #{clCd}
         SELECT * FROM outsourcing ORDER BY os_reg_ymdt DESC
     </select>
     
-        <insert id="insertFiles">
-        INSERT INTO file
-            (file_cd, file_reg_ymdt, file_extn, file_orgnl_nm, file_srvr_nm, file_path, cl_cd, mbr_cd)
-        VALUES
-        <foreach collection="files" item="file" separator=",">
-            (
-                #{file.fileIdx},        NOW(),
-                #{file.fileExtension},  #{file.fileOriginalName},#{file.fileNewName},    #{file.filePath},       #{clCd},                #{mbrCd}                )
-        </foreach>
-    </insert>
+       <insert id="insertFiles">
+    INSERT INTO file
+        (file_cd, file_reg_ymdt, file_extn, file_orgnl_nm, file_srvr_nm, file_path, cl_cd, mbr_cd, file_size)
+    VALUES
+    <foreach collection="files" item="file" separator=",">
+        (
+            #{file.fileIdx},
+            NOW(),
+            #{file.fileExtension},
+            #{file.fileOriginalName},
+            #{file.fileNewName},
+            #{file.filePath},
+            #{clCd}, #{mbrCd}, #{file.fileSize}
+        )
+    </foreach>
+</insert>
 
     <delete id="deleteFilesByClCd" parameterType="String">
-        DELETE FROM file WHERE cl_cd = #{clCd}
+        DELETE FROM file 
+ WHERE cl_cd = #{clCd}
     </delete>
     <delete id="deletePerusalContentByClCd">
     DELETE FROM perusal_content WHERE cl_cd = #{clCd}

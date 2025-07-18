@@ -1,4 +1,4 @@
-package outpolic.user.mypage.dto;
+package outpolic.common.dto;
 
 import lombok.Data;
 
@@ -26,4 +26,10 @@ public class OutsourcingReviewDTO {
     // outsourcing
     private String osCd;
     private String osTtl;
+    
+    //portfolio
+    private String prtfCd;
+    private String prtfTtl;
+    
+    private String contentType;
 }

@@ -12,9 +12,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import outpolic.admin.login.dto.AdminLoginDTO;
 import outpolic.admin.login.service.AdminLoginService;
 import outpolic.common.domain.Member;
-import outpolic.admin.login.DTO.AdminLoginDTO;
 
 @Controller
 @RequestMapping(value="/admin")

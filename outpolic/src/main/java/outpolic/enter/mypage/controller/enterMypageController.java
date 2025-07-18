@@ -1,5 +1,7 @@
 package outpolic.enter.mypage.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import outpolic.common.dto.OutsourcingReviewDTO;
+import outpolic.enter.inquiry.domain.EnterInquiry;
+import outpolic.enter.inquiry.service.EnterInquiryService;
 import outpolic.enter.mypage.dto.CorpInfo;
 import outpolic.enter.mypage.dto.EnterInfo;
 import outpolic.enter.mypage.service.EnterMypageService;
@@ -22,18 +27,34 @@ public class enterMypageController {
 	
 	private final EnterMypageService enterMypageService;
 	private final PasswordEncoder passwordEncoder;
+	private final EnterInquiryService enterInquiryService;
+	
 	// 기업 마이페이지 
     @GetMapping("/enter/mypage")
     public String myPage(HttpSession session, Model model) {
     	String memberCode = (String) session.getAttribute("SCD");
+    	String memberId = (String) session.getAttribute("SID");
     	String gradeCode = (String) session.getAttribute("SGrd");
     	if(gradeCode == null ||!"ENTER".equals(gradeCode)) {
     		model.addAttribute("msg", "접근 권한이 없습니다.");
     		model.addAttribute("url", "/");
     		return "enter/mypage/alert";
     	}
+    	//회원정보
  	    EnterInfo enterInfo = enterMypageService.getEnterInfoByCode(memberCode);
  	    model.addAttribute("enterInfo", enterInfo);
+ 	    
+ 	    //리뷰
+ 	    List<OutsourcingReviewDTO> reviewList = enterMypageService.getOutsourcingReviewList(memberCode);
+	    model.addAttribute("reviewList", reviewList);
+ 	    
+ 	    //문의
+ 	    List<EnterInquiry> inquiryList = enterInquiryService.getEnterInquiryListByCode(memberCode);
+ 	    
+ 	    model.addAttribute("title", "문의 내역");
+		model.addAttribute("inquiryList", inquiryList);
+		
+		
     	return "enter/mypage/enterMypageView";
     }
     
@@ -149,13 +170,6 @@ public class enterMypageController {
     @GetMapping("/enterpriseInfo")
     public String enterpriseInfoView() {
     	return "enter/enterpriseInfo/enterpriseInfo";
-    }
-
-    
-    // 살짝 위탁
-    @GetMapping("/enterGoodsList")
-    public String enterGoodsList() {
-    	return "enter/goods/enterGoodsList";
     }
 
 

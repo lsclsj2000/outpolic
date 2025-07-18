@@ -85,33 +85,29 @@
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
-                                                <th scope="col" class="start text-center col-1">진행외주 CD</th>
-                                                <th scope="col" class="text-center col-1">외주신청 CD</th>
-                                                <th scope="col" class="text-center col-1">진행단계</th>
-                                                <th scope="col" class="text-center col-1">공급자 최초요청</th>
-                                                <th scope="col" class="text-center col-1">수요자 승인 여부</th>
-                                                <th scope="col" class="text-center col-1">수요자 승인 일시</th>
+                                                <th scope="col" class="start text-center col-1">진행외주</th>
+                                                <th scope="col" class="text-center col-2">외주명</th>
+                                                <th scope="col" class="text-center col-1">공급자</th>
+                                                <th scope="col" class="text-center col-1">수요자</th>
+                                                <th scope="col" class="text-center col-1">현재 단계</th>
                                                 <th scope="col" class="text-center col-1">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td scope="col" class="text-center">452</td>
-                                                <td scope="col" class="text-center"><b>Devon Lane</b></td>
-                                                <td scope="col" class="text-center">$948.55</td>
-                                                <td scope="col" class="text-center"><span class="badge rounded-pill alert-success">Received</span></td>
-                                                <td scope="col" class="text-center">07.05.2020</td>
-                                                <td scope="col" class="text-center">07.05.2020</td>
+                                            <tr th:each="l : ${adminOsst}">
+                                                <td scope="col" class="text-center" th:text="${l.ocdCode}">진행외주</td>
+                                                <td scope="col" class="text-center" th:text="${l.ocdTitle}">외주명</td>
+                                                <td scope="col" class="text-center" th:text="${l.mbrEntName}">공급자</td>
+                                                <td scope="col" class="text-center" th:text="${l.mbrName}">수요자</td>
+                                                <td scope="col" class="text-center" th:switch="${l.stcName}">
+			                                		<span th:case="${'계약 체결'}" class="badge rounded-pill alert-secondary">계약 체결</span>
+			                                		<span th:case="${'초기 기획'}" class="badge rounded-pill alert-info">초기 기획</span>
+			                                		<span th:case="${'작업 진행'}" class="badge rounded-pill alert-warning">작업 진행</span>
+                                                	<span th:case="${'최종 완료'}" class="badge rounded-pill alert-success">최종 완료</span>
+                                                </td>
                                                 <td scope="col" class="text-center">
-                                                    <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                                    <div class="dropdown">
-                                                        <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#">View detail</a>
-                                                            <a class="dropdown-item" href="#">Edit info</a>
-                                                            <a class="dropdown-item text-danger" href="#">Delete</a>
-                                                        </div>
-                                                    </div>
+                                                    <button type="button" class="btn btn-light rounded font-sm SR_open-popup-btn"
+													        th:attr="data-ocd-cd=${l.ocdCode}">수정</button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -122,11 +118,158 @@
                     </div>
                 </div>
             </section>
-
+			
+			<!-- 외주 진행 단계 수정 모달 -->
+			<div id="osstModal" class="SR_modal">
+		        <div class="SR_modal-content-wrapper">
+		            <div class="SR_popup-header">
+		                <h2>외주 진행 단계 수정</h2>
+		                <button class="SR_close-button">&times;</button>
+		            </div>
 		
+		            <form id="inquiryForm">
+		                <div class="SR_form-group SR_full-width">
+		                    <div class="table-responsive">
+		                        <table class="table table-hover mb-0">
+		                            <thead>
+		                                <tr>
+		                                    <th class="px-4 text-center col-3">단계</th>
+		                                    <th class="px-4 text-center col-3">단계 상태</th>
+		                                    <th class="px-4 text-center col-2">수요자 승인 일시</th>
+		                                </tr>
+		                            </thead>
+		                            <tbody>
+		                                <tr>
+		                                    <td class="px-4 text-center" id="stepName1">-</td>
+		                                    <td class="px-4 text-center" id="stepStatus1">-</td>
+		                                    <td class="px-4 text-center" id="stepDate1">-</td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="px-4 text-center" id="stepName2">-</td>
+		                                    <td class="px-4 text-center" id="stepStatus2">-</td>
+		                                    <td class="px-4 text-center" id="stepDate2">-</td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="px-4 text-center" id="stepName3">-</td>
+		                                    <td class="px-4 text-center" id="stepStatus3">-</td>
+		                                    <td class="px-4 text-center" id="stepDate3">-</td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="px-4 text-center" id="stepName4">-</td>
+		                                    <td class="px-4 text-center" id="stepStatus4">-</td>
+		                                    <td class="px-4 text-center" id="stepDate4">-</td>
+		                                </tr>
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                </div>
+		                <div class="SR_popup-footer mt-0">
+		                    <div class="SR_update-info"></div>
+		                    <button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+		                </div>
+		            </form>
+		        </div>
+		    </div>
 		</th:block>
 	
 	<!-- 자바스크립트 추가 -->
     <th:block layout:fragment="jsScript">
+	    <script>
+	        document.addEventListener('DOMContentLoaded', function () {
+	            const osstModal = document.getElementById('osstModal');
+	            const osstCloseBtn = document.querySelector('#osstModal .SR_close-button');
+	            const openOsstPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+	
+	            openOsstPopupButtons.forEach(button => {
+	                button.addEventListener('click', function (event) {
+	                    event.preventDefault();
+	                    const ocdCd = this.getAttribute('data-ocd-cd');
+	                    fetch(`/admin/adminOsstSteps?ocdCd=${ocdCd}`)
+	                        .then(response => response.json())
+	                        .then(data => {
+	                            renderStepTable(data, ocdCd);
+	                            osstModal.style.display = 'flex';
+	                            document.body.style.overflow = 'hidden';
+	                        })
+	                        .catch(error => {
+	                            console.error("오류 발생:", error);
+	                            alert("데이터를 불러오지 못했습니다.");
+	                        });
+	                });
+	            });
+	
+	            osstCloseBtn.addEventListener('click', () => {
+	                osstModal.style.display = 'none';
+	                document.body.style.overflow = 'auto';
+	            });
+	
+	            window.addEventListener('click', function (event) {
+	                if (event.target === osstModal) {
+	                    osstModal.style.display = 'none';
+	                    document.body.style.overflow = 'auto';
+	                }
+	            });
+	
+	            function formatDateTime(isoString) {
+	                if (!isoString) return '-';
+	                const date = new Date(isoString);
+	                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+	            }
+	
+	            function renderStepTable(stepList, ocdCd) {
+	                const STEP_ORDER = ["SD_CONTRACT", "SD_PLANNING", "SD_WORKPROGRESS", "SD_COMPLETION"];
+	                stepList.sort((a, b) => STEP_ORDER.indexOf(a.stcCode) - STEP_ORDER.indexOf(b.stcCode));
+	
+	                for (let i = 0; i < 4; i++) {
+	                    const step = stepList[i];
+	                    const nameCell = document.getElementById(`stepName${i + 1}`);
+	                    const statusCell = document.getElementById(`stepStatus${i + 1}`);
+	                    const dateCell = document.getElementById(`stepDate${i + 1}`);
+	
+	                    if (step) {
+	                        nameCell.textContent = `${step.stcName} (${step.stcCode})`;
+	                        if (step.ospCustYn == 1 || step.ospSplyYmdt) {
+	                            const progressActive = step.ospCustYn === 0 ? 'active' : '';
+	                            const completeActive = step.ospCustYn === 1 ? 'active' : '';
+	                            statusCell.innerHTML = `
+	                                <div class="btn-group">
+	                                    <button type="button" class="btn btn-sm btn-light btn-toggle ${progressActive}" data-type="progress">진행중</button>
+	                                    <button type="button" class="ml-10 btn btn-sm btn-light btn-toggle ${completeActive}" data-type="complete">진행완료</button>
+	                                </div>
+	                            `;
+	                        } else {
+	                            statusCell.innerHTML = '<span>예정</span>';
+	                        }
+	                        dateCell.textContent = step.ospCustYmdt ? formatDateTime(step.ospCustYmdt) : '-';
+	                    }
+	                }
+	
+	                setTimeout(() => {
+	                    document.querySelectorAll('#osstModal .btn-group').forEach(group => {
+	                        const buttons = group.querySelectorAll('.btn-toggle');
+	                        const row = group.closest('tr');
+	                        const stcCd = row.querySelector('td').textContent.match(/\(([^)]+)\)/)?.[1];
+	                        buttons.forEach(btn => {
+	                            btn.addEventListener('click', function () {
+	                                buttons.forEach(b => b.classList.remove('active'));
+	                                this.classList.add('active');
+	                                const ospCustYn = this.getAttribute('data-type') === 'complete' ? 1 : 0;
+	                                fetch('/admin/adminUpdateStepStatus', {
+	                                    method: 'POST',
+	                                    headers: {
+	                                        'Content-Type': 'application/json'
+	                                    },
+	                                    body: JSON.stringify({ ocdCode: ocdCd, stcCode: stcCd, ospCustYn })
+	                                })
+	                                .then(res => res.text())
+	                                .then(msg => console.log('상태 업데이트 완료:', msg))
+	                                .catch(err => console.error('업데이트 오류:', err));
+	                            });
+	                        });
+	                    });
+	                }, 0);
+	            }
+	        });
+	    </script>
 	</th:block>
 </html>

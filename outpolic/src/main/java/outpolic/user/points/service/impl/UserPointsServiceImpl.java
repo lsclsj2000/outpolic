@@ -23,7 +23,7 @@ public class UserPointsServiceImpl implements UserPointsService {
      * @return 회원의 최신 마일리지 상태 DTO (없으면 null)
      */
     @Override
-    public UserPointsDTO getLatestPointsStatus(String mbrCd) {
+    public UserPointsDTO getUserLatestPointsStatus(String mbrCd) {
         return userPointsMapper.selectLatestPointsByMbrCd(mbrCd);
     }
 
@@ -35,7 +35,7 @@ public class UserPointsServiceImpl implements UserPointsService {
      */
     @Override
     @Transactional // 트랜잭션 관리
-    public boolean updatePoints(UserPointsDTO userPointsDTO) {
+    public boolean updateUserPoints(UserPointsDTO userPointsDTO) {
         // 1. 현재 회원의 최신 마일리지 상태를 조회합니다.
         // 수정: userPointsDTO에서 mbrCd를 가져와야 합니다.
     	UserPointsDTO currentPoints = userPointsMapper.selectLatestPointsByMbrCd(userPointsDTO.getMbrCd());

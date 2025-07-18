@@ -1,4 +1,4 @@
-package outpolic.admin.login.DTO;
+package outpolic.admin.login.dto;
 
 import lombok.Data;
 import outpolic.common.domain.Member;
