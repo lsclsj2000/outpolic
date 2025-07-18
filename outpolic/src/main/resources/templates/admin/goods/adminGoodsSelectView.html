@@ -26,12 +26,11 @@
 							    </nav>
 							</aside>
 							<div>
-		                        <button class="btn btn-md rounded font-sm hover-up">등록</button>
-		                    </div>
+							    <button id="registerGoodsBtn" class="btn btn-md rounded font-sm hover-up">등록</button>
+							</div>
 						</div>
 					</div>
 		            <div class="col-12">
-		            	<!-- 제재타입 목록 -->
 		            	<div class="card">
 		                	<div class="card-body">
 				                <div class="table-responsive">
@@ -44,13 +43,14 @@
 				                                <th scope="col" class="text-center col-1">상품종류</th>
 				                                <th scope="col" class="text-center col-1">상품 기간 / 수량</th>
 				                                <th scope="col" class="text-center col-1">단위</th>
+				                                <th scope="col" class="text-center col-1">상품 상태</th>
 				                                <th scope="col" class="text-center col-1">등록일시</th>
 				                                <th scope="col" class="end text-center col-1">수정자</th>
 				                                <th scope="col" class="end text-center col-1">수정일시</th>
 				                                <th scope="col" class="end text-center col-1">Action</th>
 				                            </tr>
 				                        </thead>
-				                        <tbody  th:if="${goodsList != null}">
+				                        <tbody th:if="${goodsList != null}">
 											<tr class="start pt-30"
 											    style="border:0px; border-bottom: solid 1px #ececec;"
 											    th:each="g : ${goodsList}">
@@ -66,11 +66,15 @@
 				                                </td>
 											    <td scope="col" class="text-center" th:text="${g.gdsPeriodQuantity}">상품 기간 / 수량</td>
 											    <td scope="col" class="text-center" th:text="${g.gdsUnit}">단위</td>
+                                                <td scope="col" class="text-center" th:switch="${g.gdsStatus}"> <!-- Product status display -->
+                                                    <span th:case="1" class="badge rounded-pill alert-success">활성</span>
+                                                    <span th:case="0" class="badge rounded-pill alert-danger">비활성</span>
+                                                </td>
 											    <td scope="col" class="text-center" th:text="${#dates.format(g.gdsRegYmdt, 'yyyy-MM-dd HH:mm')}">등록일시</td>
 											    <td scope="col" class="text-center" th:text="${g.gdsMdfcnAdmCd}">수정자</td>
 											    <td scope="col" class="text-center" th:text="${g.gdsMdfcnYmdt}">수정일시</td>
 											    <td scope="col" class="text-center">
-													<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${g.gdsCd}">수정</a>
+													<a href="#" class="btn btn-md rounded font-sm open-goods-modal" th:data-gds-cd="${g.gdsCd}">수정</a>
 												</td>
 											</tr>
 										</tbody>
@@ -81,221 +85,298 @@
 		            </div>
 		        </div>
 		    </section>
-		    <div id="goodsModal" class="SR_modal">
-			<div class="SR_modal-content-wrapper">
-				<div class="SR_popup-header">
-					<h2>상품 등록</h2>
-					<button class="SR_close-button">&times;</button>
+		    <!-- 상품 등록/수정 모달 -->
+			<div id="goodsModal" class="SR_modal">
+				<div class="SR_modal-content-wrapper">
+					<div class="SR_popup-header">
+						<h2>상품 등록</h2>
+						<button class="SR_close-button">&times;</button>
+					</div>
+	                <form id="goodsForm">
+						<input type="hidden" id="modalGdsCd" name="gdsCd" /> <!-- 상품 코드 (수정 시 사용) -->
+						<div class="row mb-4">
+					       <label class="col-lg-3 col-form-label">등록자</label>
+					       <div class="col-lg-4">
+					           <input type="text" id="admCd" name="admCd" class="form-control" value="ADM_C001" readonly/>
+					       </div>
+					       <!-- col.// -->
+						</div>
+						<!-- row.// -->
+						<div class="row mb-4">
+						    <label class="col-lg-3 col-form-label">상품명</label>
+						    <div class="col-lg-9">
+						        <input type="text" id="gdsNm" name="gdsNm" class="form-control" placeholder="상품명을 입력하세요"/>
+						    </div>
+						    <!-- col.// -->
+						</div>
+						<!-- row.// -->
+						<div class="row mb-4">
+						    <label class="col-lg-3 col-form-label">가격</label>
+						    <div class="col-lg-9">
+						        <input type="number" id="gdsAmt" name="gdsAmt" class="form-control" placeholder="가격을 입력하세요"/>
+						    </div>
+						    <!-- col.// -->
+						</div>
+						<!-- row.// -->
+                        <div class="row mb-4">
+                            <label class="col-lg-3 col-form-label">상품 종류</label>
+                            <div class="col-lg-9">
+                                <select id="gdsType" name="gdsType" class="form-select">
+                                    <option value="">선택하세요</option>
+                                    <option value="구독권">구독권</option>
+                                    <option value="이용권">이용권</option>
+                                </select>
+                            </div>
+                            <!-- col.// -->
+                        </div>
+                        <!-- row.// -->
+                        <div class="row mb-4">
+                            <label class="col-lg-3 col-form-label">기간 / 수량</label>
+                            <div class="col-lg-9">
+                                <input type="number" id="gdsPeriodQuantity" name="gdsPeriodQuantity" class="form-control" placeholder="기간 또는 수량을 입력하세요"/>
+                            </div>
+                            <!-- col.// -->
+                        </div>
+                        <!-- row.// -->
+                        <div class="row mb-4">
+                            <label class="col-lg-3 col-form-label">단위</label>
+                            <div class="col-lg-9">
+                                <select id="gdsUnit" name="gdsUnit" class="form-select">
+                                    <option value="">선택하세요</option>
+                                    <option value="일">일</option>
+                                    <option value="개수">개수</option>
+                                </select>
+                            </div>
+                            <!-- col.// -->
+                        </div>
+                        <div class="row mb-4">
+                            <label class="col-lg-3 col-form-label">상품 상태</label> <!-- 상품 상태 필드 추가 -->
+                            <div class="col-lg-9">
+                                <select id="gdsStatus" name="gdsStatus" class="form-select">
+                                    <option value="1">활성</option>
+                                    <option value="0">비활성</option>
+                                </select>
+                            </div>
+                            <!-- col.// -->
+                        </div>
+                        <!-- row.// -->
+						<br />
+						<div style="display: flex; flex-direction: row-reverse;">
+					     	<button class="btn btn-primary" type="submit">등록</button>
+					    </div>
+					</form>
 				</div>
-                <form>
-					<div class="row mb-4">
-				       <label class="col-lg-3 col-form-label">등록자</label>
-				       <div class="col-lg-4">
-				           <input type="number" class="form-control" placeholder="자동 입력. 관리자 코드" readonly/>
-				       </div>
-				       <!-- col.// -->
-					</div>
-					<!-- row.// -->
-					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">제재타입코드*</label>
-					    <div class="col-lg-9">
-					        <input type="text" class="form-control" placeholder="Type here"/>
-					    </div>
-					    <!-- col.// -->
-					</div>
-					<!-- row.// -->
-					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">제재타입명*</label>
-					    <div class="col-lg-9">
-					        <input type="text" class="form-control" placeholder="Type here"/>
-					    </div>
-					    <!-- col.// -->
-					</div>
-					<!-- row.// -->
-					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">타입설명*</label>
-					    <div class="col-lg-9">
-					        <textarea class="form-control" placeholder="Type here" rows="4"></textarea>
-					    </div>
-					    <!-- col.// -->
-					</div>
-					<!-- row.// -->
-					<br />
-					<div style="display: flex; flex-direction: row-reverse;">
-				     	<button class="btn btn-primary" type="submit">등록</button>
-				    </div>
-				</form>
 			</div>
-		</div>
 		</th:block>
 		<th:block layout:fragment="jsScript">
 		<script>
-			document.addEventListener('DOMContentLoaded', function () {
-			    const modal = document.getElementById('goodsModal');
-			    const closeButton = document.querySelector('#goodsModal .SR_close-button');
-			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
-			    const registerButton = document.querySelector('.content-header .btn');
-		
-			    // 등록 버튼 클릭 시 모달 열기
-			    if (registerButton) {
-			        registerButton.addEventListener('click', function () {
-			            modal.style.display = 'flex';
-			            document.body.style.overflow = 'hidden';
-			        });
-			    }
-		
-				// 답변 팝업 관련 요소
-			    const answerModal = document.getElementById('answerModal');
-			    const closeAnswerButton = document.querySelector('#answerModal .SR_close-button'); 
-			    const openAnswerPopupButtons = document.querySelectorAll('.SR_open-answer-popup-btn');
-		
-		        let currentInquiryCodeForAnswer = null;
-		
-			    openPopupButtons.forEach(button => {
-			        button.addEventListener('click', function (event) {
-			            event.preventDefault();
-			            const inquiryCode = this.getAttribute('data-inquiry-code');
-		
-			            fetch(`/admin/adminInquiryMdfcn?inquiryCode=${inquiryCode}`)
-			                .then(response => response.json())
-			                .then(data => {
-			                    fetch('/admin/inquiryStatus')
-			                        .then(res => res.json())
-			                        .then(statusList => {
-			                            const select = document.getElementById('inquiryStatusEdit');
-			                            select.innerHTML = '';
-		
-			                            if (data.statusName === '처리완료') {
-			                                const option = document.createElement('option');
-			                                option.value = data.statusCode;
-			                                option.textContent = data.statusName;
-			                                option.selected = true;
-			                                select.appendChild(option);
-			                                select.disabled = true;
-			                            } else {
-			                                statusList.filter(status => status.statusName !== '처리완료')
-			                                    .forEach(status => {
-			                                        const option = document.createElement('option');
-			                                        option.value = status.statusCode;
-			                                        option.textContent = status.statusName;
-			                                        select.appendChild(option);
-			                                    });
-			                                select.value = data.statusCode || '';
-			                                select.disabled = false;
-			                            }
-		
-			                            const titleInput = document.getElementById('inquiryTitleEdit');
-			                            const contentInput = document.getElementById('inquiryContentEdit');
-			                            const typeSelect = document.getElementById('inquiryTypeEdit');
-			                            const saveButton = document.getElementById('saveButton');
-		
-			                            if (data.statusName === '처리완료') {
-			                                titleInput.readOnly = true;
-			                                contentInput.readOnly = true;
-			                                typeSelect.disabled = true;
-			                                saveButton.style.display = 'none';
-			                            } else {
-			                                titleInput.readOnly = true;
-			                                contentInput.readOnly = true;
-			                                typeSelect.disabled = false;
-			                                saveButton.style.display = 'inline-block';
-			                            }
-			                        });
-		
-			                    fetch('/admin/inquiryType')
-			                        .then(res => res.json())
-			                        .then(typeList => {
-			                            const select = document.getElementById('inquiryTypeEdit');
-			                            select.innerHTML = '';
-			                            typeList.forEach(type => {
-			                                const option = document.createElement('option');
-			                                option.value = type.inquiryTypeCode;
-			                                option.textContent = type.inquiryTypeName;
-			                                select.appendChild(option);
-			                            });
-			                            select.value = data.inquiryTypeCode || '';
-			                        });
-		
-			                    document.getElementById('inquiryCodeDisplay').value = data.inquiryCode;
-			                    document.getElementById('inquiryTitleEdit').value = data.inquiryTitle;
-			                    document.getElementById('inquiryTypeCodeDisplay').value = data.inquiryTypeCode;
-			                    const contentArea = document.getElementById('inquiryContentEdit');
-		
-			                    if (data.inquiryCn) {
-			                        const tempDiv = document.createElement('div');
-			                        tempDiv.innerHTML = data.inquiryCn;
-			                        tempDiv.querySelectorAll('img').forEach(img => img.remove());
-			                        const plainText = tempDiv.textContent || tempDiv.innerText || '';
-			                        contentArea.value = plainText.trim();
-			                    } else {
-			                        contentArea.value = '내용이 없습니다.';
-			                    }
-		
-			                    document.getElementById('SR_writerCode').textContent = data.memberCode;
-			                    document.getElementById('SR_writerName').textContent = data.memberName;
-			                    document.getElementById('SR_writeDate').textContent = data.inquiryRegYmdt;
-		
-			                    document.getElementById('SR_updaterName').textContent = data.inquiryMdfcnAdmCode || '-';
-			                    document.getElementById('SR_updateDate').textContent = data.inquiryMdfcnYmdt || '-';
-		
-			                    const fileListEl = document.getElementById('SR_fileList');
-			                    if (data.subAttchOrgnlName && data.subAttchSize) {
-			                        const sizeMB = (parseInt(data.subAttchSize, 10) / 1024 / 1024).toFixed(1);
-			                        fileListEl.innerHTML = `${data.subAttchOrgnlName} (${sizeMB}MB)`;
-			                    } else {
-			                        fileListEl.innerHTML = '첨부파일 없음';
-			                    }
-		
-			                    modal.style.display = 'flex';
-			                    document.body.style.overflow = 'hidden';
-			                });
-			        });
-			    });
-		
-			    closeButton.addEventListener('click', function () {
-			        modal.style.display = 'none';
-			        document.body.style.overflow = 'auto';
-			    });
-		
-			    window.addEventListener('click', function (event) {
-			        if (event.target === modal) {
-			            modal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			        }
-			    });
-		
-			    document.getElementById('inquiryForm').addEventListener('submit', function (event) {
-			        event.preventDefault();
-			        const payload = {
-			            inquiryCode: document.getElementById('inquiryCodeDisplay').value,
-			            inquiryTypeCode: document.getElementById('inquiryTypeEdit').value,
-			            statusCode: document.getElementById('inquiryStatusEdit').value
-			        };
-			        fetch('/admin/updateInquiry', {
-			            method: 'POST',
-			            headers: { 'Content-Type': 'application/json' },
-			            body: JSON.stringify(payload)
-			        })
-			        .then(res => res.ok ? res.text() : Promise.reject('저장 실패'))
-			        .then(result => {
-			            alert('저장이 완료되었습니다.');
-			            modal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			            location.reload();
-			        })
-			        .catch(error => {
-			            console.error('저장 오류:', error);
-			            alert('저장 중 오류가 발생했습니다.');
-			        });
-			    });
-		
-			    document.getElementById('inquiryTypeEdit').addEventListener('change', function () {
-			        document.getElementById('inquiryTypeCodeDisplay').value = this.value;
-			    });
-			});
+		document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM Content Loaded - Script Start'); // 스크립트 시작 확인
+
+		    const goodsModal = document.getElementById('goodsModal');
+		    const closeButton = goodsModal.querySelector('.SR_close-button');
+		    const registerGoodsBtn = document.getElementById('registerGoodsBtn');
+            console.log('registerGoodsBtn element:', registerGoodsBtn); // 요소가 찾아졌는지 확인
+		    
+		    const openGoodsModalButtons = document.querySelectorAll('.open-goods-modal');
+            const goodsForm = document.getElementById('goodsForm'); // goodsForm을 올바르게 타겟팅
+
+            console.log('Found goodsModal:', goodsModal);
+            console.log('Found goodsForm:', goodsForm);
+
+            // Thymeleaf에서 전달된 상품 목록 데이터 (JavaScript에서 사용)
+            // goodsList가 null인 경우 빈 배열로 초기화
+            const goodsList = /*[[ ${goodsList != null ? goodsList : '[]'} ]]*/ [];
+            console.log('Goods List from Thymeleaf:', goodsList); // Thymeleaf 데이터 확인
+
+            // 모달 필드를 초기화하는 함수
+            function resetGoodsForm() {
+                goodsForm.reset(); // 모든 폼 필드 초기화
+                document.getElementById('modalGdsCd').value = ''; // 숨겨진 상품 코드 초기화
+                goodsModal.querySelector('h2').textContent = '상품 등록'; // 모달 제목 변경
+                document.getElementById('admCd').value = 'ADM_C001'; // 등록자 필드 값 설정 (기본값)
+                document.getElementById('gdsStatus').value = '1'; // 상품 상태 기본값 '활성'(1)으로 설정
+                console.log('Goods form reset.');
+            }
+
+		    // "등록" 버튼 클릭 시 모달 열기 (새 상품 등록용)
+		    if (registerGoodsBtn) {
+		        registerGoodsBtn.addEventListener('click', function () {
+                    console.log('Register Goods Button Clicked!'); // 클릭 이벤트 확인
+		            resetGoodsForm(); // 폼 초기화
+		            goodsModal.classList.add('show'); // 모달 표시
+                    goodsModal.style.display = 'flex'; // ✨ 추가: CSS 충돌 방지를 위해 inline style로 display 설정
+		            document.body.style.overflow = 'hidden'; // 스크롤 방지
+                    console.log('Modal should be visible now. goodsModal classes:', goodsModal.classList);
+                    console.log('Modal computed style display (after click):', window.getComputedStyle(goodsModal).display);
+		        });
+		    } else {
+                console.error('Error: Register Goods Button not found!'); // 버튼을 찾지 못한 경우 오류 메시지
+            }
+	
+		    // "수정" 버튼 클릭 시 모달 열기 (기존 상품 수정용)
+		    openGoodsModalButtons.forEach(button => {
+		        button.addEventListener('click', function (event) {
+		            event.preventDefault(); // 기본 링크 동작 방지
+		            const gdsCd = this.getAttribute('data-gds-cd'); // 상품 코드 가져오기
+                    console.log('Open Goods Modal Button Clicked for GdsCd:', gdsCd); // 수정 버튼 클릭 확인
+		            
+                    // goodsList에서 해당 상품 코드에 맞는 데이터 찾기
+                    const selectedGoods = goodsList.find(g => g.gdsCd === gdsCd);
+
+                    if (selectedGoods) {
+                        // 모달 필드를 데이터로 채우기
+                        document.getElementById('modalGdsCd').value = selectedGoods.gdsCd;
+                        document.getElementById('admCd').value = selectedGoods.gdsRegAdmCd || 'ADM_C001'; // 등록자 (gdsRegAdmCd 사용)
+                        document.getElementById('gdsNm').value = selectedGoods.gdsNm;
+                        document.getElementById('gdsAmt').value = selectedGoods.gdsAmt;
+                        document.getElementById('gdsType').value = selectedGoods.gdsType;
+                        document.getElementById('gdsPeriodQuantity').value = selectedGoods.gdsPeriodQuantity;
+                        document.getElementById('gdsUnit').value = selectedGoods.gdsUnit;
+                        document.getElementById('gdsStatus').value = selectedGoods.gdsStatus; // 상품 상태 값 설정
+
+                        goodsModal.querySelector('h2').textContent = '상품 수정'; // 모달 제목 변경
+                        goodsModal.classList.add('show'); // 모달 표시
+                        goodsModal.style.display = 'flex'; // ✨ 추가: CSS 충돌 방지를 위해 inline style로 display 설정
+                        document.body.style.overflow = 'hidden'; // 스크롤 방지
+                        console.log('Modal should be visible now for edit. goodsModal classes:', goodsModal.classList);
+                        console.log('Modal computed style display (for edit):', window.getComputedStyle(goodsModal).display);
+                    } else {
+                        console.error('Product data not found:', gdsCd);
+                        showCustomAlert('상품 정보를 불러오는데 실패했습니다.'); // 상품 정보 로드 실패 메시지
+                    }
+		        });
+		    });
+	
+		    // 모달 닫기 버튼 클릭 시
+		    closeButton.addEventListener('click', function () {
+                console.log('Close button clicked.'); // 닫기 버튼 클릭 확인
+		        goodsModal.classList.remove('show'); // 모달 숨기기
+                goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
+		        document.body.style.overflow = 'auto'; // 스크롤 허용
+		    });
+	
+		    // 모달 외부 클릭 시 닫기
+		    window.addEventListener('click', function (event) {
+		        if (event.target === goodsModal) {
+                    console.log('Clicked outside modal.'); // 모달 외부 클릭 확인
+		            goodsModal.classList.remove('show'); // 모달 숨기기
+                    goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
+		            document.body.style.overflow = 'auto'; // 스크롤 허용
+		        }
+		    });
+	
+		    // 상품 등록/수정 폼 제출 이벤트
+		    goodsForm.addEventListener('submit', function (event) {
+		        event.preventDefault(); // 기본 폼 제출 방지
+                console.log('Goods Form Submitted!'); // 폼 제출 이벤트 확인
+
+                const formData = new FormData(goodsForm);
+                const data = {};
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+
+                // gdsStatus를 숫자로 변환 (데이터베이스 tinyint(1)에 맞추기 위해)
+                data.gdsStatus = parseInt(data.gdsStatus);
+
+                const isUpdate = data.gdsCd !== ''; // modalGdsCd에 값이 있으면 수정 모드
+
+                let url = '/admin/insert'; // 등록 API 엔드포인트 (기존 /admin/registerGoods에서 변경)
+                let successMessage = '상품이 성공적으로 등록되었습니다!'; // 상품 등록 성공 메시지
+                let errorMessage = '상품 등록에 실패했습니다.'; // 상품 등록 실패 메시지
+
+                if (isUpdate) {
+                    url = '/admin/updateGoods'; // 수정 API 엔드포인트
+                    successMessage = '상품이 성공적으로 수정되었습니다!'; // 상품 수정 성공 메시지
+                    errorMessage = '상품 수정에 실패했습니다.'; // 상품 수정 실패 메시지
+                }
+
+                console.log("Data to send:", data); // 전송할 데이터
+
+                // 프론트엔드 유효성 검사 추가 (위에 제안된 내용)
+                if (!data.gdsNm || !data.gdsAmt || !data.gdsType || !data.gdsPeriodQuantity || !data.gdsUnit) {
+                    showCustomAlert('모든 필수 항목을 입력해주세요.');
+                    return; // 폼 제출 중단
+                }
+
+                if (isNaN(data.gdsAmt) || parseFloat(data.gdsAmt) <= 0) {
+                    showCustomAlert('가격은 0보다 큰 유효한 숫자여야 합니다.');
+                    return;
+                }
+
+                if (isNaN(data.gdsPeriodQuantity) || parseInt(data.gdsPeriodQuantity) <= 0) {
+                    showCustomAlert('기간/수량은 0보다 큰 유효한 숫자여야 합니다.');
+                    return;
+                }
+
+
+                // 실제 서버로 데이터 전송 로직 (fetch API 사용)
+                fetch(url, {
+                    method: 'POST', // 등록 및 수정 모두 POST로 가정
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // HTTP 상태 코드가 200번대가 아닌 경우 오류 처리
+                        return response.text().then(text => { throw new Error(text) });
+                    }
+                    // 응답이 JSON이 아닐 수 있으므로 text()로 받아서 처리
+                    return response.text(); 
+                })
+                .then(result => {
+                    console.log('Success:', result); // 성공
+                    showCustomAlert(successMessage);
+                    goodsModal.classList.remove("show"); // 모달 닫기
+                    goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
+                    location.reload(); // 페이지 새로고침하여 목록 업데이트
+                })
+                .catch(error => {
+                    console.error('Error:', error); // 오류
+                    showCustomAlert(errorMessage + '\n' + error.message);
+                });
+		    });
+
+            // 커스텀 알림 모달 함수 (alert() 대체)
+            function showCustomAlert(message) {
+                const alertModal = document.createElement('div');
+                alertModal.classList.add('SR_modal');
+                alertModal.style.display = 'flex'; // 즉시 표시
+
+                alertModal.innerHTML = `
+                    <div class="SR_modal-content-wrapper" style="max-width: 400px; text-align: center;">
+                        <div class="SR_popup-header">
+                            <h2>알림</h2>
+                            <button class="SR_close-button">&times;</button>
+                        </div>
+                        <p>${message}</p>
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-primary" id="customAlertConfirmBtn">확인</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(alertModal);
+
+                alertModal.querySelector('.SR_close-button').addEventListener('click', () => {
+                    document.body.removeChild(alertModal);
+                });
+                alertModal.querySelector('#customAlertConfirmBtn').addEventListener('click', () => {
+                    document.body.removeChild(alertModal);
+                });
+
+                alertModal.addEventListener('click', (event) => {
+                    if (event.target === alertModal) {
+                        document.body.removeChild(alertModal);
+                    }
+                });
+            }
+            console.log('DOM Content Loaded - Script End'); // 스크립트 종료 확인
+		});
 		</script>
 	</th:block>
 	</body>
 	<!-- 추가할 js file -->
-	
 </html>

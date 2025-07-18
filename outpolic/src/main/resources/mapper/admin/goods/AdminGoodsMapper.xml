@@ -19,6 +19,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<insert id="insertGoods" parameterType="AdminGoodsDTO">
 	/* 상품 삽입 */
+	    <selectKey  keyProperty="gdsCd" resultType="String" order="BEFORE">
+	        SELECT
+	            CASE
+	                WHEN COUNT(*) = 0 THEN 'PD_C001'
+	                ELSE CONCAT(
+	                    'PD_C',
+	                    MAX(CAST(SUBSTRING_INDEX(gds_cd, 'PD_C', -1) AS UNSIGNED)) + 1
+	                )
+	            END AS newCode
+	        FROM goods
+	        WHERE gds_cd LIKE 'PD_C%';
+	    </selectKey>
 	    INSERT INTO goods (
 	        gds_cd,
 	        gds_nm,
@@ -27,13 +39,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        gds_period_quantity,
 	        gds_unit,
 	        gds_reg_adm_cd,
-	        gds_reg_ymdt
+	        gds_reg_ymdt,
+	        gds_status
 	    ) VALUES (
 	        #{gdsCd}, #{gdsNm}, #{gdsAmt}, #{gdsType},
 	        #{gdsPeriodQuantity}, #{gdsUnit},
-	        #{gdsRegAdmCd}, #{gdsRegYmdt}
+	        #{gdsRegAdmCd}, #{gdsRegYmdt}, #{gdsStatus}
 	    )
 	</insert>
+
 	<update id="updateGoods" parameterType="AdminGoodsDTO">
 	/* 상품 수정 */
 		UPDATE goods
@@ -43,9 +57,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		    gds_period_quantity = #{gdsPeriodQuantity},
 		    gds_unit = #{gdsUnit},
 		    gds_mdfcn_adm_cd = #{gdsMdfcnAdmCd},
-		    gds_mdfcn_ymdt = #{gdsMdfcnYmdt}
+		    gds_mdfcn_ymdt = #{gdsMdfcnYmdt},
+		    gds_status = #{gdsStatus}
 		WHERE gds_cd = #{gdsCd}
 	</update>
+
 	<select id="selectAllGoods" resultType="outpolic.admin.goods.dto.AdminGoodsDTO">
 	/* 상품 조회 */
 		SELECT
@@ -58,10 +74,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		    gds_reg_adm_cd AS gdsRegAdmCd,
 		    gds_reg_ymdt AS gdsRegYmdt,
 		    gds_mdfcn_adm_cd AS gdsMdfcnAdmCd,
-		    gds_mdfcn_ymdt AS gdsMdfcnYmdt
+		    gds_mdfcn_ymdt AS gdsMdfcnYmdt,
+		    gds_status AS gdsStatus
 		FROM goods
-		ORDER BY gds_reg_ymdt DESC
-
+		ORDER BY gds_reg_ymdt ASC
+	</select>
+	
+	<select id="selectGoodsByCode" resultType="outpolic.admin.goods.dto.AdminGoodsDTO">
+	/* 상품 코드로 조회 */
+		SELECT
+		    gds_cd AS gdsCd,
+		    gds_nm AS gdsNm,
+		    gds_amt AS gdsAmt,
+		    gds_type AS gdsType,
+		    gds_period_quantity AS gdsPeriodQuantity,
+		    gds_unit AS gdsUnit,
+		    gds_reg_adm_cd AS gdsRegAdmCd,
+		    gds_reg_ymdt AS gdsRegYmdt,
+		    gds_mdfcn_adm_cd AS gdsMdfcnAdmCd,
+		    gds_mdfcn_ymdt AS gdsMdfcnYmdt,
+		    gds_status AS gdsStatus
+		FROM goods
+		WHERE gds_cd = #{gdsCd}
 	</select>
 	
 </mapper>
