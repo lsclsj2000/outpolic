@@ -33,8 +33,116 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="dt_mdfcn_ymdt" 		property="declarationTypeMdfcnYmdt"/>
 	</resultMap>
 	
+	<resultMap id="AdminDeclarationReasonMap" type="outpolic.admin.declaration.domain.AdminDeclaration">
+		<id 	column="dr_cd" 				property="drCode"/>
+		<result column="dt_cd" 				property="drDtCode"/>
+		<result column="dt_nm" 				property="drDtName"/>
+		<result column="dr_nm" 				property="drName"/>
+		<result column="dr_expln" 			property="drExpln"/>
+		<result column="stc_cd" 			property="drStcCode"/>
+		<result column="stc_nm" 			property="drStcName"/>
+		<result column="dr_reg_adm_cd" 		property="drRegAdmCode"/>
+		<result column="dr_reg_ymdt" 		property="drRegYmdt"/>
+		<result column="dr_mdfcn_adm_cd" 	property="drMdfcnAdmCode"/>
+		<result column="dr_mdfcn_ymdt" 		property="drMdfcnYmdt"/>
+	</resultMap>
+	
+	<resultMap id="AdminDeclarationResultCodeMap" type="outpolic.admin.declaration.domain.AdminDeclaration">
+		<id 	column="drc_cd" 			property="drcCode"/>
+		<result column="drc_nm" 			property="drcName"/>
+		<result column="drc_expln" 			property="drcExpln"/>
+		<result column="stc_cd" 			property="drcStcCode"/>
+		<result column="stc_nm" 			property="drcStcName"/>
+		<result column="drc_reg_adm_cd" 	property="drcRegAdmCode"/>
+		<result column="drc_reg_ymdt" 		property="drcRegYmdt"/>
+		<result column="drc_mdfcn_adm_cd" 	property="drcMdfcnAdmCode"/>
+		<result column="drc_mdfcn_ymdt" 	property="drcMdfcnYmdt"/>
+	</resultMap>
+	
+    <insert id="insertDeclarationType" parameterType="outpolic.admin.declaration.domain.AdminDeclaration">
+    	/* 신고 타입 등록 */
+        INSERT INTO declaration_type (
+            dt_cd, dt_nm, dt_expln, stc_cd, dt_reg_adm_cd, dt_reg_ymdt
+        ) VALUES (
+            #{declarationTypeCode}, #{declarationTypeName}, #{declarationTypeExpln},
+            #{declarationTypeStcCode}, #{declarationTypeRegAdmCode}, NOW()
+        )
+    </insert>
+
+    <insert id="insertDeclarationReason" parameterType="outpolic.admin.declaration.domain.AdminDeclaration">
+    	<selectKey keyColumn="newCode" keyProperty="declarationReasonCode" resultType="String" order="BEFORE">
+			/* 자동 코드 생성 */
+			SELECT
+				CASE
+					WHEN COUNT(*) = 0 THEN 'DR_C1'
+				ELSE 		
+			  		CONCAT('DR_C', MAX(CAST(SUBSTRING_INDEX(dr.dr_cd, 'DR_C', -1) AS UNSIGNED)) + 1)
+					END AS newCode
+			FROM
+			  declaration_reason dr;
+		</selectKey>
+    	/* 신고 사유 등록 */
+        INSERT INTO declaration_reason (
+            dr_cd, dt_cd, dr_nm, dr_expln, stc_cd, dr_reg_adm_cd, dr_reg_ymdt
+        ) VALUES (
+            #{declarationReasonCode}, #{drDtCode}, #{declarationReasonName},
+            #{drExpln}, #{drStcCode}, #{drRegAdmCode}, NOW()
+        )
+    </insert>
+
+    <insert id="insertDeclarationResult" parameterType="outpolic.admin.declaration.domain.AdminDeclaration">
+    	/* 신고 처리 결과 등록 */
+        INSERT INTO declaration_result_code (
+            drc_cd, drc_nm, drc_expln, stc_cd, drc_reg_adm_cd, drc_reg_ymdt
+        ) VALUES (
+            #{declarationResultCode}, #{declarationResultName}, #{drcExpln},
+            #{drcStcCode}, #{drcRegAdmCode}, NOW()
+        )
+    </insert>
+	
+	<select id="getAdminDeclarationResultList" resultMap="AdminDeclarationResultCodeMap">
+		/* 신고 처리 결과 자원 조회 */
+		select
+			drc.drc_cd as drc_cd,
+			drc.drc_nm as drc_nm,
+			drc.drc_expln as drc_expln,
+			drc.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			drc.drc_reg_adm_cd as drc_reg_adm_cd,
+			drc.drc_reg_ymdt as drc_reg_ymdt,
+			drc.drc_mdfcn_adm_cd as drc_mdfcn_adm_cd,
+			drc.drc_mdfcn_ymdt as drc_mdfcn_ymdt
+		from
+			declaration_result_code drc 
+			left join status_code sc on drc.stc_cd = sc.stc_cd
+		order by
+			drc.drc_reg_ymdt;
+	</select>
+	
+	<select id="getAdminDeclarationReasonList" resultMap="AdminDeclarationReasonMap">
+		/* 신고 사유 자원 조회 */
+		select
+			dr.dr_cd as dr_cd,
+			dr.dt_cd as dt_cd,
+			dt.dt_nm as dt_nm,
+			dr.dr_nm as dr_nm,
+			dr.dr_expln as dr_expln,
+			dr.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			dr.dr_reg_adm_cd as dr_reg_adm_cd,
+			dr.dr_reg_ymdt as dr_reg_ymdt,
+			dr.dr_mdfcn_adm_cd as dr_mdfcn_adm_cd,
+			dr.dr_mdfcn_ymdt as dr_mdfcn_ymdt
+		from
+			declaration_reason dr 
+			left join declaration_type dt on dr.dt_cd = dt.dt_cd
+			left join status_code sc on dr.stc_cd = sc.stc_cd
+		order by
+			dr_reg_ymdt;
+	</select>
+	
 	<select id="getAdminDeclarationTypeList" resultMap="AdminDeclarationTypeMap">
-		/* 신고 타입 내역 조회 */
+		/* 신고 타입 자원 조회 */
 		select
 			dt.dt_cd as dt_cd,
 			dt.dt_nm as dt_nm,

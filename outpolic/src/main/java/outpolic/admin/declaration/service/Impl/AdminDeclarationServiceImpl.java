@@ -33,4 +33,37 @@ public class AdminDeclarationServiceImpl implements AdminDeclarationService {
 		
 		return adminDeclarationList;
 	}
+
+	@Override
+	public List<AdminDeclaration> getAdminDeclarationReasonList() {
+		// 신고 사유 자원 조회
+		List<AdminDeclaration> adminDeclarationReasonList  = adminDeclarationMapper.getAdminDeclarationReasonList();
+		return adminDeclarationReasonList;
+	}
+
+	@Override
+	public List<AdminDeclaration> getAdminDeclarationResultList() {
+		// 신고 처리 결과 자원 조회
+		List<AdminDeclaration> adminDeclarationResultList  = adminDeclarationMapper.getAdminDeclarationResultList();
+		return adminDeclarationResultList;
+	}
+	
+	@Override
+    public void insertDeclarationType(AdminDeclaration declaration) {
+		// 신고 타입 등록
+		adminDeclarationMapper.insertDeclarationType(declaration);
+    }
+
+    @Override
+    public void insertDeclarationReason(AdminDeclaration declaration) {
+    	// 신고 사유 등록
+    	adminDeclarationMapper.insertDeclarationReason(declaration);
+    }
+
+    @Override
+    public void insertDeclarationResult(AdminDeclaration declaration) {
+    	// 신고처리결과 등록
+    	adminDeclarationMapper.insertDeclarationResult(declaration);
+    }
+	
 }
