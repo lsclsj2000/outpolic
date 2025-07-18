@@ -35,9 +35,6 @@
         <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
     
-    <!-- ========================================================================= -->
-    <!-- ✨✨ 2. 공용으로 사용할 찜하기 SQL 조각 정의 ✨✨ -->
-    <!-- ========================================================================= -->
     <sql id="bookmarkJoinSql">
         LEFT JOIN bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
     </sql>

@@ -10,8 +10,8 @@
     </select>
 
     <insert id="insertBookmark" parameterType="outpolic.enter.search.domain.EnterBookmark">
-        INSERT INTO bookmark (bm_cd, mbr_cd, cl_cd)
-        VALUES (#{bmCd}, #{mbrCd}, #{clCd})
+        INSERT INTO bookmark (bm_cd, mbr_cd, cl_cd,bm_reg_ymdt)
+        VALUES (#{bmCd}, #{mbrCd}, #{clCd},now())
     </insert>
 
     <delete id="deleteBookmark">

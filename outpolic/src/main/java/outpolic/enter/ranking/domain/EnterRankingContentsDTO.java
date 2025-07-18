@@ -14,7 +14,9 @@ public class EnterRankingContentsDTO {
 	private String ctgryName;
 	private String osTtl;
 	private String osExpln;
+	private String clCd;
 	private BigDecimal reviewScore;
 	private int osAtm;
+	private boolean isBookmarked;
 	
 }
