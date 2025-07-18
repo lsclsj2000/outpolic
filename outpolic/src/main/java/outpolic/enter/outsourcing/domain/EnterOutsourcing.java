@@ -66,4 +66,12 @@ public class EnterOutsourcing {
     private String clCd;
     
     private String osThumbnailUrl;
+    
+    // ssy 마이페이지용 data들
+
+    // 완료된 외주 코드
+    private String oscId;
+    
+    // 외주 신청/요청 상태코드
+    private String stcCd1;
 }

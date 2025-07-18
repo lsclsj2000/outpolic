@@ -34,4 +34,7 @@ public interface UserMypageEditMapper {
 	 
 	 // 리뷰 외주 연결 dto
 	 List<OutsourcingReviewDTO> selectUserReviewList(String memberCode);
+	 
+	 // 완료된 외주 수 가져오기
+	 int selectUserEndedOsByCode(String memberCode);
 }

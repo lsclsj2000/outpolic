@@ -23,4 +23,7 @@ public interface UserMypageEditService {
 	ReviewDTO getUserReviewByCode(String memberCode);
 	
 	List<OutsourcingReviewDTO> getOutsourcingReviewList(String memberCode);
+	
+	 // 완료된 외주 수 가져오기
+	 int selectUserEndedOsByCode(String memberCode);
 }

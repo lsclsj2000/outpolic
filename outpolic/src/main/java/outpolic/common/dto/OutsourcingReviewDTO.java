@@ -7,6 +7,7 @@ public class OutsourcingReviewDTO {
 	  // outsourcing_contract
     private String ospCd;
     private String mbrCd;
+    private String stcCd;
 
     // outsourcing_prograss
     private String ocdCd;

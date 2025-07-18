@@ -65,6 +65,11 @@ public class UserMypageEditServiceImpl implements UserMypageEditService {
 		 return userMypageEditMapper.selectUserReviewList(memberCode);
 	}
 
+	@Override
+	public int selectUserEndedOsByCode(String memberCode) {
+		return userMypageEditMapper.selectUserEndedOsByCode(memberCode);
+	}
+
 
 
 }

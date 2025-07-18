@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import outpolic.common.dto.OutsourcingReviewDTO;
 import outpolic.enter.mypage.dto.CorpInfo;
 import outpolic.enter.mypage.dto.EnterInfo;
+import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.user.mypage.dto.UserInfoDTO;
 
 @Service
@@ -32,6 +34,17 @@ public interface EnterMypageService {
 	List<OutsourcingReviewDTO> getOutsourcingReviewList(String memberCode);
 	
 	// 특정 기업 외주글 조회
+	List<EnterOutsourcing> EnterOsSelectByCode(String mbrCd);
+	
+	//특정기업 완료된 외주 수 조회
+	int EnterEndedOsSelectByCode(String mbrCd);
 	
 	// 특정 기업 포폴글 조회
+	List<EnterPortfolio> EnterPfSelectByCode(String mbrCd);
+	
+	//회원코드 기준 받은 외주 요청 수 불러오기
+	int EnterIncomingOsByCode(String mbrCd);
+	
+	// 회원코드 기준 진행중 외주 수 불러오기
+	int EnterOsIngSelectByCode(String memberCode);
 }
