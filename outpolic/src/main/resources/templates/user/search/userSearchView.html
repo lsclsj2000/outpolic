@@ -22,6 +22,23 @@
 	            max-height: 85vh;
 	            overflow-y: auto;
 	        }
+	        .slick-prev, .slick-next{
+			display : none !important;
+			}
+			.product-action-1 .action-btn i.fi-rs-heart.active {
+			    color: #F15412; /* 찜 했을 때의 색상 (주황색 계열) */
+			    font-weight: 900; /* 채워진 아이콘처럼 보이도록 폰트 굵게 */
+			}
+			/* .fi-rs-heart 아이콘에 .active 클래스가 추가되었을 때 적용될 스타일 */
+			.fi-rs-heart.active {
+			    color: #F15B5B; /* 하트 아이콘을 빨간색 계열로 변경 */
+			    font-weight: 900;  /* 폰트 아이콘의 경우, 굵기를 주면 채워진 모양으로 보이기도 합니다. */
+			}
+			
+			/* 기존 버튼 스타일과 어울리도록 active 상태일 때의 버튼 스타일도 정의할 수 있습니다. */
+			.bookmark-btn .fi-rs-heart.active {
+			    color: #F15B5B !important; /* 다른 스타일에 의해 덮어쓰이지 않도록 우선순위 부여 */
+			}
 	    </style>
 	</th:block>
 	<th:block layout:fragment="jsScript">

@@ -108,8 +108,8 @@
 	    <result column="content_body"       property="contentsBody"/>
 	    <result column="price"              property="price"/>
 	    <result column="cl_cd" 				property="clCd"/>
-	    <result column="prtf_period_start" 	property="participation_start_date"/>
-	    <result column="prtf_period_end" 	property="participation_end_date"/>
+	    <result column="prtf_period_start" 	property="participationStartDate"/>
+	    <result column="prtf_period_end" 	property="participationEndDate"/>
 	    <result column="prtf_client" 		property="client"/>
 	    <result column="prtf_industry" 		property="industry"/>
 	    <result column="isBookmarked"       property="isBookmarked"/>
@@ -141,10 +141,11 @@
 	        0                       AS price,
 	        cl.cl_cd,
 	        -- [수정] 추가된 컬럼 조회
-	        p.prtf_period_start     AS participation_start_date,
-	        p.prtf_period_end       AS participation_end_date,
-	        p.prtf_client           AS client,
-	        p.prtf_industry         AS industry
+	        p.prtf_period_start,
+	        p.prtf_period_end,
+	        p.prtf_client,
+	        p.prtf_industry
+	        
 	        <include refid="modalIsBookmarkedSelectSql"/>
 	
 	    FROM
