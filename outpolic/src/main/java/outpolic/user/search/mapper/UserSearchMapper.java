@@ -2,6 +2,7 @@ package outpolic.user.search.mapper;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
@@ -21,7 +22,7 @@ public interface UserSearchMapper {
 	List<UserContents> getContentsList(@Param("keyword") String keyword);
 	
 	// 콘텐츠 상세정보 
-	UserContentsDetailDTO getContentsDetailById(String contentsId);
+	UserContentsDetailDTO getContentsDetailById(Map<String, Object> params);
 	
 	List<UserContentItemDTO> findContentsByCategoryId(String categoryId);
 }

@@ -1,6 +1,8 @@
 package outpolic.user.ranking.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,16 +19,20 @@ public class UserRankingServiceImpl implements UserRankingService{
 	 @Autowired 
 	 private UserRankingMapper userRankingMapper;
 	  
-	 public List<UserRankingContentsDTO> getRankingContentsList() {
+	 public List<UserRankingContentsDTO> getRankingContentsList(String userId) {
+		 Map<String, Object> params = new HashMap<>();
+	     params.put("userId", userId);
 	 
-		 return userRankingMapper.getUserRankingOsContents(); 
+		 return userRankingMapper.getUserRankingOsContents(params); 
 	 }
 	 
 	 
 	 
-	 @Override public List<UserPortfolioRankingContentsDTO> getUserRankingPoContents() { 
+	 @Override public List<UserPortfolioRankingContentsDTO> getUserRankingPoContents(String userId) { 
+		 Map<String, Object> params = new HashMap<>();
+	     params.put("userId", userId);
 		 
-		 return userRankingMapper.getUserRankingPoContents(); 
+		 return userRankingMapper.getUserRankingPoContents(params); 
 	 }
 
 }

@@ -12,7 +12,7 @@ public interface UserSearchService {
 	List<UserContents> getContentsList(String keyword);
 	
 	// 검색된 콘텐츠의 상세정보 
-	UserContentsDetailDTO getContentsDetailById(String contentsId);
+	UserContentsDetailDTO getContentsDetailById(String contentsId, String userId);
 	
 	List<UserContentItemDTO> findContentsByCategoryId(String categoryId);
 }
