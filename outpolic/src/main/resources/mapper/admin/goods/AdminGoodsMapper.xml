@@ -49,12 +49,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<update id="updateGoods" parameterType="AdminGoodsDTO">
 	/* 상품 수정 */
+
 		UPDATE
 			goods
 		SET 
 			gds_status = #{gdsStatus}
 		WHERE
 			gds_cd = #{gdsCd}
+
 	</update>
 
 	<select id="selectAllGoods" resultType="outpolic.admin.goods.dto.AdminGoodsDTO">

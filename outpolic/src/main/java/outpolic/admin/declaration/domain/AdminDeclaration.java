@@ -28,4 +28,26 @@ public class AdminDeclaration {
 	private String declarationTypeMdfcnAdmCode;
 	private String declarationTypeMdfcnYmdt;
 	
+	private String drCode;
+	private String drDtCode;
+	private String drDtName;
+	private String drName;
+	private String drExpln;
+	private String drStcCode;
+	private String drStcName;
+	private String drRegAdmCode;
+	private String drRegYmdt;
+	private String drMdfcnAdmCode;
+	private String drMdfcnYmdt;
+	
+	private String drcCode;
+	private String drcName;
+	private String drcExpln;
+	private String drcStcCode;
+	private String drcStcName;
+	private String drcRegAdmCode;
+	private String drcRegYmdt;
+	private String drcMdfcnAdmCode;
+	private String drcMdfcnYmdt;
+	
 }

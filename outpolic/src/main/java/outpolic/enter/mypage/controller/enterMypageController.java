@@ -20,6 +20,8 @@ import outpolic.enter.inquiry.service.EnterInquiryService;
 import outpolic.enter.mypage.dto.CorpInfo;
 import outpolic.enter.mypage.dto.EnterInfo;
 import outpolic.enter.mypage.service.EnterMypageService;
+import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.portfolio.domain.EnterPortfolio;
 
 @Controller
 @RequiredArgsConstructor
@@ -50,10 +52,28 @@ public class enterMypageController {
  	    
  	    //문의
  	    List<EnterInquiry> inquiryList = enterInquiryService.getEnterInquiryListByCode(memberCode);
- 	    
  	    model.addAttribute("title", "문의 내역");
 		model.addAttribute("inquiryList", inquiryList);
 		
+		//외주글
+		List<EnterOutsourcing> outsourcingList = enterMypageService.EnterOsSelectByCode(memberCode);
+		model.addAttribute("outsourcingList",outsourcingList);
+		
+		//완료 외주 수
+		int endedOs = enterMypageService.EnterEndedOsSelectByCode(memberCode);
+		model.addAttribute("endedOs", endedOs);
+		
+		// 작성한 포트폴리오 글 
+		List<EnterPortfolio> portfolioList = enterMypageService.EnterPfSelectByCode(memberCode);
+		model.addAttribute("portfolioList", portfolioList);
+		
+		// 받은 외주 요청 수(읽기전만)
+		int incomeOs = enterMypageService.EnterIncomingOsByCode(memberCode);
+		model.addAttribute("incomeOs", incomeOs);
+		
+		//진행중 외주 수 조회
+		int ingOs = enterMypageService.EnterOsIngSelectByCode(memberCode);
+		model.addAttribute("ingOs", ingOs);
 		
     	return "enter/mypage/enterMypageView";
     }
