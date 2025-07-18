@@ -42,6 +42,7 @@
 	        category c on cm.ctgry_id = c.ctgry_id
 	    WHERE
 	        cl.cl_cd LIKE 'LIST_PO_%'
+	        AND p.stc_cd = 'SD_ACTIVE'
 	    GROUP BY
     		p.prtf_cd, p.prtf_ttl, e.ent_nm, p.prtf_reg_ymdt, cl.cl_cd
 	
@@ -78,6 +79,7 @@
 		    review r2 ON oc.osc_id = r2.osc_id
 	    WHERE
 	        cl.cl_cd LIKE 'LIST_OS_%'
+	        AND o.stc_cd = 'SD_ACTIVE'
 	    GROUP BY
 	        o.os_cd, o.os_ttl, e.ent_nm, o.os_reg_ymdt, cl.cl_cd, c.ctgry_nm, o.os_amt
 	    )
@@ -185,6 +187,7 @@
 	        outsourcing o
 	    LEFT JOIN -- 기업 정보가 없을 수도 있으니 LEFT JOIN이 더 안전
 	        enterprise e ON o.ent_cd = e.ent_cd
+	        
 	    left join 
 	    	content_list cl
 	    	on o.os_cd = cl.cntd_cd
@@ -222,6 +225,7 @@
 	    	bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
 	    WHERE
 	        o.ctgry_id LIKE CONCAT(#{categoryId}, '%')
+	    	AND o.stc_cd = 'SD_ACTIVE'
 	    ORDER BY
 	        o.os_reg_ymdt DESC
 	</select>
