@@ -3,7 +3,9 @@ package outpolic.admin.statistics.service.impl;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -44,9 +46,19 @@ public class AdminSearchStatisticsServiceImpl implements AdminSearchStatisticsSe
         System.out.println("집계 완료: " + nextStCd + " (" + frYmd + " ~ " + toYmd + ")");
     }
 
-	@Override
-	public List<AdminSearchStatisticsDTO> getWeeklySearchStatistics(String targetDate) {
-		return adminSearchStatisticsMapper.findWeeklySearchStatisticsByDate(targetDate);
-	}
+    @Override
+    public List<AdminSearchStatisticsDTO> getWeeklySearchStatistics(String startDate, String endDate, String type, int minCount) {
+        
+        // ★★ 1. Controller로부터 받은 파라미터를 담을 Map 객체를 생성합니다. ★★
+        Map<String, Object> params = new HashMap<>();
+        params.put("startDate", startDate);
+        params.put("endDate", endDate);
+        params.put("type", type);
+        params.put("minCount", minCount);
+
+        // ★★ 2. 새로 만든 findStatisticsByPeriod 메소드를 호출하고, 생성한 params를 전달합니다. ★★
+        //    (기존 findWeeklySearchStatisticsByDate는 더 이상 사용하지 않습니다)
+        return adminSearchStatisticsMapper.findStatisticsByPeriod(params);
+    }
 
 }

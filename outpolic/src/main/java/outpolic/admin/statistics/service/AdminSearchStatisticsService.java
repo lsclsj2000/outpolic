@@ -8,6 +8,6 @@ public interface AdminSearchStatisticsService {
 
 	void aggregateWeeklySearchTerms();
 	
-	List<AdminSearchStatisticsDTO> getWeeklySearchStatistics(String targetDate);
+	List<AdminSearchStatisticsDTO> getWeeklySearchStatistics(String startDate, String endDate, String type, int minCount);
 	
 }

@@ -35,16 +35,25 @@
     </insert>
 
     <!-- 조회 쿼리 (이전과 동일) -->
-    <select id="findWeeklySearchStatisticsByDate" resultType="outpolic.admin.statistics.domain.AdminSearchStatisticsDTO">
-        SELECT
-            st_term AS stTerm,
-            st_cnt  AS stCnt
-        FROM
-            search_terms
-        WHERE
-            #{targetDate} BETWEEN st_fr_ymd AND st_to_ymd
-        ORDER BY
-            st_cnt DESC
-        LIMIT 10
-    </select>
+    <select id="findStatisticsByPeriod" parameterType="map" resultType="outpolic.admin.statistics.domain.AdminSearchStatisticsDTO">
+	    SELECT
+	        sh_term AS stTerm,
+	        COUNT(*) AS stCnt
+	    FROM
+	        search_history -- ★★ 실제 검색 로그 테이블명으로 반드시 변경!! ★★
+	    <where>
+	        <!-- 'type' 파라미터가 'total'이 아닐 경우(기간 조회)에만 날짜 조건을 추가 -->
+	        <if test="type != 'total' and startDate != null and endDate != null and startDate != '' and endDate != ''">
+	            AND DATE(sh_ymdt) BETWEEN #{startDate} AND #{endDate} -- ★★ 실제 날짜 컬럼명으로 변경!! ★★
+	        </if>
+	    </where>
+	    GROUP BY
+	        sh_term
+	    -- 최소 검색 횟수 조건
+	    HAVING
+	        COUNT(*) >= #{minCount}
+	    ORDER BY
+	        stCnt DESC, stTerm ASC
+	    LIMIT 10
+	</select>
 </mapper>
