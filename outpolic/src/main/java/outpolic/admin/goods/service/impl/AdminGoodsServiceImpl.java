@@ -39,7 +39,7 @@ public class AdminGoodsServiceImpl implements AdminGoodsService {
 	 @Override
 	 public List<AdminGoodsDTO> getGoodsList() {
 		 List<AdminGoodsDTO> list = adminGoodsMapper.selectAllGoods();
-		 log.info("DTO {}", list);
+		 //log.info("DTO {}", list);	상품 데이터 조회되는지 로그 찍기
 		 
 		 return list;
 	 }
