@@ -113,6 +113,7 @@
 	    <result column="prtf_client" 		property="client"/>
 	    <result column="prtf_industry" 		property="industry"/>
 	    <result column="isBookmarked"       property="isBookmarked"/>
+	    <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/>
 	    
 	</resultMap>
 	<sql id="modalBookmarkJoinSql">
@@ -144,9 +145,12 @@
 	        p.prtf_period_start,
 	        p.prtf_period_end,
 	        p.prtf_client,
-	        p.prtf_industry
-	        
-	        <include refid="modalIsBookmarkedSelectSql"/>
+	        p.prtf_industry,
+	        p.prtf_thumbnail_url,
+	        NULL                   AS os_thumbnail_url,
+	        NULL                   AS osEndYmdt,
+	        NULL                   AS osFlfmtCnt
+        <include refid="modalIsBookmarkedSelectSql"/>
 	
 	    FROM
 	        portfolio p
@@ -180,8 +184,11 @@
 	        NULL                    AS prtf_period_start,
 	        NULL                    AS prtf_period_end,
 	        NULL                    AS prtf_client,
-	        NULL                    AS prtf_industry
-	        
+	        NULL                    AS prtf_industry,
+	         o.os_thumbnail_url,
+	         o.os_strt_ymdt          AS osStrtYmdt,
+            o.os_end_ymdt           AS osEndYmdt,
+            o.os_flfmt_cnt          AS osFlfmtCnt
 	        <include refid="modalIsBookmarkedSelectSql"/>
 	        
 	    FROM
