@@ -57,7 +57,7 @@ public class UserDeclarationServiceImpl implements UserDeclarationService{
 	@Override
 	public void addDeclarationWithAttachments(UserDeclaration declaration, MultipartFile[] attachments) {
 	    // 신고 등록
-	    declarationMapper.insertDeclaration(declaration);
+	    declarationMapper.insertDeclaration(declaration); // declCode는 여기서 채워집니다.
 
 	    // 첨부파일 업로드
 	    if (attachments != null && attachments.length > 0 && !attachments[0].isEmpty()) {
@@ -65,8 +65,10 @@ public class UserDeclarationServiceImpl implements UserDeclarationService{
 
 	        List<UserInquiryFile> fileList = new ArrayList<>();
 	        for (FileMetaData file : uploadedFiles) {
+	            String newSaCode = declarationMapper.generateNewSaCode();
+
 	            UserInquiryFile attach = new UserInquiryFile.Builder()
-	                .saCode(file.getFileIdx())
+	                .saCode(newSaCode)
 	                .saReferCode(declaration.getDeclCode())
 	                .saOrgnlName(file.getFileOriginalName())
 	                .saSrvrName(file.getFileNewName())

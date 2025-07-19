@@ -11,6 +11,9 @@ import outpolic.user.inquiry.domain.UserInquiryFile;
 @Mapper
 public interface UserDeclarationMapper {
 	
+	// 첨부파일 코드 생성
+	String generateNewSaCode(); 
+	
 	// 신고 등록
 	int insertDeclaration(UserDeclaration declaration);
 

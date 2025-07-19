@@ -34,7 +34,7 @@ public class UserDeclarationController {
 	        @RequestPart(value = "attachments", required = false) MultipartFile[] attachments,
 	        HttpSession session) {
 
-	    String mbrCd = (String) session.getAttribute("SID");
+	    String mbrCd = (String) session.getAttribute("SCD");
 	    if (mbrCd == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 	    }
