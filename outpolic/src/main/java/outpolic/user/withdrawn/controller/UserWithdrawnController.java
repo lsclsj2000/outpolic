@@ -1,5 +1,7 @@
 package outpolic.user.withdrawn.controller;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import outpolic.user.outsourcing.dto.UserOsInfoDTO;
+import outpolic.user.outsourcing.service.UserOutsourcingService;
 import outpolic.user.withdrawn.dto.UserWithdrawnDTO;
 import outpolic.user.withdrawn.mapper.UserWithdrawnMapper;
 import outpolic.user.withdrawn.service.UserWithdrawnService;
@@ -21,20 +25,22 @@ public class UserWithdrawnController {
 	private final UserWithdrawnService userWithdrawnService;
 	private final UserWithdrawnMapper userWithdrawnMapper;
 	private final PasswordEncoder passwordEncoder;
+	private final UserOutsourcingService userOutsourcingService;
 	
 	// 일반유저 회원탈퇴 페이지
 	@GetMapping("/user/withdrawn")
-	public String userWithdrawn(HttpSession session) {
+	public String userWithdrawn(HttpSession session, Model model) {
 		String memberCode = (String) session.getAttribute("SCD");
-		
+		List<UserOsInfoDTO> ingOs = userOutsourcingService.UserOsIngSelectByCode(memberCode);
+		int ingOsCount = (ingOs != null) ? ingOs.size() : 0;
+		model.addAttribute("ingOsCount", ingOsCount);
 		if(memberCode == null) {
-			return "redirect :/login";
+			return "redirect:/login";
 		}
 		return "user/withdrawn/userWithdrawnView";
 	}
 	
 	@PostMapping("/user/withdrawn")
-	@ResponseBody
 	public String userWithdrawClick(@RequestParam String memberPw,
 	                       @RequestParam(required = false) String wmRsn,
 	                       HttpSession session,
@@ -52,6 +58,13 @@ public class UserWithdrawnController {
 	    if (wmRsn == null || wmRsn.trim().isEmpty()) {
 	    	wmRsn = "사유 미입력";
 	    }
+	    
+	    List<UserOsInfoDTO> ingOsList = userOutsourcingService.UserOsIngSelectByCode(memberCode);
+	    if (ingOsList != null && !ingOsList.isEmpty()) {
+	        model.addAttribute("msg", "진행 중인 외주가 있어 탈퇴할 수 없습니다.");
+	        model.addAttribute("ingOsCount", ingOsList.size()); // 다시 넘겨줌
+	        return "user/withdrawn/userWithdrawnView"; 
+	        }
 	    
 	    userWithdrawnService.withdrawMember(memberCode, wmRsn);
 	    

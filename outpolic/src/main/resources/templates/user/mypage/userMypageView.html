@@ -24,8 +24,8 @@
 				            <div class="card h-100 border-primary shadow-sm" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">진행중인 외주</h5>
-				                    <p class="card-text fs-4 fw-bold" th:text="${ongoingCount != null ? ongoingCount : 0} + '건'">2건</p>
-				                    <p class="text-muted small mb-3">작업이 진행 중입니다. 상태를 확인해보세요! - 수정중</p>
+				                    <p class="card-text fs-4 fw-bold" th:classappend="${ingOs !=null} ? 'text-primary': ''" th:text="${ingOs != null ? ingOs.size() : 0} + '건'">2건</p>
+				                    <p class="text-muted small mb-3">작업이 진행 중입니다. 상태를 확인해보세요!</p>
 				                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
 				                </div>
 				            </div>
@@ -260,7 +260,23 @@
 	</th:block>
 	<th:block layout:fragment = "jsScript">
 		<script>
-
+			$(document).ready(function () {
+		        console.log("JS 로딩됨");
+		
+		        $(document).on('click', '#btnWithdrawn', function (e) {
+		            e.preventDefault();
+		
+		            const osCount = parseInt($(this).data('os-count'));
+		            console.log("진행중 외주 수:", osCount);
+		
+		            if (osCount > 0) {
+		                alert("진행 중인 외주가 있어 탈퇴할 수 없습니다.");
+		                window.location.href = "/user/mypage";
+		            } else {
+		                window.location.href = "/user/withdrawn";
+		            }
+		        });
+		    });
 		</script>
 	</th:block>
 </body>

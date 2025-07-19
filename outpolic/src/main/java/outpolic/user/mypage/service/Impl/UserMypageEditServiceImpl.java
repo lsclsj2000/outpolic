@@ -11,6 +11,7 @@ import outpolic.common.dto.OutsourcingReviewDTO;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.mapper.UserMypageEditMapper;
 import outpolic.user.mypage.service.UserMypageEditService;
+import outpolic.user.outsourcing.dto.UserOsInfoDTO;
 import outpolic.user.review.dto.ReviewDTO;
 
 @Slf4j
@@ -69,7 +70,6 @@ public class UserMypageEditServiceImpl implements UserMypageEditService {
 	public int selectUserEndedOsByCode(String memberCode) {
 		return userMypageEditMapper.selectUserEndedOsByCode(memberCode);
 	}
-
 
 
 }

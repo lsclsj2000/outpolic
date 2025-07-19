@@ -26,6 +26,7 @@
 	        </div>
 	
 	        <form id="withdrawForm" th:action="@{/user/withdrawn}" method="POST">
+	        <input type="hidden" id="osCountHidden" th:value="${ingOsCount}" />
 	            <div class="form-check mb-3">
 	                <input type="checkbox" class="form-check-input" id="agreeWithdraw">
 	                <label class="form-check-label" for="agreeWithdraw">
@@ -56,6 +57,7 @@
 				const agree = document.getElementById("agreeWithdraw");
 				const form = document.getElementById("withdrawForm");
 				const pw = document.getElementById("memberPw");
+			    const osCount = parseInt($('#osCountHidden').val());
 				
 				if (!agree.checked) {
 			        alert("탈퇴 약관에 동의해야 탈퇴가 가능합니다.");
@@ -66,6 +68,11 @@
 			        pw.focus();
 			        return;
 			    }
+        
+		        if (osCount > 0) {
+		            alert("진행 중인 외주가 있어 탈퇴할 수 없습니다.");
+		            return;
+		        }
 			    
 			    document.getElementById("withdrawForm").submit();
 			}
