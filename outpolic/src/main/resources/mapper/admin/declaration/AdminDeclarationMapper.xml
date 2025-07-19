@@ -11,7 +11,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="dt_cd" 				property="declarationTypeCode"/>
 		<result column="dt_nm" 				property="declarationTypeName"/>
 		<result column="dr_cd" 				property="declarationReasonCode"/>
-		<result column="dt_nm" 				property="declarationReasonName"/>
+		<result column="dr_nm" 				property="declarationReasonName"/>
 		<result column="mbr_cd" 			property="declarationMemberCode"/>
 		<result column="decl_target_cd" 	property="declarationTargetCode"/>
 		<result column="decl_reg_ymdt" 		property="declarationRegYmdt"/>
@@ -19,6 +19,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="stc_nm" 			property="declarationStcName"/>
 		<result column="drc_cd" 			property="declarationResultCode"/>
 		<result column="drc_nm" 			property="declarationResultName"/>
+
+		<result column="mbr_nm" 			property="declarationMemberName"/>
+		<result column="sa_cd" 				property="declarationSaCode"/>
+		<result column="sa_orgnl_nm" 		property="declarationSaOrgnlName"/>
+		<result column="sa_srvr_nm" 		property="declarationSaSrvrName"/>
+		<result column="sa_path" 			property="declarationSaPath"/>
+		<result column="decl_cn" 			property="declarationCn"/>
+		<result column="decl_mdfcn_adm_cd" 	property="declarationMdfcnAdmCode"/>
+		<result column="decl_mdfcn_ymdt" 	property="declarationMdfcnYmdt"/>
 	</resultMap>
 	
 	<resultMap id="AdminDeclarationTypeMap" type="outpolic.admin.declaration.domain.AdminDeclaration">
@@ -58,6 +67,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="drc_mdfcn_adm_cd" 	property="drcMdfcnAdmCode"/>
 		<result column="drc_mdfcn_ymdt" 	property="drcMdfcnYmdt"/>
 	</resultMap>
+	
+	<select id="getAdminDeclarationDetail" resultMap="AdminDeclarationResultMap">
+		/* 신고 수정 팝업 조회 */
+		select
+			d.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			d.decl_reg_ymdt as decl_reg_ymdt,
+			d.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			d.decl_cd as decl_cd,
+			d.dt_cd as dt_cd,
+			dt.dt_nm as dt_nm,
+			d.dr_cd as dr_cd,
+			dr.dr_nm as dr_nm,
+			sa.sa_cd as sa_cd,
+			sa.sa_orgnl_nm as sa_orgnl_nm,
+			sa.sa_srvr_nm as sa_srvr_nm,
+			sa.sa_path as sa_path,
+			d.decl_cn as decl_cn,
+			d.decl_mdfcn_adm_cd as decl_mdfcn_adm_cd,
+			d.decl_mdfcn_ymdt as decl_mdfcn_ymdt
+		from
+			declaration d
+			left join member m on d.mbr_cd = m.mbr_cd
+			left join declaration_type dt on d.dt_cd = dt.dt_cd
+			left join declaration_reason dr on d.dr_cd = dr.dr_cd
+			left join submission_attachment sa on sa.sa_refer_cd = d.decl_cd
+			left join status_code sc on d.stc_cd = sc.stc_cd;
+	</select>
 	
 	<select id="getDeclarationReasonByCode" resultMap="AdminDeclarationReasonMap">
 		/* 신고 사유 수정팝업창 조회 */

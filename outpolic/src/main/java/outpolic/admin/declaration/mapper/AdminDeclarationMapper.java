@@ -3,11 +3,15 @@ package outpolic.admin.declaration.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.repository.query.Param;
 
 import outpolic.admin.declaration.domain.AdminDeclaration;
 
 @Mapper
 public interface AdminDeclarationMapper {
+	
+	// 신고 수정팝업창 조회
+	AdminDeclaration getAdminDeclarationDetail(@Param("declarationCode") String declarationCode);
 	
 	// 신고 사유 수정팝업창 조회
 	AdminDeclaration getDeclarationReasonByCode(String code);

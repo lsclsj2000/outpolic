@@ -55,16 +55,6 @@
 	    )
 	</insert>
 	
-	<select id="generateNewSaCode" resultType="String">
-		/* 파일 코드 생성 */
-	    SELECT
-	        CASE
-	            WHEN COUNT(*) = 0 THEN 'SA_C1'
-	            ELSE CONCAT('SA_C', MAX(CAST(SUBSTRING_INDEX(sa_cd, 'SA_C', -1) AS UNSIGNED)) + 1)
-	        END
-	    FROM submission_attachment;
-	</select>
-	
 	<insert id="insertDeclarationAttachments" parameterType="java.util.List">
 	    INSERT INTO submission_attachment (
 	        sa_cd, sa_refer_cd, sa_orgnl_nm, sa_srvr_nm, sa_path, sa_extn, sa_size, mbr_cd, sa_reg_ymdt

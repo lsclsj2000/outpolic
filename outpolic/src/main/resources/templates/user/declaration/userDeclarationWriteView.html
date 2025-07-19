@@ -75,11 +75,11 @@
 					</div>
 				</div>
 	
-	            <div class="d-flex justify-content-end gap-2">
-	                <button type="button" class="SR_total_sky_btn">취소</button>
-	                <button type="submit" class="SR_total_blue_btn">제출</button>
-	            </div>
 	        </div>
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="SR_total_sky_btn">취소</button>
+                <button type="submit" class="btn SR_total_blue_btn">제출</button>
+            </div>
 	    </form>
 
         <div class="modal fade" id="searchTargetModal" tabindex="-1" aria-labelledby="searchTargetModalLabel" aria-hidden="true">
@@ -262,14 +262,17 @@
                         }
                         results.forEach(item => {
                             let id, name, type;
-                            if (item.prtfCode) {
-                                id = item.prtfCode; name = item.prtfTitle; type = item.prtfType;
-                            } else if (item.osCode) {
-                                id = item.osCode; name = item.osTitle; type = item.osType;
-                            } else if (item.entCode) {
-                                id = item.entCode; name = item.entTitle; type = item.entType;
-                            } else if (item.mbrCode) {
-                                id = item.mbrCode; name = item.mbrTitle; type = item.mbrType;
+                            if (selectedType === 'portfolio' && item.prtfCode) {
+                                id = item.prtfCode; name = item.prtfTitle; type = '포트폴리오';
+                            } else if (selectedType === 'outsourcing' && item.osCode) {
+                                id = item.osCode; name = item.osTitle; type = '외주';
+                            } else if (selectedType === 'enter' && item.entCode) {
+                                id = item.entCode; name = item.entName; type = '기업회원'; // 기업명으로 수정
+                            } else if (selectedType === 'user' && item.mbrCode) {
+                                id = item.mbrCode; name = item.mbrNick; type = '일반회원'; // 닉네임으로 수정
+                            } else {
+                                // 예상치 못한 데이터 형태일 경우 스킵
+                                return;
                             }
 
                             console.log(`모달: 항목 파싱 - id: ${id}, name: ${name}, type: ${type}`);
@@ -277,7 +280,7 @@
                             const a = document.createElement('a');
                             a.href = '#';
                             a.classList.add('list-group-item', 'list-group-item-action');
-                            a.textContent = name;
+                            a.textContent = `${name} (ID: ${id})`; // ID도 함께 표시
                             a.dataset.id = id;
                             a.dataset.name = name;
                             a.dataset.type = type;
@@ -294,11 +297,23 @@
                     });
             });
 
+            // --- 변경된 부분 시작 ---
+            // 신고 대상 검색 입력 필드에서 Enter 키를 눌렀을 때 검색 실행
+            targetSearchInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' || event.keyCode === 13) {
+                    event.preventDefault(); // 기본 Enter 동작(폼 제출 등) 방지
+                    if (!this.disabled) { // 입력 필드가 활성화된 상태일 때만 검색 실행
+                        searchTargetBtn.click(); // 검색 버튼 클릭 이벤트 발생
+                    }
+                }
+            });
+            // --- 변경된 부분 끝 ---
+
             // 모달 내 '선택' 버튼 클릭
             selectTargetBtn.addEventListener('click', function () {
                 console.log("모달: '선택' 버튼 클릭 시 selectedTarget 현재 상태:", selectedTarget);
                 if (selectedTarget && selectedTarget.id) {
-                    reportTargetInput.value = ` [${selectedTarget.type}] ${selectedTarget.name} (${selectedTarget.id})`;
+                    reportTargetInput.value = `[${selectedTarget.type}] ${selectedTarget.name} (${selectedTarget.id})`;
                     console.log("모달: 최종 선택 버튼 클릭 - reportTargetInput 값 설정됨:", reportTargetInput.value);
                     const modal = bootstrap.Modal.getInstance(document.getElementById('searchTargetModal'));
                     if (modal) modal.hide();
@@ -334,16 +349,45 @@
                     return;
                 }
                 attachedFiles.forEach((fileData, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'SR_selected-file-item';
-                    div.innerHTML = `<div class="SR_file-info">${fileData.file.name}</div>
-                                     <button type="button" class="SR_remove-file" data-index="${index}">&times;</button>`;
-                    fileListContainer.appendChild(div);
+                    const file = fileData.file;
+                    const previewURL = fileData.previewURL;
+
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'SR_selected-file-item';
+
+                    let previewHtml = '';
+                    if (previewURL) {
+                        previewHtml = `<img src="${previewURL}" alt="File preview" class="SR_file-preview-img">`;
+                    } else {
+                        previewHtml = `
+                            <div class="SR_file-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        `;
+                    }
+
+                    fileDiv.innerHTML = `
+                        <div class="SR_file-info">
+                            ${previewHtml}
+                            <span>${file.name} (${formatBytes(file.size)})</span>
+                        </div>
+                        <button type="button" class="SR_remove-file" data-index="${index}">&times;</button>
+                    `;
+                    fileListContainer.appendChild(fileDiv);
                 });
+
 
                 fileListContainer.querySelectorAll('.SR_remove-file').forEach(button => {
                     button.addEventListener('click', e => {
                         const index = parseInt(e.target.dataset.index);
+                        const fileRemoved = attachedFiles[index];
+
+                        if (fileRemoved.previewURL) {
+                            URL.revokeObjectURL(fileRemoved.previewURL); // 미리보기 URL 해제
+                        }
+
                         attachedFiles.splice(index, 1);
                         renderSelectedFiles();
                     });
@@ -353,6 +397,11 @@
             attachCheckbox.addEventListener('change', () => {
                 inputArea.classList.toggle('SR_active', attachCheckbox.checked);
                 if (!attachCheckbox.checked) {
+                    attachedFiles.forEach(fileData => {
+                        if (fileData.previewURL) {
+                            URL.revokeObjectURL(fileData.previewURL);
+                        }
+                    });
                     attachedFiles = [];
                     renderSelectedFiles();
                 }
@@ -371,11 +420,57 @@
             inputField.addEventListener('change', e => handleFiles(e.target.files));
 
             function handleFiles(files) {
+                if (files.length === 0) {
+                    return;
+                }
+                // 기존 파일 목록 초기화 (여러 파일 선택 시 매번 새로 렌더링)
+                attachedFiles = [];
                 [...files].forEach(file => {
-                    attachedFiles.push({ file });
+                    const maxSize = 10 * 1024 * 1024; // 10MB
+                    const allowedTypes = [
+                        'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', // 이미지
+                        'application/pdf',                                                        // PDF
+                        'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // Word (.doc, .docx)
+                        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // Excel (.xls, .xlsx)
+                        'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PowerPoint (.ppt, .pptx)
+                        'text/plain', 'text/csv',                                                        // 텍스트, CSV
+                        'application/zip', 'application/x-rar-compressed', 'application/x-7z-compressed' // 압축 파일
+                    ];
+
+                    if (file.size > maxSize) {
+                        alert(`${file.name}은(는) 10MB를 초과합니다.`);
+                        return; // 다음 파일로 넘어감
+                    }
+
+                    if (!allowedTypes.includes(file.type)) {
+                        alert(`${file.name}은(는) 허용되지 않은 파일 형식입니다. (허용: JPG, PNG, GIF, BMP, WEBP, PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, CSV, ZIP, RAR, 7Z)`);
+                        return; // 다음 파일로 넘어감
+                    }
+
+                    const fileData = {
+                        file: file,
+                        previewURL: null
+                    };
+
+                    if (file.type.startsWith('image/')) {
+                        fileData.previewURL = URL.createObjectURL(file);
+                    }
+
+                    attachedFiles.push(fileData);
                 });
                 renderSelectedFiles();
             }
+
+            // 바이트 단위를 읽기 쉬운 형태로 변환
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+
 
             // 폼 제출 처리
             declarationForm.addEventListener('submit', function (e) {
@@ -386,7 +481,7 @@
                 const dtCd = reportTypeSelect.value;
                 const drCd = reportReasonSelect.value;
                 const declTargetCd = selectedTarget?.id;
-                		
+
                 console.log("제출 직전: dtCd:", dtCd);
                 console.log("제출 직전: drCd:", drCd);
                 console.log("제출 직전: declTargetCd:", declTargetCd);
@@ -436,6 +531,9 @@
                     history.back();
                 }
             });
+
+            // 초기 파일 목록 렌더링 호출
+            renderSelectedFiles();
         });
         </script>
     </th:block>

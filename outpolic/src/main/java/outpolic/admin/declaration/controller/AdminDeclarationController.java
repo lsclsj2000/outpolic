@@ -26,6 +26,15 @@ public class AdminDeclarationController {
 	private final AdminDeclarationService adminDeclarationService;
 	
 	
+	@GetMapping("/adminDeclarationDetail")
+	@ResponseBody
+	public AdminDeclaration adminDeclarationDetail(@RequestParam("declarationCode") String declarationCode) {
+		// 신고 상세 수정 팝업창에 데이터 로드
+		AdminDeclaration adminDeclaration = adminDeclarationService.getAdminDeclarationDetail(declarationCode);
+		return adminDeclaration;
+	}
+	
+	
 	@GetMapping("/getDeclarationReason")
 	@ResponseBody
 	public AdminDeclaration getDeclarationReason(@RequestParam("code") String code) {

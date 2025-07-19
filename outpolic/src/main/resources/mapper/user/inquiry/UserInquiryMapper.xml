@@ -82,16 +82,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{saCode}, #{saReferCode}, #{saOrgnlName}, #{saSrvrName}, #{saPath}, #{saExtn}, #{saSize}, #{mbrCode}, NOW() 
 		)
 	</insert>
-	
-	<select id="generateNewSaCode" resultType="String">
-		/* 파일 코드 생성 */
-	    SELECT
-	        CASE
-	            WHEN COUNT(*) = 0 THEN 'SA_C1'
-	            ELSE CONCAT('SA_C', MAX(CAST(SUBSTRING_INDEX(sa_cd, 'SA_C', -1) AS UNSIGNED)) + 1)
-	        END
-	    FROM submission_attachment;
-	</select>
 
 	<!-- 다중 문의첨부파일 업로드 -->
 	<insert id="addUserInquiryFiles" parameterType="java.util.List">

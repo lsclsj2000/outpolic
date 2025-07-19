@@ -109,7 +109,7 @@
 								    <td scope="col" class="text-center" th:switch="${d.declarationStcName}">
 	                                	<span th:case="${'처리완료'}" class="badge rounded-pill alert-success">처리완료</span>
 	                                	<span th:case="${'처리중'}" class="badge rounded-pill alert-info">처리중</span>
-	                                	<span th:case="${'확인전'}" class="badge rounded-pill alert-warning">확인전</span>
+	                                	<span th:case="${'요청중'}" class="badge rounded-pill alert-warning">요청중</span>
 	                                </td>
 	                                <td scope="col" class="text-center" th:text="${d.declarationResultName}">처리결과</td>
 								    <td scope="col" class="text-center">
@@ -127,17 +127,19 @@
 		<div id="declarationModal" class="SR_modal">
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
-					<h2>신고 처리</h2>
+					<h2>신고 내역 수정</h2>
 					<button class="SR_close-button">&times;</button>
 				</div>
                 <div class="SR_popup-info">
                     <div class="SR_writer-info">
-                        <span id="SR_writerCode">신고자 코드</span> | <span id="SR_writerName">신고자명</span> | <span id="SR_writeDate">신고일자</span>
+                    	<span>작성자 : </span>
+                        <span id="SR_writerCode">작성자 코드</span> | <span id="SR_writerName">작성자명</span>
+                        <p></p>
+                        <span>작성일자 : </span><span id="SR_writeDate">작성일자</span>
                     </div>
                     <select id="inquiryStatusEdit" name="status" class="SR_form-control SR_status-dropdown">
-                        <option value="CONFIRMED">확인전</option>
-                        <option value="PROCESSING">처리중</option>
-                        <option value="COMPLETED">처리완료</option>
+                        <option value="SD_BEFORE">요청중</option>
+                        <option value="SD_PROCESS_ING">처리중</option>
                     </select>
                 </div>
 
@@ -148,14 +150,18 @@
                             <input type="text" id="inquiryCodeDisplay" name="inquiryCode" class="SR_form-control" readonly>
                         </div>
                         <div class="SR_input-half">
-                            <label for="inquiryTitleEdit">신고대상</label>
+                            <label for="inquiryTitleEdit">제목</label>
                             <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
                         </div>
 					</div>
 
                     <div class="SR_form-group">
                         <div class="SR_input-half">
-                            <label for="inquiryTypeCodeDisplay">신고타입</label>
+                            <label for="inquiryTypeCodeDisplay">신고타입 코드</label>
+                            <input type="text" id="inquiryTypeCodeDisplay" name="inquiryTypeCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label for="inquiryTypeEdit">신고타입 이름</label>
                             <select id="inquiryTypeEdit" name="inquiryType" class="SR_form-control">
                                 <option value="1">상품 문의</option>
                                 <option value="2">배송 문의</option>
@@ -163,8 +169,15 @@
                                 <option value="4">기타</option>
                             </select>
                         </div>
+					</div>
+					
+					<div class="SR_form-group">
                         <div class="SR_input-half">
-                            <label for="inquiryTypeEdit">신고사유</label>
+                            <label for="inquiryTypeCodeDisplay">신고사유 코드</label>
+                            <input type="text" id="inquiryTypeCodeDisplay" name="inquiryTypeCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label for="inquiryTypeEdit">신고사유 이름</label>
                             <select id="inquiryTypeEdit" name="inquiryType" class="SR_form-control">
                                 <option value="1">상품 문의</option>
                                 <option value="2">배송 문의</option>
@@ -189,9 +202,10 @@
                     
 					<div class="SR_popup-footer">
                         <div class="SR_update-info">
+                        	<span>수정정보 : </span>
                             <span id="SR_updaterName">수정자</span> | <span id="SR_updateDate">수정일시</span>
                         </div>
-						<button type="submit" id="saveButton" class="SR_btn-primary">저장</button>
+						<button type="submit" id="answerSaveButton" class="btn btn-md rounded font-sm">답변 저장</button>
 					</div>
 				</form>
 			</div>
