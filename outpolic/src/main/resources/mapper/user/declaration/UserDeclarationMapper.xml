@@ -4,22 +4,117 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="outpolic.user.declaration.mapper.UserDeclarationMapper">
-	<!-- UserInquiry.DTO -->
-	<resultMap id="userDeclarationResultMap" type="outpolic.user.declaration.domain.UserDeclaration">
+	<resultMap id="userDeclarationTypeMap" type="outpolic.user.declaration.domain.UserDeclaration">
 		<id 	column="dt_cd" 		property="dtCode"/>
-		
- 		<result column="dt_nm"	 	property="dtName"/>
+ 		<result column="dt_nm" 		property="dtName"/>
  		<result column="dt_expln" 	property="dtExpln"/>
- 		<result column="dr_cd" 		property="drCode"/>
- 		
+ 		<result column="stc_cd" 	property="dtStcCode"/>
+	</resultMap>
+	
+	<resultMap id="userDeclarationReasonMap" type="outpolic.user.declaration.domain.UserDeclaration">
+		<id 	column="dr_cd" 		property="drCode"/>
+ 		<result column="dt_cd" 		property="drDtCode"/>
  		<result column="dr_nm" 		property="drName"/>
  		<result column="dr_expln" 	property="drExpln"/>
- 		<result column="stc_cd" 	property="stcCode"/>
-		
+ 		<result column="stc_cd" 	property="drStcCode"/>
 	</resultMap>
-
 	
-	<select id="getActiveDeclarationTypes" resultMap="userDeclarationResultMap">
+	
+	<resultMap id="userDeclarationSearchMap" type="outpolic.user.declaration.domain.UserDeclaration">
+		<id 	column="prtf_cd" 	property="prtfCode"/>
+		<id 	column="os_cd" 		property="osCode"/>
+		<id 	column="ent_cd" 		property="entCode"/>
+		<id 	column="mbr_cd" 		property="mbrCode"/>
+ 		<result column="prtf_ttl" 	property="prtfTitle"/>
+ 		<result column="prtf_type" 	property="prtfType"/>
+ 		<result column="os_ttl" 	property="osTitle"/>
+ 		<result column="os_type" 	property="osType"/>	
+ 		<result column="ent_ttl" 	property="entTitle"/>
+ 		<result column="ent_type" 	property="entType"/>
+ 		<result column="mbr_ttl" 	property="mbrTitle"/>
+ 		<result column="mbr_type" 	property="mbrType"/>
+	</resultMap>
+	
+	<insert id="insertDeclaration" parameterType="outpolic.user.declaration.domain.UserDeclaration">
+	    <selectKey keyProperty="declCode" resultType="String" order="BEFORE">
+	        SELECT
+				CASE
+				    WHEN COUNT(*) = 0 THEN 'DECL_C1'
+					ELSE CONCAT('DECL_C', MAX(CAST(SUBSTRING_INDEX(decl_cd, 'DECL_C', -1) AS UNSIGNED)) + 1)
+				END
+				FROM declaration;
+	    </selectKey>
+	
+	    INSERT INTO declaration (
+	        decl_cd, mbr_cd, dt_cd, dr_cd, decl_target_cd, decl_cn, decl_reg_ymdt, stc_cd
+	    ) VALUES (
+	        #{declCode},      #{mbrCd},         #{dtCode},        #{drCode},        #{declTargetCd},
+	        #{declCn},
+	        NOW(),
+	        'SD_INQUIRY_ING'
+	    )
+	</insert>
+	
+	<insert id="insertDeclarationAttachments" parameterType="java.util.List">
+	    INSERT INTO submission_attachment (
+	        sa_cd, sa_refer_cd, sa_orgnl_nm, sa_srvr_nm, sa_path, sa_extn, sa_size, mbr_cd, sa_reg_ymdt
+	    )
+	    VALUES
+	    <foreach collection="list" item="file" separator=",">
+	        (
+	            #{file.saCode}, #{file.saReferCode}, #{file.saOrgnlName}, #{file.saSrvrName},
+	            #{file.saPath}, #{file.saExtn}, #{file.saSize}, #{file.mbrCode}, NOW()
+	        )
+	    </foreach>
+	</insert>
+	
+	<select id="searchPortfolio" resultMap="userDeclarationSearchMap">
+		/* 신고 대상 유형 검색 범위-포트폴리오 */
+       SELECT
+			prtf_cd AS prtf_cd,
+			CONCAT(prtf_ttl, ' [', ent_cd, ']') AS prtf_ttl,
+			'포트폴리오' AS prtf_type
+		FROM portfolio
+        WHERE prtf_ttl LIKE CONCAT('%', #{keyword}, '%')
+           OR prtf_cd LIKE CONCAT('%', #{keyword}, '%');
+    </select>
+
+    <select id="searchOutsourcing" resultMap="userDeclarationSearchMap">
+    	/* 신고 대상 유형 검색 범위-기업회원 */
+        SELECT
+			os_cd AS os_cd,
+			CONCAT(os_ttl, ' [', ent_cd, ']') AS os_ttl,
+			'외주' AS os_type
+		FROM outsourcing
+        WHERE os_ttl LIKE CONCAT('%', #{keyword}, '%')
+           OR os_cd LIKE CONCAT('%', #{keyword}, '%');
+    </select>
+    
+    <select id="searchEnterprise" resultMap="userDeclarationSearchMap">
+    	/* 신고 대상 유형 검색 범위-외주 */
+	    SELECT
+	        ent.ent_cd AS ent_cd,
+	        CONCAT(ent.ent_nm, ' (', m.mbr_nicknm, '/', m.mbr_nm, ')') AS ent_ttl,
+	        '기업회원' AS ent_type
+	    FROM enterprise ent
+	    JOIN member m ON ent.mbr_cd = m.mbr_cd
+	    WHERE ent.ent_nm LIKE CONCAT('%', #{keyword}, '%')
+	       OR m.mbr_nicknm LIKE CONCAT('%', #{keyword}, '%')
+	       OR m.mbr_nm LIKE CONCAT('%', #{keyword}, '%');
+	</select>
+	
+	<select id="searchGeneralMember" resultMap="userDeclarationSearchMap">
+		/* 신고 대상 유형 검색 범위-일반회원 */
+	    SELECT
+	        m.mbr_cd AS mbr_cd,
+	        CONCAT(m.mbr_nicknm, ' (', m.mbr_nm, ')') AS mbr_ttl,
+	        '일반회원' AS mbr_type
+	    FROM member m
+	    WHERE m.mbr_nicknm LIKE CONCAT('%', #{keyword}, '%')
+	       OR m.mbr_nm LIKE CONCAT('%', #{keyword}, '%');
+	</select>
+	
+	<select id="getActiveDeclarationTypes" resultMap="userDeclarationTypeMap">
 	    /* 신고 타입 드롭다운 조회 */
 	    SELECT
 			dt_cd,
@@ -29,10 +124,12 @@
 		FROM 
 			declaration_type
 		WHERE 
-			stc_cd = 'SD_ACTIVE';
+			stc_cd = 'SD_ACTIVE'
+		order by
+			dt_reg_ymdt;
 	</select>
 	
-	<select id="getDeclarationReasonsByType" resultMap="userDeclarationResultMap">
+	<select id="getDeclarationReasonsByType" resultMap="userDeclarationReasonMap">
 		/* 신고 사유 드롭다운 조회 */
 	    SELECT
 			dr_cd,
@@ -43,6 +140,8 @@
 		FROM 
 			declaration_reason
 	    WHERE 
-	    	dt_cd = #{dtCd} AND stc_cd = 'SD_ACTIVE';
+	    	dt_cd = #{dtCd} AND stc_cd = 'SD_ACTIVE'
+	    order by
+			dr_reg_ymdt;
 	</select>
 </mapper>
