@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import outpolic.common.dto.OutsourcingReviewDTO;
 import outpolic.user.mypage.dto.UserInfoDTO;
+import outpolic.user.outsourcing.dto.UserOsInfoDTO;
 import outpolic.user.review.dto.ReviewDTO;
 
 @Mapper
@@ -37,4 +38,5 @@ public interface UserMypageEditMapper {
 	 
 	 // 완료된 외주 수 가져오기
 	 int selectUserEndedOsByCode(String memberCode);
+
 }

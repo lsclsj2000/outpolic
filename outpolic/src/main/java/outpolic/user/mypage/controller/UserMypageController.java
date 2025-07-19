@@ -18,14 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import outpolic.common.domain.Member;
+import outpolic.common.dto.OutsourcingReviewDTO;
 import outpolic.user.inquiry.domain.UserInquiry;
 import outpolic.user.inquiry.service.UserInquiryService;
-import outpolic.user.login.mapper.UserLoginMapper;
-import outpolic.common.dto.OutsourcingReviewDTO;
 import outpolic.user.mypage.dto.UserInfoDTO;
 import outpolic.user.mypage.service.UserMypageEditService;
-import outpolic.user.review.dto.ReviewDTO;
+import outpolic.user.outsourcing.dto.UserOsInfoDTO;
+import outpolic.user.outsourcing.service.UserOutsourcingService;
 import outpolic.user.settlement.dto.UserSettlement;
 import outpolic.user.settlement.service.UserSettlementService;
 
@@ -36,6 +35,7 @@ public class UserMypageController {
 
 	private final PasswordEncoder passwordEncoder;
 	private final UserInquiryService userInquiryService;
+	private final UserOutsourcingService userOutsourcingService;
 	
 	// 결제내역 데이터를 가져오기 위함
 	@Autowired
@@ -72,6 +72,11 @@ public class UserMypageController {
 		// 완료 외주 수
 		int endedOs = userMypageEditService.selectUserEndedOsByCode(memberCode);
 		model.addAttribute("endedOs", endedOs);
+		
+		//진행 외주 
+		List<UserOsInfoDTO> ingOs = userOutsourcingService.UserOsIngSelectByCode(memberCode);
+		model.addAttribute("title", "진행중 외주");
+		model.addAttribute("ingOs", ingOs);
 		
  	    
  	   List<UserSettlement> settlementList = new ArrayList<>(); // 기본적으로 빈 리스트로 초기화

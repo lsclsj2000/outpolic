@@ -24,9 +24,6 @@ public class MypageDTO {
 	// user 개인정보 dto
 	private List<UserInfoDTO> userInfo;
 	
-	// user 외주 dto
-	private List<UserOsInfoDTO> userOsInfo;
-	
 	//USER 리뷰 DTO
 	private List<ReviewDTO> userReview;
 	// user 즐겨찾기 dto
