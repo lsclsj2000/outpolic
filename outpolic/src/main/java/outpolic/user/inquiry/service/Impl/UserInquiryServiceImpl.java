@@ -56,8 +56,9 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 			List<UserInquiryFile> userInquiryFileList = new ArrayList<>();
 			UserInquiryFile userInquiryFile = null;
 			for(FileMetaData file : fileList) {
+				String newSaCode = userInquiryMapper.generateNewSaCode();
 				userInquiryFile = new UserInquiryFile.Builder()
-													 .saCode(file.getFileIdx())
+													 .saCode(newSaCode)
 													 .saReferCode(inquiry.getInquiryCode())
 													 .saOrgnlName(file.getFileOriginalName())
 													 .saSrvrName(file.getFileNewName())

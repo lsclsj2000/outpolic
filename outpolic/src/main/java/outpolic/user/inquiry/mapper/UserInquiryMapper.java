@@ -23,6 +23,9 @@ public interface UserInquiryMapper {
 	// 문의첨부파일 데이터 목록 조회
 	List<UserInquiryFile> getUserInquiryFileList();
 	
+	// 첨부파일 코드 생성
+	String generateNewSaCode(); 
+	
 	// 단일 문의첨부파일 업로드
 	int addUserInquiryFile(UserInquiryFile inquiryFileDto);
 	
