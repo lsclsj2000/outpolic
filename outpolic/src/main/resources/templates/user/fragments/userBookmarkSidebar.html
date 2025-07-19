@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<div class="new-category-sidebar" th:fragment="userBookmarkSidebarFragment">
+        
+        <!-- 컨트롤러가 model에 담아준 'mainCategory'를 사용 -->
+        <h2 class="sidebar-main-title">Bookmark</h2>
+        
+        <ul class="category-list">
+            <!-- 컨트롤러가 model에 담아준 'categoryGroups'를 반복 -->
+            <li>
+                <h5 class="category-group-title">
+					<a>외주</a>
+                </h5>
+            </li>
+            <li>
+                <h5 class="category-group-title">
+					<a>포트폴리오</a>
+                </h5>
+            </li>
+            <li>
+                <h5 class="category-group-title">
+					<a>기업</a>
+                </h5>
+            </li>
+        </ul>
+    </div>
+</html>
