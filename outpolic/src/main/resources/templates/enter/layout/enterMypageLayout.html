@@ -7,7 +7,7 @@
 	<meta http-equiv="x-ua-compatible" content="ie=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<!-- Favicon -->
-	<link rel="shortcut icon" type="image/x-icon" href="enter/assets/imgs/theme/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" th:href="@{/enter/assets/imgs/theme/favicon.svg}" />
 	<!-- Template CSS -->
 	<link rel="stylesheet" th:href="@{/enter/assets/css/plugins/slider-range.css}" />
 	<link rel="stylesheet" th:href="@{/enter/assets/css/main.css?v=5.6}" />
@@ -23,7 +23,7 @@
 		        <div class="row">
 		            <div class="col-lg-10 m-auto">
 		                <div class="row"> 
-							<aside th:replace ="~{enter/fragments/enterMypageAside :: enterMypageAside}"></aside>
+							<aside th:replace ="~{enter/fragments/enterMypageAside :: enterMypageAside(ingOsCount=${ingOs != null ? ingOs.size() : 0})}"></aside>
 							<div class="col-md-9">
 		                        <div class="tab-content account dashboard-content pl-50">
 		                        	<!-- 여기 메인 콘텐츠가 들어올 자리 -->

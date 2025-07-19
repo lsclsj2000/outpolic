@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{user/layout/userLayoutMain}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		
+	</head>
+	<th:block layout:fragment="cssScript">
+	    <style>
+	        /* 크몽 스타일의 매우 넓은 모달을 위한 커스텀 CSS */
+	        @media (min-width: 1400px) {
+	            .modal-dialog.modal-xxl {
+	                /* XXL 사이즈(1400px 이상) 화면에서 모달의 최대 너비를 1320px로 설정합니다. */
+	                max-width: 1320px; 
+	            }
+	        }
+	        
+	        .modal-body.custom-modal-body {
+	            /* 모달 내용이 화면의 85% 높이를 넘지 않도록 하고, 넘으면 스크롤 생성 */
+	            max-height: 85vh;
+	            overflow-y: auto;
+	        }
+	        .slick-prev, .slick-next{
+			display : none !important;
+			}
+			.product-action-1 .action-btn i.fi-rs-heart.active {
+			    color: #F15412; /* 찜 했을 때의 색상 (주황색 계열) */
+			    font-weight: 900; /* 채워진 아이콘처럼 보이도록 폰트 굵게 */
+			}
+			/* .fi-rs-heart 아이콘에 .active 클래스가 추가되었을 때 적용될 스타일 */
+			.fi-rs-heart.active {
+			    color: #F15B5B; /* 하트 아이콘을 빨간색 계열로 변경 */
+			    font-weight: 900;  /* 폰트 아이콘의 경우, 굵기를 주면 채워진 모양으로 보이기도 합니다. */
+			}
+			
+			/* 기존 버튼 스타일과 어울리도록 active 상태일 때의 버튼 스타일도 정의할 수 있습니다. */
+			.bookmark-btn .fi-rs-heart.active {
+			    color: #F15B5B !important; /* 다른 스타일에 의해 덮어쓰이지 않도록 우선순위 부여 */
+			}
+	    </style>
+	</th:block>
+	<th:block layout:fragment="jsScript">
+		<script th:inline="javascript">
+		
+		// [수정 1] URL의 filter 파라미터 값을 읽어오는 initialFilter 변수를 추가합니다.
+		/*<![CDATA[*/
+		    const initialKeyword = /*[[${initialKeyword}]]*/ '';
+    		const initialFilter = /*[[${initialFilter}]]*/ null; // #request.getParameter(...) -> ${initialFilter}
+		/*]]>*/
+
+		document.addEventListener('DOMContentLoaded', function() {
+
+		    // --- (변수 선언부는 기존과 동일) ---
+		    const contentsContainer = document.getElementById('contentsListContainer');
+		    const filterButtons = document.querySelectorAll('#myTab .nav-link');
+		    const headerSearchForm = document.querySelector('form[action="/user/userSearch"]');
+		    const headerSearchInput = headerSearchForm?.querySelector('input[name="keyword"]');
+		    const resultTitle = document.querySelector('.section-title h3');
+
+		    // [수정 2] 더 이상 사용하지 않는 applyInitialFilter 함수를 완전히 삭제합니다.
+
+		    // --- (renderContents 함수는 기존의 완성본 그대로 유지) ---
+		    function renderContents(contents) {
+		        contentsContainer.innerHTML = '';
+		        if (!contents || contents.length === 0) {
+		            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
+		            return;
+		        }
+		        const contentsHtml = contents.map((content, index) => {
+		            if (content.contentsType === 'Outsourcing') {
+		                const imageId1 = index + 320, imageId2 = index + 420;
+		                const reviewScore = content.reviewScore || 0, ratingWidth = reviewScore * 20;
+		                const ratingHtml = (reviewScore >= 0) ? 
+		                					`<div class="product-rate-cover">
+		                						<div class="product-rate d-inline-block">
+		                							<div class="product-rating" style="width:${ratingWidth}%">
+		                							</div>
+		                						</div>
+		                						<span class="font-small ml-5 text-muted"> (${reviewScore.toFixed(1)})</span></div>` : '';
+						let formattedPrice = '가격문의';
+
+			            if (content.osAmt && !isNaN(content.osAmt)) {
+							const priceAsNumber = parseInt(content.osAmt, 10);
+							formattedPrice = priceAsNumber.toLocaleString('ko-KR') + '원';
+			            }
+						                return `<div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="Outsourcing">
+						                			<div class="product-cart-wrap mb-30 position-relative">
+						                				<div class="product-img-action-wrap">
+						                					<div class="product-img product-img-zoom">
+						                						<a href="/user/contents/${content.contentsId}">
+						                							<img class="default-img" src="https://picsum.photos/id/${imageId1}/400/300" alt="외주 이미지">
+						                							<img class="hover-img" src="https://picsum.photos/id/${imageId2}/400/300" alt="외주 이미지">
+						                						</a>
+						                					</div>
+						                				</div>
+						                			<div class="product-content-wrap" style="padding: 15px;">
+						                		<div class="product-category">
+						                			<a>${content.ctgryName || ''} | ${content.enterName}</a>
+						                		</div>
+						                		<h2>
+						                			<span>${content.contentsTitle}</span>
+						                		</h2>${ratingHtml}
+						                		<div class="product-price">
+						                			<span>${formattedPrice}</span>
+						                		</div>
+						                			<a href="/user/contents/${content.contentsId}" class="stretched-link">
+						                		</a>
+						                	</div>
+						                </div>
+						            </div>`;
+		            } else { // 'Portfolio'
+		                const imageId1 = index + 20, imageId2 = index + 120;
+		                const categoryInfo = (content.ctgryName) ? `${content.ctgryName} | ` : '';
+		                return `<div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="Portfolio"><div class="product-cart-wrap mb-30 position-relative portfolio-modal-trigger" data-contents-id="${content.contentsId}" role="button" style="cursor: pointer;"><div class="product-img-action-wrap"><div class="product-img product-img-zoom"><a href="javascript:void(0);"><img class="default-img" src="https://picsum.photos/id/${imageId1}/400/300" alt="포트폴리오 이미지" /><img class="hover-img" src="https://picsum.photos/id/${imageId2}/400/300" alt="포트폴리오 이미지" /></a></div></div><div class="product-content-wrap" style="padding: 15px;"><div class="product-category"><a>${categoryInfo}${content.enterName}</a></div><h2>${content.contentsTitle}</h2></div></div></div>`;
+		            }
+		        }).join('');
+		        contentsContainer.innerHTML = contentsHtml;
+		    }
+
+		    // --- (performAjaxSearch 함수는 이전 답변의 완성본 그대로 유지) ---
+		    async function performAjaxSearch(keyword) {
+		        const newUrl = `/user/userSearch?keyword=${encodeURIComponent(keyword)}`;
+		        history.pushState({ keyword }, '', newUrl);
+		        resultTitle.innerHTML = '결과를 불러오는 중...';
+		        contentsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+		        try {
+		            const response = await fetch(`/user/search/api?keyword=${encodeURIComponent(keyword)}`);
+		            if (!response.ok) throw new Error(`서버 응답 오류: ${response.status}`);
+		            const data = await response.json();
+		            resultTitle.innerHTML = (keyword && keyword.trim() !== '') ? `'<span class="text-brand">${keyword}</span>' 검색 결과` : '전체 콘텐츠';
+		            renderContents(data); 
+		            let filterToApply = 'Portfolio'; 
+		            if (initialFilter === 'Outsourcing') {
+		                filterToApply = 'Outsourcing';
+		            }
+		            const targetButton = document.querySelector(`.nav-link[data-filter="${filterToApply}"]`);
+		            if(targetButton) {
+		                setActiveFilterButton(targetButton);
+		            }
+		            applyFilter(filterToApply);
+		        } catch (error) {
+		            console.error("AJAX 검색 중 에러 발생:", error);
+		            resultTitle.innerHTML = '오류';
+		            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.</p></div>';
+		        }
+		    }
+
+		    // --- (이하 나머지 함수 및 이벤트 리스너들은 모두 기존과 동일하게 유지) ---
+		    function setActiveFilterButton(clickedButton) {
+		        if (!clickedButton) return;
+		        filterButtons.forEach(button => { button.classList.remove('active'); });
+		        clickedButton.classList.add('active');
+		    }
+
+		    function applyFilter(filterType) {
+			    const items = contentsContainer.querySelectorAll('.product-item');
+			    let visibleItemCount = 0;
+			    items.forEach(item => {
+			        if (item.dataset.type === filterType) {
+			            item.style.display = '';
+			            visibleItemCount++;
+			        } else {
+			            item.style.display = 'none';
+			        }
+			    });
+			    const noResultMessage = contentsContainer.querySelector('.no-filter-result');
+			    if (noResultMessage) { noResultMessage.remove(); }
+			    if (visibleItemCount === 0 && items.length > 0) {
+			        const messageHtml = '<div class="col-12 text-center no-filter-result"><p>선택하신 필터에 해당하는 콘텐츠가 없습니다.</p></div>';
+			        contentsContainer.insertAdjacentHTML('beforeend', messageHtml);
+			    }
+			}
+		     
+		    filterButtons.forEach(button => {
+		        button.addEventListener('click', function(event) {
+		            event.preventDefault();
+		            setActiveFilterButton(this);
+		            applyFilter(this.dataset.filter);
+		        });
+		    });
+		    
+		    if (headerSearchForm) {
+		        headerSearchForm.addEventListener('submit', function(event) {
+		            if (window.location.pathname.includes('/user/userSearch')) {
+		                event.preventDefault();
+		                performAjaxSearch(headerSearchInput.value);
+		            }
+		        });
+		    }
+
+		    contentsContainer.addEventListener('click', function(event) {
+		        const trigger = event.target.closest('.portfolio-modal-trigger');
+		        if (trigger) {
+		            event.preventDefault();
+		            if (trigger.dataset.contentsId) {
+		                openPortfolioModal(trigger.dataset.contentsId);
+		            }
+		        }
+		    });
+
+		    // 페이지 로드 시 AJAX 검색을 실행하는 최종 로직
+		    performAjaxSearch(initialKeyword);
+		});
+		
+		// jsScript 블록 안에 이 함수를 추가하거나 기존 함수를 교체합니다.
+
+		function openPortfolioModal(contentsId) {
+		    const modalElement = document.getElementById('portfolioDetailModal');
+		    if (!modalElement) return;
+		
+		    const infoSection = modalElement.querySelector('#modalInfoSection');
+		    const contentSection = modalElement.querySelector('#modalContentSection');
+		    const portfolioModal = new bootstrap.Modal(modalElement);
+		
+		    infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>`;
+		    contentSection.innerHTML = '';
+		    portfolioModal.show();
+		
+		    $.ajax({
+		        url: `/user/api/contents/${contentsId}`,
+		        type: 'GET',
+		        dataType: 'json',
+		        success: function(detail) {
+		            // [수정] 목표 디자인에 맞게 infoHtml 구조와 스타일을 대폭 변경합니다.
+		            const infoHtml = `
+		                <!-- 1. 회사 로고 및 이름 (상단) -->
+		                <div class="d-flex align-items-center mb-4">
+		                    <img src="/assets/imgs/theme/icons/icon-user.svg" alt="company logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
+		                    <div>
+		                        <h6 class="mb-0 fw-bold">${detail.enterName || '회사명 정보 없음'}</h6>
+		                        <small class="text-muted">MASTER</small>
+		                    </div>
+		                </div>
+		
+		                <!-- 2. 콘텐츠 제목 및 카테고리 -->
+		                <p class="text-muted mb-2">디자인 > 상세페이지</p>
+		                <h3 class="fw-bold mb-4">${detail.contentsTitle}</h3>
+		
+		                <!-- 3. 태그 (임시) -->
+		                <div class="mb-4">
+		                    <span class="badge bg-light text-dark border me-1 px-3 py-2">#상세페이지</span>
+		                    <span class="badge bg-light text-dark border me-1 px-3 py-2">#제품촬영</span>
+		                </div>
+		
+		                <!-- 4. 프로젝트 설명 -->
+		                <div class="mb-4">
+		                    <h6 class="fw-bold">프로젝트 설명</h6>
+		                    <p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody || '상세 설명이 없습니다.'}</p>
+		                </div>
+		
+		                <!-- 5. 참여 기간 -->
+		                <div class="mb-4">
+		                    <h6 class="fw-bold">참여 기간</h6>
+		                    <p class="text-muted">${detail.participationStartDate || ''} ~ ${detail.participationEndDate || ''}</p>
+		                </div>
+		
+		                <!-- 6. 클라이언트 -->
+		                <div class="mb-4">
+		                    <h6 class="fw-bold">클라이언트</h6>
+		                    <p class="text-muted">${detail.client || '정보 없음'}</p>
+		                </div>
+		
+		                <!-- 7. 업종 -->
+		                <div>
+		                    <h6 class="fw-bold">업종</h6>
+		                    <p class="text-muted">${detail.industry || '정보 없음'}</p>
+		                </div>
+		            `;
+		            infoSection.innerHTML = infoHtml;
+		
+		            // 오른쪽 콘텐츠 영역 채우기 (세로로 긴 이미지 예시)
+		            // picsum.photos에서 세로가 더 긴 이미지를 가져오도록 수정 (e.g., 600x1200)
+		            contentSection.innerHTML = `<img src="https://picsum.photos/seed/${detail.contentId}/800/1200" class="img-fluid" alt="포트폴리오 상세 이미지">`;
+		        },
+		        error: function(xhr) {
+		            console.error("포트폴리오 상세 정보 로딩 실패:", xhr);
+		            infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>';
+		        }
+		    });
+		}
+		</script>
+	</th:block>
+	
+	
+	
+	<th:block layout:fragment="contents">
+		<section class="product-tabs section-padding position-relative">
+			<div class="row">
+				<div class="col-lg-10 m-auto">
+		            <div class="section-title style-2 wow animate__animated animate__fadeIn">
+						<!-- 컨트롤러에서 받은 initialKeyword 값에 따라 제목을 동적으로 변경합니다. -->
+		                <h3>
+							<span th:if="${initialKeyword == null || initialKeyword == ''}">전체 콘텐츠</span>
+							<span th:unless="${initialKeyword == null || initialKeyword == ''}">
+								'<th:block th:text="${initialKeyword}"/>' 검색 결과
+							</span>
+						</h3>
+						
+					</div>
+					<ul class="nav nav-tabs links" id="myTab" role="tablist">
+					    <li class="nav-item" role="presentation">
+					        <button class="nav-link active" data-filter="Portfolio" type="button">포트폴리오</button>
+					    </li>
+					    <li class="nav-item" role="presentation">
+					        <button class="nav-link" data-filter="Outsourcing" type="button">외주</button>
+					    </li>
+					</ul>
+					<br>
+					<!--End nav-tabs-->
+					<div class="tab-content" id="myTabContent" style="border: none;">
+					    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+							<!-- AJAX로 결과가 채워질 컨테이너에 id="contentsListContainer" 부여 -->
+							<div class="row product-grid-4" id="contentsListContainer">
+	
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	        
+		<!-- body 태그가 닫히기 직전에 삽입 -->
+		<div class="modal fade" id="portfolioDetailModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
+		    
+		    <!-- 1. 핵심 수정: '.modal-xl' 이나 다른 클래스 대신 '.modal-xxl'을 사용합니다. -->
+		    <div class="modal-dialog modal-dialog-centered modal-xxl"> 
+		        <div class="modal-content"> 
+		            
+		            <div class="modal-header border-bottom-0"> <!-- 깔끔한 디자인을 위해 하단 선 제거 -->
+		                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		            </div>
+		
+		            <!-- 2. 핵심 수정: 모달 바디에도 커스텀 클래스를 적용합니다. -->
+		            <div class="modal-body custom-modal-body pt-0"> <!-- 위쪽 패딩 제거로 헤더와 가깝게 -->
+		                <div class="d-flex h-100">
+		                    <!-- 왼쪽 정보 영역 -->
+		                    <div id="modalInfoSection" class="p-4" style="width: 50%; overflow-y: auto;">
+		                        <!-- JS가 이 안에 내용을 채웁니다 -->
+		                    </div>
+		                    <!-- 오른쪽 이미지/콘텐츠 영역 -->
+		                    <div id="modalContentSection" class="p-3 ps-4 border-start" style="width: 60%; overflow-y: auto;">
+		                        <!-- JS가 이 안에 내용을 채웁니다 -->
+		                    </div>
+		                </div>
+		            </div>
+		            
+		        </div>
+		    </div>
+		</div>
+	</th:block>
+</html>
