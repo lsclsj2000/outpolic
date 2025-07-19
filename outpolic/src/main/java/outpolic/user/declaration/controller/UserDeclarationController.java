@@ -1,13 +1,19 @@
 package outpolic.user.declaration.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +26,42 @@ import outpolic.user.declaration.service.UserDeclarationService;
 public class UserDeclarationController {
 	
 	private final UserDeclarationService declarationService;
+	
+	@PostMapping("/declarationWrite")
+	@ResponseBody
+	public ResponseEntity<?> declarationWriteSubmit(
+	        @RequestPart("declaration") UserDeclaration declaration, // 🟢 이 부분이 중요
+	        @RequestPart(value = "attachments", required = false) MultipartFile[] attachments,
+	        HttpSession session) {
+
+	    String mbrCd = (String) session.getAttribute("SID");
+	    if (mbrCd == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
+
+	    declaration.setMbrCd(mbrCd);
+
+	    // 🟢 서버 콘솔에 출력될 로그:
+	    System.out.println("컨트롤러에서 받은 UserDeclaration 객체 상세 정보:");
+	    System.out.println("  dtCode: " + declaration.getDtCode());
+	    System.out.println("  drCode: " + declaration.getDrCode());
+	    System.out.println("  declTargetCd: " + declaration.getDeclTargetCd());
+	    System.out.println("  declCn: " + declaration.getDeclCn());
+	    System.out.println("  mbrCd: " + declaration.getMbrCd());
+
+	    declarationService.addDeclarationWithAttachments(declaration, attachments);
+
+	    return ResponseEntity.ok(Map.of("dc_cd", declaration.getDeclCode()));
+	}
+	
+	@GetMapping("/searchTarget")
+	@ResponseBody
+    public List<UserDeclaration> searchTarget(
+            @RequestParam String type,
+            @RequestParam String keyword) {
+		// 신고 대상 유형 검색 범위
+        return declarationService.searchTarget(type, keyword);
+    }
 	
 	@GetMapping("/declarationReasons")
 	@ResponseBody
