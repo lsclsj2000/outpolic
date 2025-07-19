@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="outpolic.admin.outsourcing.mapper.AdminOutsourcingMapper">
+
+    <resultMap id="AdminOutsourcingDTOMap" type="outpolic.admin.outsourcing.dto.AdminOutsourcingDTO">
+        <id     column="os_cd"          property="osCd"/>
+        <result column="ent_cd"         property="entCd"/>
+        <result column="ctgry_id"       property="ctgryId"/>
+        <result column="os_ttl"         property="osTtl"/>
+        <result column="os_expln"       property="osExpln"/>
+        <result column="os_reg_ymdt"    property="osRegYmdt"/>
+        <result column="mbr_cd"         property="mbrCd"/>
+        <result column="os_mdfcn_ymdt"  property="osMdfcnYmdt"/>
+        <result column="stc_cd"         property="stcCd"/>
+        <result column="os_strt_ymdt"   property="osStrtYmdt"/>
+        <result column="os_end_ymdt"    property="osEndYmdt"/>
+        <result column="os_amt"         property="osAmt"/>
+        <result column="os_flfmt_cnt"   property="osFlfmtCnt"/>
+        <result column="os_thumbnail_url" property="osThumbnailUrl"/>
+
+        <result column="ctgry_nm"       property="ctgryNm"/>
+        <result column="stc_nm"         property="stcNm"/> </resultMap>
+		
+   <select id="findAllOutsourcingsForAdmin" resultMap="AdminOutsourcingDTOMap">
+       SELECT
+            o.os_cd,
+            o.ent_cd,
+            o.ctgry_id,
+            o.os_ttl,
+            o.os_expln,
+            o.os_reg_ymdt,
+            o.mbr_cd,
+            o.os_mdfcn_ymdt,
+            o.stc_cd,
+            o.os_strt_ymdt,
+            o.os_end_ymdt,
+            o.os_amt,
+            o.os_flfmt_cnt,
+            o.os_thumbnail_url,
+            c.ctgry_nm,
+            sc.stc_nm
+        FROM
+            outsourcing o
+        LEFT JOIN
+            category c ON o.ctgry_id = c.ctgry_id
+        LEFT JOIN
+            status_code sc ON o.stc_cd = sc.stc_cd
+        <where>
+            <if test="searchDTO.searchKeyword != null and searchDTO.searchKeyword != ''">
+                <choose>
+                    <when test="searchDTO.searchType == 'osTtl'">
+                        AND o.os_ttl LIKE CONCAT('%', #{searchDTO.searchKeyword}, '%')
+                    </when>
+                    <when test="searchDTO.searchType == 'osExpln'">
+                        AND o.os_expln LIKE CONCAT('%', #{searchDTO.searchKeyword}, '%')
+                    </when>
+                    <when test="searchDTO.searchType == 'osCd'">
+                        AND o.os_cd LIKE CONCAT('%', #{searchDTO.searchKeyword}, '%')
+                    </when>
+                    <when test="searchDTO.searchType == 'mbrCd'">
+                        AND o.mbr_cd LIKE CONCAT('%', #{searchDTO.searchKeyword}, '%')
+                    </when>
+                    <when test="searchDTO.searchType == 'entCd'">
+                        AND o.ent_cd LIKE CONCAT('%', #{searchDTO.searchKeyword}, '%')
+                    </when>
+                    <when test="searchDTO.searchType == 'ctgryId'">
+                        AND o.ctgry_id LIKE CONCAT('%', #{searchDTO.searchKeyword}, '%')
+                    </when>
+                </choose>
+            </if>
+
+            <if test="searchDTO.startDate != null and searchDTO.endDate != null">
+                <choose>
+                    <when test="searchDTO.dateSearchType == 'osRegYmdt'">
+                        AND o.os_reg_ymdt BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
+                    </when>
+                    <when test="searchDTO.dateSearchType == 'osMdfcnYmdt'">
+                        AND o.os_mdfcn_ymdt BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
+                    </when>
+                    <when test="searchDTO.dateSearchType == 'osStrtYmdt'">
+                        AND o.os_strt_ymdt BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
+                    </when>
+                    <when test="searchDTO.dateSearchType == 'osEndYmdt'">
+                        AND o.os_end_ymdt BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
+                    </when>
+                </choose>
+            </if>
+            <if test="searchDTO.startDate != null and searchDTO.endDate == null">
+                 AND o.${searchDTO.dateSearchType} &gt;= #{searchDTO.startDate}
+            </if>
+            <if test="searchDTO.startDate == null and searchDTO.endDate != null">
+                 AND o.${searchDTO.dateSearchType} &lt;= #{searchDTO.endDate}
+            </if>
+
+            <if test="searchDTO.stcCd != null and searchDTO.stcCd != '' and searchDTO.stcCd != 'all'">
+                AND o.stc_cd = #{searchDTO.stcCd}
+            </if>
+        </where>
+        ORDER BY
+            o.os_reg_ymdt DESC
+    </select>
+
+    <select id="findClCdByOsCd" resultType="String">
+        SELECT cl_cd FROM content_list WHERE cntd_cd = #{osCd} LIMIT 1
+    </select>
+
+    <resultMap id="FileMetaDataMap" type="outpolic.systems.file.domain.FileMetaData">
+        <result column="file_cd" property="fileIdx" />
+        <result column="file_extn" property="fileExtension" />
+        <result column="file_orgnl_nm" property="fileOriginalName" />
+        <result column="file_srvr_nm" property="fileNewName" />
+        <result column="file_path" property="filePath" />
+        <result column="file_size" property="fileSize" />
+    </resultMap>
+
+    <select id="findFilesByClCd" resultMap="FileMetaDataMap">
+        SELECT
+            file_cd,
+            file_extn,
+            file_orgnl_nm,
+            file_srvr_nm,
+            file_path,
+            file_size
+        FROM file
+        WHERE cl_cd = #{clCd}
+        ORDER BY file_reg_ymdt DESC
+    </select>
+
+</mapper>
