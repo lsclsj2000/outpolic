@@ -4,7 +4,7 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="outpolic.user.outsourcing.mapper.UserOutsourcingMapper">
  	<resultMap type="UserOsInfoDTO" id="UserMypageOsResultMap">
- 		<id column="ocd_cd" property="ocdCd"></id>
+ 		 		<id column="ocd_cd" property="ocdCd"></id>
 		<result column="ocd_req_type" property="ocdReqType"/>
 		<result column="mbr_cd" property="mbrCd"/>
 		<result column="ent_cd" property="entCd"/>

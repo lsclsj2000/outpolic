@@ -22,6 +22,8 @@ import outpolic.enter.mypage.dto.EnterInfo;
 import outpolic.enter.mypage.service.EnterMypageService;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
+import outpolic.enter.withdrawn.dto.EnterOsInfoDTO;
+import outpolic.enter.withdrawn.service.EnterWithdrawnService;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class enterMypageController {
 	private final EnterMypageService enterMypageService;
 	private final PasswordEncoder passwordEncoder;
 	private final EnterInquiryService enterInquiryService;
+	private final EnterWithdrawnService enterWithdrawnService;
 	
 	// 기업 마이페이지 
     @GetMapping("/enter/mypage")
@@ -72,7 +75,8 @@ public class enterMypageController {
 		model.addAttribute("incomeOs", incomeOs);
 		
 		//진행중 외주 수 조회
-		int ingOs = enterMypageService.EnterOsIngSelectByCode(memberCode);
+		List<EnterOsInfoDTO> ingOs = enterWithdrawnService.EnterOsIngSelectByCode(memberCode);
+		model.addAttribute("title", "진행중 외주");
 		model.addAttribute("ingOs", ingOs);
 		
     	return "enter/mypage/enterMypageView";
