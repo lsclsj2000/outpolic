@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="outpolic.user.declaration.mapper.UserDeclarationMapper">
+	<!-- UserInquiry.DTO -->
+	<resultMap id="userDeclarationResultMap" type="outpolic.user.declaration.domain.UserDeclaration">
+		<id 	column="dt_cd" 		property="dtCode"/>
+		
+ 		<result column="dt_nm"	 	property="dtName"/>
+ 		<result column="dt_expln" 	property="dtExpln"/>
+ 		<result column="dr_cd" 		property="drCode"/>
+ 		
+ 		<result column="dr_nm" 		property="drName"/>
+ 		<result column="dr_expln" 	property="drExpln"/>
+ 		<result column="stc_cd" 	property="stcCode"/>
+		
+	</resultMap>
+
+	
+	<select id="getActiveDeclarationTypes" resultMap="userDeclarationResultMap">
+	    /* 신고 타입 드롭다운 조회 */
+	    SELECT
+			dt_cd,
+			dt_nm,
+			dt_expln,
+			stc_cd
+		FROM 
+			declaration_type
+		WHERE 
+			stc_cd = 'SD_ACTIVE';
+	</select>
+	
+	<select id="getDeclarationReasonsByType" resultMap="userDeclarationResultMap">
+		/* 신고 사유 드롭다운 조회 */
+	    SELECT
+			dr_cd,
+			dt_cd,
+			dr_nm,
+			dr_expln,
+			stc_cd
+		FROM 
+			declaration_reason
+	    WHERE 
+	    	dt_cd = #{dtCd} AND stc_cd = 'SD_ACTIVE';
+	</select>
+</mapper>
