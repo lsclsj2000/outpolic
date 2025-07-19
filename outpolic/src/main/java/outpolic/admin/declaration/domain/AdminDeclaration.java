@@ -50,4 +50,14 @@ public class AdminDeclaration {
 	private String drcMdfcnAdmCode;
 	private String drcMdfcnYmdt;
 	
+	
+	private String declarationMemberName;
+	private String declarationSaCode;
+	private String declarationSaOrgnlName;
+	private String declarationSaSrvrName;
+	private String declarationSaPath;
+	private String declarationCn;
+	private String declarationMdfcnAdmCode;
+	private String declarationMdfcnYmdt;
+	
 }

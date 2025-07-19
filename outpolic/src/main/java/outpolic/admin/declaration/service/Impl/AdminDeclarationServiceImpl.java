@@ -101,5 +101,12 @@ public class AdminDeclarationServiceImpl implements AdminDeclarationService {
 		// 신고처리결과코드 수정팝업창 조회
 	    return adminDeclarationMapper.getDeclarationResultByCode(code);
 	}
+
+	@Override
+	public AdminDeclaration getAdminDeclarationDetail(String declarationCode) {
+		// 신고 수정 팝업창 조회
+		AdminDeclaration declarationDetail = adminDeclarationMapper.getAdminDeclarationDetail(declarationCode);
+        return declarationDetail;
+	}
 	
 }

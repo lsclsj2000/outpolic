@@ -65,10 +65,9 @@ public class UserDeclarationServiceImpl implements UserDeclarationService{
 
 	        List<UserInquiryFile> fileList = new ArrayList<>();
 	        for (FileMetaData file : uploadedFiles) {
-	            String newSaCode = declarationMapper.generateNewSaCode();
 
 	            UserInquiryFile attach = new UserInquiryFile.Builder()
-	                .saCode(newSaCode)
+	            	.saCode(file.getFileIdx())
 	                .saReferCode(declaration.getDeclCode())
 	                .saOrgnlName(file.getFileOriginalName())
 	                .saSrvrName(file.getFileNewName())
