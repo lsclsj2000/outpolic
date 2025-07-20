@@ -20,13 +20,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="drc_nm" 			property="declarationResultName"/>
 
 		<result column="mbr_nm" 			property="declarationMemberName"/>
-		<result column="sa_cd" 				property="declarationSaCode"/>
-		<result column="sa_orgnl_nm" 		property="declarationSaOrgnlName"/>
-		<result column="sa_srvr_nm" 		property="declarationSaSrvrName"/>
-		<result column="sa_path" 			property="declarationSaPath"/>
 		<result column="decl_cn" 			property="declarationCn"/>
 		<result column="decl_mdfcn_adm_cd" 	property="declarationMdfcnAdmCode"/>
 		<result column="decl_mdfcn_ymdt" 	property="declarationMdfcnYmdt"/>
+		
+		<result column="dp_cn" 				property="declarationProcessContent"/>
+		<result column="dp_cd" 				property="declarationProcessCode"/>
+		<result column="dp_mdfcn_adm_cd" 	property="declarationProcessMdfcnAdmCode"/> <!-- 추가 -->
+		<result column="dp_mdfcn_ymdt" 		property="declarationProcessMdfcnYmdt"/> <!-- 추가 -->
 	</resultMap>
 	
 	<resultMap id="AdminDeclarationTypeMap" type="outpolic.admin.declaration.domain.AdminDeclaration">
@@ -72,6 +73,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    <result column="stc_nm" 			property="declarationStcName"/>
     </resultMap>
     
+    <resultMap id="SubmissionAttachmentMap" type="outpolic.admin.declaration.domain.SubmissionAttachment">
+        <id     column="sa_cd"         property="saCode"/>
+        <result column="sa_refer_cd"   property="saReferCode"/>
+        <result column="sa_orgnl_nm"   property="saOrgnlName"/>
+        <result column="sa_srvr_nm"    property="saSrvrName"/>
+        <result column="sa_path"       property="saPath"/>
+        <result column="sa_reg_ymdt"   property="saRegYmdt"/>
+    </resultMap>
+    
+    <update id="updateDeclarationProcessContentAndResult" parameterType="outpolic.admin.declaration.domain.AdminDeclaration">
+        /* 신고 처리 내역 내용 및 결과 업데이트 */
+        UPDATE declaration_process
+        SET
+            dp_cn = #{declarationProcessContent},
+            drc_cd = #{declarationResultCode},
+            dp_mdfcn_adm_cd = #{declarationProcessMdfcnAdmCode},
+            dp_mdfcn_ymdt = NOW()
+        WHERE
+            dp_cd = #{declarationProcessCode}
+    </update>
+    
+    <update id="updateDeclarationStatusAndModifier" parameterType="outpolic.admin.declaration.domain.AdminDeclaration">
+        /* declaration 테이블의 상태 및 수정자/수정일시 업데이트 */
+        UPDATE declaration
+        SET
+            stc_cd = #{declarationStcCode},
+            decl_mdfcn_adm_cd = #{declarationMdfcnAdmCode},
+            decl_mdfcn_ymdt = NOW()
+        WHERE
+            decl_cd = #{declarationCode}
+    </update>
+    
     
     <insert id="insertDeclarationProcess" parameterType="outpolic.admin.declaration.domain.AdminDeclaration">
 		<selectKey keyColumn="newCode" keyProperty="declarationProcessCode" resultType="String" order="BEFORE">
@@ -87,11 +120,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</selectKey>
 		/* 신고 내역 수정 시 처리 pk 생성 */
 		INSERT INTO declaration_process (
-			dp_cd, decl_cd, adm_cd
+			dp_cd, decl_cd, adm_cd, dp_reg_ymdt
 		) VALUES (
 			#{declarationProcessCode},
 			#{declarationCode},
-			#{declarationMdfcnAdmCode}
+			#{adminCode},
+			NOW()
 		)
 	</insert>
     
@@ -143,6 +177,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        dr.dr_nm;
 	</select>
 	
+	<select id="getSubmissionAttachmentsByDeclarationCode" resultMap="SubmissionAttachmentMap">
+		/* 첨부파일 목록 조회 */
+        SELECT
+            sa_cd,
+            sa_refer_cd,
+            sa_orgnl_nm,
+            sa_srvr_nm,
+            sa_path,
+            sa_reg_ymdt
+        FROM
+            submission_attachment
+        WHERE
+            sa_refer_cd = #{declarationCode}
+        ORDER BY
+            sa_reg_ymdt ASC
+    </select>
+	
 	<select id="getAdminDeclarationDetail" resultMap="AdminDeclarationResultMap">
 		/* 신고 수정 팝업 조회 */
 		select
@@ -155,22 +206,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			d.dt_cd as dt_cd,
 			dt.dt_nm as dt_nm,
 			d.dr_cd as dr_cd,
-			dr.dr_nm as dr_nm, MAX(sa.sa_cd) as sa_cd, MAX(sa.sa_orgnl_nm) as sa_orgnl_nm, MAX(sa.sa_srvr_nm) as sa_srvr_nm,
-			MAX(sa.sa_path) as sa_path,         d.decl_cn as decl_cn,               d.decl_mdfcn_adm_cd as decl_mdfcn_adm_cd,
+			dr.dr_nm as dr_nm,
+			d.decl_cn as decl_cn,               
+			d.decl_mdfcn_adm_cd as decl_mdfcn_adm_cd,
 			d.decl_mdfcn_ymdt as decl_mdfcn_ymdt,
-			d.decl_target_cd as decl_target_cd
+			d.decl_target_cd as decl_target_cd,
+            COALESCE(dp.dp_cn, '') as dp_cn,
+            COALESCE(dp.drc_cd, '') as drc_cd,
+            dp.dp_cd as dp_cd,
+            dp.dp_mdfcn_adm_cd as dp_mdfcn_adm_cd,
+            dp.dp_mdfcn_ymdt as dp_mdfcn_ymdt
 		from
 			declaration d
 			left join member m on d.mbr_cd = m.mbr_cd
 			left join declaration_type dt on d.dt_cd = dt.dt_cd
 			left join declaration_reason dr on d.dr_cd = dr.dr_cd
-			left join submission_attachment sa on sa.sa_refer_cd = d.decl_cd
 			left join status_code sc on d.stc_cd = sc.stc_cd
+            LEFT JOIN declaration_process dp ON d.decl_cd = dp.decl_cd
 		WHERE
-        	d.decl_cd = #{declarationCode} GROUP BY
+        	d.decl_cd = #{declarationCode} 
+        GROUP BY
 			d.decl_cd, d.mbr_cd, m.mbr_nm, d.decl_reg_ymdt, d.stc_cd, sc.stc_nm,
 			d.dt_cd, dt.dt_nm, d.dr_cd, dr.dr_nm, d.decl_cn,
-			d.decl_mdfcn_adm_cd, d.decl_mdfcn_ymdt, d.decl_target_cd
+			d.decl_mdfcn_adm_cd, d.decl_mdfcn_ymdt, d.decl_target_cd, dp.dp_cn, dp.drc_cd, dp.dp_cd, dp.dp_mdfcn_adm_cd, dp.dp_mdfcn_ymdt
 	</select>
 	
 	<select id="getDeclarationReasonByCode" resultMap="AdminDeclarationReasonMap">

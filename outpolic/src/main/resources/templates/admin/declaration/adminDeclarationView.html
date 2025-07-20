@@ -10,7 +10,6 @@
 		<title>신고 내역 조회</title>
 	</head>
 	
-	
 	<th:block layout:fragment="contents">
 		<section class="content-main">
 	        <div class="content-header">
@@ -70,7 +69,7 @@
 						</table>
 						<div class="search-filter-buttons">
 							<button type="button" class="btn btn-primary">검색</button>
-							<button type="button" class="btn btn-secondary">초기화</button>
+							<button type="button" class="btn btn-secondary">초기화</ 보통>
 						</div>
 	                </div>
 	            </div>
@@ -197,51 +196,49 @@
 		<div id="answerModal" class="SR_modal">
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
-					<h2>신고 처리</h2> <!-- 문의 답변 -> 신고 처리로 변경 -->
-					<button class="SR_close-button-answer">&times;</button> <!-- 닫기 버튼 id 변경 -->
+					<h2>신고 처리</h2>
+					<button class="SR_close-button-answer">&times;</button>
 				</div>
                 <div class="SR_popup-info">
                     <div class="SR_writer-info">
                     	<span>작성정보 : </span>
                         <span id="SR_answerWriterCode">작성자 코드</span> | <span id="SR_answerWriterName">작성자명</span> | <span id="SR_answerWriteDate">작성일자</span>
                     </div>
-                    <!-- 이 부분은 신고처리 팝업이므로 '신고 처리 상태'를 나타내는 영역으로 변경 -->
                     <div id="SR_answerStatusDisplay" class="badge rounded-pill alert-warning mr-20"></div>
                 </div>
 
-				<!-- declarationForm 대신 다른 ID 사용 권장 (겹치지 않게) -->
 				<div id="processFormDisplay"> 
                     <div class="SR_form-group">
                         <div class="SR_input-half" style="width:30%;">
-                            <label for="answerDeclarationTypeCodeDisplay">신고타입 이름</label> <!-- id 변경 -->
+                            <label for="answerDeclarationTypeCodeDisplay">신고타입</label>
                             <input id="answerDeclarationTypeCodeDisplay" name="declarationType" class="SR_form-control" readonly>
                         </div>
                         <div class="SR_input-half" style="width:66%;">
-                            <label for="answerDeclarationCodeDisplay">신고코드</label> <!-- id 변경 -->
-                            <input type="text" id="answerDeclarationCodeDisplay" name="declarationCode" class="SR_form-control" readonly>
+                            <label for="answerDeclarationReasonCodeDisplay">신고사유</label>
+                            <input type="text" id="answerDeclarationReasonCodeDisplay" name="declarationReason" class="SR_form-control" readonly>
                         </div>
 					</div>
 
                     <div class="SR_form-group SR_full-width">
-						<label for="answerDeclarationContentDisplay">신고 내용</label> <!-- id 변경 -->
+						<label for="answerDeclarationContentDisplay">신고 내용</label>
 						<textarea id="answerDeclarationContentDisplay" name="declarationContent" class="SR_form-control" rows="5" readonly></textarea>
 					</div>
 
                     <div class="SR_form-group SR_full-width">
                         <label>첨부파일 목록</label>
-                        <div id="SR_answerFileList" class="SR_form-control SR_file-list"> <!-- id 변경 -->
+                        <div id="SR_answerFileList" class="SR_form-control SR_file-list">
                             </div>
                     </div>
                     	
-                    <form id="declarationProcessForm"> <!-- 폼 ID 변경 -->
+                    <form id="declarationProcessForm">
                         <div class="SR_form-group SR_full-width">
-                            <label for="declarationResultSelect">처리 결과</label> <!-- 라벨 및 id 변경 -->
+                            <label for="declarationResultSelect">처리 결과</label>
                             <select id="declarationResultSelect" name="declarationResult" class="SR_form-control">
                                 <!-- 옵션은 JS에서 동적으로 로드 -->
                             </select>
                         </div>
 	                    <div class="SR_form-group SR_full-width">
-							<label for="declarationProcessContent">처리 내용</label> <!-- 라벨 및 id 변경 -->
+							<label for="declarationProcessContent">처리 내용</label>
 							<textarea id="declarationProcessContent" name="declarationProcessContent" class="SR_form-control" rows="10" placeholder="처리 내용을 입력하세요."></textarea>
 						</div>
 					</form>
@@ -251,7 +248,7 @@
                         	<span>수정정보 : </span>
                             <span id="SR_answerUpdaterName">수정자</span> | <span id="SR_answerUpdateDate">수정일시</span>
                         </div>
-						<button type="submit" id="processSaveButton" class="btn btn-md rounded font-sm">처리 저장</button> <!-- 버튼 ID 변경 -->
+						<button type="submit" id="processSaveButton" class="btn btn-md rounded font-sm">처리 저장</button>
 					</div>
 				</div>
 			</div>
@@ -261,11 +258,47 @@
 
 	    <th:block layout:fragment="jsScript">
 			<script>
+			console.log("adminDeclarationView.html script loaded."); // Script 로드 확인
 			document.addEventListener('DOMContentLoaded', function () {
+                console.log("DOMContentLoaded event fired."); // DOMContentLoaded 이벤트 확인
+
+                // Custom Alert Function (대신 alert() 사용 금지)
+                function showCustomAlert(message) {
+                    const alertBox = document.createElement('div');
+                    alertBox.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background-color: #fff;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                        z-index: 1000;
+                        text-align: center;
+                        font-family: 'Inter', sans-serif;
+                        color: #333;
+                    `;
+                    alertBox.innerHTML = `<p>${message}</p><button style="margin-top: 15px; padding: 8px 15px; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer;">확인</button>`;
+                    document.body.appendChild(alertBox);
+
+                    alertBox.querySelector('button').addEventListener('click', () => {
+                        document.body.removeChild(alertBox);
+                    });
+
+                    // Close on outside click
+                    window.addEventListener('click', function handler(event) {
+                        if (event.target === alertBox) {
+                            document.body.removeChild(alertBox);
+                            window.removeEventListener('click', handler);
+                        }
+                    });
+                }
+
                 // 기존 수정 모달 관련 요소들
 			    const declarationModal = document.getElementById('declarationModal');
 			    const closeEditButton = document.querySelector('#declarationModal .SR_close-button');
-			    const openEditPopupButtons = document.querySelectorAll('.SR_open-edit-popup-btn'); // 클래스명 변경
+			    const openEditPopupButtons = document.querySelectorAll('.SR_open-edit-popup-btn'); 
 
 			    const editWriterCodeElem = declarationModal.querySelector('#SR_writerCode');
 			    const editWriterNameElem = declarationModal.querySelector('#SR_writerName');
@@ -286,8 +319,8 @@
 
                 // 새로운 처리 모달 관련 요소들
                 const answerModal = document.getElementById('answerModal');
-                const closeProcessButton = document.querySelector('#answerModal .SR_close-button-answer'); // 클래스명 변경
-                const openProcessPopupButtons = document.querySelectorAll('.SR_open-process-popup-btn'); // 새로운 클래스명
+                const closeProcessButton = document.querySelector('#answerModal .SR_close-button-answer'); 
+                const openProcessPopupButtons = document.querySelectorAll('.SR_open-process-popup-btn'); 
 
                 // 처리 팝업 내부 요소들 (ID 변경)
                 const processWriterCodeElem = answerModal.querySelector('#SR_answerWriterCode');
@@ -295,7 +328,7 @@
                 const processWriteDateElem = answerModal.querySelector('#SR_answerWriteDate');
                 const processStatusDisplayElem = answerModal.querySelector('#SR_answerStatusDisplay');
                 const processDeclarationTypeCodeDisplay = answerModal.querySelector('#answerDeclarationTypeCodeDisplay');
-                const processDeclarationCodeDisplay = answerModal.querySelector('#answerDeclarationCodeDisplay');
+                const processDeclarationReasonCodeDisplay = answerModal.querySelector('#answerDeclarationReasonCodeDisplay'); // 신고사유 코드 대신 이름 표시용
                 const processDeclarationContentDisplay = answerModal.querySelector('#answerDeclarationContentDisplay');
                 const processFileListElem = answerModal.querySelector('#SR_answerFileList');
                 const declarationResultSelect = answerModal.querySelector('#declarationResultSelect');
@@ -303,8 +336,8 @@
                 const processUpdaterNameElem = answerModal.querySelector('#SR_answerUpdaterName');
                 const processUpdateDateElem = answerModal.querySelector('#SR_answerUpdateDate');
                 const processSaveButton = answerModal.querySelector('#processSaveButton');
-                const declarationProcessForm = document.getElementById('declarationProcessForm'); // 처리 폼 ID
-
+                const declarationProcessForm = document.getElementById('declarationProcessForm'); 
+                console.log("declarationProcessForm element:", declarationProcessForm); // 폼 요소 확인
 
 			    let currentDeclarationData = null; // 수정 모달용
                 let currentProcessDeclarationData = null; // 처리 모달용
@@ -370,9 +403,18 @@
 			                    editUpdaterNameElem.textContent = data.declarationMdfcnAdmCode || '없음';
 			                    editUpdateDateElem.textContent = data.declarationMdfcnYmdt || '없음';
 
-			                    // 첨부파일 정보 표시
-			                    if (data.declarationSaOrgnlName && data.declarationSaPath) {
-			                        editFileListElem.innerHTML = `<a href="${data.declarationSaPath}" target="_blank">${data.declarationSaOrgnlName}</a>`;
+			                    // 첨부파일 정보 표시 (수정 팝업)
+			                    // 이제 attachments 리스트를 순회합니다.
+			                    editFileListElem.innerHTML = ''; // 기존 내용 초기화
+			                    if (data.attachments && data.attachments.length > 0) {
+			                        data.attachments.forEach(file => {
+			                            const fileLink = document.createElement('a');
+			                            fileLink.href = file.saPath; // 파일 경로
+			                            fileLink.textContent = file.saOrgnlName; // 원본 파일명
+			                            fileLink.target = '_blank'; // 새 탭에서 열기
+			                            fileLink.classList.add('d-block'); // 각 파일을 새 줄에 표시
+			                            editFileListElem.appendChild(fileLink);
+			                        });
 			                    } else {
 			                        editFileListElem.textContent = '첨부 파일 없음';
 			                    }
@@ -467,7 +509,7 @@
 			                })
 			                .catch(error => {
 			                    console.error('[수정 팝업] 데이터 로드 중 오류 발생:', error);
-			                    alert('데이터를 불러오는 데 실패했습니다.');
+			                    showCustomAlert('데이터를 불러오는 데 실패했습니다.');
 			                });
 
 			            declarationModal.style.display = 'flex';
@@ -565,20 +607,7 @@
 
 			        console.log("[수정 팝업] 저장할 데이터:", data);
 
-                    // --- 중요: 백엔드 로직 추가 필요 ---
-                    // 1. 백엔드 (AdminDeclarationController.java의 updateDeclaration 메서드)에서
-                    //    이 요청을 받을 때, 'declarationStcCode'가 'SD_PROCESS_ING'로 변경되었는지 확인합니다.
-                    // 2. 만약 이전 상태가 'SD_INQUIRY_ING'였고, 현재 상태가 'SD_PROCESS_ING'로 변경되었다면,
-                    //    'declaration_process' 테이블에 새로운 레코드를 삽입하는 로직을 추가해야 합니다.
-                    //    - dp_cd: MyBatis의 <selectKey>를 사용하여 자동 생성 (제공해주신 SQL 사용)
-                    //    - decl_cd: data.declarationCode (현재 신고 코드)
-                    //    - adm_cd: 현재 로그인한 관리자의 코드 (백엔드 세션/보안 컨텍스트에서 가져와야 함)
-                    //    - dp_reg_ymdt: NOW()
-                    //    - drc_cd: (선택 사항) 처리 결과 코드 (이 시점에서는 아직 처리 결과가 없을 수 있음)
-                    // 3. 이 삽입 로직이 성공한 후에 기존의 declaration 테이블 업데이트를 진행합니다.
-                    // ------------------------------------
-
-			        fetch('/admin/updateDeclaration', { 
+                    fetch('/admin/updateDeclaration', { 
 			            method: 'POST',
 			            headers: {
 			                'Content-Type': 'application/json'
@@ -593,17 +622,17 @@
 			        })
 			        .then(result => {
 			            if (result === "OK") {
-			                alert('신고 내역이 성공적으로 업데이트되었습니다.');
+			                showCustomAlert('신고 내역이 성공적으로 업데이트되었습니다.');
 			                declarationModal.style.display = 'none';
 			                document.body.style.overflow = 'auto';
 			                location.reload(); 
 			            } else {
-			                alert('업데이트 실패: ' + result); 
+			                showCustomAlert('업데이트 실패: ' + result); 
 			            }
 			        })
 			        .catch(error => {
 			            console.error('[수정 팝업] 업데이트 중 오류 발생:', error);
-			            alert('업데이트에 실패했습니다: ' + error.message);
+			            showCustomAlert('업데이트에 실패했습니다: ' + error.message);
 			        });
 			    });
 
@@ -619,15 +648,15 @@
                         processWriteDateElem.textContent = '';
                         processStatusDisplayElem.textContent = '';
                         processDeclarationTypeCodeDisplay.value = '';
-                        processDeclarationCodeDisplay.value = '';
+                        processDeclarationReasonCodeDisplay.value = ''; 
                         processDeclarationContentDisplay.value = '';
                         processFileListElem.innerHTML = '';
-                        declarationResultSelect.innerHTML = ''; // 처리 결과 드롭다운 초기화
-                        declarationProcessContent.value = ''; // 처리 내용 초기화
+                        declarationResultSelect.innerHTML = ''; 
+                        declarationProcessContent.value = ''; 
                         processUpdaterNameElem.textContent = '';
                         processUpdateDateElem.textContent = '';
-                        processSaveButton.style.display = 'inline-block'; // 저장 버튼 보이게
-                        declarationProcessContent.readOnly = false; // 기본적으로 처리 내용은 수정 가능
+                        processSaveButton.style.display = 'inline-block'; 
+                        declarationProcessContent.readOnly = false; 
 
                         fetch(`/admin/adminDeclarationDetail?declarationCode=${declarationCode}`)
                             .then(response => {
@@ -638,30 +667,42 @@
                             })
                             .then(data => {
                                 console.log("[처리 팝업] 신고 상세 데이터:", data);
-                                currentProcessDeclarationData = data; // 처리 모달용 데이터 저장
+                                currentProcessDeclarationData = data; 
+                                
+                                // Capture declarationProcessCode from the fetched data
+                                currentProcessDeclarationData.declarationProcessCode = data.declarationProcessCode || ''; 
 
                                 processWriterCodeElem.textContent = data.declarationMemberCode || 'N/A';
                                 processWriterNameElem.textContent = data.declarationMemberName || 'N/A';
                                 processWriteDateElem.textContent = data.declarationRegYmdt || 'N/A';
                                 processStatusDisplayElem.textContent = data.declarationStcName || 'N/A';
-                                processDeclarationTypeCodeDisplay.value = data.declarationTypeName || ''; // 타입 이름 표시
-                                processDeclarationCodeDisplay.value = data.declarationCode || '';
+                                processDeclarationTypeCodeDisplay.value = data.declarationTypeName || ''; 
+                                processDeclarationReasonCodeDisplay.value = data.declarationReasonName || ''; 
                                 processDeclarationContentDisplay.value = stripHtmlAndRemoveImages(data.declarationCn);
                                 processUpdaterNameElem.textContent = data.declarationMdfcnAdmCode || '없음';
                                 processUpdateDateElem.textContent = data.declarationMdfcnYmdt || '없음';
-                                // 기존 처리 내용이 있다면 로드 (declaration_process 테이블에서 가져와야 함)
-                                // 현재 data 객체에 declarationProcessCn 필드가 없으므로,
-                                // 백엔드에서 AdminDeclarationDetail 조회 시 해당 필드를 함께 가져오도록 수정 필요
-                                declarationProcessContent.value = data.declarationProcessCn || ''; 
+                                
+                                // 기존 처리 내용 로드 (declarationProcessContent 필드 사용)
+                                declarationProcessContent.value = data.declarationProcessContent || ''; 
 
-                                if (data.declarationSaOrgnlName && data.declarationSaPath) {
-                                    processFileListElem.innerHTML = `<a href="${data.declarationSaPath}" target="_blank">${data.declarationSaOrgnlName}</a>`;
+                                // 첨부파일 정보 표시 (처리 팝업)
+                                // 이제 attachments 리스트를 순회합니다.
+                                processFileListElem.innerHTML = ''; // 기존 내용 초기화
+                                if (data.attachments && data.attachments.length > 0) {
+                                    data.attachments.forEach(file => {
+                                        const fileLink = document.createElement('a');
+                                        fileLink.href = file.saPath; // 파일 경로
+                                        fileLink.textContent = file.saOrgnlName; // 원본 파일명
+                                        fileLink.target = '_blank'; // 새 탭에서 열기
+                                        fileLink.classList.add('d-block'); // 각 파일을 새 줄에 표시
+                                        processFileListElem.appendChild(fileLink);
+                                    });
                                 } else {
                                     processFileListElem.textContent = '첨부 파일 없음';
                                 }
 
                                 // 처리 결과 드롭다운 로드
-                                return fetch('/admin/declarationResults'); // 처리 결과를 가져오는 새 엔드포인트 가정
+                                return fetch('/admin/declarationResults'); 
                             })
                             .then(response => {
                                 if (!response.ok) {
@@ -674,33 +715,31 @@
                                 declarationResultSelect.innerHTML = '';
                                 results.forEach(result => {
                                     const option = document.createElement('option');
-                                    option.value = result.drc_cd; // 백엔드에서 오는 필드명에 맞춰 수정 (drc_cd, drc_nm 가정)
-                                    option.textContent = result.drc_nm; // 백엔드에서 오는 필드명에 맞춰 수정
+                                    option.value = result.drcCode; 
+                                    option.textContent = result.drcName; 
                                     declarationResultSelect.appendChild(option);
                                 });
 
-                                // 기존 처리 결과가 있다면 선택
-                                // currentProcessDeclarationData.declarationResultCode는 현재 없으므로,
-                                // 백엔드에서 AdminDeclarationDetail 조회 시 해당 필드를 함께 가져오도록 수정 필요
+                                // 기존 처리 결과가 있다면 선택 (declarationResultCode 필드 사용)
                                 if (currentProcessDeclarationData.declarationResultCode) {
                                     declarationResultSelect.value = currentProcessDeclarationData.declarationResultCode;
                                 }
 
                                 // 처리 상태에 따른 UI 제어 (처리 팝업)
                                 const currentStcCode = currentProcessDeclarationData.declarationStcCode;
-                                if (currentStcCode === 'SD_PROCESS_END') { // 처리 완료 상태일 경우
-                                    declarationResultSelect.disabled = true; // 처리 결과 수정 불가
-                                    declarationProcessContent.readOnly = true; // 처리 내용 수정 불가
-                                    processSaveButton.style.display = 'none'; // 처리 저장 버튼 숨김
+                                if (currentStcCode === 'SD_PROCESS_END') { 
+                                    declarationResultSelect.disabled = true; 
+                                    declarationProcessContent.readOnly = true; 
+                                    processSaveButton.style.display = 'none'; 
                                 } else {
-                                    declarationResultSelect.disabled = false; // 활성화
-                                    declarationProcessContent.readOnly = false; // 활성화
-                                    processSaveButton.style.display = 'inline-block'; // 저장 버튼 보이게
+                                    declarationResultSelect.disabled = false; 
+                                    declarationProcessContent.readOnly = false; 
+                                    processSaveButton.style.display = 'inline-block'; 
                                 }
                             })
                             .catch(error => {
                                 console.error('[처리 팝업] 데이터 로드 중 오류 발생:', error);
-                                alert('데이터를 불러오는 데 실패했습니다.');
+                                showCustomAlert('데이터를 불러오는 데 실패했습니다.');
                             });
 
                         answerModal.style.display = 'flex';
@@ -725,30 +764,22 @@
                 // 처리 팝업 - 저장 버튼 클릭 (폼 제출)
                 declarationProcessForm.addEventListener('submit', function (event) {
                     event.preventDefault();
+                    console.log("Process form submit event fired."); // submit 이벤트 발생 확인
+
+                    // 현재 관리자 코드 (실제 환경에서는 세션 등에서 동적으로 가져와야 함)
+                    const adminCode = 'ADM_C002'; // 예시: 현재 로그인한 관리자 코드
 
                     const data = {
-                        declarationCode: processDeclarationCodeDisplay.value,
-                        declarationResultCode: declarationResultSelect.value, // 선택된 처리 결과 코드
-                        declarationProcessCn: declarationProcessContent.value, // 입력된 처리 내용
-                        // adm_cd: 백엔드에서 현재 로그인한 관리자 코드를 가져와야 함
+                        declarationCode: currentProcessDeclarationData.declarationCode, // decl_cd
+                        declarationResultCode: declarationResultSelect.value, // drc_cd
+                        declarationProcessCn: declarationProcessContent.value, // dp_cn
+                        adminCode: adminCode, // adm_cd 및 decl_mdfcn_adm_cd
+                        declarationProcessCode: currentProcessDeclarationData.declarationProcessCode // dp_cd 추가
                     };
 
-                    console.log("[처리 팝업] 저장할 처리 데이터:", data);
+                    console.log("[처리 팝업] 저장할 처리 데이터:", data); // 전송할 데이터 확인
 
-                    // --- 중요: 백엔드 로직 추가 필요 ---
-                    // 1. 백엔드 (새로운 /admin/processDeclaration 엔드포인트)에서
-                    //    이 요청을 받을 때, 'declaration_process' 테이블에 새로운 레코드를 삽입하는 로직을 추가해야 합니다.
-                    //    - dp_cd: MyBatis의 <selectKey>를 사용하여 자동 생성 (제공해주신 SQL 사용)
-                    //    - decl_cd: data.declarationCode (현재 신고 코드)
-                    //    - adm_cd: 현재 로그인한 관리자의 코드 (백엔드 세션/보안 컨텍스트에서 가져와야 함)
-                    //    - dp_cn: data.declarationProcessCn (처리 내용)
-                    //    - dp_reg_ymdt: NOW()
-                    //    - drc_cd: data.declarationResultCode (선택된 처리 결과 코드)
-                    // 2. 'declaration' 테이블의 'stc_cd'를 'SD_PROCESS_END' (처리완료)로 업데이트하는 로직도 추가해야 합니다.
-                    //    (처리 팝업에서 저장하면 해당 신고는 '처리완료'가 되어야 함)
-                    // ------------------------------------
-
-                    fetch('/admin/processDeclaration', { // 처리 로직을 위한 새 엔드포인트 가정
+                    fetch('/admin/processDeclaration', { 
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -756,24 +787,26 @@
                         body: JSON.stringify(data)
                     })
                     .then(response => {
+                        console.log("Fetch response received:", response); // fetch 응답 확인
                         if (!response.ok) {
                             return response.text().then(text => { throw new Error(text || 'Process failed'); });
                         }
                         return response.text();
                     })
                     .then(result => {
+                        console.log("Fetch result:", result); // fetch 결과 확인
                         if (result === "OK") {
-                            alert('신고 처리가 성공적으로 완료되었습니다.');
+                            showCustomAlert('신고 처리가 성공적으로 완료되었습니다.');
                             answerModal.style.display = 'none';
                             document.body.style.overflow = 'auto';
                             location.reload(); 
                         } else {
-                            alert('처리 실패: ' + result); 
+                            showCustomAlert('처리 실패: ' + result); 
                         }
                     })
                     .catch(error => {
                         console.error('[처리 팝업] 처리 중 오류 발생:', error);
-                        alert('처리에 실패했습니다: ' + error.message);
+                        showCustomAlert('처리에 실패했습니다: ' + error.message);
                     });
                 });
 

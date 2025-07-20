@@ -25,8 +25,36 @@ public class AdminDeclarationController {
 	
 	private final AdminDeclarationService adminDeclarationService;
 	
+	@GetMapping("/declarationResults")
+    @ResponseBody
+    public List<AdminDeclaration> getDeclarationResults() {
+        // 신고 처리 결과 목록 조회
+        log.info("Fetching declaration results list.");
+        return adminDeclarationService.getAdminDeclarationResultList();
+    }
+
+    @PostMapping("/processDeclaration")
+    @ResponseBody
+    public String processDeclaration(@RequestBody AdminDeclaration adminDeclaration, HttpSession session) {
+        // 신고 처리 내역 저장 및 신고 상태 업데이트
+        String adminCode = (String) session.getAttribute("SACD");
+        if (adminCode == null) {
+            log.warn("Unauthorized attempt to process declaration. Session adminCode is null.");
+            return "FAIL: Unauthorized";
+        }
+        adminDeclaration.setDeclarationMdfcnAdmCode(adminCode); // 처리자 코드로 사용
+        try {
+            adminDeclarationService.processDeclaration(adminDeclaration);
+            log.info("Declaration processed successfully for code: {}", adminDeclaration.getDeclarationCode());
+            return "OK";
+        } catch (Exception e) {
+            log.error("Error processing declaration for code: {}", adminDeclaration.getDeclarationCode(), e);
+            return "FAIL: " + e.getMessage();
+        }
+    }
 	
-	@PostMapping("/updateDeclaration")
+	
+    @PostMapping("/updateDeclaration")
 	@ResponseBody
 	public String updateDeclaration(@RequestBody AdminDeclaration adminDeclaration, HttpSession session) {
 		// 신고 내역 수정 업데이트
@@ -36,6 +64,8 @@ public class AdminDeclarationController {
 		}
 		
 		adminDeclaration.setDeclarationMdfcnAdmCode(adminCode);
+		// 이 부분 추가: adm_cd 컬럼에 값을 전달하기 위해 adminCode 필드에도 세션의 adminCode를 설정합니다.
+		adminDeclaration.setAdminCode(adminCode); 
 		adminDeclarationService.updateDeclaration(adminDeclaration);
 		return "OK";
 	}
