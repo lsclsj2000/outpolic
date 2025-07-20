@@ -30,7 +30,7 @@ public class UserDeclarationController {
 	@PostMapping("/declarationWrite")
 	@ResponseBody
 	public ResponseEntity<?> declarationWriteSubmit(
-	        @RequestPart("declaration") UserDeclaration declaration, // 🟢 이 부분이 중요
+	        @RequestPart("declaration") UserDeclaration declaration,
 	        @RequestPart(value = "attachments", required = false) MultipartFile[] attachments,
 	        HttpSession session) {
 
@@ -41,7 +41,6 @@ public class UserDeclarationController {
 
 	    declaration.setMbrCd(mbrCd);
 
-	    // 🟢 서버 콘솔에 출력될 로그:
 	    System.out.println("컨트롤러에서 받은 UserDeclaration 객체 상세 정보:");
 	    System.out.println("  dtCode: " + declaration.getDtCode());
 	    System.out.println("  drCode: " + declaration.getDrCode());

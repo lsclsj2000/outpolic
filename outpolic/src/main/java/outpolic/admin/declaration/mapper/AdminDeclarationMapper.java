@@ -10,6 +10,18 @@ import outpolic.admin.declaration.domain.AdminDeclaration;
 @Mapper
 public interface AdminDeclarationMapper {
 	
+	// 신고 내역 수정 시 처리 pk 생성
+	void insertDeclarationProcess(AdminDeclaration adminDeclaration);
+	
+	// 신고 내역 수정 업데이트
+	void updateDeclaration(AdminDeclaration adminDeclaration);
+	
+	// 신고 처리 상태 조회
+	List<AdminDeclaration> getDeclarationStatusList();
+	
+	// 신고 타입별 신고 사유 조회
+	List<AdminDeclaration> getDeclarationReasonsByTypeCode(String dtCode);
+	
 	// 신고 수정팝업창 조회
 	AdminDeclaration getAdminDeclarationDetail(@Param("declarationCode") String declarationCode);
 	

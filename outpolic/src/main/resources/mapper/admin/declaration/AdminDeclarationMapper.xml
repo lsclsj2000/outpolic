@@ -5,7 +5,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
 <mapper namespace="outpolic.admin.declaration.mapper.AdminDeclarationMapper">
-	<!-- AdminInquiry.DTO -->
 	<resultMap id="AdminDeclarationResultMap" type="outpolic.admin.declaration.domain.AdminDeclaration">
 		<id 	column="decl_cd" 			property="declarationCode"/>
 		<result column="dt_cd" 				property="declarationTypeCode"/>
@@ -68,6 +67,82 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="drc_mdfcn_ymdt" 	property="drcMdfcnYmdt"/>
 	</resultMap>
 	
+	<resultMap id="StatusCodeMap" type="outpolic.admin.declaration.domain.AdminDeclaration">
+	    <id 	column="stc_cd" 			property="declarationStcCode"/>
+	    <result column="stc_nm" 			property="declarationStcName"/>
+    </resultMap>
+    
+    
+    <insert id="insertDeclarationProcess" parameterType="outpolic.admin.declaration.domain.AdminDeclaration">
+		<selectKey keyColumn="newCode" keyProperty="declarationProcessCode" resultType="String" order="BEFORE">
+			/* 자동 코드 생성 */
+			SELECT
+				CASE
+					WHEN COUNT(*) = 0 THEN 'DP_C1'
+				ELSE 		
+			  		CONCAT('DP_C', MAX(CAST(SUBSTRING_INDEX(dp.dp_cd, 'DP_C', -1) AS UNSIGNED)) + 1)
+					END AS newCode
+			FROM
+			  declaration_process dp;
+		</selectKey>
+		/* 신고 내역 수정 시 처리 pk 생성 */
+		INSERT INTO declaration_process (
+			dp_cd, decl_cd, adm_cd
+		) VALUES (
+			#{declarationProcessCode},
+			#{declarationCode},
+			#{declarationMdfcnAdmCode}
+		)
+	</insert>
+    
+    <update id="updateDeclaration" parameterType="outpolic.admin.declaration.domain.AdminDeclaration">
+		/* 신고 내역 수정 */
+	    UPDATE declaration
+	    SET
+	        dt_cd = #{declarationTypeCode},
+	        dr_cd = #{declarationReasonCode},
+	        stc_cd = #{declarationStcCode},
+	        decl_mdfcn_adm_cd = #{declarationMdfcnAdmCode},
+	        decl_mdfcn_ymdt = NOW()
+	    WHERE
+	        decl_cd = #{declarationCode}
+	</update>
+	
+	<select id="getDeclarationStatusList" resultMap="StatusCodeMap">
+	    /* 신고 처리 상태 목록 조회 */
+	    SELECT
+	        stc_cd,
+	        stc_nm
+	    FROM
+	        status_code
+	    WHERE
+	        stc_cd IN ('SD_INQUIRY_ING', 'SD_PROCESS_ING', 'SD_PROCESS_END')
+	    ORDER BY stc_cd;
+	</select>
+	
+	<select id="getDeclarationReasonsByTypeCode" resultMap="AdminDeclarationReasonMap">
+	    /* 특정 신고 타입에 따른 신고 사유 조회 */
+	    SELECT
+	        dr.dr_cd as dr_cd,
+	        dr.dt_cd as dt_cd,
+	        dt.dt_nm as dt_nm,
+	        dr.dr_nm as dr_nm,
+	        dr.dr_expln as dr_expln,
+	        dr.stc_cd as stc_cd,
+	        sc.stc_nm as stc_nm,
+	        dr.dr_reg_adm_cd as dr_reg_adm_cd,
+	        dr.dr_reg_ymdt as dr_reg_ymdt,
+	        dr.dr_mdfcn_adm_cd as dr_mdfcn_adm_cd,
+	        dr.dr_mdfcn_ymdt as dr_mdfcn_ymdt
+	    FROM
+	        declaration_reason dr
+	        LEFT JOIN declaration_type dt ON dr.dt_cd = dt.dt_cd
+	        LEFT JOIN status_code sc ON dr.stc_cd = sc.stc_cd
+	    WHERE 
+	        dr.dt_cd = #{dtCode} ORDER BY
+	        dr.dr_nm;
+	</select>
+	
 	<select id="getAdminDeclarationDetail" resultMap="AdminDeclarationResultMap">
 		/* 신고 수정 팝업 조회 */
 		select
@@ -80,21 +155,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			d.dt_cd as dt_cd,
 			dt.dt_nm as dt_nm,
 			d.dr_cd as dr_cd,
-			dr.dr_nm as dr_nm,
-			sa.sa_cd as sa_cd,
-			sa.sa_orgnl_nm as sa_orgnl_nm,
-			sa.sa_srvr_nm as sa_srvr_nm,
-			sa.sa_path as sa_path,
-			d.decl_cn as decl_cn,
-			d.decl_mdfcn_adm_cd as decl_mdfcn_adm_cd,
-			d.decl_mdfcn_ymdt as decl_mdfcn_ymdt
+			dr.dr_nm as dr_nm, MAX(sa.sa_cd) as sa_cd, MAX(sa.sa_orgnl_nm) as sa_orgnl_nm, MAX(sa.sa_srvr_nm) as sa_srvr_nm,
+			MAX(sa.sa_path) as sa_path,         d.decl_cn as decl_cn,               d.decl_mdfcn_adm_cd as decl_mdfcn_adm_cd,
+			d.decl_mdfcn_ymdt as decl_mdfcn_ymdt,
+			d.decl_target_cd as decl_target_cd
 		from
 			declaration d
 			left join member m on d.mbr_cd = m.mbr_cd
 			left join declaration_type dt on d.dt_cd = dt.dt_cd
 			left join declaration_reason dr on d.dr_cd = dr.dr_cd
 			left join submission_attachment sa on sa.sa_refer_cd = d.decl_cd
-			left join status_code sc on d.stc_cd = sc.stc_cd;
+			left join status_code sc on d.stc_cd = sc.stc_cd
+		WHERE
+        	d.decl_cd = #{declarationCode} GROUP BY
+			d.decl_cd, d.mbr_cd, m.mbr_nm, d.decl_reg_ymdt, d.stc_cd, sc.stc_nm,
+			d.dt_cd, dt.dt_nm, d.dr_cd, dr.dr_nm, d.decl_cn,
+			d.decl_mdfcn_adm_cd, d.decl_mdfcn_ymdt, d.decl_target_cd
 	</select>
 	
 	<select id="getDeclarationReasonByCode" resultMap="AdminDeclarationReasonMap">
@@ -300,14 +376,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			d.dt_cd as dt_cd,
 			dt.dt_nm as dt_nm,
 			d.dr_cd as dr_cd,
-			dr.dr_nm as dt_nm,
+			dr.dr_nm as dr_nm,
 			d.mbr_cd as mbr_cd,
 			d.decl_target_cd as decl_target_cd,
 			d.decl_reg_ymdt as decl_reg_ymdt,
 			d.stc_cd as stc_cd,
 			sc.stc_nm as stc_nm,
 			dp.drc_cd as drc_cd,
-			drc.drc_nm as drc_nm
+			COALESCE(drc.drc_nm, '-') as drc_nm
 		from
 			declaration d
 			left join declaration_type dt on d.dt_cd = dt.dt_cd
