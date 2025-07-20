@@ -5,11 +5,14 @@
 <mapper namespace="outpolic.user.bookmark.mapper.UserBookmarkMapper">
 	<resultMap id="UserBookmarkViewResultMap" type="outpolic.user.bookmark.dto.UserBookmarkViewDTO">
 		<!-- 북마크 정보 -->
-	    <result property="bmCd" column="bm_cd" />
+	    <id property="bmCd" column="bm_cd" />
+	    <result property="mbrCd" column="mbr_cd" />
 	    <result property="clCd" column="cl_cd" />
 	    <result property="clType" column="cl_type" />
 	    <result property="bmRegYmdt" column="bm_reg_ymdt" />
 	
+	    <result property="cntdCd" column="cntd_cd" />
+	    
 	    <!-- 공통 콘텐츠 정보 -->
 	    <result property="title" column="title" />
 	    <result property="writer" column="writer" />

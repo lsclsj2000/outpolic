@@ -17,12 +17,58 @@
 			<ul class="nav flex-column" role="tablist">
 				<li>
 					<div class="userprofileTitle d-flex flex-column align-items-center mt-10 ">
-						<img class="userProfileImg" th:src="@{/user/assets/imgs/outpolic/cutecat.jpg}" />
-						<h4 class="mt-10 mb-10" th:text="${userInfo.memberNickname}">기본닉네임</h4>
+						 <img class="userProfileImg"
+     								th:src="${#strings.isEmpty(userInfo.memberImg)} 
+							                ? @{/user/assets/imgs/outpolic/cutecat.jpg} 
+							                : @{'/' + ${userInfo.memberImg}}" 
+							                style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%;"/> 
+						<h5 class="mt-10 mb-10" th:text="${userInfo.memberNickname}">기본닉네임</h5>
+						<button type="button"
+                            class="btn btn-sm text-muted"
+                            data-bs-toggle="modal"
+                            data-bs-target="#profileModal"
+                            style="background-color : white;">
+	                        사진 변경
+	                    </button>
 					</div>
 				</li>
 			</ul>
 		</div>
+				<!-- 모달창 -->
+		<div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <form id="profileUploadForm" method="post" enctype="multipart/form-data" action="/user/profile/upload">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <h5 class="modal-title">프로필 사진 업로드</h5>
+		          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+		        </div>
+		        <div class="modal-body text-center">
+		      	<!-- 기본 이미지 -->
+				<img id="previewImg"
+				     th:if="${#strings.isEmpty(userInfo.memberImg)}"
+				     th:src="@{/user/assets/imgs/outpolic/cutecat.jpg}"
+				     class="img-thumbnail mb-3"
+				     style="max-width: 150px;" />
+				
+				<!-- 업로드한 이미지 -->
+				<img id="previewImg"
+				     th:if="${!#strings.isEmpty(userInfo.memberImg)}"
+				     th:src="@{'/' + ${userInfo.memberImg}}"
+				     class="img-thumbnail mb-3"
+				     style="max-width: 150px;" />
+		          <input type="file" name="profileImage" accept="image/*" class="form-control" onchange="previewProfileImage(event)">
+		        </div>
+		        <div class="modal-footer">
+		          <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center" style="width: 80px; height: 38px; padding:0px;">저장</button>
+		          <button type="button" class="btn btn-secondary d-flex align-items-center justify-content-center" style="width: 80px; height: 38px; padding:0px;" data-bs-dismiss="modal">닫기</button>
+		        </div>
+		      </div>
+		    </form>
+		  </div>
+		</div>
 	</div>
+	
+	
 </body>
 </html>

@@ -21,4 +21,6 @@ public class UserInfoDTO {
 	private LocalDate memberBirth;
 	private LocalDate memberJoinDate;
 	private LocalDate memberModifyDate;
+	//회원 프로필 이미지
+    private String memberImg;
 }    
