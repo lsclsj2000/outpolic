@@ -26,6 +26,28 @@ public class AdminDeclarationController {
 	private final AdminDeclarationService adminDeclarationService;
 	
 	
+	@PostMapping("/updateDeclaration")
+	@ResponseBody
+	public String updateDeclaration(@RequestBody AdminDeclaration adminDeclaration, HttpSession session) {
+		// 신고 내역 수정 업데이트
+		String adminCode = (String) session.getAttribute("SACD");
+		if (adminCode == null) {
+			return "FAIL: Unauthorized";
+		}
+		
+		adminDeclaration.setDeclarationMdfcnAdmCode(adminCode);
+		adminDeclarationService.updateDeclaration(adminDeclaration);
+		return "OK";
+	}
+	
+	
+	@GetMapping("/declarationStatus")
+	@ResponseBody
+    public List<AdminDeclaration> getDeclarationStatus() {
+		// 신고 처리 상태 조회
+        return adminDeclarationService.getDeclarationStatusList();
+    }
+	
 	@GetMapping("/adminDeclarationDetail")
 	@ResponseBody
 	public AdminDeclaration adminDeclarationDetail(@RequestParam("declarationCode") String declarationCode) {
@@ -33,6 +55,13 @@ public class AdminDeclarationController {
 		AdminDeclaration adminDeclaration = adminDeclarationService.getAdminDeclarationDetail(declarationCode);
 		return adminDeclaration;
 	}
+	
+	@GetMapping("/getDeclarationReasonsByTypeCode")
+	@ResponseBody
+	public List<AdminDeclaration> getDeclarationReasonsByTypeCode(@RequestParam("dtCode") String dtCode) {
+	    return adminDeclarationService.getDeclarationReasonsByTypeCode(dtCode);
+	}
+
 	
 	
 	@GetMapping("/getDeclarationReason")

@@ -60,4 +60,8 @@ public class AdminDeclaration {
 	private String declarationMdfcnAdmCode;
 	private String declarationMdfcnYmdt;
 	
+	
+	private String declarationProcessCode;
+	private String declarationProcessContent;
+	
 }

@@ -267,11 +267,10 @@
                             } else if (selectedType === 'outsourcing' && item.osCode) {
                                 id = item.osCode; name = item.osTitle; type = '외주';
                             } else if (selectedType === 'enter' && item.entCode) {
-                                id = item.entCode; name = item.entName; type = '기업회원'; // 기업명으로 수정
+                                id = item.entCode; name = item.entTitle; type = '기업회원';
                             } else if (selectedType === 'user' && item.mbrCode) {
-                                id = item.mbrCode; name = item.mbrNick; type = '일반회원'; // 닉네임으로 수정
+                                id = item.mbrCode; name = item.mbrTitle; type = '일반회원';
                             } else {
-                                // 예상치 못한 데이터 형태일 경우 스킵
                                 return;
                             }
 

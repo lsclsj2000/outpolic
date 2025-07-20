@@ -6,6 +6,15 @@ import outpolic.admin.declaration.domain.AdminDeclaration;
 
 public interface AdminDeclarationService {
 	
+	// 신고 내역 수정 업데이트
+	void updateDeclaration(AdminDeclaration adminDeclaration);
+	
+	// 신고 처리 상태 조회
+	List<AdminDeclaration> getDeclarationStatusList();
+	
+	// 신고 타입별 신고 사유 조회
+	List<AdminDeclaration> getDeclarationReasonsByTypeCode(String dtCode);
+	
 	// 신고 수정 팝업창 조회
 	AdminDeclaration getAdminDeclarationDetail(String declarationCode);
 	
