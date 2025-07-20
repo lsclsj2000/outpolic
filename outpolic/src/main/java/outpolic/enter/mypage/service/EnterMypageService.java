@@ -2,6 +2,7 @@ package outpolic.enter.mypage.service;
 
 import java.util.List;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import outpolic.common.dto.OutsourcingReviewDTO;
@@ -47,4 +48,9 @@ public interface EnterMypageService {
 	
 	// 회원코드 기준 진행중 외주 수 불러오기
 	int EnterOsIngSelectByCode(String memberCode);
+	
+	// 프로필 사진 수정하기
+	void updateCorpProfileImage(String memberCode, String imagePath);
+	
+
 }
