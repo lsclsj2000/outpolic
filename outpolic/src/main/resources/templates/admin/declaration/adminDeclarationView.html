@@ -762,9 +762,9 @@
                 });
 
                 // 처리 팝업 - 저장 버튼 클릭 (폼 제출)
-                declarationProcessForm.addEventListener('submit', function (event) {
+                processSaveButton.addEventListener('click', function (event) { 
                     event.preventDefault();
-                    console.log("Process form submit event fired."); // submit 이벤트 발생 확인
+                    console.log("Process save button clicked directly."); 
 
                     // 현재 관리자 코드 (실제 환경에서는 세션 등에서 동적으로 가져와야 함)
                     const adminCode = 'ADM_C002'; // 예시: 현재 로그인한 관리자 코드
@@ -772,8 +772,9 @@
                     const data = {
                         declarationCode: currentProcessDeclarationData.declarationCode, // decl_cd
                         declarationResultCode: declarationResultSelect.value, // drc_cd
-                        declarationProcessCn: declarationProcessContent.value, // dp_cn
-                        adminCode: adminCode, // adm_cd 및 decl_mdfcn_adm_cd
+                        declarationProcessContent: declarationProcessContent.value, // dp_cn 필드명 변경
+                        adminCode: adminCode, // adm_cd
+                        declarationProcessMdfcnAdmCode: adminCode, // dp_mdfcn_adm_cd 필드 추가
                         declarationProcessCode: currentProcessDeclarationData.declarationProcessCode // dp_cd 추가
                     };
 
