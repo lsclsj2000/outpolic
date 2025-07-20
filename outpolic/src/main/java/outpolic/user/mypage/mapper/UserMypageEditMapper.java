@@ -38,5 +38,9 @@ public interface UserMypageEditMapper {
 	 
 	 // 완료된 외주 수 가져오기
 	 int selectUserEndedOsByCode(String memberCode);
+	 
+	 //회원 프로필 이미지
+	 void updateProfileImg(@Param("memberCode") String memberCode, 
+             			   @Param("imagePath") String imagePath);
 
 }

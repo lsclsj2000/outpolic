@@ -27,5 +27,7 @@ public interface UserMypageEditService {
 	
 	 // 완료된 외주 수 가져오기
 	 int selectUserEndedOsByCode(String memberCode);
-
+	 
+	 //프로필 이미지 업로드
+	 void updateProfileImg(String memberCode, String imagePath);
 }

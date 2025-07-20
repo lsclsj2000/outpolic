@@ -1,9 +1,12 @@
 package outpolic.user.mypage.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -14,11 +17,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.common.dto.OutsourcingReviewDTO;
+import outpolic.systems.file.domain.FileMetaData;
+import outpolic.systems.util.FilesUtils;
 import outpolic.user.inquiry.domain.UserInquiry;
 import outpolic.user.inquiry.service.UserInquiryService;
 import outpolic.user.mypage.dto.UserInfoDTO;
@@ -36,6 +43,7 @@ public class UserMypageController {
 	private final PasswordEncoder passwordEncoder;
 	private final UserInquiryService userInquiryService;
 	private final UserOutsourcingService userOutsourcingService;
+	 private final FilesUtils filesUtils;
 	
 	// 결제내역 데이터를 가져오기 위함
 	@Autowired
@@ -44,7 +52,7 @@ public class UserMypageController {
 	
  // 유저 마이페이지
  	@GetMapping("/user/mypage")
- 	public String myPage(HttpSession session, Model model) {
+ 	public String myPage(HttpSession session, Model model, UserInfoDTO userInfoDTO) {
 
  		String memberCode = (String) session.getAttribute("SCD");
  		String gradeCode = (String) session.getAttribute("SGrd");
@@ -52,6 +60,12 @@ public class UserMypageController {
  			model.addAttribute("msg", "접근 권한이 없습니다.");
     		model.addAttribute("url", "/");
     		System.out.println("❌ 접근 권한 없음 → 메인으로 리다이렉트");
+    		
+		if (userInfoDTO.getMemberImg() != null && !userInfoDTO.getMemberImg().isEmpty()) {
+	        model.addAttribute("memberImg", "/"+ userInfoDTO.getMemberImg()); // 예: /attachment/mypageProfile/uuid.jpg
+	    } else {
+	        model.addAttribute("memberImg", null); // 기본 이미지 출력하도록
+	    }	
     		return "user/mypage/alert";
 
  		}
@@ -154,5 +168,63 @@ public class UserMypageController {
          return "success";
      }
  	 
+ 	 //회원 프로필사진 변경
+ 	@Value("${file.path}")
+ 	private String uploadPath;
+ 	 
+ 	@PostMapping("/user/profile/upload")
+    public String uploadProfileImage(@RequestParam("profileImage") MultipartFile file,
+    								UserInfoDTO userInfoDTO,
+                                     HttpSession session,
+                                     RedirectAttributes redirectAttributes) {
+ 		System.out.println("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
+        String memberCode = (String) session.getAttribute("SCD");
+
+        if (memberCode == null) {
+            redirectAttributes.addFlashAttribute("msg", "세션이 만료되었습니다. 다시 로그인해주세요.");
+            return "redirect:/login";
+        }
+
+        try {
+            // ✅ service 구분값으로 "user" 또는 "profile" 등 넣어주기
+            FileMetaData fileMetaData = filesUtils.uploadFile(file, "mypageProfile");
+            log.info("📦 업로드된 파일 경로: {}", fileMetaData.getFilePath());
+
+            System.out.println("🔥🔥🔥 업로드 파일: " + fileMetaData.getFilePath());
+            System.out.println("🔥🔥🔥 프로필 이미지: " + userInfoDTO.getMemberImg());
+            // 실제 경로: /attachment/user/날짜/image/uuid.확장자
+            // DB에는 이 경로를 저장
+            String imagePath =fileMetaData.getFilePath();
+
+            // DB 업데이트
+            userMypageEditService.updateProfileImg(memberCode, imagePath);
+            log.info("🖼️ 마이페이지 프로필 이미지 경로: {}", userInfoDTO.getMemberImg());
+
+            redirectAttributes.addFlashAttribute("msg", "프로필 사진이 저장되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("msg", "업로드 중 오류가 발생했습니다.");
+        }
+
+        return "redirect:/user/mypage";
+    }
+ 	 
  	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

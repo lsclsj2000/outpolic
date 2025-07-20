@@ -70,6 +70,10 @@ public class UserMypageEditServiceImpl implements UserMypageEditService {
 	public int selectUserEndedOsByCode(String memberCode) {
 		return userMypageEditMapper.selectUserEndedOsByCode(memberCode);
 	}
-
+	
+	@Override
+    public void updateProfileImg(String memberCode, String imagePath) {
+        userMypageEditMapper.updateProfileImg(memberCode, imagePath);
+    }
 
 }
