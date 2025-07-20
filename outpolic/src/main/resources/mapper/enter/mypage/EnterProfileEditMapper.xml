@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="outpolic.enter.mypage.mapper.EnterpriseMapper">
+
+    <resultMap type="outpolic.enter.mypage.dto.CorpInfo" id="EnterProfileImageResultMap">
+        <result column="mbr_cd" property="memberCode"/>
+    	<result column="ent_img" property="entImg"/>
+    </resultMap>
+
+    <select id="getCorpProfileFile" parameterType="String" resultMap="EnterProfileImageResultMap">
+		SELECT 
+	        mbr_cd,
+	        ent_img
+	    FROM 
+	        enterprise
+	    WHERE 
+	        mbr_cd = #{memberCode}
+	</select>
+	
+	<update id="updateCorpProfileImg" parameterType="map">
+	    UPDATE enterprise
+	    SET ent_img = #{imagePath},
+	        ent_mdfcn_ymdt = NOW()
+	    WHERE mbr_cd = #{memberCode}
+	</update>
+	
+	<update id="updateCorpMdfcn" parameterType="String">
+		update enterprise
+		set ent_mdfcn_ymdt = now()
+		where mbr_cd = #{memberCode}
+	</update>
+	
+	<update id="updateMemberModifiedDate" parameterType="String">
+	    UPDATE member
+	    SET mbr_mdfcn_ymdt = NOW()
+	    WHERE mbr_cd = #{memberCode}
+	</update>
+	
+	<update id="updateMemberImgToCorp" parameterType="String">
+		UPDATE member m
+		JOIN enterprise e ON m.mbr_cd = e.mbr_cd
+		SET m.mbr_img = e.ent_img
+		WHERE m.mbr_cd = #{memberCode}
+	</update>
+
+</mapper>
+ 	
+
+
+
+
+

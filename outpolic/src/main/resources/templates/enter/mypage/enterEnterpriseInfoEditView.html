@@ -18,29 +18,7 @@
 		          th:action="@{/enterpriseEdit}" method="post" th:object="${corpInfo}" enctype="multipart/form-data">
 		      
 		      <h3 class="fw-bold mb-3">기업 정보 수정</h3>
-		      <hr class="mb-4" style="border: none; height: 2px; background-color: #ececec;">
-				<div class="col-12 mb-4">
-				  <div class="d-flex flex-column align-items-start">
-				
-				    <!-- 프로필 이미지 -->
-				    <img id="previewCorpImg"
-				         th:src="@{${#strings.isEmpty(profileImgPath)} 
-				                  ? '/enter/assets/imgs/default/profile.png' 
-				                  : '/' + profileImgPath}"
-				         alt="기업 프로필 이미지"
-				         style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 1px solid #ddd;" />
-				
-				    <!-- 파일 선택 -->
-				    <input type="file"
-				           name="corpProfileImg"
-				           accept="image/*"
-				           class="form-control form-control-sm mt-2"
-				           style="width: 250px;"
-				           onchange="previewCorpImage(event)" />
-				
-				  </div>
-				</div>
-		
+		      <hr class="mb-4" style="border: none; height: 2px; background-color: #ececec;">	
 		      <!-- 기업명 & 대표자명 -->
 		      <div class="col-md-6">
 		        <label for="corpName">기업명</label>

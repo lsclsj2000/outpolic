@@ -16,13 +16,60 @@
 		<div class="dashboard-menu">
 			<ul class="nav flex-column" role="tablist">
 				<li>
-					<div class="userprofileTitle d-flex flex-column align-items-center mt-10 ">
-						<img class="userProfileImg" th:src="@{/user/assets/imgs/outpolic/cutecat.jpg}" />
-						<h4 class="mt-10 mb-10" value="자갈강" th:text="${enterInfo.memberNickname}">기본닉네임</h4>
+					<div class="enterprofileTitle d-flex flex-column align-items-center mt-10 ">
+						 <img class="enterProfileImg"
+     								th:src="${corpInfo != null and !#strings.isEmpty(corpInfo.corpProfileFilePath)} 
+									         ? '/' + corpInfo.corpProfileFilePath 
+									         : '/enter/assets/imgs/outpolic/cutecat.jpg'"
+							                style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%;"/> 
+						<h5 class="mt-10 mb-10" th:text="${enterInfo.memberNickname}">기본닉네임</h5>
+						<button type="button"
+                            class="btn btn-sm text-muted"
+                            data-bs-toggle="modal"
+                            data-bs-target="#enterprofileModal"
+                            style="background-color : white;">
+	                        사진 변경
+	                    </button>
 					</div>
 				</li>
 			</ul>
 		</div>
+		<div class="modal fade" id="enterprofileModal" tabindex="-1" aria-labelledby="enterprofileModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <form id="enterProfileUploadForm"
+		          method="post"
+		          enctype="multipart/form-data"
+		          action="/enter/profile/upload"> <!-- 실제 수정할 엔드포인트로 바꿔줘 -->
+	      		<div class="modal-content">
+		       	 	<div class="modal-header">
+		          		<h5 class="modal-title" id="enterprofileModalLabel">프로필 사진 변경</h5>
+		          		<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+		        	</div>
+	        		<div class="modal-body text-center">
+		          <!-- 기존 프로필 이미지 -->
+			          <img id="enterPreviewImg"
+			               th:src="${corpInfo != null and !#strings.isEmpty(corpInfo.corpProfileFilePath)} 
+			                       ? '/' + corpInfo.corpProfileFilePath 
+			                       : '/enter/assets/imgs/outpolic/cutecat.jpg'"
+			               class="img-thumbnail mb-3"
+			               style="max-width: 150px;" />
+		
+		          <!-- 새 이미지 업로드 -->
+			          <input type="file"
+			                 name="profileImage"
+			                 accept="image/*"
+			                 class="form-control"
+			                 onchange="previewEnterProfileImage(event)" />
+		        		</div>
+				        <div class="modal-footer">
+				          <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center" style="width: 80px; height: 38px; padding:0px;">저장</button>
+				          <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center" style="width: 80px; height: 38px; padding:0px;" data-bs-dismiss="modal">닫기</button>
+		        		</div>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
+	
 </body>
 </html>

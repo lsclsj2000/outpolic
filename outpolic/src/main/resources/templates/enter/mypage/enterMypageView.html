@@ -367,17 +367,6 @@
 			</div>
 
 		</div> 
-		
-		
-<!-- 		<div id="memberEditModal" class="modal" tabindex="-1" aria-hidden="true">
-		  <div class="modal-content">
-		    <span class="close">&times;</span>
-		    <h2>어떤 페이지로 이동하시겠어요?</h2>
-		    <p>아래 버튼 중 하나를 선택해주세요.</p>
-		    <button class="modal-btn" data-target="goPersonalEdit">개인정보 수정 페이지</button>
-		    <button class="modal-btn" data-target="goCorpEdit">기업정보 수정 페이지</button>
-		  </div>
-		</div> -->
 	</th:block>
 	</body>
 	<!-- 추가할 js file -->
@@ -400,6 +389,31 @@
 		            }
 		        });
 		    });
+		</script>
+		<script>
+		  let originalEnterProfileImg = "";
+		
+		  document.addEventListener("DOMContentLoaded", function () {
+		    const previewImg = document.getElementById('enterPreviewImg');
+		    if (previewImg) {
+		      originalEnterProfileImg = previewImg.src;
+		    }
+		  });
+		
+		  function previewEnterProfileImage(event) {
+		    const input = event.target;
+		    const previewImg = document.getElementById('enterPreviewImg');
+		
+		    if (input.files && input.files[0]) {
+		      const reader = new FileReader();
+		      reader.onload = function (e) {
+		        previewImg.src = e.target.result;
+		      };
+		      reader.readAsDataURL(input.files[0]);
+		    } else {
+		      previewImg.src = originalEnterProfileImg;
+		    }
+		  }
 		</script>
 	</th:block>	
 </html>

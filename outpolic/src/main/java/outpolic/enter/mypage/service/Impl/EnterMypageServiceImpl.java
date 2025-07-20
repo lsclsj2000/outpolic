@@ -1,8 +1,11 @@
 package outpolic.enter.mypage.service.Impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,14 +28,12 @@ public class EnterMypageServiceImpl implements EnterMypageService {
 	private final EnterpriseMapper enterpriseMapper;
 	private final EnterRegisterMapper enterRegisterMapper;
 	
+	
 	//기업정보입력
 	// 기업 정보 입력위해 기업 기본키 생성
 	public String getNextEnterCode() {
 		return enterRegisterMapper.getNextEnterCode();
 	}
-	
-	
-	
 	
 	// 개인정보 호출
 	@Override
@@ -118,6 +119,16 @@ public class EnterMypageServiceImpl implements EnterMypageService {
 		return enterMypageMapper.EnterOsIngSelectByCode(memberCode);		
 	}
 
+	
+// 프로필사진 변경
+	@Override
+    @Transactional 
+    public void updateCorpProfileImage(String memberCode, String imagePath) {
+		enterpriseMapper.updateCorpProfileImg(memberCode, imagePath);
+		enterpriseMapper.updateMemberModifiedDate(memberCode);
+		enterpriseMapper.updateMemberImgToCorp(memberCode);
+    }
+	
 	
 
 }
