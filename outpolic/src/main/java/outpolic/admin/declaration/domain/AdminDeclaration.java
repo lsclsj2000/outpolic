@@ -1,5 +1,7 @@
 package outpolic.admin.declaration.domain;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -52,16 +54,20 @@ public class AdminDeclaration {
 	
 	
 	private String declarationMemberName;
-	private String declarationSaCode;
-	private String declarationSaOrgnlName;
-	private String declarationSaSrvrName;
-	private String declarationSaPath;
+	
+	// --- 첨부파일 목록 필드 추가 ---
+	private List<SubmissionAttachment> attachments;
+
 	private String declarationCn;
 	private String declarationMdfcnAdmCode;
 	private String declarationMdfcnYmdt;
 	
-	
 	private String declarationProcessCode;
 	private String declarationProcessContent;
 	
+    private String adminCode; // Controller에서 adm_cd를 설정하기 위해 추가 (필요시)
+
+	// --- declaration_process 테이블의 수정자/수정일시 필드 추가 ---
+	private String declarationProcessMdfcnAdmCode;
+	private String declarationProcessMdfcnYmdt;
 }

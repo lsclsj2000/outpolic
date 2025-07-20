@@ -5,6 +5,11 @@ import java.util.List;
 import outpolic.admin.declaration.domain.AdminDeclaration;
 
 public interface AdminDeclarationService {
+
+	
+	
+	// 신고 처리 내역 저장 및 신고 상태 업데이트
+	void processDeclaration(AdminDeclaration adminDeclaration);
 	
 	// 신고 내역 수정 업데이트
 	void updateDeclaration(AdminDeclaration adminDeclaration);
@@ -56,4 +61,7 @@ public interface AdminDeclarationService {
 	
 	// 신고 내역 목록 조회
 	List<AdminDeclaration> getAdminDeclarationList();
+
+    // 신고 테이블의 상태 및 수정자/수정일시 업데이트 (이름 변경)
+    void updateDeclarationStatusAndModifier(AdminDeclaration adminDeclaration);
 }
