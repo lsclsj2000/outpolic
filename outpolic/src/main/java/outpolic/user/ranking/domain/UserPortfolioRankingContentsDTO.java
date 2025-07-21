@@ -15,6 +15,7 @@ public class UserPortfolioRankingContentsDTO {
 	private String ctgryName;
 	private String stcCode;
 	private String clCd;
+	private String prtfThumbnailUrl;
 	private int rankingView;
 	private LocalDateTime rkDate;
 	private boolean isBookmarked;

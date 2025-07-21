@@ -133,10 +133,7 @@
 					                    <div class="product-img product-img-zoom">
 					                        <a th:href="@{/user/contents/{id}(id=${content.osCode})}">
 					                            <img class="default-img"
-					                                 th:src="@{|https://picsum.photos/id/${iterStat.index + 320}/400/300|}" 
-					                                 alt="외주 이미지" />
-					                            <img class="hover-img"
-					                                 th:src="@{|https://picsum.photos/id/${iterStat.index + 420}/400/300|}" 
+					                                 th:src="${content.osThumbnailUrl}" 
 					                                 alt="외주 이미지" />
 					                        </a>
 					                    </div>
@@ -197,10 +194,7 @@
 							            <div class="product-img product-img-zoom">
 							                <a href="javascript:void(0);">
 												<img class="default-img"
-												     th:src="@{|https://picsum.photos/id/${iterStat.index + 20}/400/300|}" 
-												     alt="" />
-												<img class="hover-img"
-												     th:src="@{|https://picsum.photos/id/${iterStat.index + 120}/400/300|}" 
+												     th:src="${content.prtfThumbnailUrl}" 
 												     alt="" />
 							                </a>
 							            </div>
@@ -502,6 +496,7 @@
 		    infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
 		    contentSection.innerHTML = '';
 		    portfolioModal.show();
+		    
 		
 		    $.ajax({
 		        url: `/user/api/contents/${contentsId}`,
@@ -571,7 +566,17 @@
 		                </div>
 		            `;
 		            infoSection.innerHTML = infoHtml;
-		            contentSection.innerHTML = `<img src="https://picsum.photos/seed/${contentsId}/800/1200" class="img-fluid" alt="상세 이미지">`;
+		            const files = JSON.parse(detail.filesJson);
+
+		            // 2. 파일 배열을 순회하며 각 파일에 대한 <img> 태그 문자열을 생성합니다.
+		            //    map()을 사용하여 각 파일 객체를 HTML 문자열로 변환하고, join('')으로 합칩니다.
+		            const imagesHtml = files.map(file =>
+		                `<img src="${file.filePath}" alt="${file.fileOrgnlNm}" class="img-fluid" style="margin-bottom: 15px;">`
+		            ).join('');
+
+		            // 3. contentSection의 내용을 생성된 이미지 태그들로 교체합니다.
+		            //    만약 파일이 없다면 imagesHtml은 빈 문자열이 되어 아무것도 표시되지 않습니다.
+		            contentSection.innerHTML = imagesHtml;
 		        },
 		        error: function(xhr) {
 		            infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>';

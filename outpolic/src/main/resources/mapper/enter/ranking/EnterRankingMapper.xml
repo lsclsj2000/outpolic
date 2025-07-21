@@ -9,6 +9,7 @@
         <result property="entName"      column="ent_nm" />
         <result property="prtfTtl"      column="prtf_ttl" />
         <result property="prtfDate"     column="prtf_reg_ymdt" />
+        <result property="prtfThumbnailUrl"     column="prtf_thumbnail_url" />
         <result property="ctgryName"    column="ctgry_nm" />
         <result property="stcCode"      column="stc_cd" />
         <result property="rankingView"  column="rk_view" />
@@ -24,6 +25,7 @@
         <result property="ctgryName"    column="ctgry_nm" />
         <result property="osTtl"        column="os_ttl" />
         <result property="osExpln"      column="os_expln" />
+        <result property="osThumbnailUrl"     column="os_thumbnail_url" />
         <result property="reviewScore"  column="avg_review_score" />
         <result property="osAtm"        column="os_amt" />
         <result property="clCd"         column="cl_cd" />
@@ -44,6 +46,7 @@
             p.prtf_ttl,
             p.prtf_reg_ymdt,
             p.stc_cd,
+            p.prtf_thumbnail_url,
             -- ✨ 카테고리 중복 문제를 GROUP_CONCAT으로 해결
             IFNULL(GROUP_CONCAT(c.ctgry_nm SEPARATOR ', '), '미지정') AS ctgry_nm,
             r.rk_view,
@@ -76,6 +79,7 @@
             c.ctgry_nm,
             o.os_ttl,
             o.os_expln,
+            o.os_thumbnail_url,
             IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score,
             o.os_amt,
             cl.cl_cd

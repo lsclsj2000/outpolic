@@ -17,6 +17,7 @@
         <result property="rankingView"  column="rk_view" />
         <result property="rkDate"       column="rk_tot_ymd" />
         <result property="clCd"         column="cl_cd" />
+        <result property="prtfThumbnailUrl"         column="prtf_thumbnail_url" />
         <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
     <resultMap id="ContentsRankingMap" type="outpolic.user.ranking.domain.UserRankingContentsDTO">
@@ -30,6 +31,7 @@
         <result property="reviewScore"  column="avg_review_score" />
         <result property="osAtm"        column="os_amt" />
         <result property="clCd"         column="cl_cd" />
+        <result property="osThumbnailUrl"         column="os_thumbnail_url" />
         <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
     <sql id="bookmarkJoinSql">
@@ -51,7 +53,8 @@
             IFNULL(GROUP_CONCAT(c.ctgry_nm SEPARATOR ', '), '미지정') AS ctgry_nm,
             r.rk_view,
             r.rk_tot_ymd,
-            cl.cl_cd
+            cl.cl_cd,
+            p.prtf_thumbnail_url
             <!-- 찜 여부 SELECT 절 포함 -->
             <include refid="isBookmarkedSelectSql"/>
         FROM
@@ -81,6 +84,7 @@
             o.os_expln,
             IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score,
             o.os_amt,
+            o.os_thumbnail_url,
             cl.cl_cd
             <!-- 찜 여부 SELECT 절 포함 -->
             <include refid="isBookmarkedSelectSql"/>
