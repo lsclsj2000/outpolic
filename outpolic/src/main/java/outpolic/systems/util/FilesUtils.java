@@ -58,7 +58,7 @@ public class FilesUtils {
 				if (view != null) {
 					GroupPrincipal newGroup = path.getFileSystem().getUserPrincipalLookupService().lookupPrincipalByGroupName("deploygroup");
 					view.setGroup(newGroup);
-					String cmd = "chmod 775 -R " + path.toString();
+					String cmd = "chmod 775 -R " + fileRealPath + "/attachment/";
 					Runtime rt = Runtime.getRuntime();
 					Process prc = rt.exec(cmd);
 					prc.waitFor();
