@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.GroupPrincipal;
+import java.nio.file.attribute.PosixFileAttributeView;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -50,6 +52,18 @@ public class FilesUtils {
 	private void createFolder(Path path) {
 		try {
 			Files.createDirectories(path);
+			String os = System.getProperty("os.name").toLowerCase();
+			if(os.contains("linux")) {				
+				PosixFileAttributeView view = Files.getFileAttributeView(path, PosixFileAttributeView.class);
+				if (view != null) {
+					GroupPrincipal newGroup = path.getFileSystem().getUserPrincipalLookupService().lookupPrincipalByGroupName("deploygroup");
+					view.setGroup(newGroup);
+					String cmd = "chmod 775 -R " + path.toString();
+					Runtime rt = Runtime.getRuntime();
+					Process prc = rt.exec(cmd);
+					prc.waitFor();
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("디렉토리 생성 실패: " + path, e);
