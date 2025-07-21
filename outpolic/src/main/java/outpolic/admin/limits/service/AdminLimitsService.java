@@ -4,6 +4,7 @@ import java.util.List;
 
 import outpolic.admin.limits.domain.AdminLimits;
 
+
 public interface AdminLimitsService {
 	
 	// 회원 권한 조회

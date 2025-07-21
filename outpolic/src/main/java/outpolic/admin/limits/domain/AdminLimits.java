@@ -23,23 +23,23 @@ public class AdminLimits {
 	private String limitsStartYmdt;
 	private String limitsEndYmdt;
 	private String limitsClearYmdt;
-	private Integer limitsRmdDays;
+	private int limitsRmdDays;
 	private String limitsStatus;
 	
 	private String authorityMemberCode;
 	private String authorityGrdCode;
-	private Integer authorityPortfolio;
-	private Integer authorityOsWrite;
-	private Integer authorityOsContract;
-	private Integer authorityOs;
-	private Integer authorityChat;
-	private Integer authorityReview;
-	private Integer authorityMdfcnYmdt;
+	private int authorityPortfolio;
+	private int authorityOsWrite;
+	private int authorityOsContract;
+	private int authorityOs;
+	private int authorityChat;
+	private int authorityReview;
+	private int authorityMdfcnYmdt;
 	
 	
 	private String limitsPeriodCode;
 	private String limitsPeriodName;
-	private Integer limitsPeriodDays;
+	private int limitsPeriodDays;
 	private String limitsPeriodMdfcnAdmCode;
 	private String limitsPeriodMdfcnYmdt;
 	private String limitsPeriodRegAdmCode;
@@ -47,11 +47,15 @@ public class AdminLimits {
 	
 	private String limitsReasonCode;
 	private String limitsReasonCnd;
-	private Integer limitsReasonCndMin;
-	private Integer limitsReasonCndMax;
+	private int limitsReasonCndMin;
+	private int limitsReasonCndMax;
 	private String limitsReasonExpln;
 	private String limitsReasonRegAdmCode;
 	private String limitsReasonRegYmdt;
 	private String limitsReasonMdfcnAdmCode;
 	private String limitsReasonMdfcnYmdt;
+	
+	private String limitsReasonCondition;
+	private int limitsReasonMinCount;
+	private int limitsReasonMaxCount;
 }
