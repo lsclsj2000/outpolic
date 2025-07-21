@@ -7,48 +7,40 @@
         <result property="osTtl" column="os_ttl"/>
     </resultMap>
 
-   <resultMap id="portfolioDetailResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
-        <id property="prtfCd" column="prtf_cd"/>
-        <result property="entCd" column="ent_cd"/>
-        <result property="prtfTtl" column="prtf_ttl"/>
-        <result property="prtfCn" column="prtf_cn"/>
-        <result property="prtfDwnld_cnt" column="prtf_dwnld_cnt"/>
-        <result property="prtfRegYmdt" column="prtf_reg_ymdt"/>
-        <result property="admCd" column="adm_cd"/>
-        <result property="prtfMdfcnYmdt" column="prtf_mdfcn_ymdt"/>
-        <result property="stcCd" column="stc_cd"/>
-        
-        <result property="clCd" column="cl_cd"/>
-
-        <result property="prtfPeriodStart" column="prtf_period_start"/> 
-        <result property="prtfPeriodEnd" column="prtf_period_end"/>     
-        <result property="prtfClient" column="prtf_client"/>           
-        <result property="prtfIndustry" column="prtf_industry"/>       
-        <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/>
-        <collection property="categories" ofType="outpolic.enter.POAddtional.domain.CategorySearchDto">
-            <id property="ctgryId" column="category_id"/>
-            <result property="ctgryNm" column="ctgry_nm"/>
-        </collection>
-        <collection property="tagNames" ofType="java.lang.String">
-            <result column="tag_name"/>
-        </collection>
-        <collection property="linkedOutsourcings" javaType="java.util.ArrayList"
-                     ofType="outpolic.enter.outsourcing.domain.EnterOutsourcing"
-        			column="prtf_cd" select="findLinkedOutsourcingsByPrtfCd" />
-    </resultMap>
-
     <resultMap id="simplePortfolioResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
         <id property="prtfCd" column="prtf_cd"/>
         <result property="prtfTtl" column="prtf_ttl"/>
         <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/>
     </resultMap>
 
+   <resultMap id="portfolioDetailResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
+        <id property="prtfCd" column="prtf_cd"/>
+        <result property="entCd" column="ent_cd"/>
+        <result property="prtfTtl" column="prtf_ttl"/>
+        <result property="prtfCn" column="prtf_cn"/>
+        <result property="prtfRegYmdt" column="prtf_reg_ymdt"/>
+        <result property="stcCd" column="stc_cd"/>
+        <result property="clCd" column="cl_cd"/>
+        <result property="prtfPeriodStart" column="prtf_period_start"/>
+        <result property="prtfPeriodEnd" column="prtf_period_end"/>
+        <result property="prtfClient" column="prtf_client"/>
+        <result property="prtfIndustry" column="prtf_industry"/>
+        <result property="ctgryId" column="ctgry_id"/>
+        <result property="ctgryNm" column="ctgry_nm"/>
+        <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/>
+        <collection property="tagNames" ofType="java.lang.String" javaType="java.util.ArrayList">
+            <result column="tag_name"/>
+        </collection>
+        <collection property="bodyImages" javaType="java.util.ArrayList"
+                    ofType="outpolic.systems.file.domain.FileMetaData"
+                    column="cl_cd" select="findFilesByClCd" />
+    </resultMap>
+
  <select id="findPortfoliosByTitleAndEntCd" resultType="outpolic.enter.portfolio.domain.EnterPortfolio">
         SELECT
             prtf_cd,
             prtf_ttl
-            <!-- 필요하다면 더 많은 컬럼을 추가할 수 있습니다 -->
-        FROM
+            FROM
             portfolio
         WHERE
             ent_cd = #{entCd}
@@ -58,57 +50,40 @@
     </select>
 
     <select id="findPortfolioDetailsByEntCd" resultMap="portfolioDetailResultMap">
-    SELECT
-        p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.stc_cd,
-        p.prtf_period_start, p.prtf_period_end, p.prtf_client, p.prtf_industry, 
-        p.prtf_thumbnail_url, cl.cl_cd,
-        c.ctgry_id AS category_id,
-        c.ctgry_nm AS ctgry_nm,
-        t.tag_nm AS tag_name
-    FROM
-        portfolio p
-    LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
-    LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
-    LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
-    LEFT JOIN tag_mapping tm ON cl.cl_cd = tm.cl_cd
-    LEFT JOIN tag t ON tm.tag_cd = t.tag_cd
-    WHERE
-        p.ent_cd = #{entCd}
-    ORDER BY
-        p.prtf_reg_ymdt DESC
-</select>
-
-    <select id="findPortfolioDetailsByPrtfCd" resultMap="portfolioDetailResultMap">
         SELECT
-            p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt, p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd,
-            p.prtf_period_start, p.prtf_period_end, p.prtf_client, p.prtf_industry, 
-            p.prtf_thumbnail_url, cl.cl_cd, c.ctgry_id AS category_id,
-            c.ctgry_nm AS ctgry_nm, t.tag_nm AS tag_name
+            p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_reg_ymdt, p.stc_cd,
+            p.prtf_period_start, p.prtf_period_end, p.prtf_client, p.prtf_industry,
+            p.prtf_thumbnail_url,
+            cl.cl_cd,
+            (SELECT c.ctgry_nm FROM category_mapping cm JOIN category c ON cm.ctgry_id = c.ctgry_id WHERE cm.cl_cd = cl.cl_cd LIMIT 1) AS ctgry_nm,
+            (SELECT GROUP_CONCAT(t.tag_nm SEPARATOR ', ') FROM tag_mapping tm JOIN tag t ON tm.tag_cd = t.tag_cd WHERE tm.cl_cd = cl.cl_cd) AS tag_name
         FROM
             portfolio p
         LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
-        LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
-        LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
-        LEFT JOIN tag_mapping tm ON cl.cl_cd = tm.cl_cd
-        LEFT JOIN tag t ON tm.tag_cd = t.tag_cd
+        WHERE
+            p.ent_cd = #{entCd}
+        GROUP BY
+            p.prtf_cd, cl.cl_cd
+        ORDER BY
+            p.prtf_reg_ymdt DESC
+    </select>
+ <select id="findPortfolioDetailsByPrtfCd" resultMap="portfolioDetailResultMap">
+        SELECT
+            p.prtf_cd, p.ent_cd, p.prtf_ttl, p.prtf_cn, p.prtf_dwnld_cnt,
+            p.prtf_reg_ymdt, p.adm_cd, p.prtf_mdfcn_ymdt, p.stc_cd,
+            p.prtf_period_start, p.prtf_period_end, p.prtf_client, p.prtf_industry,
+            p.prtf_thumbnail_url,
+            cl.cl_cd,
+            (SELECT cm.ctgry_id FROM category_mapping cm WHERE cm.cl_cd = cl.cl_cd LIMIT 1) AS ctgry_id,
+            (SELECT GROUP_CONCAT(DISTINCT t.tag_nm SEPARATOR ', ') FROM tag_mapping tm JOIN tag t ON tm.tag_cd = t.tag_cd WHERE tm.cl_cd = cl.cl_cd) AS tag_name
+        FROM
+            portfolio p
+        LEFT JOIN content_list cl ON p.prtf_cd = cl.cntd_cd AND cl.cl_cd LIKE 'LIST_PO_C%'
         WHERE
             p.prtf_cd = #{prtfCd}
+        GROUP BY
+            p.prtf_cd, cl.cl_cd
     </select>
-
-    <select id="findPortfoliosByTitle" resultMap="simplePortfolioResultMap">
-        SELECT
-            prtf_cd,
-            prtf_ttl
-        FROM
-            portfolio
-        WHERE
-            prtf_ttl LIKE CONCAT('%', #{query}, 
- '%')
-        ORDER BY
-            prtf_reg_ymdt DESC
-        LIMIT 10
-    </select>
-
 
 <select id="selectMaxPortfolioCode" resultType="string">
     SELECT MAX(prtf_cd) FROM portfolio
@@ -135,14 +110,14 @@
    p.prtf_cd = #{prtfCd}
     </select>
 
-    <insert id="insertPortfolio" parameterType="EnterPortfolio">
+     <insert id="insertPortfolio" parameterType="EnterPortfolio">
         INSERT INTO portfolio (
             prtf_cd, ent_cd, prtf_ttl, prtf_cn,
             prtf_dwnld_cnt, prtf_reg_ymdt, stc_cd, prtf_thumbnail_url,
-            prtf_period_start, prtf_period_end, prtf_client, prtf_industry 
+            prtf_period_start, prtf_period_end, prtf_client, prtf_industry, ctgry_id
         ) VALUES (
             #{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), 'SD_ACTIVE', #{prtfThumbnailUrl},
-            #{prtfPeriodStart}, #{prtfPeriodEnd}, #{prtfClient}, #{prtfIndustry} 
+            #{prtfPeriodStart}, #{prtfPeriodEnd}, #{prtfClient}, #{prtfIndustry}, #{ctgryId}
         )
     </insert>
 
@@ -167,30 +142,27 @@
         VALUES (#{tagCd}, #{clCd}, NOW(), #{mbrCd}, 'SD_ACTIVE')
     </insert>
 
-    <update id="updatePortfolio" parameterType="EnterPortfolio">
+     <update id="updatePortfolio" parameterType="EnterPortfolio">
         UPDATE portfolio
         <set>
             <if test="prtfTtl != null and prtfTtl != ''"> prtf_ttl = #{prtfTtl}, </if>
             <if test="prtfCn != null and prtfCn != ''"> prtf_cn = #{prtfCn}, </if>
-            
             <if test="prtfPeriodStart != null"> prtf_period_start = #{prtfPeriodStart}, </if>
-            <if test="prtfPeriodStart == null"> prtf_period_start = NULL, </if> 
-
+            <if test="prtfPeriodStart == null"> prtf_period_start = NULL, </if>
             <if test="prtfPeriodEnd != null"> prtf_period_end = #{prtfPeriodEnd}, </if>
-            <if test="prtfPeriodEnd == null"> prtf_period_end = NULL, </if> 
-
+            <if test="prtfPeriodEnd == null"> prtf_period_end = NULL, </if>
             <if test="prtfClient != null and prtfClient != ''"> prtf_client = #{prtfClient}, </if>
-            <if test="prtfClient != null and prtfClient == ''"> prtf_client = NULL, </if> 
-
+            <if test="prtfClient != null and prtfClient == ''"> prtf_client = NULL, </if>
             <if test="prtfIndustry != null and prtfIndustry != ''"> prtf_industry = #{prtfIndustry}, </if>
-            <if test="prtfIndustry != null and prtfIndustry == ''"> prtf_industry = NULL, </if> 
-
-            <if test="prtfThumbnailUrl != null"> prtf_thumbnail_url = #{prtfThumbnailUrl}, </if> 
+            <if test="prtfIndustry != null and prtfIndustry == ''"> prtf_industry = NULL, </if>
+            <if test="prtfThumbnailUrl != null"> prtf_thumbnail_url = #{prtfThumbnailUrl}, </if>
             <if test="prtfThumbnailUrl == null"> prtf_thumbnail_url = NULL, </if>
+            <if test="ctgryId != null"> ctgry_id = #{ctgryId}, </if>
             prtf_mdfcn_ymdt = NOW()
         </set>
         WHERE prtf_cd = #{prtfCd}
     </update>
+
 
     <delete id="deleteCategoryMappingByClCd">
         DELETE FROM category_mapping WHERE cl_cd = #{clCd}
@@ -217,19 +189,16 @@
    DELETE FROM portfolio WHERE prtf_cd = #{prtfCd}
     </delete>
 
-    <delete id="deleteFilesByClCd">
-        DELETE FROM `file` WHERE cl_cd = #{clCd}
+    <delete id="deleteFilesByFileCd" parameterType="String">
+        DELETE FROM `file` WHERE file_cd = #{fileCd}
     </delete>
-
-
     <select id="findLatestPrtfCd" resultType="String">
     SELECT prtf_cd FROM portfolio WHERE prtf_cd LIKE 'PO_C%'
     ORDER BY CAST(SUBSTRING(prtf_cd, 5) AS UNSIGNED) DESC LIMIT 1
 </select>
 
     <select id="findLatestTagCd" resultType="String">
-        SELECT tag_cd FROM tag WHERE tag_cd LIKE
-        'T_C%'
+        SELECT tag_cd FROM tag WHERE tag_cd LIKE 'T_C%'
      ORDER BY CAST(SUBSTRING(tag_cd, 5) AS UNSIGNED) DESC LIMIT 1
     </select>
 
@@ -361,13 +330,16 @@
             (#{file.fileIdx}, NOW(), #{file.fileExtension}, #{file.fileOriginalName}, #{file.fileNewName}, #{file.filePath}, #{clCd}, #{mbrCd}, #{file.fileSize})
 </insert>
 
-    <select id="findFilesByClCd" resultType="outpolic.systems.file.domain.FileMetaData">
+   <select id="findFilesByClCd" resultType="outpolic.systems.file.domain.FileMetaData">
         SELECT
-            file_cd AS fileIdx, file_reg_ymdt AS fileRegYmdt, file_mdfcn_ymdt AS fileMdfcnYmdt,
-            file_extn AS fileExtension, file_orgnl_nm AS fileOriginalName, file_srvr_nm AS fileNewName,
-            file_path AS filePath, file_size AS fileSize FROM `file`
+            file_cd AS fileIdx,
+            file_path AS filePath,
+            file_orgnl_nm AS fileOriginalName,
+            file_srvr_nm AS fileNewName,
+            file_extn AS fileExtension,
+            file_size AS fileSize
+        FROM file
         WHERE cl_cd = #{clCd}
-        ORDER BY file_reg_ymdt DESC
     </select>
 
     <select id="searchPortfoliosByTitle" resultType="outpolic.enter.portfolio.domain.EnterPortfolio">
@@ -381,11 +353,15 @@
         ORDER BY
             prtf_reg_ymdt DESC
     </select>
+    
+    <select id="findEntCdByMbrCd" resultType="String">
+        SELECT ent_cd FROM enterprise WHERE mbr_cd = #{mbrCd}
+    </select>
 
    <select id="findLatestClCdForPortfolio" resultType="String">
     SELECT cl_cd FROM content_list
     WHERE cl_cd LIKE 'LIST_PO_C%'
-    ORDER BY CAST(SUBSTRING(cl_cd, 11) AS UNSIGNED) DESC 
+    ORDER BY CAST(SUBSTRING(cl_cd, 11) AS UNSIGNED) DESC
  LIMIT 1
 </select>
 

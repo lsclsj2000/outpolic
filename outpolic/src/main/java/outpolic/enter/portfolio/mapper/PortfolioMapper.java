@@ -6,7 +6,6 @@ import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.systems.file.domain.FileMetaData;
 
 import java.util.List;
-
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -15,7 +14,6 @@ import org.apache.ibatis.annotations.Select;
 public interface PortfolioMapper {
 
     List<EnterPortfolio> findPortfoliosByTitle(@Param("query") String query);
-
     // INSERT
     // insertPortfolio 메서드 파라미터 추가
     int insertPortfolio(EnterPortfolio portfolio);
@@ -40,8 +38,7 @@ public interface PortfolioMapper {
     int deleteCategoryMappingByClCd(String clCd);
     int deleteTagMappingByClCd(String clCd);
     int deleteBookmarkByClCd(String clCd);
-    int deleteFilesByClCd(String clCd);
-
+    int deleteFilesByClCd(String clCd); // 이 메서드는 file_cd를 받을 수 있도록 변경해야 할 수도 있습니다.
     // UPDATE
     int updatePortfolio(EnterPortfolio portfolio);
 
@@ -56,7 +53,7 @@ public interface PortfolioMapper {
     List<EnterPortfolio> findUnlinkedPortfolios(@Param("osCd") String osCd, @Param("entCd") String entCd, @Param("query") String query);
     int deleteOutsourcingPortfolioByPrtfCd(@Param("prtfCd") String prtfCd);
 
-    @Select("SELECT ent_cd FROM enterprise WHERE mbr_cd = #{mbrCd}")
+   // @Select("SELECT ent_cd FROM enterprise WHERE mbr_cd = #{mbrCd}")
     String findEntCdByMbrCd(String mbrCd);
     String findMbrCdByClCd(String clCd);
 
@@ -68,13 +65,13 @@ public interface PortfolioMapper {
 
     // Missing method: Outsourcing에 연결된 Portfolio 조회
     // 이 메서드는 PortfolioMapper에 있어야 합니다.
-    List<EnterPortfolio> findLinkedPortfoliosByOsCd(String osCd); // <-- 이 줄을 추가합니다.
+    List<EnterPortfolio> findLinkedPortfoliosByOsCd(String osCd);
 
     int deleteOutsourcingContractDetailsByClCd(String clCd);
     int deleteRankingByClCd(String clCd);
     int deleteTodayViewByClCd(String clCd);
     int deleteTotalViewByClCd(String clCd);
-    int deletePerusalContentByClCd(String clCd); // <-- 이 줄을 추가합니다.
+    int deletePerusalContentByClCd(String clCd);
     
     String findLatestClCdForPortfolio();
     String selectMaxPortfolioCode();
@@ -86,8 +83,14 @@ public interface PortfolioMapper {
 	List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query);
 
 	List<EnterOutsourcing> findUnlinkedOutsourcings(String prtfCd, String entCd, String query);
-
-	List<EnterPortfolio> findPortfoliosByTitleAndEntCd(String query, String entCd);
+    List<EnterPortfolio> findPortfoliosByTitleAndEntCd(String query, String entCd);
 
 	List<EnterPortfolio> findAllPortfoliosByTitle(String query);
+
+    // [!code diff --start]
+    // file_cd로 FileMetaData를 조회하는 메서드 추가
+    @Select("SELECT file_cd AS fileIdx, file_reg_ymdt, file_mdfcn_ymdt, file_extn, file_orgnl_nm AS fileOriginalName, file_srvr_nm AS fileNewName, file_path AS filePath, cl_cd, mbr_cd, file_size FROM file WHERE file_cd = #{fileCd}")
+    FileMetaData findFileMetaDataByFileCd(@Param("fileCd") String fileCd);
+    // [!code diff --end]
+	void deleteFilesByFileCd(String fileIdx);
 }
