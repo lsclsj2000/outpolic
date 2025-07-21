@@ -273,7 +273,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        dt_cd, dr_cd, lt_cd, lp_cd, lr_cnd, lr_cnd_min, lr_cnd_max, lr_expln, stc_cd, lr_reg_adm_cd, lr_reg_ymdt
 	    ) VALUES (
 	        #{declarationTypeCode}, #{declarationReasonCode}, #{limitsTypeCode}, #{limitsPeriodCode},
-	        #{limitsReasonCondition}, #{limitsReasonMinCount}, #{limitsReasonMaxCount}, #{limitsReasonExpln}, #{limitsReasonStcCode},
+	        #{limitsReasonCnd}, #{limitsReasonCndMin}, #{limitsReasonCndMax}, #{limitsReasonExpln}, #{limitsTypeStcCode},
 	        #{limitsReasonRegAdmCode}, NOW()
 	    )
 	</insert>
@@ -286,11 +286,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        dr_cd = #{declarationReasonCode},
 	        lt_cd = #{limitsTypeCode},
 	        lp_cd = #{limitsPeriodCode},
-	        lr_cnd = #{limitsReasonCondition},
-	        lr_cnd_min = #{limitsReasonMinCount},
-	        lr_cnd_max = #{limitsReasonMaxCount},
+	        lr_cnd = #{limitsReasonCnd},
+	        lr_cnd_min = #{limitsReasonCndMin},
+	        lr_cnd_max = #{limitsReasonCndMax},
 	        lr_expln = #{limitsReasonExpln},
-	        stc_cd = #{limitsReasonStcCode},
+	        stc_cd = #{limitsTypeStcCode},
 	        lr_mdfcn_adm_cd = #{limitsReasonMdfcnAdmCode},
 	        lr_mdfcn_ymdt = NOW()
 	    WHERE

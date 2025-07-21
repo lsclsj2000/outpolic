@@ -23,6 +23,7 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
 	public List<AdminLimits> getAdminLimitsTypeList() {
 		// 제재 타입 자원 조회
 		List<AdminLimits> adminLimitsTypeList = adminLimitsMapper.getAdminLimitsTypeList();
+		log.info("Fetched AdminLimitsTypeList: {}", adminLimitsTypeList); // 이 줄 추가
 		return adminLimitsTypeList;
 	}
 
@@ -37,6 +38,7 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
 	public List<AdminLimits> getAdminLimitsPeriodList() {
 		// 제재 기간 자원 조회
 		List<AdminLimits> adminLimitsPeriodList = adminLimitsMapper.getAdminLimitsPeriodList();
+		log.info("Fetched AdminLimitsPeriodList: {}", adminLimitsPeriodList); // 이 줄 추가
 		return adminLimitsPeriodList;
 	}
 
@@ -118,8 +120,19 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
 
 	@Override
 	public List<AdminLimits> getDeclarationReasonList(String declarationTypeCode) {
-		// 신고 사유 목록 조회 (타입별 필터링 가능)
-	    return adminLimitsMapper.getDeclarationReasonList(declarationTypeCode);
+	    List<AdminLimits> reasons = adminLimitsMapper.getDeclarationReasonList(declarationTypeCode);
+	    
+	    // 여기에 로그 추가: (logger 대신 log 사용)
+	    log.info("DEBUG: 신고 타입 [{}]에 대한 신고 사유 개수: {}", declarationTypeCode, reasons.size());
+	    if (reasons != null && !reasons.isEmpty()) {
+	        reasons.forEach(reason -> 
+	            log.info("  DEBUG: - 코드: {}, 이름: {}", reason.getDeclarationReasonCode(), reason.getDeclarationReasonName())
+	        );
+	    } else {
+	        log.info("  DEBUG: - 반환된 신고 사유 데이터가 없습니다.");
+	    }
+	    
+	    return reasons;
 	}
 
 
