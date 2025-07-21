@@ -26,6 +26,7 @@ public class UserBookmarkViewDTO {
     private String osctgryId;
     private String osAmt;
     private String osThumbnailUrl;
+    private String osStcCd;
 
     // 포트폴리오일 경우
     private String prtfCd;
