@@ -18,9 +18,9 @@
 				<li>
 					<div class="enterprofileTitle d-flex flex-column align-items-center mt-10 ">
 						 <img class="enterProfileImg"
-     								th:src="${corpInfo != null and !#strings.isEmpty(corpInfo.corpProfileFilePath)} 
-									         ? '/' + corpInfo.corpProfileFilePath 
-									         : '/enter/assets/imgs/outpolic/cutecat.jpg'"
+     								th:src="${(enterInfo != null and !#strings.isEmpty(enterInfo.mbrImg)) 
+								           ? '/' + enterInfo.mbrImg 
+								           : '/enter/assets/imgs/outpolic/cutecat.jpg'}"
 							                style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%;"/> 
 						<h5 class="mt-10 mb-10" th:text="${enterInfo.memberNickname}">기본닉네임</h5>
 						<button type="button"
@@ -48,9 +48,9 @@
 	        		<div class="modal-body text-center">
 		          <!-- 기존 프로필 이미지 -->
 			          <img id="enterPreviewImg"
-			               th:src="${corpInfo != null and !#strings.isEmpty(corpInfo.corpProfileFilePath)} 
-			                       ? '/' + corpInfo.corpProfileFilePath 
-			                       : '/enter/assets/imgs/outpolic/cutecat.jpg'"
+			               th:src="${(enterInfo != null and !#strings.isEmpty(enterInfo.mbrImg)) 
+						           ? '/' + enterInfo.mbrImg 
+						           : '/enter/assets/imgs/outpolic/cutecat.jpg'}"
 			               class="img-thumbnail mb-3"
 			               style="max-width: 150px;" />
 		

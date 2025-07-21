@@ -22,4 +22,6 @@ public class EnterInfo {
 	private LocalDate memberBirth;
 	private LocalDate memberJoinDate;
 	private LocalDate memberModifyDate;
+	
+	private String mbrImg;
 }

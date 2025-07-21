@@ -1,6 +1,8 @@
 package outpolic.enter.mypage.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import outpolic.enter.inquiry.domain.EnterInquiry;
 import outpolic.enter.inquiry.service.EnterInquiryService;
 import outpolic.enter.mypage.dto.CorpInfo;
 import outpolic.enter.mypage.dto.EnterInfo;
+import outpolic.enter.mypage.mapper.EnterpriseMapper;
 import outpolic.enter.mypage.service.EnterMypageService;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
@@ -39,6 +42,7 @@ public class enterMypageController {
 	private final EnterInquiryService enterInquiryService;
 	private final EnterWithdrawnService enterWithdrawnService;
 	private final FilesUtils filesUtils;
+	private final EnterpriseMapper enterpriseMapper;
 	
 	// 기업 마이페이지 
     @GetMapping("/enter/mypage")
@@ -51,6 +55,12 @@ public class enterMypageController {
     		model.addAttribute("url", "/");
     		return "enter/mypage/alert";
     	}
+    	
+    	// 기업정보 담는거
+    	CorpInfo corpInfo = enterMypageService.getEnterpriseInfoByCode(memberCode);
+    	System.out.println("기업 프로필 이미지 경로: " + corpInfo.getEntImg());
+    	model.addAttribute("corpInfo", corpInfo);
+    	
     	//회원정보
  	    EnterInfo enterInfo = enterMypageService.getEnterInfoByCode(memberCode);
  	    model.addAttribute("enterInfo", enterInfo);
@@ -217,27 +227,38 @@ public class enterMypageController {
     @PostMapping("/enter/profile/upload")
     public String uploadCorpProfileImage(@RequestParam("profileImage") MultipartFile file,
                                          HttpSession session,
-                                         RedirectAttributes redirectAttributes) {
+                                         RedirectAttributes redirectAttributes,
+                                         Model model) {
         String memberCode = (String) session.getAttribute("SCD");
-
+        
         if (memberCode == null) {
             redirectAttributes.addFlashAttribute("msg", "세션이 만료되었습니다. 다시 로그인해주세요.");
             return "redirect:/login";
         }
 
         try {
-            FileMetaData fileMetaData = filesUtils.uploadFile(file, "mypageProfile");
+            FileMetaData fileMetaData = filesUtils.uploadFile(file, "enterMypageProfile");
             String imagePath = fileMetaData.getFilePath();
-
             enterMypageService.updateCorpProfileImage(memberCode, imagePath);
+            Map<String, Object> param = new HashMap<>();
+            param.put("memberCode", memberCode);
+            param.put("imagePath", imagePath);
+            enterpriseMapper.updateCorpProfileImg(param);
+            System.out.println("memberCode = " + memberCode);
+            System.out.println("imagePath = " + imagePath);
+            
+            model.addAttribute("msg", "프로필사진이 성공적으로 수정되었습니다");
+            model.addAttribute("url", "/enter/mypage");
 
-            redirectAttributes.addFlashAttribute("msg", "프로필 사진이 저장되었습니다.");
+            //redirectAttributes.addFlashAttribute("msg", "프로필 사진이 저장되었습니다.");
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("msg", "업로드 중 오류가 발생했습니다.");
+            model.addAttribute("msg", "업로드 중 오류가 발생했습니다.");
+            model.addAttribute("url", "/enter/mypage");
+            //redirectAttributes.addFlashAttribute("msg", "업로드 중 오류가 발생했습니다.");
         }
-
-        return "redirect:/enter/mypage";
+        
+        return "enter/mypage/alert";
     }
     
     

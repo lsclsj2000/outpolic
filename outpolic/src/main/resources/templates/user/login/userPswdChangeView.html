@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{user/layout/userLayoutMain}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<title>비밀번호 재설정</title>
+	</head>
+	<th:block layout:fragment="contents">
+    	        <!-- 수정할 부분 신세영 -->
+        <div class="page-content w-100">
+            <div class="container col-6">
+                <div class="row justify-content-center pl-90">
+                    <div class="col-xl-4 col-lg-6 col-md-12 m-auto w-100">
+                        <div class="login_wrap widget-taber-content background-white">
+                            <div class="padding_eight_all bg-white">
+                                <div class="heading_s1">
+                                    <img class="border-radius-15" th:src="@{/user/assets/imgs/page/forgot_password.svg}" alt="" />
+                                    <h2 class="mb-15 mt-15">비밀번호 재설정</h2>
+                                    <p class="mb-30">비밀번호를 재설정하시길 원하시면 현재 비밀번호와 새 비밀번호를 입력해주세요.</p>
+                                </div>
+                             
+                                <div class="w-75">
+	                                <form method="post" th:action="@{/user/passwordChange}">
+									  <div class="mb-3">
+									    <label class="form-label">현재 비밀번호</label>
+									    <input type="password" name="currentPassword" class="form-control" required>
+									  </div>
+									
+									  <div class="mb-3">
+									    <label class="form-label">새 비밀번호</label>
+									    <input type="password" name="newPassword" class="form-control" required>
+									  </div>
+									
+									  <div class="mb-3">
+									    <label class="form-label">새 비밀번호 확인</label>
+									    <input type="password" name="confirmPassword" class="form-control" required>
+									  </div>
+									
+									  <div id="errorMsg" style="color:red; display:none;"></div>
+									<button type="button" id="passwordChangeBtn">변경</button>
+									</form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    	
+	</th:block>       
+	<th:block layout:fragment="jsScript">
+		<script>
+			$(document).ready(function () {
+			    $('#passwordChangeBtn').on('click', function (e) {
+			        e.preventDefault(); // 폼 기본 제출 방지
+			
+			        const currentPassword = $('input[name="currentPassword"]').val();
+			        const newPassword = $('input[name="newPassword"]').val();
+			        const confirmPassword = $('input[name="confirmPassword"]').val();
+			        
+			        if (!isValidPassword(newPassword)) {
+				        $('#errorMsg')
+				            .css('color', 'red')
+				            .text("비밀번호는 8~20자, 영문 대소문자/숫자/특수문자(!@^*)를 모두 포함해야 합니다.")
+				            .show();
+				        return; // ✅ 유효성 실패 시 서버 요청 안 감
+				    }
+			
+			        $.ajax({
+			            url: '/user/passwordChange',
+			            method: 'POST',
+			            data: {
+			                currentPassword,
+			                newPassword,
+			                confirmPassword
+			            },
+			            success: function (response) {
+			                console.log("서버 응답:", response); // 디버깅 로그
+			
+			                if (response.status === 'success') {
+			                    alert(response.msg); // ✅ alert 띄우고
+			                    window.location.href = '/login'; // ✅ 확인 누르면 이동
+			                } else {
+			                    $('#errorMsg')
+			                        .css('color', 'red')
+			                        .text(response.msg)
+			                        .show(); // ❌ 실패 시 페이지 내에 안내문 표시
+			                }
+			            },
+			            error: function () {
+			                $('#errorMsg')
+			                    .css('color', 'red')
+			                    .text("요청 중 오류가 발생했습니다.")
+			                    .show();
+			            }
+			        });
+			    });
+			});
+		</script>	
+		<script src="/common/assets/js/validate.js"></script>
+	</th:block> 
+	<!-- 추가할 js file -->
+	
+</html>
