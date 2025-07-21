@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -197,13 +198,32 @@ public class enterMypageController {
         return enterMypageService.getEnterpriseInfoByCode(memberCode);
     }
     
-    // 기업 기업정보 페이지 수정
+	/*
+	 * // 기업 기업정보 페이지 수정
+	 * 
+	 * @PostMapping("/enterpriseEdit") public String saveEnterpriseInfo(Model model,
+	 * CorpInfo corpInfo) { enterMypageService.editEnterpriseInfo(corpInfo);
+	 * model.addAttribute("title", "개인정보 수정"); model.addAttribute("enterpriseInfo",
+	 * corpInfo); return "redirect:/enter/mypage"; }
+	 */
     @PostMapping("/enterpriseEdit")
-    public String saveEnterpriseInfo(Model model, CorpInfo corpInfo) {
-    	enterMypageService.editEnterpriseInfo(corpInfo);
-    	model.addAttribute("title", "개인정보 수정");
-    	model.addAttribute("enterpriseInfo", corpInfo);
-    	return "redirect:/enter/mypage";
+    @ResponseBody
+    public Map<String, Object> updateEnterpriseInfo(@RequestBody CorpInfo corpInfo, HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        
+        String memberCode = (String) session.getAttribute("SCD");
+        if (memberCode == null) {
+            result.put("status", "fail");
+            result.put("msg", "세션이 만료되었습니다.");
+            return result;
+        }
+
+        corpInfo.setMemberCode(memberCode);
+        enterMypageService.editEnterpriseInfo(corpInfo);
+
+        result.put("status", "success");
+        result.put("msg", "기업 정보가 성공적으로 수정되었습니다.");
+        return result;
     }
     
     // 기업 기업정보 소개 페이지

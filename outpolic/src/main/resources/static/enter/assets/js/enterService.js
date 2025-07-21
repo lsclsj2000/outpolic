@@ -115,11 +115,20 @@ $(document).ready(function () {
 	// 회원정보 수정 요청
 	$('#btnSave').click(function(e){
 		e.preventDefault();
-
-			//수정된 info 정보 가져오기
+		//수정된 info 정보 가져오기
 		const enterInfo = collectEnterInfo();
+			
+		if (!isValidTelNo(enterInfo.corpTelNo)) {
+			alert("전화번호는 형식에 맞게 입력해주세요. (예: 010-1234-5678)");
+			return;
+		}
+		if (!isValidCorpScale(enterInfo.corpScale)) {
+			alert("기업 규모는 숫자만 입력 가능합니다.");
+			return;
+		}
+
 		
-		saveEnterInfo('/enter/enterEdit/update', enterInfo, () => {
+		saveEnterInfo('/enterpriseEdit', enterInfo, () => {
 			alert('정보가 성공적으로 수정되었습니다.')
 		window.location.href = '/enter/mypage';
 		});
