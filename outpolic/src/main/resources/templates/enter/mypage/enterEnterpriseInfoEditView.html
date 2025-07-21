@@ -15,11 +15,10 @@
 		  <div class="row justify-content-center">
 		    <form class="col-10 row g-4 p-4 border" 
 		          style="border-color: #ececec; border-radius:5px;" 
-		          th:action="@{/enterpriseEdit}" method="post" th:object="${corpInfo}">
+		          th:action="@{/enterpriseEdit}" method="post" th:object="${corpInfo}" enctype="multipart/form-data">
 		      
 		      <h3 class="fw-bold mb-3">기업 정보 수정</h3>
-		      <hr class="mb-4" style="border: none; height: 2px; background-color: #ececec;">
-		
+		      <hr class="mb-4" style="border: none; height: 2px; background-color: #ececec;">	
 		      <!-- 기업명 & 대표자명 -->
 		      <div class="col-md-6">
 		        <label for="corpName">기업명</label>
@@ -89,6 +88,20 @@
 		    <script src="/enter/assets/js/enterServiceAjax.js"></script>
 			<script src="/enter/assets/js/enterService.js"></script>
 			<script src="/common/assets/js/validate.js"></script>
+			<script>
+				function previewCorpImage(event) {
+				  const input = event.target;
+				  const preview = document.getElementById('previewCorpImg');
+				
+				  if (input.files && input.files[0]) {
+				    const reader = new FileReader();
+				    reader.onload = function (e) {
+				      preview.src = e.target.result;
+				    };
+				    reader.readAsDataURL(input.files[0]);
+				  }
+				}
+			</script>
 		</th:block>
 
 		<th:block layout:fragment="jsFile">

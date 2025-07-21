@@ -7,9 +7,8 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
-		<title>문의 내역 조회</title>
+		<title>신고 내역 조회</title>
 	</head>
-	
 	
 	<th:block layout:fragment="contents">
 		<section class="content-main">
@@ -19,7 +18,6 @@
 	                <p>사용자 신고 내역 조회</p>
 	            </div>
 	        </div>
-	        <!-- 검색 필터 -->
 	        <div class="card mb-4 search-filter-card">
 	            <div class="card-body search-filter-body">
 	                <div class="table-responsive">
@@ -71,7 +69,7 @@
 						</table>
 						<div class="search-filter-buttons">
 							<button type="button" class="btn btn-primary">검색</button>
-							<button type="button" class="btn btn-secondary">초기화</button>
+							<button type="button" class="btn btn-secondary">초기화</ 보통>
 						</div>
 	                </div>
 	            </div>
@@ -109,11 +107,12 @@
 								    <td scope="col" class="text-center" th:switch="${d.declarationStcName}">
 	                                	<span th:case="${'처리완료'}" class="badge rounded-pill alert-success">처리완료</span>
 	                                	<span th:case="${'처리중'}" class="badge rounded-pill alert-info">처리중</span>
-	                                	<span th:case="${'확인전'}" class="badge rounded-pill alert-warning">확인전</span>
+	                                	<span th:case="${'요청중'}" class="badge rounded-pill alert-warning">요청중</span>
 	                                </td>
 	                                <td scope="col" class="text-center" th:text="${d.declarationResultName}">처리결과</td>
 								    <td scope="col" class="text-center">
-										<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${d.declarationCode}">처리</a>
+								    	<a href="#" class="btn btn-light rounded font-sm SR_open-edit-popup-btn" th:data-declaration-code="${d.declarationCode}">수정</a>
+										<a href="#" class="btn btn-md rounded font-sm SR_open-process-popup-btn" th:data-declaration-code="${d.declarationCode}">처리</a>
 									</td>
 								</tr>
 							</tbody>
@@ -126,117 +125,693 @@
 		<div id="declarationModal" class="SR_modal">
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
-					<h2>신고 처리</h2>
+					<h2>신고 내역 수정</h2>
 					<button class="SR_close-button">&times;</button>
 				</div>
                 <div class="SR_popup-info">
                     <div class="SR_writer-info">
-                        <span id="SR_writerCode">신고자 코드</span> | <span id="SR_writerName">신고자명</span> | <span id="SR_writeDate">신고일자</span>
+                    	<span>작성자 : </span>
+                        <span id="SR_writerCode">작성자 코드</span> | <span id="SR_writerName">작성자명</span>
+                        <p></p>
+                        <span>작성일자 : </span><span id="SR_writeDate">작성일자</span>
                     </div>
-                    <select id="inquiryStatusEdit" name="status" class="SR_form-control SR_status-dropdown">
-                        <option value="CONFIRMED">확인전</option>
-                        <option value="PROCESSING">처리중</option>
-                        <option value="COMPLETED">처리완료</option>
-                    </select>
+                    <select id="declarationStatusEdit" name="status" class="SR_form-control SR_status-dropdown">
+                        </select>
                 </div>
 
-				<form id="inquiryForm">
+				<form id="declarationForm">
                     <div class="SR_form-group">
                         <div class="SR_input-half">
-                            <label for="inquiryCodeDisplay">신고코드</label>
-                            <input type="text" id="inquiryCodeDisplay" name="inquiryCode" class="SR_form-control" readonly>
-                        </div>
-                        <div class="SR_input-half">
-                            <label for="inquiryTitleEdit">신고대상</label>
-                            <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
+                            <label for="declarationCodeDisplay">신고코드</label>
+                            <input type="text" id="declarationCodeDisplay" name="declarationCode" class="SR_form-control" readonly>
                         </div>
 					</div>
 
                     <div class="SR_form-group">
                         <div class="SR_input-half">
-                            <label for="inquiryTypeCodeDisplay">신고타입</label>
-                            <select id="inquiryTypeEdit" name="inquiryType" class="SR_form-control">
-                                <option value="1">상품 문의</option>
-                                <option value="2">배송 문의</option>
-                                <option value="3">기술 지원</option>
-                                <option value="4">기타</option>
-                            </select>
+                            <label for="declarationTypeCodeDisplay">신고타입 코드</label>
+                            <input type="text" id="declarationTypeCodeDisplay" name="declarationTypeCode" class="SR_form-control" readonly>
                         </div>
                         <div class="SR_input-half">
-                            <label for="inquiryTypeEdit">신고사유</label>
-                            <select id="inquiryTypeEdit" name="inquiryType" class="SR_form-control">
-                                <option value="1">상품 문의</option>
-                                <option value="2">배송 문의</option>
-                                <option value="3">기술 지원</option>
-                                <option value="4">기타</option>
-                            </select>
+                            <label for="declarationTypeEdit">신고타입 이름</label>
+                            <select id="declarationTypeEdit" name="declarationType" class="SR_form-control">
+							    </select>
                         </div>
+					</div>
+					
+					<div class="SR_form-group">
+					    <div class="SR_input-half">
+					        <label for="declarationReasonCodeDisplay">신고사유 코드</label> 
+                            <input type="text" id="declarationReasonCodeDisplay" name="declarationReasonCode" class="SR_form-control" readonly> 
+                        </div>
+					    <div class="SR_input-half">
+					        <label for="declarationReasonEdit">신고사유 이름</label> 
+                            <select id="declarationReasonEdit" name="declarationReason" class="SR_form-control">
+					        </select>
+					    </div>
 					</div>
 
                     <div class="SR_form-group SR_full-width">
-						<label for="inquiryContentEdit">신고 내용</label>
-						<textarea id="inquiryContentEdit" name="inquiryContent" class="SR_form-control" rows="5" readonly></textarea>
+						<label for="declarationContentEdit">신고 내용</label>
+						<textarea id="declarationContentEdit" name="declarationContent" class="SR_form-control" rows="5" readonly></textarea>
 					</div>
 
                     <div class="SR_form-group SR_full-width">
                         <label>첨부파일 목록</label>
                         <div id="SR_fileList" class="SR_form-control SR_file-list">
-                            파일1.jpg (1.2MB) <br>
-                            파일2.pdf (3.5MB)
-                        </div>
+                            </div>
                     </div>
                     
 					<div class="SR_popup-footer">
                         <div class="SR_update-info">
+                        	<span>수정정보 : </span>
                             <span id="SR_updaterName">수정자</span> | <span id="SR_updateDate">수정일시</span>
                         </div>
-						<button type="submit" id="saveButton" class="SR_btn-primary">저장</button>
+						<button type="submit" id="answerSaveButton" class="btn btn-md rounded font-sm">저장</button>
 					</div>
 				</form>
 			</div>
 		</div>
+		<!-- 처리 팝업창 추가 -->
+		<div id="answerModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>신고 처리</h2>
+					<button class="SR_close-button-answer">&times;</button>
+				</div>
+                <div class="SR_popup-info">
+                    <div class="SR_writer-info">
+                    	<span>작성정보 : </span>
+                        <span id="SR_answerWriterCode">작성자 코드</span> | <span id="SR_answerWriterName">작성자명</span> | <span id="SR_answerWriteDate">작성일자</span>
+                    </div>
+                    <div id="SR_answerStatusDisplay" class="badge rounded-pill alert-warning mr-20"></div>
+                </div>
+
+				<div id="processFormDisplay"> 
+                    <div class="SR_form-group">
+                        <div class="SR_input-half" style="width:30%;">
+                            <label for="answerDeclarationTypeCodeDisplay">신고타입</label>
+                            <input id="answerDeclarationTypeCodeDisplay" name="declarationType" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half" style="width:66%;">
+                            <label for="answerDeclarationReasonCodeDisplay">신고사유</label>
+                            <input type="text" id="answerDeclarationReasonCodeDisplay" name="declarationReason" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label for="answerDeclarationContentDisplay">신고 내용</label>
+						<textarea id="answerDeclarationContentDisplay" name="declarationContent" class="SR_form-control" rows="5" readonly></textarea>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+                        <label>첨부파일 목록</label>
+                        <div id="SR_answerFileList" class="SR_form-control SR_file-list">
+                            </div>
+                    </div>
+                    	
+                    <form id="declarationProcessForm">
+                        <div class="SR_form-group SR_full-width">
+                            <label for="declarationResultSelect">처리 결과</label>
+                            <select id="declarationResultSelect" name="declarationResult" class="SR_form-control">
+                                <!-- 옵션은 JS에서 동적으로 로드 -->
+                            </select>
+                        </div>
+	                    <div class="SR_form-group SR_full-width">
+							<label for="declarationProcessContent">처리 내용</label>
+							<textarea id="declarationProcessContent" name="declarationProcessContent" class="SR_form-control" rows="10" placeholder="처리 내용을 입력하세요."></textarea>
+						</div>
+					</form>
+                    
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        	<span>수정정보 : </span>
+                            <span id="SR_answerUpdaterName">수정자</span> | <span id="SR_answerUpdateDate">수정일시</span>
+                        </div>
+						<button type="submit" id="processSaveButton" class="btn btn-md rounded font-sm">처리 저장</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 		</th:block>
 
 	    <th:block layout:fragment="jsScript">
 			<script>
-				document.addEventListener('DOMContentLoaded', function () {
-				    const modal = document.getElementById('declarationModal');
-				    const closeButton = document.querySelector('#declarationModal .SR_close-button');
-				    const saveButton = document.getElementById('saveButton');
-				    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
-		
-				    // 팝업 열기
-				    openPopupButtons.forEach(button => {
-				        button.addEventListener('click', function (event) {
-				            event.preventDefault();
-				            modal.style.display = 'flex';
-				            document.body.style.overflow = 'hidden';
-				        });
-				    });
-		
-				    // 팝업 닫기 (닫기 버튼)
-				    closeButton.addEventListener('click', function () {
-				        modal.style.display = 'none';
-				        document.body.style.overflow = 'auto';
-				    });
-		
-				    // 팝업 닫기 (바깥 클릭 시)
-				    window.addEventListener('click', function (event) {
-				        if (event.target === modal) {
-				            modal.style.display = 'none';
-				            document.body.style.overflow = 'auto';
-				        }
-				    });
-		
-				    // 저장 버튼 클릭
-				    const inquiryForm = document.getElementById('inquiryForm');
-				    inquiryForm.addEventListener('submit', function (event) {
-				        event.preventDefault();
-				        alert('저장 버튼이 클릭되었습니다! (저장 로직은 필요 시 추가)');
-				        modal.style.display = 'none';
-				        document.body.style.overflow = 'auto';
-				    });
-				});
+			console.log("adminDeclarationView.html script loaded."); // Script 로드 확인
+			document.addEventListener('DOMContentLoaded', function () {
+                console.log("DOMContentLoaded event fired."); // DOMContentLoaded 이벤트 확인
+
+                // Custom Alert Function (대신 alert() 사용 금지)
+                function showCustomAlert(message) {
+                    const alertBox = document.createElement('div');
+                    alertBox.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background-color: #fff;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                        z-index: 1000;
+                        text-align: center;
+                        font-family: 'Inter', sans-serif;
+                        color: #333;
+                    `;
+                    alertBox.innerHTML = `<p>${message}</p><button style="margin-top: 15px; padding: 8px 15px; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer;">확인</button>`;
+                    document.body.appendChild(alertBox);
+
+                    alertBox.querySelector('button').addEventListener('click', () => {
+                        document.body.removeChild(alertBox);
+                    });
+
+                    // Close on outside click
+                    window.addEventListener('click', function handler(event) {
+                        if (event.target === alertBox) {
+                            document.body.removeChild(alertBox);
+                            window.removeEventListener('click', handler);
+                        }
+                    });
+                }
+
+                // 기존 수정 모달 관련 요소들
+			    const declarationModal = document.getElementById('declarationModal');
+			    const closeEditButton = document.querySelector('#declarationModal .SR_close-button');
+			    const openEditPopupButtons = document.querySelectorAll('.SR_open-edit-popup-btn'); 
+
+			    const editWriterCodeElem = declarationModal.querySelector('#SR_writerCode');
+			    const editWriterNameElem = declarationModal.querySelector('#SR_writerName');
+			    const editWriteDateElem = declarationModal.querySelector('#SR_writeDate');
+			    const editDeclarationStatusEdit = declarationModal.querySelector('#declarationStatusEdit');
+			    const editDeclarationCodeDisplay = declarationModal.querySelector('#declarationCodeDisplay');
+			    const editDeclarationTypeCodeDisplay = declarationModal.querySelector('#declarationTypeCodeDisplay');
+			    const editDeclarationTypeEdit = declarationModal.querySelector('#declarationTypeEdit');
+			    const editDeclarationReasonCodeDisplay = declarationModal.querySelector('#declarationReasonCodeDisplay');
+			    const editDeclarationReasonEdit = declarationModal.querySelector('#declarationReasonEdit');
+			    const editDeclarationContentEdit = declarationModal.querySelector('#declarationContentEdit');
+			    const editFileListElem = declarationModal.querySelector('#SR_fileList');
+			    const editUpdaterNameElem = declarationModal.querySelector('#SR_updaterName');
+			    const editUpdateDateElem = declarationModal.querySelector('#SR_updateDate');
+			    const editAnswerSaveButton = declarationModal.querySelector('#answerSaveButton');
+                const declarationForm = document.getElementById('declarationForm');
+
+
+                // 새로운 처리 모달 관련 요소들
+                const answerModal = document.getElementById('answerModal');
+                const closeProcessButton = document.querySelector('#answerModal .SR_close-button-answer'); 
+                const openProcessPopupButtons = document.querySelectorAll('.SR_open-process-popup-btn'); 
+
+                // 처리 팝업 내부 요소들 (ID 변경)
+                const processWriterCodeElem = answerModal.querySelector('#SR_answerWriterCode');
+                const processWriterNameElem = answerModal.querySelector('#SR_answerWriterName');
+                const processWriteDateElem = answerModal.querySelector('#SR_answerWriteDate');
+                const processStatusDisplayElem = answerModal.querySelector('#SR_answerStatusDisplay');
+                const processDeclarationTypeCodeDisplay = answerModal.querySelector('#answerDeclarationTypeCodeDisplay');
+                const processDeclarationReasonCodeDisplay = answerModal.querySelector('#answerDeclarationReasonCodeDisplay'); // 신고사유 코드 대신 이름 표시용
+                const processDeclarationContentDisplay = answerModal.querySelector('#answerDeclarationContentDisplay');
+                const processFileListElem = answerModal.querySelector('#SR_answerFileList');
+                const declarationResultSelect = answerModal.querySelector('#declarationResultSelect');
+                const declarationProcessContent = answerModal.querySelector('#declarationProcessContent');
+                const processUpdaterNameElem = answerModal.querySelector('#SR_answerUpdaterName');
+                const processUpdateDateElem = answerModal.querySelector('#SR_answerUpdateDate');
+                const processSaveButton = answerModal.querySelector('#processSaveButton');
+                const declarationProcessForm = document.getElementById('declarationProcessForm'); 
+                console.log("declarationProcessForm element:", declarationProcessForm); // 폼 요소 확인
+
+			    let currentDeclarationData = null; // 수정 모달용
+                let currentProcessDeclarationData = null; // 처리 모달용
+                let originalDeclarationStcCode = ''; // 수정 모달용
+
+			    function stripHtmlAndRemoveImages(html) {
+			        if (!html) return '';
+			        const doc = new DOMParser().parseFromString(html, 'text/html');
+			        doc.querySelectorAll('img').forEach(img => img.remove());
+			        return doc.body.textContent || '';
+			    }
+
+                // --- 수정 팝업 관련 로직 (기존 코드에서 변수명만 변경) ---
+			    openEditPopupButtons.forEach(button => {
+			        button.addEventListener('click', function (event) {
+			            event.preventDefault();
+			            const declarationCode = this.getAttribute('data-declaration-code');
+
+			            // 팝업 내용 초기화
+			            editWriterCodeElem.textContent = '';
+			            editWriterNameElem.textContent = '';
+			            editWriteDateElem.textContent = '';
+			            editDeclarationCodeDisplay.value = '';
+			            editDeclarationTypeCodeDisplay.value = '';
+			            editDeclarationReasonCodeDisplay.value = '';
+			            editDeclarationContentEdit.value = '';
+			            editFileListElem.innerHTML = '';
+			            editUpdaterNameElem.textContent = '';
+			            editUpdateDateElem.textContent = '';
+			            editDeclarationTypeEdit.innerHTML = '';
+			            editDeclarationReasonEdit.innerHTML = '';
+			            editDeclarationStatusEdit.innerHTML = ''; 
+			            
+                        // 모든 요소들을 기본적으로 활성화 상태로 설정 (팝업 열릴 때마다 초기화)
+                        editDeclarationStatusEdit.disabled = false;
+                        editDeclarationTypeEdit.disabled = false;
+                        editDeclarationReasonEdit.disabled = false;
+                        editAnswerSaveButton.style.display = 'inline-block';
+                        editDeclarationContentEdit.readOnly = true;
+
+
+			            // 1. 신고 상세 정보 로드
+			            fetch(`/admin/adminDeclarationDetail?declarationCode=${declarationCode}`)
+			                .then(response => {
+			                    if (!response.ok) {
+			                        throw new Error('Network response was not ok');
+			                    }
+			                    return response.json();
+			                })
+			                .then(data => {
+			                    console.log("[수정 팝업] 신고 상세 데이터:", data);
+			                    currentDeclarationData = data;
+			                    originalDeclarationStcCode = data.declarationStcCode; 
+
+			                    // 데이터로 팝업 필드 채우기
+			                    editWriterCodeElem.textContent = data.declarationMemberCode || 'N/A';
+			                    editWriterNameElem.textContent = data.declarationMemberName || 'N/A';
+			                    editWriteDateElem.textContent = data.declarationRegYmdt || 'N/A';
+			                    editDeclarationCodeDisplay.value = data.declarationCode || '';
+			                    editDeclarationTypeCodeDisplay.value = data.declarationTypeCode || '';
+			                    editDeclarationReasonCodeDisplay.value = data.declarationReasonCode || '';
+			                    editDeclarationContentEdit.value = stripHtmlAndRemoveImages(data.declarationCn); 
+			                    editUpdaterNameElem.textContent = data.declarationMdfcnAdmCode || '없음';
+			                    editUpdateDateElem.textContent = data.declarationMdfcnYmdt || '없음';
+
+			                    // 첨부파일 정보 표시 (수정 팝업)
+			                    // 이제 attachments 리스트를 순회합니다.
+			                    editFileListElem.innerHTML = ''; // 기존 내용 초기화
+			                    if (data.attachments && data.attachments.length > 0) {
+			                        data.attachments.forEach(file => {
+			                            const fileLink = document.createElement('a');
+			                            fileLink.href = file.saPath; // 파일 경로
+			                            fileLink.textContent = file.saOrgnlName; // 원본 파일명
+			                            fileLink.target = '_blank'; // 새 탭에서 열기
+			                            fileLink.classList.add('d-block'); // 각 파일을 새 줄에 표시
+			                            editFileListElem.appendChild(fileLink);
+			                        });
+			                    } else {
+			                        editFileListElem.textContent = '첨부 파일 없음';
+			                    }
+			                    
+			                    // 2. 신고 타입 드롭다운 채우기
+			                    return fetch('/admin/declarationTypes');
+			                })
+			                .then(response => {
+			                    if (!response.ok) {
+			                        throw new Error('Network response for types was not ok');
+			                    }
+			                    return response.json();
+			                })
+			                .then(types => {
+			                    console.log("[수정 팝업] 신고 타입 목록:", types);
+			                    editDeclarationTypeEdit.innerHTML = '';
+			                    types.forEach(type => {
+			                        const option = document.createElement('option');
+			                        option.value = type.declarationTypeCode;
+			                        option.textContent = type.declarationTypeName;
+			                        editDeclarationTypeEdit.appendChild(option);
+			                    });
+
+			                    const currentTypeCode = currentDeclarationData.declarationTypeCode;
+			                    if (currentTypeCode) {
+			                        editDeclarationTypeEdit.value = currentTypeCode;
+			                    }
+
+			                    // 3. 신고 사유 드롭다운 채우기 (선택된 타입에 따라) 및 선택
+			                    return loadDeclarationReasons(editDeclarationTypeEdit.value, editDeclarationReasonEdit, currentDeclarationData.declarationReasonCode);
+			                })
+			                .then(() => { // 모든 데이터 로드가 완료된 후 처리 상태에 따른 UI 제어
+			                    // 4. 처리 상태 드롭다운 채우기 및 UI 활성화/비활성화
+			                    return fetch('/admin/declarationStatus')
+			                        .then(res => {
+			                            if (!res.ok) throw new Error('Failed to load declaration status');
+			                            return res.json();
+			                        })
+			                        .then(statusList => {
+			                            console.log("[수정 팝업] 신고 상태 목록:", statusList);
+			                            editDeclarationStatusEdit.innerHTML = ''; 
+
+                                        const currentStcCode = currentDeclarationData.declarationStcCode;
+                                        
+                                        if (currentStcCode === 'SD_INQUIRY_ING') { // 1. 요청중일 때
+                                            // '요청중' 옵션 추가 (현재 값)
+                                            let option = document.createElement('option');
+                                            option.value = 'SD_INQUIRY_ING';
+                                            option.textContent = '요청중';
+                                            editDeclarationStatusEdit.appendChild(option);
+
+                                            // '처리중' 옵션만 추가
+                                            option = document.createElement('option');
+                                            option.value = 'SD_PROCESS_ING';
+                                            option.textContent = '처리중';
+                                            editDeclarationStatusEdit.appendChild(option);
+
+                                            editDeclarationStatusEdit.disabled = false; // 드롭다운 활성화
+                                            editDeclarationTypeEdit.disabled = false; // 신고타입이름 수정 가능
+                                            editDeclarationReasonEdit.disabled = false; // 신고사유이름 수정 가능
+                                            editAnswerSaveButton.style.display = 'inline-block'; // 저장 버튼 활성화
+
+                                        } else if (currentStcCode === 'SD_PROCESS_ING') { // 2. 처리중일 때
+                                            // '처리중' 옵션만 추가 (현재 값)
+                                            const option = document.createElement('option');
+                                            option.value = 'SD_PROCESS_ING';
+                                            option.textContent = '처리중';
+                                            editDeclarationStatusEdit.appendChild(option);
+
+                                            editDeclarationStatusEdit.disabled = true; // 드롭다운 비활성화
+                                            editDeclarationTypeEdit.disabled = false; // 신고타입이름 수정 가능
+                                            editDeclarationReasonEdit.disabled = false; // 신고사유이름 수정 가능
+                                            editAnswerSaveButton.style.display = 'inline-block'; // 저장 버튼 활성화
+
+                                        } else if (currentStcCode === 'SD_PROCESS_END') { // 3. 처리완료일 때
+                                            // '처리완료' 옵션만 추가 (현재 값)
+                                            const option = document.createElement('option');
+                                            option.value = 'SD_PROCESS_END';
+                                            option.textContent = '처리완료';
+                                            editDeclarationStatusEdit.appendChild(option);
+
+                                            editDeclarationStatusEdit.disabled = true; // 드롭다운 비활성화
+                                            editDeclarationTypeEdit.disabled = true; // 신고타입이름 수정 불가
+                                            editDeclarationReasonEdit.disabled = true; // 신고사유이름 수정 불가
+                                            editAnswerSaveButton.style.display = 'none'; // 저장 버튼 숨김
+                                        }
+
+                                        // 어떤 경우든 현재 상태 값을 선택 (위에서 옵션을 이미 추가했으므로 안전함)
+                                        editDeclarationStatusEdit.value = currentStcCode;
+                                        
+			                        });
+			                })
+			                .catch(error => {
+			                    console.error('[수정 팝업] 데이터 로드 중 오류 발생:', error);
+			                    showCustomAlert('데이터를 불러오는 데 실패했습니다.');
+			                });
+
+			            declarationModal.style.display = 'flex';
+			            document.body.style.overflow = 'hidden';
+			        });
+			    });
+
+                // 수정 팝업 닫기 (닫기 버튼)
+			    closeEditButton.addEventListener('click', function () {
+			        declarationModal.style.display = 'none';
+			        document.body.style.overflow = 'auto';
+			    });
+
+			    // 수정 팝업 닫기 (바깥 클릭 시)
+			    window.addEventListener('click', function (event) {
+			        if (event.target === declarationModal) {
+			            declarationModal.style.display = 'none';
+			            document.body.style.overflow = 'auto';
+			        }
+			    });
+
+			    // 신고 타입 드롭다운 변경 시 신고 사유 동적 로드 및 코드 업데이트
+			    editDeclarationTypeEdit.addEventListener('change', function() {
+			        const selectedTypeCode = this.value;
+			        editDeclarationTypeCodeDisplay.value = selectedTypeCode; 
+			        loadDeclarationReasons(selectedTypeCode, editDeclarationReasonEdit, null); 
+			    });
+
+			    // 신고 사유 드롭다운 변경 시 코드 업데이트
+			    editDeclarationReasonEdit.addEventListener('change', function() {
+			        editDeclarationReasonCodeDisplay.value = this.value; 
+			    });
+
+                // 수정 팝업 - 처리 상태 드롭다운 변경 시 경고 메시지 로직
+                editDeclarationStatusEdit.addEventListener('change', function() {
+                    const newStcCode = this.value;
+                    const oldStcCode = originalDeclarationStcCode; 
+
+                    if (oldStcCode === 'SD_INQUIRY_ING' && newStcCode === 'SD_PROCESS_ING') {
+                        const confirmChange = confirm("요청중에서 처리중으로 상태를 변경하시겠습니까? (처리중에서 요청중으로 재수정은 불가합니다.)");
+                        if (!confirmChange) {
+                            this.value = oldStcCode;
+                        }
+                    } 
+                });
+
+			    function loadDeclarationReasons(typeCode, reasonSelectElement, currentReasonCode) {
+			        return fetch(`/admin/getDeclarationReasonsByTypeCode?dtCode=${typeCode}`)
+			            .then(response => {
+			                if (!response.ok) {
+			                    throw new Error('Network response for reasons was not ok');
+			                }
+			                return response.json();
+			            })
+			            .then(reasons => {
+			                console.log(`[수정 팝업] 신고 사유 목록 (타입: ${typeCode}):`, reasons);
+			                reasonSelectElement.innerHTML = '';
+			                if (reasons && reasons.length > 0) {
+			                    reasons.forEach(reason => {
+			                        const option = document.createElement('option');
+			                        option.value = reason.drCode;
+			                        option.textContent = reason.drName;
+			                        reasonSelectElement.appendChild(option);
+			                    });
+			        
+			                    if (currentReasonCode && reasonSelectElement.querySelector(`option[value="${currentReasonCode}"]`)) {
+			                        reasonSelectElement.value = currentReasonCode;
+			                    } else if (reasons.length > 0) {
+			                        reasonSelectElement.value = reasons[0].drCode;
+			                    }
+			                    editDeclarationReasonCodeDisplay.value = reasonSelectElement.value;
+			                } else {
+			                    reasonSelectElement.innerHTML = '<option value="">사유 없음</option>';
+			                    editDeclarationReasonCodeDisplay.value = ''; 
+			                }
+			            })
+			            .catch(error => {
+			                console.error('[수정 팝업] 신고 사유 로드 중 오류 발생:', error);
+			                reasonSelectElement.innerHTML = '<option value="">사유 로드 실패</option>';
+			                editDeclarationReasonCodeDisplay.value = '';
+			            });
+			    }
+
+			    // 수정 팝업 - 저장 버튼 클릭 (폼 제출)
+			    declarationForm.addEventListener('submit', function (event) {
+			        event.preventDefault();
+
+			        const data = {
+			            declarationCode: editDeclarationCodeDisplay.value, 
+			            declarationTypeCode: editDeclarationTypeEdit.value, 
+			            declarationReasonCode: editDeclarationReasonEdit.value, 
+			            declarationStcCode: editDeclarationStatusEdit.value, 
+			            declarationCn: currentDeclarationData.declarationCn 
+			        };
+
+			        console.log("[수정 팝업] 저장할 데이터:", data);
+
+                    fetch('/admin/updateDeclaration', { 
+			            method: 'POST',
+			            headers: {
+			                'Content-Type': 'application/json'
+			            },
+			            body: JSON.stringify(data)
+			        })
+			        .then(response => {
+			            if (!response.ok) {
+			                return response.text().then(text => { throw new Error(text || 'Update failed'); });
+			            }
+			            return response.text();
+			        })
+			        .then(result => {
+			            if (result === "OK") {
+			                showCustomAlert('신고 내역이 성공적으로 업데이트되었습니다.');
+			                declarationModal.style.display = 'none';
+			                document.body.style.overflow = 'auto';
+			                location.reload(); 
+			            } else {
+			                showCustomAlert('업데이트 실패: ' + result); 
+			            }
+			        })
+			        .catch(error => {
+			            console.error('[수정 팝업] 업데이트 중 오류 발생:', error);
+			            showCustomAlert('업데이트에 실패했습니다: ' + error.message);
+			        });
+			    });
+
+                // --- 처리 팝업 관련 로직 ---
+                openProcessPopupButtons.forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        const declarationCode = this.getAttribute('data-declaration-code');
+
+                        // 처리 팝업 초기화
+                        processWriterCodeElem.textContent = '';
+                        processWriterNameElem.textContent = '';
+                        processWriteDateElem.textContent = '';
+                        processStatusDisplayElem.textContent = '';
+                        processDeclarationTypeCodeDisplay.value = '';
+                        processDeclarationReasonCodeDisplay.value = ''; 
+                        processDeclarationContentDisplay.value = '';
+                        processFileListElem.innerHTML = '';
+                        declarationResultSelect.innerHTML = ''; 
+                        declarationProcessContent.value = ''; 
+                        processUpdaterNameElem.textContent = '';
+                        processUpdateDateElem.textContent = '';
+                        processSaveButton.style.display = 'inline-block'; 
+                        declarationProcessContent.readOnly = false; 
+
+                        fetch(`/admin/adminDeclarationDetail?declarationCode=${declarationCode}`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log("[처리 팝업] 신고 상세 데이터:", data);
+                                currentProcessDeclarationData = data; 
+                                
+                                // Capture declarationProcessCode from the fetched data
+                                currentProcessDeclarationData.declarationProcessCode = data.declarationProcessCode || ''; 
+
+                                processWriterCodeElem.textContent = data.declarationMemberCode || 'N/A';
+                                processWriterNameElem.textContent = data.declarationMemberName || 'N/A';
+                                processWriteDateElem.textContent = data.declarationRegYmdt || 'N/A';
+                                processStatusDisplayElem.textContent = data.declarationStcName || 'N/A';
+                                processDeclarationTypeCodeDisplay.value = data.declarationTypeName || ''; 
+                                processDeclarationReasonCodeDisplay.value = data.declarationReasonName || ''; 
+                                processDeclarationContentDisplay.value = stripHtmlAndRemoveImages(data.declarationCn);
+                                processUpdaterNameElem.textContent = data.declarationMdfcnAdmCode || '없음';
+                                processUpdateDateElem.textContent = data.declarationMdfcnYmdt || '없음';
+                                
+                                // 기존 처리 내용 로드 (declarationProcessContent 필드 사용)
+                                declarationProcessContent.value = data.declarationProcessContent || ''; 
+
+                                // 첨부파일 정보 표시 (처리 팝업)
+                                // 이제 attachments 리스트를 순회합니다.
+                                processFileListElem.innerHTML = ''; // 기존 내용 초기화
+                                if (data.attachments && data.attachments.length > 0) {
+                                    data.attachments.forEach(file => {
+                                        const fileLink = document.createElement('a');
+                                        fileLink.href = file.saPath; // 파일 경로
+                                        fileLink.textContent = file.saOrgnlName; // 원본 파일명
+                                        fileLink.target = '_blank'; // 새 탭에서 열기
+                                        fileLink.classList.add('d-block'); // 각 파일을 새 줄에 표시
+                                        processFileListElem.appendChild(fileLink);
+                                    });
+                                } else {
+                                    processFileListElem.textContent = '첨부 파일 없음';
+                                }
+
+                                // 처리 결과 드롭다운 로드
+                                return fetch('/admin/declarationResults'); 
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response for results was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(results => {
+                                console.log("[처리 팝업] 처리 결과 목록:", results);
+                                declarationResultSelect.innerHTML = '';
+                                results.forEach(result => {
+                                    const option = document.createElement('option');
+                                    option.value = result.drcCode; 
+                                    option.textContent = result.drcName; 
+                                    declarationResultSelect.appendChild(option);
+                                });
+
+                                // 기존 처리 결과가 있다면 선택 (declarationResultCode 필드 사용)
+                                if (currentProcessDeclarationData.declarationResultCode) {
+                                    declarationResultSelect.value = currentProcessDeclarationData.declarationResultCode;
+                                }
+
+                                // 처리 상태에 따른 UI 제어 (처리 팝업)
+                                const currentStcCode = currentProcessDeclarationData.declarationStcCode;
+                                if (currentStcCode === 'SD_PROCESS_END') { 
+                                    declarationResultSelect.disabled = true; 
+                                    declarationProcessContent.readOnly = true; 
+                                    processSaveButton.style.display = 'none'; 
+                                } else {
+                                    declarationResultSelect.disabled = false; 
+                                    declarationProcessContent.readOnly = false; 
+                                    processSaveButton.style.display = 'inline-block'; 
+                                }
+                            })
+                            .catch(error => {
+                                console.error('[처리 팝업] 데이터 로드 중 오류 발생:', error);
+                                showCustomAlert('데이터를 불러오는 데 실패했습니다.');
+                            });
+
+                        answerModal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                    });
+                });
+
+                // 처리 팝업 닫기 (닫기 버튼)
+                closeProcessButton.addEventListener('click', function () {
+                    answerModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                });
+
+                // 처리 팝업 닫기 (바깥 클릭 시)
+                window.addEventListener('click', function (event) {
+                    if (event.target === answerModal) {
+                        answerModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+
+                // 처리 팝업 - 저장 버튼 클릭 (폼 제출)
+                processSaveButton.addEventListener('click', function (event) { 
+                    event.preventDefault();
+                    console.log("Process save button clicked directly."); 
+
+                    // 현재 관리자 코드 (실제 환경에서는 세션 등에서 동적으로 가져와야 함)
+                    const adminCode = 'ADM_C002'; // 예시: 현재 로그인한 관리자 코드
+
+                    const data = {
+                        declarationCode: currentProcessDeclarationData.declarationCode, // decl_cd
+                        declarationResultCode: declarationResultSelect.value, // drc_cd
+                        declarationProcessContent: declarationProcessContent.value, // dp_cn 필드명 변경
+                        adminCode: adminCode, // adm_cd
+                        declarationProcessMdfcnAdmCode: adminCode, // dp_mdfcn_adm_cd 필드 추가
+                        declarationProcessCode: currentProcessDeclarationData.declarationProcessCode // dp_cd 추가
+                    };
+
+                    console.log("[처리 팝업] 저장할 처리 데이터:", data); // 전송할 데이터 확인
+
+                    fetch('/admin/processDeclaration', { 
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => {
+                        console.log("Fetch response received:", response); // fetch 응답 확인
+                        if (!response.ok) {
+                            return response.text().then(text => { throw new Error(text || 'Process failed'); });
+                        }
+                        return response.text();
+                    })
+                    .then(result => {
+                        console.log("Fetch result:", result); // fetch 결과 확인
+                        if (result === "OK") {
+                            showCustomAlert('신고 처리가 성공적으로 완료되었습니다.');
+                            answerModal.style.display = 'none';
+                            document.body.style.overflow = 'auto';
+                            location.reload(); 
+                        } else {
+                            showCustomAlert('처리 실패: ' + result); 
+                        }
+                    })
+                    .catch(error => {
+                        console.error('[처리 팝업] 처리 중 오류 발생:', error);
+                        showCustomAlert('처리에 실패했습니다: ' + error.message);
+                    });
+                });
+
+			});
 			</script>
 		</th:block>
 </html>

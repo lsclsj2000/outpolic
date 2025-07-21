@@ -4330,6 +4330,7 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
     animation: SR_slideIn 0.3s ease-out;
     box-sizing: border-box;
     overflow-y: auto;
+    max-height: 80vh;
 }
 
 /* 팝업 헤더 */

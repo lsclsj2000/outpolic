@@ -73,25 +73,89 @@
 	
 	<resultMap type="outpolic.enter.outsourcing.domain.EnterOutsourcing" id="EnterMypageOSResultMap">
 		<id property="osCd" column="os_cd"/>
-		<result column="mbr_cd" property="memberCode"/>
+		<result column="mbr_cd" property="mbrCd"/>
 		<result property="entCd" column="ent_cd"/>
 		<result property="osTtl" column="os_ttl"/>
 		<result property="osExpln" column="os_expln"/>
 		<result property="osRegYmdt" column="os_reg_ymdt"/>
+		<result property="oscId" column="osc_id"/>
+		<result column="stc_cd" property="stcCd1"/>
 	</resultMap>
 	
-<!-- 	<select id="EnterMypageOSResultMap">
+ 	<select resultMap="EnterMypageOSResultMap" id="EnterOsSelectByCode" parameterType="string">
 		select 
-	</select> -->
+			os.os_cd,
+			e.mbr_cd,
+			e.ent_cd,
+			os.os_ttl,
+			os.os_expln,
+			os.os_reg_ymdt
+		from enterprise e inner join outsourcing os
+		on e.ent_cd = os.ent_cd
+		where e.mbr_cd = #{memberCode}
+		ORDER BY os.os_reg_ymdt DESC
+		limit 10;	
+	</select>  
+	
+	<select resultType="int" id="EnterEndedOsSelectByCode" parameterType="String">
+		select
+			 COUNT(*)
+			from outsourcing_contract oc inner join enterprise e
+			on oc.ent_cd = e.ent_cd
+			where e.mbr_cd = #{_parameter};
+	</select>
 	<resultMap type="outpolic.enter.portfolio.domain.EnterPortfolio" id="EnterMypagePFResultMap">
 		<id property="prtfCd" column="prtf_cd"/>
 		<result property="entCd" column="ent_cd"/>
 		<result property="prtfTtl" column="prtf_ttl"/>
 		<result property="prtfCn" column="prtf_cn"/>
 		<result property="prtfRegYmdt" column="prtf_reg_ymdt"/>
+		<result column="mbr_cd" property="mbrCd"/>
 	</resultMap>
 	
+	<select  id="EnterPfSelectByCode" resultMap="EnterMypagePFResultMap">
+		select
+			p.prtf_cd,
+			p.ent_cd,
+			p.prtf_ttl,
+			p.prtf_cn,
+			p.prtf_reg_ymdt,
+			e.mbr_cd
+		from
+			portfolio p inner join enterprise e
+			on p.ent_cd = e.ent_cd
+		where e.mbr_cd = #{memberCode}
+		ORDER BY p.prtf_reg_ymdt DESC
+		limit 10;		
+	</select>
 	
+	<select resultType="int" id="EnterIncomingOsByCode" parameterType="String">
+		select count(*)
+		from outsourcing_contract_details ocd
+		inner join enterprise e
+		on ocd.ent_cd = e.ent_cd
+		where ocd.stc_cd = 'SD_BEFORE'
+		and e.mbr_cd = #{memberCode};
+	</select>
+	
+	<resultMap type="outpolic.enter.osst.domain.EnterOsst" id="EnterOsIngResultMap">
+		<id 	column="osp_cd" 			property="ospCode"/>
+		<result column="ocd_cd" 			property="ocdCd"/>
+		<result column="stc_cd" 			property="stcCode"/>
+		<result column="ent_cd" 			property="entCode"/>
+		<result column="mbr_cd" 			property="memberCode"/>	
+	</resultMap>
+	
+	<select id="EnterOsIngSelectByCode" resultType="int" parameterType="String">
+		select count(DISTINCT op.ocd_cd)
+		from outsourcing_prograss op 
+		inner join outsourcing_contract_details ocd 
+		on op.ocd_cd = ocd.ocd_cd
+		inner join enterprise e
+		on ocd.ent_cd = e.ent_cd
+		where op.stc_cd &lt;&gt; 'SD_COMPLETION' 
+		and e.mbr_cd = #{memberCode};
+	</select>
 	
 	
 	

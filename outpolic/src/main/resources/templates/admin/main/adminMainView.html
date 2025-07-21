@@ -10,9 +10,129 @@
 		<th:block layout:fragment="contents">
 		
 			<h2>admin1의 관리자 페이지 메인뷰 입니다</h2>
+			<br>
 		
+			<div class="row">
+		        <!-- 총 회원 수 -->
+		        <div class="col-xl-3 col-md-6 mb-4">
+		            <div class="card border-left-primary shadow h-100 py-2">
+		                <div class="card-body">
+		                    <div class="row no-gutters align-items-center">
+		                        <div class="col mr-2">
+		                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">총 회원 수</div>
+		                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalMemberCount">--</div>
+		                        </div>
+		                        <div class="col-auto"><i class="fas fa-users fa-2x text-gray-300"></i></div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		        <!-- 오늘 신규 가입 -->
+		        <div class="col-xl-3 col-md-6 mb-4">
+		            <div class="card border-left-success shadow h-100 py-2">
+		                <div class="card-body">
+		                    <div class="row no-gutters align-items-center">
+		                        <div class="col mr-2">
+		                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">오늘 신규 가입</div>
+		                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="todayNewMemberCount">--</div>
+		                        </div>
+		                        <div class="col-auto"><i class="fas fa-user-plus fa-2x text-gray-300"></i></div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		        <!-- 총 매출 -->
+		        <div class="col-xl-3 col-md-6 mb-4">
+		            <div class="card border-left-info shadow h-100 py-2">
+		                <div class="card-body">
+		                    <div class="row no-gutters align-items-center">
+		                        <div class="col mr-2">
+		                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">총 누적 매출</div>
+		                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalRevenue">--</div>
+		                        </div>
+		                        <div class="col-auto"><i class="fas fa-won-sign fa-2x text-gray-300"></i></div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		        <!-- 이번 달 매출 -->
+		        <div class="col-xl-3 col-md-6 mb-4">
+		            <div class="card border-left-warning shadow h-100 py-2">
+		                <div class="card-body">
+		                    <div class="row no-gutters align-items-center">
+		                        <div class="col mr-2">
+		                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">이번 달 매출</div>
+		                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="monthlyRevenue">--</div>
+		                        </div>
+		                        <div class="col-auto"><i class="fas fa-calendar-alt fa-2x text-gray-300"></i></div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		
+		    <!-- 차트 영역 -->
+		    <div class="row mt-4">
+		        <div class="col-lg-12">
+		            <div class="card shadow mb-4">
+		                <div class="card-header py-3">
+		                    <h6 class="m-0 font-weight-bold text-primary">최근 7일 신규 가입 추이</h6>
+		                </div>
+		                <div class="card-body">
+		                    <div class="chart-area">
+		                        <canvas id="weeklyNewMembersChart"></canvas>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
 		</th:block>
 	</body>
 	<!-- 추가할 js file -->
+	<th:block layout:fragment="jsScript">
 	
+		<script>
+		// admin/main.html의 script 태그 안에 작성
+		document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/admin/dashboard')
+                .then(response => response.json())
+                .then(data => {
+                    // KPI 카드 데이터 채우기
+                    document.getElementById('totalMemberCount').textContent = data.totalMemberCount.toLocaleString() + ' 명';
+                    document.getElementById('todayNewMemberCount').textContent = data.todayNewMemberCount.toLocaleString() + ' 명';
+                    document.getElementById('totalRevenue').textContent = '₩ ' + data.totalRevenue.toLocaleString();
+                    document.getElementById('monthlyRevenue').textContent = '₩ ' + data.monthlyRevenue.toLocaleString();
+
+                    // 주간 신규 가입자 차트 그리기
+                    const weeklyCtx = document.getElementById('weeklyNewMembersChart').getContext('2d');
+                    const labels = data.weeklyNewMembers.map(item => item.date);
+                    const counts = data.weeklyNewMembers.map(item => item.count);
+
+                    new Chart(weeklyCtx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: '신규 가입자 수',
+                                data: counts,
+                                borderColor: 'rgba(78, 115, 223, 1)',
+                                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                                pointRadius: 3,
+                                pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                                pointBorderColor: "rgba(78, 115, 223, 1)",
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            scales: { y: { beginAtZero: true } },
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                })
+                .catch(error => console.error('대시보드 데이터를 불러오는 데 실패했습니다:', error));
+        });
+
+		</script>
+	</th:block>
 </html>

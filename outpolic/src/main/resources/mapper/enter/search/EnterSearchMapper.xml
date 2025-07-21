@@ -109,7 +109,15 @@
 	    <result column="prtf_period_end" 	property="participation_end_date"/>
 	    <result column="prtf_client" 		property="client"/>
 	    <result column="prtf_industry" 		property="industry"/>
+	    <result column="isBookmarked"       property="isBookmarked"/>
 	</resultMap>
+	
+	<sql id="modalBookmarkJoinSql">
+    	LEFT JOIN bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
+	</sql>
+	<sql id="modalIsBookmarkedSelectSql">
+	    , CASE WHEN bm.bm_cd IS NOT NULL THEN 1 ELSE 0 END AS isBookmarked
+	</sql>
 	
 	
 	<!-- 2. ID로 특정 콘텐츠의 상세 정보를 조회하는 select 쿼리 -->
@@ -134,6 +142,7 @@
 	        p.prtf_period_end       AS participation_end_date,
 	        p.prtf_client           AS client,
 	        p.prtf_industry         AS industry
+	        <include refid="modalIsBookmarkedSelectSql"/>
 	
 	    FROM
 	        portfolio p
@@ -142,6 +151,7 @@
 	    left join 
 	    	content_list cl
 	    	on p.prtf_cd = cl.cntd_cd
+	    <include refid="modalBookmarkJoinSql"/>
 	    WHERE
 	        p.prtf_cd = #{contentsId} AND #{contentsId} LIKE 'PO_%'
 	
@@ -167,6 +177,7 @@
 	        NULL                    AS prtf_period_end,
 	        NULL                    AS prtf_client,
 	        NULL                    AS prtf_industry
+	        <include refid="modalIsBookmarkedSelectSql"/>
 	        
 	    FROM
 	        outsourcing o
@@ -175,6 +186,7 @@
 	    left join 
 	    	content_list cl
 	    	on o.os_cd = cl.cntd_cd
+	    <include refid="modalBookmarkJoinSql"/>
 	    WHERE
 	        o.os_cd = #{contentsId} AND #{contentsId} LIKE 'OS_%'
 	</select>

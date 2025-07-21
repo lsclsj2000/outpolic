@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class CorpInfo {
+	//기업은 corp. 코퍼레이션 줄임말
 	private String corpCode; 
 	private String corpBrno; 
 	private String memberCode; 
@@ -26,4 +27,7 @@ public class CorpInfo {
 	private String statuseCode; 
 	private int corpPortfolioCount; 
 	private int corpOutsourcingCount;
+	
+	private String entImg;
+	
 }

@@ -1,8 +1,11 @@
 package outpolic.enter.mypage.service.Impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +15,8 @@ import outpolic.enter.mypage.dto.EnterInfo;
 import outpolic.enter.mypage.mapper.EnterMypageMapper;
 import outpolic.enter.mypage.mapper.EnterpriseMapper;
 import outpolic.enter.mypage.service.EnterMypageService;
+import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.enter.register.mapper.EnterRegisterMapper;
 
 @Service
@@ -23,14 +28,12 @@ public class EnterMypageServiceImpl implements EnterMypageService {
 	private final EnterpriseMapper enterpriseMapper;
 	private final EnterRegisterMapper enterRegisterMapper;
 	
+	
 	//기업정보입력
 	// 기업 정보 입력위해 기업 기본키 생성
 	public String getNextEnterCode() {
 		return enterRegisterMapper.getNextEnterCode();
 	}
-	
-	
-	
 	
 	// 개인정보 호출
 	@Override
@@ -80,13 +83,52 @@ public class EnterMypageServiceImpl implements EnterMypageService {
 
 
 
-
+	// 리뷰-외주 연결
 	@Override
 	public List<OutsourcingReviewDTO> getOutsourcingReviewList(String memberCode) {
 		
 		return enterMypageMapper.selectEnterReviewList(memberCode);
 	}
 
+
+
+	// 특정 기업 외주글 조회
+	@Override
+	public List<EnterOutsourcing> EnterOsSelectByCode(String mbrCd) {
+		return enterMypageMapper.EnterOsSelectByCode(mbrCd);
+	}
+
+	// 특정 기업 완료한 외주 수 조회
+	@Override
+	public int EnterEndedOsSelectByCode(String mbrCd) {
+		return enterMypageMapper.EnterEndedOsSelectByCode(mbrCd);
+	}
+	// 특정 기업 포폴글 조회
+	@Override
+	public List<EnterPortfolio> EnterPfSelectByCode(String mbrCd) {
+		return enterMypageMapper.EnterPfSelectByCode(mbrCd);
+	}
+
+	@Override
+	public int EnterIncomingOsByCode(String mbrCd) {
+		return enterMypageMapper.EnterIncomingOsByCode(mbrCd);
+	}
+
+	@Override
+	public int EnterOsIngSelectByCode(String memberCode) {
+		return enterMypageMapper.EnterOsIngSelectByCode(memberCode);		
+	}
+
+	
+// 프로필사진 변경
+	@Override
+    @Transactional 
+    public void updateCorpProfileImage(String memberCode, String imagePath) {
+		enterpriseMapper.updateCorpProfileImg(memberCode, imagePath);
+		enterpriseMapper.updateMemberModifiedDate(memberCode);
+		enterpriseMapper.updateMemberImgToCorp(memberCode);
+    }
+	
 	
 
 }

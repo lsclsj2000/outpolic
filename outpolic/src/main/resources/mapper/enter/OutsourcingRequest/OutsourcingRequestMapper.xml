@@ -4,42 +4,25 @@
 	
 	<insert id="insertRequest" parameterType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO">
         INSERT INTO outsourcing_contract_details (
-            ocd_cd,
-            mbr_cd,
-            ent_cd,
-            cl_cd,
-            ocd_ttl,
-     
-        ocd_expln,
-            ocd_frctn_cmdty,
-            ocd_dlvgds_mthd,
-            ocd_strt_ymdt, ocd_dedline,
-            ocd_amt,
-            ocd_dmnd_ymdt,
-            ocd_req_type,
-            stc_cd
-        
-) VALUES (
-            #{ocd_cd},
-            #{mbr_cd},
-            #{ent_cd},
-            #{cl_cd},
-            #{ocd_ttl},
-            #{ocd_expln},
-            #{ocd_frctn_cmdty},
-            #{ocd_dlvgds_mthd},
-  
-            #{ocd_strt_ymdt}, #{ocd_dedline},
-            #{ocd_amt},
-            NOW(),
+            ocd_cd, mbr_cd, ent_cd, cl_cd, ocd_ttl, 
+            ocd_expln, ocd_frctn_cmdty, ocd_dlvgds_mthd,
+            ocd_strt_ymdt, ocd_dedline, ocd_amt, ocd_dmnd_ymdt,
+            ocd_req_type, stc_cd
+        ) VALUES (
+            #{ocd_cd}, #{mbr_cd}, #{ent_cd}, #{cl_cd}, #{ocd_ttl},
+            #{ocd_expln}, #{ocd_frctn_cmdty}, #{ocd_dlvgds_mthd},
+            #{ocd_strt_ymdt}, #{ocd_dedline}, #{ocd_amt}, NOW(),
             #{ocd_req_type}, 'SD_BEFORE'
         )
     </insert>
-    
-    
+
+    <update id="updateChatRoomId">
+        UPDATE outsourcing_contract_details
+        SET chr_cd = #{chr_cd}
+        WHERE ocd_cd = #{ocd_cd}
+    </update>
     
     <update id="updateStatus">
- 
     	UPDATE outsourcing_contract_details
     	SET
     		stc_cd=#{status},
@@ -50,119 +33,93 @@
 
     <select id="findSentRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
         SELECT 
-            ocd.ocd_cd, 
-            ocd.ocd_ttl, 
-            e.ent_nm AS supplierName, 
-            ocd.ocd_dmnd_ymdt, 
-   
-            ocd.stc_cd,
-            m.mbr_nm AS demanderName
-        FROM 
-            outsourcing_contract_details ocd 
-        JOIN 
-            enterprise e ON ocd.ent_cd = e.ent_cd
-        JOIN 
-            member m ON ocd.mbr_cd = m.mbr_cd 
- 
-        WHERE 
-            ocd.mbr_cd = #{requesterId} AND ocd.ocd_req_type = '신청'
+            ocd.ocd_cd, ocd.ocd_ttl, e.ent_nm AS supplierName, 
+            ocd.ocd_dmnd_ymdt, ocd.stc_cd, m.mbr_nm AS demanderName
+        FROM outsourcing_contract_details ocd 
+        JOIN enterprise e ON ocd.ent_cd = e.ent_cd
+        JOIN member m ON ocd.mbr_cd = m.mbr_cd 
+        WHERE ocd.mbr_cd = #{requesterId} AND ocd.ocd_req_type = '신청'
+        ORDER BY ocd.ocd_dmnd_ymdt DESC
+    </select>
+    
+    <select id="findSentInquiries" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
+        SELECT 
+            ocd.ocd_cd, ocd.ocd_ttl, e.ent_nm AS supplierName, 
+            ocd.ocd_dmnd_ymdt, ocd.stc_cd, m.mbr_nm AS demanderName
+        FROM outsourcing_contract_details ocd 
+        JOIN enterprise e ON ocd.ent_cd = e.ent_cd
+        JOIN member m ON ocd.mbr_cd = m.mbr_cd 
+        WHERE ocd.mbr_cd = #{requesterId} AND ocd.ocd_req_type = '문의'
+        ORDER BY ocd.ocd_dmnd_ymdt DESC
+    </select>
+
+    <select id="findReceivedRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
+        SELECT
+            ocd.ocd_cd, ocd.ocd_ttl, m.mbr_nm AS demanderName,
+            e.ent_nm AS supplierName, ocd.ocd_dmnd_ymdt, ocd.stc_cd
+        FROM outsourcing_contract_details ocd
+        JOIN member m ON ocd.mbr_cd = m.mbr_cd
+        JOIN enterprise e ON ocd.ent_cd = e.ent_cd
+        WHERE ocd.ent_cd = #{supplierEntCd} AND ocd.ocd_req_type = '신청'
+        ORDER BY ocd.ocd_dmnd_ymdt DESC
+    </select>
+
+    <select id="findReceivedInquiries" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
+        SELECT
+            ocd.ocd_cd, ocd.ocd_ttl, m.mbr_nm AS demanderName,
+            e.ent_nm AS supplierName, ocd.ocd_dmnd_ymdt, ocd.stc_cd
+        FROM outsourcing_contract_details ocd
+        JOIN member m ON ocd.mbr_cd = m.mbr_cd
+        JOIN enterprise e ON ocd.ent_cd = e.ent_cd
+        WHERE ocd.ent_cd = #{supplierEntCd} AND ocd.ocd_req_type = '문의'
         ORDER BY ocd.ocd_dmnd_ymdt DESC
     </select>
     
     <select id="findRequestDetailById" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
         SELECT 
-            ocd.ocd_cd,
-            ocd.mbr_cd,
-            ocd.ent_cd,
-            ocd.cl_cd,
-            ocd.ocd_ttl,
-            ocd.ocd_expln,
-            ocd.ocd_frctn_cmdty,
-            ocd.ocd_dlvgds_mthd,
-            ocd.ocd_strt_ymdt,
-            ocd.ocd_dedline,
-            ocd.ocd_amt,
-            ocd.ocd_dmnd_ymdt,
-            ocd.ocd_req_type,
-            ocd.stc_cd,
-            m.mbr_nm as demanderName, 
-            e.ent_nm as supplierName
+           ocd.ocd_cd, ocd.ocd_ttl, ocd.ocd_expln,
+           ocd.ocd_frctn_cmdty, ocd.ocd_dlvgds_mthd,
+           ocd.ocd_strt_ymdt, ocd.ocd_dedline,
+           ocd.ocd_amt, ocd.ocd_dmnd_ymdt,
+           ocd.stc_cd,  ocd.ocd_req_type,
+           ocd.mbr_cd, ocd.ent_cd,
+           m.mbr_nm as demanderName, 
+           e.ent_nm as supplierName,
+           (SELECT mm.mbr_cd FROM member mm WHERE mm.mbr_id = e.mbr_cd) as supplierMemberCode
         FROM outsourcing_contract_details ocd
         JOIN member m ON ocd.mbr_cd = m.mbr_cd
-        JOIN enterprise 
-e ON ocd.ent_cd = e.ent_cd
+        JOIN enterprise e ON ocd.ent_cd = e.ent_cd
         WHERE ocd.ocd_cd = #{requestId}
     </select>
 
     <select id="findLatestOcdCd" resultType="String">
-        SELECT ocd_cd
-        FROM outsourcing_contract_details
+        SELECT ocd_cd FROM outsourcing_contract_details
         WHERE ocd_cd LIKE 'OCD_C%'
         ORDER BY CAST(SUBSTRING(ocd_cd, 6) AS UNSIGNED) DESC
         LIMIT 1
     </select>
     
-    <select id="findReceivedRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
-        SELECT
- 
-            ocd.ocd_cd,
-            ocd.ocd_ttl,
-            m.mbr_nm AS demanderName,
-            e.ent_nm AS supplierName,
-            ocd.ocd_dmnd_ymdt,
-            ocd.stc_cd
-        FROM
-            outsourcing_contract_details ocd
-    
-    JOIN
-            member m ON ocd.mbr_cd = m.mbr_cd
-        JOIN
-            enterprise e ON ocd.ent_cd = e.ent_cd
-        WHERE
-            ocd.ent_cd = #{supplierEntCd} AND ocd.ocd_req_type = '신청'
-        ORDER BY ocd.ocd_dmnd_ymdt DESC
-    </select>
-    
     <select id="findEntCdByMbrCd" resultType="String">
-   
-    	SELECT
-    		ent_cd 
-    	FROM
-    		enterprise 
-    	WHERE
-    		mbr_cd=#{mbrCd}		
+    	SELECT ent_cd FROM enterprise WHERE mbr_cd=#{mbrCd}		
+    </select>
+
+    <select id="findMbrCdByEntCd" resultType="String">
+        SELECT mbr_cd FROM enterprise WHERE ent_cd=#{entCd}
     </select>
     
     <select id="findLatestOspCd" resultType="String">
-    	SELECT 
-    		osp_cd
-    	FROM
-    		outsourcing_prograss	
+    	SELECT osp_cd FROM outsourcing_prograss	
     	ORDER BY CAST(SUBSTRING(osp_cd, 5) AS UNSIGNED) DESC	
     	LIMIT 1
     </select>
     
-    <insert id="insertInitialProgress">
-    	 INSERT INTO outsourcing_prograss
-           
-    (osp_cd, ocd_cd, stc_cd, osp_sply_ymdt)
-        VALUES
-            (#{ospCd}, #{ocdCd}, #{stcCd}, NOW())
-    
-    </insert>
-    
     <insert id="insertInitialProgressStages">
-    INSERT INTO outsourcing_prograss
-        (osp_cd, ocd_cd, stc_cd, osp_sply_ymdt, osp_cust_yn) VALUES
-    <foreach collection="stageList" item="stage" separator=",">
-        (
-        	#{stage.ospCd},
-            #{stage.ocdCd},
- 
-            #{stage.stcCd},
-            #{stage.ospSplyYmdt},
-            #{stage.ospCustYn}
-        )
-    </foreach>
-</insert>
+        INSERT INTO outsourcing_prograss
+            (osp_cd, ocd_cd, stc_cd, osp_sply_ymdt, osp_cust_yn) 
+        VALUES
+        <foreach collection="stageList" item="stage" separator=",">
+            (#{stage.ospCd}, #{stage.ocdCd}, #{stage.stcCd}, #{stage.ospSplyYmdt}, #{stage.ospCustYn})
+        </foreach>
+    </insert>
+
 </mapper>

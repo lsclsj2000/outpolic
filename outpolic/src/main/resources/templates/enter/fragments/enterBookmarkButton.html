@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<div th:fragment="bookmarkButton(content)">
+        <a th:attr="data-cl-cd=${content.clCd}" aria-label="Add To Wishlist" class="action-btn bookmark-btn" href="javascript:void(0);">
+            <i class="fi-rs-heart" th:classappend="${content.isBookmarked ? 'active' : ''}"></i>
+        </a>
+    </div>
+</html>

@@ -284,9 +284,12 @@
 	                processData: false,
 	                contentType: false,
 	                success: function(response) {
-	                    alert('문의가 등록되었습니다.');
-	                    $('#addInquiryForm')[0].reset();
-	                    
+						const iq_cd = response.iq_cd;
+				        console.log("서버에서 받은 iq_cd:", iq_cd);
+				
+				        alert('문의가 등록되었습니다.');
+				        $('#addInquiryForm')[0].reset();
+				        
 	                    if (SR_attachFileCheckbox) {
 	                        SR_attachFileCheckbox.checked = false;
 	                    }
@@ -301,11 +304,18 @@
 	                    renderSelectedFiles();
 	                    
 	                    window.location.href = '/user/userInquiryDetail?iq_cd=' + response.iq_cd;
+	
+						if (iq_cd) {
+					        window.location.href = '/user/userInquiryDetail?iq_cd=' + iq_cd;
+					    } else {
+					        alert("문의 코드 정보를 받지 못했습니다. 문의 목록으로 이동합니다.");
+					        window.location.href = '/user/userInquiryList';
+					    }
 	                    
 	                },
 	                error: function(xhr, status, error) {
 	                    alert('문의 등록에 실패했습니다. 다시 시도해 주세요.');
-	                    console.error("AJAX Error: ", status, error, xhr.responseText);
+    					console.error("AJAX Error: ", status, error, xhr.responseText);
 	                }
 	            });
 	        });

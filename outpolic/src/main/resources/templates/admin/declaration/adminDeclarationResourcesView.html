@@ -1,314 +1,972 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{admin/layout/adminLayoutMain}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout/adminLayoutMain}">
 
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
-		<title>신고 자원 등록</title>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <meta name="description" content="신고 자원 등록" />
+	    <title>신고 자원 등록</title>
 	</head>
-	
+
 	<th:block layout:fragment="contents">
-		<section class="content-main">
-	        <div class="row">
-	            <div class="col-12">
-	                <div class="content-header">
-	                    <h2 class="content-title">신고 자원 등록</h2>
-	                </div>
-	            </div>
-	            <div class="col-12">
-	            	<div class="content-header mb-0">
-						<aside>
-						    <nav class="nav nav-pills mb-4">
-						        <a class="nav-link active" aria-current="page" href="#">신고 타입</a>
-						        <a class="nav-link" href="#">신고 사유</a>
-						        <a class="nav-link" href="#">신고 처리 결과</a>
-						    </nav>
-						</aside>
-						<div>
-	                        <button class="btn btn-md rounded font-sm hover-up">등록</button>
-	                    </div>
-					</div>
-				</div>
-	            <div class="col-12">
-	                <!-- 신고타입 목록 -->
-	            	<div class="card">
-	                	<div class="card-body">
-			                <div class="table-responsive">
-			                    <table class="table table-hover">
-			                        <thead>
-			                            <tr>
-			                                <th scope="col" class="start text-center col-1">신고타입코드</th>
-			                                <th scope="col" class="text-center col-1">신고타입명</th>
-			                                <th scope="col" class="text-center col-1">타입설명</th>
-			                                <th scope="col" class="text-center col-1">타입상태코드</th>
-			                                <th scope="col" class="text-center col-1">등록자</th>
-			                                <th scope="col" class="text-center col-1">최초등록일시</th>
-			                                <th scope="col" class="text-center col-1">수정자</th>
-			                                <th scope="col" class="text-center col-1">최종수정일시</th>
-			                                <th scope="col" class="end text-center col-1">Action</th>
-			                            </tr>
-			                        </thead>
-			                        <tbody>
-										<tr class="start pt-30"
-										    style="border:0px; border-bottom: solid 1px #ececec;"
-										    th:each="dt : ${adminDeclarationTypeList}">
-										    
-										    <td class="start text-center">
-										        <span th:text="${dt.declarationTypeCode}">신고타입코드</span>
-										    </td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeName}">신고타입명</td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeExpln}">타입설명</td>
-										    <td scope="col" class="text-center" th:switch="${dt.declarationTypeStcName}">
-			                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
-			                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
-			                                </td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeRegAdmCode}">등록자</td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeRegYmdt}">최초등록일시</td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeMdfcnAdmCode}">수정자</td>
-										    <td scope="col" class="text-center" th:text="${dt.declarationTypeMdfcnYmdt}">최종수정일시</td>
-										    <td scope="col" class="text-center">
-												<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${dt.declarationTypeCode}">수정</a>
-											</td>
-										</tr>
-									</tbody>
-			                    </table>
-			                </div>
-			            </div>
-	            	</div>
+	    <section class="content-main">
+	        <div class="content-header">
+	            <h2 class="content-title">신고 자원 등록</h2>
+	            <div>
+	                <button class="btn btn-md rounded font-sm hover-up" id="tab-register-button">등록</button>
 	            </div>
 	        </div>
+           	<!-- 검색 필터 -->
+	        <div class="card mb-4 search-filter-card">
+	            <div class="card-body search-filter-body">
+	                <div class="table-responsive">
+	                    <table class="search-filter-table">
+							<tbody>
+								<tr>
+									<th>기본검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>제목</option>
+											<option>내용</option>
+											<option>문의코드</option>
+											<option>작성자</option>
+										</select>
+										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+									</td>
+								</tr>
+								<tr>
+									<th>기간검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>작성일자</option>
+											<option>수정일자</option>
+										</select>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<span> ~ </span>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<button type="button" class="btn btn-sm btn-light">오늘</button>
+										<button type="button" class="btn btn-sm btn-light">어제</button>
+										<button type="button" class="btn btn-sm btn-light">일주일</button>
+										<button type="button" class="btn btn-sm btn-light">지난달</button>
+										<button type="button" class="btn btn-sm btn-light">1개월</button>
+										<button type="button" class="btn btn-sm btn-light">3개월</button>
+										<button type="button" class="btn btn-sm btn-light">전체</button>
+									</td>
+								</tr>
+								<tr>
+									<th>처리상태</th>
+									<td>
+										<div class="radio-group">
+											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
+											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
+											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
+											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="search-filter-buttons">
+							<button type="button" class="btn btn-primary">검색</button>
+							<button type="button" class="btn btn-secondary">초기화</button>
+						</div>
+	                </div>
+	            </div>
+	        </div>
+            <div class="col-12">
+                <div class="content-header mb-0 d-flex justify-content-between align-items-center">
+                    <nav class="nav nav-pills mb-4" id="declaration-tab">
+                        <a class="nav-link active" data-tab="type" href="#">신고 타입</a>
+                        <a class="nav-link" data-tab="reason" href="#">신고 사유</a>
+                        <a class="nav-link" data-tab="result" href="#">신고 처리 결과</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="col-12">
+                <!-- 신고타입 조회 -->
+                <div class="card" id="type">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">신고타입코드</th>
+                                        <th class="text-center">신고타입명</th>
+                                        <th class="text-center">타입설명</th>
+                                        <th class="text-center">상태</th>
+                                        <th class="text-center">등록자</th>
+                                        <th class="text-center">등록일시</th>
+                                        <th class="text-center">수정자</th>
+                                        <th class="text-center">수정일시</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="dt : ${adminDeclarationTypeList}">
+                                        <td class="text-center" th:text="${dt.declarationTypeCode}">신고타입코드</td>
+                                        <td class="text-center" th:text="${dt.declarationTypeName}">신고타입명</td>
+                                        <td class="text-center" th:text="${dt.declarationTypeExpln}">타입설명</td>
+                                        <td class="text-center" th:switch="${dt.declarationTypeStcName}">
+                                            <span th:case="'활성'" class="badge rounded-pill alert-success">활성</span>
+                                            <span th:case="'비활성'" class="badge rounded-pill alert-secondary">비활성</span>
+                                        </td>
+                                        <td class="text-center" th:text="${dt.declarationTypeRegAdmCode}">등록자</td>
+                                        <td class="text-center" th:text="${dt.declarationTypeRegYmdt}">등록일시</td>
+                                        <td class="text-center" th:text="${dt.declarationTypeMdfcnAdmCode}">수정자</td>
+                                        <td class="text-center" th:text="${dt.declarationTypeMdfcnYmdt}">수정일시</td>
+                                        <td class="text-center">
+                                            <a href="#" class="btn btn-sm btn-light SR_open-popup-btn" th:data-declaration-code="${dt.declarationTypeCode}">수정</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- 신고사유 조회 -->
+                <div class="card d-none" id="reason">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">신고사유코드</th>
+                                        <th class="text-center">신고타입</th>
+                                        <th class="text-center">신고사유명</th>
+                                        <th class="text-center">사유설명</th>
+                                        <th class="text-center">상태</th>
+                                        <th class="text-center">등록자</th>
+                                        <th class="text-center">등록일시</th>
+                                        <th class="text-center">수정자</th>
+                                        <th class="text-center">수정일시</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="dr : ${adminDeclarationReasonList}">
+                                        <td class="text-center" th:text="${dr.drCode}">신고사유코드</td>
+                                        <td class="text-center" th:text="${dr.drDtName}">신고타입</td>
+                                        <td class="text-center" th:text="${dr.drName}">신고사유명</td>
+                                        <td class="text-center" th:text="${dr.drExpln}">사유설명</td>
+                                        <td class="text-center" th:switch="${dr.drStcName}">
+                                            <span th:case="'활성'" class="badge rounded-pill alert-success">활성</span>
+                                            <span th:case="'비활성'" class="badge rounded-pill alert-secondary">비활성</span>
+                                        </td>
+                                        <td class="text-center" th:text="${dr.drRegAdmCode}">등록자</td>
+                                        <td class="text-center" th:text="${dr.drRegYmdt}">등록일시</td>
+                                        <td class="text-center" th:text="${dr.drMdfcnAdmCode}">수정자</td>
+                                        <td class="text-center" th:text="${dr.drMdfcnYmdt}">수정일시</td>
+                                        <td class="text-center">
+                                            <a href="#" class="btn btn-sm btn-light SR_open-popup-btn" th:data-declaration-code="${dr.drCode}">수정</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- 신고처리결과 조회 -->
+                <div class="card d-none" id="result">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">신고타입코드</th>
+                                        <th class="text-center">신고타입명</th>
+                                        <th class="text-center">타입설명</th>
+                                        <th class="text-center">상태</th>
+                                        <th class="text-center">등록자</th>
+                                        <th class="text-center">등록일시</th>
+                                        <th class="text-center">수정자</th>
+                                        <th class="text-center">수정일시</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="dl : ${adminDeclarationResultList}">
+                                        <td class="text-center" th:text="${dl.drcCode}">신고타입코드</td>
+                                        <td class="text-center" th:text="${dl.drcName}">신고타입명</td>
+                                        <td class="text-center" th:text="${dl.drcExpln}">타입설명</td>
+                                        <td class="text-center" th:switch="${dl.drcStcName}">
+                                            <span th:case="'활성'" class="badge rounded-pill alert-success">활성</span>
+                                            <span th:case="'비활성'" class="badge rounded-pill alert-secondary">비활성</span>
+                                        </td>
+                                        <td class="text-center" th:text="${dl.drcRegAdmCode}">등록자</td>
+                                        <td class="text-center" th:text="${dl.drcRegYmdt}">등록일시</td>
+                                        <td class="text-center" th:text="${dl.drcMdfcnAdmCode}">수정자</td>
+                                        <td class="text-center" th:text="${dl.drcMdfcnYmdt}">수정일시</td>
+                                        <td class="text-center">
+                                            <a href="#" class="btn btn-sm btn-light SR_open-popup-btn" th:data-declaration-code="${dl.drcCode}">수정</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 	    </section>
 	    
-	    <div id="inquiryModal" class="SR_modal">
+	    <!-- 신고 타입 등록 모달 -->
+	    <div id="typeModal" class="SR_modal">
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
-					<h2>신고 자원 등록</h2>
+					<h2>신고 타입 등록</h2>
 					<button class="SR_close-button">&times;</button>
 				</div>
-                <form>
-	           		<div class="row mb-4">
-	                   <label class="col-lg-3 col-form-label">등록자</label>
-	                   <div class="col-lg-4">
-	                       <input type="number" class="form-control" placeholder="자동 입력. 관리자 코드" readonly/>
-	                   </div>
-	                   <!-- col.// -->
-	               </div>
-	               <!-- row.// -->
-	               <div class="row mb-4">
-	                   <label class="col-lg-3 col-form-label">신고타입코드*</label>
-	                   <div class="col-lg-9">
-	                       <input type="text" class="form-control" placeholder="Type here"/>
-	                   </div>
-	                   <!-- col.// -->
-	               </div>
-	               <!-- row.// -->
-	               <div class="row mb-4">
-	                   <label class="col-lg-3 col-form-label">신고타입명*</label>
-	                   <div class="col-lg-9">
-	                       <input type="text" class="form-control" placeholder="Type here"/>
-	                   </div>
-	                   <!-- col.// -->
-	               </div>
-	               <!-- row.// -->
-	               <div class="row mb-4">
-	                   <label class="col-lg-3 col-form-label">타입설명*</label>
-	                   <div class="col-lg-9">
-	                       <textarea class="form-control" placeholder="Type here" rows="4"></textarea>
-	                   </div>
-	                   <!-- col.// -->
-	               </div>
-	               <!-- row.// -->
-	               <div class="row mb-4">
-	                   <label class="col-lg-3 col-form-label">Status</label>
-	                   <div class="col-lg-9" style="display: flex; flex-direction: row;">
+                <form id="typeRegisterForm">
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">신고타입코드*</label>
+                            <input type="text" id="typeCode" name="typeCode" class="SR_form-control"  placeholder="신고 타입 코드 영문명을 입력하세요">
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="typeTitleEdit">신고타입명*</label>
+                            <input type="text" id="typeName" name="typeName" class="SR_form-control" placeholder="신고 타입명을 입력하세요">
+                        </div>
+					</div>
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="typeExplnEdit">타입설명*</label>
+						<textarea id="typeExpln" name="typeExpln" class="SR_form-control" rows="5"  placeholder="신고 타입에 대해 설명하세요"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status*</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
 							<label class="form-check my-2">
-								<input type="radio" class="form-check-input" name="status" value="active" />
+								<input type="radio" class="form-check-input" name="typeStatus" value="SD_ACTIVE" />
 								<span class="form-check-label">활성</span>
 							</label>
 							<label class="form-check my-2 ml-20">
-								<input type="radio" class="form-check-input" name="status" value="inactive" />
+								<input type="radio" class="form-check-input" name="typeStatus" value="SD_INACTIVE" />
 								<span class="form-check-label">비활성</span>
 							</label>
 						</div>
-	                   <!-- col.// -->
-	               </div>
-	               <!-- row.// -->
-	               <br />
-	               <div style="display: flex; flex-direction: row-reverse;">
-	                <button class="btn btn-primary" type="submit">등록</button>
-	               </div>
-	           </form>
+	               	</div>
+				    <div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button class="btn btn-primary" type="submit">등록</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 신고 타입 수정 모달 -->		
+		<div id="typeMdfcnModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>신고 타입 수정</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+				<form id="typeEditForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">등록자</label>
+                            <input type="text" id="typeEditRegAdm" name="typeEditRegAdm" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="typeRegYmdtEdit">등록일시</label>
+                            <input type="text" id="typeEditRegYmdt" name="typeEditRegYmdt" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="typeCodeEdit">신고타입 코드</label>
+                            <input type="text" id="typeEditCode" name="typeEditCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="typeNameEdit">신고타입명</label>
+                            <input type="text" id="typeEditName" name="typeEditName" class="SR_form-control">
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="typeExplnEdit">타입 설명</label>
+						<textarea id="typeEditExpln" name="typeEditExpln" class="SR_form-control" rows="5"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="typeEditStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="typeEditStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 신고 사유 등록 모달 -->
+	    <div id="reasonModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>신고 사유 등록</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+                <form id="reasonRegisterForm">
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTypeEdit">상위 신고타입</label>
+                            <select id="declarationTypeEdit" name="declarationType" class="SR_form-control" style="height:39px;">
+							    <option value="">신고타입을 선택하세요</option>
+							</select>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="reasonTitleEdit">신고사유명*</label>
+                            <input type="text" id="reasonName" name="reasonName" class="SR_form-control" placeholder="신고 사유명을 입력하세요">
+                        </div>
+					</div>
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="reasonExplnEdit">사유설명*</label>
+						<textarea id="reasonExpln" name="reasonExpln" class="SR_form-control" rows="5"  placeholder="신고 타입에 대해 설명하세요"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status*</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="reasonStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="reasonStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+				    <div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button class="btn btn-primary" type="submit">등록</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 신고 사유 수정 모달 -->		
+		<div id="reasonMdfcnModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>신고 사유 수정</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+				<form id="reasonEditForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">등록자</label>
+                            <input type="text" id="reasonEditRegAdm" name="reasonEditRegAdm" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="reasonRegYmdtEdit">등록일시</label>
+                            <input type="text" id="reasonEditRegYmdt" name="reasonEditRegYmdt" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="reasonCodeEdit">신고사유 코드</label>
+                            <input type="text" id="reasonEditCode" name="reasonEditCode" class="SR_form-control" readonly>
+                        </div>
+					</div>
+					
+					<div class="SR_form-group">
+						<div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTypeEdit">상위 신고타입</label>
+                            <select id="declarationTypeEdit" name="declarationType" class="SR_form-control" style="height:39px;">
+							    <option value="">신고타입을 선택하세요</option>
+							</select>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="reasonNameEdit">신고사유명</label>
+                            <input type="text" id="reasonEditName" name="reasonEditName" class="SR_form-control">
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="reasonExplnEdit">사유설명</label>
+						<textarea id="reasonEditExpln" name="reasonEditExpln" class="SR_form-control" rows="5"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="reasonEditStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="reasonEditStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 신고 처리 결과 등록 모달 -->
+	    <div id="resultModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>신고 처리 결과 등록</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+                <form id="resultRegisterForm">
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" style="width: 50%;">신고처리결과코드*</label>
+                            <input type="text" id="resultCode" name="resultCode" class="SR_form-control"  placeholder="신고처리결과코드 영문명을 입력하세요">
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="resultTitleEdit" style="width: 50%;">신고처리결과명*</label>
+                            <input type="text" id="resultName" name="resultName" class="SR_form-control" placeholder="신고처리결과명을 입력하세요">
+                        </div>
+					</div>
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="resultExplnEdit">코드설명*</label>
+						<textarea id="resultExpln" name="resultExpln" class="SR_form-control" rows="5"  placeholder="신고처리결과코드에 대해 설명하세요"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status*</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="resultStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="resultStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+				    <div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button class="btn btn-primary" type="submit">등록</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 신고 처리 결과 수정 모달 -->		
+		<div id="resultMdfcnModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>신고 처리 결과 수정</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+				<form id="resultEditForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">등록자</label>
+                            <input type="text" id="resultEditRegAdm" name="resultRegAdmEdit" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="resultRegYmdtEdit">등록일시</label>
+                            <input type="text" id="resultEditRegYmdt" name="resultEditRegYmdt" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="resultCodeEdit" style="width: 50%;">신고처리결과 코드</label>
+                            <input type="text" id="resultEditCode" name="resultEditCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="resultNameEdit" style="width: 50%;">신고처리결과명</label>
+                            <input type="text" id="resultEditName" name="resultEditName" class="SR_form-control">
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="resultExplnEdit">코드설명</label>
+						<textarea id="resultEditExpln" name="resultEditExpln" class="SR_form-control" rows="5"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="resultEditStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="resultEditStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	</th:block>
-	
-	
+
 	<th:block layout:fragment="jsScript">
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
-			    const modal = document.getElementById('inquiryModal');
-			    const closeButton = document.querySelector('#inquiryModal .SR_close-button');
-			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
-			    const registerButton = document.querySelector('.content-header .btn');
-		
-			    // 등록 버튼 클릭 시 모달 열기
-			    if (registerButton) {
-			        registerButton.addEventListener('click', function () {
+			    const registerBtn = document.getElementById('tab-register-button');
+				
+			    const openEditButtons = document.querySelectorAll('.SR_open-popup-btn');
+			    
+			    const modals = {
+			        type: {
+			            register: document.getElementById('typeModal'),
+			            edit: document.getElementById('typeMdfcnModal'),
+			        },
+			        reason: {
+			            register: document.getElementById('reasonModal'),
+			            edit: document.getElementById('reasonMdfcnModal'),
+			        },
+			        result: {
+			            register: document.getElementById('resultModal'),
+			            edit: document.getElementById('resultMdfcnModal'),
+			        }
+			    };
+	
+			    let currentTab = 'type';
+	
+			    const tabButtons = document.querySelectorAll('#declaration-tab .nav-link');
+			    const panels = {
+			        type: document.getElementById('type'),
+			        reason: document.getElementById('reason'),
+			        result: document.getElementById('result')
+			    };
+	
+			    tabButtons.forEach(tab => {
+			        tab.addEventListener('click', e => {
+			            e.preventDefault();
+			            tabButtons.forEach(t => t.classList.remove('active'));
+			            tab.classList.add('active');
+	
+			            const selected = tab.getAttribute('data-tab');
+			            currentTab = selected;
+	
+			            Object.keys(panels).forEach(key => {
+			                panels[key].classList.toggle('d-none', key !== selected);
+			            });
+			        });
+			    });
+	
+			    registerBtn?.addEventListener('click', () => {
+			        const modal = modals[currentTab]?.register;
+			        if (modal) {
 			            modal.style.display = 'flex';
 			            document.body.style.overflow = 'hidden';
-			        });
-			    }
-		
-				// 답변 팝업 관련 요소
-			    const answerModal = document.getElementById('answerModal');
-			    const closeAnswerButton = document.querySelector('#answerModal .SR_close-button'); 
-			    const openAnswerPopupButtons = document.querySelectorAll('.SR_open-answer-popup-btn');
-		
-		        let currentInquiryCodeForAnswer = null;
-		
-			    openPopupButtons.forEach(button => {
-			        button.addEventListener('click', function (event) {
-			            event.preventDefault();
-			            const inquiryCode = this.getAttribute('data-inquiry-code');
-		
-			            fetch(`/admin/adminInquiryMdfcn?inquiryCode=${inquiryCode}`)
-			                .then(response => response.json())
-			                .then(data => {
-			                    fetch('/admin/inquiryStatus')
-			                        .then(res => res.json())
-			                        .then(statusList => {
-			                            const select = document.getElementById('inquiryStatusEdit');
-			                            select.innerHTML = '';
-		
-			                            if (data.statusName === '처리완료') {
-			                                const option = document.createElement('option');
-			                                option.value = data.statusCode;
-			                                option.textContent = data.statusName;
-			                                option.selected = true;
-			                                select.appendChild(option);
-			                                select.disabled = true;
-			                            } else {
-			                                statusList.filter(status => status.statusName !== '처리완료')
-			                                    .forEach(status => {
-			                                        const option = document.createElement('option');
-			                                        option.value = status.statusCode;
-			                                        option.textContent = status.statusName;
-			                                        select.appendChild(option);
-			                                    });
-			                                select.value = data.statusCode || '';
-			                                select.disabled = false;
-			                            }
-		
-			                            const titleInput = document.getElementById('inquiryTitleEdit');
-			                            const contentInput = document.getElementById('inquiryContentEdit');
-			                            const typeSelect = document.getElementById('inquiryTypeEdit');
-			                            const saveButton = document.getElementById('saveButton');
-		
-			                            if (data.statusName === '처리완료') {
-			                                titleInput.readOnly = true;
-			                                contentInput.readOnly = true;
-			                                typeSelect.disabled = true;
-			                                saveButton.style.display = 'none';
-			                            } else {
-			                                titleInput.readOnly = true;
-			                                contentInput.readOnly = true;
-			                                typeSelect.disabled = false;
-			                                saveButton.style.display = 'inline-block';
-			                            }
-			                        });
-		
-			                    fetch('/admin/inquiryType')
-			                        .then(res => res.json())
-			                        .then(typeList => {
-			                            const select = document.getElementById('inquiryTypeEdit');
-			                            select.innerHTML = '';
-			                            typeList.forEach(type => {
-			                                const option = document.createElement('option');
-			                                option.value = type.inquiryTypeCode;
-			                                option.textContent = type.inquiryTypeName;
-			                                select.appendChild(option);
-			                            });
-			                            select.value = data.inquiryTypeCode || '';
-			                        });
-		
-			                    document.getElementById('inquiryCodeDisplay').value = data.inquiryCode;
-			                    document.getElementById('inquiryTitleEdit').value = data.inquiryTitle;
-			                    document.getElementById('inquiryTypeCodeDisplay').value = data.inquiryTypeCode;
-			                    const contentArea = document.getElementById('inquiryContentEdit');
-		
-			                    if (data.inquiryCn) {
-			                        const tempDiv = document.createElement('div');
-			                        tempDiv.innerHTML = data.inquiryCn;
-			                        tempDiv.querySelectorAll('img').forEach(img => img.remove());
-			                        const plainText = tempDiv.textContent || tempDiv.innerText || '';
-			                        contentArea.value = plainText.trim();
-			                    } else {
-			                        contentArea.value = '내용이 없습니다.';
-			                    }
-		
-			                    document.getElementById('SR_writerCode').textContent = data.memberCode;
-			                    document.getElementById('SR_writerName').textContent = data.memberName;
-			                    document.getElementById('SR_writeDate').textContent = data.inquiryRegYmdt;
-		
-			                    document.getElementById('SR_updaterName').textContent = data.inquiryMdfcnAdmCode || '-';
-			                    document.getElementById('SR_updateDate').textContent = data.inquiryMdfcnYmdt || '-';
-		
-			                    const fileListEl = document.getElementById('SR_fileList');
-			                    if (data.subAttchOrgnlName && data.subAttchSize) {
-			                        const sizeMB = (parseInt(data.subAttchSize, 10) / 1024 / 1024).toFixed(1);
-			                        fileListEl.innerHTML = `${data.subAttchOrgnlName} (${sizeMB}MB)`;
-			                    } else {
-			                        fileListEl.innerHTML = '첨부파일 없음';
-			                    }
-		
-			                    modal.style.display = 'flex';
-			                    document.body.style.overflow = 'hidden';
-			                });
-			        });
-			    });
-		
-			    closeButton.addEventListener('click', function () {
-			        modal.style.display = 'none';
-			        document.body.style.overflow = 'auto';
-			    });
-		
-			    window.addEventListener('click', function (event) {
-			        if (event.target === modal) {
-			            modal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
+	
+			            if (currentTab === 'reason') {
+			                loadDeclarationTypes('declarationTypeEdit');
+			            }
 			        }
 			    });
-		
-			    document.getElementById('inquiryForm').addEventListener('submit', function (event) {
-			        event.preventDefault();
+	
+			    const allCloseButtons = document.querySelectorAll('.SR_modal .SR_close-button');
+			    allCloseButtons.forEach(btn => {
+			        btn.addEventListener('click', () => {
+			            const modal = btn.closest('.SR_modal');
+			            if (modal) {
+			                modal.style.display = 'none';
+			                document.body.style.overflow = 'auto';
+			            }
+			        });
+			    });
+	
+			    window.addEventListener('click', e => {
+			        Object.values(modals).forEach(({ register, edit }) => {
+			            if (e.target === register || e.target === edit) {
+			                e.target.style.display = 'none';
+			                document.body.style.overflow = 'auto';
+			            }
+			        });
+			    });
+	
+			    openEditButtons.forEach(button => {
+			        button.addEventListener('click', e => {
+			            e.preventDefault();
+			            const declarationCode = button.getAttribute('data-declaration-code');
+			            const currentTab = document.querySelector('.nav-link.active')?.getAttribute('data-tab');
+
+			            if (currentTab === 'type') {
+			                fetch(`/admin/getDeclarationType?code=${declarationCode}`)
+			                    .then(res => res.json())
+			                    .then(data => {
+			                        document.getElementById('typeEditCode').value = data.declarationTypeCode;
+			                        document.getElementById('typeEditName').value = data.declarationTypeName;
+			                        document.getElementById('typeEditExpln').value = data.declarationTypeExpln;
+			                        document.getElementById('typeEditRegAdm').value = data.declarationTypeRegAdmCode || '';
+			                        document.getElementById('typeEditRegYmdt').value = data.declarationTypeRegYmdt || '';
+			                        const radio = document.querySelector(`input[name="typeEditStatus"][value="${data.declarationTypeStcCode}"]`);
+			                        if (radio) radio.checked = true;
+
+			                        modals.type.edit.style.display = 'flex';
+			                        document.body.style.overflow = 'hidden';
+			                    })
+			                    .catch(err => alert('데이터 조회 실패: ' + err));
+			            }
+
+			            if (currentTab === 'reason') {
+			                fetch(`/admin/getDeclarationReason?code=${declarationCode}`)
+			                    .then(res => res.json())
+			                    .then(data => {
+			                        document.getElementById('reasonEditCode').value = data.drCode;
+			                        document.getElementById('reasonEditName').value = data.drName;
+			                        document.getElementById('reasonEditExpln').value = data.drExpln;
+			                        document.getElementById('reasonEditRegAdm').value = data.drRegAdmCode || '';
+			                        document.getElementById('reasonEditRegYmdt').value = data.drRegYmdt || '';
+			                        loadDeclarationTypes('declarationTypeEdit', data.drDtCode);
+			                        const radio = document.querySelector(`input[name="reasonEditStatus"][value="${data.drStcCode}"]`);
+			                        if (radio) radio.checked = true;
+
+			                        modals.reason.edit.style.display = 'flex';
+			                        document.body.style.overflow = 'hidden';
+			                    })
+			                    .catch(err => alert('데이터 조회 실패: ' + err));
+			            }
+
+			            if (currentTab === 'result') {
+			                fetch(`/admin/getDeclarationResult?code=${declarationCode}`)
+			                    .then(res => res.json())
+			                    .then(data => {
+			                        document.getElementById('resultEditCode').value = data.drcCode;
+			                        document.getElementById('resultEditName').value = data.drcName;
+			                        document.getElementById('resultEditExpln').value = data.drcExpln;
+			                        document.getElementById('resultEditRegAdm').value = data.drcRegAdmCode || '';
+			                        document.getElementById('resultEditRegYmdt').value = data.drcRegYmdt || '';
+			                        const radio = document.querySelector(`input[name="resultEditStatus"][value="${data.drcStcCode}"]`);
+			                        if (radio) radio.checked = true;
+
+			                        modals.result.edit.style.display = 'flex';
+			                        document.body.style.overflow = 'hidden';
+			                    })
+			                    .catch(err => alert('데이터 조회 실패: ' + err));
+			            }
+			        });
+			    });
+
+	
+			    function loadDeclarationTypes(selectElementId, selectedCode = null) {
+			        fetch('/admin/declarationTypes')
+			            .then(res => res.json())
+			            .then(data => {
+			                const select = document.getElementById(selectElementId);
+			                if (!select) return;
+			                select.innerHTML = '<option value="">신고타입을 선택하세요</option>';
+			                data.forEach(item => {
+			                    const opt = document.createElement('option');
+			                    opt.value = item.declarationTypeCode;
+			                    opt.textContent = item.declarationTypeName;
+			                    if (selectedCode && selectedCode === item.declarationTypeCode) {
+			                        opt.selected = true;
+			                    }
+			                    select.appendChild(opt);
+			                });
+			            })
+			            .catch(err => console.error('신고 타입 목록 불러오기 실패:', err));
+			    }
+	
+			    function validateDeclarationTypeForm() {
+			        const code = document.getElementById('typeCode').value.trim();
+			        const name = document.getElementById('typeName').value.trim();
+			        const expln = document.getElementById('typeExpln').value.trim();
+	
+			        const codeRegex = /^DT_[A-Z]{0,16}$/;
+			        if (!codeRegex.test(code)) {
+			            alert("신고타입코드는 'DT_'로 시작하고 대문자 영문자만 포함하며 20자 이하이어야 합니다.");
+			            return false;
+			        }
+	
+			        const nameRegex = /^[가-힣\s]{1,30}$/;
+			        if (!nameRegex.test(name)) {
+			            alert("신고타입명은 한글만 사용 가능하며, 특수기호 없이 30자 이하로 작성해야 합니다.");
+			            return false;
+			        }
+	
+			        if (expln.length > 255) {
+			            alert("타입설명은 255자 이하여야 합니다.");
+			            return false;
+			        }
+	
+			        return true;
+			    }
+	
+			    function validateDeclarationResultForm() {
+			        const code = document.getElementById('resultCode').value.trim();
+			        const name = document.getElementById('resultName').value.trim();
+			        const expln = document.getElementById('resultExpln').value.trim();
+	
+			        const codeRegex = /^DRC_[A-Z]{0,16}$/;
+			        if (!codeRegex.test(code)) {
+			            alert("신고처리결과코드는 'DRC_'로 시작하고 대문자 영문자만 포함하며 20자 이하이어야 합니다.");
+			            return false;
+			        }
+	
+			        const nameRegex = /^[가-힣\s]{1,30}$/;
+			        if (!nameRegex.test(name)) {
+			            alert("신고처리결과명은 한글과 공백만 허용되며, 특수기호 없이 30자 이내여야 합니다.");
+			            return false;
+			        }
+	
+			        if (expln.length > 255) {
+			            alert("코드설명은 255자 이내여야 합니다.");
+			            return false;
+			        }
+	
+			        return true;
+			    }
+	
+			    // 신고타입 등록
+			    document.getElementById('typeRegisterForm')?.addEventListener('submit', function (e) {
+			        e.preventDefault();
+			        if (!validateDeclarationTypeForm()) return;
+	
 			        const payload = {
-			            inquiryCode: document.getElementById('inquiryCodeDisplay').value,
-			            inquiryTypeCode: document.getElementById('inquiryTypeEdit').value,
-			            statusCode: document.getElementById('inquiryStatusEdit').value
+			            declarationTypeCode: document.getElementById('typeCode').value.trim(),
+			            declarationTypeName: document.getElementById('typeName').value.trim(),
+			            declarationTypeExpln: document.getElementById('typeExpln').value.trim(),
+			            declarationTypeStcCode: document.querySelector('input[name="typeStatus"]:checked')?.value
 			        };
-			        fetch('/admin/updateInquiry', {
+	
+			        fetch('/admin/addDeclarationType', {
 			            method: 'POST',
 			            headers: { 'Content-Type': 'application/json' },
 			            body: JSON.stringify(payload)
-			        })
-			        .then(res => res.ok ? res.text() : Promise.reject('저장 실패'))
-			        .then(result => {
-			            alert('저장이 완료되었습니다.');
-			            modal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			            location.reload();
-			        })
-			        .catch(error => {
-			            console.error('저장 오류:', error);
-			            alert('저장 중 오류가 발생했습니다.');
-			        });
+			        }).then(res => res.text()).then(result => {
+			            if (result === 'OK') {
+			                alert('신고 타입 등록 완료');
+			                location.reload();
+			            } else {
+			                alert('등록 실패: ' + result);
+			            }
+			        }).catch(err => alert('에러 발생: ' + err));
 			    });
-		
-			    document.getElementById('inquiryTypeEdit').addEventListener('change', function () {
-			        document.getElementById('inquiryTypeCodeDisplay').value = this.value;
+	
+			    // 신고 처리 결과 등록
+			    document.getElementById('resultRegisterForm')?.addEventListener('submit', function (e) {
+			        e.preventDefault();
+			        if (!validateDeclarationResultForm()) return;
+	
+			        const payload = {
+			            declarationResultCode: document.getElementById('resultCode').value.trim(),
+			            declarationResultName: document.getElementById('resultName').value.trim(),
+			            drcExpln: document.getElementById('resultExpln').value.trim(),
+			            drcStcCode: document.querySelector('input[name="resultStatus"]:checked')?.value
+			        };
+	
+			        fetch('/admin/addDeclarationResult', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(payload)
+			        }).then(res => res.text()).then(result => {
+			            if (result === 'OK') {
+			                alert('신고 처리 결과 등록 완료');
+			                location.reload();
+			            } else {
+			                alert('등록 실패: ' + result);
+			            }
+			        }).catch(err => alert('에러 발생: ' + err));
+			    });
+			    
+			    
+			 // 수정 버튼 클릭 시 신고타입 단건 조회 및 모달 오픈
+			    document.querySelectorAll('.SR_open-popup-btn').forEach(button => {
+			    	button.addEventListener('click', e => {
+			    		e.preventDefault();
+			    		const declarationCode = button.getAttribute('data-declaration-code');
+
+			    		// 현재 탭이 'type'인 경우에만 작동
+			    		if (document.querySelector('.nav-link.active')?.getAttribute('data-tab') === 'type') {
+			    			fetch(`/admin/getDeclarationType?code=${declarationCode}`)
+			    				.then(res => res.json())
+			    				.then(data => {
+			    					// 조회된 데이터를 수정 모달에 채움
+			    					document.getElementById('typeEditCode').value = data.declarationTypeCode;
+			    					document.getElementById('typeEditName').value = data.declarationTypeName;
+			    					document.getElementById('typeEditExpln').value = data.declarationTypeExpln;
+			    					document.getElementById('typeEditRegAdm').value = data.declarationTypeRegAdmCode || '';
+			    					document.getElementById('typeEditRegYmdt').value = data.declarationTypeRegYmdt || '';
+
+			    					// 상태 라디오 버튼 선택
+			    					const radio = document.querySelector(`input[name="typeEditStatus"][value="${data.declarationTypeStcCode}"]`);
+			    					if (radio) radio.checked = true;
+
+			    					// 모달 열기
+			    					document.getElementById('typeMdfcnModal').style.display = 'flex';
+			    					document.body.style.overflow = 'hidden';
+			    				})
+			    				.catch(err => {
+			    					alert('데이터 조회 실패: ' + err);
+			    				});
+			    		}
+			    	});
+			    });
+			 	
+			    function validateEditDeclarationTypeForm() {
+			        const name = document.getElementById('typeEditName').value.trim();
+			        const expln = document.getElementById('typeEditExpln').value.trim();
+
+			        if (!name) {
+			            alert("신고타입명을 입력하세요.");
+			            return false;
+			        }
+
+			        if (!expln) {
+			            alert("타입 설명을 입력하세요.");
+			            return false;
+			        }
+
+			        return true;
+			    }
+			    
+			    // 수정 저장 버튼 클릭 시 서버로 수정 요청
+			    document.getElementById('typeEditForm')?.addEventListener('submit', function (e) {
+			    	e.preventDefault();
+			    	if (!validateEditDeclarationTypeForm()) return;
+
+			    	const payload = {
+			    		declarationTypeCode: document.getElementById('typeEditCode').value.trim(),
+			    		declarationTypeName: document.getElementById('typeEditName').value.trim(),
+			    		declarationTypeExpln: document.getElementById('typeEditExpln').value.trim(),
+			    		declarationTypeStcCode: document.querySelector('input[name="typeEditStatus"]:checked')?.value
+			    	};
+
+			    	fetch('/admin/updateDeclarationType', {
+			    		method: 'POST',
+			    		headers: { 'Content-Type': 'application/json' },
+			    		body: JSON.stringify(payload)
+			    	})	
+			    	.then(res => res.text())
+			    	.then(result => {
+			    		if (result === 'OK') {
+			    			alert('신고 타입 수정 완료');
+			    			location.reload();
+			    		} else {
+			    			alert('수정 실패: ' + result);
+			    		}
+			    	})
+			    	.catch(err => alert('에러 발생: ' + err));
+			    });
+			    
+			 	// reason 유효성 검증
+			    function validateEditDeclarationReasonForm() {
+			        const name = document.getElementById('reasonEditName').value.trim();
+			        const expln = document.getElementById('reasonEditExpln').value.trim();
+			        const dtCode = document.getElementById('declarationTypeEdit').value;
+
+			        if (!dtCode) {
+			            alert("상위 신고타입을 선택하세요.");
+			            return false;
+			        }
+
+			        if (!name) {
+			            alert("신고사유명을 입력하세요.");
+			            return false;
+			        }
+
+			        if (!expln) {
+			            alert("사유 설명을 입력하세요.");
+			            return false;
+			        }
+
+			        return true;
+			    }
+
+			 	// reason 수정 저장
+			    document.getElementById('reasonEditForm')?.addEventListener('submit', function (e) {
+			        e.preventDefault();
+			        if (!validateEditDeclarationReasonForm()) return;
+			        const payload = {
+			            drCode: document.getElementById('reasonEditCode').value.trim(),
+			            drName: document.getElementById('reasonEditName').value.trim(),
+			            drExpln: document.getElementById('reasonEditExpln').value.trim(),
+			            drStcCode: document.querySelector('input[name="reasonEditStatus"]:checked')?.value,
+			            drDtCode: document.getElementById('declarationTypeEdit').value.trim()
+			        };
+			        fetch('/admin/updateDeclarationReason', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(payload)
+			        }).then(res => res.text()).then(result => {
+			            if (result === 'OK') {
+			                alert('신고 사유 수정 완료');
+			                location.reload();
+			            } else {
+			                alert('수정 실패: ' + result);
+			            }
+			        }).catch(err => alert('에러 발생: ' + err));
+			    });
+				
+			 	// result 수정 유효성 검증
+			    function validateEditDeclarationResultForm() {
+			        const name = document.getElementById('resultEditName').value.trim();
+			        const expln = document.getElementById('resultEditExpln').value.trim();
+
+			        if (!name) {
+			            alert("신고처리결과명을 입력하세요.");
+			            return false;
+			        }
+
+			        if (!expln) {
+			            alert("코드 설명을 입력하세요.");
+			            return false;
+			        }
+
+			        return true;
+			    }
+			 	
+			    // result 수정 저장
+			    document.getElementById('resultEditForm')?.addEventListener('submit', function (e) {
+			        e.preventDefault();
+			        if (!validateEditDeclarationResultForm()) return;
+			        const payload = {
+			            drcCode: document.getElementById('resultEditCode').value.trim(),
+			            drcName: document.getElementById('resultEditName').value.trim(),
+			            drcExpln: document.getElementById('resultEditExpln').value.trim(),
+			            drcStcCode: document.querySelector('input[name="resultEditStatus"]:checked')?.value
+			        };
+			        fetch('/admin/updateDeclarationResult', {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify(payload)
+			        }).then(res => res.text()).then(result => {
+			            if (result === 'OK') {
+			                alert('신고 처리 결과 수정 완료');
+			                location.reload();
+			            } else {
+			                alert('수정 실패: ' + result);
+			            }
+			        }).catch(err => alert('에러 발생: ' + err));
 			    });
 			});
 		</script>

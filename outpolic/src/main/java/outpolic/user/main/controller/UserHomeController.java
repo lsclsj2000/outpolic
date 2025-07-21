@@ -30,7 +30,11 @@ public class UserHomeController {
 
     @GetMapping("/") // 메인 페이지 URL
     public String mainPage(HttpSession session, Model model) {
-        
+    	
+
+    	// ★★ 1. 세션에서 현재 로그인한 사용자의 ID를 가져옵니다. ★★
+        String userId = (String) session.getAttribute("SCD"); // 비로그인 시 null이 됩니다.
+
         // 1. 서비스 호출: DB에서 대분류 카테고리 목록을 가져옵니다.
         List<UserCategory> mainCategories = categoryService.getMainCategoryList();
         
@@ -38,15 +42,15 @@ public class UserHomeController {
         model.addAttribute("mainCategories", mainCategories);
         log.info("메인 페이지 세션 확인: {}", session.getAttribute("SID"));
 
-		List<UserPortfolioRankingContentsDTO> popularPortfolioList = userRankingService.getUserRankingPoContents();
-		
-		model.addAttribute("findPOList", popularPortfolioList);
-		 
-		 // 인기 외주 리스트 불러오기 
-		List<UserRankingContentsDTO> popularOutsourcingList = userRankingService.getRankingContentsList();
-		
-		model.addAttribute("findOSList", popularOutsourcingList);
-		
+        // ★★ 2. 서비스 호출 시, 가져온 userId를 파라미터로 전달합니다. ★★
+        List<UserPortfolioRankingContentsDTO> popularPortfolioList = userRankingService.getUserRankingPoContents(userId);
+        
+        model.addAttribute("findPOList", popularPortfolioList);
+         
+        // 인기 외주 리스트 불러오기 (외주 목록도 찜 기능이 있다면 동일하게 userId를 전달해야 합니다)
+        List<UserRankingContentsDTO> popularOutsourcingList = userRankingService.getRankingContentsList(userId);
+        
+        model.addAttribute("findOSList", popularOutsourcingList);
 		return "main";
     }
     
@@ -56,8 +60,7 @@ public class UserHomeController {
      */
     @GetMapping("/userListpage")
     public String userListpageView() {
-        // 이 메소드 안에는 model.addAttribute가 없지만,
-        // @ModelAttribute 덕분에 헤더는 이미 'megaMenuCategories' 데이터를 받은 상태입니다.
+
         return "user/main/userListpageView";
     }
     

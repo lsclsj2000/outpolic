@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.user.bookmark.mapper.UserBookmarkMapper">
+	<resultMap id="UserBookmarkViewResultMap" type="outpolic.user.bookmark.dto.UserBookmarkViewDTO">
+		<!-- 북마크 정보 -->
+	    <id property="bmCd" column="bm_cd" />
+	    <result property="mbrCd" column="mbr_cd" />
+	    <result property="clCd" column="cl_cd" />
+	    <result property="clType" column="cl_type" />
+	    <result property="bmRegYmdt" column="bm_reg_ymdt" />
+	
+	    <result property="cntdCd" column="cntd_cd" />
+	    
+	    <!-- 공통 콘텐츠 정보 -->
+	    <result property="title" column="title" />
+	    <result property="writer" column="writer" />
+	    <result property="ctgryNm" column="ctgry_nm" />
+	    <result property="thumbnailUrl" column="thumbnail_url" />
+	
+	    <!-- 외주일 경우 -->
+	    <result property="osCd" column="os_cd" />
+	    <result property="osAmt" column="os_amt" />
+	
+	    <!-- 포트폴리오일 경우 -->
+	    <result property="prtfCd" column="prtf_cd" />
+	    <result property="prtfDwnldCnt" column="prtf_dwnld_cnt" />
+	
+	    <!-- 기업일 경우 -->
+	    <result property="entCd" column="ent_cd" />
+	    <result property="entRprsv" column="ent_rprsv" />
+	    <result property="entScr" column="ent_scr" />
+	</resultMap>    
+</mapper>
+
+<!-- 
+일단 회원의 bookmark테이블에서 cl_cd로 조인을 해. 그러고 여기서 분기처리를 해야하는데, cl테이블의 cntd_cd가 ei로 시작하면 기업이랑 join하고 os로 시작하면 외주랑 join하고 po로 시작하면 포폴이랑 join을 해야해
+(select b.bm_cd, b.mbr_cd, b.cl_cd, b.bm_reg_ymdt, cl.cntd_cd, null as nucode, e.ent_cd, e.ent_nm as title, e.ent_rprsv as supervisor, 'ENTER' as type
+from bookmark b inner JOIN content_list cl on b.cl_cd =cl.cl_cd
+inner join enterprise e on cl.cntd_cd = e.ent_cd
+where b.mbr_cd = 'MB_C0000119' and cl.cntd_cd like 'EI%'
+union all
+select b.bm_cd, b.mbr_cd, b.cl_cd, b.bm_reg_ymdt, cl.cntd_cd, o.os_cd, e.ent_cd, e.ent_nm as title, null as supervisor, 'OS' as type
+from bookmark b inner JOIN content_list cl on b.cl_cd =cl.cl_cd
+inner join outsourcing o on cl.cntd_cd = o.os_cd
+inner join enterprise e on e.ent_cd =o.ent_cd 
+where b.mbr_cd = 'MB_C0000119' and cl.cntd_cd like 'OS%'
+union all
+select b.bm_cd, b.mbr_cd, b.cl_cd, b.bm_reg_ymdt, cl.cntd_cd,p.prtf_cd, e.ent_cd, e.ent_nm as title, null as supervisor, 'PO' as type
+from bookmark b inner JOIN content_list cl on b.cl_cd =cl.cl_cd
+inner join portfolio p on cl.cntd_cd = p.prtf_cd
+inner join enterprise e on e.ent_cd = p.ent_cd
+where b.mbr_cd = 'MB_C0000119'and cl.cntd_cd like 'PO%')
+order by bm_reg_ymdt DESC;
+
+ -->
+
+
+
+
+
+
+
+

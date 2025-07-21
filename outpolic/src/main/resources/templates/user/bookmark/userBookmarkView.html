@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{user/layout/userLayoutBookmark}">
+
+	<head>
+		<meta name="description">
+		<style>
+			.section-padding {
+			    padding: 0;
+			}
+			.product-action-1 .action-btn i.fi-rs-heart.active {
+			    color: #F15412; /* 찜 했을 때의 색상 */
+			    font-weight: 900; /* 채워진 아이콘처럼 보이게 */
+			}
+		</style>
+	</head>
+	<!-- 추가할 javaFile -->
+	<th:block layout:fragment="jsFile">
+	</th:block>
+	
+	<!-- 추가할 script -->
+	<script layout:fragment="jsScript">
+	    document.addEventListener('DOMContentLoaded', () => {
+	        // 이벤트 위임을 사용하여 모든 찜 버튼 클릭을 효율적으로 처리
+	        // ✨✨✨ '.product-grid'를 '.product-grid-4'로 수정합니다 ✨✨✨
+	        const productGrid = document.querySelector('.product-grid-4');
+	
+	        // ✨ 방어 코드 추가: productGrid가 없을 경우를 대비합니다.
+	        if (productGrid) {
+	            productGrid.addEventListener('click', function(e) {
+	                const bookmarkBtn = e.target.closest('.bookmark-btn');
+	                if (!bookmarkBtn) return; // 찜 버튼이 아니면 무시
+	        
+	                // ✨✨✨ JavaScript 변수명을 clCode로 통일합니다 ✨✨✨
+	                const clCd = bookmarkBtn.dataset.clCd; 
+	                const heartIcon = bookmarkBtn.querySelector('i.fi-rs-heart');
+	                const isBookmarked = heartIcon.classList.contains('active');
+	                
+	                const apiUrl = `/api/enter/bookmarks`;
+	                let options;
+	        
+	                if (isBookmarked) {
+	                    // 찜 해제 (DELETE)
+	                    options = { method: 'DELETE' };
+	                    fetch(`${apiUrl}/${clCd}`, options)
+	                        .then(response => {
+	                            if (!response.ok) throw new Error('찜 해제 실패');
+	                            heartIcon.classList.remove('active');
+	                        })
+	                        .catch(error => console.error(error));
+	                } else {
+	                    // 찜 추가 (POST)
+	                    options = {
+	                        method: 'POST',
+	                        headers: { 'Content-Type': 'application/json' },
+	                        body: JSON.stringify({ clCd: clCd }) // ✨ clCode -> clCode
+	                    };
+	                    fetch(apiUrl, options)
+	                        .then(response => {
+	                            if (!response.ok) throw new Error('찜 추가 실패');
+	                            heartIcon.classList.add('active');
+	                        })
+	                        .catch(error => console.error(error));
+	                }
+	            });
+	        }
+	    });
+	</script>
+	
+	
+	<th:block layout:fragment="contents">
+		<section class="wishlist-section section-padding" >
+		    <!-- 외주 섹션 -->
+		    <div class="wishlist-category mb-5">
+		        <h4 class="mb-3">외주</h4>
+		        <hr />
+		        <div class="row g-4"  style="margin-bottom: 60px;">
+		            <div class="col-md-3" th:each="i : ${#numbers.sequence(1,4)}">
+		                <div class="card h-100 shadow-sm">
+		                    <img src="https://picsum.photos/400/300?random=1" class="card-img-top" alt="외주 이미지">
+		                    <div class="card-body">
+		                        <h5 class="card-title">외주 제목</h5>
+		                        <p class="card-text text-muted small">예상 금액: 1,200,000원</p>
+		                        <p class="card-text text-muted small">기업명: OO기업</p>
+		                        <a href="#" class="btn btn-sm btn-outline-primary w-100">
+		                            <i class="fi-rs-heart"></i> 찜 취소
+		                        </a>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		
+		    <!-- 포트폴리오 섹션 -->
+		    <div class="wishlist-category mb-5">
+		        <h4 class="mb-3">포트폴리오</h4>
+		        <hr />
+		        <div class="row g-4" style="margin-bottom: 60px;">
+		            <div class="col-md-3" th:each="i : ${#numbers.sequence(1,4)}">
+		                <div class="card h-100 shadow-sm">
+		                    <img src="https://picsum.photos/400/300?random=2" class="card-img-top" alt="포트폴리오 이미지">
+		                    <div class="card-body">
+		                        <h5 class="card-title">포트폴리오 제목</h5>
+		                        <p class="card-text text-muted small">카테고리: 디자인</p>
+		                        <p class="card-text text-muted small">작성자: 홍길동</p>
+		                        <a href="#" class="btn btn-sm btn-outline-primary w-100">
+		                            <i class="fi-rs-heart"></i> 찜 취소
+		                        </a>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		
+		    <!-- 기업 섹션 -->
+		    <div class="wishlist-category mb-5">
+		        <h4 class="mb-3">기업</h4>
+		        <hr />
+		        <div class="row g-4"  style="margin-bottom: 60px;">
+		            <div class="col-md-3" th:each="i : ${#numbers.sequence(1,4)}">
+		                <div class="card h-100 shadow-sm">
+		                    <img src="https://picsum.photos/400/300?random=3" class="card-img-top" alt="기업 이미지">
+		                    <div class="card-body">
+		                        <h5 class="card-title">기업명: ㈜아웃폴릭</h5>
+		                        <p class="card-text text-muted small">대표자: 김대표</p>
+		                        <p class="card-text text-muted small">분야: IT / 개발</p>
+		                        <a href="#" class="btn btn-sm btn-outline-primary w-100">
+		                            <i class="fi-rs-heart"></i> 찜 취소
+		                        </a>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</section>
+		
+		<!-- 4. 콘텐츠가 없을 때 표시할 메시지 예시 -->
+		<div class="col-12">
+		    <p class="text-center">찜한 콘텐츠가 없습니다.</p>
+		</div>
+	</th:block>
+</html>

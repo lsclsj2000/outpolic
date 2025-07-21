@@ -15,6 +15,7 @@ import outpolic.enter.category.service.EnterCategoryService;
 import outpolic.enter.ranking.domain.EnterPortfolioRankingContentsDTO;
 import outpolic.enter.ranking.domain.EnterRankingContentsDTO;
 import outpolic.enter.ranking.service.EnterRankingService;
+import outpolic.user.ranking.domain.UserPortfolioRankingContentsDTO;
 
 @Controller
 @RequestMapping("/enter")
@@ -28,22 +29,25 @@ public class EnterHomeController {
 
 	@GetMapping("") // 메인 페이지 URL
     public String enterMainPage(HttpSession session, Model model) {
+		
+		// ★★ 1. 세션에서 현재 로그인한 사용자의 ID를 가져옵니다. ★★
+        String userId = (String) session.getAttribute("SCD"); // 비로그인 시 null이 됩니다.
         
         // 1. 서비스 호출: DB에서 대분류 카테고리 목록을 가져옵니다.
         List<EnterCategory> mainCategories = categoryService.getMainCategoryList();
         
         // 2. Model에 담기: "mainCategories" 라는 이름으로 HTML에 전달합니다.
         model.addAttribute("mainCategories", mainCategories);
-		
-		 log.info("메인 페이지 세션 확인: {}", session.getAttribute("SID"));
+        log.info("메인 페이지 세션 확인: {}", session.getAttribute("SID"));
+        
+        // ★★ 2. 서비스 호출 시, 가져온 userId를 파라미터로 전달합니다. ★★
+        List<EnterPortfolioRankingContentsDTO> popularPortfolioList = enterRankingService.getEnterRankingPoContents(userId);
 		 
-		 List<EnterPortfolioRankingContentsDTO> popularPortfolioList =
-		 enterRankingService.getEnterRankingPoContents();
-		 model.addAttribute("findPOList", popularPortfolioList);
-		 
-		 // 인기 외주 리스트 불러오기 
-		 List<EnterRankingContentsDTO> popularOutsourcingList = enterRankingService.getRankingContentsList();
-		 model.addAttribute("findOSList", popularOutsourcingList);
+        model.addAttribute("findPOList", popularPortfolioList);
+
+		// 인기 외주 리스트 불러오기 
+		List<EnterRankingContentsDTO> popularOutsourcingList = enterRankingService.getRankingContentsList(userId);
+		model.addAttribute("findOSList", popularOutsourcingList);
 		 
 
         return "enterMain";

@@ -6,89 +6,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>신고하기 페이지</title>
-    <!-- Bootstrap CSS는 로컬 또는 번들링되어 있다고 가정합니다. -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- 사용자 정의 CSS 파일 참조 -->
     <link rel="stylesheet" th:href="@{/user/assets/css/userOutsourcingStatus.css}" />
     <link rel="stylesheet" th:href="@{/user/assets/css/userInquiry.css}">
-    <!-- HTML 내에 style 태그는 포함하지 않습니다. 모든 스타일은 외부 CSS 파일을 통해 관리됩니다. -->
 </head>
 <body>
-    <!-- Thymeleaf 레이아웃을 위한 컨텐츠 블록 시작 -->
     <th:block layout:fragment="contents">
         <h2 style="margin-bottom:25px;">신고하기</h2>
-        <div class="SR_content-input-box">
-            <!-- 작성자 및 작성일자 섹션 -->
-            <div class="row shipping_calculator g-3">
-                <div class="form-group col-lg-6">
-                	<div class="custom_select">
-	                    <label for="reporter" class="SR_form-label">작성자 :</label>
-	                    <input type="text" id="reporter" class="form-control SR_disabled-input" style="height:45px;" readonly>
-                    </div>
-                </div>
-                <div class="form-group col-lg-6">
-                	<div class="custom_select">
-	                    <label for="reportDate" class="SR_form-label">작성일자 :</label>
-	                    <input type="text" id="reportDate" class="form-control SR_disabled-input" style="height:45px;" readonly>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 신고 타입 및 신고 사유 드롭다운 섹션 -->
-            <!-- userInquiry.css의 shipping_calculator 및 custom_select 구조를 활용 -->
-            <div class="row shipping_calculator g-3 mb-3">
-                <div class="form-group col-lg-6">
-                    <div class="custom_select">
-                        <label for="reportType" class="SR_form-label" style="font-size: 16px;">신고타입 :</label>
-                        <select class="form-control select-active" id="reportType">
-                            <option value="">선택하세요</option>
-                            <option value="chat">채팅 신고</option>
-                            <option value="malicious">악의적 신고</option>
-                            <option value="etc">기타 신고</option>
-                            <option value="outsourcing">외주 신고</option>
-                            <option value="portfolio">포트폴리오 신고</option>
-                            <option value="profile">프로필 신고</option>
-                            <option value="review">리뷰 신고</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group col-lg-6">
-                    <div class="custom_select">
-                        <label for="reportReason" class="SR_form-label" style="font-size: 16px;">신고 사유 :</label>
-                        <select class="form-control select-active" id="reportReason" disabled>
-                            <option value="">신고 타입을 먼저 선택하세요</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 신고 대상 입력 필드 -->
-            <div class="mb-4">
-                <label for="reportTarget" class="SR_form-label">신고 대상 :</label>
-                <input type="text" id="reportTarget" class="form-control SR_clickable-input" placeholder="신고 대상을 검색하여 선택하세요" data-bs-toggle="modal" data-bs-target="#searchTargetModal" readonly>
-            </div>
-
-            <!-- 신고 내용 입력 (CKEditor 적용) -->
-            <div class="mb-4">
-                <label for="reportContent" class="SR_form-label">신고 내용 입력 :</label>
-                <textarea id="reportContent" class="form-control SR_form-control-textarea" placeholder="신고 내용을 상세히 입력해주세요"></textarea>
-            </div>
-
-            <!-- 첨부파일 선택 -->
-            <div class="mb-5">
-                <label for="fileUpload" class="SR_form-label">첨부파일 선택 :</label>
-                <input type="file" id="fileUpload" class="form-control">
-            </div>
-
-            <!-- 제출/취소 버튼 -->
+        <form id="declarationForm" method="post" enctype="multipart/form-data" action="/user/declarationWrite">
+	        <div class="SR_content-input-box">
+	            <div class="row shipping_calculator g-3">
+	                <div class="form-group col-lg-6">
+	                	<div class="custom_select">
+		                    <label for="reporter" class="SR_form-label">작성자 :</label>
+		                    <input type="text" id="reporter" class="form-control SR_disabled-input" style="height:45px;" 
+							       th:value="${reporter}" readonly>
+	                    </div>
+	                </div>
+	                <div class="form-group col-lg-6">
+	                	<div class="custom_select">
+		                    <label for="reportDate" class="SR_form-label">작성일자 :</label>
+		                    <input type="text" id="reportDate" class="form-control SR_disabled-input" style="height:45px;" readonly>
+	                    </div>
+	                </div>
+	            </div>
+	
+	            <div class="row shipping_calculator g-3 mb-3">
+	                <div class="form-group col-lg-6">
+	                    <div class="custom_select">
+	                        <label for="reportType" class="SR_form-label" style="font-size: 16px;">신고타입 :</label>
+	                        <select class="form-control select-active" id="reportType">
+	                        </select>
+	                    </div>
+	                </div>
+	                <div class="form-group col-lg-6">
+	                    <div class="custom_select">
+	                        <label for="reportReason" class="SR_form-label" style="font-size: 16px;">신고 사유 :</label>
+	                        <select class="form-control select-active" id="reportReason" disabled>
+							    <option value="">신고 타입을 먼저 선택하세요</option>
+							</select>
+	                    </div>
+	                </div>
+	            </div>
+	            
+	            <div class="mb-4">
+	                <label for="reportTarget" class="SR_form-label">신고 대상 :</label>
+	                <input type="text" id="reportTarget" class="form-control SR_clickable-input" placeholder="신고 대상을 검색하여 선택하세요" data-bs-toggle="modal" data-bs-target="#searchTargetModal" readonly>
+	            </div>
+	
+	            <div class="mb-4">
+	                <label for="reportContent" class="SR_form-label">신고 내용 입력 :</label>
+	                <textarea id="reportContent" class="form-control SR_form-control-textarea" placeholder="신고 내용을 상세히 입력해주세요"></textarea>
+	            </div>
+	
+	            <div class="SR_file-upload-container" style="margin-top: 0px;">
+					<div class="SR_checkbox-container">
+						<input type="checkbox" id="SR_attachFileCheckbox">
+						<label for="SR_attachFileCheckbox">첨부파일을 추가하시겠습니까?</label>
+					</div>
+				
+					<div class="SR_file-input-area mt-15" id="SR_fileInputArea">
+						<div class="SR_file-drop-zone" id="SR_fileDropZone">
+							<p>여기에 파일을 드롭하거나</p>
+							<label for="SR_fileInput" class="SR_custom-file-button">파일 선택</label>
+							<input type="file" id="SR_fileInput" name="attachment" style="display: none;" multiple />
+							<div id="SR_selectedFiles" class="SR_selected-files"></div>
+						</div>
+					</div>
+				</div>
+	
+	        </div>
             <div class="d-flex justify-content-end gap-2">
-                <!-- SR_total_btn 클래스 적용 및 Tailwind CSS 클래스 추가 -->
                 <button type="button" class="SR_total_sky_btn">취소</button>
-                <button type="button" class="SR_total_blue_btn">제출</button>
+                <button type="submit" class="btn SR_total_blue_btn">제출</button>
             </div>
-        </div>
+	    </form>
 
-        <!-- 신고 대상 검색 모달 -->
         <div class="modal fade" id="searchTargetModal" tabindex="-1" aria-labelledby="searchTargetModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -97,21 +90,23 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- 신고 대상 유형 선택 드롭다운 추가 -->
-                        <div class="mb-3">
-                            <label for="targetTypeSelect" class="form-label">신고 대상 유형 선택:</label>
-                            <select class="form-select h-10 rounded-md" id="targetTypeSelect">
-                                <option value="">유형을 선택하세요</option>
-                                <option value="portfolio">포트폴리오</option>
-                                <option value="outsourcing">외주</option>
-                                <option value="member">회원</option>
-                            </select>
+                        <div class="row shipping_calculator g-3 mb-3">
+	                        <div class="form-group">
+	                        	<div class="custom_select">
+		                            <label for="targetTypeSelect" class="SR_form-label" style="font-size: 16px; width:50%;">신고 대상 유형 선택:</label>
+		                            <select class="form-select h-10 rounded-md" id="targetTypeSelect">
+		                                <option value="">유형을 선택하세요</option>
+		                                <option value="portfolio">포트폴리오</option>
+		                                <option value="outsourcing">외주</option>
+		                                <option value="enter">기업회원</option>
+		                                <option value="user">일반회원</option>
+		                            </select>
+	                            </div>
+	                        </div>
                         </div>
                         <div class="input-group mb-3">
-                            <!-- 검색 입력란과 검색 버튼의 높이를 동일하게 설정 (h-10, rounded-md) -->
                             <input type="text" class="form-control h-10 rounded-l-md" id="targetSearchInput" placeholder="유형을 먼저 선택하세요" disabled>
-                            <!-- 검색 버튼 텍스트 중앙 정렬을 위해 flex, items-center, justify-center 추가 -->
-                            <button class="SR_btn-primary h-10 rounded-r-md flex items-center justify-center" type="button" id="searchTargetBtn" disabled>검색</button>
+                            <button class="SR_btn-primary h-10 rounded-r-md flex items-center justify-center" type="button" id="searchTargetBtn" style="height: 45px;" disabled>검색</button>
                         </div>
                         <div id="searchResults" class="list-group">
                             <p class="text-muted text-center mt-3">유형을 선택하고 검색어를 입력한 후 검색 버튼을 눌러주세요.</p>
@@ -126,278 +121,419 @@
         </div>
     </th:block>
 
-    <!-- Javascript 스크립트 블록 시작 -->
     <th:block layout:fragment="jsScript">
-        <!-- CKEditor 5 Super Build 스크립트 -->
         <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/super-build/ckeditor.js"></script>
-        <!-- Bootstrap JavaScript는 로컬 또는 번들링되어 있다고 가정합니다. -->
         <script>
-            let editorInstance; // CKEditor 인스턴스를 저장할 변수 추가
+        let editorInstance;
+        let attachedFiles = [];
+        let selectedTarget = null; // selectedTarget 변수 초기화
 
-            document.addEventListener('DOMContentLoaded', function() {
-                // 작성자와 작성일자 자동 입력
-                const reporterInput = document.getElementById('reporter');
-                const reportDateInput = document.getElementById('reportDate');
-                const reportTypeSelect = document.getElementById('reportType');
-                const reportReasonSelect = document.getElementById('reportReason');
-                const reportTargetInput = document.getElementById('reportTarget');
-                
-                // 모달 관련 요소
-                const targetTypeSelect = document.getElementById('targetTypeSelect'); // 새로 추가된 대상 유형 선택 드롭다운
-                const targetSearchInput = document.getElementById('targetSearchInput');
-                const searchTargetBtn = document.getElementById('searchTargetBtn');
-                const searchResultsDiv = document.getElementById('searchResults');
-                const selectTargetBtn = document.getElementById('selectTargetBtn');
-                let selectedTarget = null; // 선택된 대상 저장
+        document.addEventListener('DOMContentLoaded', function () {
+            const reporterInput = document.getElementById('reporter');
+            const reportDateInput = document.getElementById('reportDate');
+            const reportTypeSelect = document.getElementById('reportType');
+            const reportReasonSelect = document.getElementById('reportReason');
+            const reportTargetInput = document.getElementById('reportTarget');
+            const targetTypeSelect = document.getElementById('targetTypeSelect');
+            const targetSearchInput = document.getElementById('targetSearchInput');
+            const searchTargetBtn = document.getElementById('searchTargetBtn');
+            const searchResultsDiv = document.getElementById('searchResults');
+            const selectTargetBtn = document.getElementById('selectTargetBtn');
+            const cancelBtn = document.querySelector('.SR_total_sky_btn');
+            const declarationForm = document.getElementById('declarationForm');
 
-                // 실제 사용자 이름 또는 ID를 여기에 설정
-                reporterInput.value = '현재 사용자'; // 예시: 로그인된 사용자 이름
-                // 현재 날짜 자동 입력
-                const today = new Date();
-                const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, '0');
-                const day = String(today.getDate()).padStart(2, '0');
-                reportDateInput.value = `${year}-${month}-${day}`;
+            const today = new Date();
+            reportDateInput.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-                // CKEditor 초기화
-                CKEDITOR.ClassicEditor.create(document.getElementById("reportContent"), {
-                    toolbar: {
-                        items: [
-                            'heading', '|',
-                            'bold', 'italic', 'strikethrough', 'underline', '|',
-                            'bulletedList', 'numberedList', '|',
-                            'link', 'insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', '|',
-                            'undo', 'redo', '|',
-                            'sourceEditing'
-                        ],
-                        shouldNotGroupWhenFull: true
-                    },
-                    placeholder: '신고 내용을 상세히 입력해주세요.',
-                    ckfinder : {
-                        uploadUrl: '/user/uploadImage' // 이미지 업로드 URL (필요시 백엔드 구현 필요)
-                    },
-                    // WebSocket Gateway 오류 해결을 위해 불필요한 플러그인 제거
-                    removePlugins: [
-                        'ExportPdf',
-                        'ExportWord',
-                        'CKBox', // CKBox 플러그인 제거
-                        'CKFinder', // CKFinder 플러그인 제거
-                        'EasyImage',
-                        'RealTimeCollaborativeComments',
-                        'RealTimeCollaborativeTrackChanges',
-                        'RealTimeCollaborativeRevisionHistory',
-                        'PresenceList',
-                        'Comments',
-                        'TrackChanges',
-                        'TrackChangesData',
-                        'RevisionHistory',
-                        'Pagination',
-                        'WProofreader',
-                        'MathType'
-                    ]
-                })
-                .then(editor => {
-                    editorInstance = editor;
-                })
-                .catch(error => {
-                    console.error('CKEditor initialization failed:', error);
+            if (typeof jQuery !== 'undefined' && typeof jQuery.fn.select2 !== 'undefined') {
+                $('#reportType').select2();
+                $('#reportReason').select2({ disabled: true });
+                $('#targetTypeSelect').select2({
+                    dropdownParent: $('#searchTargetModal'),
+                    width: '100%'
+                });
+            }
+
+            CKEDITOR.ClassicEditor.create(document.getElementById("reportContent"), {
+                toolbar: {
+                    items: [
+                        'heading', '|', 'bold', 'italic', 'strikethrough', 'underline', '|',
+                        'bulletedList', 'numberedList', '|', 'link', 'insertImage', 'blockQuote',
+                        'insertTable', 'mediaEmbed', '|', 'undo', 'redo', '|', 'sourceEditing'
+                    ],
+                    shouldNotGroupWhenFull: true
+                },
+                placeholder: '신고 내용을 상세히 입력해주세요.',
+                ckfinder: { uploadUrl: '/user/uploadImage' },
+                removePlugins: ['ExportPdf', 'ExportWord', 'CKBox', 'CKFinder', 'EasyImage',
+                    'RealTimeCollaborativeComments', 'RealTimeCollaborativeTrackChanges',
+                    'RealTimeCollaborativeRevisionHistory', 'PresenceList', 'Comments',
+                    'TrackChanges', 'TrackChangesData', 'RevisionHistory', 'Pagination',
+                    'WProofreader', 'MathType']
+            }).then(editor => {
+                editorInstance = editor;
+            });
+
+            // 신고 타입 드롭다운 로드
+            fetch('/user/declarationTypes')
+                .then(res => res.json())
+                .then(types => {
+                    console.log("로드된 신고 타입:", types);
+                    reportTypeSelect.innerHTML = '<option value="">신고 타입 선택</option>';
+                    types.forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type.dtCode;
+                        option.textContent = type.dtName;
+                        reportTypeSelect.appendChild(option);
+                    });
+                    $('#reportType').select2();
                 });
 
+            // 신고 타입 변경 시 사유 드롭다운 업데이트
+            $('#reportType').on('change', function () {
+                const selectedType = $(this).val();
+                console.log("선택된 신고 타입 (dtCd):", selectedType);
+                $('#reportReason').html('<option value="">신고 사유 선택</option>');
+                $('#reportReason').prop('disabled', true).select2('destroy').select2({ disabled: true });
 
-                // 신고 타입에 따른 신고 사유 동적 변경
-                const reportReasons = {
-                    chat: [
-                        { text: '욕설/비하 발언', value: 'chat_insult' },
-                        { text: '성희롱/불쾌한 발언', value: 'chat_sexual_harassment' },
-                        { text: '외부 유도', value: 'chat_external_inducement' },
-                        { text: '도배/스팸', value: 'chat_spam' },
-                        { text: '부적절한 요청', value: 'chat_inappropriate_request' }
-                    ],
-                    malicious: [
-                        { text: '악의적 신고', value: 'malicious_report' }
-                    ],
-                    etc: [
-                        { text: '기타 신고', value: 'etc_report' }
-                    ],
-                    outsourcing: [
-                        { text: '허위 외주 게시글', value: 'outsourcing_false_post' },
-                        { text: '조건/내용 불명확', value: 'outsourcing_unclear' },
-                        { text: '일방적인 계약 파기', value: 'outsourcing_breach_contract' },
-                        { text: '외부 유도', value: 'outsourcing_external_inducement' },
-                        { text: '불법적 외주', value: 'outsourcing_illegal' },
-                        { text: '반복 도배 외주글', value: 'outsourcing_spam_post' }
-                    ],
-                    portfolio: [
-                        { text: '도용된 포트폴리오', value: 'portfolio_plagiarized' },
-                        { text: '허위 이력/경력', value: 'portfolio_false_history' },
-                        { text: '부적절한 이미지', value: 'portfolio_inappropriate_image' },
-                        { text: '광고성/스팸 포트폴리오', value: 'portfolio_ad_spam' },
-                        { text: '타인 비방 내용 포함', value: 'portfolio_slander' }
-                    ],
-                    profile: [
-                        { text: '부적절한 닉네임', value: 'profile_inappropriate_nickname' },
-                        { text: '도용된 사진', value: 'profile_plagiarized_photo' },
-                        { text: '광고/홍보성 내용', value: 'profile_ad_promo' },
-                        { text: '허위 정보 기재', value: 'profile_false_info' }
-                    ],
-                    review: [
-                        { text: '욕설/비방', value: 'review_insult' },
-                        { text: '악의리뷰', value: 'review_malicious' },
-                        { text: '거래 유도', value: 'review_transaction_inducement' }
-                    ]
-                };
+                if (!selectedType) return;
 
-                reportTypeSelect.addEventListener('change', function() {
-                    const selectedType = this.value;
-                    reportReasonSelect.innerHTML = '<option value="">신고 타입을 먼저 선택하세요</option>'; // 초기화
-                    reportReasonSelect.disabled = true;
-
-                    if (selectedType && reportReasons[selectedType]) {
-                        reportReasons[selectedType].forEach(reason => {
-                            const option = document.createElement('option');
-                            option.value = reason.value;
-                            option.textContent = reason.text;
-                            reportReasonSelect.appendChild(option);
+                fetch(`/user/declarationReasons?dtCd=${selectedType}`)
+                    .then(res => res.json())
+                    .then(reasons => {
+                        console.log("로드된 신고 사유:", reasons);
+                        $('#reportReason').html('<option value="">신고 사유 선택</option>');
+                        reasons.forEach(reason => {
+                            const option = $('<option></option>')
+                                .val(reason.drCode)
+                                .text(reason.drName);
+                            $('#reportReason').append(option);
                         });
-                        reportReasonSelect.disabled = false;
-                    }
-                });
+                        $('#reportReason').prop('disabled', false).select2();
+                    });
+            });
 
-                // 신고 대상 유형 선택 시 로직 (모달 내)
-                targetTypeSelect.addEventListener('change', function() {
-                    const selectedType = this.value;
-                    targetSearchInput.value = ''; // 검색 입력 초기화
-                    searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">검색어를 입력하고 검색 버튼을 눌러주세요.</p>';
-                    selectTargetBtn.disabled = true;
-                    selectedTarget = null;
+            // 신고 사유 변경 시 로그
+            $('#reportReason').on('change', function() {
+                const selectedReason = $(this).val();
+                console.log("선택된 신고 사유 (drCd):", selectedReason);
+            });
 
-                    if (selectedType) {
-                        targetSearchInput.disabled = false;
-                        searchTargetBtn.disabled = false;
-                        let placeholderText = '';
-                        switch (selectedType) {
-                            case 'portfolio':
-                                placeholderText = '포트폴리오 제목 또는 ID로 검색';
-                                break;
-                            case 'outsourcing':
-                                placeholderText = '외주 제목 또는 ID로 검색';
-                                break;
-                            case 'member':
-                                placeholderText = '회원 이름 또는 ID로 검색';
-                                break;
-                            default:
-                                placeholderText = '검색어를 입력하세요';
-                        }
-                        targetSearchInput.placeholder = placeholderText;
-                    } else {
-                        targetSearchInput.disabled = true;
-                        searchTargetBtn.disabled = true;
-                        targetSearchInput.placeholder = '유형을 먼저 선택하세요';
-                    }
-                });
+            // 신고 대상 유형 변경 시 처리
+            $('#targetTypeSelect').on('change', function () {
+                const selectedType = $(this).val();
+                console.log("모달: 선택된 신고 대상 유형:", selectedType);
+                targetSearchInput.value = '';
+                searchResultsDiv.innerHTML = '';
+                selectTargetBtn.disabled = true;
+                selectedTarget = null; // 유형 변경 시 이전 선택 초기화 (정상 동작)
 
-                // 모달 검색 기능
-                searchTargetBtn.addEventListener('click', function() {
-                    const query = targetSearchInput.value.trim();
-                    const selectedTargetType = targetTypeSelect.value;
-
-                    searchResultsDiv.innerHTML = ''; // 이전 검색 결과 초기화
-                    selectTargetBtn.disabled = true; // 선택 버튼 비활성화
-                    selectedTarget = null; // 선택된 대상 초기화
-
-                    if (!selectedTargetType) {
-                        searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">신고 대상 유형을 먼저 선택해주세요.</p>';
-                        return;
-                    }
-
-                    if (query.length === 0) {
-                        searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">검색어를 입력해주세요.</p>';
-                        return;
-                    }
-
-                    // 실제 검색 로직 (예시 데이터 사용)
-                    // 이 부분은 실제 백엔드 API 호출 등으로 대체되어야 합니다.
-                    const dummyData = {
-                        portfolio: [
-                            { id: 'port1', name: '웹 디자인 포트폴리오 2023', type: '포트폴리오' },
-                            { id: 'port2', name: '모바일 앱 개발 사례', type: '포트폴리오' },
-                            { id: 'port3', name: 'UI/UX 프로젝트 모음', type: '포트폴리오' }
-                        ],
-                        outsourcing: [
-                            { id: 'out1', name: '기업 홈페이지 제작', type: '외주' },
-                            { id: 'out2', name: '쇼핑몰 솔루션 개발', type: '외주' },
-                            { id: 'out3', name: '모바일 게임 그래픽 디자인', type: '외주' }
-                        ],
-                        member: [
-                            { id: 'user1', name: '김철수', type: '회원' },
-                            { id: 'user2', name: '이영희', type: '회원' },
-                            { id: 'user3', name: '박민수', type: '회원' }
-                        ]
-                    };
-
-                    const dataToSearch = dummyData[selectedTargetType] || [];
-                    const results = dataToSearch.filter(item =>
-                        item.name.includes(query) || item.id.includes(query)
-                    );
-
-                    if (results.length > 0) {
-                        results.forEach(item => {
-                            const listItem = document.createElement('a');
-                            listItem.href = '#';
-                            listItem.classList.add('list-group-item', 'list-group-item-action');
-                            listItem.textContent = `${item.name} (${item.id}) [${item.type}]`;
-                            listItem.dataset.id = item.id;
-                            listItem.dataset.name = item.name;
-                            listItem.dataset.type = item.type; // 유형 정보 저장
-                            listItem.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                // 모든 항목에서 active 클래스 제거
-                                document.querySelectorAll('#searchResults .list-group-item').forEach(item => {
-                                    item.classList.remove('active');
-                                });
-                                // 클릭된 항목에 active 클래스 추가
-                                this.classList.add('active');
-                                selectedTarget = { id: this.dataset.id, name: this.dataset.name, type: this.dataset.type };
-                                selectTargetBtn.disabled = false; // 선택 버튼 활성화
-                            });
-                            searchResultsDiv.appendChild(listItem);
-                        });
-                    } else {
-                        searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">검색 결과가 없습니다.</p>';
-                    }
-                });
-
-                // 검색 입력란에서 Enter 키를 눌렀을 때 검색 버튼 클릭 이벤트 트리거
-                targetSearchInput.addEventListener('keypress', function(event) {
-                    if (event.key === 'Enter' && !searchTargetBtn.disabled) {
-                        event.preventDefault(); // 기본 Enter 동작 (폼 제출 등) 방지
-                        searchTargetBtn.click();
-                    }
-                });
-
-                // 선택 버튼 클릭 시 신고 대상 입력 필드에 값 설정
-                selectTargetBtn.addEventListener('click', function() {
-                    if (selectedTarget) {
-                        reportTargetInput.value = `${selectedTarget.name} (${selectedTarget.id}) [${selectedTarget.type}]`;
-                        // Bootstrap 모달 인스턴스를 가져와서 닫기
-                        const searchTargetModal = bootstrap.Modal.getInstance(document.getElementById('searchTargetModal')) || new bootstrap.Modal(document.getElementById('searchTargetModal'));
-                        searchTargetModal.hide(); // 모달 닫기
-                    }
-                });
-
-                // 모달이 닫힐 때 검색 결과 및 선택 초기화
-                const searchTargetModalElement = document.getElementById('searchTargetModal');
-                searchTargetModalElement.addEventListener('hidden.bs.modal', function () {
-                    targetTypeSelect.value = ''; // 유형 선택 초기화
-                    targetSearchInput.value = '';
-                    targetSearchInput.placeholder = '유형을 먼저 선택하세요';
+                if (selectedType) {
+                    targetSearchInput.disabled = false;
+                    searchTargetBtn.disabled = false;
+                    targetSearchInput.placeholder = {
+                        portfolio: '포트폴리오 제목 또는 ID',
+                        outsourcing: '외주 제목 또는 ID',
+                        enter: '기업명 또는 회원명',
+                        user: '닉네임 또는 이름'
+                    }[selectedType] || '검색어 입력';
+                } else {
                     targetSearchInput.disabled = true;
                     searchTargetBtn.disabled = true;
-                    searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">유형을 선택하고 검색어를 입력한 후 검색 버튼을 눌러주세요.</p>';
-                    selectTargetBtn.disabled = true;
-                    selectedTarget = null;
+                    targetSearchInput.placeholder = '유형 먼저 선택하세요';
+                }
+            });
+
+            // 신고 대상 검색 버튼 클릭
+            searchTargetBtn.addEventListener('click', () => {
+                const keyword = targetSearchInput.value.trim();
+                const selectedType = targetTypeSelect.value;
+                console.log("모달: 검색 버튼 클릭 - 유형:", selectedType, "키워드:", keyword);
+                if (!keyword || !selectedType) return;
+
+                fetch(`/user/searchTarget?type=${selectedType}&keyword=${encodeURIComponent(keyword)}`)
+                    .then(res => res.json())
+                    .then(results => {
+                        console.log("모달: 검색 결과 (raw):", results);
+                        searchResultsDiv.innerHTML = '';
+                        if (!results.length) {
+                            searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">검색 결과 없음</p>';
+                            return;
+                        }
+                        results.forEach(item => {
+                            let id, name, type;
+                            if (selectedType === 'portfolio' && item.prtfCode) {
+                                id = item.prtfCode; name = item.prtfTitle; type = '포트폴리오';
+                            } else if (selectedType === 'outsourcing' && item.osCode) {
+                                id = item.osCode; name = item.osTitle; type = '외주';
+                            } else if (selectedType === 'enter' && item.entCode) {
+                                id = item.entCode; name = item.entTitle; type = '기업회원';
+                            } else if (selectedType === 'user' && item.mbrCode) {
+                                id = item.mbrCode; name = item.mbrTitle; type = '일반회원';
+                            } else {
+                                return;
+                            }
+
+                            console.log(`모달: 항목 파싱 - id: ${id}, name: ${name}, type: ${type}`);
+
+                            const a = document.createElement('a');
+                            a.href = '#';
+                            a.classList.add('list-group-item', 'list-group-item-action');
+                            a.textContent = `${name} (ID: ${id})`; // ID도 함께 표시
+                            a.dataset.id = id;
+                            a.dataset.name = name;
+                            a.dataset.type = type;
+                            a.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                document.querySelectorAll('#searchResults .list-group-item').forEach(el => el.classList.remove('active'));
+                                this.classList.add('active');
+                                selectedTarget = { id: this.dataset.id, name: this.dataset.name, type: this.dataset.type };
+                                console.log("모달: 목록에서 선택된 대상 (클릭 후):", selectedTarget);
+                                selectTargetBtn.disabled = false;
+                            });
+                            searchResultsDiv.appendChild(a);
+                        });
+                    });
+            });
+
+            // --- 변경된 부분 시작 ---
+            // 신고 대상 검색 입력 필드에서 Enter 키를 눌렀을 때 검색 실행
+            targetSearchInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' || event.keyCode === 13) {
+                    event.preventDefault(); // 기본 Enter 동작(폼 제출 등) 방지
+                    if (!this.disabled) { // 입력 필드가 활성화된 상태일 때만 검색 실행
+                        searchTargetBtn.click(); // 검색 버튼 클릭 이벤트 발생
+                    }
+                }
+            });
+            // --- 변경된 부분 끝 ---
+
+            // 모달 내 '선택' 버튼 클릭
+            selectTargetBtn.addEventListener('click', function () {
+                console.log("모달: '선택' 버튼 클릭 시 selectedTarget 현재 상태:", selectedTarget);
+                if (selectedTarget && selectedTarget.id) {
+                    reportTargetInput.value = `[${selectedTarget.type}] ${selectedTarget.name} (${selectedTarget.id})`;
+                    console.log("모달: 최종 선택 버튼 클릭 - reportTargetInput 값 설정됨:", reportTargetInput.value);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('searchTargetModal'));
+                    if (modal) modal.hide();
+                } else {
+                    console.log("모달: 선택된 신고 대상이 없거나 ID가 유효하지 않습니다.");
+                }
+            });
+
+            // 모달이 닫힐 때 이벤트 (중복 제거 후 하나의 정확한 리스너)
+            document.getElementById('searchTargetModal').addEventListener('hidden.bs.modal', () => {
+                targetTypeSelect.value = '';
+                targetSearchInput.value = '';
+                targetSearchInput.disabled = true;
+                searchTargetBtn.disabled = true;
+                selectTargetBtn.disabled = true;
+                // selectedTarget = null; // 🚨 이 줄은 제거되었습니다. (모달 닫힘 시 선택값 유지)
+                searchResultsDiv.innerHTML = '<p class="text-muted text-center mt-3">유형을 선택하고 검색어를 입력한 후 검색 버튼을 누르세요.</p>';
+                $('#targetTypeSelect').val('').trigger('change.select2');
+            });
+
+
+            // 파일 업로드 처리
+            const attachCheckbox = document.getElementById('SR_attachFileCheckbox');
+            const inputArea = document.getElementById('SR_fileInputArea');
+            const inputField = document.getElementById('SR_fileInput');
+            const dropZone = document.getElementById('SR_fileDropZone');
+            const fileListContainer = document.getElementById('SR_selectedFiles');
+
+            function renderSelectedFiles() {
+                fileListContainer.innerHTML = '';
+                if (attachedFiles.length === 0) {
+                    fileListContainer.innerHTML = '<p class="text-gray-400 italic text-center p-5">선택된 파일 없음</p>';
+                    return;
+                }
+                attachedFiles.forEach((fileData, index) => {
+                    const file = fileData.file;
+                    const previewURL = fileData.previewURL;
+
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'SR_selected-file-item';
+
+                    let previewHtml = '';
+                    if (previewURL) {
+                        previewHtml = `<img src="${previewURL}" alt="File preview" class="SR_file-preview-img">`;
+                    } else {
+                        previewHtml = `
+                            <div class="SR_file-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        `;
+                    }
+
+                    fileDiv.innerHTML = `
+                        <div class="SR_file-info">
+                            ${previewHtml}
+                            <span>${file.name} (${formatBytes(file.size)})</span>
+                        </div>
+                        <button type="button" class="SR_remove-file" data-index="${index}">&times;</button>
+                    `;
+                    fileListContainer.appendChild(fileDiv);
+                });
+
+
+                fileListContainer.querySelectorAll('.SR_remove-file').forEach(button => {
+                    button.addEventListener('click', e => {
+                        const index = parseInt(e.target.dataset.index);
+                        const fileRemoved = attachedFiles[index];
+
+                        if (fileRemoved.previewURL) {
+                            URL.revokeObjectURL(fileRemoved.previewURL); // 미리보기 URL 해제
+                        }
+
+                        attachedFiles.splice(index, 1);
+                        renderSelectedFiles();
+                    });
+                });
+            }
+
+            attachCheckbox.addEventListener('change', () => {
+                inputArea.classList.toggle('SR_active', attachCheckbox.checked);
+                if (!attachCheckbox.checked) {
+                    attachedFiles.forEach(fileData => {
+                        if (fileData.previewURL) {
+                            URL.revokeObjectURL(fileData.previewURL);
+                        }
+                    });
+                    attachedFiles = [];
+                    renderSelectedFiles();
+                }
+            });
+
+            dropZone.addEventListener('dragover', e => {
+                e.preventDefault();
+                dropZone.classList.add('SR_hover');
+            });
+            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('SR_hover'));
+            dropZone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropZone.classList.remove('SR_hover');
+                handleFiles(e.dataTransfer.files);
+            });
+            inputField.addEventListener('change', e => handleFiles(e.target.files));
+
+            function handleFiles(files) {
+                if (files.length === 0) {
+                    return;
+                }
+                // 기존 파일 목록 초기화 (여러 파일 선택 시 매번 새로 렌더링)
+                attachedFiles = [];
+                [...files].forEach(file => {
+                    const maxSize = 10 * 1024 * 1024; // 10MB
+                    const allowedTypes = [
+                        'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', // 이미지
+                        'application/pdf',                                                        // PDF
+                        'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // Word (.doc, .docx)
+                        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // Excel (.xls, .xlsx)
+                        'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PowerPoint (.ppt, .pptx)
+                        'text/plain', 'text/csv',                                                        // 텍스트, CSV
+                        'application/zip', 'application/x-rar-compressed', 'application/x-7z-compressed' // 압축 파일
+                    ];
+
+                    if (file.size > maxSize) {
+                        alert(`${file.name}은(는) 10MB를 초과합니다.`);
+                        return; // 다음 파일로 넘어감
+                    }
+
+                    if (!allowedTypes.includes(file.type)) {
+                        alert(`${file.name}은(는) 허용되지 않은 파일 형식입니다. (허용: JPG, PNG, GIF, BMP, WEBP, PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, CSV, ZIP, RAR, 7Z)`);
+                        return; // 다음 파일로 넘어감
+                    }
+
+                    const fileData = {
+                        file: file,
+                        previewURL: null
+                    };
+
+                    if (file.type.startsWith('image/')) {
+                        fileData.previewURL = URL.createObjectURL(file);
+                    }
+
+                    attachedFiles.push(fileData);
+                });
+                renderSelectedFiles();
+            }
+
+            // 바이트 단위를 읽기 쉬운 형태로 변환
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+
+
+            // 폼 제출 처리
+            declarationForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const content = editorInstance.getData().trim();
+                if (!content) return alert('신고 내용을 입력해주세요.');
+
+                const dtCd = reportTypeSelect.value;
+                const drCd = reportReasonSelect.value;
+                const declTargetCd = selectedTarget?.id;
+
+                console.log("제출 직전: dtCd:", dtCd);
+                console.log("제출 직전: drCd:", drCd);
+                console.log("제출 직전: declTargetCd:", declTargetCd);
+                console.log("제출 직전: selectedTarget 객체:", selectedTarget);
+
+                if (!dtCd || !drCd || !declTargetCd) {
+                    alert('신고 타입, 사유, 대상을 모두 선택해주세요.');
+                    return;
+                }
+
+                const declaration = {
+                    dtCode: dtCd,
+                    drCode: drCd,
+                    declTargetCd: declTargetCd,
+                    declCn: content,
+                };
+
+                console.log("JavaScript에서 최종적으로 생성된 declaration 객체:", declaration);
+
+                const formData = new FormData();
+                formData.append("declaration", new Blob([JSON.stringify(declaration)], { type: "application/json" }));
+
+                if (attachCheckbox.checked) {
+                    attachedFiles.forEach(data => formData.append('attachments', data.file));
+                }
+
+                fetch('/user/declarationWrite', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.text()) // 서버 응답을 텍스트로 받아서 확인
+                .then(text => {
+                    console.log("서버로부터 받은 응답 텍스트 (raw):", text); // 서버 응답 원본 확인
+                    const data = JSON.parse(text); // JSON 파싱 시도
+                    alert('신고가 접수되었습니다.');
+                    window.location.href = '/';
+                })
+                .catch(err => {
+                    alert('신고 등록 실패');
+                    console.error("Fetch 오류:", err);
                 });
             });
+
+            // 취소 버튼
+            cancelBtn.addEventListener('click', () => {
+                if (confirm('작성을 취소하시겠습니까?')) {
+                    history.back();
+                }
+            });
+
+            // 초기 파일 목록 렌더링 호출
+            renderSelectedFiles();
+        });
         </script>
     </th:block>
 </body>

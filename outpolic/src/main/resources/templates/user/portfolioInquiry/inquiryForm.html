@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/userLayoutkjw}">
+<head>
+    <meta charset="UTF-8">
+    <title>포트폴리오 문의하기</title>
+    <th:block layout:fragment="css">
+        <style>
+            .inquiry-container { max-width: 800px; margin: 40px auto; }
+            .card { padding: 2.5rem; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
+            .section-title { font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 2.5rem; }
+            .form-group { margin-bottom: 1.75rem; }
+            .form-group label { display: block; font-weight: 600; margin-bottom: 0.75rem; }
+            .form-group .required { color: #e11d48; margin-left: 4px; }
+            .form-control { width: 100%; padding: 0.8rem 1rem; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
+            .info-box { background-color: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 5px solid #4f46e5; }
+            .info-box h3 { margin-top: 0; font-size: 1.25rem; }
+            .info-box p { margin: 0.5rem 0 0; color: #4b5563; }
+            .btn-submit { display: block; width: 100%; background-color: #4f46e5; color: white; padding: 0.9rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s; }
+            .btn-submit:disabled { background-color: #a5b4fc; cursor: not-allowed; }
+            .form-text { font-size: 0.875rem; color: #6c757d; margin-top: 0.25rem; }
+        </style>
+    </th:block>
+</head>
+<body>
+<th:block layout:fragment="contents">
+    <div class="inquiry-container">
+        <h1 class="section-title">포트폴리오 문의</h1>
+        <div class="card">
+            <div class="info-box" th:if="${portfolio != null}">
+                <h3>문의 대상 포트폴리오</h3>
+                <p th:text="${portfolio.prtfTtl}">[포트폴리오 제목]</p>
+            </div>
+
+            <form id="portfolio-inquiry-form">
+                <input type="hidden" name="ent_cd" th:value="${portfolio.entCd}">
+                <input type="hidden" name="cl_cd"  th:value="${portfolio.clCd}">
+                <input type="hidden" name="ocd_req_type" value="문의">
+
+                <div class="form-group">
+                    <label for="title">문의 제목<span class="required">*</span></label>
+                    <input type="text" id="title" name="ocd_ttl" class="form-control" th:value="${portfolio != null ? portfolio.prtfTtl + ' 포트폴리오 관련 문의' : ''}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="deliverable">어떤 제작물을 생각하시나요? (선택)</label>
+                    <input type="text" id="deliverable" name="ocd_frctn_cmdty" class="form-control" placeholder="예: 로고 디자인 원본 파일, 소개 영상 MP4 파일">
+                </div>
+
+                <div class="form-group">
+                    <label for="delivery-method">선호하는 납품 방식이 있나요? (선택)</label>
+                    <input type="text" id="delivery-method" name="ocd_dlvgds_mthd" class="form-control" placeholder="예: 이메일 전달, 클라우드 링크 공유">
+                </div>
+
+                <div class="form-group">
+                    <label for="start-date">희망하는 작업 시작일이 언제인가요? (선택)</label>
+                    <input type="datetime-local" id="start-date" name="ocd_strt_ymdt" class="form-control">
+                    <div class="form-text">정확하지 않아도 괜찮습니다.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="end-date">언제까지 작업이 완료되길 바라시나요? (선택)</label>
+                    <input type="datetime-local" id="end-date" name="ocd_dedline" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="amount">생각하고 계신 예산이 있나요? (선택)</label>
+                    <input type="number" id="amount" name="ocd_amt" class="form-control" placeholder="숫자만 입력 (미입력 시 '협의'로 전달됩니다)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="explanation">상세 문의 내용<span class="required">*</span></label>
+                    <textarea id="explanation" name="ocd_expln" class="form-control" rows="8" placeholder="궁금한 점이나 협업하고 싶은 내용에 대해 자유롭게 작성해주세요." required style="min-height: 200px;"></textarea>
+                </div>
+
+                <button type="submit" id="submit-button" class="btn-submit">문의하기</button>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="jsFile">
+    <script>
+        // 자바스크립트는 수정할 필요 없이 그대로 사용하시면 됩니다.
+        document.getElementById('portfolio-inquiry-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const submitButton = document.getElementById('submit-button');
+            const clCdInput = form.querySelector('input[name="cl_cd"]');
+
+            if (!clCdInput || !clCdInput.value) {
+                alert('콘텐츠 정보가 없어 문의를 등록할 수 없습니다. 포트폴리오 데이터를 확인해주세요.');
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = '전송 중...';
+
+            fetch('/user/outsourcing-requests', {
+                method: 'POST',
+                body: new FormData(form)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(err));
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = data.redirectUrl;
+                } else {
+                    throw new Error(data.message || '알 수 없는 오류');
+                }
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+                alert(`오류: ${error.message || '서버와 통신할 수 없습니다.'}`);
+                submitButton.disabled = false;
+                submitButton.textContent = '문의하기';
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

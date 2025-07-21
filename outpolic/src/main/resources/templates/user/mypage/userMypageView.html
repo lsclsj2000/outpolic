@@ -11,10 +11,10 @@
 		<div class="tab-content">
 			<!-- 마이페이지 기본 페이지 -->
 			<div class="tab-pane fade show active " id="userOverview" th:object="${userInfo}">
-				<div class="container py-4">
+				<div class="container">
 				    <div class="row mb-3">
 				        <div class="col-12">
-				            <h3 class="mb-30"><span th:text="*{memberNickname}"></span>님의 마이페이지입니다</h3>
+				            <h3 class="mb-30"><span th:text="*{memberNickname}"></span> 님의 마이페이지입니다</h3>
 				        </div>
 				    </div>
 				
@@ -24,9 +24,9 @@
 				            <div class="card h-100 border-primary shadow-sm" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">진행중인 외주</h5>
-				                    <p class="card-text fs-4 text-primary fw-bold" th:text="${ongoingCount != null ? ongoingCount : 0} + '건'">2건</p>
+				                    <p class="card-text fs-4 fw-bold" th:classappend="${ingOs !=null} ? 'text-primary': ''" th:text="${ingOs != null ? ingOs.size() : 0} + '건'">2건</p>
 				                    <p class="text-muted small mb-3">작업이 진행 중입니다. 상태를 확인해보세요!</p>
-				                    <a href="#" class="btn btn-outline-primary btn-sm">자세히 보기</a>
+				                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
 				                </div>
 				            </div>
 				        </div>
@@ -36,9 +36,9 @@
 				            <div class="card h-100 border-success shadow-sm h-100" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">완료된 외주</h5>
-				                    <p class="card-text fs-4 text-success fw-bold"><span t th:text="${reviewList != null ? reviewList.?[ospCd != null].size() : 0} + '건'">0건</span></span></p>
+				                    <p class="card-text fs-4 fw-bold" th:classappend="${endedOs !=0} ? 'text-primary': ''" th:text="${endedOs != 0 ? endedOs : 0} + '건'">0건</p>
 				                    <p class="text-muted small mb-3">완료된 외주를 다시 확인하거나 리뷰를 작성해보세요.</p>
-				                    <a href="#" class="btn btn-outline-success btn-sm">자세히 보기</a>
+				                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
 				                </div>
 				            </div>
 				        </div>
@@ -48,9 +48,9 @@
 				            <div class="card h-100 border-info shadow-sm h-100" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">내가 작성한 리뷰</h5>
-				                    <p class="card-text fs-4 text-info fw-bold" th:text="${reviewList != null ? reviewList.size() : 0} + '건'">3건</p>
+				                    <p class="card-text fs-4 fw-bold" th:classappend="${reviewList !=null} ? 'text-primary': ''" th:text="${reviewList != null ? reviewList.size() : 0} + '건'">3건</p>
 				                    <p class="text-muted small mb-3">다른 회원이 여러분의 피드백을 기다리고 있어요.</p>
-				                    <a href="#" class="btn btn-outline-info btn-sm">자세히 보기</a>
+				                    <a href="#" class="btn btn-primarybtn-sm">자세히 보기</a>
 				                </div>
 				            </div>
 				        </div>
@@ -61,8 +61,8 @@
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">전체 외주 신청 내역</h5>
 				                    <p class="card-text fs-4 fw-bold" th:text="${totalRequestCount != null ? totalRequestCount : 0} + '건'">10건</p>
-				                    <p class="text-muted small mb-3">.</p>
-				                    <a href="#" class="btn btn-outline-dark btn-sm">자세히 보기</a>
+				                    <p class="text-muted small mb-3">. 수정중</p>
+				                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
 				                </div>
 				            </div>
 				        </div>
@@ -74,7 +74,7 @@
 				<div class="row">
 					<form action="/user/userEditView" method="post"
 						class="d-flex flex-column">
-						<h3 class="mb-40 mt-30">내 정보 수정</h3>
+						<h3 class="mb-30 ">내 정보 수정</h3>
 						<div th:if="${msg}" class="alert alert-danger mb-3 " role="alert" th:text="${msg}"></div>
 						<div class="d-flex" style="flex-direction: column; justify-content : center; align-items : center;">
 						<input type="password" id="passwordInput" class = "mb-40" name="password"
@@ -84,13 +84,13 @@
 					</form>
 				</div>
 			</div>
-			<div class="tab-pane fade py-4" id="myReview">
+			<div class="tab-pane fade" id="myReview">
 				<div class="row d-flex flex-column align-items-center">
-					<h3>내가 작성한 리뷰</h3>
-					<div id="reviewBox" class=" mt-30">
+					<h3 class="mb-30">내가 작성한 리뷰</h3>
+					<div id="reviewBox">
 					    <div th:each="r : ${reviewList}" th:if="${not #lists.isEmpty(reviewList)}"
 					         class="SR_bg-white SR_p-6 SR_rounded-lg" 
-					         style="border:solid 3px #ececec; border-radius : 10px; padding : 15px; margin-top : 15px; cursor:pointer;">
+					         style="border:solid 3px #ececec; border-radius : 10px; padding : 15px; cursor:pointer;">
 					         
 					        <!-- 숨겨진 프로젝트 ID -->
 					        <input type="hidden" name="projectId" th:value="${r.ospCd}" />
@@ -128,10 +128,10 @@
 					    	<div>아직 작성하신 리뷰가 없습니다.</div>
 					    </div>
 					</div>
-					<a href="#" th:if="${not #lists.isEmpty(reviewList)}">&lt;내가 작성한 리뷰 자세히 보기&gt;</a>
+					<a href="#" class="btn btn-primary w-25" style="border:none;" th:if="${not #lists.isEmpty(reviewList)}">내가 작성한 리뷰 자세히 보기</a>
 				</div>
 			</div>
-			<div class="tab-pane fade py-4" id="mySettList">
+			<div class="tab-pane fade" id="mySettList">
 			<div class="row d-flex flex-column align-items-center">
 				<h3>결제내역</h3>
 					<table class="table mt-30 table-bordered table-striped">
@@ -217,9 +217,10 @@
 				</div>
 			</div>
 
-			<div class="tab-pane fade py-4 row d-flex" id="myNotific">
+			<div class="tab-pane fade row d-flex" id="myNotific">
 				<div class="row d-flex flex-column align-items-center" style="width:100%;">
 					<h3>문의내역</h3>
+					<p class="text-muted small mb-3">제목을 누르면 해당 문의 페이지로 이동합니다.</p>
 					<div class="table-responsive shopping-summery mt-30">
 						<table class="table table-bordered text-center" style="border-collapse: separate; border-spacing: 0;">
 							<thead class="table-light" style="border: none !important;">
@@ -259,8 +260,49 @@
 	</th:block>
 	<th:block layout:fragment = "jsScript">
 		<script>
-
+			$(document).ready(function () {
+		        console.log("JS 로딩됨");
+		
+		        $(document).on('click', '#btnWithdrawn', function (e) {
+		            e.preventDefault();
+		
+		            const osCount = parseInt($(this).data('os-count'));
+		            console.log("진행중 외주 수:", osCount);
+		
+		            if (osCount > 0) {
+		                alert("진행 중인 외주가 있어 탈퇴할 수 없습니다.");
+		                window.location.href = "/user/mypage";
+		            } else {
+		                window.location.href = "/user/withdrawn";
+		            }
+		        });
+		    });
 		</script>
+		<script>
+		  let originalProfileImg = "";
+		  
+		  document.addEventListener("DOMContentLoaded", function () {
+			  const previewImg = document.getElementById('previewImg');
+			  originalProfileImg = previewImg.src; // DOMContentLoaded 이후에 정확하게 읽힘
+			});
+
+
+		  function previewProfileImage(event) {
+		    const input = event.target;
+		    const previewImg = document.getElementById('previewImg');
+		
+		    if (input.files && input.files[0]) {
+		      const reader = new FileReader();
+		      reader.onload = function(e) {
+		        previewImg.src = e.target.result;
+		      };
+		      reader.readAsDataURL(input.files[0]);
+		    } else {
+		      // 사용자가 파일 선택 취소했을 경우 → 기존 프로필 이미지로 복원
+		      previewImg.src = originalProfileImg;
+		    }
+		  }
+	</script>
 	</th:block>
 </body>
 <!-- 추가할 js file -->

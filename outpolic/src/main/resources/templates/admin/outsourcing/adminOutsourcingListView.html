@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutMain}">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<th:block layout:fragment="css">
+			<style>
+			  .modal {
+        display: none; /* 기본적으로 숨김 */
+        position: fixed; /* 화면 고정 */
+        z-index: 1000; /* 다른 요소 위에 표시 */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto; /* 내용이 넘치면 스크롤 */
+        background-color: rgba(0,0,0,0.4); /* 배경을 어둡게 */
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 화면 중앙에 위치 */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* 모달 너비 */
+        max-width: 600px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        position: relative;
+    }
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .close-button:hover,
+    .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .file-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px dashed #eee;
+    }
+    .file-item:last-child {
+        border-bottom: none;
+    }
+    .file-item span {
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+    .file-item a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .file-item a:hover {
+        text-decoration: underline;
+    }
+    .file-thumbnail {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        margin-right: 10px;
+        border-radius: 4px;
+        border: 1px solid #eee;
+    }
+			
+			
+			
+			
+			
+			</style>
+			</th:block>
+	</head>
+	
+	<th:block layout:fragment="contents">
+		<section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title" th:text="${title}">외주 관리</h2>
+                    <p>등록된 전체 외주 목록을 조회합니다.</p>
+                </div>
+            </div>
+             <div class="card mb-4 search-filter-card">
+	            <div class="card-body search-filter-body">
+	                <div class="table-responsive">
+	                    <table class="search-filter-table">
+							<tbody>
+								<tr>
+									<th>기본검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>제목</option>
+											<option>내용</option>
+											<option>외주코드</option>
+											<option>등록자</option>
+										</select>
+										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+									</td>
+								</tr>
+								<tr>
+									<th>기간검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>등록일시</option>
+											<option>수정일시</option>
+										</select>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<span> ~ </span>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<button type="button" class="btn btn-sm btn-light">오늘</button>
+										<button type="button" class="btn btn-sm btn-light">어제</button>
+										<button type="button" class="btn btn-sm btn-light">일주일</button>
+										<button type="button" class="btn btn-sm btn-light">지난달</button>
+										<button type="button" class="btn btn-sm btn-light">1개월</button>
+										<button type="button" class="btn btn-sm btn-light">3개월</button>
+										<button type="button" class="btn btn-sm btn-light">전체</button>
+									</td>
+								</tr>
+								<tr>
+									<th>상태</th>
+									<td>
+										<div class="radio-group">
+											<label><input type="radio" name="statusSearch" value="all" checked /> 전체</label>
+											<label><input type="radio" name="statusSearch" value="active" /> 활성</label>
+											<label><input type="radio" name="statusSearch" value="inactive" /> 비활성</label>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="search-filter-buttons">
+							<button type="button" class="btn btn-primary">검색</button>
+							<button type="button" class="btn btn-secondary">초기화</button>
+						</div>
+	                </div>
+	            </div>
+	        </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="text-center col-1">외주 코드</th> <th scope="col" class="text-center col-2">제목</th>
+                                            <th scope="col" class="text-center col-1">기업 코드</th>
+                                            <th scope="col" class="text-center col-1">카테고리 ID</th>
+                                            <th scope="col" class="text-center col-1">희망 금액</th>
+                                            <th scope="col" class="text-center col-1">필요 인원</th>
+                                            <th scope="col" class="text-center col-1">등록일시</th>
+                                            <th scope="col" class="text-center col-1">상태</th>
+                                            <th scope="col" class="text-center col-1">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="o : ${outsourcingList}">
+                                            <td class="text-center"><span th:text="${o.osCd}"></span></td> <td><span th:text="${o.osTtl}"></span></td>
+                                            <td class="text-center"><span th:text="${o.entCd}"></span></td>
+                                            <td class="text-center"><span th:text="${o.ctgryId}"></span></td>
+                                            <td class="text-right"><span th:text="${#numbers.formatDecimal(o.osAmt, 0, 'COMMA', 0, 'POINT')} + '원'"></span></td>
+                                            <td class="text-center"><span th:text="${o.osFlfmtCnt}"></span></td>
+                                            <td class="text-center"><span th:text="${#temporals.format(o.osRegYmdt, 'yyyy-MM-dd HH:mm')}"></span></td>
+                                             <td class="text-center">
+										        <a href="#" class="btn btn-md rounded font-sm view-files-btn" th:data-os-cd="${o.osCd}">첨부파일</a> <a href="#" class="btn btn-md rounded font-sm">상세</a>
+										        <a href="#" class="btn btn-md rounded font-sm">수정</a>
+										        <a href="#" class="btn btn-md rounded font-sm delete-outsourcing-btn" th:data-os-cd="${o.osCd}">삭제</a> </td>
+										    <div id="fileModal" class="modal">
+										        <div class="modal-content">
+										            <span class="close-button">&times;</span>
+										            <h2>첨부파일 목록</h2>
+										            <div id="fileListContainer">
+										                </div>
+										        </div>
+										        </div>
+										       
+										     </td>   
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+	</th:block>
+	
+	<th:block layout:fragment="jsScript">
+	</th:block>
+</html>

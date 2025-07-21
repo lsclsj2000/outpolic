@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="outpolic.user.outsourcing.mapper.UserOutsourcingMapper">
+ 	<resultMap type="UserOsInfoDTO" id="UserMypageOsResultMap">
+ 		 		<id column="ocd_cd" property="ocdCd"></id>
+		<result column="ocd_req_type" property="ocdReqType"/>
+		<result column="mbr_cd" property="mbrCd"/>
+		<result column="ent_cd" property="entCd"/>
+		<result column="ocd_ttl" property="ocdTtl"/>
+		<result column="cl_cd" property="clCd"/>
+		<result column="ocd_frctn_cmdty" property="ocdFrctnCmdty"/>
+		<result column="ocd_dlvgds_mthd" property="ocdDlvgdsMthd"/>
+		<result column="ocd_expln" property="ocdExpln"/>
+		<result column="ocd_dedline" property="ocdDedline"/>
+		<result column="ocd_amt" property="ocdAmt"/>
+		<result column="ocd_dmnd_ymdt" property="ocdDmndYmdt"/>
+		<result column="ocd_rspns_ymdt" property="ocdRspnsYmdt"/>
+		<result column="ocd_mdfcn_ymdt" property="ocdMdfcnYmdt"/>
+		<result column="ocd_yn" property="ocdYn"/>
+		<result column="ocd_yn_ymdt" property="ocdYnYmdt"/>
+		<result column="ocd_strt_ymdt" property="ocdStrtYmdt"/>
+		<result column="osp_cd" property="ospCd"/>
+		<result column="stc_cd" property="osStcCd"/>
+		<result column="osp_sply_ymdt" property="ospSplyYmdt"/>
+		<result column="osp_cust_yn" property="ospCustYn"/>
+		<result column="osp_cust_ymdt" property="ospCustYmdt"/>
+ 	</resultMap>
+ 	<select resultMap="UserMypageOsResultMap" id="UserOsIngSelectByCode">
+ 		SELECT 
+		  ocd.ocd_cd,
+		  ocd.ocd_req_type,
+		  ocd.mbr_cd,
+		  ocd.ent_cd,
+		  ocd.cl_cd,
+		  ocd.ocd_ttl,
+		  ocd.ocd_frctn_cmdty,
+		  ocd.ocd_dlvgds_mthd,
+		  ocd.ocd_expln,
+		  ocd.ocd_dedline,
+		  ocd.ocd_amt,
+		  ocd.ocd_dmnd_ymdt,
+		  ocd.ocd_rspns_ymdt,
+		  ocd.ocd_mdfcn_ymdt,
+		  ocd.ocd_yn,
+		  ocd.ocd_yn_ymdt,
+		  ocd.ocd_strt_ymdt,
+		  op.osp_cd,
+		  op.stc_cd,
+		  op.osp_sply_ymdt,
+		  op.osp_cust_yn,
+		  op.osp_cust_ymdt
+		FROM outsourcing_contract_details ocd
+		JOIN outsourcing_prograss op ON ocd.ocd_cd = op.ocd_cd
+		WHERE ocd.mbr_cd = #{memberCode}
+		AND op.stc_cd &lt;&gt; 'SD_COMPLETION'
+		group by op.ocd_cd;
+ 	</select>
+ </mapper>
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 

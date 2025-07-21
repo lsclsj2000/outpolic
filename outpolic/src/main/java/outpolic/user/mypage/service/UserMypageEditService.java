@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import outpolic.common.dto.OutsourcingReviewDTO;
 import outpolic.user.mypage.dto.UserInfoDTO;
+import outpolic.user.outsourcing.dto.UserOsInfoDTO;
 import outpolic.user.review.dto.ReviewDTO;
 
 @Service
@@ -23,4 +24,10 @@ public interface UserMypageEditService {
 	ReviewDTO getUserReviewByCode(String memberCode);
 	
 	List<OutsourcingReviewDTO> getOutsourcingReviewList(String memberCode);
+	
+	 // 완료된 외주 수 가져오기
+	 int selectUserEndedOsByCode(String memberCode);
+	 
+	 //프로필 이미지 업로드
+	 void updateProfileImg(String memberCode, String imagePath);
 }

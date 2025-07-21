@@ -17,44 +17,20 @@
 	            <div class="card-body search-filter-body">
 	                <div class="table-responsive">
 	                    <table class="search-filter-table">
-							<tbody>
-								<tr>
-									<th>기본검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>제목</option>
-											<option>내용</option>
-											<option>문의코드</option>
-											<option>작성자</option>
-										</select>
-										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
-									</td>
-								</tr>
-								<tr>
-									<th>기간검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>작성일자</option>
-											<option>수정일자</option>
-										</select>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<span> ~ </span>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<button type="button" class="btn btn-sm btn-light">오늘</button>
-										<button type="button" class="btn btn-sm btn-light">어제</button>
-										<button type="button" class="btn btn-sm btn-light">일주일</button>
-										<button type="button" class="btn btn-sm btn-light">지난달</button>
-										<button type="button" class="btn btn-sm btn-light">1개월</button>
-										<button type="button" class="btn btn-sm btn-light">3개월</button>
-										<button type="button" class="btn btn-sm btn-light">전체</button>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+			                <tbody>
+			                    <tr>
+			                        <th>조회 기준일</th>
+			                        <td>
+			                            <!-- ★★ 1. ID를 'ranking-date-picker'로 지정합니다. ★★ -->
+			                            <input type="date" id="ranking-date-picker" class="form-control" style="width: 200px;" />
+			                        </td>
+			                    </tr>
+			                </tbody>
+			            </table>
 						<div class="search-filter-buttons">
-							<button type="button" class="btn btn-primary">검색</button>
-							<button type="button" class="btn btn-secondary">초기화</button>
-						</div>
+			                <!-- ★★ 2. ID를 'search-ranking-btn'으로 지정합니다. ★★ -->
+			                <button type="button" id="search-ranking-btn" class="btn btn-primary">해당 날짜 랭킹 조회</button>
+			            </div>
 	                </div>
 	            </div>
 	        </div>
@@ -112,123 +88,122 @@
 	<!-- 추가할 js file -->
 	<script layout:fragment="jsScript">
 		document.addEventListener('DOMContentLoaded', () => {
-			// UI부분
-			const datePicker = document.getElementById('ranking-date-picker');
+		    // --- 1. UI 요소 선택 ---
+		    const datePicker = document.getElementById('ranking-date-picker');
 		    const searchBtn = document.getElementById('search-ranking-btn');
-		 	// 포트폴리오/외주 탭 및 테이블 body (기존 코드)
 		    const portfolioTab = document.getElementById('portfolio-tab');
 		    const outsourcingTab = document.getElementById('outsourcing-tab');
 		    const portfolioBody = document.getElementById('portfolio-ranking-body');
 		    const outsourcingBody = document.getElementById('outsourcing-ranking-body');
-		
+	
+		    // 오늘 날짜를 'YYYY-MM-DD' 형식으로 반환하는 함수
 		    const getTodayString = () => new Date().toISOString().split('T')[0];
-		    // 포트폴리오 랭킹 렌더링 함수
-		    const renderPortfolio = async (targetDate) => {
-		    	const response = await fetch(`/admin/api/rankings/portfolio?targetDate=${targetDate}`);
-		        const data = await response.json();
+	
+		    // --- 2. 데이터 로드 및 렌더링 통합 함수 ---
+		    const loadAndRenderRankings = async () => {
+		        const targetDate = datePicker.value || getTodayString();
+		        const activeTab = portfolioTab.classList.contains('active') ? 'portfolio' : 'outsourcing';
+	
+		        // 로딩 스피너 표시 (선택적이지만 사용자 경험에 좋음)
+		        const loadingHtml = '<tr><td colspan="8" class="text-center"><div class="spinner-border spinner-border-sm" role="status"></div> 로딩 중...</td></tr>';
+		        if (activeTab === 'portfolio') portfolioBody.innerHTML = loadingHtml;
+		        else outsourcingBody.innerHTML = loadingHtml;
+	
+		        try {
+		            const response = await fetch(`/admin/api/rankings/${activeTab}?targetDate=${targetDate}`);
+		            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+		            
+		            const data = await response.json();
+		            renderTable(activeTab, data);
+	
+		        } catch (error) {
+		            console.error('랭킹 데이터 로딩 중 오류:', error);
+		            const errorHtml = '<tr><td colspan="8" class="text-center">데이터를 불러오는 중 오류가 발생했습니다.</td></tr>';
+		            if (activeTab === 'portfolio') portfolioBody.innerHTML = errorHtml;
+		            else outsourcingBody.innerHTML = errorHtml;
+		        }
+		    };
+	
+		    // --- 3. 테이블 렌더링 전용 함수 ---
+		    const renderTable = (type, data) => {
+		        let html = '';
+		        if (!data || data.length === 0) {
+		            html = '<tr><td colspan="8" class="text-center">해당 날짜의 랭킹 데이터가 없습니다.</td></tr>';
+		        } else {
+		            data.forEach((item, index) => {
+		                const statusText = item.stcCode === 'SD_ACTIVE' ? '<span class="badge rounded-pill alert-success">활성</span>' : '<span class="badge rounded-pill alert-danger">비활성</span>';
+		                const buttonHtml = item.stcCode === 'SD_ACTIVE' 
+		                    ? `<button class="btn btn-sm btn-danger btn-deactivate" data-id="${item.clCd}">비활성화</button>`
+		                    : '';
+		                
+		                if (type === 'portfolio') {
+		                    html += `
+		                        <tr>
+		                            <td>${index + 1}</td>
+		                            <td>${item.rankingView.toLocaleString()}</td>
+		                            <td>${item.prtfTtl}</td>
+		                            <td>${item.entName}</td>
+		                            <td>${item.ctgryName || '미지정'}</td>
+		                            <td>${new Date(item.prtfDate).toLocaleDateString()}</td>
+		                            <td>${statusText}</td>
+		                            <td>${buttonHtml}</td>
+		                        </tr>
+		                    `;
+		                } else { // 'outsourcing'
+		                    const reviewScore = Number(item.reviewScore).toFixed(1);
+		                    html += `
+		                        <tr>
+		                            <td>${index + 1}</td>
+		                            <td>${item.rankingView.toLocaleString()}</td>
+		                            <td>${item.osTtl}</td>
+		                            <td>${item.entName}</td>
+		                            <td>${item.ctgryName}</td>
+		                            <td>⭐ ${reviewScore}</td>
+		                            <td>${statusText}</td>
+		                            <td>${buttonHtml}</td>
+		                        </tr>
+		                    `;
+		                }
+		            });
+		        }
 		        
-		        let html = '';
-		        if(data.length === 0) {
-		            html = '<tr><td colspan="6" class="text-center">랭킹 데이터가 없습니다.</td></tr>';
-		        } else {
-		            data.forEach((item, index) => {
-
-		            	const statusText = item.stcCode === 'STC01' ? '활성' : '비활성';
-		                const buttonHtml = item.stcCode === 'STC01' 
-		                    ? `<button class="btn btn-sm btn-danger btn-deactivate" data-type="portfolio" data-id="${item.prtfCode}">비활성화</button>`
-		                    : ''; // 비활성 상태면 버튼 없음
-		                html += `
-		                    <tr>
-			                	<td>${index + 1}</td>
-			                    <td>${item.rankingView}</td>
-			                    <td>${item.prtfTtl}</td>
-			                    <td>${item.entName}</td>
-			                    <td>${item.ctgryName || '미지정'}</td>
-			                    <td>${new Date(item.prtfDate).toLocaleDateString()}</td>
-			                    <td>${statusText}</td>
-			                    <td>${buttonHtml}</td>
-		                    </tr>
-		                `;
-		            });
-		        }
-		        portfolioBody.innerHTML = html;
+		        if (type === 'portfolio') portfolioBody.innerHTML = html;
+		        else outsourcingBody.innerHTML = html;
 		    };
-		
-		    // 외주 랭킹 렌더링 함수
-		    const renderOutsourcing = async (targetDate) => {
-		    	const response = await fetch(`/admin/api/rankings/outsourcing?targetDate=${targetDate}`);
-		        const data = await response.json();
-		
-		        let html = '';
-		        if(data.length === 0) {
-		            html = '<tr><td colspan="6" class="text-center">랭킹 데이터가 없습니다.</td></tr>';
-		        } else {
-		            data.forEach((item, index) => {
-		            	const statusText = item.stcCode === 'STC01' ? '활성' : '비활성';
-		                const buttonHtml = item.stcCode === 'STC01' 
-		                    ? `<button class="btn btn-sm btn-danger btn-deactivate" data-type="portfolio" data-id="${item.prtfCode}">비활성화</button>`
-		                    : ''; // 비활성 상태면 버튼 없음
-		                const reviewScore = Number(item.reviewScore).toFixed(1);
-		                html += `
-		                    <tr>
-		                        <td>${index + 1}</td>
-		                        <td>${item.rankingView}</td>
-		                        <td>${item.osTtl}</td>
-		                        <td>${item.entName}</td>
-		                        <td>${item.ctgryName}</td>
-		                        <td>${reviewScore}</td>
-		                        <td>${statusText}</td>
-			                    <td>${buttonHtml}</td>
-		                    </tr>
-		                `;
-		            });
-		        }
-		        outsourcingBody.innerHTML = html;
-		    };
+	
+		    // --- 4. 이벤트 리스너 설정 ---
+		    // '조회' 버튼 클릭 시 현재 활성화된 탭의 데이터만 다시 로드
+		    searchBtn.addEventListener('click', loadAndRenderRankings);
+	
+		    // 탭 클릭 시 해당 탭의 데이터 로드
+		    portfolioTab.addEventListener('click', loadAndRenderRankings);
+		    outsourcingTab.addEventListener('click', loadAndRenderRankings);
 		    
-		    searchBtn.addEventListener('click', () => {
-		        const selectedDate = datePicker.value || getTodayString();
-		        // 현재 활성화된 탭에 따라 해당 랭킹만 다시 불러옴
-		        if (portfolioTab.classList.contains('active')) {
-		            renderPortfolio(selectedDate);
-		        } else {
-		            renderOutsourcing(selectedDate);
-		        }
-		    });
-		
-		    // 탭 클릭 이벤트 리스너
-		    portfolioTab.addEventListener('click', renderPortfolio);
-		    outsourcingTab.addEventListener('click', renderOutsourcing);
-		    
-		    datePicker.value = getTodayString(); // 날짜 선택기를 오늘 날짜로 설정
-		    renderPortfolio(datePicker.value); // 기본으로 포트폴리오 랭킹을 오늘 날짜 기준으로 조회
-		    
+		    // 비활성화 버튼 클릭 이벤트 위임
 		    document.getElementById('rankingTabContent').addEventListener('click', async (e) => {
-		        // 클릭된 요소가 '비활성화' 버튼이 아니면 무시
-		        if (!e.target.classList.contains('btn-deactivate')) {
-		            return;
-		        }
-
-		        const contentId = e.target.dataset.id;
-		        if (confirm(`'${contentId}' 콘텐츠를 정말로 비활성화하시겠습니까?`)) {
+		        if (!e.target.classList.contains('btn-deactivate')) return;
+	
+		        const contentListCode = e.target.dataset.id; // 이제 cl_cd를 사용
+		        if (confirm(`콘텐츠(ID: ${contentListCode})를 정말로 비활성화하시겠습니까?`)) {
 		            try {
-		                const response = await fetch(`/admin/api/contents/${contentId}/deactivate`, {
-		                    method: 'POST'
-		                });
-
+		                const response = await fetch(`/admin/api/contents/${contentListCode}/deactivate`, { method: 'POST' });
 		                if (response.ok) {
 		                    alert('비활성화 처리되었습니다.');
-		                    // 현재 활성화된 탭의 목록을 새로고침하여 상태 변경을 반영
-		                    searchBtn.click();
+		                    loadAndRenderRankings(); // 목록 새로고침
 		                } else {
-		                    alert('처리 중 오류가 발생했습니다.');
+		                    const errorText = await response.text();
+		                    alert(`처리 중 오류가 발생했습니다: ${errorText}`);
 		                }
 		            } catch (error) {
 		                console.error('Error:', error);
-		                alert('처리 중 오류가 발생했습니다.');
+		                alert('네트워크 오류 또는 처리 중 예외가 발생했습니다.');
 		            }
 		        }
 		    });
+	
+		    // --- 5. 페이지 초기화 ---
+		    datePicker.value = getTodayString(); // 날짜 선택기를 오늘로 설정
+		    loadAndRenderRankings(); // 페이지 로드 시 오늘 날짜의 포트폴리오 랭킹을 기본으로 조회
 		});
 	</script>
 </html>

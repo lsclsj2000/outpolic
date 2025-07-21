@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.admin.dashboard.mapper.AdminDashboardMapper">
+
+    <select id="getTotalMemberCount" resultType="long">
+        SELECT COUNT(*) FROM member
+    </select>
+
+    <select id="getTodayNewMemberCount" resultType="long">
+        SELECT COUNT(*) FROM member WHERE DATE(mbr_join_ymdt) = CURDATE()
+    </select>
+
+    <select id="getTotalPortfolioCount" resultType="long">
+        SELECT COUNT(*) FROM portfolio WHERE stc_cd = 'SD_ACTIVE'
+    </select>
+    
+    <select id="getTotalOutsourcingCount" resultType="long">
+        SELECT COUNT(*) FROM outsourcing WHERE stc_cd = 'SD_ACTIVE'
+    </select>
+
+    <select id="getTotalRevenue" resultType="long">
+        -- '계약 완료' 상태 코드를 실제 프로젝트의 코드로 변경해야 합니다.
+        SELECT IFNULL(SUM(osc_amt), 0) FROM outsourcing_contract
+    </select>
+    
+    <select id="getMonthlyRevenue" resultType="long">
+		-- '계약 완료' 상태 코드를 실제 프로젝트의 코드로 변경해야 합니다.
+        SELECT IFNULL(SUM(osc_amt), 0) FROM outsourcing_contract 
+        WHERE  DATE_FORMAT(osc_terminate_ymdt, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+    </select>
+
+    <select id="getWeeklyNewMembers" resultType="outpolic.admin.dashboard.domain.AdminDashboardDTO$DailyCount">
+        -- 지난 7일간의 날짜별 신규 가입자 수를 계산합니다.
+        SELECT
+		    DATE(mbr_join_ymdt) AS date,
+		    COUNT(*) AS count
+		FROM
+		    member
+		WHERE
+		    mbr_join_ymdt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+		GROUP BY
+		    DATE(mbr_join_ymdt)
+		ORDER BY
+		    date ASC
+    </select>
+</mapper>
+
+

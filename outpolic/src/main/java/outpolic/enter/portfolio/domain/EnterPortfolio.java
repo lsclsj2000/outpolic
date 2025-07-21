@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 public class EnterPortfolio {
-    private String prtfCd, entCd, prtfTtl, prtfCn, admCd, stcCd, mbrCd, prtfThumbnailUrl;
+    private String prtfCd, entCd, prtfTtl, prtfCn, admCd, stcCd, mbrCd, prtfThumbnailUrl,clCd;
     private int prtfDwnld_cnt;
     private LocalDateTime prtfRegYmdt, prtfMdfcnYmdt;
 
@@ -26,4 +26,6 @@ public class EnterPortfolio {
     private List<String> tagNames = new ArrayList<>();
     private List<EnterOutsourcing> linkedOutsourcings = new ArrayList<>();
     // private EnterPortfolioFile thumbnailDetails; // 이 필드는 사용하지 않습니다.
+    
+    
 }

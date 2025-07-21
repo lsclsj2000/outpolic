@@ -1,59 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.user.outsourcingRequest.mapper.UserOutsourcingRequestMapper">
-	
-	<insert id="insertRequest" parameterType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO">
+
+    <insert id="insertRequest" parameterType="outpolic.enter.outsourcingRequest.domain.OutsourcingRequestDTO">
         INSERT INTO outsourcing_contract_details (
-            ocd_cd,
-            mbr_cd,
-            ent_cd,
-            cl_cd,
-            ocd_ttl,
-            ocd_expln,
-            ocd_frctn_cmdty,
-            ocd_dlvgds_mthd,
-            ocd_strt_ymdt, ocd_dedline,
-            ocd_amt,
-            ocd_dmnd_ymdt,
-            ocd_req_type,
-            stc_cd
+            ocd_cd, mbr_cd, ent_cd, cl_cd, ocd_ttl, 
+            ocd_expln, ocd_frctn_cmdty, ocd_dlvgds_mthd,
+            ocd_strt_ymdt, ocd_dedline, ocd_amt, ocd_dmnd_ymdt,
+            ocd_req_type, stc_cd, ocd_yn
         ) VALUES (
-            #{ocd_cd},
-            #{mbr_cd},
-            #{ent_cd},
-            #{cl_cd},
-            #{ocd_ttl},
-            #{ocd_expln},
-            #{ocd_frctn_cmdty},
-            #{ocd_dlvgds_mthd},
-            #{ocd_strt_ymdt}, #{ocd_dedline},
-            #{ocd_amt},
-            NOW(),
-            '신청', 'SD_BEFORE'
+            #{ocd_cd}, #{mbr_cd}, #{ent_cd}, #{cl_cd}, #{ocd_ttl},
+            #{ocd_expln}, #{ocd_frctn_cmdty}, #{ocd_dlvgds_mthd},
+            #{ocd_strt_ymdt}, #{ocd_dedline}, #{ocd_amt}, NOW(),
+            #{ocd_req_type}, 'SD_BEFORE', 'N'
         )
-    </insert> 
-    
+    </insert>
+
+    <update id="updateChatRoomId">
+        UPDATE outsourcing_contract_details
+        SET    chr_cd = #{chr_cd}
+        WHERE  ocd_cd = #{ocd_cd}
+    </update>
+
     <select id="findSentRequests" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
         SELECT 
-            ocd.ocd_cd, 
-            ocd.ocd_ttl, 
-            e.ent_nm AS supplierName, 
-            ocd.ocd_dmnd_ymdt, 
-            ocd.stc_cd,
-            m.mbr_nm AS demanderName
-        FROM 
-            outsourcing_contract_details ocd 
-        JOIN 
-            enterprise e ON ocd.ent_cd = e.ent_cd
-        JOIN 
-            member m ON ocd.mbr_cd = m.mbr_cd 
-        WHERE 
-            ocd.mbr_cd = #{requesterId} AND ocd.ocd_req_type = '신청'
+            ocd.ocd_cd, ocd.ocd_ttl, e.ent_nm AS supplierName, 
+            ocd.ocd_dmnd_ymdt, ocd.stc_cd, m.mbr_nm AS demanderName
+        FROM outsourcing_contract_details ocd 
+        JOIN enterprise e ON ocd.ent_cd = e.ent_cd
+        JOIN member m ON ocd.mbr_cd = m.mbr_cd 
+        WHERE ocd.mbr_cd = #{requesterId} AND ocd.ocd_req_type = '신청'
         ORDER BY ocd.ocd_dmnd_ymdt DESC
-    </select> 
+    </select>
+    
+    <select id="findSentInquiries" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
+        SELECT 
+            ocd.ocd_cd, ocd.ocd_ttl, e.ent_nm AS supplierName, 
+            ocd.ocd_dmnd_ymdt, ocd.stc_cd, m.mbr_nm AS demanderName
+        FROM outsourcing_contract_details ocd 
+        JOIN enterprise e ON ocd.ent_cd = e.ent_cd
+        JOIN member m ON ocd.mbr_cd = m.mbr_cd 
+        WHERE ocd.mbr_cd = #{requesterId} AND ocd.ocd_req_type = '문의'
+        ORDER BY ocd.ocd_dmnd_ymdt DESC
+    </select>
     
     <select id="findRequestDetailById" resultType="outpolic.enter.outsourcingRequest.domain.RequestViewDTO">
-        SELECT ocd.*, m.mbr_nm as demanderName, e.ent_nm as supplierName
+        SELECT 
+           ocd.ocd_cd, ocd.ocd_ttl, ocd.ocd_expln,
+           ocd.ocd_frctn_cmdty, ocd.ocd_dlvgds_mthd,
+           ocd.ocd_strt_ymdt, ocd.ocd_dedline,
+           ocd.ocd_amt, ocd.ocd_dmnd_ymdt,
+           ocd.stc_cd, ocd.ocd_req_type,
+           ocd.mbr_cd, ocd.ent_cd,
+           m.mbr_nm as demanderName, 
+           e.ent_nm as supplierName
         FROM outsourcing_contract_details ocd
         JOIN member m ON ocd.mbr_cd = m.mbr_cd
         JOIN enterprise e ON ocd.ent_cd = e.ent_cd
@@ -61,10 +61,13 @@
     </select> 
 
     <select id="findLatestOcdCd" resultType="String">
-        SELECT ocd_cd
-        FROM outsourcing_contract_details
+        SELECT ocd_cd FROM outsourcing_contract_details
         WHERE ocd_cd LIKE 'OCD_C%'
         ORDER BY CAST(SUBSTRING(ocd_cd, 6) AS UNSIGNED) DESC
         LIMIT 1
     </select> 
+    
+    <select id="findMbrCdByEntCd" resultType="String">
+        SELECT mbr_cd FROM enterprise WHERE ent_cd = #{entCd}
+    </select>
 </mapper>

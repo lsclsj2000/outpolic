@@ -14,6 +14,8 @@ public class EnterPortfolioRankingContentsDTO {
 	private String prtfDate;
 	private String ctgryName;
 	private String stcCode;
+	private String clCd;
 	private int rankingView;
 	private LocalDateTime rkDate;
+	private boolean isBookmarked;
 }

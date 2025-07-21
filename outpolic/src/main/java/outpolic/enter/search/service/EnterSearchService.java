@@ -12,7 +12,7 @@ public interface EnterSearchService {
 	List<EnterContents> getContentsList(String keyword);
 	
 	// 검색된 콘텐츠의 상세정보 
-	EnterContentsDetailDTO getContentsDetailById(String contentsId);
+	EnterContentsDetailDTO getContentsDetailById(String contentsId, String userId);
 	
 	List<EnterContentItemDTO> findContentsByCategoryId(String categoryId);
 }

@@ -7,12 +7,12 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="enter/assets/imgs/theme/favicon.svg" />
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/enter/assets/imgs/theme/favicon.svg}" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="enter/assets/css/main.css?v=5.6" />
 </head>
 <body>
-	<div class="col-md-3" th:fragment="enterMypageAside">
+	<div class="col-md-3" th:fragment="enterMypageAside(ingOsCount)">
 		<div class="dashboard-menu">
 			<ul class="nav flex-column" role="tablist">
 				<li>	
@@ -40,9 +40,9 @@
 					<a class="nav-link" id="inqueryTab" data-bs-toggle="tab" href="#myNotific" role="tab"><i class="fi-rs-sign-out mr-10"></i>문의내역</a>
 				</li>
 				<li style="border:none; margin-top:50px;">
-				    <button type="button" class="nav-link btn" data-bs-toggle="tab" role="tab">
-				        <i class="fi-rs-sign-out mr-10"></i>회원 탈퇴
-				    </button>
+				   <a type="button" id="btnWithdrawn" class="btn btn-primary" th:data-os-count="${ingOsCount}" href="#">
+				        회원 탈퇴
+				    </a>
 				</li>
 			</ul>
 		</div>

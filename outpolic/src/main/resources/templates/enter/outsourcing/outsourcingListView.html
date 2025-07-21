@@ -8,7 +8,7 @@
     <style>
       /* 기본 레이아웃 및 여백 */
         .page-container { padding: 20px;
- max-width: 1200px; margin: 0 auto; }
+ max: 1200px; margin: 0 auto; }
         
         /* 섹션 제목 스타일 */
         .section-title { 
@@ -202,7 +202,7 @@
  padding: 20px;
             border-radius: 10px;
             width: 90%;
-            max-width: 500px;
+            max-width: 1000px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
  /* animation: fadeIn 0.3s ease-out; 이전 스타일, 이제 CSS transition으로 대체 */
         }
@@ -320,6 +320,28 @@
             text-align: center;
         }
         /* ... (나머지 스타일 유지) ... */
+        /* --- 포트폴리오 상세 모달 관련 CSS (enterMain.html에서 가져옴) --- */
+        /* 크몽 스타일의 매우 넓은 모달을 위한 커스텀 CSS */
+        @media (min-width: 1400px) {
+            .modal-dialog.modal-xxl {
+                /* XXL 사이즈(1400px 이상) 화면에서 모달의 최대 너비를 1320px로 설정합니다. */
+                max-width: 1320px;
+            }
+        }
+        
+        .modal-body.custom-modal-body {
+            /* 모달 내용이 화면의 85% 높이를 넘지 않도록 하고, 넘으면 스크롤 생성 */
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+		/* 찜 했을 때의 색상 */
+		.fi-rs-heart.active {
+		    color: #F15B5B; 
+		    font-weight: 900; 
+		}
+		.bookmark-btn .fi-rs-heart.active {
+		    color: #F15B5B !important; 
+		}
     </style>
 </head>
 <body>
@@ -362,14 +384,224 @@
             </div>
         </div>
     </div>
-</th:block>
+
+    <div class="modal fade" id="portfolioDetailModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xxl"> 
+            <div class="modal-content"> 
+                <div class="modal-header border-bottom-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body custom-modal-body pt-0">
+                    <div class="d-flex h-100">
+                        <div id="modalInfoSection" class="p-4" style="width: 40%; overflow-y: auto;">
+                            </div>
+                        <div id="modalContentSection" class="p-3 ps-4 border-start" style="width: 60%; overflow-y: auto;">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </th:block>
 
 <th:block layout:fragment="jsFile">
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     function initializeFirebase() {
         // 아무 내용도 없는 빈 함수
       }
+
+    // 전역 변수로 선언하여 모달이 닫힌 후에도 접근 가능하게 함
+    let lastFocusedElement = null;
+
+    // --- 찜하기 토글 함수 (전역 스코프) ---
+    function toggleBookmark(clickedButtonElement) {
+        const clCd = clickedButtonElement.dataset.clCd;
+        if (!clCd) return;
+
+        const heartIcons = document.querySelectorAll(`.bookmark-btn[data-cl-cd="${clCd}"] i.fi-rs-heart`);
+        if (heartIcons.length === 0) return;
+
+        const isCurrentlyBookmarked = heartIcons[0].classList.contains('active');
+        const apiUrl = '/api/enter/bookmarks';
+
+        heartIcons.forEach(icon => {
+            icon.classList.toggle('active');
+        });
+
+        let options;
+        if (isCurrentlyBookmarked) {
+            options = { method: 'DELETE' };
+            fetch(`${apiUrl}/${clCd}`, options)
+                .then(response => {
+                    if (!response.ok) {
+                        alert('찜 해제에 실패했습니다. 다시 시도해주세요.');
+                        heartIcons.forEach(icon => icon.classList.add('active'));
+                        throw new Error('찜 해제 실패');
+                    }
+                })
+                .catch(error => console.error('찜 해제 중 오류:', error));
+        } else {
+            options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ clCd: clCd })
+            };
+            fetch(apiUrl, options)
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('로그인이 필요한 기능입니다.');
+                        } else {
+                            alert('찜하기에 실패했습니다. 다시 시도해주세요.');
+                        }
+                        heartIcons.forEach(icon => icon.classList.remove('active'));
+                        throw new Error('찜 추가 실패');
+                    }
+                })
+                .catch(error => console.error('찜 추가 중 오류:', error));
+        }
+    }
+
+    // --- openPortfolioModal 함수 (전역 스코프) ---
+    function openPortfolioModal(contentsId) {
+        const modalElement = document.getElementById('portfolioDetailModal');
+        if (!modalElement) return;
+            
+        lastFocusedElement = document.activeElement; 
+
+        const infoSection = modalElement.querySelector('#modalInfoSection');
+        const contentSection = modalElement.querySelector('#modalContentSection');
+        const portfolioModal = new bootstrap.Modal(modalElement);
+
+        // 모달을 열 때 로딩 스피너만 먼저 보여줍니다.
+        infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
+        contentSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`; // 이미지 영역도 로딩 스피너
+        portfolioModal.show();
+            
+        $.ajax({
+            url: `/user/api/contents/${contentsId}`, // 포트폴리오/외주 통합 상세 API
+            type: 'GET',
+            dataType: 'json',
+            success: function(detail) {
+                // 1. 필요한 기본 변수들 선언
+                const title = detail.contentsTitle || detail.enterName || '제목 없음';
+                const isBookmarked = detail.isBookmarked || false; 
+                const clCd = detail.clCd || '';
+                const inquiryTargetId = detail.contentsId; // 문의하기 버튼에 사용될 ID (osCd 또는 prtfCd)
+                
+                // 2. 썸네일 URL 가져오기 (포트폴리오 또는 외주)
+                const rawThumbnailUrl = detail.prtfThumbnailUrl || detail.osThumbnailUrl; 
+                let displayImageUrl = ''; 
+
+                // 3. displayImageUrl을 먼저 정의
+                if (rawThumbnailUrl) {
+                    if (!rawThumbnailUrl.startsWith('/attachment/')) {
+                        displayImageUrl = '/attachment/' + rawThumbnailUrl;
+                    } else {
+                        displayImageUrl = rawThumbnailUrl;
+                    }
+                }
+                
+                // 4. infoHtml 정의 
+                const infoHtml = `
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="/user/assets/imgs/theme/icons/icon-user.svg" alt="logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
+                        <div>
+                            <h6 class="mb-0 fw-bold">${detail.enterName || '회사명 없음'}</h6>
+                            <small class="text-muted">MASTER</small>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="/enter/outsourcing-requests/inquiry-form/${inquiryTargetId}" class="btn btn-primary">문의하기</a>
+                        </div>
+                    </div>
+            
+                    <hr class="my-3">
+            
+                    <p class="text-muted mb-2">${detail.ctgryName || '카테고리 정보 없음'}</p>
+                    <h3 class="fw-bold mb-3">${title}</h3>
+                    
+                    <div class="d-flex align-items-center mb-4">
+                        <a href="javascript:void(0);" 
+                           class="btn btn-outline-secondary d-flex align-items-center me-2 action-btn bookmark-btn" 
+                           data-cl-cd="${clCd}" 
+                           aria-label="Add To Wishlist">
+                            <i class="fi-rs-heart me-2 ${isBookmarked ? 'active' : ''}"></i> 찜하기
+                        </a>
+                        <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center">
+                            <i class="fi-rs-share me-2"></i> 공유하기
+                        </a>
+                    </div>
+            
+                    <div class="mb-4">
+                        <span class="badge bg-light text-dark border me-1 px-3 py-2">#상세페이지</span>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">프로젝트 설명</h6>
+                        <p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody || '설명 없음'}</p>
+                    </div>
+                    
+                    ${detail.contentsType === 'Outsourcing' ? `
+                    <div class="mb-4">
+                        <h6 class="fw-bold">희망 작업 시작일</h6>
+                        <p class="text-muted">${detail.osStrtYmdt ? new Date(detail.osStrtYmdt).toLocaleDateString() : '정보 없음'}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">희망 작업 종료일</h6>
+                        <p class="text-muted">${detail.osEndYmdt ? new Date(detail.osEndYmdt).toLocaleDateString() : '정보 없음'}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">계약 희망 금액</h6>
+                        <p class="text-muted">${detail.price ? detail.price.toLocaleString('ko-KR') + '원' : '협의'}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">수행 가능 인원</h6>
+                        <p class="text-muted">${detail.osFlfmtCnt ? detail.osFlfmtCnt + '명' : '정보 없음'}</p>
+                    </div>
+                    ` : `
+                    <div class="mb-4">
+                        <h6 class="fw-bold">참여 기간</h6>
+                        <p class="text-muted">${(detail.participationStartDate ? new Date(detail.participationStartDate).toLocaleDateString() : '') + ' ~ ' + (detail.participationEndDate ? new Date(detail.participationEndDate).toLocaleDateString() : '')}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">클라이언트</h6>
+                        <p class="text-muted">${detail.client || '정보 없음'}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">업종</h6>
+                        <p class="text-muted">${detail.industry || '정보 없음'}</p>
+                    </div>
+                    `}
+                    `;
+                infoSection.innerHTML = infoHtml; 
+
+                // 5. dynamicThumbnailHtml 정의 (displayImageUrl 사용)
+                const dynamicThumbnailHtml = displayImageUrl 
+                    ? `<img src="${displayImageUrl}" class="img-fluid" alt="상세 이미지" style="width: 100%; height: auto; object-fit: contain;">` 
+                    : `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; background-color: #f0f0f0; color: #aaa; font-size: 1.2em; text-align: center;">
+                         <i class="fas fa-image" style="font-size: 2em; margin-bottom: 10px;"></i>
+                         <span>이미지 없음</span>
+                       </div>`;
+
+                contentSection.innerHTML = dynamicThumbnailHtml; 
+
+                // 모달 내 찜하기 버튼에 클릭 이벤트 리스너 다시 추가 (동적으로 추가된 HTML 요소에 대해)
+                const modalBookmarkBtn = modalElement.querySelector('.bookmark-btn');
+                if (modalBookmarkBtn) {
+                    modalBookmarkBtn.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        toggleBookmark(this);
+                    });
+                }
+            },
+            error: function(xhr) {
+                infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>';
+                contentSection.innerHTML = '<p class="text-center">이미지를 불러오는 데 실패했습니다.</p>'; 
+            }
+        });
+    }
 
   $(document).ready(function() {
             let grid = $('#outsourcingItemsGrid');
@@ -489,7 +721,11 @@ function(outsourcings) {
      </div>
                                         </div>
                      <div class="card-content">
-                                            <h3 class="card-title">${o.osTtl}</h3>
+                                            <h3 class="card-title">
+                                                <a href="javascript:void(0);" onclick="openPortfolioModal('${osCd}')">
+                                                    ${o.osTtl}
+                                                </a>
+                                            </h3>
                                             <div class="card-category">${categoriesHtml}</div>
                                             <p class="card-summary">${o.osExpln}</p>
                                             <div 

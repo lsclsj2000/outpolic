@@ -2,6 +2,7 @@ package outpolic.enter.mypage.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,12 @@ import outpolic.enter.inquiry.service.EnterInquiryService;
 import outpolic.enter.mypage.dto.CorpInfo;
 import outpolic.enter.mypage.dto.EnterInfo;
 import outpolic.enter.mypage.service.EnterMypageService;
+import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.enter.portfolio.domain.EnterPortfolio;
+import outpolic.enter.withdrawn.dto.EnterOsInfoDTO;
+import outpolic.enter.withdrawn.service.EnterWithdrawnService;
+import outpolic.systems.file.domain.FileMetaData;
+import outpolic.systems.util.FilesUtils;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,6 +37,8 @@ public class enterMypageController {
 	private final EnterMypageService enterMypageService;
 	private final PasswordEncoder passwordEncoder;
 	private final EnterInquiryService enterInquiryService;
+	private final EnterWithdrawnService enterWithdrawnService;
+	private final FilesUtils filesUtils;
 	
 	// 기업 마이페이지 
     @GetMapping("/enter/mypage")
@@ -50,10 +61,29 @@ public class enterMypageController {
  	    
  	    //문의
  	    List<EnterInquiry> inquiryList = enterInquiryService.getEnterInquiryListByCode(memberCode);
- 	    
  	    model.addAttribute("title", "문의 내역");
 		model.addAttribute("inquiryList", inquiryList);
 		
+		//외주글
+		List<EnterOutsourcing> outsourcingList = enterMypageService.EnterOsSelectByCode(memberCode);
+		model.addAttribute("outsourcingList",outsourcingList);
+		
+		//완료 외주 수
+		int endedOs = enterMypageService.EnterEndedOsSelectByCode(memberCode);
+		model.addAttribute("endedOs", endedOs);
+		
+		// 작성한 포트폴리오 글 
+		List<EnterPortfolio> portfolioList = enterMypageService.EnterPfSelectByCode(memberCode);
+		model.addAttribute("portfolioList", portfolioList);
+		
+		// 받은 외주 요청 수(읽기전만)
+		int incomeOs = enterMypageService.EnterIncomingOsByCode(memberCode);
+		model.addAttribute("incomeOs", incomeOs);
+		
+		//진행중 외주 수 조회
+		List<EnterOsInfoDTO> ingOs = enterWithdrawnService.EnterOsIngSelectByCode(memberCode);
+		model.addAttribute("title", "진행중 외주");
+		model.addAttribute("ingOs", ingOs);
 		
     	return "enter/mypage/enterMypageView";
     }
@@ -182,6 +212,40 @@ public class enterMypageController {
 		return "/enter/review/reviewListView"; // 뷰 이름은 그대로 유지하거나 변경
 	}
 
+    @Value("${file.path}")
+    private String uploadPath;
+    @PostMapping("/enter/profile/upload")
+    public String uploadCorpProfileImage(@RequestParam("profileImage") MultipartFile file,
+                                         HttpSession session,
+                                         RedirectAttributes redirectAttributes) {
+        String memberCode = (String) session.getAttribute("SCD");
 
+        if (memberCode == null) {
+            redirectAttributes.addFlashAttribute("msg", "세션이 만료되었습니다. 다시 로그인해주세요.");
+            return "redirect:/login";
+        }
+
+        try {
+            FileMetaData fileMetaData = filesUtils.uploadFile(file, "mypageProfile");
+            String imagePath = fileMetaData.getFilePath();
+
+            enterMypageService.updateCorpProfileImage(memberCode, imagePath);
+
+            redirectAttributes.addFlashAttribute("msg", "프로필 사진이 저장되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("msg", "업로드 중 오류가 발생했습니다.");
+        }
+
+        return "redirect:/enter/mypage";
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     
 }

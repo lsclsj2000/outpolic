@@ -75,7 +75,7 @@ public interface PortfolioMapper {
     int deleteTodayViewByClCd(String clCd);
     int deleteTotalViewByClCd(String clCd);
     int deletePerusalContentByClCd(String clCd); // <-- 이 줄을 추가합니다.
-
+    
     String findLatestClCdForPortfolio();
     String selectMaxPortfolioCode();
 
@@ -86,4 +86,8 @@ public interface PortfolioMapper {
 	List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query);
 
 	List<EnterOutsourcing> findUnlinkedOutsourcings(String prtfCd, String entCd, String query);
+
+	List<EnterPortfolio> findPortfoliosByTitleAndEntCd(String query, String entCd);
+
+	List<EnterPortfolio> findAllPortfoliosByTitle(String query);
 }

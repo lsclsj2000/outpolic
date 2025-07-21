@@ -71,7 +71,6 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 			
 			userInquiryMapper.addUserInquiryFiles(userInquiryFileList);			
 		}
-		userInquiryMapper.adduserInquiryProcess(inquiry);
 		
 	}
 	

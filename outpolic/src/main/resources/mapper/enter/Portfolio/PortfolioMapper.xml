@@ -7,7 +7,7 @@
         <result property="osTtl" column="os_ttl"/>
     </resultMap>
 
-    <resultMap id="portfolioDetailResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
+   <resultMap id="portfolioDetailResultMap" type="outpolic.enter.portfolio.domain.EnterPortfolio">
         <id property="prtfCd" column="prtf_cd"/>
         <result property="entCd" column="ent_cd"/>
         <result property="prtfTtl" column="prtf_ttl"/>
@@ -17,6 +17,9 @@
         <result property="admCd" column="adm_cd"/>
         <result property="prtfMdfcnYmdt" column="prtf_mdfcn_ymdt"/>
         <result property="stcCd" column="stc_cd"/>
+        
+        <result property="clCd" column="cl_cd"/>
+
         <result property="prtfPeriodStart" column="prtf_period_start"/> 
         <result property="prtfPeriodEnd" column="prtf_period_end"/>     
         <result property="prtfClient" column="prtf_client"/>           
@@ -30,7 +33,7 @@
             <result column="tag_name"/>
         </collection>
         <collection property="linkedOutsourcings" javaType="java.util.ArrayList"
-                    ofType="outpolic.enter.outsourcing.domain.EnterOutsourcing"
+                     ofType="outpolic.enter.outsourcing.domain.EnterOutsourcing"
         			column="prtf_cd" select="findLinkedOutsourcingsByPrtfCd" />
     </resultMap>
 
@@ -39,6 +42,20 @@
         <result property="prtfTtl" column="prtf_ttl"/>
         <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/>
     </resultMap>
+
+ <select id="findPortfoliosByTitleAndEntCd" resultType="outpolic.enter.portfolio.domain.EnterPortfolio">
+        SELECT
+            prtf_cd,
+            prtf_ttl
+            <!-- 필요하다면 더 많은 컬럼을 추가할 수 있습니다 -->
+        FROM
+            portfolio
+        WHERE
+            ent_cd = #{entCd}
+            AND prtf_ttl LIKE CONCAT('%', #{query}, '%')
+        ORDER BY
+            prtf_reg_ymdt DESC
+    </select>
 
     <select id="findPortfolioDetailsByEntCd" resultMap="portfolioDetailResultMap">
     SELECT

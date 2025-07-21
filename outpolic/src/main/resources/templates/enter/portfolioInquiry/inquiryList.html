@@ -1,52 +1,65 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{enter/layout/enterLayoutkjw}">
+      layout:decorate="~{enter/layout/enterLayoutkjw.html}">
 <head>
     <meta charset="UTF-8">
-    <title>보낸 문의 목록</title>
-    <style>
-        /* 이전과 동일한 카드 디자인 스타일 */
-        h1 { font-size: 2rem; font-weight: 800; margin-bottom: 2rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem; }
-        .request-item { border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
-        .item-info .item-title a { font-size: 1.2rem; font-weight: 600; color: #1f2937; text-decoration: none; }
-        .item-info .item-meta { font-size: 0.9rem; color: #6b7280; margin-top: 0.5rem; }
-        .item-status .status-badge { font-size: 0.8rem; font-weight: bold; padding: 0.3rem 0.75rem; border-radius: 9999px; color: white; }
-        .status-before { background-color: #6b7280; }
-        .status-approved { background-color: #16a34a; }
-        .empty-message { text-align: center; padding: 3rem; color: #6b7280; }
-    </style>
+    <title th:text="${listTitle}">문의 목록</title>
+    <th:block layout:fragment="css">
+        <style>
+            .list-container { max-width: 960px; margin: 2rem auto; }
+            .item-card {
+                border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem;
+                margin-bottom: 1rem; display: flex; justify-content: space-between;
+                align-items: center; transition: box-shadow 0.2s, border-color 0.2s;
+            }
+            .item-card:hover { border-color: #4f46e5; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+            .item-info .item-title a { font-size: 1.2rem; font-weight: 600; color: #1f2937; text-decoration: none; }
+            .item-info .item-title a:hover { text-decoration: underline; color: #4f46e5; }
+            .item-info .item-meta { font-size: 0.9rem; color: #6b7280; margin-top: 0.5rem; }
+            .item-status .status-badge { font-size: 0.8rem; font-weight: bold; padding: 0.3rem 0.75rem; border-radius: 9999px; color: white; }
+            .status-SD_BEFORE { background-color: #6b7280; }
+            .status-SD_APPROVED { background-color: #16a34a; }
+            .status-SD_REJECTED { background-color: #dc2626; }
+            .empty-message { text-align: center; padding: 3rem; color: #6b7280; border: 2px dashed #e5e7eb; border-radius: 8px; }
+        </style>
+    </th:block>
 </head>
 <body>
 <th:block layout:fragment="contents">
-    <div class="container">
-        <h1>보낸 문의 목록</h1>
+    <div class="list-container">
+        <h1 th:text="${listTitle}">문의 목록</h1>
+
         <div id="inquiry-list-container">
+            <th:block th:if="${not #lists.isEmpty(inquiries)}">
+                <div th:each="inquiry : ${inquiries}" class="item-card">
+                    <div class="item-info">
+                        <h3 class="item-title">
+                            <a th:href="@{/enter/outsourcing-requests/detail/{id}(id=${inquiry.ocd_cd})}" th:text="${inquiry.ocd_ttl}"></a>
+                        </h3>
+                        <div class="item-meta">
+                            <span th:if="${inquiry.supplierName}">To: <strong th:text="${inquiry.supplierName}"></strong></span>
+                            |
+                            <span>문의일: <span th:text="${#temporals.format(inquiry.ocd_dmnd_ymdt, 'yyyy-MM-dd')}"></span></span>
+                        </div>
+                    </div>
+                    <div class="item-status">
+                         <span class="status-badge" th:classappend="'status-' + ${inquiry.stc_cd}" th:text="${@statusTextFormatter.getStatusText(inquiry.stc_cd)}"></span>
+                    </div>
+                </div>
+            </th:block>
+
+            <div th:if="${#lists.isEmpty(inquiries)}" class="empty-message">
+                <p>관련 문의 내역이 없습니다.</p>
             </div>
+        </div>
     </div>
 </th:block>
 
 <th:block layout:fragment="jsFile">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const listContainer = document.getElementById('inquiry-list-container');
-
-            // 목록 아이템 HTML 생성 함수 (재사용)
-            const createListHtml = (items) => { /* ... 이전과 동일 ... */ };
-            
-            fetch('/api/my/all-requests')
-                .then(response => response.ok ? response.json() : Promise.reject('서버 오류'))
-                .then(data => {
-                    const myUserId = 'EI_C00003'; // 예시: 현재 로그인한 사용자 ID
-
-                    // [핵심] 내가 보낸(demander) 요청 중에서 '문의' 타입인 것만 필터링
-                    const sentInquiries = data.filter(item => 
-                        item.mbr_cd === myUserId && item.ocd_req_type === '문의'
-                    );
-                    
-                    listContainer.innerHTML = createListHtml(sentInquiries);
-                })
-                .catch(error => { /* ... 오류 처리 ... */ });
+            console.log("문의 목록 페이지가 로드되었습니다.");
         });
     </script>
 </th:block>

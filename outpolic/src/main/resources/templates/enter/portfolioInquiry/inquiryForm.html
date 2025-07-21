@@ -1,64 +1,94 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{enter/layout/enterLayoutkjw}">
+      layout:decorate="~{enter/layout/enterLayoutkjw.html}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${listTitle}">문의 목록</title>
+    <title>포트폴리오 문의하기</title>
     <th:block layout:fragment="css">
         <style>
-            .inquiry-item { border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
-            .item-info .item-title a { font-size: 1.2rem; font-weight: 600; color: #1f2937; text-decoration: none; }
-            .item-info .item-meta { font-size: 0.9rem; color: #6b7280; margin-top: 0.5rem; }
-            .item-status .status-badge { font-size: 0.8rem; font-weight: bold; padding: 0.3rem 0.75rem; border-radius: 9999px; color: white; }
-            .status-SD_BEFORE { background-color: #6b7280; }
-            .status-SD_ANSWERED { background-color: #16a34a; } /* 예시: 답변완료 상태 */
-            .empty-message { text-align: center; padding: 3rem; color: #6b7280; border: 2px dashed #e5e7eb; border-radius: 8px; }
+            .inquiry-container { max-width: 800px; margin: 40px auto; }
+            .card { padding: 2.5rem; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
+            .section-title { font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 2.5rem; }
+            .form-group { margin-bottom: 1.75rem; }
+            .form-group label { display: block; font-weight: 600; margin-bottom: 0.75rem; }
+            .form-group .required { color: #e11d48; margin-left: 4px; }
+            .form-control { width: 100%; padding: 0.8rem 1rem; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
+            .info-box { background-color: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 5px solid #4f46e5; }
+            .info-box h3 { margin-top: 0; font-size: 1.25rem; }
+            .info-box p { margin: 0.5rem 0 0; color: #4b5563; }
+            .btn-submit { display: block; width: 100%; background-color: #4f46e5; color: white; padding: 0.9rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s; }
+            .btn-submit:disabled { background-color: #a5b4fc; cursor: not-allowed; }
+            .form-text { font-size: 0.875rem; color: #6c757d; margin-top: 0.25rem; }
         </style>
     </th:block>
 </head>
 <body>
 <th:block layout:fragment="contents">
-    <div class="container">
-        <h1 th:text="${listTitle}">문의 목록</h1>
-
-        <div id="inquiry-list-container">
-            <!-- Thymeleaf가 서버에서 받은 데이터로 이 영역을 채웁니다. -->
-            <th:block th:if="${not #lists.isEmpty(inquiries)}">
-                <div th:each="inquiry : ${inquiries}" class="inquiry-item">
-                    <div class="item-info">
-                        <h3 class="item-title">
-                            <!-- 상세 페이지로 이동하는 링크 -->
-                            <a th:href="@{/enter/outsourcing-requests/detail/{id}(id=${inquiry.ocd_cd})}" th:text="${inquiry.ocd_ttl}"></a>
-                        </h3>
-                        <div class="item-meta">
-                            <!-- 보낸 문의/받은 문의에 따라 상대방 정보를 다르게 표시 -->
-                            <span th:if="${inquiry.supplierName}">To: <strong th:text="${inquiry.supplierName}"></strong></span>
-                            <span th:if="${inquiry.demanderName}">From: <strong th:text="${inquiry.demanderName}"></strong></span>
-                            | <span>문의일: <span th:text="${#temporals.format(inquiry.ocd_dmnd_ymdt, 'yyyy-MM-dd')}"></span></span>
-                        </div>
-                    </div>
-                    <div class="item-status">
-                        <!-- 상태 뱃지 -->
-                        <span class="status-badge" th:classappend="'status-' + ${inquiry.stc_cd}" th:text="${@statusTextFormatter.getStatusText(inquiry.stc_cd)}"></span>
-                    </div>
-                </div>
-            </th:block>
-
-            <!-- 문의 내역이 없을 경우 메시지 표시 -->
-            <div th:if="${#lists.isEmpty(inquiries)}" class="empty-message">
-                <p>관련 문의 내역이 없습니다.</p>
+    <div class="inquiry-container">
+        <h1 class="section-title">포트폴리오 문의</h1>
+        <div class="card">
+            <div class="info-box" th:if="${portfolio != null}">
+                <h3>문의 대상 포트폴리오</h3>
+                <p th:text="${portfolio.prtfTtl}">[포트폴리오 제목]</p>
             </div>
+
+            <form id="portfolio-inquiry-form" th:action="@{/enter/outsourcing-requests/inquiry/send}" method="post">
+                <input type="hidden" name="ent_cd" th:value="${portfolio.entCd}">
+                <input type="hidden" name="cl_cd"  th:value="${portfolio.clCd}">
+                <input type="hidden" name="ocd_req_type" value="문의">
+
+                <div class="form-group">
+                    <label for="title">문의 제목<span class="required">*</span></label>
+                    <input type="text" id="title" name="ocd_ttl" class="form-control" th:value="${portfolio != null ? portfolio.prtfTtl + ' 포트폴리오 관련 문의' : ''}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="deliverable">어떤 제작물을 생각하시나요? (선택)</label>
+                    <input type="text" id="deliverable" name="ocd_frctn_cmdty" class="form-control" placeholder="예: 로고 디자인 원본 파일, 소개 영상 MP4 파일">
+                </div>
+
+                <div class="form-group">
+                    <label for="delivery-method">선호하는 납품 방식이 있나요? (선택)</label>
+                    <input type="text" id="delivery-method" name="ocd_dlvgds_mthd" class="form-control" placeholder="예: 이메일 전달, 클라우드 링크 공유">
+                </div>
+
+                <div class="form-group">
+                    <label for="start-date">희망하는 작업 시작일이 언제인가요? (선택)</label>
+                    <input type="datetime-local" id="start-date" name="ocd_strt_ymdt" class="form-control">
+                    <div class="form-text">정확하지 않아도 괜찮습니다.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="end-date">언제까지 작업이 완료되길 바라시나요? (선택)</label>
+                    <input type="datetime-local" id="end-date" name="ocd_dedline" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="amount">생각하고 계신 예산이 있나요? (선택)</label>
+                    <input type="number" id="amount" name="ocd_amt" class="form-control" placeholder="숫자만 입력 (미입력 시 '협의'로 전달됩니다)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="explanation">상세 문의 내용<span class="required">*</span></label>
+                    <textarea id="explanation" name="ocd_expln" class="form-control" rows="8" placeholder="궁금한 점이나 협업하고 싶은 내용에 대해 자유롭게 작성해주세요." required style="min-height: 200px;"></textarea>
+                </div>
+
+                <button type="submit" id="submit-button" class="btn-submit">문의하기</button>
+            </form>
         </div>
     </div>
 </th:block>
 
 <th:block layout:fragment="jsFile">
-    <!-- 이 페이지는 서버 사이드 렌더링으로 목록을 표시하므로, 특별한 JS 로직이 필요하지 않습니다. -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("문의 목록 페이지가 로드되었습니다.");
-            // 향후 필터링이나 정렬 같은 동적 기능을 여기에 추가할 수 있습니다.
+        document.getElementById('portfolio-inquiry-form').addEventListener('submit', function(e) {
+            const submitButton = document.getElementById('submit-button');
+            if (submitButton.disabled) {
+                e.preventDefault();
+                return;
+            }
+            submitButton.disabled = true;
+            submitButton.textContent = '전송 중...';
         });
     </script>
 </th:block>
