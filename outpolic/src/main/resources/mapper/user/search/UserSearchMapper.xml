@@ -103,6 +103,8 @@
 	    <result column="registrant_name"    property="enterName"/>
 	    <result column="registrant_code"    property="enterCode"/>
 	    <result column="registration_date"  property="registrationDate"/>
+	    <result column="files_json"  		property="filesJson"/>
+	    <result column="thumbnail_url"		property="thumbnailUrl"  	/>
 	    
 	    <!-- 상세 정보 -->
 	    <result column="content_body"       property="contentsBody"/>
@@ -113,8 +115,9 @@
 	    <result column="prtf_client" 		property="client"/>
 	    <result column="prtf_industry" 		property="industry"/>
 	    <result column="isBookmarked"       property="isBookmarked"/>
-	    <result property="prtfThumbnailUrl" column="prtf_thumbnail_url"/>
-	    
+	    <result column="osStrtYmdt"       	property="osStrtYmdt"/>
+	    <result column="osEndYmdt"       	property="osEndYmdt"/>
+	    <result column="osFlfmtCnt"       	property="osFlfmtCnt"/>
 	</resultMap>
 	<sql id="modalBookmarkJoinSql">
     	LEFT JOIN bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
@@ -134,24 +137,23 @@
 	        e.ent_nm                AS registrant_name,
 	        e.ent_cd                AS registrant_code,
 	        p.prtf_reg_ymdt         AS registration_date,
-	        
-	        -- 상세 설명: 포트폴리오 테이블의 prtf_cn 컬럼 사용
 	        p.prtf_cn               AS content_body,
-	        
-	        -- 가격: 포트폴리오 테이블에는 가격 정보가 없으므로 0으로 설정
 	        0                       AS price,
 	        cl.cl_cd,
-	        -- [수정] 추가된 컬럼 조회
 	        p.prtf_period_start,
 	        p.prtf_period_end,
 	        p.prtf_client,
 	        p.prtf_industry,
-	        p.prtf_thumbnail_url,
-	        NULL                   AS os_thumbnail_url,
-	        NULL                   AS osEndYmdt,
-	        NULL                   AS osFlfmtCnt
+	        p.prtf_thumbnail_url   AS thumbnail_url,
+	        NULL                    AS osStrtYmdt,
+	        NULL                    AS osEndYmdt,
+	        NULL                    AS osFlfmtCnt,
+	        IFNULL((SELECT CONCAT('[', GROUP_CONCAT(
+	            JSON_OBJECT(
+	                'fileCd', f.file_cd, 'fileOrgnlNm', f.file_orgnl_nm, 'filePath', CONCAT(f.file_path, f.file_srvr_nm)
+	            )
+	        ), ']') FROM file f WHERE f.cl_cd = CONCAT('LIST_', o.os_cd)), '[]') AS files_json						
         <include refid="modalIsBookmarkedSelectSql"/>
-	
 	    FROM
 	        portfolio p
 	    LEFT JOIN -- 기업 정보가 없을 수도 있으니 LEFT JOIN이 더 안전
@@ -173,22 +175,22 @@
 	        e.ent_nm                AS registrant_name,
 	        e.ent_cd                AS registrant_code,
 	        o.os_reg_ymdt           AS registration_date,
-	        
-	        -- 상세 설명: 외주 테이블의 os_expln 컬럼 사용
 	        o.os_expln              AS content_body,
-	        
-	        -- 가격: 외주 테이블의 os_amt 컬럼 사용
 	        o.os_amt                AS price,
+	        o.os_thumbnail_url      AS thumbnail_url,
 	        cl.cl_cd,
-	        -- [수정] 포트폴리오에만 있는 정보는 NULL로 채움
 	        NULL                    AS prtf_period_start,
 	        NULL                    AS prtf_period_end,
 	        NULL                    AS prtf_client,
 	        NULL                    AS prtf_industry,
-	         o.os_thumbnail_url,
-	         o.os_strt_ymdt          AS osStrtYmdt,
+	        o.os_strt_ymdt          AS osStrtYmdt,
             o.os_end_ymdt           AS osEndYmdt,
-            o.os_flfmt_cnt          AS osFlfmtCnt
+            o.os_flfmt_cnt          AS osFlfmtCnt,
+            IFNULL((SELECT CONCAT('[', GROUP_CONCAT(
+	            JSON_OBJECT(
+	                'fileCd', f.file_cd, 'fileOrgnlNm', f.file_orgnl_nm, 'filePath', CONCAT(f.file_path, f.file_srvr_nm)
+	            )
+	        ), ']') FROM file f WHERE f.cl_cd = CONCAT('LIST_', o.os_cd)), '[]') AS files_json
 	        <include refid="modalIsBookmarkedSelectSql"/>
 	        
 	    FROM

@@ -133,10 +133,7 @@
 					                    <div class="product-img product-img-zoom">
 					                        <a th:href="@{/user/contents/{id}(id=${content.osCode})}">
 					                            <img class="default-img"
-					                                 th:src="@{|https://picsum.photos/id/${iterStat.index + 320}/400/300|}" 
-					                                 alt="외주 이미지" />
-					                            <img class="hover-img"
-					                                 th:src="@{|https://picsum.photos/id/${iterStat.index + 420}/400/300|}" 
+					                                 th:src="${content.osThumbnailUrl}" 
 					                                 alt="외주 이미지" />
 					                        </a>
 					                    </div>
@@ -197,10 +194,7 @@
 							            <div class="product-img product-img-zoom">
 							                <a href="javascript:void(0);">
 												<img class="default-img"
-												     th:src="@{|https://picsum.photos/id/${iterStat.index + 20}/400/300|}" 
-												     alt="" />
-												<img class="hover-img"
-												     th:src="@{|https://picsum.photos/id/${iterStat.index + 120}/400/300|}" 
+												     th:src="${content.prtfThumbnailUrl}" 
 												     alt="" />
 							                </a>
 							            </div>

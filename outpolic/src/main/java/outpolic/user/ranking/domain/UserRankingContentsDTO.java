@@ -15,6 +15,7 @@ public class UserRankingContentsDTO {
 	private String osTtl;
 	private String osExpln;
 	private String clCd;
+	private String osThumbnailUrl;
 	private BigDecimal reviewScore;
 	private int osAtm;
 	private boolean isBookmarked;
