@@ -119,11 +119,5 @@ public class UserLoginController {
 		return "user/mypage/alert";
     }
     
-
-    // 비밀번호 재설정 페이지
-    @GetMapping("/forgotPswd")
-    public String forgotPasswordPage() {
-        return "user/login/userForgotPswdView"; // templates/page-forgot-password.html
-    }
     
 }

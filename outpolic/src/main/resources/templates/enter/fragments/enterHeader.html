@@ -50,7 +50,7 @@
 										    <li th:if="${session.SCD != null}"><a th:href="@{/enter/mypage}"><i class="fi fi-rs-user mr-10"></i>내정보</a></li>
 										    <li  th:if="${session.SCD == null}"><a th:href="@{/login}"><i class="fi fi-rs-log-in mr-10"></i>로그인</a></li>
 										    <li th:if="${session.SCD != null}"><a th:href="@{/logout}"><i class="fi fi-rs-log-out mr-10"></i>로그아웃</a></li>
-										    <li><a th:href="@{/forgotPswd}"><i class="fi fi-rs-log-out mr-10"></i>비밀번호찾기</a></li>
+										    <li th:if="${session.SCD != null}"><a th:href="@{/pswdCng}"><i class="fi fi-rs-log-out mr-10"></i>비밀번호 재설정</a></li>
 										    <li  th:if="${session.SCD == null}"><a th:href="@{/user/registerInfo}"><i class="fi fi-rs-log-out mr-10"></i>회원가입</a></li>
 										</ul>
 									</div>

@@ -18,6 +18,7 @@
 		<result column="mbr_birth" property="memberBirth"/>
 		<result column="mbr_join_ymdt" property="memberJoinDate"/>
 		<result column="mbr_mdfcn_ymdt" property="memberModifyDate"/>
+		<result column="mbr_img" property="mbrImg"/>
 	</resultMap>
 	<select id="getEnterInfoByCode" parameterType="String" resultMap="EnterMypageResultMap"> 
 		 SELECT 
@@ -33,7 +34,8 @@
 			mbr_eml, 
 			mbr_birth,
 			mbr_join_ymdt,
-			mbr_mdfcn_ymdt
+			mbr_mdfcn_ymdt,
+			mbr_img
 		FROM member
 		WHERE mbr_cd=#{memberCode};
 	</select>
