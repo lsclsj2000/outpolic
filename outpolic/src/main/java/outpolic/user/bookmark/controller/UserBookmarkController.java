@@ -20,7 +20,7 @@ public class UserBookmarkController {
 	
 	private final UserBookmarkService userBookmarkService;
 
-	@GetMapping("/user/bookmark")
+	@GetMapping("/bookmark")
 	public String bookmarkView(HttpSession session, Model model) {
 		String memberCode = (String) session.getAttribute("SCD");
 		if (memberCode == null) {

@@ -146,7 +146,7 @@
 									    </ul>
 									</li>
 									<li>
-										<a th:href="@{/user/bookmark}">찜목록</a>
+										<a th:if="${session.SCD != null}" th:href="@{/bookmark}">찜목록</a>
 									</li>
 								</ul>
 							</nav>
