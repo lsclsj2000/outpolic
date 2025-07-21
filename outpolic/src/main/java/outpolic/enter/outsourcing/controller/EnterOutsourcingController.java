@@ -55,7 +55,7 @@ public class EnterOutsourcingController {
 
     @GetMapping("/add")
     public String showAddOutsourcingForm(Model model, HttpSession session) {
-        session.removeAttribute("outsourcingFormData"); // 기존 폼 데이터 삭제
+        session.removeAttribute("outsourcingFormData");
         String mbrCd = (String) session.getAttribute("SCD");
         if (mbrCd == null) {
             return "redirect:/login";
@@ -92,7 +92,6 @@ public class EnterOutsourcingController {
             String osCd = (String) payload.get("osCd");
             String osTtl = (String) payload.get("osTtl");
             String osExpln = (String) payload.get("osExpln");
-            
             // LocalDateTime 파싱 (ISO_LOCAL_DATE_TIME 패턴: "yyyy-MM-dd'T'HH:mm")
             LocalDateTime osStrtYmdt = null;
             if (payload.get("osStrtYmdt") instanceof String && !((String)payload.get("osStrtYmdt")).isEmpty()) {
@@ -143,7 +142,7 @@ public class EnterOutsourcingController {
             }
 
 
-            formData.setOsCd(osCd); // 기존 osCd가 있으면 그대로 사용, 없으면 서비스에서 생성
+            formData.setOsCd(osCd);
             formData.setOsTtl(osTtl);
             formData.setOsExpln(osExpln);
             formData.setOsStrtYmdt(osStrtYmdt);
@@ -154,14 +153,10 @@ public class EnterOutsourcingController {
             String entCd = outsourcingService.findEntCdByMbrCd(mbrCd);
             formData.setEntCd(entCd);
             formData.setMbrCd(mbrCd);
-            
-            // osCd가 null이면 새로 생성
             if (formData.getOsCd() == null || formData.getOsCd().isEmpty()) {
-                String generatedOsCd = outsourcingService.saveStep1Data(formData, session); // 이 메서드에서 osCd 생성 및 세션 저장
+                String generatedOsCd = outsourcingService.saveStep1Data(formData, session);
                 return ResponseEntity.ok(Map.of("success", true, "osCd", generatedOsCd));
             } else {
-                // 이미 osCd가 있는 경우 (세션에 데이터가 있을 경우), 업데이트 로직을 직접 수행 (saveStep1Data는 새로 생성만 함)
-                // 여기서는 단순히 세션에 데이터 업데이트만 하고 현재 osCd 반환
                 session.setAttribute("outsourcingFormData", formData);
                 return ResponseEntity.ok(Map.of("success", true, "osCd", formData.getOsCd()));
             }
@@ -206,6 +201,20 @@ public class EnterOutsourcingController {
         return ResponseEntity.ok(Map.of("success", true));
     }
 
+    // [!code diff --start]
+    @PostMapping("/save-step4")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> saveStep4(
+            @RequestParam(value = "bodyImageFiles", required = false) List<MultipartFile> bodyImageFiles,
+            @SessionAttribute("outsourcingFormData") OutsourcingFormDataDto formData) {
+        
+        // 새로 업로드된 본문 이미지 파일을 formData에 저장
+        formData.setNewBodyImageFiles(bodyImageFiles);
+        
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+    // [!code diff --end]
+
     @PostMapping("/complete-registration")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> completeRegistration(@SessionAttribute("outsourcingFormData") OutsourcingFormDataDto formData, HttpSession session) {
@@ -220,27 +229,30 @@ public class EnterOutsourcingController {
     
     @GetMapping("/edit/{osCd}")
     public String showEditOutsourcingForm(@PathVariable String osCd, Model model) {
+        // 1. osCd로 외주 상세 정보 조회
         EnterOutsourcing outsourcing = outsourcingService.findOutsourcingDetailsByOsCd(osCd);
         if (outsourcing == null) {
             return "redirect:/enter/outsourcing/list?error=notfound";
         }
         
         try {
-            // 이전에 저장된 카테고리 정보 (final category IDs)
-            List<CategorySearchDto> existingCategories = outsourcing.getCategories();
             List<List<CategorySearchDto>> allCategoryPaths = new ArrayList<>();
-            if (existingCategories != null) {
-                for (CategorySearchDto category : existingCategories) {
-                    List<CategorySearchDto> fullPath = categorySearchService.getCategoryPath(category.getCtgryId());
-                    if (!fullPath.isEmpty()) {
-                        allCategoryPaths.add(fullPath);
-                    }
+            // 2. 조회된 외주 정보에서 대표 카테고리 ID를 가져옴
+            String representativeCtgryId = outsourcing.getCtgryId();
+            // 3. 카테고리 ID가 존재하면, 서비스 로직을 호출해 전체 경로를 조회
+            if (representativeCtgryId != null && !representativeCtgryId.isEmpty()) {
+                List<CategorySearchDto> fullPath = categorySearchService.getCategoryPath(representativeCtgryId);
+                if (!fullPath.isEmpty()) {
+                    allCategoryPaths.add(fullPath);
                 }
             }
+
+            // 4. 조회된 경로 정보를 JSON 문자열로 변환하여 모델에 추가
             String categoryPathsJson = objectMapper.writeValueAsString(allCategoryPaths);
-            model.addAttribute("categoryPathsJson", categoryPathsJson); // 변수명 변경 (initialCategoryPath -> categoryPathsJson)
+            model.addAttribute("categoryPathsJson", categoryPathsJson);
         } catch (JsonProcessingException e) {
-            model.addAttribute("categoryPathsJson", "[]"); 
+            // 오류 발생 시 빈 배열 전달
+            model.addAttribute("categoryPathsJson", "[]");
         }
         
         model.addAttribute("outsourcing", outsourcing);
@@ -255,7 +267,6 @@ public class EnterOutsourcingController {
             HttpSession session) {
 
         EnterOutsourcing outsourcingToUpdate = new EnterOutsourcing();
-        
         // payload에서 데이터 추출 및 EnterOutsourcing 객체에 설정
         String osCd = (String) payload.get("osCd");
         String osTtl = (String) payload.get("osTtl");
@@ -332,8 +343,6 @@ public class EnterOutsourcingController {
         @SuppressWarnings("unchecked")
         List<String> categoryCodes = (List<String>) payload.get("categoryCodes");
         String tags = (String) payload.get("tags");
-        
-        // OutsourcingFormDataDto는 세션에 있으므로 업데이트 필요 없음 (서비스에서 osCd와 categoryCodes/tags로 처리)
         outsourcingService.updateOutsourcingStep2(osCd, categoryCodes, tags);
         return ResponseEntity.ok(Map.of("success", true, "message", "카테고리 및 태그가 수정되었습니다."));
     }
@@ -343,8 +352,11 @@ public class EnterOutsourcingController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> updateStep3(
             @RequestParam("osCd") String osCd,
-            @RequestParam(value = "outsourcingThumbnailFile", required = false) MultipartFile thumbnailFile) {
-        outsourcingService.updateOutsourcingStep3(osCd, thumbnailFile);
+            @RequestParam(value = "outsourcingThumbnailFile", required = false) MultipartFile thumbnailFile,
+            @RequestParam(value = "newBodyImageFiles", required = false) List<MultipartFile> newBodyImageFiles, // [!code ++]
+            @RequestParam(value = "deletedBodyImageCds", required = false) List<String> deletedBodyImageCds // [!code ++]
+            ) {
+        outsourcingService.updateOutsourcingStep3(osCd, thumbnailFile, newBodyImageFiles, deletedBodyImageCds); // [!code modified]
         return ResponseEntity.ok(Map.of("success", true, "message", "첨부 파일이 수정되었습니다."));
     }
 
@@ -420,18 +432,13 @@ public class EnterOutsourcingController {
         }
         String entCd = outsourcingService.findEntCdByMbrCd(mbrCd);
         outsourcingService.linkPortfolioToOutsourcing(osCd, prtfCd, entCd);
-
-        // 성공했다는 정보와 메시지를 담은 JSON 객체를 반환
         return ResponseEntity.ok(Map.of("success", true, "message", "포트폴리오가 성공적으로 연결되었습니다."));
     }
 
     @DeleteMapping("/unlink-portfolio")    
     @ResponseBody
     public ResponseEntity<Map<String, Object>> unlinkPortfolio(@RequestBody Map<String, String> payload) {
-        // 실제 비즈니스 로직 호출
         outsourcingService.unlinkPortfolioFromOutsourcing(payload.get("osCd"), payload.get("prtfCd"));
-
-        // 성공 응답으로 JSON 객체를 명시적으로 반환
         return ResponseEntity.ok(Map.of("success", true, "message", "연결이 해제되었습니다."));
     }
     
@@ -447,12 +454,11 @@ public class EnterOutsourcingController {
     @ResponseBody
     public ResponseEntity<List<EnterPortfolio>> searchCompanyPortfolios(
             @RequestParam("query") String query,
-            @RequestParam("entCd") String entCd) {
+            @RequestParam("entCd") String
+ entCd) {
         
         // 포트폴리오 서비스(EnterPortfolioService)를 사용하여 검색 로직 수행
         List<EnterPortfolio> searchResults = portfolioService.searchByTitleForLinking(query, entCd);
-        
         return ResponseEntity.ok(searchResults);
     }
-
 }

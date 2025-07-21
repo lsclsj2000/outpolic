@@ -7,12 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         body { font-family: "Inter", sans-serif; }
-        .main-container { max-width: 960px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); height:900px}
+        .main-container { max-width: 960px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
         .section-title { text-align: center; margin-bottom: 30px; font-size: 1.8em; }
-        .form-step { display: none; } /* 각 단계 폼은 기본적으로 숨김 */
+        .form-step { display: none; }
         .form-step.active { display: block; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .progress-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .progress-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; max-width: 600px; margin-left: auto; margin-right: auto; }
         .progress-indicator::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: #e0e0e0; transform: translateY(-50%); z-index: 1; }
         .progress-step { width: 30px; height: 30px; border-radius: 50%; background-color: #e0e0e0; color: #888; display: flex; justify-content: center; align-items: center; font-weight: bold; position: relative; z-index: 2; border: 3px solid #fff; }
         .progress-step.active { background-color: #264796; color: white; border-color: #264796;}
@@ -22,50 +22,19 @@
         .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
         .btn-step { background-color: #264796; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; }
         .btn-step.prev { background-color: #6c757d; }
-        .btn-submit { background-color: #28a745; color: white; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600; }
-        .btn-submit:hover { background-color: #218838; }
+        .btn-submit { background-color: #28a745; }
         .error-message { color: #dc3545; font-size: 0.875rem; margin-top: 5px; }
-        .btn-secondary { background-color: #6c757d; border-color: #6c757d; color: white; padding: 8px 12px; border-radius: 5px; cursor: pointer; border: none; }
-
-        /* 다중 카테고리 행을 위한 스타일 */
-        .category-row-new {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-        .category-row-new .category-select { flex-grow: 1; }
-        .remove-category-row-btn { 
-            background-color: #dc3545; 
-            border-color: #dc3545; 
-            color: white; 
-            padding: 5px 10px; /* 버튼 패딩 조정 */
-            line-height: 1; /* 텍스트 세로 중앙 정렬 */
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-        }
-
-        /* 태그 검색 드롭다운 스타일 */
+        .category-row-new { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .category-select { flex-grow: 1; }
+        .remove-category-row-btn { background-color: #dc3545; border-color: #dc3545; color: white; padding: 5px 10px; line-height: 1; border: none; border-radius: 5px; cursor: pointer; }
         .tag-search-wrapper { position: relative; }
-        .tag-search-results-dropdown {
-            position: absolute;
-            width: 100%;
-            border: 1px solid #ddd;
-            background-color: #fff;
-            z-index: 1000;
-            max-height: 150px;
-            overflow-y: auto;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: none; /* 기본 숨김 */
-        }
-        .tag-search-results-dropdown .result-item-tag {
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-        .tag-search-results-dropdown .result-item-tag:hover {
-            background-color: #f0f0f0;
-        }
+        .tag-search-results-dropdown { position: absolute; width: 100%; border: 1px solid #ddd; background-color: #fff; z-index: 1000; max-height: 150px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; }
+        .tag-search-results-dropdown .result-item-tag { padding: 8px 12px; cursor: pointer; }
+        .tag-search-results-dropdown .result-item-tag:hover { background-color: #f0f0f0; }
+        .note-editor.note-frame { z-index: 1; }
+        .select2-container { z-index: 9999; }
+        .body-image-preview-item { position: relative; }
+        .remove-body-image-btn { position: absolute; top: 2px; right: 2px; background: rgba(220, 53, 69, 0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; line-height: 20px; text-align: center; }
     </style>
 </head>
 <body>
@@ -79,20 +48,21 @@
             <div class="progress-step" data-step="3">3</div>
             <div class="progress-step" data-step="4">4</div>
             <div class="progress-step" data-step="5">5</div>
+            <div class="progress-step" data-step="6">6</div>
         </div>
 
-        <form id="portfolioRegistrationForm" enctype="multipart/form-data">
+        <form id="portfolioRegistrationForm">
             <input type="hidden" id="prtfCd" name="prtfCd">
 
             <div class="form-step active" id="step1">
-                <h4>1단계: 기본 정보 입력</h4>
+                <h4>1단계: 기본 정보</h4>
                 <div class="form-group">
                     <label for="prtfTtl">포트폴리오 제목 <span style="color:red;">*</span></label>
                     <input type="text" id="prtfTtl" name="prtfTtl" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label for="prtfCn">포트폴리오 내용 <span style="color:red;">*</span></label>
-                    <textarea id="prtfCn" name="prtfCn" class="form-control" rows="8" style="height:300px;" required></textarea>
+                    <textarea id="prtfCn" name="prtfCn" class="form-control"></textarea>
                 </div>
                 <div class="form-navigation">
                     <span></span><button type="button" class="btn-step next" data-step="1">다음</button>
@@ -100,7 +70,7 @@
             </div>
 
             <div class="form-step" id="step2">
-                <h4>2단계: 참여 기간 및 클라이언트 정보</h4>
+                <h4>2단계: 참여 기간 및 클라이언트</h4>
                 <div class="form-group">
                     <label for="prtfPeriodStart">참여 기간 시작일</label>
                     <input type="date" id="prtfPeriodStart" name="prtfPeriodStart" class="form-control">
@@ -127,7 +97,7 @@
                 <h4>3단계: 카테고리 및 태그</h4>
                 <div class="form-group">
                     <label>카테고리 <span style="color:red;">*</span></label>
-                    <div id="category-rows-container"></div> 
+                    <div id="category-rows-container"></div>
                     <button type="button" id="add-category-row-btn" class="btn btn-secondary mt-2" style="background-color: #6c757d; border-color: #6c757d;">+ 카테고리 추가</button>
                     <div class="error-message" id="categoryError"></div>
                 </div>
@@ -145,10 +115,10 @@
             </div>
 
             <div class="form-step" id="step4">
-                <h4>4단계: 대표 이미지 등록</h4>
+                <h4>4단계: 대표 이미지</h4>
                 <div class="form-group">
                     <label for="portfolioImage">대표 이미지 <span style="color:red;">*</span></label>
-                    <input type="file" id="portfolioImage" name="portfolioImage" class="form-control" accept="image/*" required>
+                    <input type="file" id="portfolioImage" name="portfolioImage" class="form-control" accept="image/*">
                     <div id="image-preview" style="margin-top:15px; width: 150px; height: 150px; border: 1px solid #ddd; background-color: #f8f8f8; display: flex; align-items: center; justify-content: center; color: #aaa;">
                         <span>이미지 없음</span>
                     </div>
@@ -160,32 +130,27 @@
             </div>
 
             <div class="form-step" id="step5">
-                <h4>5단계: 최종 확인 및 등록</h4>
+                <h4>5단계: 본문 이미지 (여러 장 가능)</h4>
                 <div class="form-group">
-                    <p>입력하신 모든 정보를 확인 후 '등록 완료' 버튼을 눌러주세요.</p>
-                    <div id="final-summary">
-                        <h5>[1단계] 기본 정보</h5>
-                        <p><strong>제목:</strong> <span id="summaryPrtfTtl"></span></p>
-                        <p><strong>내용:</strong> <span id="summaryPrtfCn" style="white-space: pre-wrap;"></span></p>
-                        
-                        <h5>[2단계] 참여 기간 및 클라이언트 정보</h5>
-                        <p><strong>시작일:</strong> <span id="summaryPrtfPeriodStart"></span></p>
-                        <p><strong>종료일:</strong> <span id="summaryPrtfPeriodEnd"></span></p>
-                        <p><strong>클라이언트:</strong> <span id="summaryPrtfClient"></span></p>
-                        <p><strong>업종:</strong> <span id="summaryPrtfIndustry"></span></p>
-
-                        <h5>[3단계] 카테고리 및 태그</h5>
-                        <p><strong>카테고리:</strong> <span id="summaryCategories"></span></p>
-                        <p><strong>태그:</strong> <span id="summaryTags"></span></p>
-
-                        <h5>[4단계] 대표 이미지</h5>
-                        <div id="summaryImagePreview" style="margin-top:10px; width: 100px; height: 100px; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                            <span>이미지</span>
+                    <label for="portfolioBodyImages">이미지 파일 선택</label>
+<input type="file" id="portfolioBodyImages" name="portfolioBodyImages" class="form-control" accept="image/*" multiple>                    <div id="body-image-preview-container" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px;">
                         </div>
-                    </div>
                 </div>
                 <div class="form-navigation">
                     <button type="button" class="btn-step prev" data-step="5">이전</button>
+                    <button type="button" class="btn-step next" data-step="5">다음</button>
+                </div>
+            </div>
+
+            <div class="form-step" id="step6">
+                <h4>6단계: 최종 확인</h4>
+                <div class="form-group">
+                    <p>입력하신 모든 정보를 확인 후 '등록 완료' 버튼을 눌러주세요.</p>
+                    <div id="final-summary" style="border: 1px solid #eee; padding: 15px; border-radius: 8px;">
+                        </div>
+                </div>
+                <div class="form-navigation">
+                    <button type="button" class="btn-step prev" data-step="6">이전</button>
                     <button type="button" class="btn-step submit">등록 완료</button>
                 </div>
             </div>
@@ -195,43 +160,18 @@
 
 <th:block layout:fragment="jsFile">
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+        
+
         $(document).ready(function() {
-            // =================================================================
-            // 1. 초기 데이터 설정
-            // =================================================================
-            // addPortfolio는 새로 등록하는 페이지이므로, 초기 categoryPath는 비어있습니다.
-            const categoryJson = '[]'; 
-            const initialCategoryPath = JSON.parse(categoryJson);
-            
-            // addPortfolio에서는 portfolio 객체가 없으므로, initialThumbnailUrl은 null로 고정합니다.
-            let initialThumbnailUrl = null;
-
-            // 전역 스코프(또는 $(document).ready()의 최상위 스코프)에 currentStep 변수 선언
             let currentStep = 1;
-            
-            let currentCategoryCodes = []; 
-            
-            // 모든 단계의 데이터를 임시로 저장할 객체 (세션 데이터와 동일한 구조를 가짐)
-            let currentFormData = {
-                prtfCd: null, // 초기에는 null, 1단계 성공 후 할당
-                entCd: null,
-                mbrCd: null,
-                prtfTtl: '',
-                prtfCn: '',
-                prtfPeriodStart: null,
-                prtfPeriodEnd: null,
-                prtfClient: '',
-                prtfIndustry: '',
-                categoryCodes: [], // 여러 카테고리 ID를 저장할 배열
-                tags: '',
-                thumbnailFile: null // File객체는 JavaScript에서만 다루고, 최종 전송 시 FormData에 추가
-            };
+            let currentFormData = {};
+            let bodyImageFiles = []; // 본문 이미지 파일 목록
 
-            // =================================================================
-            // 2. 함수 정의
-            // =================================================================
+          
 
             function showStep(step) {
                 $('.form-step').removeClass('active');
@@ -240,443 +180,321 @@
                 for (let i = 1; i <= step; i++) {
                     $('.progress-step[data-step=' + i + ']').addClass('active');
                 }
-                // 최종 확인 단계일 경우 요약 정보 업데이트
-                if (step === 5) {
+                if (step === 6) {
                     updateFinalSummary();
                 }
             }
-
-            /**
-             * 이미지 미리보기를 업데이트하는 함수
-             * @param {string|null} url - 표시할 이미지의 URL
-             */
-            function updateImagePreview(url = null) {
-                const previewContainer = $('#image-preview');
-                previewContainer.empty();
-
-                if (url) {
-                    const displayUrl = url.startsWith('/attachment/') ? url : '/attachment' + url.replace(/^\/+/, '');
-                    previewContainer.html(`
-                        <img src="${displayUrl}" alt="Thumbnail">
-                    `);
-                } else {
-                    previewContainer.html('<span>이미지 없음</span>');
-                }
-            }
-
-            /**
-             * 특정 레벨의 드롭다운을 API에서 받아온 데이터로 채우는 함수
-             * @param {object} $select - jQuery로 감싼 <select> 요소
-             * @param {Array<object>} categories - API로부터 받은 카테고리 데이터 배열
-             * @param {string|null} selectedId - 미리 선택할 카테고리 ID (수정 폼에서만 사용)
-             */
-            function populateDropdown($select, categories, selectedId = null) {
-                // $select가 jQuery 객체인지 확인 (안전 장치)
-                if (!($select instanceof jQuery)) {
-                    console.error("populateDropdown: Expected jQuery object, got", $select);
-                    return;
-                }
-                
-                const level = $select.data('level');
-                // Select2 인스턴스가 이미 있으면 파괴 (재초기화 위해)
-                if ($select.hasClass("select2-hidden-accessible")) {
-                    $select.select2('destroy');
-                }
-                $select.html(`<option value="">${level}차 선택</option>`).show(); // 플레이스홀더 옵션 추가
-                if (categories && categories.length > 0) {
-                    categories.forEach(cat => {
-                        const isSelected = (cat.ctgryId === selectedId) ? 'selected' : '';
-                        $select.append(`<option value="${cat.ctgryId}" ${isSelected}>${cat.ctgryNm}</option>`); 
-                    });
-                    // Select2 다시 초기화
-                    $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: 'style', allowClear: true });
-                    if (selectedId) {
-                        $select.val(selectedId).trigger('change.select2'); // Select2에 값 설정
-                    }
-                } else {
-                    // 하위 카테고리가 없으면 드롭다운 숨김
-                    $select.hide();
-                }
-            }
-
-            /**
-             * 카테고리 드롭다운 변경 시 하위 드롭다운을 로드하고 최종 값을 업데이트하는 함수
-             */
-            function handleCategoryChange() {
-                const $this = $(this);
-                const level = $this.data('level');
-                const selectedValue = $this.val();
-                const $row = $this.closest('.category-row-new'); // 현재 카테고리 행
-                const rowId = $row.data('row-id'); // 현재 행의 고유 ID
-
-                // 현재 레벨 다음의 모든 하위 드롭다운 초기화 및 숨김
-                for (let i = level + 1; i <= 3; i++) {
-                    const $nextSelect = $row.find(`.category-select[data-level='${i}']`);
-                    if ($nextSelect.hasClass("select2-hidden-accessible")) {
-                        $nextSelect.select2('destroy');
-                    }
-                    $nextSelect.html('').hide();
-                }
-
-                // 현재 행의 최종 카테고리 hidden input 업데이트
-                $row.find('.final-category-id').val(selectedValue || (level > 1 ? $row.find(`.category-select[data-row-id="${rowId}"][data-level="${level - 1}"]`).val() : ''));
-                
-                // currentFormData.categoryCodes 업데이트 (모든 행의 최종 카테고리 ID 수집)
-                updateCurrentFormDataCategoryCodes();
-
-
-                // 선택된 값이 있고, 3차 미만인 경우에만 하위 카테고리 로드
-                if (selectedValue && level < 3) {
-                    $.get('/api/categories', { parentId: selectedValue }, function(subCategories) {
-                        populateDropdown($row.find(`.category-select[data-level='${level + 1}']`), subCategories);
-                    });
-                }
-            }
             
-            /**
-             * currentFormData.categoryCodes를 모든 행의 최종 카테고리 ID로 업데이트
-             */
             function updateCurrentFormDataCategoryCodes() {
-                currentFormData.categoryCodes = [];
+                currentFormData.categoryCodes = []; // 배열을 초기화
+                // 모든 카테고리 행을 순회
                 $('.category-row-new').each(function() {
+                    // 각 행의 최종 선택된 카테고리 ID 값을 가져옴
                     const finalCatIdInRow = $(this).find('.final-category-id').val();
-                    // undefined, null, 빈 문자열인 경우 배열에 추가하지 않음
-                    if (finalCatIdInRow && finalCatIdInRow !== "" && finalCatIdInRow !== "null" && finalCatIdInRow !== "undefined") {
+                    
+                    // 값이 있는 경우에만 배열에 추가
+                    if (finalCatIdInRow && finalCatIdInRow.trim() !== "") {
                         currentFormData.categoryCodes.push(finalCatIdInRow);
                     }
                 });
             }
-
-            /**
-             * 새 카테고리 행을 추가하고 1차 카테고리를 로드하는 함수
-             */
-            const addNewCategoryRow = () => {
-                const uniqueId = new Date().getTime(); // 각 행의 select 요소들이 독립적인 ID를 가질 수 있도록
-                const newRowHtml = `
-                    <div class="category-row-new" data-row-id="${uniqueId}" style="display: flex; gap: 10px; margin-bottom: 10px;">
-                        <select class="form-control category-select" data-level="1" data-row-id="${uniqueId}"><option value="">1차 선택</option></select>
-                        <select class="form-control category-select" data-level="2" data-row-id="${uniqueId}" style="width: 30%; display:none;"><option value="">2차 선택</option></select>
-                        <select class="form-control category-select" data-level="3" data-row-id="${uniqueId}" style="width: 30%; display:none;"><option value="">3차 선택</option></select>
-                        <input type="hidden" class="final-category-id" name="categoryCodes" value="">
-                        <button type="button" class="btn btn-danger remove-category-row-btn">삭제</button>
-                    </div>`;
-                
-                $('#category-rows-container').append(newRowHtml);
-                
-                const $newRow = $(`div.category-row-new[data-row-id="${uniqueId}"]`); // 새로 추가된 행 선택
-                const $newFirstDropdown = $newRow.find(`.category-select[data-level="1"]`);
-
-                // 1차 카테고리 데이터를 요청
-                $.get('/api/categories', { parentId: '' }, function(categories) {
-                    populateDropdown($newFirstDropdown, categories);
-                });
-
-                // 새로 추가된 행 내의 select 박스 변경 이벤트 리스너 바인딩 (이벤트 위임 방식으로)
-                $newRow.on('change', '.category-select', handleCategoryChange);
-
-                // 새로 추가된 행의 remove 버튼에 이벤트 리스너 바인딩 (클릭 시 해당 행 제거)
-                $newRow.on('click', '.remove-category-row-btn', function() {
-                    $(this).closest('.category-row-new').remove();
-                    updateCurrentFormDataCategoryCodes(); // 삭제 후 currentFormData.categoryCodes 업데이트
-                });
-            };
-
-
-            /**
-             * 페이지 로드 시, 카테고리 드롭다운 초기 설정 (addPortfolio에서는 1차 카테고리만 로드)
-             */
-            async function initializeCategorySelectors() {
-                // 기본으로 하나의 카테고리 행을 추가하고 초기화
-                addNewCategoryRow(); 
-            }
-
-            // --- 최종 확인 단계 요약 정보 업데이트 함수 ---
             function updateFinalSummary() {
-                $('#summaryPrtfTtl').text(currentFormData.prtfTtl);
-                $('#summaryPrtfCn').text(currentFormData.prtfCn);
-                $('#summaryPrtfPeriodStart').text(currentFormData.prtfPeriodStart || '미입력');
-                $('#summaryPrtfPeriodEnd').text(currentFormData.prtfPeriodEnd || '미입력');
-                $('#summaryPrtfClient').text(currentFormData.prtfClient || '미입력');
-                $('#summaryPrtfIndustry').text(currentFormData.prtfIndustry || '미입력');
+                // 1~3단계 데이터 요약
+                const summaryHtml = `
+                    <h5>[1단계] 기본 정보</h5>
+                    <p><strong>제목:</strong> ${currentFormData.prtfTtl || '미입력'}</p>
+                    <p><strong>내용:</strong></p>
+                    <div style="white-space: pre-wrap; border: 1px solid #eee; padding: 10px; max-height: 150px; overflow-y: auto;">${currentFormData.prtfCn || '미입력'}</div>
+                    <hr>
+                    <h5>[2단계] 참여 기간 및 클라이언트 정보</h5>
+                    <p><strong>시작일:</strong> ${currentFormData.prtfPeriodStart || '미입력'}</p>
+                    <p><strong>종료일:</strong> ${currentFormData.prtfPeriodEnd || '미입력'}</p>
+                    <p><strong>클라이언트:</strong> ${currentFormData.prtfClient || '미입력'}</p>
+                    <p><strong>업종:</strong> ${currentFormData.prtfIndustry || '미입력'}</p>
+                    <hr>
+                    <h5>[3단계] 카테고리 및 태그</h5>
+                    <p><strong>카테고리:</strong> <span id="summaryCategories">미선택</span></p>
+                    <p><strong>태그:</strong> ${currentFormData.tags || '미입력'}</p>
+                    <hr>
+                    <h5>[4단계] 대표 이미지</h5>
+                    <div id="summaryImagePreview" style="width:100px; height:100px; border: 1px solid #eee; display:flex; align-items:center; justify-content:center;"></div>
+                    <hr>
+                    <h5>[5단계] 본문 이미지</h5>
+                    <div id="summaryBodyImagesPreview" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+                `;
+                $('#final-summary').html(summaryHtml);
 
-                // 카테고리 이름 가져오기 (비동기) - 여러 카테고리 지원
+                // 카테고리 이름 비동기 조회 및 표시
                 if (currentFormData.categoryCodes && currentFormData.categoryCodes.length > 0) {
-                    const categoryPromises = currentFormData.categoryCodes.map(id => 
-                        $.get('/api/categories/search', { query: id }).then(data => {
-                            // data는 List<CategorySearchDto> 입니다.
-                            // data[0]이 존재하고 ctgryNm이 비어있지 않아야 합니다.
-                            return (data.length > 0 && data[0].ctgryNm) ? data[0].ctgryNm : id;
-                        })
-                    );
-                    Promise.all(categoryPromises).then(names => {
+                    const promises = currentFormData.categoryCodes.map(id => $.get('/api/categories/search', { query: id }));
+                    Promise.all(promises).then(results => {
+                        const names = results.map(data => (data.length > 0 && data[0].ctgryNm) ? data[0].ctgryNm : '알 수 없음');
                         $('#summaryCategories').text(names.join(', '));
                     });
-                } else {
-                    $('#summaryCategories').text('미선택');
                 }
-                
-                $('#summaryTags').text(currentFormData.tags || '미입력');
 
-                const summaryImagePreview = $('#summaryImagePreview');
-                summaryImagePreview.empty();
-                if (currentFormData.thumbnailFile) { // 새로 업로드된 파일
+                // 대표 이미지 미리보기
+                const $thumbPreview = $('#summaryImagePreview');
+                if (currentFormData.thumbnailFile) {
                     const reader = new FileReader();
-                    reader.onload = (e) => summaryImagePreview.html(`<img src="${e.target.result}" alt="Preview" style="width:100%; height:100%; object-fit:cover;">`);
-                    reader.readAsDataURL(currentFormData.thumbnailFile); 
+                    reader.onload = e => $thumbPreview.html(`<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`);
+                    reader.readAsDataURL(currentFormData.thumbnailFile);
                 } else {
-                    summaryImagePreview.html('<span>이미지 없음</span>');
+                    $thumbPreview.html('<span>없음</span>');
+                }
+
+                // 본문 이미지 미리보기
+                const $bodyPreview = $('#summaryBodyImagesPreview');
+                $bodyPreview.empty();
+                if (bodyImageFiles.length > 0) {
+                    bodyImageFiles.forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = e => $bodyPreview.append(`<img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:4px;">`);
+                        reader.readAsDataURL(file);
+                    });
+                } else {
+                    $bodyPreview.html('<span>없음</span>');
                 }
             }
 
+            // ... (카테고리/태그 관련 함수들: populateDropdown, handleCategoryChange, addNewCategoryRow, initializeCategorySelectors) ...
 
-            // =================================================================
-            // 3. 이벤트 리스너 바인딩
-            // =================================================================
+           $('.btn-step.next').on('click', function() {
+    const step = $(this).data('step');
+    let isValid = true;
 
-            // '다음' 버튼 클릭 이벤트
-         $('.btn-step.next').on('click', function() {
-                let isValid = true;
-                const step = $(this).data('step');
-                
-                let ajaxData; // AJAX 요청의 'data' 파라미터에 들어갈 값 (객체 또는 FormData)
-                let ajaxContentType = 'application/json'; // 기본 Content-Type (JSON)
-                let ajaxProcessData = false; // 기본 processData (JSON 직렬화 시)
+    // 각 단계별로 데이터를 currentFormData 객체에 저장
+    if (step === 1) {
+        const prtfTtl = $('#prtfTtl').val();
+        const prtfCn = $('#prtfCn').val();
+        if (!prtfTtl || !prtfCn) {
+            alert('제목과 내용을 모두 입력해주세요.');
+            isValid = false;
+        } else {
+            currentFormData.prtfTtl = prtfTtl;
+            currentFormData.prtfCn = prtfCn;
+        }
+    } else if (step === 2) {
+        currentFormData.prtfPeriodStart = $('#prtfPeriodStart').val();
+        currentFormData.prtfPeriodEnd = $('#prtfPeriodEnd').val();
+        currentFormData.prtfClient = $('#prtfClient').val();
+        currentFormData.prtfIndustry = $('#prtfIndustry').val();
+    } else if (step === 3) {
+        updateCurrentFormDataCategoryCodes(); // 카테고리 최신 정보 업데이트
+        if (currentFormData.categoryCodes.length === 0) {
+            alert('카테고리는 최소 하나 이상 선택해야 합니다.');
+            isValid = false;
+        } else {
+            currentFormData.tags = $('#tags').val();
+        }
+    } else if (step === 4) {
+        const thumbnailFile = $('#portfolioImage')[0].files[0];
+        if (!thumbnailFile) {
+            alert('대표 이미지를 등록해주세요.');
+            isValid = false;
+        } else {
+            currentFormData.thumbnailFile = thumbnailFile;
+        }
+    } else if (step === 5) {
+        // 5단계는 bodyImageFiles 배열에 이미 파일이 저장되어 있으므로 추가 처리 없음
+    }
+    
+    if (isValid) {
+        currentStep++;
+        showStep(currentStep);
+    }
+});
 
-                // prtfCd는 모든 요청에 포함 (1단계 성공 후부터)
-                const prtfCdValue = currentFormData.prtfCd;
-
-                if (step === 1) { // 1단계: 기본 정보 (JSON)
-                    const prtfTtl = $('#prtfTtl').val();
-                    const prtfCn = $('#prtfCn').val();
-                    if (!prtfTtl || !prtfCn) {
-                        alert('제목과 내용을 모두 입력해주세요.');
-                        isValid = false;
-                    } else {
-                        currentFormData.prtfTtl = prtfTtl;
-                        currentFormData.prtfCn = prtfCn;
-                        // ajaxData를 일반 객체로 구성
-                        ajaxData = { 
-                            prtfTtl: prtfTtl,
-                            prtfCn: prtfCn
-                        };
-                        // Note: prtfCd, entCd, mbrCd는 서버에서 세션을 통해 받거나,
-                        // 첫 요청(saveStep1) 성공 후 응답으로 받아와서 currentFormData에 저장하고,
-                        // 이후 요청 시 FormData에 포함하여 전송하는 방식이어야 합니다.
-                        // 현재 코드는 saveStep1에서 prtfCd를 생성하므로, 첫 요청에서는 prtfCd를 보내지 않습니다.
-                        // 컨트롤러에서 @RequestBody Map<String, Object>를 받을 것이므로, JSON으로 보냅니다.
-                    }
-                } else if (step === 2) { // 2단계: 참여 기간 및 클라이언트 정보 (JSON)
-                    const prtfPeriodStart = $('#prtfPeriodStart').val();
-                    const prtfPeriodEnd = $('#prtfPeriodEnd').val();
-                    if (prtfPeriodStart && prtfPeriodEnd && (new Date(prtfPeriodStart) > new Date(prtfPeriodEnd))) {
-                        alert('참여 기간 시작일은 종료일보다 늦을 수 없습니다.');
-                        isValid = false;
-                    } else {
-                        currentFormData.prtfPeriodStart = prtfPeriodStart || null; 
-                        currentFormData.prtfPeriodEnd = prtfPeriodEnd || null;   
-                        currentFormData.prtfClient = $('#prtfClient').val() || ''; 
-                        currentFormData.prtfIndustry = $('#prtfIndustry').val() || ''; 
-                        
-                        ajaxData = { // 일반 JS 객체로 데이터 구성
-                            prtfCd: prtfCdValue, // prtfCd 포함
-                            prtfPeriodStart: currentFormData.prtfPeriodStart,
-                            prtfPeriodEnd: currentFormData.prtfPeriodEnd,
-                            prtfClient: currentFormData.prtfClient,
-                            prtfIndustry: currentFormData.prtfIndustry
-                        };
-                        // JSON 전송을 위한 기본 contentType과 processData는 유지됨
-                    }
-                } else if (step === 3) { // 3단계: 카테고리 및 태그 (JSON)
-                	updateCurrentFormDataCategoryCodes();
-                
-                    if (currentFormData.categoryCodes.length === 0) {
-                        alert('카테고리는 최소 하나 이상 선택해야 합니다.');
-                        isValid = false;
-                    } else {
-                        $('#categoryError').text(''); 
-                        currentFormData.tags = $('#tags').val(); 
-                        ajaxData = { // 일반 JS 객체로 데이터 구성
-                            prtfCd: prtfCdValue, // prtfCd 포함
-                            categoryCodes: currentFormData.categoryCodes, // 배열 전송
-                            tags: currentFormData.tags
-                        };
-                        // JSON 전송을 위한 기본 contentType과 processData는 유지됨
-                        ajaxContentType = 'application/json';
-                        ajaxProcessData = false;
-                    }
-                } else if (step === 4) { // 4단계: 대표 이미지 등록 (FormData)
-                    const portfolioImageFile = $('#portfolioImage')[0].files[0];
-                    if (!portfolioImageFile) { 
-                        alert('대표 이미지를 등록해주세요.');
-                        isValid = false;
-                    } else { 
-                        // ▼▼▼ 이 한 줄을 추가해주세요! ▼▼▼
-                        currentFormData.thumbnailFile = portfolioImageFile; 
-
-                        ajaxData = new FormData();
-                        ajaxData.append('portfolioImage', portfolioImageFile);
-                        ajaxData.append('prtfCd', prtfCdValue);
-
-                        ajaxContentType = false;
-                        ajaxProcessData = false;
-                    }
-                }
-                
-                if (step === 5) { // 5단계: 최종 확인 및 등록 (이 단계에서는 AJAX 요청을 보내지 않음, 요약만 보여줌)
-                    updateFinalSummary(); // 요약 정보 업데이트
-                    currentStep++;
-                    showStep(currentStep);
-                    return; 
-                }
-
-                if (isValid) {
-                    const url = `/enter/portfolio/add/step${step}`;
-                    // ajaxData가 JSON 객체라면 JSON.stringify()를 적용하여 문자열로 변환
-                    const dataToSend = (ajaxContentType === 'application/json') ? JSON.stringify(ajaxData) : ajaxData;
-
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: dataToSend,
-                        processData: ajaxProcessData,
-                        contentType: ajaxContentType,
-                        success: function(response) {
-                            if (response.success) {
-                                // 1단계에서만 prtfCd를 응답으로 받아서 currentFormData에 저장
-                                if (step === 1 && response.prtfCd) {
-                                    currentFormData.prtfCd = response.prtfCd;
-                                }
-                                currentStep++;
-                                showStep(currentStep);
-                            } else {
-                                alert('오류: ' + (response.message || '알 수 없는 오류'));
-                            }
-                        },
-                        error: function(xhr, status, error) { 
-                            console.error("AJAX 통신 오류 (단계 " + step + "):", status, error, xhr.responseText, xhr.responseJSON);
-                            // XHR.responseJSON에서 서버가 보낸 오류 메시지를 확인할 수 있습니다.
-                            alert('서버 오류가 발생했습니다. (' + url + ')');
-                        }
-                    });
-                }
-            });
-            // '이전' 버튼 클릭 이벤트
             $('.btn-step.prev').on('click', function() {
                 currentStep--;
                 showStep(currentStep);
             });
 
-            // '등록 완료' 버튼 클릭 (5단계)
             $('.btn-step.submit').on('click', function() {
-                // 최종 등록은 모든 단계의 정보가 currentFormData에 통합되어 있으므로, 이를 전송
                 const finalFormData = new FormData();
                 
-                // currentFormData 객체의 필드를 FormData에 추가
-                for (const key in currentFormData) {
-                    if (currentFormData.hasOwnProperty(key)) {
-                        const value = currentFormData[key]; 
-                        if (key === 'categoryCodes') { 
-                            if (value && value.length > 0) {
-                                value.forEach(code => finalFormData.append('categoryCodes[]', code));
-                            }
-                        } else if (value !== null && value !== undefined) {
-                            finalFormData.append(key, value);
-                        }
+                // 1단계 데이터
+                finalFormData.append('prtfTtl', $('#prtfTtl').val());
+                finalFormData.append('prtfCn', $('#prtfCn').val()); // [!code focus]
+                
+                // 2단계 데이터
+                finalFormData.append('prtfPeriodStart', $('#prtfPeriodStart').val());
+                finalFormData.append('prtfPeriodEnd', $('#prtfPeriodEnd').val());
+                finalFormData.append('prtfClient', $('#prtfClient').val());
+                finalFormData.append('prtfIndustry', $('#prtfIndustry').val());
+                
+                // 3단계 데이터
+                $('.final-category-id').each(function() {
+                    if ($(this).val()) {
+                        finalFormData.append('categoryCodes', $(this).val());
                     }
+                });
+                finalFormData.append('tags', $('#tags').val());
+
+                // 4단계 데이터 (대표 이미지)
+                if ($('#portfolioImage')[0].files.length > 0) {
+                    finalFormData.append('thumbnailFile', $('#portfolioImage')[0].files[0]);
+                }
+
+                // 5단계 데이터 (본문 이미지)
+                if (bodyImageFiles.length > 0) {
+                    bodyImageFiles.forEach(file => {
+                        finalFormData.append('bodyImageFiles', file);
+                    });
                 }
 
                 $.ajax({
-                    url: '/enter/portfolio/add/complete',
+                    url: '/enter/portfolio/add/complete', // 새로운 통합 엔드포인트
                     type: 'POST',
-                    data: finalFormData, // 통합 FormData 전송
-                    processData: false, 
-                    contentType: false, 
-                    success: function(finalRes) { 
-                        if(finalRes.success) {
-                            // 콘솔에 메시지 띄우기 (finalRes.message가 undefined일 경우를 대비하여)
-                            const displayMessage = finalRes.message || "포트폴리오가 성공적으로 등록되었습니다."; 
-                            console.log("포트폴리오 등록 성공:", displayMessage); 
-                            
-                            alert(displayMessage); 
-                            window.location.href = finalRes.redirectUrl; 
+                    data: finalFormData,
+                    processData: false,
+                    contentType: false,
+                    success: function(res) {
+                        if(res.success) {
+                            alert('포트폴리오가 성공적으로 등록되었습니다.');
+                            window.location.href = res.redirectUrl;
                         } else {
-                            // 오류 발생 시에도 콘솔에 상세 정보 출력 (추가된 부분)
-                            console.error("포트폴리오 등록 실패:", finalRes.message);
-                            alert('최종 등록 실패: ' + finalRes.message);
+                            alert('등록 실패: ' + res.message);
                         }
                     },
-                    error: function(xhr, status, error) { // error 콜백에 파라미터 추가
-                        // AJAX 통신 오류 시 콘솔에 상세 정보 출력 (추가된 부분)
-                        console.error("AJAX 통신 오류 (최종 등록):", status, error, xhr.responseText);
-                        alert('최신 등록 중 서버 오류 발생'); 
+                    error: function() {
+                        alert('등록 중 서버 오류가 발생했습니다.');
                     }
                 });
             });
 
-            // 카테고리 행 추가 버튼 클릭 이벤트
-            $('#add-category-row-btn').on('click', addNewCategoryRow);
+            $('#portfolioBodyImages').on('change', function(event) {
+                const previewContainer = $('#body-image-preview-container');
+                previewContainer.empty();
+                bodyImageFiles = Array.from(event.target.files);
 
-            // 태그 검색 기능
-            let tagSearchTimeout;
-            $('#tags').on('input', function() {
-                clearTimeout(tagSearchTimeout);
-                const query = $(this).val();
-                const $resultsDiv = $('#tag-search-results');
-                $resultsDiv.empty().hide();
-
-                if (query.length < 1) return; 
-
-                tagSearchTimeout = setTimeout(() => {
-                    $.get('/enter/portfolio/api/tags/search', { query: query }, function(data) {
-                        if (data && data.length > 0) {
-                            data.forEach(tag => {
-                                $resultsDiv.append(`<div class="result-item-tag" data-tag-name="${tag}">${tag}</div>`);
-                            });
-                            $resultsDiv.show();
-                        }
-                    });
-                }, 300);
+                bodyImageFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewHtml = `
+                            <div class="body-image-preview-item" data-index="${index}">
+                                <img src="${e.target.result}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
+                                <button type="button" class="remove-body-image-btn">X</button>
+                            </div>`;
+                        previewContainer.append(previewHtml);
+                    }
+                    reader.readAsDataURL(file);
+                });
             });
 
-            $(document).on('click', '.result-item-tag', function() {
-                const tagName = $(this).data('tag-name');
-                const $tagsInput = $('#tags');
-                let currentTags = $tagsInput.val().split(',').map(t => t.trim()).filter(t => t);
+            $(document).on('click', '.remove-body-image-btn', function() {
+                const itemToRemove = $(this).closest('.body-image-preview-item');
+                const indexToRemove = parseInt(itemToRemove.data('index'));
                 
-                if (!currentTags.includes(tagName)) { 
-                    currentTags.push(tagName);
-                }
-                $tagsInput.val(currentTags.join(', '));
-                $('#tag-search-results').empty().hide(); 
+                bodyImageFiles.splice(indexToRemove, 1);
+                
+                const dt = new DataTransfer();
+                bodyImageFiles.forEach(file => dt.items.add(file));
+                $('#portfolioBodyImages')[0].files = dt.files;
+                
+                itemToRemove.remove();
             });
 
-            $('#tags').on('blur', function() {
-                setTimeout(() => {
-                    $('#tag-search-results').empty().hide();
-                }, 100); 
-            });
-
-
-            // 이미지 미리보기
-            $('#portfolioImage').on('change', function(event) {
+            // 대표 이미지 미리보기
+             $('#portfolioImage').on('change', function(event) {
                 const preview = $('#image-preview');
                 preview.empty();
                 const file = event.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = (e) => preview.html(`<img src="${e.target.result}" alt="New Preview" style="width:100%; height:100%; object-fit:cover;">`);
+                    reader.onload = (e) => preview.html(`<img src="${e.target.result}" alt="Preview" style="width:100%; height:100%; object-fit:cover;">`);
                     reader.readAsDataURL(file);
                 } else {
                     preview.html('<span>이미지 없음</span>');
                 }
             });
 
-            // =================================================================
-            // 4. 초기화 실행
-            // =================================================================
-            updateImagePreview(initialThumbnailUrl);
-            initializeCategorySelectors(); // 카테고리 초기 로드 (기본 1행 추가)
-            showStep(1); // 페이지 로드 시 1단계 표시
+            // ... (카테고리/태그 관련 JS는 생략하지 않고 모두 포함) ...
+             function populateDropdown($select, categories) {
+                const level = $select.data('level');
+                if ($select.hasClass("select2-hidden-accessible")) { $select.select2('destroy'); }
+                $select.html(`<option value="">${level}차 선택</option>`).show();
+                if (categories && categories.length > 0) {
+                    categories.forEach(cat => {
+                        $select.append(`<option value="${cat.ctgryId}">${cat.ctgryNm}</option>`);
+                    });
+                    $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: 'style', allowClear: true });
+                } else {
+                    $select.hide();
+                }
+            }
+
+            function handleCategoryChange() {
+                const $this = $(this);
+                const level = $this.data('level');
+                const selectedValue = $this.val();
+                const $row = $this.closest('.category-row-new');
+                for (let i = level + 1; i <= 3; i++) {
+                    const $nextSelect = $row.find(`.category-select[data-level='${i}']`);
+                    if ($nextSelect.hasClass("select2-hidden-accessible")) { $nextSelect.select2('destroy'); }
+                    $nextSelect.html('').hide();
+                }
+                $row.find('.final-category-id').val(selectedValue || (level > 1 ? $row.find(`.category-select[data-level="${level - 1}"]`).val() : ''));
+                if (selectedValue && level < 3) {
+                    $.get('/api/categories', { parentId: selectedValue }, function(subCategories) {
+                        populateDropdown($row.find(`.category-select[data-level='${level + 1}']`), subCategories);
+                    });
+                }
+            }
+
+            const addNewCategoryRow = () => {
+                const uniqueId = new Date().getTime();
+                const newRowHtml = `
+                    <div class="category-row-new" data-row-id="${uniqueId}">
+                        <select class="form-control category-select" data-level="1" data-row-id="${uniqueId}"><option value="">1차 선택</option></select>
+                        <select class="form-control category-select" data-level="2" data-row-id="${uniqueId}" style="display:none;"></select>
+                        <select class="form-control category-select" data-level="3" data-row-id="${uniqueId}" style="display:none;"></select>
+                        <input type="hidden" class="final-category-id">
+                        <button type="button" class="remove-category-row-btn">삭제</button>
+                    </div>`;
+                $('#category-rows-container').append(newRowHtml);
+                const $newRow = $(`div.category-row-new[data-row-id="${uniqueId}"]`);
+                $.get('/api/categories', { parentId: '' }, function(categories) {
+                    populateDropdown($newRow.find(`.category-select[data-level="1"]`), categories);
+                });
+                $newRow.on('change', '.category-select', handleCategoryChange);
+                $newRow.on('click', '.remove-category-row-btn', function() {
+                    $(this).closest('.category-row-new').remove();
+                });
+            };
+            
+            function initializeCategorySelectors() {
+                addNewCategoryRow();
+            }
+            $('#add-category-row-btn').on('click', addNewCategoryRow);
+
+            let tagSearchTimeout;
+            $('#tags').on('input', function() {
+                clearTimeout(tagSearchTimeout);
+                const query = $(this).val();
+                const $resultsDiv = $('#tag-search-results');
+                if (query.length < 1) {$resultsDiv.empty().hide(); return;}
+                tagSearchTimeout = setTimeout(() => {
+                    $.get('/enter/portfolio/api/tags/search', { query: query }, function(data) {
+                        $resultsDiv.empty().hide();
+                        if (data && data.length > 0) {
+                            data.forEach(tag => {$resultsDiv.append(`<div class="result-item-tag" data-tag-name="${tag}">${tag}</div>`);});
+                            $resultsDiv.show();
+                        }
+                    });
+                }, 300);
+            });
+            $(document).on('click', '.result-item-tag', function() {
+                const tagName = $(this).data('tag-name');
+                const $tagsInput = $('#tags');
+                let currentTags = $tagsInput.val().split(',').map(t => t.trim()).filter(t => t);
+                if (!currentTags.includes(tagName)) { currentTags.push(tagName); }
+                $tagsInput.val(currentTags.join(', '));
+                $('#tag-search-results').empty().hide();
+            });
+
+            initializeCategorySelectors();
+            showStep(1);
         });
     </script>
 </th:block>

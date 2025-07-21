@@ -3,6 +3,7 @@ package outpolic.enter.portfolio.domain;
 import lombok.Data;
 import outpolic.enter.POAddtional.domain.CategorySearchDto;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
+import outpolic.systems.file.domain.FileMetaData;
 
 import java.time.LocalDate; // LocalDate 임포트 추가
 import java.time.LocalDateTime;
@@ -20,12 +21,13 @@ public class EnterPortfolio {
     private LocalDate prtfPeriodEnd;   // 참여 기간 종료일
     private String prtfClient;         // 클라이언트명
     private String prtfIndustry;       // 업종
-
+    private String ctgryNm; 
     private String ctgryId;
     private List<CategorySearchDto> categories = new ArrayList<>();
     private List<String> tagNames = new ArrayList<>();
     private List<EnterOutsourcing> linkedOutsourcings = new ArrayList<>();
     // private EnterPortfolioFile thumbnailDetails; // 이 필드는 사용하지 않습니다.
     
-    
+    private List<FileMetaData> bodyImages = new ArrayList<>(); // [!code ++]
+
 }
