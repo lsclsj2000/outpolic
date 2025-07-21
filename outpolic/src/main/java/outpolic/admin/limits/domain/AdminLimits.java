@@ -35,4 +35,23 @@ public class AdminLimits {
 	private Integer authorityChat;
 	private Integer authorityReview;
 	private Integer authorityMdfcnYmdt;
+	
+	
+	private String limitsPeriodCode;
+	private String limitsPeriodName;
+	private Integer limitsPeriodDays;
+	private String limitsPeriodMdfcnAdmCode;
+	private String limitsPeriodMdfcnYmdt;
+	private String limitsPeriodRegAdmCode;
+	private String limitsPeriodRegYmdt;
+	
+	private String limitsReasonCode;
+	private String limitsReasonCnd;
+	private Integer limitsReasonCndMin;
+	private Integer limitsReasonCndMax;
+	private String limitsReasonExpln;
+	private String limitsReasonRegAdmCode;
+	private String limitsReasonRegYmdt;
+	private String limitsReasonMdfcnAdmCode;
+	private String limitsReasonMdfcnYmdt;
 }
