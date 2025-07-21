@@ -27,6 +27,20 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
 	}
 
 	@Override
+	public List<AdminLimits> getAdminLimitsReasonList() {
+		// 제재 사유 자원 조회
+		List<AdminLimits> adminLimitsReasonList = adminLimitsMapper.getAdminLimitsReasonList();
+		return adminLimitsReasonList;
+	}
+	
+	@Override
+	public List<AdminLimits> getAdminLimitsPeriodList() {
+		// 제재 기간 자원 조회
+		List<AdminLimits> adminLimitsPeriodList = adminLimitsMapper.getAdminLimitsPeriodList();
+		return adminLimitsPeriodList;
+	}
+
+	@Override
 	public List<AdminLimits> getAdminLimitsList() {
 		// 제재 내역 조회
 		List<AdminLimits> adminLimitsList = adminLimitsMapper.getAdminLimitsList();
@@ -41,5 +55,72 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
 		
 		return adminLimitsAuthorityList;
 	}
+	
+	@Override
+	public int registerLimitsType(AdminLimits adminLimits) {
+		// 제재 타입 등록
+		return adminLimitsMapper.insertLimitsType(adminLimits);
+	}
+
+	@Override
+	public int updateLimitsType(AdminLimits adminLimits) {
+		// 제재 타입 수정
+		return adminLimitsMapper.updateLimitsType(adminLimits);
+	}
+
+	@Override
+	public AdminLimits getLimitsTypeById(String limitsTypeCode) {
+		// 특정 제재 타입 조회 (수정 모달용)
+		return adminLimitsMapper.selectLimitsTypeById(limitsTypeCode);
+	}
+	
+	@Override
+	public int registerLimitsPeriod(AdminLimits adminLimits) {
+		// 제재 기간 등록
+		return adminLimitsMapper.insertLimitsPeriod(adminLimits);
+	}
+
+	@Override
+	public int updateLimitsPeriod(AdminLimits adminLimits) {
+		// 제재 기간 수정
+		return adminLimitsMapper.updateLimitsPeriod(adminLimits);
+	}
+
+	@Override
+	public AdminLimits getLimitsPeriodById(String limitsPeriodCode) {
+		// 특정 제재 기간 조회 (수정 모달용)
+		return adminLimitsMapper.selectLimitsPeriodById(limitsPeriodCode);
+	}
+	
+	@Override
+	public int registerLimitsReason(AdminLimits adminLimits) {
+		// 제재 사유 등록
+	    return adminLimitsMapper.insertLimitsReason(adminLimits);
+	}
+
+	@Override
+	public int updateLimitsReason(AdminLimits adminLimits) {
+		// 제재 사유 수정
+	    return adminLimitsMapper.updateLimitsReason(adminLimits);
+	}
+
+	@Override
+	public AdminLimits getLimitsReasonById(String limitsReasonCode) {
+		// 특정 제재 사유 조회 (수정 모달용)
+	    return adminLimitsMapper.selectLimitsReasonById(limitsReasonCode);
+	}
+
+	@Override
+	public List<AdminLimits> getDeclarationTypeList() {
+		// 신고 타입 목록 조회
+	    return adminLimitsMapper.getDeclarationTypeList();
+	}
+
+	@Override
+	public List<AdminLimits> getDeclarationReasonList(String declarationTypeCode) {
+		// 신고 사유 목록 조회 (타입별 필터링 가능)
+	    return adminLimitsMapper.getDeclarationReasonList(declarationTypeCode);
+	}
+
 
 }
