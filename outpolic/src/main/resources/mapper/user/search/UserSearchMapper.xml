@@ -152,7 +152,7 @@
 	            JSON_OBJECT(
 	                'fileCd', f.file_cd, 'fileOrgnlNm', f.file_orgnl_nm, 'filePath', CONCAT(f.file_path, f.file_srvr_nm)
 	            )
-	        ), ']') FROM file f WHERE f.cl_cd = CONCAT('LIST_', o.os_cd)), '[]') AS files_json						
+	        ), ']') FROM file f WHERE f.cl_cd = CONCAT('LIST_', p.prtf_cd)), '[]') AS files_json						
         <include refid="modalIsBookmarkedSelectSql"/>
 	    FROM
 	        portfolio p
