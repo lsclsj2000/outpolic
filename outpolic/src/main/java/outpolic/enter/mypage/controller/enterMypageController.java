@@ -232,11 +232,6 @@ public class enterMypageController {
     	return "enter/enterpriseInfo/enterpriseInfo";
     }
 
-
-    @GetMapping("/bookMarkListView") // URL 경로를 더 구체적으로 변경하여 충돌 방지
-	public String showOutsourcingPage3() {
-		return "/enter/bookmark/bookMarkListView"; // 뷰 이름은 그대로 유지하거나 변경
-	}
     @GetMapping("/reviewListView") // URL 경로를 더 구체적으로 변경하여 충돌 방지
 	public String showOutsourcingPage4() {
 		return "/enter/review/reviewListView"; // 뷰 이름은 그대로 유지하거나 변경

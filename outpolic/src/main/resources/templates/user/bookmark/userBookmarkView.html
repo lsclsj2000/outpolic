@@ -103,7 +103,10 @@
 		    <div class="wishlist-category mb-5">
 		        <h4 class="mb-3">외주</h4>
 		        <hr />
-		        <div class="row g-4"  style="margin-bottom: 60px;">
+				<div th:if="${#lists.isEmpty(osBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+			        <p style="color: #999; font-size: 1.1rem;">즐겨찾기한 목록이 없습니다.</p>
+			    </div>
+		        <div th:if="${not #lists.isEmpty(osBookmarks)}" class="row g-4"  style="margin-bottom: 60px;">
 		            <div class="bookmark-card outsourcing col-md-3" th:each="b : ${osBookmarks.size() > 4 ? osBookmarks.subList(0,4) : osBookmarks}">
 		                <div class="card h-100 shadow-sm">
 		                    <img th:if="${b != null and b.osThumbnailUrl != null}" th:src="${b.osThumbnailUrl}" class="card-img-top" alt="외주 이미지">
@@ -126,7 +129,10 @@
 		    <div class="wishlist-category mb-5">
 		        <h4 class="mb-3">포트폴리오</h4>
 		        <hr />
-		        <div class="row g-4" style="margin-bottom: 60px;">
+				<div th:if="${#lists.isEmpty(poBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+			        <p style="color: #999; font-size: 1.1rem;">즐겨찾기한 목록이 없습니다.</p>
+			    </div>
+		        <div th:if="${not #lists.isEmpty(poBookmarks)}" class="row g-4"  style="margin-bottom: 60px;">
 		            <div class="bookmark-card portfolio col-md-3" th:each="b : ${poBookmarks.size() > 4 ? poBookmarks.subList(0,4) : poBookmarks}">
 		                <div class="card h-100 shadow-sm">
 		                    <img th:if="${b != null and b.prtfThumbnailUrl != null}" th:src="${b.prtfThumbnailUrl}" class="card-img-top" alt="포트폴리오 이미지">
@@ -149,7 +155,10 @@
 		    <div class="wishlist-category mb-5">
 		        <h4 class="mb-3">기업</h4>
 		        <hr />
-		        <div class="row g-4"  style="margin-bottom: 60px;">
+				<div th:if="${#lists.isEmpty(eiBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+			        <p style="color: #999; font-size: 1.1rem;">즐겨찾기한 목록이 없습니다.</p>
+			    </div>
+		        <div th:if="${not #lists.isEmpty(eiBookmarks)}" class="row g-4"  style="margin-bottom: 60px;">
 		            <div class="bookmark-card enterprise col-md-3" th:each="b : ${eiBookmarks.size() > 4 ? eiBookmarks.subList(0,4) : eiBookmarks}">
 		                <div class="card h-100 shadow-sm">
 		                    <img th:if="${b != null and b.entImg != null}" th:src="${b.entImg}" class="card-img-top" alt="기업 이미지">
