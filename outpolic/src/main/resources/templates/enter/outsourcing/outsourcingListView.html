@@ -209,7 +209,7 @@
                         const files = JSON.parse(detail.filesJson);
                         if (files && files.length > 0) {
                             imagesHtml = files.map(file => {
-                                const imageUrl = file.filePath.startsWith('/attachment/') ? file.filePath : '/attachment/' + file.filePath;
+                                let imageUrl = file.filePath; 
                                 return `<img src="${imageUrl}" alt="${file.fileOriginalName || '외주 이미지'}" class="img-fluid" style="margin-bottom: 15px;">`;
                             }).join('');
                         }

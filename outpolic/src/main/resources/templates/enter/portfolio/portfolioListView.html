@@ -232,7 +232,9 @@
                             if (files && files.length > 0) {
                                 imagesHtml = files.map(file => {
                                     let correctedPath = fixDuplicatedPath(file.filePath, file.fileNewName);
-                                    let imageUrl = correctedPath;
+                                   
+                                    let imageUrl = file.filePath; 
+
                                     if (imageUrl && !imageUrl.startsWith('/attachment/')) {
                                         imageUrl = '/attachment/' + imageUrl;
                                     }

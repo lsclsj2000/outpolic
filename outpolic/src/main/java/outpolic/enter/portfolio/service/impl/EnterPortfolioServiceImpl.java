@@ -207,7 +207,7 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
             for (MultipartFile bodyFile : bodyImageFiles) {
                 FileMetaData bodyMeta = filesUtils.uploadFile(bodyFile, "portfolio"); // Keep path consistent
                 if (bodyMeta != null) {
-                    bodyMeta.setFilePath(cleanPathForDb(bodyMeta.getFilePath()));
+                //    bodyMeta.setFilePath(cleanPathForDb(bodyMeta.getFilePath()));
                     portfolioMapper.insertFileRecord(bodyMeta, clCd, mbrCd);
                 }
             }
