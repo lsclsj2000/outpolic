@@ -25,7 +25,7 @@
 	<sql id="modalIsBookmarkedSelectSql">
 	    , CASE WHEN bm.bm_cd IS NOT NULL THEN 1 ELSE 0 END AS isBookmarked
 	</sql>
-	<select id="getContentsList" resultMap="contentResultMap">
+	<select id="getContentsList" parameterType="map" resultMap="contentResultMap">
 	    WITH UnifiedContents AS (
 	    -- 포트폴리오(PO) 데이터 조회
 	    SELECT
@@ -138,7 +138,7 @@
 	
 	
 	<!-- 2. ID로 특정 콘텐츠의 상세 정보를 조회하는 select 쿼리 -->
-	<select id="getContentsDetailById" parameterType="string" resultMap="contentsDetailResultMap">
+	<select id="getContentsDetailById" parameterType="map" resultMap="contentsDetailResultMap">
 	    -- ID가 'PO'로 시작하면 포트폴리오 테이블에서 조회
 	    SELECT
 	        p.prtf_cd               AS content_id,
@@ -173,6 +173,7 @@
 	    <include refid="modalBookmarkJoinSql"/>
 	    WHERE
 	        p.prtf_cd = #{contentsId} AND #{contentsId} LIKE 'PO_%'
+	   
 	
 	    UNION ALL
 	
@@ -210,6 +211,7 @@
 	    <include refid="modalBookmarkJoinSql"/>
 	    WHERE
 	        o.os_cd = #{contentsId} AND #{contentsId} LIKE 'OS_%'
+	    
 	</select>
 	
 	<resultMap type="outpolic.user.search.domain.UserContentItemDTO" id="outsourcingContentItemMap">

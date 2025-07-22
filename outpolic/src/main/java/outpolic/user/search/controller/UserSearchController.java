@@ -59,6 +59,6 @@ public class UserSearchController {
 		}
 		// --- 검색어 저장 로직 (여기까지) ---
 		
-		return searchService.getContentsList(keyword);
+		return searchService.getContentsList(keyword,mbrCd);
 	}
 }
