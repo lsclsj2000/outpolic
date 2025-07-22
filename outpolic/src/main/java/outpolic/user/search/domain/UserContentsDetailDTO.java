@@ -15,7 +15,6 @@ public class UserContentsDetailDTO {
     private String enterName;
     private String enterCode;
     private LocalDateTime registrationDate;
-    private String filesJson;
     private String thumbnailUrl;
     
     // --- 상세 정보 필드들 ---
@@ -30,4 +29,5 @@ public class UserContentsDetailDTO {
     private LocalDateTime osStrtYmdt; // 외주 시작일
     private LocalDateTime osEndYmdt;  // 외주 종료일
     private int osFlfmtCnt;           // 수행 인원수
+    private String filesJson;
 }
