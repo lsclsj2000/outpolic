@@ -8,6 +8,7 @@
 		<association property="memberInfo" javaType="outpolic.common.domain.Member">
 			<id column="mbr_id" property="memberId"/>
 	 		<result column="mbr_pw" property="memberPw"/>
+	 		<result column="mbr_nm" property="memberName"/>
 	 		<result column="grd_cd" property="gradeCode"/>
 	 		<result column="mbr_cd" property="memberCode"/>
 	 		<result column="stc_cd" property="statusCode"/>
@@ -16,7 +17,7 @@
 	</resultMap>
 
 	<select id="findAdminMemberById" resultMap="AdminLoginResultMap">
-	    SELECT m.mbr_id, m.mbr_pw, m.grd_cd, m.mbr_cd, m.stc_cd, ad.adm_cd
+	    SELECT m.mbr_id, m.mbr_pw, m.grd_cd, m.mbr_cd, m.stc_cd, ad.adm_cd, m.mbr_nm, m.mbr_last_lgn_ymdt
 	    FROM member m inner join admin ad
 	    on m.mbr_cd = ad.mbr_cd
 	    WHERE mbr_id = #{memberInfo.memberId};

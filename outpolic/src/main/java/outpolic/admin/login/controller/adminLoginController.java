@@ -24,13 +24,19 @@ public class adminLoginController {
 	private final AdminLoginService adminLoginService;
 	
 	@GetMapping("")
-	public String adminMain(Model model) {
-		return "admin/main/adminMainView";
+	public String adminMain(Model model, HttpSession session) {
+	    String adminName = (String) session.getAttribute("SName");
+		model.addAttribute("adminName", adminName);  // ✅ 뷰에 넘길 이름
+		System.out.println("세션에서 가져온 관리자 이름: " + adminName);
+		return "admin/main/adminMainView"; // ✅ 타임리프 뷰 이름
 	}
-
 	
 	@GetMapping("/login")
-	public String adminLoginView() {
+	public String adminLoginView(HttpSession session) {
+		String grade = (String) session.getAttribute("SGrd");
+		if ("ADMIN".equals(grade)) {
+	        return "redirect:/admin";
+	    }
 		
 		return "admin/login/adminLoginView";
 	}
@@ -62,7 +68,7 @@ public class adminLoginController {
                 session.setAttribute("SGrd", memberInfo.getGradeCode());
                 session.setAttribute("SCD", memberInfo.getMemberCode());
                 session.setAttribute("SACD", adminLoginDTO.getAdminCode());
-                
+                System.out.println("세션 저장 전 이름: " + memberInfo.getMemberName());
                 redirectAttributes.addFlashAttribute("success", "로그인에 성공하였습니다");
 
                 return "redirect:/admin";
@@ -77,7 +83,25 @@ public class adminLoginController {
         	return "user/mypage/alert";
 		}
 
+
 	}
+	
+    //로그아웃
+    @GetMapping("/logout")
+    public String adminLogout(HttpSession session, Model model) {
+    	String memberCode = (String) session.getAttribute("SCD");
+    	if(memberCode != null) {
+    		session.invalidate();  // 세션 전체 제거
+    		model.addAttribute("msg", "로그아웃되었습니다.");
+    		model.addAttribute("url", "/admin/login");
+    		
+    	}else {
+    		model.addAttribute("msg", "로그인 상태가 아닙니다.");
+    		model.addAttribute("url", "/admin/login");
+    	}
+		return "user/mypage/alert";
+    }
+	
 }
 
 
