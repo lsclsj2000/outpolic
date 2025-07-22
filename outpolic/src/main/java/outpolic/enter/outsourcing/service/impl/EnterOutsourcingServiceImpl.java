@@ -35,26 +35,26 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     // DB 저장을 위해 파일 경로를 정리하는 유틸리티 메서드
     private String cleanPathForDb(String filePath) {
         if (filePath == null) return null;
-        String cleaned = filePath.replace("\\", "/"); // [!code modified] 백슬래시를 슬래시로 변환
-        // "attachment/" 접두사를 제거하여 DB에는 서비스별 상대 경로만 저장
+        String cleaned = filePath.replace("\\", "/");
+        // "attachment/" 또는 "/attachment/" 접두사를 제거합니다.
         if (cleaned.startsWith("/attachment/")) {
             return cleaned.substring("/attachment/".length());
         }
         if (cleaned.startsWith("attachment/")) {
             return cleaned.substring("attachment/".length());
         }
-        return cleaned; // 이미 상대 경로인 경우
+        return cleaned;
     }
 
     // 웹 표시 또는 파일 시스템 접근을 위해 경로를 복원하는 유틸리티 메서드
     private String restorePathForWebOrFileSystem(String dbPath) {
         if (dbPath == null) return null;
-        String normalizedPath = dbPath.replace("\\", "/"); // [!code modified] 백슬래시를 슬래시로 변환
-        // 만약 dbPath가 이미 '/attachment/'로 시작한다면, 그대로 반환합니다.
-        if (normalizedPath.startsWith("/attachment/")) {
-            return normalizedPath;
+        String normalizedPath = dbPath.replace("\\", "/");
+        // 이미 접두사가 있다면 그대로 반환하여 중복을 방지합니다.
+        if (normalizedPath.startsWith("/attachment/") || normalizedPath.startsWith("attachment/")) {
+            return normalizedPath.startsWith("/") ? normalizedPath : "/" + normalizedPath;
         }
-        // 그렇지 않은 경우에만 '/attachment/'를 앞에 붙여줍니다.
+        // 접두사가 없는 경우에만 붙여줍니다.
         return "/attachment/" + normalizedPath;
     }
 
@@ -104,9 +104,11 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     public FileMetaData uploadThumbnail(MultipartFile file) {
         if (file == null || file.isEmpty()) return null;
         String serviceName = "outsourcing";
-        String imageTypeDir = (file.getContentType() != null && file.getContentType().startsWith("image")) ? "image" : "files"; // [!code modified] "thumbnail" 대신 "image"로 통일 (본문 이미지와 구분)
-        String fullServicePath = serviceName + "/" + imageTypeDir;
+        String imageTypeDir = (file.getContentType() != null && file.getContentType().startsWith("image")) ? "image" : "files";
         
+        // ▼▼▼ 아래와 같이 수정 ▼▼▼
+        String fullServicePath = serviceName + "/thumbnail/" + imageTypeDir; // 👈 "outsourcing/thumbnail/image" 경로를 생성합니다.
+
         FileMetaData uploadedFile = filesUtils.uploadFile(file, fullServicePath);
         if (uploadedFile != null && uploadedFile.getFilePath() != null) {
             String cleanedPath = cleanPathForDb(uploadedFile.getFilePath());
@@ -144,11 +146,23 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     
     @Override
     @Transactional
-    public void completeOutsourcingRegistration(OutsourcingFormDataDto formData, HttpSession session) {
+    public void completeOutsourcingRegistration(OutsourcingFormDataDto formData, MultipartFile thumbnailFile, List<MultipartFile> bodyImageFiles, HttpSession session) {
+        
+        // 세션에서 mbrCd, entCd 가져오기
+        String mbrCd = (String) session.getAttribute("SCD");
+        String entCd = outsourcingMapper.findEntCdByMbrCd(mbrCd);
+
         EnterOutsourcing finalOutsourcing = new EnterOutsourcing();
-        finalOutsourcing.setOsCd(formData.getOsCd());
-        finalOutsourcing.setEntCd(formData.getEntCd());
-        finalOutsourcing.setMbrCd(formData.getMbrCd());
+
+        // 새로운 외주 코드(PK) 생성
+        String latestOsCd = outsourcingMapper.findLatestOsCd();
+        int nextNum = (latestOsCd == null || !latestOsCd.startsWith("OS_C")) ? 1 : Integer.parseInt(latestOsCd.substring(5)) + 1;
+        String newOsCd = String.format("OS_C%05d", nextNum);
+        finalOutsourcing.setOsCd(newOsCd);
+
+        // DTO에서 받은 텍스트 데이터 설정
+        finalOutsourcing.setEntCd(entCd);
+        finalOutsourcing.setMbrCd(mbrCd);
         finalOutsourcing.setOsTtl(formData.getOsTtl());
         finalOutsourcing.setOsExpln(formData.getOsExpln());
         finalOutsourcing.setOsStrtYmdt(formData.getOsStrtYmdt());
@@ -164,39 +178,50 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         
         finalOutsourcing.setOsRegYmdt(LocalDateTime.now());
         finalOutsourcing.setStcCd("SD_ACTIVE");
-        if (formData.getThumbnailFile() != null) {
-            finalOutsourcing.setOsThumbnailUrl(formData.getThumbnailFile().getFilePath());
+        
+        // 2. 썸네일 처리 로직을 파라미터로 받은 thumbnailFile로 변경하고, 중복 코드 삭제
+        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+            FileMetaData thumbMeta = uploadThumbnail(thumbnailFile);
+            if (thumbMeta != null) {
+                finalOutsourcing.setOsThumbnailUrl(thumbMeta.getFilePath());
+            }
         }
 
+        // 3. outsourcing 테이블에 먼저 INSERT
         outsourcingMapper.insertOutsourcing(finalOutsourcing);
 
+        // 4. 생성된 osCd 기반으로 clCd 생성 후 content_list에 INSERT
         String clCd = "LIST_" + finalOutsourcing.getOsCd();
         outsourcingMapper.insertContentList(clCd, finalOutsourcing.getOsCd());
         
-        // 썸네일 파일 DB 저장 (FileMetaData DTO가 이미 정리된 경로를 가지고 있음)
-        if (formData.getThumbnailFile() != null) {
-            List<FileMetaData> fileList = new ArrayList<>();
-            fileList.add(formData.getThumbnailFile());
-            outsourcingMapper.insertFiles(fileList, clCd, finalOutsourcing.getMbrCd());
+        // 5. 파일들을 DB에 저장
+        List<FileMetaData> filesToInsert = new ArrayList<>();
+
+        // 썸네일 파일 메타데이터 추가 (업로드된 경우)
+        if (finalOutsourcing.getOsThumbnailUrl() != null) {
+            // uploadThumbnail 메소드가 FileMetaData를 반환한다고 가정
+            FileMetaData thumbMeta = uploadThumbnail(thumbnailFile);
+            if (thumbMeta != null) {
+                filesToInsert.add(thumbMeta);
+            }
         }
-        
-        // [!code diff --start]
-        // 본문 이미지들 DB 저장
-        if (formData.getNewBodyImageFiles() != null && !formData.getNewBodyImageFiles().isEmpty()) {
-            List<FileMetaData> bodyFilesToInsert = new ArrayList<>();
-            for (MultipartFile bodyFile : formData.getNewBodyImageFiles()) {
-                FileMetaData bodyMeta = uploadBodyImage(bodyFile); // 본문 이미지 업로드
+
+        // 본문 이미지들 메타데이터 추가
+        if (bodyImageFiles != null && !bodyImageFiles.isEmpty()) {
+            for (MultipartFile bodyFile : bodyImageFiles) {
+                FileMetaData bodyMeta = uploadBodyImage(bodyFile);
                 if (bodyMeta != null) {
-                    bodyFilesToInsert.add(bodyMeta);
+                    filesToInsert.add(bodyMeta);
                 }
             }
-            if (!bodyFilesToInsert.isEmpty()) {
-                outsourcingMapper.insertFiles(bodyFilesToInsert, clCd, finalOutsourcing.getMbrCd());
-            }
         }
-        // [!code diff --end]
         
-        // 카테고리 매핑 및 태그 매핑 처리 (카테고리 매핑 로직은 건드리지 않음)
+        // DB에 파일 정보 한 번에 INSERT
+        if (!filesToInsert.isEmpty()) {
+            outsourcingMapper.insertFiles(filesToInsert, clCd, finalOutsourcing.getMbrCd());
+        }
+        
+        // 카테고리 및 태그 매핑 처리
         updateMappings(clCd, finalOutsourcing.getMbrCd(), formData.getCategoryCodes(), formData.getTags());
     }
 
@@ -400,9 +425,10 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         return this.findOutsourcingDetailsByOsCd(osCd);
     }
 
-	@Override
-	public void unlinkPortfolioFromOutsourcing(String string, String string2) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    @Transactional
+    public void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd) {
+    	outsourcingMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
+    }
+
 }

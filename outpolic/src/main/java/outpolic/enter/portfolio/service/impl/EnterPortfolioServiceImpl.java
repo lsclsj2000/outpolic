@@ -36,31 +36,25 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     // 파일 경로 정리 및 복원 유틸리티 메서드
     private String cleanPathForDb(String filePath) {
         if (filePath == null) return null;
-        String cleaned = filePath.replace("\\", "/"); // 백슬래시를 슬래시로 변환
-        // "attachment/" 접두사를 제거하여 DB에는 서비스별 상대 경로만 저장
+        String cleaned = filePath.replace("\\", "/");
+        // "attachment/" 또는 "/attachment/" 접두사를 제거합니다.
         if (cleaned.startsWith("/attachment/")) {
             return cleaned.substring("/attachment/".length());
         }
         if (cleaned.startsWith("attachment/")) {
             return cleaned.substring("attachment/".length());
         }
-        return cleaned; // 이미 상대 경로인 경우
+        return cleaned;
     }
 
     private String restorePathForWebOrFileSystem(String dbPath) {
         if (dbPath == null) return null;
-        // 1. 백슬래시를 슬래시로 변환 (윈도우즈 경로 처리)
         String normalizedPath = dbPath.replace("\\", "/");
-
-        // 2. "/attachment/" 접두사가 이미 있는지 확인 (중복 방지)
-        if (normalizedPath.startsWith("/attachment/")) {
-            return normalizedPath;
+        // 이미 접두사가 있다면 그대로 반환하여 중복을 방지합니다.
+        if (normalizedPath.startsWith("/attachment/") || normalizedPath.startsWith("attachment/")) {
+            return normalizedPath.startsWith("/") ? normalizedPath : "/" + normalizedPath;
         }
-        // 3. "attachment/" 접두사가 이미 있는지 확인 (중복 방지, 슬래시가 없는 경우도 고려)
-        if (normalizedPath.startsWith("attachment/")) {
-            return "/" + normalizedPath; // 앞에 '/'를 붙여 웹 루트 상대 경로로 만듦
-        }
-        // 4. 그 외의 경우 (예: "portfolio/image/...")
+        // 접두사가 없는 경우에만 붙여줍니다.
         return "/attachment/" + normalizedPath;
     }
 

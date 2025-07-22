@@ -388,4 +388,9 @@
     <delete id="callDeletePortfolioProcedure">
     CALL sp_delete_portfolio(#{prtfCd})
 </delete>
+
+<delete id="deleteFilesByClCd" parameterType="String">
+    DELETE FROM file
+    WHERE cl_cd = #{clCd}
+</delete>
 </mapper>
