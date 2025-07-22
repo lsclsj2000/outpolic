@@ -40,6 +40,36 @@
 		.bookmark-btn .fi-rs-heart.active {
 		    color: #F15B5B !important; /* 다른 스타일에 의해 덮어쓰이지 않도록 우선순위 부여 */
 		}
+		.product-cart-wrap h2 {
+			    /* 제목 요소의 높이를 강제로 고정하기 위한 설정 */
+			    /* line-height * 줄 수 = 고정 높이 */
+			    /* 예: 1.5em * 2줄 = 3em */
+			    line-height: 1.4em; /* 줄 간격을 적절히 설정 */
+			    height: 1.4em;        /* 2줄 높이로 고정 (line-height * 2) */
+			    
+			    /* 아래 4줄이 말줄임표의 핵심입니다. */
+			    overflow: hidden;                 /* 영역을 넘어가는 텍스트 숨기기 */
+			    display: -webkit-box;             /* Webkit의 박스 모델 사용 */
+			    -webkit-line-clamp: 1;            /* 최대 2줄까지 표시 */
+			    -webkit-box-orient: vertical;     /* 수직 방향으로 배치 */
+			}
+			.product-cart-wrap .product-category a {
+			    /* 이 텍스트는 한 줄로 제한하는 것이 깔끔합니다. */
+			    line-height: 1.4em; /* 한 줄 텍스트에 맞는 줄 간격 */
+			    height: 1.4em;      /* 1줄 높이로 고정 (line-height * 1) */
+			    
+			    /* 말줄임표 핵심 속성들 */
+			    overflow: hidden;
+			    display: -webkit-box;
+			    -webkit-line-clamp: 1; /* 최대 1줄까지 표시 */
+			    -webkit-box-orient: vertical;
+			    
+			    /* 
+			      <a> 태그는 기본적으로 inline 요소이므로, 
+			      위 속성들이 잘 동작하려면 block 또는 inline-block으로 만들어주는 것이 좋습니다. 
+			    */
+			    display: block; /* 또는 inline-block */
+			}
     </style>
 </th:block>
 
@@ -121,19 +151,20 @@
 						
 						<!-- 외주 랭킹 시작 -->
 						<section class="section-padding">
-							<!-- 섹션 제목 부분 -->
-					        <div class="section-title style-2 wow animate__animated animate__fadeIn">
-					            <h3>인기있는 외주</h3>
-					        </div> 
-					        <div th:if="${not #lists.isEmpty(findOSList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
+						    <!-- 섹션 제목 부분 -->
+						    <div class="section-title style-2 wow animate__animated animate__fadeIn">
+						        <h3>인기있는 외주</h3>
+	
+						    </div> 
+						    <div th:if="${not #lists.isEmpty(findOSList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
 						        <div th:each="content, iterStat : ${findOSList}" class="slider-item">
 						        
-						            <div class="product-cart-wrap mb-30 position-relative">
+						            <div class="product-cart-wrap mb-30">
 						                <div class="product-img-action-wrap">
 						                    <div class="product-img product-img-zoom">
-						                        <a th:href="@{/user/contents/{id}(id=${content.osCode})}">
+						                        <a th:href="@{/enter/contents/{id}(id=${content.osCode})}">
 						                            <img class="default-img"
-						                                 th:src="${content.osThumbnailUrl}"
+						                                 th:src="${content.osThumbnailUrl}" 
 						                                 alt="외주 이미지" />
 						                        </a>
 						                    </div>
@@ -146,8 +177,9 @@
 						                        <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" th:href="@{/enter/company/{id}(id=${content.entCode})}">카테고리 | 기업명</a>
 						                    </div>
 						                    <h2>
-						                        <!-- 링크가 중복되므로, 이 a 태그는 제거하고 텍스트만 남깁니다. -->
-						                        <span th:text="${content.osTtl}">콘텐츠 제목</span>
+						                        <a th:href="@{/enter/contents/{id}(id=${content.osCode})}">
+									                <span th:text="${content.osTtl}">콘텐츠 제목</span>
+									            </a>
 						                    </h2>
 						                    <div class="product-rate-cover">
 						                       <div class="product-rate d-inline-block">
@@ -158,16 +190,14 @@
 						                    <div class="product-price">
 						                       <span th:text="${#numbers.formatInteger({content.osAtm}, 3, 'COMMA')} + '원'">가격 정보~</span>
 						                    </div>
-						                    <!-- stretched-link 클래스를 상위 a태그로 옮겨주는 효과 -->
-						                    <a th:href="@{/enter/contents/{id}(id=${content.osCode})}" class="stretched-link"></a>
+						                    
 						                </div>
 						            </div>
 						        </div> 
 						    </div>
-					        <!-- 데이터가 없을 경우 표시할 메시지 -->
-					        <div th:if="${#lists.isEmpty(findOSList)}" class="text-center py-5">
-					            <p>표시할 인기 콘텐츠가 없습니다.</p>
-					        </div>
+						    <div th:if="${#lists.isEmpty(findOSList)}" class="text-center py-5">
+						        <p>표시할 인기 콘텐츠가 없습니다.</p>
+						    </div> 
 						</section>
 						<!-- 외주 랭킹 끝 -->
 						<!--Products Tabs-->
@@ -183,6 +213,7 @@
 					        <div class="section-title style-2 wow animate__animated animate__fadeIn">
 					            <h3>인기있는 포트폴리오</h3>
 					        </div> 
+	
 					        <div th:if="${not #lists.isEmpty(findPOList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
 					            <div th:each="content, iterStat : ${findPOList}" class="slider-item">
 								    <div class="product-cart-wrap mb-30 position-relative portfolio-modal-trigger"
@@ -194,7 +225,10 @@
 								            <div class="product-img product-img-zoom">
 								                <a href="javascript:void(0);">
 													<img class="default-img"
-													     th:src="${content.prtfThumbnailUrl}"
+													     th:src="${content.prtfThumbnailUrl}" 
+													     alt="" />
+													<img class="hover-img"
+													     th:src="${content.prtfThumbnailUrl}" 
 													     alt="" />
 								                </a>
 								            </div>
@@ -216,121 +250,49 @@
 					            <p>표시할 인기 콘텐츠가 없습니다.</p>
 					        </div>
 						</section>
-						<!-- Products Tabs -->
 					</div>
 				</div>
 			</div>
 			<!-- 인기있는 포트폴리오 영역 끝 -->
 			<!-- 리뷰 영역 시작 -->
 			<div class="comments-area">
-				<div class="container" id="review-area" style="width: 1300px;">
-					<h3 class="mb-30">최근에 작성된 리뷰</h3>
-					<div class="review-slider-active">
-						<!-- 리뷰 항목 1 -->
-						<div class="single-comment justify-content-between d-flex">
-							<div class="enter justify-content-between d-flex">
-								<div class="thumb text-center">
-									<img src="enter/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
-									<a href="#" class="font-heading text-brand">Sienna</a>
-								</div>
-								<div class="desc">
-									<a href="#">	<!-- 리뷰가 작성된 게시글 주소를 넣으시면 됩니다. -->
-										<div class="d-flex justify-content-between mb-10">
-											<span class="font-xs text-muted">2025년 7월 8일 11:12</span>
-											<div class="product-rate d-inline-block">
-												<div class="product-rating" style="width: 80%"></div>
-											</div>
-										</div>
-										<p class="mb-10">1테스트 리뷰입니다. 여기에 리뷰 내용이 들어갑니다.</p>
-									</a>
-								</div>
-							</div>
-						</div>
-						<!-- 리뷰 항목 2 -->
-						<div class="single-comment justify-content-between d-flex">
-							<div class="enter justify-content-between d-flex">
-								<div class="thumb text-center">
-									<img src="enter/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
-									<a href="#" class="font-heading text-brand">Sienna</a>
-								</div>
-								<div class="desc">
-									<a href="#">	<!-- 리뷰가 작성된 게시글 주소를 넣으시면 됩니다. -->
-										<div class="d-flex justify-content-between mb-10">
-											<span class="font-xs text-muted">2025년 7월 8일 11:12</span>
-											<div class="product-rate d-inline-block">
-												<div class="product-rating" style="width: 80%"></div>
-											</div>
-										</div>
-										<p class="mb-10">2테스트 리뷰입니다. 여기에 리뷰 내용이 들어갑니다. 테스트입니다.</p>
-									</a>
-								</div>
-							</div>
-						</div>
-						<!-- 리뷰 항목 3 -->
-						<div class="single-comment justify-content-between d-flex">
-							<div class="enter justify-content-between d-flex">
-								<div class="thumb text-center">
-									<img src="enter/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
-									<a href="#" class="font-heading text-brand">Sienna</a>
-								</div>
-								<div class="desc">
-									<a href="#">	<!-- 리뷰가 작성된 게시글 주소를 넣으시면 됩니다. -->
-										<div class="d-flex justify-content-between mb-10">
-											<span class="font-xs text-muted">2025년 7월 8일 11:12</span>
-											<div class="product-rate d-inline-block">
-												<div class="product-rating" style="width: 80%"></div>
-											</div>
-										</div>
-										<p class="mb-10">3테스트 리뷰입니다. 여기에 리뷰 내용이 들어갑니다.</p>
-									</a>
-								</div>
-							</div>
-						</div>
-						<!-- 리뷰 항목 4 -->
-						<div class="single-comment justify-content-between d-flex">
-							<div class="enter justify-content-between d-flex">
-								<div class="thumb text-center">
-									<img src="enter/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
-									<a href="#" class="font-heading text-brand">Sienna</a>
-								</div>
-								<div class="desc">
-									<a href="#">	<!-- 리뷰가 작성된 게시글 주소를 넣으시면 됩니다. -->
-										<div class="d-flex justify-content-between mb-10">
-											<span class="font-xs text-muted">2025년 7월 8일 11:12</span>
-											<div class="product-rate d-inline-block">
-												<div class="product-rating" style="width: 80%"></div>
-											</div>
-										</div>
-										<p class="mb-10">4테스트 리뷰입니다. 여기에 리뷰 내용이 들어갑니다.</p>
-									</a>
-								</div>
-							</div>
-						</div>
-						<!-- 리뷰 항목 5 -->
-						<div class="single-comment justify-content-between d-flex">
-							<div class="enter justify-content-between d-flex">
-								<div class="thumb text-center">
-									<img src="enter/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
-									<a href="#" class="font-heading text-brand">Sienna</a>
-								</div>
-								<div class="desc">
-									<a href="#">	<!-- 리뷰가 작성된 게시글 주소를 넣으시면 됩니다. -->
-										<div class="d-flex justify-content-between mb-10">
-											<span class="font-xs text-muted">2025년 7월 8일 11:12</span>
-											<div class="product-rate d-inline-block">
-												<div class="product-rating" style="width: 80%"></div>
-											</div>
-										</div>
-										<p class="mb-10">5테스트 리뷰입니다. 여기에 리뷰 내용이 들어갑니다.</p>
-									</a>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div
-						class="slider-arrow slider-arrow-2 flex-right review-slider-arrows"
-						id="review-slider-arrows"></div>
-				</div>
+			    <div class="container" id="review-area" style="width: 1341.66px;">
+			        <h3 class="mb-30">최근에 작성된 리뷰</h3>
+			        
+			        <div class="review-slider-active" th:if="${not #lists.isEmpty(recentReviews)}">
+			            <div class="single-comment justify-content-between d-flex" th:each="review : ${recentReviews}">
+			                <div class="user justify-content-between d-flex">
+			                    <div class="thumb text-center">
+			                        <img src="/user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+			                        <a href="#" class="font-heading text-brand" th:text="${review.mbrNicknm}"></a>
+			                    </div>
+			                    
+			                    <!-- [핵심 수정 1] 부모 요소에 position-relative 클래스 추가 -->
+			                    <div class="desc position-relative">
+			                        <div class="d-flex justify-content-between mb-10">
+			                            <span class="font-xs text-muted" th:text="${review.rvwRegYmdt}"></span>
+			                            <div class="product-rate d-inline-block">
+			                                <div class="product-rating" th:style="|width: ${review.rvwEvl * 20}%|"></div>
+			                            </div>
+			                        </div>
+			                        <p class="mb-10" th:text="${review.rvwCn}"></p>
+			
+			                        <!-- [핵심 수정 2] <a> 태그를 맨 마지막에 배치하고 stretched-link 클래스 추가 -->
+			                        <a th:href="${review.contentsId.startsWith('OS_C')} ? @{/enter/contents/{id}(id=${review.contentsId})} : 'javascript:void(0);'"
+			                           th:classappend="${review.contentsId.startsWith('PO_C')} ? 'js-portfolio-modal-trigger' : ''"
+			                           th:attr="data-contents-id=${review.contentsId.startsWith('PO_C')} ? ${review.contentsId} : null"
+			                           class="stretched-link">
+			                           <!-- 이 링크는 눈에 보이지 않지만 전체 영역을 덮습니다. -->
+			                        </a>
+			                    </div>
+			                </div>
+			            </div>
+			        </div>
+			        
+			        <div class="text-center py-5" th:if="${#lists.isEmpty(recentReviews)}">
+			            <p class="font-lg">아직 작성된 리뷰가 없습니다.</p>
+			        </div>
+			    </div>
 			</div>
 			<!-- 리뷰 영역 끝  -->
 			
@@ -358,13 +320,12 @@
     </th:block>
     <th:block layout:fragment="jsScript">
 		<script>
-			// DOMContentLoaded 이벤트 리스너를 사용하여 문서를 먼저 읽고 스크립트 실행한다
 			document.addEventListener('DOMContentLoaded', function() {
-	
+				
 				// --- 제목 자르기 로직 (기존 코드) ---
 				const portfolioTitles = document.querySelectorAll('.portfolio-title');
 				const outsourcingTitles = document.querySelectorAll('.outsourcing-title');
-				const maxLength = 12; 
+				const maxLength = 10; 
 	
 				portfolioTitles.forEach(titleElement => {
 					let originalText = titleElement.textContent;
@@ -498,9 +459,10 @@
 			    infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
 			    contentSection.innerHTML = '';
 			    portfolioModal.show();
+			    
 			
 			    $.ajax({
-			        url: `/user/api/contents/${contentsId}`,
+			        url: `/enter/api/contents/${contentsId}`,
 			        type: 'GET',
 			        dataType: 'json',
 			        success: function(detail) {
@@ -509,7 +471,7 @@
 			            
 			            // ★★ 핵심 수정 1: isBookmarked와 clCd 값을 변수로 추출합니다 ★★
 			            //    (API 응답이 null일 경우를 대비하여 기본값(false, '')을 설정합니다.)
-			            const isBookmarked = detail.isBookmarked || false; 
+			            const isActive = detail.bookmarked ? 'active' : '';
 			            const clCd = detail.clCd || '';
 			            const prtfCd = detail.contentsId; 
 	
@@ -539,7 +501,7 @@
 			                       aria-label="Add To Wishlist">
 			                        
 			                        <!-- ★★ 핵심 수정 2: isBookmarked 값에 따라 active 클래스를 동적으로 추가합니다 ★★ -->
-			                        <i class="fi-rs-heart me-2 ${isBookmarked ? 'active' : ''}"></i> 찜하기
+			                        <i class="fi-rs-heart me-2 ${isActive}"></i> 찜하기
 			                    </a>
 			                    <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center">
 			                        <i class="fi-rs-share me-2"></i> 공유하기
@@ -568,13 +530,13 @@
 			            `;
 			            infoSection.innerHTML = infoHtml;
 			            const files = JSON.parse(detail.filesJson);
-
+	
 			            // 2. 파일 배열을 순회하며 각 파일에 대한 <img> 태그 문자열을 생성합니다.
 			            //    map()을 사용하여 각 파일 객체를 HTML 문자열로 변환하고, join('')으로 합칩니다.
 			            const imagesHtml = files.map(file =>
 			                `<img src="${file.filePath}" alt="${file.fileOrgnlNm}" class="img-fluid" style="margin-bottom: 15px;">`
 			            ).join('');
-
+	
 			            // 3. contentSection의 내용을 생성된 이미지 태그들로 교체합니다.
 			            //    만약 파일이 없다면 imagesHtml은 빈 문자열이 되어 아무것도 표시되지 않습니다.
 			            contentSection.innerHTML = imagesHtml;

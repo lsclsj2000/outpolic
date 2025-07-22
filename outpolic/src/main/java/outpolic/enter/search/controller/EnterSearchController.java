@@ -38,8 +38,8 @@ public class EnterSearchController {
 						               Model model) {
 			
 		model.addAttribute("title", "콘텐츠목록조회");
-		model.addAttribute("initialFilter", filter);
 	    model.addAttribute("initialKeyword", keyword);
+	    model.addAttribute("initialFilter", filter);
 
 		
 		return "enter/search/enterSearchView";
@@ -59,6 +59,6 @@ public class EnterSearchController {
 		}
 		// --- 검색어 저장 로직 (여기까지) ---
 		
-		return searchService.getContentsList(keyword);
+		return searchService.getContentsList(keyword,mbrCd);
 	}
 }
