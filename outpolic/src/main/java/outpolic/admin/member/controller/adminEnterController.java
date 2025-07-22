@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.member.dto.AdminMemberDTO;
 import outpolic.admin.member.service.AdminEnterService;
@@ -28,7 +29,9 @@ public class adminEnterController {
 	
 	//전체 회원목록
 	@GetMapping("/enterList")
-	public String adminEnterList(Model model) {
+	public String adminEnterList(Model model, HttpSession session) {
+		String adminCode = (String)session.getAttribute("SCD");
+		model.addAttribute("adminCode",adminCode);
 		var enterList = adminEnterService.getEnterList();
 		model.addAttribute("title", "기업목록");
 		model.addAttribute("enterList", enterList);
@@ -65,9 +68,13 @@ public class adminEnterController {
 	
 	@PostMapping("/enterList/detail/update")
 	@ResponseBody
-	public String adminEnterDetailEdit(@RequestBody AdminMemberDTO adminMemberDTO) {
-		adminEnterService.updateAdminEnterEditInfo(adminMemberDTO);
-		return "success";
+	public String adminEnterDetailEdit(@RequestBody AdminMemberDTO adminMemberDTO, HttpSession session) {
+		System.out.println("받은 값: " + adminMemberDTO);
+		String adminCode = (String)session.getAttribute("SACD");
+		adminMemberDTO.setAdminCode(adminCode);
+		System.out.println("DTO에 들어간 adminCode = " + adminMemberDTO.getAdminCode());
+		int result = adminEnterService.updateAdminEnterEditInfo(adminMemberDTO);
+	    return result > 0 ? "success" : "fail";
 	}
 	
 }

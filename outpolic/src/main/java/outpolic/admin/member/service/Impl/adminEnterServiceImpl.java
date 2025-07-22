@@ -24,25 +24,10 @@ public class adminEnterServiceImpl implements AdminEnterService {
 
 	@Override
 	public List<AdminMemberDTO> getEnterListByStatus(String statusCode) {
-		String status;
-		switch(statusCode.toLowerCase()) {
-			case "active":
-	            status = "SD_ACTIVE";
-	            break;
-	        case "withdrawn":
-	            status = "SD_WITHDRAWN";
-	            break;
-	        case "dormant":
-	            status = "SD_DORMANT";
-	            break;
-	        case "limit":
-	            status = "SD_LIMIT";
-	            break;
-	        default:
-	            status = null; 
+		if (statusCode == null || statusCode.isBlank()) {
+			return adminEnterMapper.getEnterList(); // 전체 목록
 		}
-		List<AdminMemberDTO> enterList = adminEnterMapper.getEnterListByStatus(status);
-		return enterList;
+		return adminEnterMapper.getEnterListByStatus(statusCode);
 	}
 	
 

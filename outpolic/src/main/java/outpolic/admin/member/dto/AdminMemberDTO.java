@@ -20,12 +20,12 @@ public class AdminMemberDTO {
 	private String corpHomepageUrl; 
 	private String corpJoinYmdt; 
 	private LocalDate corpModificationYmdt; 
-	private String mbr2_cd; 
+	private String adminCode; 
 	private String corpScr; 
-	private String statuseCode; 
+	private String statusCode; 
 	private int corpPortfolioCount; 
 	private int corpOutsourcingCount;
 	
 	private String entImg;
-	private String adminCode;
+
 }
