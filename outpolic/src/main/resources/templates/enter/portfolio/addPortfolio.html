@@ -17,7 +17,7 @@
         .progress-step { width: 30px; height: 30px; border-radius: 50%; background-color: #e0e0e0; color: #888; display: flex; justify-content: center; align-items: center; font-weight: bold; position: relative; z-index: 2; border: 3px solid #fff; }
         .progress-step.active { background-color: #264796; color: white; border-color: #264796;}
         .form-navigation { margin-top: 30px; display: flex; justify-content: space-between; }
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; margin-top:40px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
         .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
         .btn-step { background-color: #264796; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; }
@@ -62,14 +62,14 @@
                 </div>
                 <div class="form-group">
                     <label for="prtfCn">포트폴리오 내용 <span style="color:red;">*</span></label>
-                    <textarea id="prtfCn" name="prtfCn" class="form-control"></textarea>
+                    <textarea id="prtfCn" name="prtfCn" class="form-control" rows="8" style="height:300px;"></textarea>
                 </div>
                 <div class="form-navigation">
                     <span></span><button type="button" class="btn-step next" data-step="1">다음</button>
                 </div>
             </div>
 
-            <div class="form-step" id="step2">
+            <div class="form-step" id="step2" style="height:700px;">
                 <h4>2단계: 참여 기간 및 클라이언트</h4>
                 <div class="form-group">
                     <label for="prtfPeriodStart">참여 기간 시작일</label>
