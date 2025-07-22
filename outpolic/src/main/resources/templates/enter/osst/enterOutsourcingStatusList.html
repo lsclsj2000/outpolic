@@ -56,6 +56,8 @@
 	                            	 th:each="l : ${osstList}"
 	                            	 th:attr="data-url=@{/enter/enterOsstDetail(ocd_cd=${l.ocdCd})}"
 	                            	 data-project-id="proj-003" >
+                           	 	<span th:if="${l.memberRole == 'SUPPLIER'}" class="SR_project-role-tag">신청 받은 외주</span>
+                                <span th:if="${l.memberRole == 'DEMANDER'}" class="SR_project-role-tag">신청한 외주</span>
 	                                <div class="SR_card-content">
 	                                    <h3 class="SR_project-title" th:text="${l.ocdTitle}">외주 제목</h3>
                                         <p class="SR_project-meta">공급자: <span th:text="${l.entMemberName + ' (' + l.entName + ')'}">공급자이름 (공급자기업명)</span></p>
