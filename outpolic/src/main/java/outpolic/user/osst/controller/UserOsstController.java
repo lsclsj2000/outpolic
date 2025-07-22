@@ -1,12 +1,19 @@
 package outpolic.user.osst.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,6 +25,8 @@ import outpolic.user.osst.domain.UserOsst;
 import outpolic.user.osst.domain.UserOsstRecord;
 import outpolic.user.osst.domain.UserStepData;
 import outpolic.user.osst.service.UserOsstService;
+import outpolic.user.review.dto.UserOutsourcingReviewDTO;
+import outpolic.user.review.service.UserOutsourcingReviewService;
 
 
 @Controller
@@ -26,6 +35,8 @@ import outpolic.user.osst.service.UserOsstService;
 public class UserOsstController {
 	
 	private final UserOsstService userOsstService;
+	
+	private final UserOutsourcingReviewService userOutsourcingReviewService;
 	
 	@PostMapping("/submitRecord")
 	@ResponseBody
@@ -110,6 +121,8 @@ public class UserOsstController {
 	    return "user/osst/userOutsourcingStatusDetail";
 	}
 	
+	
+	
 	@PostMapping("/approveStep")
 	@ResponseBody
 	public String approveStep(@RequestParam("ospCd") String ospCd) {
@@ -117,5 +130,75 @@ public class UserOsstController {
 	    boolean result = userOsstService.approveStep(ospCd);
 	    return result ? "OK" : "FAIL";
 	}
+	
+	// 김한별 추가 부분
+	
+	@GetMapping("/api/review")
+    public ResponseEntity<UserOutsourcingReviewDTO> getReviewForEdit(@RequestParam("oscId") String oscId, HttpSession session) {
+        String mbrCd = (String) session.getAttribute("SCD");
+        if (mbrCd == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        UserOutsourcingReviewDTO review = userOutsourcingReviewService.getReviewForEdit(oscId, mbrCd);
+        if (review == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(review);
+    }
+
+    @PutMapping("/api/review/{rvwCd}")
+    @ResponseBody
+    public String updateReview(@PathVariable("rvwCd") String rvwCd,
+                               @RequestBody Map<String, String> payload,
+                               HttpSession session) {
+        String mbrCd = (String) session.getAttribute("SCD");
+        if (mbrCd == null) return "FAIL_AUTH";
+
+        UserOutsourcingReviewDTO reviewDTO = new UserOutsourcingReviewDTO();
+        reviewDTO.setRvwCd(rvwCd);
+        reviewDTO.setRvwEvl(new BigDecimal(payload.get("rating")));
+        reviewDTO.setRvwCn(payload.get("content"));
+
+        // TODO: 수정 권한 검증 로직 추가 가능 (해당 리뷰의 작성자인지 확인)
+
+        boolean success = userOutsourcingReviewService.updateReview(reviewDTO);
+        return success ? "OK" : "FAIL_DB";
+    }
+	
+	@PostMapping("/osst/review")
+    @ResponseBody
+    public String submitReview(@RequestBody Map<String, String> payload, HttpSession session) {
+		String reviewerMbrCd = (String) session.getAttribute("SCD");
+        if (reviewerMbrCd == null) {
+            return "FAIL_AUTH"; // 인증 실패
+        }
+
+        try {
+            String oscId = payload.get("projectId");
+            BigDecimal rvwEvl = new BigDecimal(payload.get("rating"));
+            String rvwCn = payload.get("content");
+            
+            if (oscId == null || rvwEvl == null || rvwCn == null || rvwCn.trim().isEmpty()) {
+                return "FAIL_VALIDATION"; // 필수 데이터 누락
+            }
+
+            UserOutsourcingReviewDTO reviewDTO = new UserOutsourcingReviewDTO();
+            reviewDTO.setOscId(oscId);
+            reviewDTO.setReviewerMbrCd(reviewerMbrCd); // 세션에서 가져온 작성자 코드
+            reviewDTO.setRvwEvl(rvwEvl);
+            reviewDTO.setRvwCn(rvwCn);
+
+            boolean success = userOutsourcingReviewService.createReview(reviewDTO);
+
+
+            return success ? "OK" : "FAIL_DB";
+        } catch (NumberFormatException e) {
+            return "FAIL_RATING_FORMAT"; // 별점 숫자 형식 오류
+        } catch (Exception e) {
+            // 로그 기록 (실제 운영 시)
+            return "FAIL_SERVER"; // 기타 서버 오류
+        }
+    
+    }
 
 }

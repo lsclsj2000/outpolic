@@ -208,7 +208,85 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 	SELECT sr.* FROM StepRaw sr
 		    JOIN ContractStatus cs ON sr.ocd_cd = cs.ocd_cd
 		    WHERE ( cs.완료단계수 = cs.단계수 AND sr.osp_stc_order = 1)
-		       OR (cs.완료단계수 &lt; cs.단계수 AND sr.osp_cust_stc_yn = '단계 진행중')
-		) SELECT * FROM FilteredStep where mbr_cd = #{memberCode} or ent_mbr_cd = #{memberCode};
+		       OR (cs.완료단계수 &lt; cs.단계수 AND sr.osp_cust_stc_yn = '단계 진행중')  
+		) SELECT
+			    fs.*,
+			    r.rvw_cd AS rvwCd,
+			    CASE WHEN r.rvw_cd IS NOT NULL THEN 'Y' ELSE 'N' END AS reviewWrittenYn
+			FROM FilteredStep fs
+			-- [수정된 부분] LEFT JOIN의 ON 조건절에서, 리뷰 작성자를 로그인한 사용자로 직접 지정합니다.
+			LEFT JOIN review r ON fs.ocd_cd = r.osc_id AND r.mbr_cd = #{memberCode}
+			WHERE fs.mbr_cd = #{memberCode} OR fs.ent_mbr_cd = #{memberCode}
 	</select>
+	
+	<!-- 리뷰 생성 쿼리들 -->
+	<!-- PK 생성을 위한 쿼리 -->
+	<select id="getNextReviewCode" resultType="String">
+	    /* rvw_cd 자동 생성 (Zero-padding 규칙 준수) */
+	    SELECT
+	        CASE
+	            -- 테이블에 데이터가 하나도 없을 경우, 첫 번째 코드를 형식에 맞게 생성
+	            WHEN COUNT(rvw_cd) = 0 THEN 'RVW_C00001'
+	            -- 데이터가 있을 경우, 숫자 부분만 추출하여 최댓값을 구하고 +1 한 뒤, LPAD 함수로 0을 채움
+	            ELSE CONCAT('RVW_C', LPAD(MAX(CAST(SUBSTRING(rvw_cd, 6) AS UNSIGNED)) + 1, 5, '0'))
+	        END
+	    FROM review
+	    WHERE rvw_cd LIKE 'RVW_C%'; -- PK 형식에 맞는 데이터만 대상으로 하여 안정성 확보
+	</select>
+	
+	<!-- 외주 계약 ID로 기업 코드를 가져오는 쿼리 -->
+	<select id="getEnterpriseCodeByOscId" parameterType="String" resultType="String">
+	    /* ocd_cd로 ent_cd 조회 */
+	    SELECT ent_cd
+	    FROM outsourcing_contract_details
+	    WHERE ocd_cd = #{oscId}
+	</select>
+	
+	<!-- 리뷰 저장을 위한 쿼리 (컬럼명 수정) -->
+	<insert id="insertReview" parameterType="outpolic.user.review.dto.UserOutsourcingReviewDTO">
+	    /* 신규 리뷰 등록 */
+	    INSERT INTO review (
+	        rvw_cd,
+	        osc_id,
+	        mbr_cd,      -- 리뷰 작성자
+	        ent_cd,      -- 리뷰 대상 기업
+	        rvw_cn,
+	        rvw_evl,
+	        rvw_reg_ymdt
+	    ) VALUES (
+	        #{rvwCd},
+	        #{oscId},
+	        #{reviewerMbrCd}, -- DTO의 reviewerMbrCd 필드 사용
+	        #{revieweeEntCd}, -- DTO의 revieweeEntCd 필드 사용
+	        #{rvwCn},
+	        #{rvwEvl},
+	        NOW()
+	    )
+	</insert>
+	
+	<!-- 리뷰 상세 정보 조회 쿼리 -->
+	<select id="findReviewByOscIdAndMbrCd" parameterType="map" resultType="outpolic.user.review.dto.UserOutsourcingReviewDTO">
+	    SELECT
+	        rvw_cd        AS rvwCd,
+	        osc_id        AS oscId,
+	        mbr_cd        AS mbrCd,
+	        ent_cd        AS entCd,
+	        rvw_cn        AS rvwCn,
+	        rvw_evl       AS rvwEvl,
+	        rvw_reg_ymdt  AS rvwRegYmdt,
+	        rvw_mdfcn_ymdt AS rvwMdfcnYmdt
+	    FROM review
+	    WHERE osc_id = #{oscId} AND mbr_cd = #{mbrCd}
+	</select>
+	
+	<!-- 리뷰 수정 쿼리 -->
+	<update id="updateReview" parameterType="outpolic.user.review.dto.UserOutsourcingReviewDTO">
+	    UPDATE review
+	    SET
+	        rvw_evl = #{rvwEvl},
+	        rvw_cn = #{rvwCn},
+	        rvw_mdfcn_ymdt = NOW()
+	    WHERE
+	        rvw_cd = #{rvwCd}
+	</update>
 </mapper>
