@@ -103,7 +103,6 @@
 	    <result column="registrant_name"    property="enterName"/>
 	    <result column="registrant_code"    property="enterCode"/>
 	    <result column="registration_date"  property="registrationDate"/>
-	    <result column="files_json"  		property="filesJson"/>
 	    <result column="thumbnail_url"		property="thumbnailUrl"  	/>
 	    
 	    <!-- 상세 정보 -->
@@ -118,6 +117,7 @@
 	    <result column="osStrtYmdt"       	property="osStrtYmdt"/>
 	    <result column="osEndYmdt"       	property="osEndYmdt"/>
 	    <result column="osFlfmtCnt"       	property="osFlfmtCnt"/>
+	    <result column="files_json"  		property="filesJson"/>
 	</resultMap>
 	<sql id="modalBookmarkJoinSql">
     	LEFT JOIN bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
@@ -145,6 +145,7 @@
 	        p.prtf_client,
 	        p.prtf_industry,
 	        p.prtf_thumbnail_url   AS thumbnail_url,
+        	<include refid="modalIsBookmarkedSelectSql"/>
 	        NULL                    AS osStrtYmdt,
 	        NULL                    AS osEndYmdt,
 	        NULL                    AS osFlfmtCnt,
@@ -153,7 +154,6 @@
 	                'fileCd', f.file_cd, 'fileOrgnlNm', f.file_orgnl_nm, 'filePath', CONCAT(f.file_path, f.file_srvr_nm)
 	            )
 	        ), ']') FROM file f WHERE f.cl_cd = CONCAT('LIST_', p.prtf_cd)), '[]') AS files_json						
-        <include refid="modalIsBookmarkedSelectSql"/>
 	    FROM
 	        portfolio p
 	    LEFT JOIN -- 기업 정보가 없을 수도 있으니 LEFT JOIN이 더 안전
@@ -175,14 +175,15 @@
 	        e.ent_nm                AS registrant_name,
 	        e.ent_cd                AS registrant_code,
 	        o.os_reg_ymdt           AS registration_date,
-	        o.os_expln              AS content_body,
 	        o.os_amt                AS price,
 	        o.os_thumbnail_url      AS thumbnail_url,
+	        o.os_expln              AS content_body,
 	        cl.cl_cd,
 	        NULL                    AS prtf_period_start,
 	        NULL                    AS prtf_period_end,
 	        NULL                    AS prtf_client,
 	        NULL                    AS prtf_industry,
+	        <include refid="modalIsBookmarkedSelectSql"/>
 	        o.os_strt_ymdt          AS osStrtYmdt,
             o.os_end_ymdt           AS osEndYmdt,
             o.os_flfmt_cnt          AS osFlfmtCnt,
@@ -191,7 +192,6 @@
 	                'fileCd', f.file_cd, 'fileOrgnlNm', f.file_orgnl_nm, 'filePath', CONCAT(f.file_path, f.file_srvr_nm)
 	            )
 	        ), ']') FROM file f WHERE f.cl_cd = CONCAT('LIST_', o.os_cd)), '[]') AS files_json
-	        <include refid="modalIsBookmarkedSelectSql"/>
 	        
 	    FROM
 	        outsourcing o
