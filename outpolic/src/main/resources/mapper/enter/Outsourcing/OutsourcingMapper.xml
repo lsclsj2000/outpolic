@@ -15,8 +15,7 @@
     <insert id="insertOutsourcing" parameterType="outpolic.enter.outsourcing.domain.EnterOutsourcing">
         INSERT INTO outsourcing
             (os_cd, ent_cd, ctgry_id, os_ttl, os_expln, os_reg_ymdt, mbr_cd, stc_cd, os_strt_ymdt, os_end_ymdt,
-            os_amt, os_flfmt_cnt, os_thumbnail_url) VALUES
-            (#{osCd}, #{entCd}, #{ctgryId}, #{osTtl}, #{osExpln}, NOW(), #{mbrCd}, 'SD_ACTIVE', #{osStrtYmdt}, #{osEndYmdt}, #{osAmt}, #{osFlfmtCnt}, #{osThumbnailUrl})
+            os_amt, os_flfmt_cnt, os_thumbnail_url) VALUES (#{osCd}, #{entCd}, #{ctgryId}, #{osTtl}, #{osExpln}, NOW(), #{mbrCd}, 'SD_ACTIVE', #{osStrtYmdt}, #{osEndYmdt}, #{osAmt}, #{osFlfmtCnt}, #{osThumbnailUrl})
     </insert>
 
     <insert id="insertContentList">
@@ -26,7 +25,7 @@
 
     <insert id="insertCategoryMapping">
         INSERT INTO category_mapping (ctgry_id, cl_cd, cm_reg_ymdt, mbr_cd)
-         VALUES (#{ctgryCd}, #{clCd}, NOW(), #{mbrCd})
+        VALUES (#{ctgryCd}, #{clCd}, NOW(), #{mbrCd})
     </insert>
 
     <insert id="insertTag">
@@ -54,11 +53,10 @@
         <result property="osFlfmtCnt" column="os_flfmt_cnt"/>
         <result property="admCd" column="adm_cd"/>
         <result property="clCd" column="cl_cd"/>
-        <result property="osThumbnailUrl" column="os_thumbnail_url"/>
-        <result property="ctgryNm" column="ctgryNm"/>
+        <result property="osThumbnailUrl" column="os_thumbnail_url"/> <result property="ctgryNm" column="ctgryNm"/>
         <collection property="tagNames" ofType="java.lang.String" javaType="java.util.ArrayList">
             <result column="tag_tag_nm"/>
-        </collection>
+       </collection>
        <collection property="relatedPortfolios" javaType="java.util.ArrayList"
                     ofType="outpolic.enter.portfolio.domain.EnterPortfolio"
         			column="os_cd" select="findLinkedPortfoliosByOsCd" />
@@ -181,7 +179,7 @@
 
     <insert id="insertOutsourcingPortfolio">
         INSERT INTO outsourcing_portfolio
-         (op_cd,os_cd,prtf_cd,op_reg_ymdt,ent_cd)
+            (op_cd,os_cd,prtf_cd,op_reg_ymdt,ent_cd)
         VALUES(#{opCd},#{osCd},#{prtfCd},NOW(),#{entCd})
     </insert>
 
@@ -348,4 +346,5 @@
         DELETE FROM perusal_content WHERE cl_cd = #{clCd}
     </delete>
     
-    <select id="findFileMetaDataByFileCd" resultType="outpolic.systems.file.domain.FileMetaData"> SELECT file_cd AS fileIdx, file_reg_ymdt, file_mdfcn_ymdt, file_extn, file_orgnl_nm AS fileOriginalName, file_srvr_nm AS fileNewName, file_path AS filePath, cl_cd, mbr_cd, file_size FROM file WHERE file_cd = #{fileCd} </select> <delete id="deleteFilesByFileCd" parameterType="String"> DELETE FROM `file` WHERE file_cd = #{fileCd} </delete> </mapper>
+    <select id="findFileMetaDataByFileCd" resultType="outpolic.systems.file.domain.FileMetaData"> SELECT file_cd AS fileIdx, file_reg_ymdt, file_mdfcn_ymdt, file_extn, file_orgnl_nm AS fileOriginalName, file_srvr_nm AS fileNewName, file_path AS filePath, cl_cd, mbr_cd, file_size FROM file WHERE file_cd = #{fileCd} </select> <delete id="deleteFilesByFileCd" parameterType="String"> DELETE FROM `file` WHERE file_cd = #{fileCd} </delete>
+</mapper>

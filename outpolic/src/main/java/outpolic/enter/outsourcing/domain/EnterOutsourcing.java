@@ -14,7 +14,7 @@ import outpolic.enter.portfolio.domain.EnterPortfolio;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
-import outpolic.systems.file.domain.FileMetaData; // [!code ++]
+import outpolic.systems.file.domain.FileMetaData;
 
 @Data
 public class EnterOutsourcing {
@@ -53,10 +53,10 @@ public class EnterOutsourcing {
     private List<String> tagNames = new ArrayList<>();
     private List<EnterPortfolio> relatedPortfolios = new ArrayList<>();
     
-    private String prtfThumbnailUrl;;
+   // 외주 썸네일 URL 필드 추가 [cite: 1]
+    private String osThumbnailUrl; 
     
     private String clCd;
-    private String osThumbnailUrl;
     
     // ssy 마이페이지용 data들
 
@@ -66,5 +66,5 @@ public class EnterOutsourcing {
     private String stcCd1;
     
     private String ctgryNm;
-    private List<FileMetaData> bodyImages = new ArrayList<>(); // [!code ++]
+    private List<FileMetaData> bodyImages = new ArrayList<>(); // 본문 이미지 파일 메타데이터 리스트 추가 [cite: 1]
 }

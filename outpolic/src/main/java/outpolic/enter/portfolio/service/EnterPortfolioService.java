@@ -9,7 +9,6 @@ import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.enter.portfolio.domain.PortfolioFormDataDto;
 import outpolic.systems.file.domain.FileMetaData;
-
 public interface EnterPortfolioService {
 
     // --- 조회 관련 ---
@@ -27,14 +26,12 @@ public interface EnterPortfolioService {
     // 기존 updatePortfolio 메서드 삭제 (이제 여러 단계로 나눠서 처리)
     // void updatePortfolio(EnterPortfolio portfolio, List<String> categoryCodes, String tags, MultipartFile portfolioImage) throws IOException;
     // 5단계 전체 수정을 위한 통합 서비스 메서드
-    // [!code diff --start]
     void updatePortfolioAllSteps(PortfolioFormDataDto formData) throws IOException;
-    // [!code diff --end]
 
     void deletePortfolio(String prtfCd);
     // ▼▼▼ [수정] 다단계 등록을 위한 신규 메서드들 선언 ▼▼▼
     String generateNewPrtfCd();
-    FileMetaData uploadThumbnail(MultipartFile file);
+    FileMetaData uploadThumbnail(MultipartFile file); // 파라미터 변경 [cite: 11]
     void registerNewPortfolio(PortfolioFormDataDto formData, MultipartFile thumbnailFile, List<MultipartFile> bodyImageFiles, HttpSession session) throws IOException;
     List<EnterPortfolio> searchByTitleForLinking(String query, String entCd);
 }

@@ -33,6 +33,7 @@ public class PortfolioFormDataDto {
 	    // 3단계: 카테고리 및 태그 (기존 2단계 -> 3단계)
 	    private List<String> categoryCodes;
 	    private String tags;
+	    private MultipartFile newThumbnailFile; // 새로운 썸네일 파일을 받기 위한 필드 추가 [!code ++]
 
 	    // 4단계: 썸네일 파일 정보 (기존 3단계 -> 4단계)
 	    private FileMetaData thumbnailFile;

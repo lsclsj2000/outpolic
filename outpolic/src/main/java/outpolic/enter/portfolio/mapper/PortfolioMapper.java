@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-
 @Mapper
 public interface PortfolioMapper {
 
@@ -38,7 +37,7 @@ public interface PortfolioMapper {
     int deleteCategoryMappingByClCd(String clCd);
     int deleteTagMappingByClCd(String clCd);
     int deleteBookmarkByClCd(String clCd);
-    int deleteFilesByClCd(String clCd); // 이 메서드는 file_cd를 받을 수 있도록 변경해야 할 수도 있습니다.
+    int deleteFilesByClCd(String clCd);
     // UPDATE
     int updatePortfolio(EnterPortfolio portfolio);
 
@@ -57,7 +56,7 @@ public interface PortfolioMapper {
     String findEntCdByMbrCd(String mbrCd);
     String findMbrCdByClCd(String clCd);
 
-    void insertFileRecord(@Param("file") FileMetaData fileData, @Param("clCd") String clCd, @Param("mbrCd") String mbrCd);
+    void insertFileRecord(@Param("file") FileMetaData fileData, @Param("clCd") String clCd, @Param("mbrCd") String mbrCd); // fileData 파라미터 추가 [cite: 9]
     List<FileMetaData> findFilesByClCd(String clCd);
 
     void addPortfolio(EnterPortfolio portfolio);
@@ -81,16 +80,10 @@ public interface PortfolioMapper {
     List<EnterOutsourcing> findLinkedOutsourcingsByOsCd(String osCd);
 
 	List<EnterPortfolio> searchUnlinkedPortfolios(String osCd, String entCd, String query);
-
-	List<EnterOutsourcing> findUnlinkedOutsourcings(String prtfCd, String entCd, String query);
+    List<EnterOutsourcing> findUnlinkedOutsourcings(String prtfCd, String entCd, String query);
     List<EnterPortfolio> findPortfoliosByTitleAndEntCd(String query, String entCd);
 
 	List<EnterPortfolio> findAllPortfoliosByTitle(String query);
-
-    // [!code diff --start]
-    // file_cd로 FileMetaData를 조회하는 메서드 추가
-    @Select("SELECT file_cd AS fileIdx, file_reg_ymdt, file_mdfcn_ymdt, file_extn, file_orgnl_nm AS fileOriginalName, file_srvr_nm AS fileNewName, file_path AS filePath, cl_cd, mbr_cd, file_size FROM file WHERE file_cd = #{fileCd}")
-    FileMetaData findFileMetaDataByFileCd(@Param("fileCd") String fileCd);
-    // [!code diff --end]
+    FileMetaData findFileMetaDataByFileCd(@Param("fileCd") String fileCd);// file_cd로 파일 메타데이터 조회 [cite: 9]
 	void deleteFilesByFileCd(String fileIdx);
 }
