@@ -91,8 +91,7 @@
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
                                         <a th:href="@{/user/contents/{id}(id=${content.contentsId})}" >
-                                            <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 50) + '/400/300'}" alt="콘텐츠 이미지" >
-                                            <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 150) + '/400/300'}" alt="콘텐츠 이미지" >
+                                            <img class="default-img" th:src="${content.thumbnailUrl}" alt="콘텐츠 이미지" >
                                         </a>
                                     </div>
                                     <div class="product-action-1">

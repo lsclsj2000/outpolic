@@ -14,8 +14,17 @@
 	    <result column="category_name"  	property="ctgryName"/>
 	    <result column="os_amt"         	property="osAmt"/>
 	    <result column="avg_review_score" 	property="reviewScore"/>
+	    <result column="thumbnail_url"		property="thumbnailUrl"/>
+	    <result column="isBookmarked"       property="isBookmarked"/>
 	</resultMap>
-	<!-- [최종 수정] getContentsList 쿼리 -->
+
+
+	<sql id="modalBookmarkJoinSql">
+    	LEFT JOIN bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
+	</sql>
+	<sql id="modalIsBookmarkedSelectSql">
+	    , CASE WHEN bm.bm_cd IS NOT NULL THEN 1 ELSE 0 END AS isBookmarked
+	</sql>
 	<select id="getContentsList" resultMap="contentResultMap">
 	    WITH UnifiedContents AS (
 	    -- 포트폴리오(PO) 데이터 조회
@@ -29,7 +38,9 @@
 	        -- ▼▼▼ 핵심 수정 1: 외주 쿼리와 컬럼 구조를 맞추기 위한 더미(dummy) 컬럼 ▼▼▼
 	        c.ctgry_nm           AS category_name, -- 포트폴리오도 카테고리가 있다면 JOIN
 	        NULL                 AS os_amt,
-	        0.0                  AS avg_review_score
+	        0.0                  AS avg_review_score,
+	        p.prtf_thumbnail_url    AS thumbnail_url
+	        <include refid="modalIsBookmarkedSelectSql"/>
 	    FROM
 	        content_list cl
 	    JOIN
@@ -40,6 +51,7 @@
 	        category_mapping cm on cl.cl_cd = cm.cl_cd
 	    LEFT JOIN 
 	        category c on cm.ctgry_id = c.ctgry_id
+	    <include refid="modalBookmarkJoinSql"/>
 	    WHERE
 	        cl.cl_cd LIKE 'LIST_PO_%'
 	        AND p.stc_cd = 'SD_ACTIVE'
@@ -59,7 +71,9 @@
 	        cl.cl_cd,
 	        c.ctgry_nm           AS category_name,
 	        o.os_amt,
-	        IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score
+	        IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score,
+	        o.os_thumbnail_url      AS thumbnail_url
+	        <include refid="modalIsBookmarkedSelectSql"/>
 	    FROM
 	        content_list cl
 	    JOIN
@@ -77,6 +91,7 @@
 		    outsourcing_contract oc ON op.osp_cd = oc.osp_cd
 		LEFT JOIN
 		    review r2 ON oc.osc_id = r2.osc_id
+		<include refid="modalBookmarkJoinSql"/>
 	    WHERE
 	        cl.cl_cd LIKE 'LIST_OS_%'
 	        AND o.stc_cd = 'SD_ACTIVE'
@@ -119,12 +134,7 @@
 	    <result column="osFlfmtCnt"       	property="osFlfmtCnt"/>
 	    <result column="files_json"  		property="filesJson"/>
 	</resultMap>
-	<sql id="modalBookmarkJoinSql">
-    	LEFT JOIN bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
-	</sql>
-	<sql id="modalIsBookmarkedSelectSql">
-	    , CASE WHEN bm.bm_cd IS NOT NULL THEN 1 ELSE 0 END AS isBookmarked
-	</sql>
+
 	
 	
 	<!-- 2. ID로 특정 콘텐츠의 상세 정보를 조회하는 select 쿼리 -->
@@ -209,6 +219,8 @@
         <result column="os_reg_ymdt"   property="registrationDate"/>
         <result column="os_amt"        property="price"/>
         <result column="cl_cd"        property="clCode"/>
+        <result column="thumbnail_url"		property="thumbnailUrl"  	/>
+        <result column="isBookmarked"       property="isBookmarked"/>
     </resultMap>
 
     <!-- [핵심] 카테고리 ID로 외주(Outsourcing) 콘텐츠 목록을 조회하는 쿼리 -->
@@ -220,15 +232,15 @@
 	        o.os_amt,
 	        e.ent_nm,
 	        cl.cl_cd,
-	        CASE WHEN bm.bm_cd IS NOT NULL THEN 1 ELSE 0 END AS isBookmarked
+	        o.os_thumbnail_url      AS thumbnail_url
+	        <include refid="modalIsBookmarkedSelectSql"/>
 	    FROM
 	        outsourcing o
 	    LEFT JOIN
 	        enterprise e ON o.ent_cd = e.ent_cd
 	    LEFT JOIN
 	    	content_list cl on o.os_cd = cl.cntd_cd
-	    LEFT JOIN 
-	    	bookmark bm ON cl.cl_cd = bm.cl_cd AND bm.mbr_cd = #{userId}
+	    <include refid="modalBookmarkJoinSql"/>
 	    WHERE
 	        o.ctgry_id LIKE CONCAT(#{categoryId}, '%')
 	    	AND o.stc_cd = 'SD_ACTIVE'
