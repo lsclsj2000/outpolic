@@ -72,304 +72,304 @@
 	    </style>
 	</th:block>
 	<th:block layout:fragment="jsScript">
-<script th:inline="javascript">
-/*<![CDATA[*/
-    // 1. 서버로부터 전달받는 초기값 (페이지 로드 시 한 번만 사용)
-    const initialKeyword = /*[[${initialKeyword}]]*/ '';
-    const initialFilter = /*[[${initialFilter}]]*/ 'Portfolio'; // 기본값을 'Portfolio'로 설정
-/*]]>*/
-
-
-// =================================================================================
-// 헬퍼 함수 정의 (Helper Functions)
-// =================================================================================
-
-/**
- * content 객체를 받아 북마크 버튼 HTML 문자열을 생성하는 함수.
- * (이것이 th:replace="... :: bookmarkButton"의 JavaScript 버전입니다.)
- * @param {object} content - isBookmarked, clCd 등의 속성을 포함한 콘텐츠 객체
- * @returns {string} 완성된 북마크 버튼의 HTML 문자열
- */
-function createBookmarkButtonHtml(content) {
-	// ★★ 핵심 수정: content.isBookmarked 값을 숫자 1 또는 문자열 "1"과 명시적으로 비교합니다. ★★
-    //    느슨한 비교(==)를 사용하여 숫자 1과 문자열 "1"을 모두 true로 처리합니다.
-    const isActive = (content.isBookmarked == 1) ? 'active' : '';
-    
-    // API 호출에 필요한 clCd 값을 가져옵니다. 없으면 빈 문자열로 처리합니다.
-    const clCd = content.clCd || '';
-
-    // Thymeleaf 프래그먼트와 완전히 동일한 구조의 HTML을 생성하여 반환합니다.
-    return `
-        <div class="product-action-1">
-            <a data-cl-cd="${clCd}" aria-label="Add To Wishlist" class="action-btn bookmark-btn" href="javascript:void(0);">
-                <i class="fi-rs-heart ${isActive}"></i>
-            </a>
-        </div>
-    `;
-}
-
-/**
- * 찜 버튼 클릭을 처리하는 전용 함수
- */
-function handleBookmarkClick(clickedButtonElement) {
-    // (이 함수는 작성자님의 기존 코드를 그대로 사용합니다. 이미 잘 만들어져 있습니다.)
-    const clCd = clickedButtonElement.dataset.clCd;
-    if (!clCd) return;
-    const heartIcons = document.querySelectorAll(`.bookmark-btn[data-cl-cd="${clCd}"] i.fi-rs-heart`);
-    if (heartIcons.length === 0) return;
-    const isCurrentlyBookmarked = heartIcons[0].classList.contains('active');
-    const apiUrl = '/api/enter/bookmarks';
-    heartIcons.forEach(icon => icon.classList.toggle('active'));
-    let options;
-    if (isCurrentlyBookmarked) {
-        options = { method: 'DELETE' };
-        fetch(`${apiUrl}/${clCd}`, options)
-            .then(response => {
-                if (!response.ok) {
-                    alert('찜 해제에 실패했습니다.');
-                    heartIcons.forEach(icon => icon.classList.add('active'));
-                    throw new Error('찜 해제 실패');
-                }
-            }).catch(error => console.error('찜 해제 중 오류:', error));
-    } else {
-        options = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ clCd: clCd })
-        };
-        fetch(apiUrl, options)
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 401 || response.status === 403) {
-                         alert('로그인이 필요한 기능입니다.');
-                    } else {
-                         alert('찜하기에 실패했습니다.');
-                    }
-                    heartIcons.forEach(icon => icon.classList.remove('active'));
-                    throw new Error('찜 추가 실패');
-                }
-            }).catch(error => console.error('찜 추가 중 오류:', error));
-    }
-}
-
-/**
- * 포트폴리오 상세 정보를 모달로 띄우는 함수
- */
-function openPortfolioModal(contentsId) {
-    // (이 함수 역시 작성자님의 기존 코드를 그대로 사용합니다.)
-    const modalElement = document.getElementById('portfolioDetailModal');
-    if (!modalElement) return;
-    const infoSection = modalElement.querySelector('#modalInfoSection');
-    const contentSection = modalElement.querySelector('#modalContentSection');
-    const portfolioModal = new bootstrap.Modal(modalElement);
-    infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
-    contentSection.innerHTML = '';
-    portfolioModal.show();
-    $.ajax({
-        url: `/user/api/contents/${contentsId}`,
-        type: 'GET',
-        dataType: 'json',
-        success: function(detail) {
-        	const isActive = detail.bookmarked ? 'active' : '';
-            const clCd = detail.clCd || '';
-            const prtfCd = detail.contentsId;
-            const infoHtml = `
-                <div class="d-flex align-items-center mb-3">
-                    <img src="/user/assets/imgs/theme/icons/icon-user.svg" alt="logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
-                    <div><h6 class="mb-0 fw-bold">${detail.enterName || '회사명 없음'}</h6><small class="text-muted">MASTER</small></div>
-                    <div class="ms-auto"><a href="/user/outsourcing-requests/inquiry-form/${prtfCd}" class="btn btn-primary">문의하기</a></div>
-                </div><hr class="my-3">
-                <p class="text-muted mb-2">${detail.ctgryName || '카테고리 정보 없음'}</p><h3 class="fw-bold mb-3">${detail.contentsTitle || '제목 없음'}</h3>
-                <div class="d-flex align-items-center mb-4">
-                    <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center me-2 action-btn bookmark-btn" data-cl-cd="${clCd}" aria-label="Add To Wishlist">
-                    	<i class="fi-rs-heart me-2 ${isActive}"></i> 찜하기
-                    </a>
-                    <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center"><i class="fi-rs-share me-2"></i> 공유하기</a>
-                </div>
-                <div class="mb-4"><span class="badge bg-light text-dark border me-1 px-3 py-2">#상세페이지</span></div>
-                <div class="mb-4"><h6 class="fw-bold">프로젝트 설명</h6><p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody || '설명 없음'}</p></div>
-                <div class="mb-4"><h6 class="fw-bold">참여 기간</h6><p class="text-muted">${(detail.participationStartDate || '') + ' ~ ' + (detail.participationEndDate || '')}</p></div>
-                <div class="mb-4"><h6 class="fw-bold">클라이언트</h6><p class="text-muted">${detail.client || '정보 없음'}</p></div>
-                <div><h6 class="fw-bold">업종</h6><p class="text-muted">${detail.industry || '정보 없음'}</p></div>`;
-            infoSection.innerHTML = infoHtml;
-
-							
-            const files = JSON.parse(detail.filesJson);
-            const imagesHtml = files.map(file => `<img src="${file.filePath}" alt="${file.fileOrgnlNm}" class="img-fluid" style="margin-bottom: 15px;">`).join('');
-            contentSection.innerHTML = imagesHtml;
-        },
-        error: function(xhr) { infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>'; }
-    });
-}
-
-
-// =================================================================================
-// 메인 로직 및 이벤트 리스너 설정 (DOM 로드 후 실행)
-// =================================================================================
-document.addEventListener('DOMContentLoaded', function() {
-
-    // --- DOM 요소 캐싱 ---
-    const contentsContainer = document.getElementById('contentsListContainer');
-    const filterButtons = document.querySelectorAll('#myTab .nav-link');
-    const headerSearchForm = document.querySelector('form[action="/user/userSearch"]');
-    const headerSearchInput = headerSearchForm?.querySelector('input[name="keyword"]');
-    const resultTitle = document.querySelector('.section-title h3');
-
-    // --- 데이터 렌더링 함수 ---
-    function renderContents(contents) {
-        contentsContainer.innerHTML = '';
-        if (!contents || contents.length === 0) {
-            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
-            return;
-        }
-        
-        const contentsHtml = contents.map(content => {
-            // ★★ 핵심 1: 재사용 가능한 북마크 버튼 HTML을 미리 생성합니다. ★★
-            const bookmarkButtonHtml = createBookmarkButtonHtml(content);
-
-            if (content.contentsType === 'Outsourcing') {
-                const reviewScore = content.reviewScore || 0, ratingWidth = reviewScore * 20;
-                const ratingHtml = (reviewScore >= 0) ? `<div class="product-rate-cover"><div class="product-rate d-inline-block"><div class="product-rating" style="width:${ratingWidth}%"></div></div><span class="font-small ml-5 text-muted"> (${reviewScore.toFixed(1)})</span></div>` : '';
-                let formattedPrice = '가격문의';
-                if (content.osAmt && !isNaN(content.osAmt)) {
-                    formattedPrice = parseInt(content.osAmt, 10).toLocaleString('ko-KR') + '원';
-                }
-                return `<div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="Outsourcing">
-                            <div class="product-cart-wrap mb-30 position-relative">
-                                <div class="product-img-action-wrap">
-                                    ${bookmarkButtonHtml}  <!-- ★★ 핵심 2: 여기에 북마크 버튼 삽입 ★★ -->
-                                    <div class="product-img product-img-zoom">
-                                        <a href="/user/contents/${content.contentsId}"><img class="default-img" src="${content.thumbnailUrl}" alt="외주 이미지"></a>
-                                    </div>
-                                </div>
-                                <div class="product-content-wrap" style="padding: 15px;">
-                                    <div class="product-category"><a>${content.ctgryName || ''} | ${content.enterName}</a></div>
-                                    <h2><span>${content.contentsTitle}</span></h2>
-                                    ${ratingHtml}
-                                    <div class="product-price"><span>${formattedPrice}</span></div>
-                                    <a href="/user/contents/${content.contentsId}" class="stretched-link"></a>
-                                </div>
-                            </div>
-                        </div>`;
-
-            } else { // 'Portfolio'
-                const categoryInfo = (content.ctgryName) ? `${content.ctgryName} | ` : '';
-                return `<div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="Portfolio">
-                            <div class="product-cart-wrap mb-30 position-relative portfolio-modal-trigger" data-contents-id="${content.contentsId}" role="button" style="cursor: pointer;">
-                                <div class="product-img-action-wrap">
-                                    ${bookmarkButtonHtml} <!-- ★★ 핵심 2: 포트폴리오에도 북마크 버튼 삽입 ★★ -->
-                                    <div class="product-img product-img-zoom">
-                                        <a href="javascript:void(0);">
-                                            <img class="default-img" src="${content.thumbnailUrl}" alt="포트폴리오 이미지" />
-                                            <img class="hover-img" src="${content.thumbnailUrl}" alt="포트폴리오 이미지" />
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="product-content-wrap" style="padding: 15px;">
-                                    <div class="product-category"><a>${categoryInfo}${content.enterName}</a></div>
-                                    <h2>${content.contentsTitle}</h2>
-                                </div>
-                            </div>
-                        </div>`;
-            }
-        }).join('');
-        contentsContainer.innerHTML = contentsHtml;
-    }
-
-    // --- AJAX 검색 및 필터링 함수 ---
-    async function performAjaxSearch(keyword) {
-        const newUrl = `/user/userSearch?keyword=${encodeURIComponent(keyword)}`;
-        history.pushState({ keyword }, '', newUrl);
-        resultTitle.innerHTML = '결과를 불러오는 중...';
-        contentsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
-        try {
-            const response = await fetch(`/user/search/api?keyword=${encodeURIComponent(keyword)}`);
-            if (!response.ok) throw new Error(`서버 응답 오류: ${response.status}`);
-            const data = await response.json();
-            resultTitle.innerHTML = (keyword && keyword.trim() !== '') ? `'<span class="text-brand">${keyword}</span>' 검색 결과` : '전체 콘텐츠';
-            renderContents(data); 
-            const filterToApply = initialFilter || 'Portfolio'; 
-            const targetButton = document.querySelector(`.nav-link[data-filter="${filterToApply}"]`);
-            if (targetButton) {
-                setActiveFilterButton(targetButton);
-            }
-            applyFilter(filterToApply);
-        } catch (error) {
-            console.error("AJAX 검색 중 에러 발생:", error);
-            resultTitle.innerHTML = '오류';
-            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과를 불러오는 데 실패했습니다.</p></div>';
-        }
-    }
-    
-    function setActiveFilterButton(clickedButton) {
-        if (!clickedButton) return;
-        filterButtons.forEach(button => button.classList.remove('active'));
-        clickedButton.classList.add('active');
-    }
-
-    function applyFilter(filterType) {
-        const items = contentsContainer.querySelectorAll('.product-item');
-        let visibleItemCount = 0;
-        items.forEach(item => {
-            if (item.dataset.type === filterType) {
-                item.style.display = '';
-                visibleItemCount++;
-            } else {
-                item.style.display = 'none';
-            }
-        });
-        const noResultMessage = contentsContainer.querySelector('.no-filter-result');
-        if (noResultMessage) noResultMessage.remove();
-        if (visibleItemCount === 0 && items.length > 0) {
-            contentsContainer.insertAdjacentHTML('beforeend', '<div class="col-12 text-center no-filter-result"><p>선택하신 필터에 해당하는 콘텐츠가 없습니다.</p></div>');
-        }
-    }
-
-    // --- 이벤트 리스너 설정 ---
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            setActiveFilterButton(this);
-            applyFilter(this.dataset.filter);
-        });
-    });
-    
-    if (headerSearchForm) {
-        headerSearchForm.addEventListener('submit', function(event) {
-            if (window.location.pathname.includes('/user/userSearch')) {
-                event.preventDefault();
-                performAjaxSearch(headerSearchInput.value);
-            }
-        });
-    }
-
-    // ★★ 이벤트 위임을 사용하여 동적으로 생성된 요소의 클릭 처리 ★★
-    document.body.addEventListener('click', function(event) {
-        // 1. 찜 버튼 클릭 처리
-        const bookmarkBtn = event.target.closest('.bookmark-btn');
-        if (bookmarkBtn) {
-            event.preventDefault(); 
-            event.stopPropagation();
-            handleBookmarkClick(bookmarkBtn);
-            return;
-        }
-
-        // 2. 포트폴리오 모달 트리거 클릭 처리
-        const trigger = event.target.closest('.portfolio-modal-trigger');
-        if (trigger) {
-            const contentsId = trigger.dataset.contentsId;
-            if (contentsId) {
-                openPortfolioModal(contentsId);
-            }
-        }
-    });
-
-    // --- 페이지 최초 로드 시 실행 ---
-    performAjaxSearch(initialKeyword);
-});
-
-</script>
-</th:block>
+		<script>
+			/*<![CDATA[*/
+			    // 1. 서버로부터 전달받는 초기값 (페이지 로드 시 한 번만 사용)
+			    const initialKeyword = /*[[${initialKeyword}]]*/ '';
+			    const initialFilter = /*[[${initialFilter}]]*/ 'Portfolio'; // 기본값을 'Portfolio'로 설정
+			/*]]>*/
+			
+			
+			// =================================================================================
+			// 헬퍼 함수 정의 (Helper Functions)
+			// =================================================================================
+			
+			/**
+			 * content 객체를 받아 북마크 버튼 HTML 문자열을 생성하는 함수.
+			 * (이것이 th:replace="... :: bookmarkButton"의 JavaScript 버전입니다.)
+			 * @param {object} content - isBookmarked, clCd 등의 속성을 포함한 콘텐츠 객체
+			 * @returns {string} 완성된 북마크 버튼의 HTML 문자열
+			 */
+			function createBookmarkButtonHtml(content) {
+				// ★★ 핵심 수정: content.isBookmarked 값을 숫자 1 또는 문자열 "1"과 명시적으로 비교합니다. ★★
+			    //    느슨한 비교(==)를 사용하여 숫자 1과 문자열 "1"을 모두 true로 처리합니다.
+			    const isActive = (content.isBookmarked == 1) ? 'active' : '';
+			    
+			    // API 호출에 필요한 clCd 값을 가져옵니다. 없으면 빈 문자열로 처리합니다.
+			    const clCd = content.clCd || '';
+			
+			    // Thymeleaf 프래그먼트와 완전히 동일한 구조의 HTML을 생성하여 반환합니다.
+			    return `
+			        <div class="product-action-1">
+			            <a data-cl-cd="${clCd}" aria-label="Add To Wishlist" class="action-btn bookmark-btn" href="javascript:void(0);">
+			                <i class="fi-rs-heart ${isActive}"></i>
+			            </a>
+			        </div>
+			    `;
+			}
+			
+			/**
+			 * 찜 버튼 클릭을 처리하는 전용 함수
+			 */
+			function handleBookmarkClick(clickedButtonElement) {
+			    // (이 함수는 작성자님의 기존 코드를 그대로 사용합니다. 이미 잘 만들어져 있습니다.)
+			    const clCd = clickedButtonElement.dataset.clCd;
+			    if (!clCd) return;
+			    const heartIcons = document.querySelectorAll(`.bookmark-btn[data-cl-cd="${clCd}"] i.fi-rs-heart`);
+			    if (heartIcons.length === 0) return;
+			    const isCurrentlyBookmarked = heartIcons[0].classList.contains('active');
+			    const apiUrl = '/api/enter/bookmarks';
+			    heartIcons.forEach(icon => icon.classList.toggle('active'));
+			    let options;
+			    if (isCurrentlyBookmarked) {
+			        options = { method: 'DELETE' };
+			        fetch(`${apiUrl}/${clCd}`, options)
+			            .then(response => {
+			                if (!response.ok) {
+			                    alert('찜 해제에 실패했습니다.');
+			                    heartIcons.forEach(icon => icon.classList.add('active'));
+			                    throw new Error('찜 해제 실패');
+			                }
+			            }).catch(error => console.error('찜 해제 중 오류:', error));
+			    } else {
+			        options = {
+			            method: 'POST',
+			            headers: { 'Content-Type': 'application/json' },
+			            body: JSON.stringify({ clCd: clCd })
+			        };
+			        fetch(apiUrl, options)
+			            .then(response => {
+			                if (!response.ok) {
+			                    if (response.status === 401 || response.status === 403) {
+			                         alert('로그인이 필요한 기능입니다.');
+			                    } else {
+			                         alert('찜하기에 실패했습니다.');
+			                    }
+			                    heartIcons.forEach(icon => icon.classList.remove('active'));
+			                    throw new Error('찜 추가 실패');
+			                }
+			            }).catch(error => console.error('찜 추가 중 오류:', error));
+			    }
+			}
+			
+			/**
+			 * 포트폴리오 상세 정보를 모달로 띄우는 함수
+			 */
+			function openPortfolioModal(contentsId) {
+			    // (이 함수 역시 작성자님의 기존 코드를 그대로 사용합니다.)
+			    const modalElement = document.getElementById('portfolioDetailModal');
+			    if (!modalElement) return;
+			    const infoSection = modalElement.querySelector('#modalInfoSection');
+			    const contentSection = modalElement.querySelector('#modalContentSection');
+			    const portfolioModal = new bootstrap.Modal(modalElement);
+			    infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
+			    contentSection.innerHTML = '';
+			    portfolioModal.show();
+			    $.ajax({
+			        url: `/user/api/contents/${contentsId}`,
+			        type: 'GET',
+			        dataType: 'json',
+			        success: function(detail) {
+			        	const isActive = detail.bookmarked ? 'active' : '';
+			            const clCd = detail.clCd || '';
+			            const prtfCd = detail.contentsId;
+			            const infoHtml = `
+			                <div class="d-flex align-items-center mb-3">
+			                    <img src="/user/assets/imgs/theme/icons/icon-user.svg" alt="logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
+			                    <div><h6 class="mb-0 fw-bold">${detail.enterName || '회사명 없음'}</h6><small class="text-muted">MASTER</small></div>
+			                    <div class="ms-auto"><a href="/user/outsourcing-requests/inquiry-form/${prtfCd}" class="btn btn-primary">문의하기</a></div>
+			                </div><hr class="my-3">
+			                <p class="text-muted mb-2">${detail.ctgryName || '카테고리 정보 없음'}</p><h3 class="fw-bold mb-3">${detail.contentsTitle || '제목 없음'}</h3>
+			                <div class="d-flex align-items-center mb-4">
+			                    <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center me-2 action-btn bookmark-btn" data-cl-cd="${clCd}" aria-label="Add To Wishlist">
+			                    	<i class="fi-rs-heart me-2 ${isActive}"></i> 찜하기
+			                    </a>
+			                    <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center"><i class="fi-rs-share me-2"></i> 공유하기</a>
+			                </div>
+			                <div class="mb-4"><span class="badge bg-light text-dark border me-1 px-3 py-2">#상세페이지</span></div>
+			                <div class="mb-4"><h6 class="fw-bold">프로젝트 설명</h6><p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody || '설명 없음'}</p></div>
+			                <div class="mb-4"><h6 class="fw-bold">참여 기간</h6><p class="text-muted">${(detail.participationStartDate || '') + ' ~ ' + (detail.participationEndDate || '')}</p></div>
+			                <div class="mb-4"><h6 class="fw-bold">클라이언트</h6><p class="text-muted">${detail.client || '정보 없음'}</p></div>
+			                <div><h6 class="fw-bold">업종</h6><p class="text-muted">${detail.industry || '정보 없음'}</p></div>`;
+			            infoSection.innerHTML = infoHtml;
+			
+										
+			            const files = JSON.parse(detail.filesJson);
+			            const imagesHtml = files.map(file => `<img src="${file.filePath}" alt="${file.fileOrgnlNm}" class="img-fluid" style="margin-bottom: 15px;">`).join('');
+			            contentSection.innerHTML = imagesHtml;
+			        },
+			        error: function(xhr) { infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>'; }
+			    });
+			}
+			
+			
+			// =================================================================================
+			// 메인 로직 및 이벤트 리스너 설정 (DOM 로드 후 실행)
+			// =================================================================================
+			document.addEventListener('DOMContentLoaded', function() {
+			
+			    // --- DOM 요소 캐싱 ---
+			    const contentsContainer = document.getElementById('contentsListContainer');
+			    const filterButtons = document.querySelectorAll('#myTab .nav-link');
+			    const headerSearchForm = document.querySelector('form[action="/user/userSearch"]');
+			    const headerSearchInput = headerSearchForm?.querySelector('input[name="keyword"]');
+			    const resultTitle = document.querySelector('.section-title h3');
+			
+			    // --- 데이터 렌더링 함수 ---
+			    function renderContents(contents) {
+			        contentsContainer.innerHTML = '';
+			        if (!contents || contents.length === 0) {
+			            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과가 없습니다.</p></div>';
+			            return;
+			        }
+			        
+			        const contentsHtml = contents.map(content => {
+			            // ★★ 핵심 1: 재사용 가능한 북마크 버튼 HTML을 미리 생성합니다. ★★
+			            const bookmarkButtonHtml = createBookmarkButtonHtml(content);
+			
+			            if (content.contentsType === 'Outsourcing') {
+			                const reviewScore = content.reviewScore || 0, ratingWidth = reviewScore * 20;
+			                const ratingHtml = (reviewScore >= 0) ? `<div class="product-rate-cover"><div class="product-rate d-inline-block"><div class="product-rating" style="width:${ratingWidth}%"></div></div><span class="font-small ml-5 text-muted"> (${reviewScore.toFixed(1)})</span></div>` : '';
+			                let formattedPrice = '가격문의';
+			                if (content.osAmt && !isNaN(content.osAmt)) {
+			                    formattedPrice = parseInt(content.osAmt, 10).toLocaleString('ko-KR') + '원';
+			                }
+			                return `<div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="Outsourcing">
+			                            <div class="product-cart-wrap mb-30 position-relative">
+			                                <div class="product-img-action-wrap">
+			                                    ${bookmarkButtonHtml}  <!-- ★★ 핵심 2: 여기에 북마크 버튼 삽입 ★★ -->
+			                                    <div class="product-img product-img-zoom">
+			                                        <a href="/user/contents/${content.contentsId}"><img class="default-img" src="${content.thumbnailUrl}" alt="외주 이미지"></a>
+			                                    </div>
+			                                </div>
+			                                <div class="product-content-wrap" style="padding: 15px;">
+			                                    <div class="product-category"><a>${content.ctgryName || ''} | ${content.enterName}</a></div>
+			                                    <h2><span>${content.contentsTitle}</span></h2>
+			                                    ${ratingHtml}
+			                                    <div class="product-price"><span>${formattedPrice}</span></div>
+			                                    <a href="/user/contents/${content.contentsId}" class="stretched-link"></a>
+			                                </div>
+			                            </div>
+			                        </div>`;
+			
+			            } else { // 'Portfolio'
+			                const categoryInfo = (content.ctgryName) ? `${content.ctgryName} | ` : '';
+			                return `<div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="Portfolio">
+			                            <div class="product-cart-wrap mb-30 position-relative portfolio-modal-trigger" data-contents-id="${content.contentsId}" role="button" style="cursor: pointer;">
+			                                <div class="product-img-action-wrap">
+			                                    ${bookmarkButtonHtml} <!-- ★★ 핵심 2: 포트폴리오에도 북마크 버튼 삽입 ★★ -->
+			                                    <div class="product-img product-img-zoom">
+			                                        <a href="javascript:void(0);">
+			                                            <img class="default-img" src="${content.thumbnailUrl}" alt="포트폴리오 이미지" />
+			                                            <img class="hover-img" src="${content.thumbnailUrl}" alt="포트폴리오 이미지" />
+			                                        </a>
+			                                    </div>
+			                                </div>
+			                                <div class="product-content-wrap" style="padding: 15px;">
+			                                    <div class="product-category"><a>${categoryInfo}${content.enterName}</a></div>
+			                                    <h2>${content.contentsTitle}</h2>
+			                                </div>
+			                            </div>
+			                        </div>`;
+			            }
+			        }).join('');
+			        contentsContainer.innerHTML = contentsHtml;
+			    }
+			
+			    // --- AJAX 검색 및 필터링 함수 ---
+			    async function performAjaxSearch(keyword) {
+			        const newUrl = `/user/userSearch?keyword=${encodeURIComponent(keyword)}`;
+			        history.pushState({ keyword }, '', newUrl);
+			        resultTitle.innerHTML = '결과를 불러오는 중...';
+			        contentsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+			        try {
+			            const response = await fetch(`/user/search/api?keyword=${encodeURIComponent(keyword)}`);
+			            if (!response.ok) throw new Error(`서버 응답 오류: ${response.status}`);
+			            const data = await response.json();
+			            resultTitle.innerHTML = (keyword && keyword.trim() !== '') ? `'<span class="text-brand">${keyword}</span>' 검색 결과` : '전체 콘텐츠';
+			            renderContents(data); 
+			            const filterToApply = initialFilter || 'Portfolio'; 
+			            const targetButton = document.querySelector(`.nav-link[data-filter="${filterToApply}"]`);
+			            if (targetButton) {
+			                setActiveFilterButton(targetButton);
+			            }
+			            applyFilter(filterToApply);
+			        } catch (error) {
+			            console.error("AJAX 검색 중 에러 발생:", error);
+			            resultTitle.innerHTML = '오류';
+			            contentsContainer.innerHTML = '<div class="col-12 text-center"><p>검색 결과를 불러오는 데 실패했습니다.</p></div>';
+			        }
+			    }
+			    
+			    function setActiveFilterButton(clickedButton) {
+			        if (!clickedButton) return;
+			        filterButtons.forEach(button => button.classList.remove('active'));
+			        clickedButton.classList.add('active');
+			    }
+			
+			    function applyFilter(filterType) {
+			        const items = contentsContainer.querySelectorAll('.product-item');
+			        let visibleItemCount = 0;
+			        items.forEach(item => {
+			            if (item.dataset.type === filterType) {
+			                item.style.display = '';
+			                visibleItemCount++;
+			            } else {
+			                item.style.display = 'none';
+			            }
+			        });
+			        const noResultMessage = contentsContainer.querySelector('.no-filter-result');
+			        if (noResultMessage) noResultMessage.remove();
+			        if (visibleItemCount === 0 && items.length > 0) {
+			            contentsContainer.insertAdjacentHTML('beforeend', '<div class="col-12 text-center no-filter-result"><p>선택하신 필터에 해당하는 콘텐츠가 없습니다.</p></div>');
+			        }
+			    }
+			
+			    // --- 이벤트 리스너 설정 ---
+			    filterButtons.forEach(button => {
+			        button.addEventListener('click', function(event) {
+			            event.preventDefault();
+			            setActiveFilterButton(this);
+			            applyFilter(this.dataset.filter);
+			        });
+			    });
+			    
+			    if (headerSearchForm) {
+			        headerSearchForm.addEventListener('submit', function(event) {
+			            if (window.location.pathname.includes('/user/userSearch')) {
+			                event.preventDefault();
+			                performAjaxSearch(headerSearchInput.value);
+			            }
+			        });
+			    }
+			
+			    // ★★ 이벤트 위임을 사용하여 동적으로 생성된 요소의 클릭 처리 ★★
+			    document.body.addEventListener('click', function(event) {
+			        // 1. 찜 버튼 클릭 처리
+			        const bookmarkBtn = event.target.closest('.bookmark-btn');
+			        if (bookmarkBtn) {
+			            event.preventDefault(); 
+			            event.stopPropagation();
+			            handleBookmarkClick(bookmarkBtn);
+			            return;
+			        }
+			
+			        // 2. 포트폴리오 모달 트리거 클릭 처리
+			        const trigger = event.target.closest('.portfolio-modal-trigger');
+			        if (trigger) {
+			            const contentsId = trigger.dataset.contentsId;
+			            if (contentsId) {
+			                openPortfolioModal(contentsId);
+			            }
+			        }
+			    });
+			
+			    // --- 페이지 최초 로드 시 실행 ---
+			    performAjaxSearch(initialKeyword);
+			});
+	
+		</script>
+	</th:block>
 	
 	
 	

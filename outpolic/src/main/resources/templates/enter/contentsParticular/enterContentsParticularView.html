@@ -7,6 +7,25 @@
 	    <!-- 1. 브라우저 탭에 표시될 페이지 제목 -->
 	    <title th:text="|${detail.contentsTitle} - outpolic|">콘텐츠 상세 정보</title>
 	    <meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	    <style>
+		    .slick-prev, .slick-next{
+					display : none !important;
+			}
+			.product-action-1 .action-btn i.fi-rs-heart.active {
+			    color: #F15412; /* 찜 했을 때의 색상 (주황색 계열) */
+			    font-weight: 900; /* 채워진 아이콘처럼 보이도록 폰트 굵게 */
+			}
+			/* .fi-rs-heart 아이콘에 .active 클래스가 추가되었을 때 적용될 스타일 */
+			.fi-rs-heart.active {
+			    color: #F15B5B; /* 하트 아이콘을 빨간색 계열로 변경 */
+			    font-weight: 900;  /* 폰트 아이콘의 경우, 굵기를 주면 채워진 모양으로 보이기도 합니다. */
+			}
+			
+			/* 기존 버튼 스타일과 어울리도록 active 상태일 때의 버튼 스타일도 정의할 수 있습니다. */
+			.bookmark-btn .fi-rs-heart.active {
+			    color: #F15B5B !important; /* 다른 스타일에 의해 덮어쓰이지 않도록 우선순위 부여 */
+			}
+	    </style>
 	</head>
 	
 	<!-- 2. 메인 콘텐츠 영역 -->
@@ -81,7 +100,7 @@
 		                    
 		                    <!-- 작성자 정보 -->
 		                    <div class="product-by mb-20">
-		                        <span>By: <a th:href="@{/user/company/{id}(id=${detail.enterCode})}" th:text="${detail.enterName}">작성자 이름</a></span>
+		                        <span>By: <a th:href="@{/enter/company/{id}(id=${detail.enterCode})}" th:text="${detail.enterName}">작성자 이름</a></span>
 		                    </div>
 		                    
 		                    <hr class="my-4">
@@ -99,12 +118,25 @@
 		                    </div>
 		                    <br>
 		                    <!-- 구매 또는 문의 버튼 -->
-		                    <div class="detail-extralink" th:if="${detail != null}">
-		                        <!-- 버튼이 꽉 차도록 w-100 클래스 추가 -->
-		                       <a th:href="@{/user/outsourcing-requests/form/{id}(id=${detail.contentsId})}" 
-							       class="button button-add-to-cart w-100">
-							       <i class="fi-rs-shopping-cart"></i>신청하기
+		                    <div class="d-flex align-items-center mb-4 w-100">
+							    <!-- 찜하기 버튼 -->
+							    <a href="javascript:void(0);" 
+							       class="btn btn-outline-secondary d-flex align-items-center me-5 action-btn bookmark-btn w-60"
+							       th:attr="data-cl-cd=${detail.clCd}" 
+							       aria-label="Add To Wishlist">
+							       <i class="fi-rs-heart me-2" th:classappend="${detail.isBookmarked ? 'active' : ''}"></i> 찜하기
 							    </a>
+							    <!-- 공유하기 버튼 -->
+							    <a href="javascript:void(0);" 
+							       class="btn btn-outline-secondary d-flex align-items-center w-60">
+							       <i class="fi-rs-share me-2"></i> 공유하기
+							    </a>
+							</div>
+		                    <div class="detail-extralink" th:if="${detail != null}">
+		                       <a th:href="@{/enter/outsourcing-requests/form/{id}(id=${detail.contentsId})}" 
+							       class="button button-add-to-cart w-100">
+							       신청하기
+							   </a>
 		                    </div>
 		                    
 		                    <!-- 타입, ID 등 추가 정보 -->
@@ -123,41 +155,93 @@
 	<th:block layout:fragment="jsScript">
 		<script th:inline="javascript">
 			/*<![CDATA[*/
-			
+	
 			document.addEventListener('DOMContentLoaded', function() {
-			
-			    // 1. Thymeleaf를 통해 서버에서 직접 전달받은 'detail' 객체를 JavaScript 변수로 받습니다.
-			    //    이 방법은 페이지가 처음 로드될 때 이미 모든 데이터가 있다는 전제 하에 사용합니다.
+	
+			    // --- 1. 상세 이미지 렌더링 로직 (기존 코드와 동일) ---
 			    const detail = /*[[${detail}]]*/ null;
-			
-			    if (!detail || !detail.filesJson) {
-			        console.error('상세 정보 또는 파일 정보가 없습니다.');
-			        return;
+			    if (detail && detail.filesJson) {
+			        const imageSlider = document.querySelector('.product-image-slider');
+			        try {
+			            const files = JSON.parse(detail.filesJson);
+			            let imagesHtml = files.map(file => `<img src="${file.filePath}" alt="${file.fileOrgnlNm}" class="img-fluid">`).join('');
+			            if (imageSlider) {
+			                imageSlider.innerHTML = imagesHtml || '<p>상세 이미지가 없습니다.</p>';
+			            }
+			        } catch (e) {
+			            console.error("filesJson 파싱 오류:", e);
+			            if(imageSlider) imageSlider.innerHTML = '<p>이미지 정보를 불러오는 데 실패했습니다.</p>';
+			        }
 			    }
-			
-			    // 2. 이미지를 삽입할 부모 요소를 찾습니다.
-			    const imageSlider = document.querySelector('.product-image-slider');
-			
-			    // 3. 'filesJson' 문자열을 실제 JavaScript 객체 배열로 변환합니다.
-			    //    바로 이 부분이 작성자님께서 말씀하신 'JSON으로 받은 객체를 풀어서'에 해당하는 핵심 코드입니다.
-			    const files = JSON.parse(detail.filesJson);
-			    
-			    // 4. 파일 배열이 비어있지 않다면, 각 파일을 <img> 태그로 변환합니다.
-			    let imagesHtml = '';
-			    if (files && files.length > 0) {
-			        imagesHtml = files.map(file => 
-			            // 표준 HTML <img> 태그를 생성합니다.
-			            `<img src="${file.filePath}" alt="${file.fileOrgnlNm}" class="img-fluid">`
-			        ).join(''); // 생성된 모든 <img> 태그 문자열을 하나로 합칩니다.
-			    } else {
-			        imagesHtml = '<p>상세 이미지가 없습니다.</p>';
+	
+	
+			    // --- 2. 찜 버튼 클릭 이벤트 처리 로직 (핵심 수정) ---
+	
+			    function handleBookmarkClick(clickedButtonElement) {
+			        const clCd = clickedButtonElement.dataset.clCd;
+			        if (!clCd) return;
+	
+			        const heartIcon = clickedButtonElement.querySelector('i.fi-rs-heart');
+			        if (!heartIcon) return;
+	
+			        const isCurrentlyBookmarked = heartIcon.classList.contains('active');
+			        const apiUrl = '/api/enter/bookmarks';
+	
+			        if (isCurrentlyBookmarked) {
+			            // [찜 해제 로직] - 이 부분은 이미 정상 동작하므로 그대로 둡니다.
+			            heartIcon.classList.remove('active'); // 낙관적 업데이트
+			            fetch(`${apiUrl}/${clCd}`, { method: 'DELETE' })
+			                .catch(error => {
+			                    console.error('찜 해제 실패:', error);
+			                    heartIcon.classList.add('active'); // 실패 시 롤백
+			                });
+			        } else {
+			            // [찜 추가 로직] - 이 부분이 핵심입니다.
+			            heartIcon.classList.add('active'); // 먼저 아이콘을 채웁니다. (낙관적 업데이트)
+			            
+			            fetch(apiUrl, {
+			                method: 'POST',
+			                headers: { 'Content-Type': 'application/json' },
+			                body: JSON.stringify({ clCd: clCd })
+			            })
+			            .then(response => {
+			                // [핵심] 응답 상태 코드를 확인합니다.
+			                if (response.ok) {
+			                    // 성공 (2xx 응답): 아무것도 할 필요 없음. 이미 아이콘이 채워져 있음.
+			                    return; 
+			                }
+			                
+			                // [핵심] '중복' 에러를 '성공'으로 간주하는 로직
+			                // 409 Conflict: 서버가 '이미 존재하는 자원'이라고 응답 (우리의 DuplicateKeyException)
+			                if (response.status === 409) { 
+			                    console.warn("서버에서 중복 찜이 확인되었습니다. UI를 찜 된 상태로 유지합니다.");
+			                    // 아무것도 하지 않음으로써, 채워진 하트 상태를 유지합니다. 이것이 '성공' 처리입니다.
+			                    return;
+			                }
+	
+			                // 그 외 다른 모든 에러는 '실패'로 간주하고 UI를 롤백합니다.
+			                throw new Error(`찜 추가 실패: 상태 코드 ${response.status}`);
+			            })
+			            .catch(error => {
+			                // 네트워크 오류 또는 위에서 throw한 에러를 여기서 처리합니다.
+			                console.error(error);
+			                alert('찜하기에 실패했습니다. 잠시 후 다시 시도해주세요.');
+			                heartIcon.classList.remove('active'); // 실패 시 아이콘을 다시 비웁니다.
+			            });
+			        }
 			    }
-			
-			    // 5. 생성된 HTML을 slider 내부에 삽입하여 화면을 업데이트합니다.
-			    imageSlider.innerHTML = imagesHtml;
-			
+	
+			    // 이벤트 위임 설정 (기존과 동일)
+			    document.body.addEventListener('click', function(event) {
+			        const bookmarkBtn = event.target.closest('.bookmark-btn');
+			        if (bookmarkBtn) {
+			            event.preventDefault(); 
+			            handleBookmarkClick(bookmarkBtn);
+			        }
+			    });
+	
 			});
-			
+	
 			/*]]>*/
 			</script>
 	</th:block>

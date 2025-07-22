@@ -47,9 +47,11 @@
     <select id="getCompanyPortfoliosById" resultType="outpolic.enter.company.domain.EnterCompanyPortfolioDTO">
         SELECT
             p.prtf_cd     AS prtfCd,
-            p.prtf_ttl    AS prtfTtl
+            p.prtf_ttl    AS prtfTtl,
+            p.prtf_thumbnail_url AS prtfThumbnailUrl
         FROM portfolio p
         WHERE p.ent_cd = #{entCd}
+        	AND p.stc_cd = 'SD_ACTIVE'
         ORDER BY p.prtf_reg_ymdt DESC
     </select>
 
@@ -57,9 +59,11 @@
         SELECT
             o.os_cd     AS osCd,
             o.os_ttl    AS osTtl,
-            o.os_amt    AS osAmt
+            o.os_amt    AS osAmt,
+            o.os_thumbnail_url AS osThumbnailUrl
         FROM outsourcing o
         WHERE o.ent_cd = #{entCd}
+        	AND o.stc_cd = 'SD_ACTIVE'
         ORDER BY o.os_reg_ymdt DESC
     </select>
 

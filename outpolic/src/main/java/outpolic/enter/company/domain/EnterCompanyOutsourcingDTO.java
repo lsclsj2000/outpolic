@@ -8,4 +8,5 @@ public class EnterCompanyOutsourcingDTO {
 	private String osCd;
 	private String osTtl;
 	private int osAmt;
+	private String osThumbnailUrl;
 }

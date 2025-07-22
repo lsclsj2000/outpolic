@@ -99,44 +99,8 @@ public class EnterContentsController {
     }
 
 
-    @GetMapping("/products") 
-    public String showContentsBySubCategory(@RequestParam("category") String subCategoryCode, Model model) {
-    	
-    	log.info("카테고리별 콘텐츠 조회 시작. 요청된 categoryCode: {}", subCategoryCode);
-        
-        String mainCategoryCode = subCategoryCode.substring(0, 3);
-        
-        addSidebarDataToModel(mainCategoryCode, model);
-
-        EnterCategory currentCategory = categoryService.getCategoryByCode(subCategoryCode);
-        if (currentCategory == null) {
-            // 존재하지 않는 카테고리일 경우 예외 처리
-            log.warn("존재하지 않는 카테고리 코드입니다: {}", subCategoryCode);
-            return "error/404"; 
-        }
-        // "currentCategory" 이름으로 모델에 추가
-        model.addAttribute("currentCategory", currentCategory);
-
-
-        // --- 3. 실제 콘텐츠 목록 조회 ---
-        // 이전에 만드신 SearchService의 메소드를 호출합니다.
-        List<EnterContentItemDTO> contentsList = searchService.findContentsByCategoryId(subCategoryCode);
-        
-        // "contentsList" 이름으로 모델에 추가
-        model.addAttribute("contentsList", contentsList);
-        
-        return "enter/contents/enterContentsView";
-    }
     
-    // --- 헬퍼 메서드 ---
-    private void addSidebarDataToModel(String mainCategoryCode, Model model) {
-        // 인터페이스에 정의된 올바른 메서드 이름으로 호출
-        List<EnterCategoryGroup> categoryGroups = categoryService.getCategoryHierarchy(mainCategoryCode);
-        EnterCategory mainCategory = categoryService.getMainCategory(mainCategoryCode);
-        
-        model.addAttribute("categoryGroups", categoryGroups);
-        model.addAttribute("mainCategory", mainCategory);
-    }
+
     /**
      * '/enter/contents/{osCd}' 주소를 처리하는 메서드
      */

@@ -9,12 +9,12 @@
         <result property="entName"      column="ent_nm" />
         <result property="prtfTtl"      column="prtf_ttl" />
         <result property="prtfDate"     column="prtf_reg_ymdt" />
-        <result property="prtfThumbnailUrl"     column="prtf_thumbnail_url" />
         <result property="ctgryName"    column="ctgry_nm" />
         <result property="stcCode"      column="stc_cd" />
         <result property="rankingView"  column="rk_view" />
         <result property="rkDate"       column="rk_tot_ymd" />
         <result property="clCd"         column="cl_cd" />
+        <result property="prtfThumbnailUrl"         column="prtf_thumbnail_url" />
         <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
     <resultMap  id="ContentsRankingMap" type="outpolic.enter.ranking.domain.EnterRankingContentsDTO">
@@ -25,10 +25,10 @@
         <result property="ctgryName"    column="ctgry_nm" />
         <result property="osTtl"        column="os_ttl" />
         <result property="osExpln"      column="os_expln" />
-        <result property="osThumbnailUrl"     column="os_thumbnail_url" />
         <result property="reviewScore"  column="avg_review_score" />
         <result property="osAtm"        column="os_amt" />
         <result property="clCd"         column="cl_cd" />
+        <result property="osThumbnailUrl"         column="os_thumbnail_url" />
         <result property="isBookmarked" column="isBookmarked" /> <!-- 찜 상태 매핑 추가 -->
     </resultMap>
     <sql id="bookmarkJoinSql">
@@ -40,34 +40,39 @@
     <!-- 포트폴리오 랭킹 -->
     <select id="getEnterRankingPoContents" resultMap="PortfolioContentsRankingMap">
     	SELECT
-            p.prtf_cd,
-            p.ent_cd,
-            e.ent_nm,
-            p.prtf_ttl,
-            p.prtf_reg_ymdt,
-            p.stc_cd,
-            p.prtf_thumbnail_url,
-            -- ✨ 카테고리 중복 문제를 GROUP_CONCAT으로 해결
-            IFNULL(GROUP_CONCAT(c.ctgry_nm SEPARATOR ', '), '미지정') AS ctgry_nm,
-            r.rk_view,
-            r.rk_tot_ymd,
-            cl.cl_cd
-            <!-- 찜 여부 SELECT 절 포함 -->
-            <include refid="isBookmarkedSelectSql"/>
-        FROM
-            ranking r 
-        JOIN content_list cl ON r.cl_cd = cl.cl_cd
-        JOIN portfolio p ON cl.cntd_cd = p.prtf_cd
-        JOIN enterprise e ON p.ent_cd = e.ent_cd
-        LEFT JOIN category_mapping cm ON cl.cl_cd = cm.cl_cd
-        LEFT JOIN category c ON cm.ctgry_id = c.ctgry_id
-        <!-- 찜 테이블 JOIN 절 포함 -->
-        <include refid="bookmarkJoinSql"/>
-        GROUP BY 
-            p.prtf_cd, r.rk_tot_ymd, r.rk_view, cl.cl_cd
-        ORDER BY 
-            r.rk_tot_ymd DESC, r.rk_view DESC
-        LIMIT 10
+	        p.prtf_cd,
+	        p.ent_cd,
+	        e.ent_nm,
+	        p.prtf_ttl,
+	        p.prtf_reg_ymdt,
+	        p.stc_cd,
+	        -- 각 랭킹 행(r.cl_cd)에 대해 대표 카테고리 1개만 조회하는 서브쿼리
+	        (SELECT c.ctgry_nm
+	         FROM category_mapping cm
+	         JOIN category c ON cm.ctgry_id = c.ctgry_id
+	         WHERE cm.cl_cd = r.cl_cd -- 메인 쿼리의 cl_cd를 직접 사용
+	         ORDER BY cm.ctgry_id ASC
+	         LIMIT 1
+	        ) AS ctgry_nm,
+	        r.rk_view,
+	        r.rk_tot_ymd,
+	        r.cl_cd, -- ranking 테이블의 cl_cd를 명확히 명시
+	        p.prtf_thumbnail_url
+	        <include refid="isBookmarkedSelectSql"/>
+	    FROM
+	        ranking r 
+	    -- ▼▼▼ 핵심 수정: JOIN 순서 명확화 및 별칭 사용 ▼▼▼
+	    JOIN content_list cl ON r.cl_cd = cl.cl_cd
+	    JOIN portfolio p ON cl.cntd_cd = p.prtf_cd
+	    JOIN enterprise e ON p.ent_cd = e.ent_cd
+	    <include refid="bookmarkJoinSql"/>
+	    WHERE
+	        p.stc_cd = 'SD_ACTIVE'
+	        -- ▼▼▼ 핵심 수정: GROUP BY 절을 완전히 제거합니다. ▼▼▼
+	        -- 각 랭킹 데이터는 고유하므로 집계할 필요가 없습니다.
+	    ORDER BY 
+	        r.rk_tot_ymd DESC, r.rk_view DESC
+	    LIMIT 10
     </select>
     <!-- 외주랭킹 -->
 	<select id="getEnterRankingOsContents" resultMap="ContentsRankingMap">
@@ -79,9 +84,9 @@
             c.ctgry_nm,
             o.os_ttl,
             o.os_expln,
-            o.os_thumbnail_url,
             IFNULL(AVG(r2.rvw_evl), 0) AS avg_review_score,
             o.os_amt,
+            o.os_thumbnail_url,
             cl.cl_cd
             <!-- 찜 여부 SELECT 절 포함 -->
             <include refid="isBookmarkedSelectSql"/>
@@ -107,10 +112,11 @@
         WHERE
             r.rn = 1 
             AND cl.cntd_cd LIKE 'os%'
+            AND o.stc_cd = 'SD_ACTIVE'
         GROUP BY
             o.os_cd, r.rk_view, e.ent_nm, e.ent_cd, c.ctgry_nm, o.os_ttl, o.os_expln, o.os_amt, cl.cl_cd
         ORDER BY
             r.rk_view DESC
-        LIMIT 10		
+        LIMIT 10	
 	</select>
  </mapper>
