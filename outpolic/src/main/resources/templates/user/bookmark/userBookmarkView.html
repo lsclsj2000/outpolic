@@ -13,6 +13,10 @@
 			    color: #F15412; /* 찜 했을 때의 색상 */
 			    font-weight: 900; /* 채워진 아이콘처럼 보이게 */
 			}
+		    .wishlist-category {
+		        display: none; /* 기본 숨김 */
+		    }
+
 		</style>
 	</head>
 	<!-- 추가할 javaFile -->
@@ -66,33 +70,48 @@
 	            });
 	        }
 	    });
-		
-		
-		// 탭 기능
 		document.addEventListener('DOMContentLoaded', function () {
 		    const sidebarLinks = document.querySelectorAll('.category-list .category-link');
 		    const sections = document.querySelectorAll('.wishlist-category');
-
+		
+		    // 탭 클릭 함수 (공통 처리용)
+		    function handleTabClick(selectedCategory) {
+		        sidebarLinks.forEach(link => {
+		            const category = link.textContent.trim();
+		            link.classList.toggle('active', category === selectedCategory);
+		        });
+		
+		        sections.forEach(section => {
+		            const title = section.querySelector('h4').textContent.trim();
+		            const cards = section.querySelectorAll('.card');
+		
+		            if (selectedCategory === '전체보기') {
+		                section.style.display = 'block';
+		                cards.forEach((card, index) => {
+		                    card.parentElement.style.display = (index < 4) ? 'block' : 'none';
+		                });
+		            } else if (selectedCategory === title) {
+		                section.style.display = 'block';
+		                cards.forEach(card => {
+		                    card.parentElement.style.display = 'block';
+		                });
+		            } else {
+		                section.style.display = 'none';
+		            }
+		        });
+		    }
+		
+		    // 각 탭 클릭 시
 		    sidebarLinks.forEach(link => {
 		        link.addEventListener('click', function (e) {
 		            e.preventDefault();
-
 		            const selectedCategory = this.textContent.trim();
-
-		            // active 클래스 초기화
-		            sidebarLinks.forEach(l => l.classList.remove('active'));
-		            this.classList.add('active');
-
-		            sections.forEach(section => {
-		                const title = section.querySelector('h4').textContent.trim();
-		                if (selectedCategory === '전체보기' || selectedCategory === title) {
-		                    section.style.display = 'block';
-		                } else {
-		                    section.style.display = 'none';
-		                }
-		            });
+		            handleTabClick(selectedCategory);
 		        });
 		    });
+		
+		    // ✅ 페이지 진입 시 "전체보기" 자동 클릭 효과
+		    handleTabClick('전체보기');
 		});
 	</script>
 	
@@ -103,11 +122,11 @@
 		    <div class="wishlist-category mb-5">
 		        <h4 class="mb-3">외주</h4>
 		        <hr />
-				<div th:if="${#lists.isEmpty(osBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+		        <div th:if="${#lists.isEmpty(osBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
 			        <p style="color: #999; font-size: 1.1rem;">즐겨찾기한 목록이 없습니다.</p>
 			    </div>
 		        <div th:if="${not #lists.isEmpty(osBookmarks)}" class="row g-4"  style="margin-bottom: 60px;">
-		            <div class="bookmark-card outsourcing col-md-3" th:each="b : ${osBookmarks.size() > 4 ? osBookmarks.subList(0,4) : osBookmarks}">
+		            <div class="col-md-3" th:each="b : ${osBookmarks}">
 		                <div class="card h-100 shadow-sm">
 		                    <img th:if="${b != null and b.osThumbnailUrl != null}" th:src="${b.osThumbnailUrl}" class="card-img-top" alt="외주 이미지">
 		                    <div class="card-body">
@@ -129,11 +148,11 @@
 		    <div class="wishlist-category mb-5">
 		        <h4 class="mb-3">포트폴리오</h4>
 		        <hr />
-				<div th:if="${#lists.isEmpty(poBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+		        <div th:if="${#lists.isEmpty(poBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
 			        <p style="color: #999; font-size: 1.1rem;">즐겨찾기한 목록이 없습니다.</p>
 			    </div>
 		        <div th:if="${not #lists.isEmpty(poBookmarks)}" class="row g-4"  style="margin-bottom: 60px;">
-		            <div class="bookmark-card portfolio col-md-3" th:each="b : ${poBookmarks.size() > 4 ? poBookmarks.subList(0,4) : poBookmarks}">
+		            <div class="col-md-3" th:each="b : ${poBookmarks}">
 		                <div class="card h-100 shadow-sm">
 		                    <img th:if="${b != null and b.prtfThumbnailUrl != null}" th:src="${b.prtfThumbnailUrl}" class="card-img-top" alt="포트폴리오 이미지">
 		                    <div class="card-body">
@@ -155,19 +174,18 @@
 		    <div class="wishlist-category mb-5">
 		        <h4 class="mb-3">기업</h4>
 		        <hr />
-				<div th:if="${#lists.isEmpty(eiBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+		       <div th:if="${#lists.isEmpty(eiBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
 			        <p style="color: #999; font-size: 1.1rem;">즐겨찾기한 목록이 없습니다.</p>
 			    </div>
 		        <div th:if="${not #lists.isEmpty(eiBookmarks)}" class="row g-4"  style="margin-bottom: 60px;">
-		            <div class="bookmark-card enterprise col-md-3" th:each="b : ${eiBookmarks.size() > 4 ? eiBookmarks.subList(0,4) : eiBookmarks}">
+		            <div class="col-md-3" th:each="b : ${eiBookmarks}">
 		                <div class="card h-100 shadow-sm">
 		                    <img th:if="${b != null and b.entImg != null}" th:src="${b.entImg}" class="card-img-top" alt="기업 이미지">
 							<img th:if="${b == null or b.entImg == null}" th:src="@{/enter/assets/imgs/outpolic/cutecat.jpg}" class="card-img-top" alt="기본 기업 이미지" />
 		                    <div class="card-body">
-		                    	<!--a th:href="@{'/user/contents/' + ${b.entCd}}">-->
-								<a>
+		                    	<a th:href="@{'/user/contents/' + ${b.entCd}}">
 		                        	<h5 class="card-title" th:if="${b != null and b.entNm != null}" th:text="${b.entNm}">기업명: ㈜아웃폴릭</h5>
-		                        </a<!--a>	
+		                        </a>	
 		                        <p class="card-text text-muted small" th:if="${b != null and b.entRprsv != null}" th:text="'대표자: ' + ${b.entRprsv}">대표자: 김대표</p>
 		                        <a href="#" class="btn btn-sm btn-outline-primary w-100">
 		                            <i class="fi-rs-heart"></i> 찜 취소

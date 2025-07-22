@@ -28,7 +28,7 @@
 	    INNER JOIN content_list cl ON b.cl_cd = cl.cl_cd
 	    INNER JOIN outsourcing o ON cl.cntd_cd = o.os_cd
 	    INNER JOIN enterprise e ON o.ent_cd = e.ent_cd
-	    WHERE b.mbr_cd = #{memberCode} AND cl.cntd_cd LIKE 'OS%'
+	    WHERE b.mbr_cd = #{memberCode} AND cl.cntd_cd LIKE 'OS%' AND o.stc_cd = 'SD_ACTIVE'
 	    ORDER BY b.bm_reg_ymdt DESC
 	</select>
 
@@ -44,19 +44,20 @@
     <result property="prtfThumbnailUrl" column="prtf_thumbnail_url" />
     <result property="ctgryNm" column="ctgry_nm" />
     <result property="entNm" column="ent_nm" />
+    <result property="poStcCd" column="stc_cd" />
 </resultMap>
 
 <select id="getBookmarkPoByCode" resultMap="PortfolioBookmarkResultMap" parameterType="String">
     SELECT b.bm_cd, b.mbr_cd, b.cl_cd, b.bm_reg_ymdt, cl.cntd_cd,
            p.prtf_cd, p.prtf_ttl, p.prtf_thumbnail_url,
-           c.ctgry_nm, e.ent_nm
+           c.ctgry_nm, e.ent_nm, p.stc_cd as poStcCd
     FROM bookmark b
     INNER JOIN content_list cl ON b.cl_cd = cl.cl_cd
     INNER JOIN portfolio p ON cl.cntd_cd = p.prtf_cd
     INNER JOIN enterprise e ON p.ent_cd = e.ent_cd
     LEFT JOIN category_mapping cm ON cm.cl_cd = cl.cl_cd
     LEFT JOIN category c ON c.ctgry_id = cm.ctgry_id
-    WHERE b.mbr_cd = #{memberCode} AND cl.cntd_cd LIKE 'PO%'
+    WHERE b.mbr_cd = #{memberCode} AND cl.cntd_cd LIKE 'PO%' and p.stc_cd = 'SD_ACTIVE'
     ORDER BY b.bm_reg_ymdt DESC
 </select>
 
@@ -71,15 +72,16 @@
     <result property="entNm" column="ent_nm" />
     <result property="entRprsv" column="ent_rprsv" />
     <result property="entImg" column="ent_img" />
+    <result property="eiStcCd" column="stc_cd" />
 </resultMap>
 
 <select id="getBookmarkEiByCode" resultMap="EnterpriseBookmarkResultMap" parameterType="String">
     SELECT b.bm_cd, b.mbr_cd, b.cl_cd, b.bm_reg_ymdt, cl.cntd_cd,
-           e.ent_cd, e.ent_nm, e.ent_rprsv, e.ent_img
+           e.ent_cd, e.ent_nm, e.ent_rprsv, e.ent_img, e.stc_cd as eiStcCd
     FROM bookmark b
     INNER JOIN content_list cl ON b.cl_cd = cl.cl_cd
     INNER JOIN enterprise e ON cl.cntd_cd = e.ent_cd
-    WHERE b.mbr_cd = #{memberCode} AND cl.cntd_cd LIKE 'EI%'
+    WHERE b.mbr_cd = #{memberCode} AND cl.cntd_cd LIKE 'EI%' and e.stc_cd = 'SD_ACTIVE'
     ORDER BY b.bm_reg_ymdt DESC
 </select>
 

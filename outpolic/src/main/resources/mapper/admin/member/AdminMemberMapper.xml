@@ -81,9 +81,6 @@
  		set
  			mbr_cd= #{memberCode},
 			mbr_nicknm = #{memberNickname}, 
-			mbr_addr = #{memberAddress}, 
-			mbr_daddr = #{memberDAddress}, 
-			mbr_zip = #{memberZip}, 
 			mbr_mdfcn_ymdt = curdate(),
 			stc_cd = #{statusCode},
 			grd_cd = #{gradeCode}

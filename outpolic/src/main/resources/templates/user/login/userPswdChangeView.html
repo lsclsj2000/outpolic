@@ -9,45 +9,46 @@
 	</head>
 	<th:block layout:fragment="contents">
     	        <!-- 수정할 부분 신세영 -->
-        <div class="page-content w-100">
-            <div class="container col-6">
-                <div class="row justify-content-center pl-90">
-                    <div class="col-xl-4 col-lg-6 col-md-12 m-auto w-100">
-                        <div class="login_wrap widget-taber-content background-white">
-                            <div class="padding_eight_all bg-white">
-                                <div class="heading_s1">
-                                    <img class="border-radius-15" th:src="@{/user/assets/imgs/page/forgot_password.svg}" alt="" />
-                                    <h2 class="mb-15 mt-15">비밀번호 재설정</h2>
-                                    <p class="mb-30">비밀번호를 재설정하시길 원하시면 현재 비밀번호와 새 비밀번호를 입력해주세요.</p>
-                                </div>
-                             
-                                <div class="w-75">
-	                                <form method="post" th:action="@{/user/passwordChange}">
-									  <div class="mb-3">
-									    <label class="form-label">현재 비밀번호</label>
-									    <input type="password" name="currentPassword" class="form-control" required>
-									  </div>
-									
-									  <div class="mb-3">
-									    <label class="form-label">새 비밀번호</label>
-									    <input type="password" name="newPassword" class="form-control" required>
-									  </div>
-									
-									  <div class="mb-3">
-									    <label class="form-label">새 비밀번호 확인</label>
-									    <input type="password" name="confirmPassword" class="form-control" required>
-									  </div>
-									
-									  <div id="errorMsg" style="color:red; display:none;"></div>
-									<button type="button" id="passwordChangeBtn">변경</button>
-									</form>
-                                </div>
-                            </div>
+       <div class="page-content w-100">
+    <div class="container">
+        <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+            <!-- 좌측 이미지 -->
+            <div class="col-lg-6 d-flex justify-content-center">
+                <img class="img-fluid" style="max-width: 60%; height: auto;" th:src="@{/user/assets/imgs/page/changePassword.png}" alt="비밀번호 재설정 이미지" />
+            </div>
+
+            <!-- 우측 폼 -->
+            <div class="col-lg-6">
+                <div class="login_wrap widget-taber-content background-white">
+                    <div class="padding_eight_all bg-white">
+                        <div class="heading_s1">
+                            <h2 class="mb-15">비밀번호 재설정</h2>
+                            <p class="mb-30">비밀번호를 재설정하시길 원하시면 현재 비밀번호와 새 비밀번호를 입력해주세요.</p>
                         </div>
+
+                        <form method="post" th:action="@{/user/passwordChange}" style="max-width: 400px;">
+                            <div class="mb-3">
+                                <label class="form-label">현재 비밀번호</label>
+                                <input type="password" name="currentPassword" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">새 비밀번호</label>
+                                <input type="password" name="newPassword" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">새 비밀번호 확인</label>
+                                <input type="password" name="confirmPassword" class="form-control" required>
+                            </div>
+                            <div id="errorMsg" style="color:red; display:none; margin-bottom : 5px;"></div>
+                            <button class="btn btn-primary" type="button" id="passwordChangeBtn">변경</button>
+                        </form>
+
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
     	
 	</th:block>       
 	<th:block layout:fragment="jsScript">
