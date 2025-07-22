@@ -56,7 +56,7 @@ public class UserMypageController {
 
  		String memberCode = (String) session.getAttribute("SCD");
  		String gradeCode = (String) session.getAttribute("SGrd");
- 		if(gradeCode == null ||!"USER".equals(gradeCode)) {
+ 		if(gradeCode == null ||"ENTER".equals(gradeCode)) {
  			model.addAttribute("msg", "접근 권한이 없습니다.");
     		model.addAttribute("url", "/");
     		System.out.println("❌ 접근 권한 없음 → 메인으로 리다이렉트");

@@ -24,4 +24,7 @@ public class AdminDashboardDTO {
         private String date; // 날짜 (예: "2023-10-27")
         private long count;  // 수치
     }
+    //관리자로그인용도
+    private String adminName;
+    private String adminCode;
 }

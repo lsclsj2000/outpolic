@@ -9,7 +9,7 @@
 		<body>
 		<th:block layout:fragment="contents">
 		
-			<h2>admin1의 관리자 페이지 메인뷰 입니다</h2>
+			<h2><span th:text="${adminName}">admin1</span>의 관리자 페이지 메인뷰 입니다</h2>
 			<br>
 		
 			<div class="row">
@@ -90,7 +90,6 @@
 	</body>
 	<!-- 추가할 js file -->
 	<th:block layout:fragment="jsScript">
-	
 		<script>
 		// admin/main.html의 script 태그 안에 작성
 		document.addEventListener('DOMContentLoaded', function() {
