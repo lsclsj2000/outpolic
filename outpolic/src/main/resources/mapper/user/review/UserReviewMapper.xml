@@ -15,14 +15,14 @@
 
 <select id="getUserReviewByCode" parameterType="String" resultMap="UserReviewResultMap">
 	SELECT 
-		rvw_cd, 
-		osc_id, 
-		mbr_cd, 
-		rvw_cn, 
-		rvw_evl, 
-		rvw_reg_ymdt, 
-		rvw_mdfcn_ymdt
-	FROM review
+		r.rvw_cd, 
+		r.osc_id, 
+		r.mbr_cd, 
+		r.rvw_cn, 
+		r.rvw_evl, 
+		r.rvw_reg_ymdt, 
+		r.rvw_mdfcn_ymdt
+	FROM review r
 	WHERE mbr_cd=#{memberCode};
 </select>	
 <!-- select *
