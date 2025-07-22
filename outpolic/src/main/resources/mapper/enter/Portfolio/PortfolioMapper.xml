@@ -121,10 +121,12 @@
         )
     </insert>
 
-    <insert id="insertContentList">
-        INSERT INTO content_list (cl_cd, cntd_cd, cl_reg_ymdt)
-        VALUES (#{clCd}, #{cntdCd}, NOW())
-    </insert>
+  <insert id="insertContentList">
+    INSERT INTO content_list 
+        (cl_cd, cntd_cd, cl_reg_ymdt)
+    VALUES 
+        (#{clCd}, #{cntdCd}, NOW())
+</insert>
 
     <insert id="insertCategoryMapping">
         INSERT INTO category_mapping (ctgry_id, cl_cd, cm_reg_ymdt, mbr_cd)
