@@ -1,43 +1,128 @@
 package outpolic.enter.declaration.controller;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import outpolic.enter.declaration.domain.EnterDeclaration;
+import outpolic.enter.declaration.service.EnterDeclarationService;
 
 @Controller
 @RequestMapping(value="/enter")
 @RequiredArgsConstructor
 public class EnterDeclarationController {
 	
+	private final EnterDeclarationService declarationService;
+	
+	@PostMapping("/declarationWrite")
+	@ResponseBody
+	public ResponseEntity<?> declarationWriteSubmit(
+	        @RequestPart("declaration") EnterDeclaration declaration,
+	        @RequestPart(value = "attachments", required = false) MultipartFile[] attachments,
+	        HttpSession session) {
+
+	    String mbrCd = (String) session.getAttribute("SCD");
+	    if (mbrCd == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
+
+	    declaration.setMbrCd(mbrCd);
+
+	    System.out.println("컨트롤러에서 받은 EnterDeclaration 객체 상세 정보:");
+	    System.out.println("  dtCode: " + declaration.getDtCode());
+	    System.out.println("  drCode: " + declaration.getDrCode());
+	    System.out.println("  declTargetCd: " + declaration.getDeclTargetCd());
+	    System.out.println("  declCn: " + declaration.getDeclCn());
+	    System.out.println("  mbrCd: " + declaration.getMbrCd());
+
+	    declarationService.addDeclarationWithAttachments(declaration, attachments);
+
+	    return ResponseEntity.ok(Map.of("dc_cd", declaration.getDeclCode()));
+	}
+	
+	@GetMapping("/searchTarget")
+	@ResponseBody
+    public List<EnterDeclaration> searchTarget(
+            @RequestParam String type,
+            @RequestParam String keyword) {
+		// 신고 대상 유형 검색 범위
+        return declarationService.searchTarget(type, keyword);
+    }
+	
+	@GetMapping("/declarationReasons")
+	@ResponseBody
+	public List<EnterDeclaration> getDeclarationReasons(@RequestParam("dtCd") String dtCd) {
+		// 신고 사유 드롭다운 조회
+	    return declarationService.getDeclarationReasonsByType(dtCd);
+	}
+	
+	@GetMapping("/declarationTypes")
+	@ResponseBody
+	public List<EnterDeclaration> getDeclarationTypes() {
+		// 신고 타입 드롭다운 조회
+	    return declarationService.getActiveDeclarationTypes();
+	}
+	
+	@GetMapping("/declaration")
+	public String declarationPage(HttpSession session, Model model) {
+		// 신고 작성 시 세션 불러오기
+	    String sid = (String) session.getAttribute("SID");
+	    String sname = (String) session.getAttribute("SName");
+
+	    if (sid != null && sname != null) {
+	        model.addAttribute("reporter", sname + " (" + sid + ")");
+	    } else {
+	        model.addAttribute("reporter", "로그인이 필요합니다");
+	    }
+
+	    return "enter/declarationForm";
+	}
 	
 	@GetMapping("/enterDeclarationWrite")
-	public String enterDeclarationWriteView(Model model) {
+	public String enterDeclarationWriteView(HttpSession session, Model model) {
 		// 신고 작성 페이지
-		model.addAttribute("title", "신고 작성");
-		
-		return "enter/declaration/enterDeclarationWriteView";
-	}
-	
-	
-	@GetMapping("/enterDeclarationNotice")
-	public String enterDeclarationNoticeView(Model model) {
-		// 신고 주의사항 페이지
-		model.addAttribute("title", "신고 주의사항");
-		
-		return "enter/declaration/enterDeclarationNoticeView";
-	}
+	    String sid = (String) session.getAttribute("SID");
+	    String sname = (String) session.getAttribute("SName");
+	    
+	    System.out.println("세션 확인: SID = " + sid + ", SName = " + sname);
+	    
+	    if (sid != null && sname != null) {
+	        model.addAttribute("reporter", sname + " (" + sid + ")");
+	    } else {
+	        model.addAttribute("reporter", "로그인이 필요합니다");
+	    }
 
-	
-	@GetMapping("/enterDeclaration")
-	public String enterDeclarationView(Model model) {
-		// 나의 신고 내역 목록 페이지
-		model.addAttribute("title", "신고 내역");
-		
-		return "enter/declaration/enterDeclarationView";
+	    model.addAttribute("title", "신고 작성");
+	    return "enter/declaration/enterDeclarationWriteView";
 	}
+	
+	
+	/*
+	 * @GetMapping("/enterDeclarationNotice") public String
+	 * enterDeclarationNoticeView(Model model) { // 신고 주의사항 페이지
+	 * model.addAttribute("title", "신고 주의사항");
+	 * 
+	 * return "enter/declaration/enterDeclarationNoticeView"; }
+	 * 
+	 * 
+	 * @GetMapping("/enterDeclaration") public String enterDeclarationView(Model
+	 * model) { // 나의 신고 내역 목록 페이지 model.addAttribute("title", "신고 내역");
+	 * 
+	 * return "enter/declaration/enterDeclarationView"; }
+	 */
 	
 	
 	
