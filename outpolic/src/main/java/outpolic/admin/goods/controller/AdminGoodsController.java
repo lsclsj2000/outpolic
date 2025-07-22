@@ -2,8 +2,9 @@ package outpolic.admin.goods.controller;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.Enumeration;
-
+import java.util.HashMap;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -96,7 +97,7 @@ public class AdminGoodsController {
 	    log.info("========================================");
 	    // ================= [ 디버깅 코드 종료 ] =================
 		
-	    List<AdminGoodsDTO> goodsList = adminGoodsService.getGoodsList();
+	    List<AdminGoodsDTO> goodsList = adminGoodsService.getGoodsList(new HashMap<>());
 	    model.addAttribute("goodsList", goodsList);
 	    
 	    // 세션에서 관리자 코드를 가져와 뷰(HTML)로 전달
@@ -113,8 +114,23 @@ public class AdminGoodsController {
 	 */
 	@GetMapping("/goodsListApi")
 	@ResponseBody
-	public List<AdminGoodsDTO> getGoodsListApi() {
-	    return adminGoodsService.getGoodsList();
+	public List<AdminGoodsDTO> getGoodsListApi(
+			@RequestParam(required = false) String searchType,
+	        @RequestParam(required = false) String searchKeyword,
+	        @RequestParam(required = false) String startDate,
+	        @RequestParam(required = false) String endDate,
+	        @RequestParam(required = false) String gdsType,
+	        @RequestParam(required = false) String gdsStatus) {
+		
+		Map<String, Object> params = new HashMap<>();
+	    params.put("searchType", searchType);
+	    params.put("searchKeyword", searchKeyword);
+	    params.put("startDate", startDate);
+	    params.put("endDate", endDate);
+	    params.put("gdsType", gdsType);
+	    params.put("gdsStatus", gdsStatus);
+	    
+	    return adminGoodsService.getGoodsList(params);
 	}
 
 	/**

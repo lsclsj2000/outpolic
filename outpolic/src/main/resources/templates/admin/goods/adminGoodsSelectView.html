@@ -18,6 +18,66 @@
 						</div>
 	                </div>
 		            <div class="col-12">
+		            	<!-- 검색 필터 영역 -->
+		            	<div class="card mb-4 search-filter-card">
+						    <div class="card-body search-filter-body">
+						        <div class="table-responsive">
+						            <table class="search-filter-table">
+						                <tbody>
+						                    <tr>
+						                        <th>기본검색</th>
+						                        <td>
+						                            <select id="searchType" name="searchType" class="form-select" style="width: 120px;">
+						                                <option value="gdsNm">상품명</option>
+						                                <option value="gdsCd">상품코드</option>
+						                                <option value="gdsRegAdmCd">등록자</option>
+						                            </select>
+						                            <input type="text" id="searchKeyword" name="searchKeyword" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+						                        </td>
+						                    </tr>
+						                    <tr>
+						                        <th>등록일</th>
+						                        <td>
+						                            <input type="date" id="startDate" name="startDate" class="form-control" style="width: 150px;" />
+						                            <span> ~ </span>
+						                            <input type="date" id="endDate" name="endDate" class="form-control" style="width: 150px;" />
+						                            <button type="button" class="btn btn-sm btn-light quick-date-btn" data-period="0">오늘</button>
+						                            <button type="button" class="btn btn-sm btn-light quick-date-btn" data-period="7">1주일</button>
+						                            <button type="button" class="btn btn-sm btn-light quick-date-btn" data-period="30">1개월</button>
+						                            <button type="button" class="btn btn-sm btn-light quick-date-btn" data-period="-1">전체</button>
+						                        </td>
+						                    </tr>
+						                    <tr>
+						                        <th>상세조건</th>
+						                        <td>
+						                            <div class="filter-group">
+						                                <strong class="filter-label">상품 종류</strong>
+						                                <div class="radio-group">
+						                                    <label><input type="radio" name="filterGdsType" value="" checked /> 전체</label>
+						                                    <label><input type="radio" name="filterGdsType" value="구독권" /> 구독권</label>
+						                                    <label><input type="radio" name="filterGdsType" value="이용권" /> 이용권</label>
+						                                </div>
+						                            </div>
+						                            <div class="filter-group">
+						                                <strong class="filter-label">상품 상태</strong>
+						                                <div class="radio-group">
+						                                    <label><input type="radio" name="filterGdsStatus" value="" checked /> 전체</label>
+						                                    <label><input type="radio" name="filterGdsStatus" value="1" /> 활성</label>
+						                                    <label><input type="radio" name="filterGdsStatus" value="0" /> 비활성</label>
+						                                </div>
+						                            </div>
+						                        </td>
+						                    </tr>
+						                </tbody>
+						            </table>
+						            <div class="search-filter-buttons">
+						                <button type="button" id="searchBtn" class="btn btn-primary">검색</button>
+						                <button type="button" id="resetBtn" class="btn btn-secondary">초기화</button>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+						<!-- 상품 테이블 데이터 -->
 		            	<div class="card">
 		                	<div class="card-body">
 				                <div class="table-responsive">
@@ -245,6 +305,12 @@
             const editCloseButton = editGoodsModal?.querySelector('.SR_close-button');
             const goodsTableBody = document.getElementById('goodsTableBody');
             const editGoodsForm = document.getElementById('editGoodsForm');
+            
+         	// 검색 필터 요소
+            const searchBtn = document.getElementById('searchBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const searchForm = document.querySelector('.search-filter-card'); // 검색 폼 영역
+            const quickDateBtns = document.querySelectorAll('.quick-date-btn');
 
             let goodsList = []; // 상품 데이터를 저장할 배열
 
@@ -300,21 +366,22 @@
             }
 
             // 상품 목록 데이터를 서버에서 다시 가져와 렌더링하는 함수
-            async function fetchAndReRenderGoods() {
-                goodsTableBody.innerHTML = '<tr><td colspan="11" class="text-center">상품 데이터를 불러오는 중...</td></tr>';
-                try {
-                    const response = await fetch('/admin/goodsListApi');
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    goodsList = await response.json();
-                    renderGoodsTable(goodsList);
-                    attachOpenModalListeners();
-                } catch (error) {
-                    console.error('Error fetching goods list:', error);
-                    goodsTableBody.innerHTML = '<tr><td colspan="11" class="text-center text-danger">상품 데이터를 불러오는데 실패했습니다.</td></tr>';
-                    showCustomAlert('상품 데이터를 불러오는데 실패했습니다.');
-                }
+            async function fetchAndReRenderGoods(queryParams = '') {
+			    goodsTableBody.innerHTML = '<tr><td colspan="11" class="text-center">상품 데이터를 불러오는 중...</td></tr>';
+			    try {
+			        // API 호출 시 쿼리 파라미터를 추가합니다.
+			        const response = await fetch(`/admin/goodsListApi${queryParams}`);
+			        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+			        goodsList = await response.json();
+			        renderGoodsTable(goodsList);
+			        attachOpenModalListeners();
+			    } catch (error) {
+			        console.error('Error fetching goods list:', error);
+			        goodsTableBody.innerHTML = '<tr><td colspan="11" class="text-center text-danger">상품 데이터를 불러오는데 실패했습니다.</td></tr>';
+			        showCustomAlert('상품 데이터를 불러오는데 실패했습니다.');
+			    }
             }
-
+		    
             // 등록 모달 필드를 초기화하는 함수
             function resetRegisterGoodsForm() {
                 registerGoodsForm.reset();
@@ -329,6 +396,27 @@
                 document.getElementById('registerStatusActive').checked = true; // '활성'을 기본으로 체크
                 console.log('Register goods form reset.');
             }
+            
+            searchBtn?.addEventListener('click', () => {
+                const searchType = document.getElementById('searchType').value;
+                const searchKeyword = document.getElementById('searchKeyword').value;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const filterGdsType = document.querySelector('input[name="filterGdsType"]:checked').value;
+                const filterGdsStatus = document.querySelector('input[name="filterGdsStatus"]:checked').value;
+
+                // URL 쿼리 스트링 생성
+                const queryParams = new URLSearchParams({
+                    searchType,
+                    searchKeyword,
+                    startDate,
+                    endDate,
+                    gdsType: filterGdsType,
+                    gdsStatus: filterGdsStatus
+                }).toString();
+
+                fetchAndReRenderGoods('?' + queryParams);
+            });
 
             if (registerGoodsBtn) {
                 registerGoodsBtn.addEventListener('click', function () {
@@ -337,6 +425,46 @@
                     document.body.style.overflow = 'hidden';
                 });
             }
+            
+            /**
+             * [추가] 초기화 버튼 이벤트 리스너
+             */
+            resetBtn?.addEventListener('click', () => {
+                document.getElementById('searchType').value = 'gdsNm';
+                document.getElementById('searchKeyword').value = '';
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+                document.querySelector('input[name="filterGdsType"][value=""]').checked = true;
+                document.querySelector('input[name="filterGdsStatus"][value=""]').checked = true;
+                
+                fetchAndReRenderGoods(); // 파라미터 없이 호출하여 전체 목록 조회
+            });
+
+            /**
+             * [추가] 기간 버튼 이벤트 리스너
+             */
+            quickDateBtns.forEach(button => {
+                button.addEventListener('click', function() {
+                    const period = parseInt(this.getAttribute('data-period'), 10);
+                    const endDate = new Date();
+                    const startDate = new Date();
+
+                    if (period === -1) { // 전체
+                        document.getElementById('startDate').value = '';
+                        document.getElementById('endDate').value = '';
+                        return;
+                    }
+
+                    startDate.setDate(endDate.getDate() - period);
+
+                    // yyyy-MM-dd 형식으로 변환
+                    const formatDate = (date) => date.toISOString().split('T')[0];
+                    
+                    document.getElementById('startDate').value = formatDate(startDate);
+                    document.getElementById('endDate').value = formatDate(endDate);
+                });
+            });
+
 
             registerCloseButton?.addEventListener('click', () => {
                 registerGoodsModal.style.display = 'none';
