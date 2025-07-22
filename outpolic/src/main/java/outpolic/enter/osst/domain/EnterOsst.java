@@ -32,4 +32,5 @@ public class EnterOsst {
 	             
 	private String stcCode;
 	private String stcName;
+	private String memberRole;
 }

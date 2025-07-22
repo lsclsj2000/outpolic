@@ -9,13 +9,13 @@ import outpolic.enter.osst.domain.EnterStepData;
 public interface EnterOsstService {
 	
 	// 진행 외주 기록 조회
-	List<EnterOsstRecord> getEnterOsstRecord();
+	List<EnterOsstRecord> getOutsourcingRecordsByOcdCd(String ocdCd);
 	
 	// 진행 외주 상세 조회
 	EnterOsst getEnterOsstDetail(String osstDetailCode);
 	
 	// 진행 외주 목록 조회
-	List<EnterOsst> getEnterOsstList();
+	List<EnterOsst> getEnterOsstList(String memberCode);
 	
 	// 진행 외주 단계
 	List<EnterOsst> getEnterOsstStcCode(String ocdCd);
