@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.user.category.domain.UserCategory;
@@ -28,55 +29,57 @@ public class UserCategoryController {
     
     
     @GetMapping("/user/contents/category/{categoryCode}")
-    public String showContentsByCategory(@PathVariable String categoryCode, Model model) {
-    	
-    	UserCategory currentCategory = categoryService.getCategoryByCode(categoryCode);
-    	if (currentCategory == null) {
-            return "error/404"; // 혹은 다른 적절한 처리
-        }
-    	model.addAttribute("currentCategory", currentCategory);
-    	
-        // 1. [메인 컨텐츠용 데이터] 현재 카테고리에 속한 콘텐츠 목록 가져오기
-
-        // 현재 소분류 코드(categoryCode)에서 대분류 코드(예: "010")를 추출
-        String mainCategoryCode = categoryCode.substring(0, 3); 
-
-        // 2. [사이드바용 데이터] 대분류에 맞는 계층형 카테고리 목록 가져오기
-        List<UserCategoryGroup> categoryGroups = categoryService.getCategoryHierarchy(mainCategoryCode);
-        model.addAttribute("categoryGroups", categoryGroups);
-
-        // 3. [사이드바용 데이터] 대분류 정보 가져오기
-        UserCategory mainCategory = categoryService.getMainCategory(mainCategoryCode);
-        model.addAttribute("mainCategory", mainCategory);
-        // --- 사이드바 로직 끝 ---
-
-        // 콘텐츠 목록을 보여줄 뷰 페이지 반환
-        return "user/contents/userContentsView"; 
+    public String showContentsByCategory(@PathVariable String categoryCode, Model model, HttpSession session) {
+        // [수정] 새로 만든 공통 로직 처리 메서드를 호출합니다.
+        return renderCategoryPage(categoryCode, model, session);
     }
-    
-    // --- 2. 소분류 클릭 시 (새로 추가하는 코드) ---
-    @GetMapping("/user/products")
-    public String showContentsBySubCategory(@RequestParam("category") String subCategoryCode, Model model) {
-        
 
-        // 소분류 코드에서 대분류 코드를 추출 (0100101 -> 010)
-        String mainCategoryCode = subCategoryCode.substring(0, 3);
+    /**
+     * 쿼리 파라미터로 카테고리 코드를 받는 경우 (예: /user/products?category=010001)
+     */
+    @GetMapping("/user/products")
+    public String showContentsBySubCategory(@RequestParam("category") String categoryCode, Model model, HttpSession session) {
+        // [수정] 새로 만든 공통 로직 처리 메서드를 호출합니다.
+        return renderCategoryPage(categoryCode, model, session);
+    }
+
+
+    /**
+     * [신설] 카테고리 페이지 렌더링을 위한 핵심 로직을 처리하는 공통 메서드
+     * @param categoryCode 처리할 카테고리 코드
+     * @param model View에 전달할 데이터를 담는 객체
+     * @param session 사용자 ID를 가져오기 위한 세션 객체
+     * @return 렌더링할 뷰의 이름
+     */
+    private String renderCategoryPage(String categoryCode, Model model, HttpSession session) {
+        
+        // 1. 현재 카테고리 정보 조회 및 모델에 추가
+        UserCategory currentCategory = categoryService.getCategoryByCode(categoryCode);
+        if (currentCategory == null) {
+            log.warn("존재하지 않는 카테고리 코드 '{}'에 대한 접근 시도", categoryCode);
+            return "error/404";
+        }
+        model.addAttribute("currentCategory", currentCategory);
+
+        // 2. 사이드바 데이터 조회 및 모델에 추가 (헬퍼 메서드 활용)
+        String mainCategoryCode = categoryCode.substring(0, 3);
         addSidebarDataToModel(mainCategoryCode, model);
 
-        // 소분류에 해당하는 카테고리 이름을 페이지 타이틀 등으로 사용하기 위해 조회
-        UserCategory currentCategory = categoryService.getMainCategory(subCategoryCode);
-        
-        model.addAttribute("currentCategory", currentCategory);
-        
-        List<UserContentItemDTO> contents = searchService.findContentsByCategoryId(subCategoryCode);
-        model.addAttribute("contentsList", contents); // View에서 사용할 이름 "contentsList"
-        
-        // 대분류/소분류가 공유하는 동일한 뷰 페이지를 반환
+        // 3. [핵심] 세션에서 사용자 ID를 가져옵니다.
+        String userId = (String) session.getAttribute("SCD");
+        log.info("카테고리 '{}' 페이지 조회. 사용자 ID: {}", categoryCode, userId);
+
+        // 4. [핵심] 서비스 호출 시, categoryCode와 함께 userId를 전달합니다.
+        List<UserContentItemDTO> contentsList = searchService.findContentsByCategoryId(categoryCode, userId);
+        model.addAttribute("contentsList", contentsList);
+
+        // 5. 최종 뷰 이름을 반환합니다.
         return "user/contents/userContentsView";
     }
 
-
-    // --- 3. 중복 로직을 처리하는 private 헬퍼 메서드 ---
+    /**
+     * 사이드바 데이터를 모델에 추가하는 private 헬퍼 메서드 (기존 코드 유지)
+     */
     private void addSidebarDataToModel(String mainCategoryCode, Model model) {
         List<UserCategoryGroup> categoryGroups = categoryService.getCategoryHierarchy(mainCategoryCode);
         UserCategory mainCategory = categoryService.getMainCategory(mainCategoryCode);

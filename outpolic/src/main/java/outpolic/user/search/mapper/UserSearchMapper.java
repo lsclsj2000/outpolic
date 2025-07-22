@@ -24,5 +24,5 @@ public interface UserSearchMapper {
 	// 콘텐츠 상세정보 
 	UserContentsDetailDTO getContentsDetailById(Map<String, Object> params);
 	
-	List<UserContentItemDTO> findContentsByCategoryId(String categoryId);
+	List<UserContentItemDTO> findContentsByCategoryId(Map<String, Object>params);
 }

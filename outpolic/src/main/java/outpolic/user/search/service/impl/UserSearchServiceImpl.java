@@ -49,8 +49,10 @@ public class UserSearchServiceImpl implements UserSearchService{
 	
 	// 콘텐츠 리스트뷰 페이지에서 카테고리별 외주를 불러오기 위한 메소드
 	@Override
-	public List<UserContentItemDTO> findContentsByCategoryId(String categoryId) {
-		
-		return searchMapper.findContentsByCategoryId(categoryId);
+	public List<UserContentItemDTO> findContentsByCategoryId(String categoryId,String userId) {
+		Map<String, Object> params = new HashMap<>();
+	    params.put("categoryId", categoryId);
+	    params.put("userId", userId);
+		return searchMapper.findContentsByCategoryId(params);
 	}
 }
