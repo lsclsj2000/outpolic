@@ -192,7 +192,6 @@
                                                 <div class="content-toggle">
                                                     <span class="short-content" th:text="${#strings.abbreviate(p.prtfCn, 50)}"></span>
                                                     <span class="full-content" style="display:none;" th:text="${p.prtfCn}"></span>
-                                                    <a href="#" class="toggle-link" data-action="more">더보기</a>
                                                 </div>
                                             </td>
                                             <td class="text-center"><span th:text="${#temporals.format(p.prtfRegYmdt, 'yyyy-MM-dd HH:mm')}"></span></td>
@@ -203,8 +202,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <a href="#" class="btn btn-md rounded font-sm view-files-btn" th:data-prtf-cd="${p.prtfCd}">첨부파일</a>
-                                                <a href="#" class="btn btn-md rounded font-sm">상세</a>
-                                                <a href="#" class="btn btn-md rounded font-sm">수정</a>
+                                               
                                                 <a href="#" class="btn btn-md rounded font-sm delete-portfolio-btn" th:data-prtf-cd="${p.prtfCd}">삭제</a>
                                             </td>
                                         </tr>

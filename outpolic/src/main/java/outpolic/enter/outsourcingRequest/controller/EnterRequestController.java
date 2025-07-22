@@ -1,4 +1,5 @@
 package outpolic.enter.outsourcingRequest.controller;
+
 import lombok.RequiredArgsConstructor;
 import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.outsourcing.service.EnterOutsourcingService;
@@ -48,7 +49,8 @@ public class EnterRequestController {
         }
         
         requestDto.setMbr_cd(loggedInUserCode);
-        requestDto.setOcd_req_type("신청"); // 타입을 명확히 '신청'으로 설정
+        requestDto.setOcd_req_type("신청");
+        // 타입을 명확히 '신청'으로 설정
         requestService.createRequest(requestDto);
         return ResponseEntity.ok(Map.of(
             "success", true,
@@ -61,23 +63,21 @@ public class EnterRequestController {
     public String showInquiryForm(@PathVariable String prtfCd, Model model) {
         // 문의 대상 포트폴리오 정보를 조회하여 모델에 담아 전달
         model.addAttribute("portfolio", portfolioService.getPortfolioByPrtfCd(prtfCd));
-        
         // ▼▼▼ 이 return 값이 "inquiryForm"을 정확히 가리키도록 수정합니다. ▼▼▼
-        return "enter/portfolioInquiry/inquiryForm"; 
+        return "enter/portfolioInquiry/inquiryForm";
     }
     
     // [복원 및 유지] 작성된 포트폴리오 '문의' 전송
     @PostMapping("/inquiry/send")
     public String sendInquiry(@ModelAttribute OutsourcingRequestDTO requestDto, HttpSession session) {
     	String memberCode = (String) session.getAttribute("SCD");
-    	requestDto.setMbr_cd(memberCode);
+        requestDto.setMbr_cd(memberCode);
     	
     	// 요청 타입을 '문의'로 직접 설정
     	requestDto.setOcd_req_type("문의");
     	
     	requestService.createRequest(requestDto);
-    	
-    	// 문의 목록 페이지로 리다이렉트
+        // 문의 목록 페이지로 리다이렉트
     	return "redirect:/enter/outsourcing-requests/sent-inquiries";
     }
 
@@ -142,11 +142,27 @@ public class EnterRequestController {
         return ResponseEntity.ok(receivedRequests);
     }
 
-    // [유지] 받은 '문의' 목록 페이지
+    // [수정] 받은 '문의' 목록 페이지 (서버 사이드 렌더링을 위해 데이터 추가)
     @GetMapping("/received-inquiries")
-    public String showReceivedInquiries(Model model) {
+    public String showReceivedInquiries(Model model, HttpSession session) {
     	model.addAttribute("listTitle","받은 포트폴리오 문의 목록");
-    	return "enter/portfolioInquiry/receivedInquiryList";
+        String loggedInMbrCd = (String) session.getAttribute("SCD"); // 세션에서 로그인된 회원 코드 가져오기 [cite: 33]
+
+        if(loggedInMbrCd == null || loggedInMbrCd.isEmpty()) { // 로그인 여부 확인 [cite: 33]
+            return "redirect:/login"; // 로그인되지 않았다면 로그인 페이지로 리다이렉트
+        }
+
+        String supplierEntCd = requestService.findEntCdByMbrCd(loggedInMbrCd); // 회원 코드로 기업 코드 조회 [cite: 33]
+        if (supplierEntCd == null || supplierEntCd.isEmpty()) {
+            // 해당 회원이 기업에 연결되어 있지 않다면 빈 목록을 보여주거나 에러 처리
+            model.addAttribute("inquiries", List.of());
+            return "enter/portfolioInquiry/receivedInquiryList";
+        }
+
+        List<RequestViewDTO> receivedInquiries = requestService.getReceivedInquiries(supplierEntCd); // 기업 코드로 받은 문의 목록 조회 [cite: 34]
+        model.addAttribute("inquiries", receivedInquiries); // 조회된 목록을 모델에 추가 [cite: 23]
+
+        return "enter/portfolioInquiry/receivedInquiryList"; // [cite: 32]
     }
     
     // [유지] 받은 '문의' 목록 API
@@ -154,11 +170,11 @@ public class EnterRequestController {
     @ResponseBody
     public ResponseEntity<List<RequestViewDTO>> getReceivedInquiriesApi(HttpSession session){
     	String loggedInMbrCd = (String) session.getAttribute("SCD");
-    	if(loggedInMbrCd == null || loggedInMbrCd.isEmpty()) {
+        if(loggedInMbrCd == null || loggedInMbrCd.isEmpty()) {
     		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     	}
     	String supplierEntCd = requestService.findEntCdByMbrCd(loggedInMbrCd);
-    	List<RequestViewDTO> receivedInquiries = requestService.getReceivedInquiries(supplierEntCd);
+        List<RequestViewDTO> receivedInquiries = requestService.getReceivedInquiries(supplierEntCd);
     	return ResponseEntity.ok(receivedInquiries);
     }
 
@@ -173,16 +189,17 @@ public class EnterRequestController {
         String loggedInUserCode = (String) session.getAttribute("SCD");
         boolean isSupplier = loggedInUserCode != null && loggedInUserCode.equals(requestService.findMbrCdByEntCd(requestDetail.getEnt_cd()));
         model.addAttribute("isSupplier", isSupplier);
-        
         // 목록으로 돌아가기 URL 설정
         String listUrl = "/";
         String reqType = requestDetail.getOcd_req_type();
         boolean isRequester = loggedInUserCode != null && loggedInUserCode.equals(requestDetail.getMbr_cd());
         
         if ("신청".equals(reqType)) {
-            listUrl = isRequester ? "/enter/outsourcing-requests/sent" : "/enter/outsourcing-requests/received";
+            listUrl = isRequester ?
+"/enter/outsourcing-requests/sent" : "/enter/outsourcing-requests/received";
         } else if ("문의".equals(reqType)) {
-            listUrl = isRequester ? "/enter/outsourcing-requests/sent-inquiries" : "/enter/outsourcing-requests/received-inquiries";
+            listUrl = isRequester ?
+"/enter/outsourcing-requests/sent-inquiries" : "/enter/outsourcing-requests/received-inquiries";
         }
         model.addAttribute("listUrl", listUrl);
 
@@ -195,12 +212,12 @@ public class EnterRequestController {
     public ResponseEntity<Map<String,Object>> updateRequestStatus(@RequestBody Map<String,String> payload){
     	try {
     		String requestId = payload.get("requestId");
-    		String status = payload.get("status");
+            String status = payload.get("status");
     		requestService.updateRequestStatus(requestId,status);
     		return ResponseEntity.ok(Map.of("success",true,"message","상태가 성공적으로 변경되었습니다."));
     	} catch(Exception e) {
     	    e.printStackTrace();
-    	    return ResponseEntity.badRequest().body(Map.of("success",false,"message",e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("success",false,"message",e.getMessage()));
         }
     }
 }

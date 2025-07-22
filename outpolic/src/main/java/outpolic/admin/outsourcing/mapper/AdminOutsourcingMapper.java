@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Param;
 
 import outpolic.admin.outsourcing.dto.AdminOutsourcingDTO;
 import outpolic.admin.outsourcing.dto.AdminOutsourcingSearchDTO;
-import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.systems.file.domain.FileMetaData;
 
 @Mapper

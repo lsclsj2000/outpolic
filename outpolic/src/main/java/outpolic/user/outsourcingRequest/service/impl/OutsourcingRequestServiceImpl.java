@@ -59,4 +59,10 @@ public class OutsourcingRequestServiceImpl implements OutsourcingRequestService 
     public RequestViewDTO getRequestDetails(String requestId) {
         return requestMapper.findRequestDetailById(requestId);
     }
+    
+
+    @Override // 이 부분을 추가합니다.
+    public String findMbrCdByEntCd(String entCd) {
+        return requestMapper.findMbrCdByEntCd(entCd);
+    }
 }
