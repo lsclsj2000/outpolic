@@ -1,21 +1,29 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{user/layout/userLayoutMain}">
-<head>
-    <meta name="description" content="한국스마트정보교육원 팀프로젝트 - 외주 목록" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내 외주 진행 목록</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/user/assets/css/userOutsourcingStatus.css}">
-</head>
-
-<body>
-	<div layout:fragment="contents">
-		<div class="row">
-			<div class="col-md-2 row" th:fragment="userInquirySidebarFragment">
-				<div class="dashboard-menu col-md-11 mt-100">
+	<!DOCTYPE html>
+	<html xmlns:th="http://www.thymeleaf.org"
+	      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	      layout:decorate="~{user/layout/userLayoutOsstList}">
+	<head>
+	    <meta name="description" content="한국스마트정보교육원 팀프로젝트 - 외주 목록" />
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title>내 외주 진행 목록</title>
+	    
+	    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	    <link rel="stylesheet" th:href="@{/user/assets/css/userOutsourcingStatus.css}">
+	</head>
+	
+	<body>
+		<!-- 페이지 타이틀 -->
+		<th:block layout:fragment="title">
+	        <div class="SR_label-container">
+	            <div class="SR_blue-bar"></div>
+	            <h2 class="SR_text-3xl SR_font-bold SR_text-gray-800">내 외주 진행 목록</h2>
+	        </div>
+		</th:block>
+		
+		<!-- 사이드바 -->
+		<th:block layout:fragment="osstSidebar">
+			<div class="col-md-2">
+				<div class="dashboard-menu">
 					<ul class="nav flex-column" role="tablist">
 						<li class="nav-item">
 							<a class="nav-link active" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">전체</a>
@@ -26,293 +34,238 @@
 						<li class="nav-item">
 							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">진행 완료된 외주</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">신청 받은 외주</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">신청한 외주</a>
+						</li>
 					</ul>
 				</div>
 			</div>
-			<div class="col-md-10">
+		</th:block>
+	
+		<div layout:fragment="contents" class="col-md-10">
+			<div class="row justify-content-around">
 			    <div class="SR_flex SR_flex-col SR_min-h-screen">
-			        <!-- Main Content -->
-			        <main class="SR_flex-grow SR_p-8">
-			            <!-- Page Title with Blue Bar -->
-			            <div class="SR_label-container">
-			                <div class="SR_blue-bar"></div>
-			                <h2 class="SR_text-3xl SR_font-bold SR_text-gray-800">내 외주 진행 목록</h2>
-			            </div>
-			
-			            <!-- Project List Container -->
+			        <main class="SR_flex-grow SR_p-8" style="padding-top:0px; padding-right:0px;">
 			            <div class="SR_max-w-6xl SR_mx-auto SR_container-bg SR_p-8 SR_rounded-lg SR_box-shadow">
 			                <div id="project-list" class="SR_project-list-container">
-			                    <!-- Project cards will be dynamically loaded here -->
-			                </div>
-			                <p id="no-projects-message" class="SR_text-center SR_text-gray-600 SR_mt-8 SR_hidden">
-			                    진행 중인 외주 프로젝트가 없습니다.
-			                </p>
+	                            
+	                            <div class="SR_project-card"
+	                            	 th:each="l : ${osstList}"
+	                            	 th:attr="data-url=@{/user/userOsstDetail(ocd_cd=${l.ocdCd})}"
+	                            	 data-project-id="proj-003" >
+                           	 	<span th:if="${l.memberRole == 'SUPPLIER'}" class="SR_project-role-tag">신청 받은 외주</span>
+                                <span th:if="${l.memberRole == 'DEMANDER'}" class="SR_project-role-tag">신청한 외주</span>
+	                                <div class="SR_card-content">
+	                                    <h3 class="SR_project-title" th:text="${l.ocdTitle}">외주 제목</h3>
+                                        <p class="SR_project-meta">공급자: <span th:text="${l.entMemberName + ' (' + l.entName + ')'}">공급자이름 (공급자기업명)</span></p>
+                                        <p class="SR_project-meta">수요자: <span th:text="${l.memberName}">수요자이름</span></p>
+	                                    <p class="SR_project-meta">현재 단계: <span th:text="${l.stcName}">최종 완료</span></p>
+	                                    <div class="SR_project-progress-bar">
+	                                        <!-- l.stcCode 값에 따라 진행률 바의 너비를 동적으로 설정 -->
+	                                        <div class="SR_project-progress-fill" 
+	                                             th:style="${l.stcCode == 'SD_CONTRACT' ? 'width: 25%;' : 
+	                                                        (l.stcCode == 'SD_PLANNING' ? 'width: 50%;' : 
+	                                                        (l.stcCode == 'SD_WORKPROGRESS' ? 'width: 75%;' : 
+	                                                        (l.stcCode == 'SD_COMPLETION' ? 'width: 100%;' : 'width: 0%;')))}"></div>
+	                                    </div>
+	                                    <p class="SR_project-meta">진행률: 
+	                                        <span th:text="${l.stcCode == 'SD_CONTRACT' ? '25%' : 
+	                                                        (l.stcCode == 'SD_PLANNING' ? '50%' : 
+	                                                        (l.stcCode == 'SD_WORKPROGRESS' ? '75%' : 
+	                                                        (l.stcCode == 'SD_COMPLETION' ? '100%' : '0%')))}">100%</span>
+	                                    </p>
+	                                    <p class="SR_project-meta">마지막 활동: <span>2025-06-28</span></p>
+	                                </div>
+	                                <div class="SR_card-footer" th:switch="${l.ospCustStcYn}">
+	                                    <!-- '단계 완료'일 때만 리뷰 작성 버튼을 노출합니다. -->
+	                                    <button th:if="${l.ospCustStcYn == '단계 완료'}" class="SR_btn-secondary SR_review-btn" data-project-id="proj-003" data-project-title="모바일 앱 UI/UX 개선">리뷰 작성</button>
+                                    	<p th:case="${'단계 완료'}" class="SR_project-status completed">완료</p>
+                                		<p th:case="${'단계 진행중'}" class="SR_project-status in-progress">진행중</p>
+	                                </div>
+	                            </div>
+			            	</div>
 			            </div>
 			        </main>
 			    </div>
 			</div>
-		</div>
-		<!-- ============== 리뷰 작성 모달 시작 ============== -->
-		<div class="SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_z-50 SR_hidden" id="reviewModal">
-		    <div class="SR_bg-white SR_p-6 SR_rounded-lg SR_shadow-lg SR_max-w-md SR_w-full">
-		        <h3 class="SR_text-xl SR_font-bold SR_mb-4" id="reviewModalTitle">리뷰 작성</h3>
-		        
-		        <!-- 리뷰 작성 폼 -->
-		        <form id="reviewForm">
-		            <!-- 어떤 프로젝트에 대한 리뷰인지 식별하기 위한 hidden input -->
-		            <input type="hidden" id="reviewProjectId" name="projectId">
-		            
-		            <div class="SR_mb-4">
-		                <label for="reviewRating" class="SR_block SR_text-sm SR_font-medium SR_text-gray-700">별점</label>
-		                <div class="SR_mt-1">
-		                    <!-- 간단한 별점 시스템 (예시) -->
-		                    <div id="starRating" class="SR_flex SR_items-center">
-		                        <span class="star" data-value="1">★</span>
-		                        <span class="star" data-value="2">★</span>
-		                        <span class="star" data-value="3">★</span>
-		                        <span class="star" data-value="4">★</span>
-		                        <span class="star" data-value="5">★</span>
-		                    </div>
-		                    <input type="hidden" id="reviewRatingValue" name="rating" value="0">
-		                </div>
-		            </div>
-		
-		            <div class="SR_mb-4">
-		                <label for="reviewContent" class="SR_block SR_text-sm SR_font-medium SR_text-gray-700">리뷰 내용</label>
-		                <textarea id="reviewContent" name="content" rows="4" class="SR_w-full SR_mt-1 SR_p-2 SR_border SR_border-gray-300 SR_rounded-md" placeholder="프로젝트에 대한 경험을 공유해주세요."></textarea>
-		            </div>
-		            
-		            <div class="SR_flex SR_justify-end SR_gap-4">
-		                <button type="button" class="SR_btn-secondary" onclick="closeReviewModal()">취소</button>
-		                <button type="submit" class="SR_btn-primary">리뷰 제출</button>
-		            </div>
-		        </form>
-		    </div>
-		</div>
-		<!-- =============== 리뷰 작성 모달 끝 =============== -->
-	</div>
-	
-	<th:block layout:fragment="jsScript">
-	    <script>
-	        // Sample data for outsourcing projects
-	        const outsourcingProjectsData = [
-	            {
-	                id: 'proj-001',
-	                title: '원룸 인테리어 디자인 외주 프로젝트',
-	                partner: '홍길동 (수요자)',
-	                progress: 75,
-	                currentStep: '작업 진행',
-	                status: 'in-progress',
-	                lastActivityDate: '2025-07-07'
-	            },
-	            {
-	                id: 'proj-002',
-	                title: '웹사이트 개발 프로젝트',
-	                partner: '김철수 (공급자)',
-	                progress: 20,
-	                currentStep: '계약 체결',
-	                status: 'upcoming',
-	                lastActivityDate: '2025-07-01'
-	            },
-	            {
-	                id: 'proj-003',
-	                title: '모바일 앱 UI/UX 개선',
-	                partner: '이영희 (수요자)',
-	                progress: 100,
-	                currentStep: '최종 완료',
-	                status: 'completed',
-	                lastActivityDate: '2025-06-28'
-	            },
-	            {
-	                id: 'proj-004',
-	                title: '로고 디자인 의뢰',
-	                partner: '박민준 (수요자)',
-	                progress: 50,
-	                currentStep: '초기 기획',
-	                status: 'in-progress',
-	                lastActivityDate: '2025-07-05'
-	            },
-	            {
-	                id: 'proj-005',
-	                title: '데이터 분석 리포트 작성',
-	                partner: '최지우 (공급자)',
-	                progress: 0,
-	                currentStep: '예정',
-	                status: 'upcoming',
-	                lastActivityDate: '2025-07-02'
-	            }
-	        ];
-	
-	        document.addEventListener('DOMContentLoaded', () => {
-	            renderProjectList();
-	        });
-	
-
-	        function renderProjectList() {
-	            const projectListContainer = document.getElementById('project-list');
-	            const noProjectsMessage = document.getElementById('no-projects-message');
-	            projectListContainer.innerHTML = ''; 
-
-	            if (outsourcingProjectsData.length === 0) {
-	                noProjectsMessage.classList.remove('SR_hidden');
-	                return;
-	            } else {
-	                noProjectsMessage.classList.add('SR_hidden');
-	            }
-
-	            outsourcingProjectsData.forEach(project => {
-	                const projectCard = document.createElement('div');
-	                projectCard.className = 'SR_project-card';
-	                // 카드 전체 클릭 이벤트는 유지
-	                projectCard.onclick = () => viewProjectDetails(project.id);
-
-	                let statusClass = '';
-	                if (project.status === 'completed') statusClass = 'completed';
-	                else if (project.status === 'in-progress') statusClass = 'in-progress';
-	                else if (project.status === 'upcoming') statusClass = 'upcoming';
-
-	                // '리뷰 작성' 버튼 HTML을 조건부로 생성
-	                // progress가 100일 때만 버튼을 만들고, openReviewModal 함수를 호출하도록 설정
-	                const reviewButtonHtml = project.progress === 100 ?
-	                    `<button class="SR_btn-secondary SR_review-btn" onclick="openReviewModal(event, '${project.id}', '${project.title}')">리뷰 작성</button>` : '';
-
-	                // 카드 내용을 설정할 때, 버튼 영역을 추가하고 위에서 만든 버튼 HTML을 삽입
-	                projectCard.innerHTML = `
-	                    <div class="SR_card-content">
-	                        <h3 class="SR_project-title">${project.title}</h3>
-	                        <p class="SR_project-meta">담당자: ${project.partner}</p>
-	                        <p class="SR_project-meta">현재 단계: ${project.currentStep}</p>
-	                        <div class="SR_project-progress-bar">
-	                            <div class="SR_project-progress-fill" style="width: ${project.progress}%;"></div>
-	                        </div>
-	                        <p class="SR_project-meta">진행률: ${project.progress}%</p>
-	                        <p class="SR_project-meta">마지막 활동: ${project.lastActivityDate}</p>
-	                    </div>
-	                    <div class="SR_card-footer">
-	                        ${reviewButtonHtml} <!-- 조건부 리뷰 버튼 -->
-	                        <p class="SR_project-status ${statusClass}">${project.status === 'completed' ? '완료' : project.status === 'in-progress' ? '진행 중' : '예정'}</p>
-	                    </div>
-	                `;
-	                
-	                projectListContainer.appendChild(projectCard);
-	            });
-	        }
-	
-	        function viewProjectDetails(projectId) {
-	            // In a real application, this would navigate to a detailed page
-	            // e.g., window.location.href = `/outsourcing/progress/${projectId}`;
-	            showMessageBox(`프로젝트 상세 보기: ${projectId} (실제 페이지로 이동)`);
-	            console.log(`Viewing details for project: ${projectId}`);
-	        }
-	        
-	        function writeReview(event, projectId) {
-	            event.stopPropagation(); // 중요: 카드 전체에 걸린 onclick 이벤트의 전파를 막음
-	            showMessageBox(`리뷰 작성 페이지로 이동합니다: ${projectId}`);
-	            console.log(`Writing review for project: ${projectId}`);
-	            // 실제 구현: window.location.href = `/review/write?projectId=${projectId}`;
-	        }
-	
-	        // Custom Message Box functions (replaces alert()) - Copied from previous immersive
-	        function showMessageBox(message) {
-	            let messageBox = document.getElementById('SR_messageBox');
-	            if (!messageBox) {
-	                messageBox = document.createElement('div');
-	                messageBox.id = 'SR_messageBox';
-	                messageBox.className = 'SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_z-50';
-	                messageBox.innerHTML = `
-	                    <div class="SR_bg-white SR_p-6 SR_rounded-lg SR_shadow-lg SR_max-w-sm SR_w-full SR_text-center">
-	                        <p class="SR_mb-4">${message}</p>
-	                        <button class="SR_btn-primary" onclick="closeMessageBox()">확인</button>
-	                    </div>
-	                `;
-	                document.body.appendChild(messageBox);
-	            } else {
-	                messageBox.querySelector('p').textContent = message;
-	                messageBox.classList.remove('SR_hidden');
-	            }
-	        }
-	
-	        function closeMessageBox() {
-	            const messageBox = document.getElementById('SR_messageBox');
-	            if (messageBox) {
-	                messageBox.classList.add('SR_hidden');
-	            }
-	        }
-	        
-		    // ===============================================
-			//          리뷰 모달 관련 함수 추가
-			//===============================================
 			
-			//리뷰 모달을 여는 함수
-			function openReviewModal(event, projectId, projectTitle) {
-			    event.stopPropagation(); // 카드 전체의 클릭 이벤트(viewProjectDetails)가 실행되는 것을 방지
-			
-			    // 모달 요소들을 가져옵니다.
-			    const reviewModal = document.getElementById('reviewModal');
-			    const modalTitle = document.getElementById('reviewModalTitle');
-			    const projectIdInput = document.getElementById('reviewProjectId');
-			    
-			    // 모달에 프로젝트 정보 설정
-			    modalTitle.textContent = `[${projectTitle}] 리뷰 작성`;
-			    projectIdInput.value = projectId;
-			    
-			    // 모달을 보여줍니다.
-			    reviewModal.classList.remove('SR_hidden');
-			}
-			
-			// 리뷰 모달을 닫는 함수
-			function closeReviewModal() {
-			    const reviewModal = document.getElementById('reviewModal');
-			    // 폼 초기화
-			    document.getElementById('reviewForm').reset();
-			    // 별점 초기화
-			    document.querySelectorAll('#starRating .star').forEach(star => star.classList.remove('selected'));
-			    
-			    // 모달을 숨깁니다.
-			    reviewModal.classList.add('SR_hidden');
-			}
-			
-			// DOM이 로드되면 리뷰 모달의 폼 제출 및 별점 이벤트 리스너를 설정합니다.
-			document.addEventListener('DOMContentLoaded', () => {
-			    // 기존 renderProjectList() 호출은 그대로 둡니다.
-			
-			    const reviewForm = document.getElementById('reviewForm');
-			    const stars = document.querySelectorAll('#starRating .star');
-			    const ratingValueInput = document.getElementById('reviewRatingValue');
-			
-			    // 폼 제출 이벤트 처리
-			    reviewForm.addEventListener('submit', function(event) {
-			        event.preventDefault(); // 기본 폼 제출(새로고침) 방지
+			<!-- ============== 리뷰 작성 모달 시작 ============== -->
+			<div class="SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_z-50 SR_hidden" id="reviewModal">
+			    <div class="SR_bg-white SR_p-6 SR_rounded-lg SR_shadow-lg" style="width:25%;">
+			        <h3 class="SR_text-xl SR_font-bold SR_mb-4" id="reviewModalTitle">리뷰 작성</h3>
 			        
-			        const projectId = this.elements.projectId.value;
-			        const rating = this.elements.rating.value;
-			        const content = this.elements.content.value;
-			        
-			        if (rating === "0") {
-			            showMessageBox("별점을 선택해주세요.");
-			            return;
-			        }
-			
-			        // 현재는 기능 구현 전이므로 console에 출력하고 모달을 닫습니다.
-			        console.log("리뷰 제출:", { projectId, rating, content });
-			        showMessageBox("리뷰가 성공적으로 제출되었습니다! (콘솔 확인)");
-			        
-			        closeReviewModal();
-			    });
-			
-			    // 별점 클릭 이벤트 처리
-			    stars.forEach(star => {
-			        star.addEventListener('click', () => {
-			            const rating = star.dataset.value;
-			            ratingValueInput.value = rating;
+			        <form id="reviewForm">
+			            <input type="hidden" id="reviewProjectId" name="projectId">
 			            
-			            stars.forEach(s => {
-			                s.classList.toggle('selected', s.dataset.value <= rating);
-			            });
-			        });
-			    });
-			});
-	    </script>
-	</th:block>
-</body>
+			            <div class="SR_mb-4">
+			                <label for="reviewRating" class="SR_block SR_text-sm SR_font-medium SR_text-gray-700">별점</label>
+			                <div class="SR_mt-1">
+			                    <div id="starRating" class="SR_flex SR_items-center">
+			                        <span class="star" data-value="1">★</span>
+			                        <span class="star" data-value="2">★</span>
+			                        <span class="star" data-value="3">★</span>
+			                        <span class="star" data-value="4">★</span>
+			                        <span class="star" data-value="5">★</span>
+			                    </div>
+			                    <input type="hidden" id="reviewRatingValue" name="rating" value="0">
+			                </div>
+			            </div>
+			
+			            <div class="SR_mb-4">
+			                <label for="reviewContent" class="SR_block SR_text-sm SR_font-medium SR_text-gray-700">리뷰 내용</label>
+			                <textarea id="reviewContent" name="content" rows="4" class="SR_w-full SR_mt-1 SR_p-2 SR_border SR_border-gray-300 SR_rounded-md" placeholder="프로젝트에 대한 경험을 공유해주세요."></textarea>
+			            </div>
+			            
+			            <div class="SR_flex SR_justify-end SR_gap-4">
+			                <button type="button" class="SR_btn-secondary" onclick="closeReviewModal()">취소</button>
+			                <button type="submit" class="SR_btn-primary">리뷰 제출</button>
+			            </div>
+			        </form>
+			    </div>
+			</div>
+			<!-- =============== 리뷰 작성 모달 끝 =============== -->
+			
+		</div>
+		
+		
+		<th:block layout:fragment="jsScript">
+		    <script>
+		        function showMessageBox(message) {
+		            let messageBox = document.getElementById('SR_messageBox');
+		            if (!messageBox) {
+		                messageBox = document.createElement('div');
+		                messageBox.id = 'SR_messageBox';
+		                messageBox.className = 'SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_z-50';
+		                messageBox.innerHTML = `
+		                    <div class="SR_bg-white SR_p-6 SR_rounded-lg SR_shadow-lg SR_max-w-sm SR_w-full SR_text-center">
+		                        <p class="SR_mb-4">${message}</p>
+		                        <button class="SR_btn-primary" onclick="closeMessageBox()">확인</button>
+		                    </div>
+		                `;
+		                document.body.appendChild(messageBox);
+		            } else {
+		                messageBox.querySelector('p').textContent = message;
+		                messageBox.classList.remove('SR_hidden');
+		            }
+		        }
+		
+		        function closeMessageBox() {
+		            const messageBox = document.getElementById('SR_messageBox');
+		            if (messageBox) {
+		                messageBox.classList.add('SR_hidden');
+		            }
+		        }
+		
+		        function viewProjectDetails(projectId) {
+		            // 프로젝트 ID가 없으므로 고정된 URL을 문자열로 지정합니다.
+		            const url = '/user/userOsst';
+		            // 페이지 이동
+		            window.location.href = url;
+		        }
+		
+		        // ===============================================
+		        //          리뷰 모달 관련 함수 추가
+		        //===============================================
+		        
+		        // 리뷰 모달을 여는 함수
+		        function openReviewModal(event, projectId, projectTitle) {
+		            event.stopPropagation(); // 카드 전체의 클릭 이벤트(viewProjectDetails)가 실행되는 것을 방지
+		
+		            // 모달 요소들을 가져옵니다.
+		            const reviewModal = document.getElementById('reviewModal');
+		            const modalTitle = document.getElementById('reviewModalTitle');
+		            const projectIdInput = document.getElementById('reviewProjectId');
+		            
+		            // 모달에 프로젝트 정보 설정
+		            modalTitle.textContent = `[${projectTitle}] 리뷰 작성`;
+		            projectIdInput.value = projectId;
+	
+	                // 폼 초기화 및 별점 시각적 초기화
+	                document.getElementById('reviewForm').reset();
+	                // 별점 초기화는 openReviewModal에서 직접 수행 (forEach 사용)
+	                document.querySelectorAll('#starRating .star').forEach(star => star.classList.remove('selected'));
+		            
+		            // 모달을 보여줍니다.
+		            reviewModal.classList.remove('SR_hidden');
+		        }
+		        
+		        // 리뷰 모달을 닫는 함수
+		        function closeReviewModal() {
+		            const reviewModal = document.getElementById('reviewModal');
+		            // 폼 초기화
+		            document.getElementById('reviewForm').reset();
+		            // 별점 초기화
+		            document.querySelectorAll('#starRating .star').forEach(star => star.classList.remove('selected'));
+		            
+		            // 모달을 숨깁니다.
+		            reviewModal.classList.add('SR_hidden');
+		        }
+		        
+		        // DOM이 로드되면 이벤트 리스너를 설정합니다.
+		        document.addEventListener('DOMContentLoaded', () => {
+	                // 프로젝트 카드 클릭 이벤트 리스너 추가
+	                document.querySelectorAll('.SR_project-card').forEach(card => {
+					    card.addEventListener('click', (event) => {
+					        if (!event.target.closest('.SR_review-btn')) {
+					            const url = card.dataset.url;
+					            if (url) {
+					                window.location.href = url;
+					            }
+					        }
+					    });
+					});
+	
+	                // 리뷰 작성 버튼 클릭 이벤트 리스너 추가
+	                document.querySelectorAll('.SR_review-btn').forEach(button => {
+	                    button.addEventListener('click', (event) => {
+	                        event.stopPropagation(); // 카드 전체의 클릭 이벤트(viewProjectDetails)가 실행되는 것을 방지
+	                        const projectId = button.dataset.projectId;
+	                        const projectTitle = button.dataset.projectTitle;
+	                        openReviewModal(event, projectId, projectTitle);
+	                    });
+	                });
+	
+	                // 별점 클릭 이벤트 처리 (forEach 사용)
+	                const stars = document.querySelectorAll('#starRating .star');
+	                const ratingValueInput = document.getElementById('reviewRatingValue');
+	                
+	                stars.forEach(star => {
+	                    star.addEventListener('click', () => {
+	                        const rating = star.dataset.value;
+	                        ratingValueInput.value = rating;
+	                        
+	                        stars.forEach(s => {
+	                            s.classList.toggle('selected', s.dataset.value <= rating);
+	                        });
+	                    });
+	                });
+	
+		            const reviewForm = document.getElementById('reviewForm');
+		        
+		            // 폼 제출 이벤트 처리
+		            reviewForm.addEventListener('submit', function(event) {
+		                event.preventDefault(); // 기본 폼 제출(새로고침) 방지
+		                
+		                const projectId = this.elements.projectId.value;
+		                const rating = this.elements.rating.value;
+		                const content = this.elements.content.value;
+		                
+		                if (rating === "0") {
+		                    showMessageBox("별점을 선택해주세요.");
+		                    return;
+		                }
+		        
+		                // 현재는 기능 구현 전이므로 console에 출력하고 모달을 닫습니다.
+		                console.log("리뷰 제출:", { projectId, rating, content });
+		                showMessageBox("리뷰가 성공적으로 제출되었습니다! (콘솔 확인)");
+		                
+		                closeReviewModal();
+		            });
+		        });
+		    </script>
+		</th:block>
+	</body>
 </html>
