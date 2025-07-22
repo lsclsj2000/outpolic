@@ -14,5 +14,5 @@ public interface UserSearchService {
 	// 검색된 콘텐츠의 상세정보 
 	UserContentsDetailDTO getContentsDetailById(String contentsId, String userId);
 	
-	List<UserContentItemDTO> findContentsByCategoryId(String categoryId);
+	List<UserContentItemDTO> findContentsByCategoryId(String categoryId, String userId);
 }
