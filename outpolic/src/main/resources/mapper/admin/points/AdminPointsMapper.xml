@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.admin.points.mapper.AdminPointsMapper">
+
+    <select id="selectPointsHistory" parameterType="map" resultType="outpolic.admin.points.dto.AdminPointsHistoryDTO">
+	    SELECT
+	        ps.pts_cd           AS ptsCd,
+	        ps.mbr_cd           AS mbrCd,
+	        ps.pts_points       AS ptsPoints,
+	        ps.pts_points_delta AS ptsPointsDelta,
+	        ps.pts_cum_points   AS ptsCumPoints,
+	        ps.pts_status       AS ptsStatus,
+	        ps.pts_ymdt         AS ptsYmdt,
+	        m.mbr_nm            AS mbrNm
+	    FROM
+	        points_status ps
+	    JOIN
+	        member m ON ps.mbr_cd = m.mbr_cd
+	    <where>
+	        <if test="searchKeyword != null and searchKeyword != ''">
+	            <choose>
+	                <when test="searchType == 'mbrCd'">
+	                    AND ps.mbr_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	                <when test="searchType == 'mbrNm'">
+	                    AND m.mbr_nm LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	            </choose>
+	        </if>
+	        <if test="startDate != null and startDate != ''">
+	            AND DATE(ps.pts_ymdt) &gt;= #{startDate}
+	        </if>
+	        <if test="endDate != null and endDate != ''">
+	            AND DATE(ps.pts_ymdt) &lt;= #{endDate}
+	        </if>
+	        </where>
+	    ORDER BY ps.pts_ymdt DESC
+	</select>
+	
+	<select id="selectAllStandards" parameterType="map" resultType="outpolic.admin.points.dto.AdminPointsStandardDTO">
+	    SELECT
+	        ep_cd           AS epCd,
+	        ep_expln        AS epExpln,
+	        ep_amt          AS epAmt,
+	        ep_reg_ymdt     AS epRegYmdt,
+	        ep_reg_adm_cd   AS epRegAdmCd,
+	        ep_mdfcn_ymdt   AS epMdfcnYmdt,
+	        ep_mdfcn_adm_cd AS epMdfcnAdmCd,
+	        ep_status       AS epStatus
+	    FROM earned_point
+	    <where>
+	        <if test="searchKeyword != null and searchKeyword != ''">
+	            AND ep_expln LIKE CONCAT('%', #{searchKeyword}, '%')
+	        </if>
+	        <if test="filterStatus != null and filterStatus != ''">
+	            AND ep_status = #{filterStatus}
+	        </if>
+	        <if test="minAmount != null">
+	            AND ep_amt &gt;= #{minAmount}
+	        </if>
+	        <if test="maxAmount != null">
+	            AND ep_amt &lt;= #{maxAmount}
+	        </if>
+	    </where>
+	    ORDER BY ep_reg_ymdt DESC
+	</select>
+    
+    <select id="selectStandardByCode" parameterType="string" resultType="outpolic.admin.points.dto.AdminPointsStandardDTO">
+        SELECT
+            ep_cd           AS epCd,
+            ep_expln        AS epExpln,
+            ep_amt          AS epAmt,
+            ep_reg_ymdt     AS epRegYmdt,
+            ep_reg_adm_cd   AS epRegAdmCd,
+            ep_mdfcn_ymdt   AS epMdfcnYmdt,
+            ep_mdfcn_adm_cd AS epMdfcnAdmCd,
+            ep_status       AS epStatus
+        FROM earned_point
+        WHERE ep_cd = #{epCd}
+    </select>
+	
+	<insert id="insertStandard" parameterType="outpolic.admin.points.dto.AdminPointsStandardDTO">
+	    <selectKey keyProperty="epCd" resultType="String" order="BEFORE">
+	        SELECT
+	            CASE
+	                WHEN COUNT(*) = 0 THEN 'EP_C001'
+	                ELSE CONCAT(
+	                    'EP_C',
+	                    MAX(CAST(SUBSTRING_INDEX(ep_cd, 'EP_C', -1) AS UNSIGNED)) + 1
+	                )
+	            END AS newCode
+	        FROM earned_point
+	        WHERE ep_cd LIKE 'EP_C%';
+	    </selectKey>
+	    
+	    INSERT INTO earned_point (
+	        ep_cd, ep_expln, ep_amt, ep_reg_ymdt, ep_reg_adm_cd, ep_status
+	    ) VALUES (
+	        #{epCd}, #{epExpln}, #{epAmt}, #{epRegYmdt}, #{epRegAdmCd}, #{epStatus}
+	    )
+	</insert>
+	
+	<update id="updateStandard" parameterType="outpolic.admin.points.dto.AdminPointsStandardDTO">
+	    UPDATE
+	        earned_point
+	    SET
+	        ep_expln = #{epExpln},
+	        ep_amt = #{epAmt},
+	        ep_status = #{epStatus},
+	        ep_mdfcn_adm_cd = #{epMdfcnAdmCd},
+	        ep_mdfcn_ymdt = #{epMdfcnYmdt}
+	    WHERE
+	        ep_cd = #{epCd}
+	</update>
+</mapper>
