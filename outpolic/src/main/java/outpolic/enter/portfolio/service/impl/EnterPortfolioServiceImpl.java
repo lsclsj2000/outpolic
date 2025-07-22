@@ -47,12 +47,16 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         return cleaned;
     }
 
+
     private String restorePathForWebOrFileSystem(String dbPath) {
         if (dbPath == null) return null;
         String normalizedPath = dbPath.replace("\\", "/");
-        // 이미 접두사가 있다면 그대로 반환하여 중복을 방지합니다.
-        if (normalizedPath.startsWith("/attachment/") || normalizedPath.startsWith("attachment/")) {
-            return normalizedPath.startsWith("/") ? normalizedPath : "/" + normalizedPath;
+        // 이미 접두사가 있다면 중복해서 붙이지 않고, 올바른 형태로 반환합니다.
+        if (normalizedPath.startsWith("/attachment/")) {
+            return normalizedPath;
+        }
+        if (normalizedPath.startsWith("attachment/")) {
+            return "/" + normalizedPath;
         }
         // 접두사가 없는 경우에만 붙여줍니다.
         return "/attachment/" + normalizedPath;
@@ -68,6 +72,7 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     public List<EnterPortfolio> getPortfolioListByEntCd(String entCd) {
         List<EnterPortfolio> portfolios = portfolioMapper.findPortfolioDetailsByEntCd(entCd);
         portfolios.forEach(p -> {
+            // 이 코드가 DB 경로 앞에 "/attachment/"를 붙여줍니다.
             p.setPrtfThumbnailUrl(restorePathForWebOrFileSystem(p.getPrtfThumbnailUrl()));
         });
         return portfolios;
@@ -139,10 +144,11 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     public FileMetaData uploadThumbnail(MultipartFile file) {
         if (file == null || file.isEmpty()) return null;
         String serviceName = "portfolio";
-        String imageTypeDir = (file.getContentType() != null && file.getContentType().startsWith("image")) ? "image" : "files";
-        String fullServicePath = serviceName + "/" + imageTypeDir;
-        
-        FileMetaData uploadedFile = filesUtils.uploadFile(file, fullServicePath);
+      //  String imageTypeDir = "image";
+        //String fullServicePath = serviceName + "/" + imageTypeDir; // 결과: "portfolio/image"
+        String fullServicePath = serviceName; // "portfolio"만 전달
+
+        FileMetaData uploadedFile = filesUtils.uploadFile(file, fullServicePath); // "portfolio/image"를 전달
         if (uploadedFile != null && uploadedFile.getFilePath() != null) {
             String cleanedPath = cleanPathForDb(uploadedFile.getFilePath());
             uploadedFile.setFilePath(cleanedPath);
@@ -150,12 +156,16 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         return uploadedFile;
     }
 
+   
+
+ // EnterPortfolioServiceImpl.java
+
     @Override
     @Transactional
     public void registerNewPortfolio(PortfolioFormDataDto formData, MultipartFile thumbnailFile, List<MultipartFile> bodyImageFiles, HttpSession session) throws IOException {
         String mbrCd = (String) session.getAttribute("SCD");
         String entCd = findEntCdByMbrCd(mbrCd);
-        String prtfCd = generateNewPrtfCd(); // 서비스에서 새로운 prtfCd 생성
+        String prtfCd = generateNewPrtfCd();
 
         EnterPortfolio portfolio = new EnterPortfolio();
         portfolio.setPrtfCd(prtfCd);
@@ -169,34 +179,40 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         portfolio.setPrtfIndustry(formData.getPrtfIndustry());
         portfolio.setStcCd("SD_ACTIVE");
         
-        // 대표 카테고리 ID 설정
         if (formData.getCategoryCodes() != null && !formData.getCategoryCodes().isEmpty()) {
             portfolio.setCtgryId(formData.getCategoryCodes().get(0));
         }
 
-        String clCd = "LIST_" + prtfCd;
-        // 대표 이미지(썸네일) 처리
+        FileMetaData thumbMeta = null;
         if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-            FileMetaData thumbMeta = uploadThumbnail(thumbnailFile);
-            portfolio.setPrtfThumbnailUrl(thumbMeta.getFilePath());
+            thumbMeta = uploadThumbnail(thumbnailFile);
+            portfolio.setPrtfThumbnailUrl(cleanPathForDb(thumbMeta.getFilePath()));
+        }
+        
+        // 1. Save the main portfolio information first
+        portfolioMapper.addPortfolio(portfolio);
+
+        // 2. [Key Change] Create the clCd directly from the unique prtfCd
+        String clCd = "LIST_" + prtfCd;
+        
+        // 3. Save to content_list to create the parent row for foreign keys
+        portfolioMapper.insertContentList(clCd, prtfCd);
+
+        // 4. Now, safely save files and mappings
+        if (thumbMeta != null) {
             portfolioMapper.insertFileRecord(thumbMeta, clCd, mbrCd);
         }
         
-        // 포트폴리오 기본 정보 DB 저장
-        portfolioMapper.addPortfolio(portfolio);
-        portfolioMapper.insertContentList(clCd, prtfCd);
-
-        // 본문 이미지들 처리
         if (bodyImageFiles != null && !bodyImageFiles.isEmpty()) {
             for (MultipartFile bodyFile : bodyImageFiles) {
-                FileMetaData bodyMeta = filesUtils.uploadFile(bodyFile, "portfolio/body");
+                FileMetaData bodyMeta = filesUtils.uploadFile(bodyFile, "portfolio"); // Keep path consistent
                 if (bodyMeta != null) {
+                    bodyMeta.setFilePath(cleanPathForDb(bodyMeta.getFilePath()));
                     portfolioMapper.insertFileRecord(bodyMeta, clCd, mbrCd);
                 }
             }
         }
         
-        // 카테고리 및 태그 매핑 처리
         updateMappings(formData.getCategoryCodes(), clCd, mbrCd, formData.getTags());
     }
 

@@ -99,15 +99,14 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
                                .map(file -> restorePathForWebOrFileSystem(file.getFilePath()))
                                .collect(Collectors.toList());
     }
-
-    @Override
     public FileMetaData uploadThumbnail(MultipartFile file) {
         if (file == null || file.isEmpty()) return null;
         String serviceName = "outsourcing";
-        String imageTypeDir = (file.getContentType() != null && file.getContentType().startsWith("image")) ? "image" : "files";
         
-        // ▼▼▼ 아래와 같이 수정 ▼▼▼
-        String fullServicePath = serviceName + "/thumbnail/" + imageTypeDir; // 👈 "outsourcing/thumbnail/image" 경로를 생성합니다.
+        // ▼▼▼ [수정] 아래 3줄을 한 줄로 변경합니다. ▼▼▼
+        // String imageTypeDir = (file.getContentType() != null && file.getContentType().startsWith("image")) ? "image" : "files";
+        // String fullServicePath = serviceName + "/thumbnail/" + imageTypeDir;
+        String fullServicePath = serviceName; // "outsourcing"만 전달
 
         FileMetaData uploadedFile = filesUtils.uploadFile(file, fullServicePath);
         if (uploadedFile != null && uploadedFile.getFilePath() != null) {
@@ -121,8 +120,11 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     public FileMetaData uploadBodyImage(MultipartFile file) {
         if (file == null || file.isEmpty()) return null;
         String serviceName = "outsourcing";
-        String imageTypeDir = "body"; // 본문 이미지는 별도 디렉토리
-        String fullServicePath = serviceName + "/" + imageTypeDir;
+
+        // ▼▼▼ [수정] 아래 2줄을 한 줄로 변경합니다. ▼▼▼
+        // String imageTypeDir = "body";
+        // String fullServicePath = serviceName + "/" + imageTypeDir;
+        String fullServicePath = serviceName; // "outsourcing"만 전달
 
         FileMetaData uploadedFile = filesUtils.uploadFile(file, fullServicePath);
         if (uploadedFile != null && uploadedFile.getFilePath() != null) {
