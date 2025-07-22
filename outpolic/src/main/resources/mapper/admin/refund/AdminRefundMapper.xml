@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.admin.refund.mapper.AdminRefundMapper">
+
+    <select id="selectRefundHistory" parameterType="map" resultType="outpolic.admin.refund.dto.AdminRefundDTO">
+	    SELECT
+	        r.rfnd_cd           AS rfndCd,
+	        r.stlm_cd           AS stlmCd,
+	        r.mbr_cd            AS mbrCd,
+	        r.rfnd_amt          AS rfndAmt,
+	        r.rfnd_proc_ymdt    AS rfndProcYmdt,
+	        m.mbr_nm            AS mbrNm,
+	        s.stlm_used_points  AS stlmUsedPoints
+	    FROM
+	        refundment r
+	    JOIN
+	        member m ON r.mbr_cd = m.mbr_cd
+	    JOIN
+	        settlement s ON r.stlm_cd = s.stlm_cd
+	    <where>
+	        <if test="searchKeyword != null and searchKeyword != ''">
+	            <choose>
+	                <when test="searchType == 'mbrCd'"> AND r.mbr_cd LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+	                <when test="searchType == 'mbrNm'"> AND m.mbr_nm LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+	            </choose>
+	        </if>
+	        <if test="startDate != null and startDate != ''">
+	            AND DATE(r.rfnd_proc_ymdt) &gt;= #{startDate}
+	        </if>
+	        <if test="endDate != null and endDate != ''">
+	            AND DATE(r.rfnd_proc_ymdt) &lt;= #{endDate}
+	        </if>
+	    </where>
+	    ORDER BY r.rfnd_proc_ymdt DESC
+	</select>
+</mapper>
