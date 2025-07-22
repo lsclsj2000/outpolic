@@ -50,10 +50,15 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     private String restorePathForWebOrFileSystem(String dbPath) {
         if (dbPath == null) return null;
         String normalizedPath = dbPath.replace("\\", "/");
-        // 이미 접두사가 있다면 그대로 반환하여 중복을 방지합니다.
-        if (normalizedPath.startsWith("/attachment/") || normalizedPath.startsWith("attachment/")) {
-            return normalizedPath.startsWith("/") ? normalizedPath : "/" + normalizedPath;
+        
+        // 이미 접두사가 있다면 중복해서 붙이지 않고, 올바른 형태로 반환합니다.
+        if (normalizedPath.startsWith("/attachment/")) {
+            return normalizedPath;
         }
+        if (normalizedPath.startsWith("attachment/")) {
+            return "/" + normalizedPath;
+        }
+        
         // 접두사가 없는 경우에만 붙여줍니다.
         return "/attachment/" + normalizedPath;
     }
@@ -108,10 +113,11 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         // String fullServicePath = serviceName + "/thumbnail/" + imageTypeDir;
         String fullServicePath = serviceName; // "outsourcing"만 전달
 
-        FileMetaData uploadedFile = filesUtils.uploadFile(file, fullServicePath);
+        FileMetaData uploadedFile = filesUtils.uploadFile(file, "outsourcing");
         if (uploadedFile != null && uploadedFile.getFilePath() != null) {
-            String cleanedPath = cleanPathForDb(uploadedFile.getFilePath());
-            uploadedFile.setFilePath(cleanedPath);
+            // ▼▼▼ 이 줄을 반드시 삭제! ▼▼▼
+            // String cleanedPath = cleanPathForDb(uploadedFile.getFilePath());
+            // uploadedFile.setFilePath(cleanedPath);
         }
         return uploadedFile;
     }
