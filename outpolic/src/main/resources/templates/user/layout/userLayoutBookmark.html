@@ -18,7 +18,13 @@
 
 <body>
 	<!-- header start -->
-	<header th:replace="~{user/fragments/userHeader :: userHeaderFragment}"></header>
+	<th:block th:if="${session.SGrd == 'ENTER'}">
+    <div th:replace="~{enter/fragments/enterHeader :: enterHeaderFragment}"></div>
+</th:block>
+
+<th:block th:unless="${session.SGrd == 'ENTER'}">
+    <div th:replace="~{user/fragments/userHeader :: userHeaderFragment}"></div>
+</th:block>
 	<!-- header end -->
 	
 	<main class="main" style="margin-top: 40px;">

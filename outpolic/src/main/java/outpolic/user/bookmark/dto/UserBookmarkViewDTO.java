@@ -33,6 +33,7 @@ public class UserBookmarkViewDTO {
     private String prtfTtl;
     private int prtfDwnldCnt;
     private String prtfThumbnailUrl;
+    private String poStcCd;
 
     // 기업일 경우
     private String entCd;
@@ -40,4 +41,5 @@ public class UserBookmarkViewDTO {
     private String entRprsv;
     private Double entScr;
     private String entImg;
+    private String eiStcCd;
 }

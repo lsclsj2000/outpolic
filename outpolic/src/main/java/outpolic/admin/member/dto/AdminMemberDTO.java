@@ -1,12 +1,10 @@
-package outpolic.enter.mypage.dto;
+package outpolic.admin.member.dto;
 
 import java.time.LocalDate;
 
 import lombok.Data;
-
 @Data
-public class CorpInfo {
-	//기업은 corp. 코퍼레이션 줄임말
+public class AdminMemberDTO {
 	private String corpCode; 
 	private String corpBrno; 
 	private String memberCode; 
@@ -30,5 +28,4 @@ public class CorpInfo {
 	
 	private String entImg;
 	private String adminCode;
-	
 }
