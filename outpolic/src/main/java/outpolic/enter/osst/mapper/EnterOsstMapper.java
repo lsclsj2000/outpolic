@@ -12,8 +12,17 @@ import outpolic.enter.osst.domain.EnterOsstRecord;
 @Mapper
 public interface EnterOsstMapper {
 	
+	// 단계 승인
+	int updateStepApproval(@Param("ospCd") String ospCd);
+	
+	// osr_cd 자동생성
+	String getNextOsrCode();
+	
+	// 보고 피드백 제출
+	int insertRecord(EnterOsstRecord record);
+	
 	// 진행 외주 상세 조회
-	EnterOsst getEnterOsstDetail(String osstDetailCode);
+	EnterOsst getEnterOsstDetail(@Param("osstDetailCode") String osstDetailCode, @Param("memberCode") String memberCode);
 	
 	// 진행 외주 목록 조회
 	List<EnterOsst> getEnterOsstList(String memberCode);
