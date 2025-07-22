@@ -14,4 +14,7 @@ public interface OutsourcingRequestService {
     List<RequestViewDTO> getSentInquiries(String requesterId);
 
     RequestViewDTO getRequestDetails(String requestId);
+    
+    String findMbrCdByEntCd(String entCd); // 이 줄을 추가합니다.
+
 }

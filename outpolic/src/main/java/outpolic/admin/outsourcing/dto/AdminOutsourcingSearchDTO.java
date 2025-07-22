@@ -17,7 +17,6 @@ public class AdminOutsourcingSearchDTO {
 	private LocalDate startDate;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate endDate;
-	
 	// 상태 검색 
 	private String stcCd;
 }
