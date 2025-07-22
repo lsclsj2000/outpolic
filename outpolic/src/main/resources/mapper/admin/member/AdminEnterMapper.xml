@@ -19,10 +19,8 @@
 		<result column="ent_mdfcn_ymdt" property="corpModificationYmdt"/>
 		<result column="mbr2_cd" property="adminCode"/>
 		<result column="ent_scr" property="corpScr"/>
-		<result column="stc_cd" property="statuseCode" />
+		<result column="statusCode" property="statusCode" />
 		<result column="ent_join_ymdt" property="corpJoinYmdt"/>
-		<result column="ent_prtf_cnt" property="corpPortfolioCount"/>
-		<result column="ent_os_cnt" property="corpOutsourcingCount"/>
 		<result column="ent_img" property="entImg"/>
 	</resultMap>
 	<select id="getEnterList" resultMap="adminCorpInfoResultMap">
@@ -44,9 +42,7 @@
 		    e.ent_mdfcn_ymdt,
 		    e.mbr2_cd,
 		    e.ent_scr,
-		    m.stc_cd as statuseCode,
-		    e.ent_prtf_cnt,
-		    e.ent_os_cnt,
+		    m.stc_cd as statusCode,
 		    e.ent_img
 		FROM enterprise e
 		JOIN member m ON e.mbr_cd = m.mbr_cd
@@ -55,9 +51,26 @@
 	
 	<select id="getEnterListByStatus" resultMap="adminCorpInfoResultMap">
   		SELECT 
-			e.*,
-			m.stc_cd as statuseCode
-		FROM enterprise
+ e.ent_cd,
+    e.ent_brno,
+    e.mbr_cd,
+    e.ent_nm,
+    e.ent_rprsv,
+    e.ent_telno,
+    e.ent_fndn_ymdt,
+    e.ent_addr,
+    e.ent_daddr,
+    e.ent_zip,
+    e.ent_scl,
+    e.ent_expln,
+    e.ent_url,
+    e.ent_mdfcn_ymdt,
+    m.stc_cd as statusCode,  <!-- 요거!! -->
+    e.mbr2_cd,
+    e.ent_scr,
+    e.ent_join_ymdt,
+    e.ent_img
+		FROM enterprise e
 		JOIN member m ON e.mbr_cd = m.mbr_cd
 		where m.stc_cd=#{statusCode}
 		order by CAST(SUBSTRING_INDEX(ent_cd, 'EI_C', -1) AS UNSIGNED)
@@ -65,20 +78,41 @@
   	
 	<select id="selectEnterByCode" resultMap="adminCorpInfoResultMap">
  		SELECT 
-		*
-		FROM enterprise
-		where mbr_cd=#{memberCode};
+			e.ent_cd,
+			e.ent_brno,
+			e.mbr_cd,
+			e.ent_nm,
+			e.ent_rprsv,
+			e.ent_telno,
+			e.ent_fndn_ymdt,
+			e.ent_addr,
+			e.ent_daddr,
+			e.ent_zip,
+			e.ent_scl,
+			e.ent_expln,
+			e.ent_url,
+			e.ent_mdfcn_ymdt,
+			m.stc_cd as statusCode,  
+			e.mbr2_cd,
+			e.ent_scr,
+			e.ent_join_ymdt,
+			e.ent_img
+		FROM enterprise e
+	    JOIN member m ON e.mbr_cd = m.mbr_cd
+		where e.mbr_cd=#{memberCode};
   	</select>
   	<update id="updateAdminEnterEditInfo" parameterType="outpolic.admin.member.dto.AdminMemberDTO">
-  		UPDATE eneterprise
+  		UPDATE enterprise e
  		set
- 			ent_cd= #{corpCode},
- 			mbr_cd=#{memberCode},
-			mbr_mdfcn_ymdt = curdate(),
-			mbr2_cd = #{adminCode},
-			ent_expln = #{corpExplain}
+ 			e.ent_nm= #{corpName},
+			e.ent_mdfcn_ymdt = curdate(),
+			e.ent_scl = #{corpScale},
+			e.ent_scr = #{corpScr},
+			e.ent_url = #{corpHomepageUrl},
+			e.ent_expln = #{corpExplain},
+			e.ent_rprsv = #{corpRprsv}
 		where
-			mbr_cd= #{memberCode};
+			e.mbr_cd= #{memberCode};
   	</update>
   	
   	<select id="selectFilteredEnterpriseMembers" resultMap="adminCorpInfoResultMap">
@@ -100,9 +134,7 @@
 		    e.ent_mdfcn_ymdt,
 		    e.mbr2_cd,
 		    e.ent_scr,
-		    m.stc_cd as statuseCode,
-		    e.ent_prtf_cnt,
-		    e.ent_os_cnt,
+		    m.stc_cd as statusCode,
 		    e.ent_img
 		FROM enterprise e
 		JOIN member m ON e.mbr_cd = m.mbr_cd
@@ -130,15 +162,12 @@
 	        e.ent_expln,
 	        e.ent_url,
 	        e.ent_mdfcn_ymdt,
-	        m.stc_cd as statuseCode,
+	        m.stc_cd as statusCode,
 	        e.mbr2_cd,
 	        e.ent_scr,
 	        e.ent_join_ymdt,
-	        e.ent_prtf_cnt,
-	        e.ent_os_cnt,
 	        e.ent_img
 	    FROM enterprise e
-	    JOIN member m ON e.mbr_cd = m.mbr_cd
 	    JOIN member m ON e.mbr_cd = m.mbr_cd
 	    WHERE e.ent_nm LIKE CONCAT('%', #{keyword}, '%')
 	       OR e.ent_rprsv LIKE CONCAT('%', #{keyword}, '%')
