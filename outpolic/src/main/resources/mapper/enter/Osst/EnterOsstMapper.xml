@@ -50,6 +50,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="osr_reg_ymdt" 		property="osstRecordRegYmdt"/>
 		<result column="osr_up_cd" 			property="osstRecordUpCode"/>
 	</resultMap>
+	
+	<update id="updateStepApproval">
+		/* 단계 승인 업데이트 */
+	    UPDATE outsourcing_prograss
+	    SET osp_cust_yn = 1,
+	        osp_cust_ymdt = NOW()
+	    WHERE osp_cd = #{ospCd}
+	</update>
+	
+	<select id="getNextOsrCode" resultType="String">
+		/* osr_cd 자동 생성 */
+	    SELECT
+	    CASE
+	        WHEN COUNT(*) = 0 THEN 'OSR_C1'
+	        ELSE CONCAT('OSR_C', MAX(CAST(SUBSTRING_INDEX(osr_cd, 'OSR_C', -1) AS UNSIGNED)) + 1)
+	    END
+	    FROM outsourcing_record;
+	</select>
+	
+	<insert id="insertRecord" parameterType="outpolic.enter.osst.domain.EnterOsstRecord">
+		/* 보고 피드백 제출 */
+	    INSERT INTO outsourcing_record (
+	        osr_cd, osp_cd, osr_type, mbr_cd, osr_ttl, osr_cn, osr_reg_ymdt, osr_up_cd
+	    ) VALUES (
+	        #{osstRecordCode}, #{osstPrograssCode}, #{osstRecordType}, #{osstRecordMbrCode},
+	        #{osstRecordTitle}, #{osstRecordCn}, NOW(), #{osstRecordUpCode}
+	    )
+	</insert>
 
 	<select id="getEnterOsstStcCode" parameterType="String" resultMap="enterOsstResultMap">
 		/* 진행 외주 단계 조회 */
@@ -101,29 +129,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="getEnterOsstDetail" parameterType="String" resultMap="enterOsstResultMap">
-		/* 진행외주 박스를 누르면 보이는 상세 페이지의 기본 정보 (신청 외주 정보) */
-		select
-			ocd.ocd_cd as ocd_cd,
-			ocd.mbr_cd as mbr_cd,
-			m.mbr_nm as mbr_nm,
-			m.mbr_eml as mbr_eml,
-			ocd.ent_cd as ent_cd,
-			e.ent_nm as ent_nm,
-			m2.mbr_nm as ent_mbr_nm,
-			m2.mbr_eml as ent_mbr_eml,
-			ocd.ocd_ttl as ocd_ttl,
-			ocd.ocd_expln as ocd_expln,	
-			ocd.ocd_dedline as ocd_dedline,
-			ocd.ocd_amt as ocd_amt,
-			ocd.stc_cd as stc_cd,
-			ocd.ocd_dmnd_ymdt as ocd_dmnd_ymdt
-		from
-			outsourcing_contract_details ocd
-			left join member m on ocd.mbr_cd = m.mbr_cd
-			left join enterprise e on ocd.ent_cd = e.ent_cd
-			left join member m2 on e.mbr_cd = m2.mbr_cd
-		where
-			ocd.stc_cd = 'SD_APPROVED' and ocd.ocd_cd = #{osstDetailCode};
+	    SELECT
+	        ocd.ocd_cd as ocd_cd,
+	        ocd.mbr_cd as mbr_cd,
+	        m.mbr_nm as mbr_nm,
+	        m.mbr_eml as mbr_eml,
+	        ocd.ent_cd as ent_cd,
+	        e.ent_nm as ent_nm,
+	        m2.mbr_nm as ent_mbr_nm,
+	        m2.mbr_eml as ent_mbr_eml,
+	        ocd.ocd_ttl as ocd_ttl,
+	        ocd.ocd_expln as ocd_expln,
+	        ocd.ocd_dedline as ocd_dedline,
+	        ocd.ocd_amt as ocd_amt,
+	        ocd.stc_cd as stc_cd,
+	        ocd.ocd_dmnd_ymdt as ocd_dmnd_ymdt,
+	        CASE
+	            WHEN ocd.mbr_cd = #{memberCode} THEN 'DEMANDER'
+	            WHEN e.mbr_cd = #{memberCode} THEN 'SUPPLIER'
+	            ELSE 'UNKNOWN'
+	        END AS member_role
+	    FROM
+	        outsourcing_contract_details ocd
+	        LEFT JOIN member m ON ocd.mbr_cd = m.mbr_cd
+	        LEFT JOIN enterprise e ON ocd.ent_cd = e.ent_cd
+	        LEFT JOIN member m2 ON e.mbr_cd = m2.mbr_cd
+	    WHERE
+	        ocd.stc_cd = 'SD_APPROVED'
+	        AND ocd.ocd_cd = #{osstDetailCode}
 	</select>
 	
 	

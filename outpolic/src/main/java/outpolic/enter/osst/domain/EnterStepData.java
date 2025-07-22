@@ -12,6 +12,7 @@ public class EnterStepData {
 	private String ospSplyYmdt;
 	private Integer ospCustYn;
 	private String ospCustYmdt;
+	private String ospCd;
 
 	private List<EnterOsstRecord> reports;
 	private List<EnterOsstRecord> feedbacks;
@@ -24,5 +25,12 @@ public class EnterStepData {
 
 	public boolean isInProgress() {
 		return ospCustYn != null && ospCustYn == 0 && ospSplyYmdt != null;
+	}
+	
+	public List<EnterOsstRecord> getAllActivities() {
+	    List<EnterOsstRecord> all = new ArrayList<>();
+	    if (reports != null) all.addAll(reports);
+	    if (feedbacks != null) all.addAll(feedbacks);
+	    return all;
 	}
 }

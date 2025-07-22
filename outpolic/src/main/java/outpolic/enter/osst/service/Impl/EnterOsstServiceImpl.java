@@ -29,10 +29,8 @@ public class EnterOsstServiceImpl implements EnterOsstService {
 	
 
 	@Override
-	public EnterOsst getEnterOsstDetail(String osstDetailCode) {
-		// 진행 외주 상세 조회
-		EnterOsst EnterOsstDetail = enterOsstMapper.getEnterOsstDetail(osstDetailCode);
-		return EnterOsstDetail;
+	public EnterOsst getEnterOsstDetail(String osstDetailCode, String memberCode) {
+	    return enterOsstMapper.getEnterOsstDetail(osstDetailCode, memberCode);
 	}
 	
 	@Override
@@ -87,6 +85,7 @@ public class EnterOsstServiceImpl implements EnterOsstService {
 			stepData.setOspSplyYmdt(step.getOspSplyYmdt());
 			stepData.setOspCustYn(step.getOspCustYn());
 			stepData.setOspCustYmdt(step.getOspCustYmdt());
+			stepData.setOspCd(step.getOspCode());
 
 			// 공급자 보고서 필터: "SUPPLIER" 대신 "REPORT"로 변경
 			List<EnterOsstRecord> reports = recordList.stream()
@@ -117,5 +116,22 @@ public class EnterOsstServiceImpl implements EnterOsstService {
 		}
 
 		return grouped;
+	}
+	
+	@Override
+	public String generateNewOsrCode() {
+	    String newCode = enterOsstMapper.getNextOsrCode();
+	    return newCode;
+	}
+
+	@Override
+	public boolean insertRecord(EnterOsstRecord record) {
+	    return enterOsstMapper.insertRecord(record) == 1;
+	}
+	
+	@Override
+	public boolean approveStep(String ospCd) {
+		// 단계 승인
+	    return enterOsstMapper.updateStepApproval(ospCd) == 1;
 	}
 }
