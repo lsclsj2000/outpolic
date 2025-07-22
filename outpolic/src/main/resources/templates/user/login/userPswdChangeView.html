@@ -60,7 +60,13 @@
 			        const currentPassword = $('input[name="currentPassword"]').val();
 			        const newPassword = $('input[name="newPassword"]').val();
 			        const confirmPassword = $('input[name="confirmPassword"]').val();
-			        
+			        if (newPassword !== confirmPassword) {
+			        	$('#errorMsg')
+			        	.css('color', 'red')
+				        .text('새 비밀번호와 확인 비밀번호가 일치하지 않습니다.')
+				        .show();
+				        return;
+				    }
 			        if (!isValidPassword(newPassword)) {
 				        $('#errorMsg')
 				            .css('color', 'red')

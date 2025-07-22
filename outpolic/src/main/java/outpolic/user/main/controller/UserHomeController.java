@@ -34,6 +34,7 @@ public class UserHomeController {
     	//main세션에 등급코드를 담는코드
     	String gred = (String) session.getAttribute("SGrd");
         model.addAttribute("SGrd", gred);
+        
 
     	// ★★ 1. 세션에서 현재 로그인한 사용자의 ID를 가져옵니다. ★★
         String userId = (String) session.getAttribute("SCD"); // 비로그인 시 null이 됩니다.
@@ -54,7 +55,12 @@ public class UserHomeController {
         List<UserRankingContentsDTO> popularOutsourcingList = userRankingService.getRankingContentsList(userId);
         
         model.addAttribute("findOSList", popularOutsourcingList);
-		return "main";
+        if("ENTER".equals(gred)) {
+        	return "redirect:/enter";
+        }else{
+        	return "main";
+        }
+
     }
     
 
