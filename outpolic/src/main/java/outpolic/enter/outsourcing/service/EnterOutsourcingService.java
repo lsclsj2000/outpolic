@@ -9,7 +9,6 @@ import outpolic.enter.outsourcing.domain.EnterOutsourcing;
 import outpolic.enter.outsourcing.domain.OutsourcingFormDataDto;
 import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.systems.file.domain.FileMetaData;
-
 public interface EnterOutsourcingService {
     
     List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd);
@@ -21,12 +20,13 @@ public interface EnterOutsourcingService {
     // 등록 프로세스
     String saveStep1Data(OutsourcingFormDataDto formData, HttpSession session);
     FileMetaData uploadThumbnail(MultipartFile file);
+    FileMetaData uploadBodyImage(MultipartFile file); // 본문 이미지 업로드 메서드 추가 [cite: 5]
     void completeOutsourcingRegistration(OutsourcingFormDataDto formData, MultipartFile thumbnailFile, List<MultipartFile> bodyImageFiles, HttpSession session);
     
     // 수정 프로세스
     void updateOutsourcingStep1(EnterOutsourcing outsourcingToUpdate);
     void updateOutsourcingStep2(String osCd, List<String> categoryCodes, String tags);
-    void updateOutsourcingStep3(String osCd, MultipartFile thumbnailFile, List<MultipartFile> newBodyImageFiles, List<String> deletedBodyImageCds); // [!code modified]
+    void updateOutsourcingStep3(String osCd, MultipartFile thumbnailFile, List<MultipartFile> newBodyImageFiles, List<String> deletedBodyImageCds);
     
     // 삭제
     void deleteOutsourcing(String osCd);
@@ -41,5 +41,5 @@ public interface EnterOutsourcingService {
      * @return EnterOutsourcing
      */
     EnterOutsourcing getOutsourcingByOsCd(String osCd);
-	void unlinkPortfolioFromOutsourcing(String string, String string2);
+    void unlinkPortfolioFromOutsourcing(String string, String string2);
 }

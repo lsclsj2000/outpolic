@@ -33,7 +33,7 @@
         </collection>
         <collection property="bodyImages" javaType="java.util.ArrayList"
                     ofType="outpolic.systems.file.domain.FileMetaData"
-                    column="cl_cd" select="findFilesByClCd" />
+                column="cl_cd" select="findFilesByClCd" />
     </resultMap>
 
  <select id="findPortfoliosByTitleAndEntCd" resultType="outpolic.enter.portfolio.domain.EnterPortfolio">
@@ -291,7 +291,8 @@
         (#{prtfCd}, #{entCd}, #{prtfTtl}, #{prtfCn}, 0, NOW(), #{stcCd}, #{prtfThumbnailUrl}, #{prtfPeriodStart}, #{prtfPeriodEnd}, #{prtfClient}, #{prtfIndustry})
 </insert>
 
-<select id="searchUnlinkedPortfolios" resultMap="simplePortfolioResultMap"> SELECT
+<select id="searchUnlinkedPortfolios" resultMap="simplePortfolioResultMap"> 
+    SELECT
         p.prtf_cd,
         p.prtf_ttl
     FROM
@@ -329,8 +330,7 @@
        INSERT INTO `file`
         (file_cd, file_reg_ymdt, file_extn, file_orgnl_nm, file_srvr_nm, file_path, cl_cd, mbr_cd, file_size)
         VALUES
-            (#{file.fileIdx}, NOW(), #{file.fileExtension}, #{file.fileOriginalName}, #{file.fileNewName}, #{file.filePath}, #{clCd}, #{mbrCd}, #{file.fileSize})
-</insert>
+            (#{file.fileIdx}, NOW(), #{file.fileExtension}, #{file.fileOriginalName}, #{file.fileNewName}, #{file.filePath}, #{clCd}, #{mbrCd}, #{file.fileSize}) </insert>
 
    <select id="findFilesByClCd" resultType="outpolic.systems.file.domain.FileMetaData">
         SELECT
@@ -353,7 +353,7 @@
         WHERE
             prtf_ttl LIKE CONCAT('%', #{query}, '%')
         ORDER BY
-            prtf_reg_ymdt DESC
+           prtf_reg_ymdt DESC
     </select>
     
     <select id="findEntCdByMbrCd" resultType="String">

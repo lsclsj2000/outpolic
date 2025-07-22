@@ -22,7 +22,6 @@ import outpolic.enter.portfolio.mapper.PortfolioMapper;
 import outpolic.enter.portfolio.service.EnterPortfolioService;
 import outpolic.systems.file.domain.FileMetaData;
 import outpolic.systems.util.FilesUtils;
-
 @Service
 @RequiredArgsConstructor
 public class EnterPortfolioServiceImpl implements EnterPortfolioService {
@@ -32,34 +31,43 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     private final FilesUtils filesUtils;
     private final PortfolioAsyncService portfolioAsyncService;
     private final CategorySearchService categorySearchService;
+    // DB 저장을 위해 파일 경로를 정리하는 유틸리티 메서드 (본문 이미지의 file_path 컬럼용)
+    // FilesUtils가 'attachment/...' 형태로 경로를 반환한다고 가정
+    private String cleanPathForDb(FileMetaData fileMetaData) {
+        if (fileMetaData == null || fileMetaData.getFilePath() == null) return null;
+        
+        String fullPath = fileMetaData.getFilePath().replace("\\", "/"); // FilesUtils가 반환하는 경로 (예: attachment/portfolio/20250721/image/file.png)
+        String serverFileName = fileMetaData.getFileNewName(); // 서버 파일명 (예: file.png)
 
-    // 파일 경로 정리 및 복원 유틸리티 메서드
-    private String cleanPathForDb(String filePath) {
-        if (filePath == null) return null;
-        String cleaned = filePath.replace("\\", "/");
-        // "attachment/" 또는 "/attachment/" 접두사를 제거합니다.
-        if (cleaned.startsWith("/attachment/")) {
-            return cleaned.substring("/attachment/".length());
+        // 파일명 부분을 제거하여 경로만 남기고, 앞에 '/'를 붙입니다. (예: /attachment/portfolio/20250721/image/)
+        if (fullPath.endsWith("/" + serverFileName)) {
+            return "/" + fullPath.substring(0, fullPath.length() - serverFileName.length());
         }
-        if (cleaned.startsWith("attachment/")) {
-            return cleaned.substring("attachment/".length());
-        }
-        return cleaned;
+        // 이 경우는 거의 없을 것이지만, 안전을 위해 앞에 '/'를 붙여 반환
+        return "/" + fullPath;
     }
 
 
     private String restorePathForWebOrFileSystem(String dbPath) {
         if (dbPath == null) return null;
         String normalizedPath = dbPath.replace("\\", "/");
-        // 이미 접두사가 있다면 중복해서 붙이지 않고, 올바른 형태로 반환합니다.
-        if (normalizedPath.startsWith("/attachment/")) {
+        // DB에 저장된 썸네일 경로가 이미 '/'로 시작하면 그대로 반환.
+        // FilesUtils가 '/' 없이 'attachment/...'로 반환했으므로, DB에도 그렇게 저장될 가능성이 높음.
+        // 따라서, 대부분의 경우 앞에 '/'를 붙여야 함.
+        if (normalizedPath.startsWith("/")) {
             return normalizedPath;
         }
-        if (normalizedPath.startsWith("attachment/")) {
-            return "/" + normalizedPath;
-        }
-        // 접두사가 없는 경우에만 붙여줍니다.
-        return "/attachment/" + normalizedPath;
+        return "/" + normalizedPath;
+    }
+
+    // 이 메서드는 FileMetaData 객체의 filePath에 저장된 경로를 웹에서 접근 가능한 전체 URL로 변환할 때 사용됩니다.
+    // 즉, DB에 '/attachment/서비스/날짜/image/' 경로만 저장했다면, 여기에 FileMetaData의 fileNewName을 붙여야 합니다.
+    // file_path 컬럼에 저장된 경로가 이미 '/'로 시작한다고 가정합니다.
+    private String restoreFullPathForWeb(FileMetaData fileMetaData) {
+        if (fileMetaData == null || fileMetaData.getFilePath() == null || fileMetaData.getFileNewName() == null) return null;
+        String dbPath = fileMetaData.getFilePath(); // DB에 저장된 경로 (예: /attachment/portfolio/20250722/image/)
+        // dbPath는 이미 '/'로 시작하는 형태로 저장되어야 함 (cleanPathForDb 결과)
+        return dbPath + fileMetaData.getFileNewName();
     }
 
 
@@ -72,7 +80,8 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     public List<EnterPortfolio> getPortfolioListByEntCd(String entCd) {
         List<EnterPortfolio> portfolios = portfolioMapper.findPortfolioDetailsByEntCd(entCd);
         portfolios.forEach(p -> {
-            // 이 코드가 DB 경로 앞에 "/attachment/"를 붙여줍니다.
+            // prtfThumbnailUrl은 이미 전체 경로이므로, restorePathForWebOrFileSystem을 사용하지 않아도 됩니다.
+            // 하지만 일관성을 위해 사용하되, 내부 로직이 이미 /attachment/가 있는 경우 처리하도록 되어 있으므로 문제 없습니다.
             p.setPrtfThumbnailUrl(restorePathForWebOrFileSystem(p.getPrtfThumbnailUrl()));
         });
         return portfolios;
@@ -81,13 +90,13 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     public EnterPortfolio getPortfolioByPrtfCd(String prtfCd) {
         EnterPortfolio portfolio = portfolioMapper.findPortfolioDetailsByPrtfCd(prtfCd);
         if (portfolio != null) {
-            // 썸네일 경로를 웹에서 접근 가능한 절대 경로로 변환합니다.
+            // 썸네일 경로를 웹에서 접근 가능한 절대 경로로 변환합니다. (이미 전체 경로이므로 문제 없음)
             portfolio.setPrtfThumbnailUrl(restorePathForWebOrFileSystem(portfolio.getPrtfThumbnailUrl()));
             
-            // 전체 파일 목록(bodyImages)의 경로도 웹에서 접근 가능하도록 변환
+            // 본문 이미지 경로도 웹 접근 가능하도록 변환
             if (portfolio.getBodyImages() != null) {
                 portfolio.getBodyImages().forEach(file ->
-                    file.setFilePath(restorePathForWebOrFileSystem(file.getFilePath()))
+                    file.setFilePath(restoreFullPathForWeb(file))
                 );
             }
         }
@@ -143,22 +152,15 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     @Override
     public FileMetaData uploadThumbnail(MultipartFile file) {
         if (file == null || file.isEmpty()) return null;
-        String serviceName = "portfolio";
-      //  String imageTypeDir = "image";
-        //String fullServicePath = serviceName + "/" + imageTypeDir; // 결과: "portfolio/image"
-        String fullServicePath = serviceName; // "portfolio"만 전달
-
-        FileMetaData uploadedFile = filesUtils.uploadFile(file, fullServicePath); // "portfolio/image"를 전달
+        // FilesUtils에 서비스 이름만 전달 (FilesUtils가 내부적으로 'attachment/서비스명/날짜/image/파일명' 형태로 반환한다고 가정)
+        FileMetaData uploadedFile = filesUtils.uploadFile(file, "portfolio");
+        // 썸네일은 portfolio 테이블에 파일명까지 포함된 전체 웹 경로를 저장
+        // FilesUtils가 반환하는 filePath는 'attachment/...' 형태일 것이므로, 앞에 '/'를 붙여서 저장
         if (uploadedFile != null && uploadedFile.getFilePath() != null) {
-            String cleanedPath = cleanPathForDb(uploadedFile.getFilePath());
-            uploadedFile.setFilePath(cleanedPath);
+            uploadedFile.setFilePath("/" + uploadedFile.getFilePath()); // [!code modified]
         }
         return uploadedFile;
     }
-
-   
-
- // EnterPortfolioServiceImpl.java
 
     @Override
     @Transactional
@@ -183,31 +185,30 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
             portfolio.setCtgryId(formData.getCategoryCodes().get(0));
         }
 
-        FileMetaData thumbMeta = null;
+        // 썸네일 처리: file 테이블에 저장하지 않고 Portfolio 테이블에 경로만 저장
         if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-            thumbMeta = uploadThumbnail(thumbnailFile);
-            portfolio.setPrtfThumbnailUrl(cleanPathForDb(thumbMeta.getFilePath()));
+            FileMetaData thumbMeta = uploadThumbnail(thumbnailFile);
+            if (thumbMeta != null) {
+                // DB에는 파일명까지 포함된 전체 웹 경로를 저장
+                portfolio.setPrtfThumbnailUrl(thumbMeta.getFilePath());
+            }
         }
         
         // 1. Save the main portfolio information first
         portfolioMapper.addPortfolio(portfolio);
-
         // 2. [Key Change] Create the clCd directly from the unique prtfCd
         String clCd = "LIST_" + prtfCd;
-        
         // 3. Save to content_list to create the parent row for foreign keys
         portfolioMapper.insertContentList(clCd, prtfCd);
-
-        // 4. Now, safely save files and mappings
-        if (thumbMeta != null) {
-            portfolioMapper.insertFileRecord(thumbMeta, clCd, mbrCd);
-        }
         
+        // 4. 본문 이미지들을 file 테이블에 저장 (썸네일은 file 테이블에 저장하지 않음)
         if (bodyImageFiles != null && !bodyImageFiles.isEmpty()) {
             for (MultipartFile bodyFile : bodyImageFiles) {
-                FileMetaData bodyMeta = filesUtils.uploadFile(bodyFile, "portfolio"); // Keep path consistent
+                // FilesUtils에 서비스 이름만 전달 (FilesUtils가 내부적으로 'attachment/서비스명/날짜/image/파일명' 형태로 반환한다고 가정)
+                FileMetaData bodyMeta = filesUtils.uploadFile(bodyFile, "portfolio");
                 if (bodyMeta != null) {
-                //    bodyMeta.setFilePath(cleanPathForDb(bodyMeta.getFilePath()));
+                    // DB에는 '/attachment/portfolio/날짜/image/' 형태로 저장
+                    bodyMeta.setFilePath(cleanPathForDb(bodyMeta));
                     portfolioMapper.insertFileRecord(bodyMeta, clCd, mbrCd);
                 }
             }
@@ -237,30 +238,23 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         existingPortfolio.setPrtfClient(formData.getPrtfClient());
         existingPortfolio.setPrtfIndustry(formData.getPrtfIndustry());
         existingPortfolio.setPrtfMdfcnYmdt(LocalDateTime.now());
-
-        // 썸네일 파일 처리 (기존 로직 유지, 필요 시 추가 보완)
-        if (formData.getThumbnailFile() != null) {
-            // 기존 썸네일이 있다면 물리적으로 삭제
-            // (이전에 문제가 되었던 전체 파일 삭제 로직 대신 썸네일만 삭제하도록 수정)
-            List<FileMetaData> existingFiles = portfolioMapper.findFilesByClCd(clCd);
-            for (FileMetaData file : existingFiles) {
-                // 썸네일 경로만 삭제하도록 필터링 (새 썸네일 업로드 시 기존 썸네일만 삭제)
-                if (file.getFilePath().contains("portfolio/image/")) { // 혹은 썸네일임을 구분할 수 있는 다른 조건
-                    String fullPathToDelete = restorePathForWebOrFileSystem(file.getFilePath());
-                    filesUtils.deleteFileByPath(fullPathToDelete);
-                    portfolioMapper.deleteFilesByFileCd(file.getFileIdx()); // 특정 file_cd로 삭제하는 메서드가 필요
-                }
+        
+        // 썸네일 파일 처리: 새 파일이 업로드된 경우
+        if (formData.getNewThumbnailFile() != null && !formData.getNewThumbnailFile().isEmpty()) {
+            FileMetaData newThumbnailMetaData = uploadThumbnail(formData.getNewThumbnailFile());
+            if (newThumbnailMetaData != null) {
+                // Portfolio 테이블에 썸네일 경로 업데이트
+                existingPortfolio.setPrtfThumbnailUrl(newThumbnailMetaData.getFilePath());
             }
-            // 새 파일 정보로 업데이트하고 DB에 기록
-            existingPortfolio.setPrtfThumbnailUrl(formData.getThumbnailFile().getFilePath());
-            portfolioMapper.insertFileRecord(formData.getThumbnailFile(), clCd, originalMbrCd);
-        } else if (formData.getThumbnailFile() == null && existingPortfolio.getPrtfThumbnailUrl() != null && (formData.getIsThumbnailDeleted() != null && formData.getIsThumbnailDeleted().equals("true"))) {
+        } else if (formData.getIsThumbnailDeleted() != null && formData.getIsThumbnailDeleted().equals("true")) {
             // 기존 썸네일이 있었는데, 새 썸네일이 없고, 명시적으로 삭제 요청이 온 경우
-            String fullPathToDelete = restorePathForWebOrFileSystem(existingPortfolio.getPrtfThumbnailUrl());
-            filesUtils.deleteFileByPath(fullPathToDelete);
-            portfolioMapper.deleteFilesByFileCd(getThumbnailFileCd(clCd, existingPortfolio.getPrtfThumbnailUrl())); // 썸네일의 file_cd를 찾아서 삭제
-            existingPortfolio.setPrtfThumbnailUrl(null); // DB에서 썸네일 URL 제거
+            if (existingPortfolio.getPrtfThumbnailUrl() != null) {
+                // 물리적 파일 삭제 시에는 prtf_thumbnail_url (전체 경로)를 사용합니다.
+                filesUtils.deleteFileByPath(existingPortfolio.getPrtfThumbnailUrl());
+            }
+            existingPortfolio.setPrtfThumbnailUrl(null);
         }
+
 
         // 대표 카테고리 ID 업데이트
         if (formData.getCategoryCodes() != null && !formData.getCategoryCodes().isEmpty()) {
@@ -276,15 +270,15 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         portfolioMapper.deleteTagMappingByClCd(clCd);
         updateMappings(formData.getCategoryCodes(), clCd, originalMbrCd, formData.getTags());
 
-        // [!code diff --start]
         // 삭제된 본문 이미지 처리
         if (formData.getDeletedBodyImageCds() != null && !formData.getDeletedBodyImageCds().isEmpty()) {
             for (String fileCd : formData.getDeletedBodyImageCds()) {
-                // Mapper를 통해 FileMetaData를 조회
                 FileMetaData fileToDelete = portfolioMapper.findFileMetaDataByFileCd(fileCd);
                 if (fileToDelete != null) {
-                    filesUtils.deleteFileByPath(restorePathForWebOrFileSystem(fileToDelete.getFilePath()));
-                    portfolioMapper.deleteFilesByFileCd(fileCd); // file_cd로 특정 파일만 삭제하는 메서드 필요
+                    // 물리적 파일 삭제 시에는 file_path (폴더 경로)와 file_srvr_nm (파일명)을 조합하여 전체 경로를 만듭니다.
+                    String fullPathToDelete = restoreFullPathForWeb(fileToDelete);
+                    filesUtils.deleteFileByPath(fullPathToDelete);
+                    portfolioMapper.deleteFilesByFileCd(fileCd);
                 }
             }
         }
@@ -292,13 +286,15 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         // 새로 추가된 본문 이미지 처리
         if (formData.getNewBodyImageFiles() != null && !formData.getNewBodyImageFiles().isEmpty()) {
             for (MultipartFile bodyFile : formData.getNewBodyImageFiles()) {
-                FileMetaData bodyMeta = filesUtils.uploadFile(bodyFile, "portfolio/body");
+                // FilesUtils에 서비스 이름만 전달 (FilesUtils가 내부적으로 'attachment/서비스명/날짜/image/파일명' 형태로 반환한다고 가정)
+                FileMetaData bodyMeta = filesUtils.uploadFile(bodyFile, "portfolio");
                 if (bodyMeta != null) {
-                    portfolioMapper.insertFileRecord(bodyMeta, clCd, originalMbrCd);
+                    // DB에는 '/attachment/portfolio/날짜/image/' 형태로 저장
+                    bodyMeta.setFilePath(cleanPathForDb(bodyMeta));
+                    portfolioMapper.insertFileRecord(bodyMeta, clCd,originalMbrCd);
                 }
             }
         }
-        // [!code diff --end]
     }
 
     @Override
@@ -345,7 +341,6 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         return portfolioMapper.findAllPortfoliosByTitle(query);
     }
 
-    // [!code diff --start]
     // 썸네일 파일의 file_cd를 가져오는 헬퍼 메서드 (간단한 로직으로 가정)
     private String getThumbnailFileCd(String clCd, String thumbnailUrl) {
         // 실제로는 clCd와 thumbnailUrl을 기반으로 DB에서 file_cd를 조회해야 합니다.
@@ -354,11 +349,11 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         // 여기서는 예시로, 해당 경로를 가진 파일의 첫 번째 file_cd를 반환한다고 가정합니다.
         List<FileMetaData> files = portfolioMapper.findFilesByClCd(clCd);
         for (FileMetaData file : files) {
+            // 이 비교는 file.getFilePath()가 이미 파일명 없이 경로만 저장되어 있을 때 유효합니다.
             if (restorePathForWebOrFileSystem(file.getFilePath()).equals(thumbnailUrl)) {
                 return file.getFileIdx();
             }
         }
-        return null; // 썸네일을 찾지 못한 경우
+        return null;
     }
-    // [!code diff --end]
 }
