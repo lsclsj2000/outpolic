@@ -33,4 +33,8 @@ public class UserOsst {
 	private String stcCode;
 	private String stcName;
 	private String memberRole;
+	
+	//김한별 추가영역	
+	private String reviewWrittenYn;
+	private String rvwCd;
 }
