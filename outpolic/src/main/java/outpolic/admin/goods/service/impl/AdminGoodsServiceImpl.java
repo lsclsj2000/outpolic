@@ -2,6 +2,7 @@ package outpolic.admin.goods.service.impl;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,11 +38,8 @@ public class AdminGoodsServiceImpl implements AdminGoodsService {
 	 }
 
 	 @Override
-	 public List<AdminGoodsDTO> getGoodsList() {
-		 List<AdminGoodsDTO> list = adminGoodsMapper.selectAllGoods();
-		 //log.info("DTO {}", list);	상품 데이터 조회되는지 로그 찍기
-		 
-		 return list;
+	 public List<AdminGoodsDTO> getGoodsList(Map<String, Object> params) {
+		 return adminGoodsMapper.selectAllGoods(params); // Mapper에 파라미터 전달
 	 }
 
 	 @Override
