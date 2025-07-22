@@ -145,6 +145,7 @@
 	        p.prtf_client,
 	        p.prtf_industry,
 	        p.prtf_thumbnail_url   AS thumbnail_url,
+        	<include refid="modalIsBookmarkedSelectSql"/>
 	        NULL                    AS osStrtYmdt,
 	        NULL                    AS osEndYmdt,
 	        NULL                    AS osFlfmtCnt,
@@ -153,7 +154,6 @@
 	                'fileCd', f.file_cd, 'fileOrgnlNm', f.file_orgnl_nm, 'filePath', CONCAT(f.file_path, f.file_srvr_nm)
 	            )
 	        ), ']') FROM file f WHERE f.cl_cd = CONCAT('LIST_', p.prtf_cd)), '[]') AS files_json						
-        <include refid="modalIsBookmarkedSelectSql"/>
 	    FROM
 	        portfolio p
 	    LEFT JOIN -- 기업 정보가 없을 수도 있으니 LEFT JOIN이 더 안전
@@ -183,6 +183,7 @@
 	        NULL                    AS prtf_period_end,
 	        NULL                    AS prtf_client,
 	        NULL                    AS prtf_industry,
+	        <include refid="modalIsBookmarkedSelectSql"/>
 	        o.os_strt_ymdt          AS osStrtYmdt,
             o.os_end_ymdt           AS osEndYmdt,
             o.os_flfmt_cnt          AS osFlfmtCnt,
@@ -191,7 +192,6 @@
 	                'fileCd', f.file_cd, 'fileOrgnlNm', f.file_orgnl_nm, 'filePath', CONCAT(f.file_path, f.file_srvr_nm)
 	            )
 	        ), ']') FROM file f WHERE f.cl_cd = CONCAT('LIST_', o.os_cd)), '[]') AS files_json
-	        <include refid="modalIsBookmarkedSelectSql"/>
 	        
 	    FROM
 	        outsourcing o

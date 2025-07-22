@@ -15,13 +15,13 @@ public class UserContentsDetailDTO {
     private String enterName;
     private String enterCode;
     private LocalDateTime registrationDate;
-    private String clCd;
     private String filesJson;
     private String thumbnailUrl;
     
     // --- 상세 정보 필드들 ---
     private String contentsBody;
     private int price;
+    private String clCd;
     private LocalDate participationStartDate; // 참여 시작일 (prtf_period_start)
     private LocalDate participationEndDate;   // 참여 종료일 (prtf_period_end)
     private String client;                    // 클라이언트 (prtf_client)
