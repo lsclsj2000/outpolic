@@ -54,8 +54,7 @@
 	                            
 	                            <div class="SR_project-card"
 	                            	 th:each="l : ${osstList}"
-	                            	 th:attr="data-url=@{/user/userOsstDetail(ocd_cd=${l.ocdCd})}"
-	                            	 data-project-id="proj-003" >
+	                            	 th:attr="data-url=@{/user/userOsstDetail(ocd_cd=${l.ocdCd})}">
                            	 	<span th:if="${l.memberRole == 'SUPPLIER'}" class="SR_project-role-tag">신청 받은 외주</span>
                                 <span th:if="${l.memberRole == 'DEMANDER'}" class="SR_project-role-tag">신청한 외주</span>
 	                                <div class="SR_card-content">
@@ -79,12 +78,27 @@
 	                                    </p>
 	                                    <p class="SR_project-meta">마지막 활동: <span>2025-06-28</span></p>
 	                                </div>
-	                                <div class="SR_card-footer" th:switch="${l.ospCustStcYn}">
-	                                    <!-- '단계 완료'일 때만 리뷰 작성 버튼을 노출합니다. -->
-	                                    <button th:if="${l.ospCustStcYn == '단계 완료'}" class="SR_btn-secondary SR_review-btn" data-project-id="proj-003" data-project-title="모바일 앱 UI/UX 개선">리뷰 작성</button>
-                                    	<p th:case="${'단계 완료'}" class="SR_project-status completed">완료</p>
-                                		<p th:case="${'단계 진행중'}" class="SR_project-status in-progress">진행중</p>
-	                                </div>
+	                                <div class="SR_card-footer">
+									    <!-- 1. 리뷰 미작성 시: '리뷰 작성' 버튼 -->
+									    <button th:if="${l.memberRole == 'DEMANDER' and l.stcCode == 'SD_COMPLETION' and l.reviewWrittenYn == 'N'}"
+									            class="SR_btn-secondary SR_review-btn"
+									            th:attr="data-project-id=${l.ocdCd}, data-project-title=${l.ocdTitle}">
+									        리뷰 작성
+									    </button>
+									    
+									    <!-- 2. 리뷰 작성 완료 시: '리뷰 수정' 버튼 -->
+									    <button th:if="${l.memberRole == 'DEMANDER' and l.stcCode == 'SD_COMPLETION' and l.reviewWrittenYn == 'Y'}"
+									            class="SR_btn-primary SR_review-edit-btn"
+									            th:attr="data-project-id=${l.ocdCd}, 
+									                      data-project-title=${l.ocdTitle},
+									                      data-review-id=${l.rvwCd}">
+									        리뷰 수정
+									    </button>
+									
+									    <!-- 기존 상태 표시 로직 -->
+									    <p th:if="${l.ospCustStcYn == '단계 완료' and l.stcCode != 'SD_COMPLETION'}" class="SR_project-status completed">최종 완료</p>
+									    <p th:if="${l.ospCustStcYn == '단계 진행중'}" class="SR_project-status in-progress">진행중</p>
+									</div>
 	                            </div>
 			            	</div>
 			            </div>
