@@ -169,8 +169,7 @@ border-radius: 4px; cursor: pointer; }
                     <h4>2단계: 카테고리 및 태그 수정</h4>
                     <div class="form-group">
                         <label>카테고리 <span style="color:red;">*</span></label>
-                        <div id="category-rows-container"></div> <button type="button" id="add-category-row-btn" class="btn btn-secondary mt-2" style="background-color: #6c757d;
-border-color: #6c757d;">+ 카테고리 추가</button>
+                        <div id="category-rows-container"></div>
                         <div class="error-message" id="categoryError"></div>
                     </div>
                     <div class="form-group">
@@ -257,6 +256,33 @@ border-radius: 8px;">
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script th:inline="javascript">
         $(document).ready(function() {
+
+        	const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // 시간대 오차 보정
+            const minDateTime = now.toISOString().slice(0, 16);
+            $('#osStrtYmdt').attr('min', minDateTime);
+            
+            
+            $('#osStrtYmdt').on('change', function() {
+                const startDateValue = $(this).val();
+                if (startDateValue) {
+                    // 1. 종료일시의 최소 선택 가능일을 시작일시로 설정
+                    $('#osEndYmdt').attr('min', startDateValue);
+
+                    // 2. 시작일시 값으로 Date 객체 생성
+                    const startDate = new Date(startDateValue);
+
+                    // 3. 시작일시에 하루를 더함
+                    startDate.setDate(startDate.getDate() + 1);
+
+                    // 4. 시간대 오차 보정 후 YYYY-MM-DDTHH:mm 형식으로 변환
+                    startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
+                    const newEndDateValue = startDate.toISOString().slice(0, 16);
+
+                    // 5. 종료일시 입력 필드에 새로운 값 설정
+                    $('#osEndYmdt').val(newEndDateValue);
+                }
+            });
             // =================================================================
             // 1. 초기 데이터 설정
             // =================================================================
