@@ -111,7 +111,6 @@
 		                    <div class="font-xs mt-30">
 		                        <ul class="list-unstyled">
 		                            <li class="mb-5">타입: <span class="text-brand" th:text="${detail.contentsType}"></span></li>
-		                            <li class="mb-5">ID: <span th:text="${detail.contentsId}"></span></li>
 		                        </ul>
 		                    </div>
 		                </div>
@@ -122,55 +121,44 @@
 	</th:block>
 	
 	<th:block layout:fragment="jsScript">
-		<script>
+		<script th:inline="javascript">
+		/*<![CDATA[*/
+		
 		document.addEventListener('DOMContentLoaded', function() {
-		    
-		    // 1. 상세 정보를 담고 있는 메인 컨테이너 요소를 찾습니다.
-		    const detailMain = document.querySelector('.product-detail-main');
-		    
-		    // data-contents-id 속성이 없으면 아무것도 실행하지 않습니다.
-		    if (!detailMain) {
-		        console.error('상세 정보 컨테이너(.product-detail-main)를 찾을 수 없습니다.');
+		
+		    // 1. Thymeleaf를 통해 서버에서 직접 전달받은 'detail' 객체를 JavaScript 변수로 받습니다.
+		    //    이 방법은 페이지가 처음 로드될 때 이미 모든 데이터가 있다는 전제 하에 사용합니다.
+		    const detail = /*[[${detail}]]*/ null;
+		
+		    if (!detail || !detail.filesJson) {
+		        console.error('상세 정보 또는 파일 정보가 없습니다.');
 		        return;
 		    }
 		
-		    // 2. HTML에 저장된 콘텐츠 ID를 가져옵니다. (안전한 데이터 전달 원칙)
-		    const contentsId = detailMain.dataset.contentsId;
+		    // 2. 이미지를 삽입할 부모 요소를 찾습니다.
+		    const imageSlider = document.querySelector('.product-image-slider');
 		
-		    // 3. API를 호출하여 전체 상세 정보를 비동기적으로 가져옵니다.
-		    //    우리는 이 중에서 'filesJson' 데이터만 사용할 것입니다.
-		    fetch(`/user/contents/${contentsId}`)
-		        .then(response => {
-		            if (!response.ok) {
-		                throw new Error('데이터를 불러오는데 실패했습니다.');
-		            }
-		            return response.json();
-		        })
-		        .then(detail => {
-		            // 4. 이미지 갤러리를 채웁니다.
-		            const imageSlider = document.querySelector('.product-image-slider');
-		            if (imageSlider && detail.filesJson) {
-		                
-		                // 4-1. 서버에서 받은 JSON "문자열"을 실제 JavaScript "객체 배열"로 변환합니다.
-		                const files = JSON.parse(detail.filesJson);
+		    // 3. 'filesJson' 문자열을 실제 JavaScript 객체 배열로 변환합니다.
+		    //    바로 이 부분이 작성자님께서 말씀하신 'JSON으로 받은 객체를 풀어서'에 해당하는 핵심 코드입니다.
+		    const files = JSON.parse(detail.filesJson);
+		    
+		    // 4. 파일 배열이 비어있지 않다면, 각 파일을 <img> 태그로 변환합니다.
+		    let imagesHtml = '';
+		    if (files && files.length > 0) {
+		        imagesHtml = files.map(file => 
+		            // 표준 HTML <img> 태그를 생성합니다.
+		            `<img src="${file.filePath}" alt="${file.fileOrgnlNm}" class="img-fluid">`
+		        ).join(''); // 생성된 모든 <img> 태그 문자열을 하나로 합칩니다.
+		    } else {
+		        imagesHtml = '<p>상세 이미지가 없습니다.</p>';
+		    }
 		
-		                // 4-2. 파일 배열을 기반으로 <img> 태그 문자열들을 생성합니다.
-		                const imagesHtml = files.map(file => 
-		                    `<img src="${file.filePath}" alt="${file.fileOrgnlNm}" class="img-fluid">`
-		                ).join('');
+		    // 5. 생성된 HTML을 slider 내부에 삽입하여 화면을 업데이트합니다.
+		    imageSlider.innerHTML = imagesHtml;
 		
-		                // 4-3. 생성된 HTML을 slider 내부에 삽입합니다.
-		                imageSlider.innerHTML = imagesHtml;
-		            }
-		        })
-		        .catch(error => {
-		            console.error('상세 정보 API 호출 중 오류 발생:', error);
-		            const imageSlider = document.querySelector('.product-image-slider');
-		            if (imageSlider) {
-		                imageSlider.innerHTML = '<p>이미지를 불러올 수 없습니다.</p>';
-		            }
-		        });
 		});
+		
+		/*]]>*/
 		</script>
-	</th:block>
+</th:block>
 </html>

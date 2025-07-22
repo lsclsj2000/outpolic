@@ -34,26 +34,19 @@
 		
 		            <!-- 왼쪽: 이미지, 상세설명, 리뷰 등 긴 스크롤이 필요한 콘텐츠 영역 (8칸) -->
 		            <div class="col-lg-8">
-		                <div class="product-detail-main">
-		
-		                    <!-- 1. 콘텐츠 제목 (모바일 화면을 위해 여기에 한번 더 표시해줄 수 있습니다. 선택사항) -->
-		                    <h2 class="title-detail d-lg-none" th:text="${detail.contentsTitle}">콘텐츠 제목</h2>
-		
-		                    <!-- 2. 이미지 갤러리 -->
-		                    <div class="detail-gallery mb-50">
-		                        <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-		                        <div class="product-image-slider">
-		                            <figure class="border-radius-10">
-		                                <img src="https://picsum.photos/id/237/800/800" alt="product image" />
-		                            </figure>
-		                            <!-- 추가 이미지가 있다면 여기에 th:each 사용 -->
-		                        </div>
-		                        <div class="slider-nav-thumbnails">
-		                            <div><img src="https://picsum.photos/id/237/100/100" alt="product image" /></div>
-		                            <div><img src="https://picsum.photos/id/238/100/100" alt="product image" /></div>
-		                            <div><img src="https://picsum.photos/id/239/100/100" alt="product image" /></div>
-		                        </div>
-		                    </div>
+					    <!-- 이 div에 data-contents-id 속성을 추가합니다. -->
+					    <div class="product-detail-main" th:data-contents-id="${detail.contentsId}">
+					        
+					        <!-- 1. 콘텐츠 제목 (모바일 화면을 위해 여기에 한번 더 표시해줄 수 있습니다. 선택사항) -->
+					        <h2 class="title-detail d-lg-none" th:text="${detail.contentsTitle}">콘텐츠 제목</h2>
+					
+					        <!-- 2. 이미지 갤러리 (JavaScript가 여기를 채울 것입니다) -->
+					        <div class="detail-gallery mb-50">
+					            <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+					            <div class="product-image-slider">
+					                <!-- 비워둠 -->
+					            </div>
+					        </div>
 		
 		                    <!-- 3. 상세 설명 (기존 탭 구조에서 꺼내왔습니다) -->
 		                    <div class="product-description" id="description-section">
@@ -88,7 +81,7 @@
 		                    
 		                    <!-- 작성자 정보 -->
 		                    <div class="product-by mb-20">
-		                        <span>By: <a th:href="@{/enter/company/{id}(id=${detail.enterCode})}" th:text="${detail.enterName}">작성자 이름</a></span>
+		                        <span>By: <a th:href="@{/user/company/{id}(id=${detail.enterCode})}" th:text="${detail.enterName}">작성자 이름</a></span>
 		                    </div>
 		                    
 		                    <hr class="my-4">
@@ -98,16 +91,17 @@
 		                        <span class="h3" th:if="${detail.price > 0}" th:text="|${#numbers.formatInteger(detail.price, 3, 'COMMA')} 원|">가격</span>
 		                        <span class="h3" th:unless="${detail.price > 0}">가격 협의</span>
 		                    </div>
+		                    <br>
 		                    
 		                    <!-- 간단한 요약 설명 -->
-		                    <div class="short-desc my-30">
-		                        <p class="font-lg">이곳에 간단한 요약 설명이 들어갈 수 있습니다. 이 부분은 `detail.shortDescription` 같은 필드를 만들어서 표시하면 좋습니다.</p>
+		                    <div class="short-desc my-30" th:utext="${detail.contentsBody}">
+		                        <p class="font-lg"></p>
 		                    </div>
-		                    
+		                    <br>
 		                    <!-- 구매 또는 문의 버튼 -->
 		                    <div class="detail-extralink" th:if="${detail != null}">
 		                        <!-- 버튼이 꽉 차도록 w-100 클래스 추가 -->
-		                       <a th:href="@{/enter/outsourcing-requests/form/{id}(id=${detail.contentsId})}" 
+		                       <a th:href="@{/user/outsourcing-requests/form/{id}(id=${detail.contentsId})}" 
 							       class="button button-add-to-cart w-100">
 							       <i class="fi-rs-shopping-cart"></i>신청하기
 							    </a>
@@ -117,7 +111,6 @@
 		                    <div class="font-xs mt-30">
 		                        <ul class="list-unstyled">
 		                            <li class="mb-5">타입: <span class="text-brand" th:text="${detail.contentsType}"></span></li>
-		                            <li class="mb-5">ID: <span th:text="${detail.contentsId}"></span></li>
 		                        </ul>
 		                    </div>
 		                </div>
@@ -125,5 +118,47 @@
 		        </div>
 		    </div>
 		</div>
+	</th:block>
+	
+	<th:block layout:fragment="jsScript">
+		<script th:inline="javascript">
+			/*<![CDATA[*/
+			
+			document.addEventListener('DOMContentLoaded', function() {
+			
+			    // 1. Thymeleaf를 통해 서버에서 직접 전달받은 'detail' 객체를 JavaScript 변수로 받습니다.
+			    //    이 방법은 페이지가 처음 로드될 때 이미 모든 데이터가 있다는 전제 하에 사용합니다.
+			    const detail = /*[[${detail}]]*/ null;
+			
+			    if (!detail || !detail.filesJson) {
+			        console.error('상세 정보 또는 파일 정보가 없습니다.');
+			        return;
+			    }
+			
+			    // 2. 이미지를 삽입할 부모 요소를 찾습니다.
+			    const imageSlider = document.querySelector('.product-image-slider');
+			
+			    // 3. 'filesJson' 문자열을 실제 JavaScript 객체 배열로 변환합니다.
+			    //    바로 이 부분이 작성자님께서 말씀하신 'JSON으로 받은 객체를 풀어서'에 해당하는 핵심 코드입니다.
+			    const files = JSON.parse(detail.filesJson);
+			    
+			    // 4. 파일 배열이 비어있지 않다면, 각 파일을 <img> 태그로 변환합니다.
+			    let imagesHtml = '';
+			    if (files && files.length > 0) {
+			        imagesHtml = files.map(file => 
+			            // 표준 HTML <img> 태그를 생성합니다.
+			            `<img src="${file.filePath}" alt="${file.fileOrgnlNm}" class="img-fluid">`
+			        ).join(''); // 생성된 모든 <img> 태그 문자열을 하나로 합칩니다.
+			    } else {
+			        imagesHtml = '<p>상세 이미지가 없습니다.</p>';
+			    }
+			
+			    // 5. 생성된 HTML을 slider 내부에 삽입하여 화면을 업데이트합니다.
+			    imageSlider.innerHTML = imagesHtml;
+			
+			});
+			
+			/*]]>*/
+			</script>
 	</th:block>
 </html>

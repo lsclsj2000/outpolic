@@ -90,8 +90,7 @@
 						                				<div class="product-img-action-wrap">
 						                					<div class="product-img product-img-zoom">
 						                						<a href="/user/contents/${content.contentsId}">
-						                							<img class="default-img" src="https://picsum.photos/id/${imageId1}/400/300" alt="외주 이미지">
-						                							<img class="hover-img" src="https://picsum.photos/id/${imageId2}/400/300" alt="외주 이미지">
+						                							<img class="default-img" src="${content.thumbnailUrl}" alt="외주 이미지">
 						                						</a>
 						                					</div>
 						                				</div>
@@ -113,7 +112,24 @@
 		            } else { // 'Portfolio'
 		                const imageId1 = index + 20, imageId2 = index + 120;
 		                const categoryInfo = (content.ctgryName) ? `${content.ctgryName} | ` : '';
-		                return `<div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="Portfolio"><div class="product-cart-wrap mb-30 position-relative portfolio-modal-trigger" data-contents-id="${content.contentsId}" role="button" style="cursor: pointer;"><div class="product-img-action-wrap"><div class="product-img product-img-zoom"><a href="javascript:void(0);"><img class="default-img" src="https://picsum.photos/id/${imageId1}/400/300" alt="포트폴리오 이미지" /><img class="hover-img" src="https://picsum.photos/id/${imageId2}/400/300" alt="포트폴리오 이미지" /></a></div></div><div class="product-content-wrap" style="padding: 15px;"><div class="product-category"><a>${categoryInfo}${content.enterName}</a></div><h2>${content.contentsTitle}</h2></div></div></div>`;
+		                return `<div class="col-lg-1-5 col-md-4 col-12 col-sm-6 product-item" data-type="Portfolio">
+		                			<div class="product-cart-wrap mb-30 position-relative portfolio-modal-trigger" data-contents-id="${content.contentsId}" role="button" style="cursor: pointer;">
+		                				<div class="product-img-action-wrap">
+		                					<div class="product-img product-img-zoom">
+		                						<a href="javascript:void(0);">
+		                							<img class="default-img" src="${content.thumbnailUrl}" alt="포트폴리오 이미지">
+		                							<img class="hover-img" src="${content.thumbnailUrl}" alt="포트폴리오 이미지" />
+		                						</a>
+		                					</div>
+		                				</div>
+		                				<div class="product-content-wrap" style="padding: 15px;">
+		                					<div class="product-category">
+		                						<a>${categoryInfo}${content.enterName}</a>
+		                					</div>
+		                					<h2>${content.contentsTitle}</h2>
+		                				</div>
+		                			</div>
+		                		</div>`;
 		            }
 		        }).join('');
 		        contentsContainer.innerHTML = contentsHtml;
@@ -269,10 +285,17 @@
 		                </div>
 		            `;
 		            infoSection.innerHTML = infoHtml;
-		
-		            // 오른쪽 콘텐츠 영역 채우기 (세로로 긴 이미지 예시)
-		            // picsum.photos에서 세로가 더 긴 이미지를 가져오도록 수정 (e.g., 600x1200)
-		            contentSection.innerHTML = `<img src="https://picsum.photos/seed/${detail.contentId}/800/1200" class="img-fluid" alt="포트폴리오 상세 이미지">`;
+		            const files = JSON.parse(detail.filesJson);
+
+		            // 2. 파일 배열을 순회하며 각 파일에 대한 <img> 태그 문자열을 생성합니다.
+		            //    map()을 사용하여 각 파일 객체를 HTML 문자열로 변환하고, join('')으로 합칩니다.
+		            const imagesHtml = files.map(file =>
+		                `<img src="${file.filePath}" alt="${file.fileOrgnlNm}" class="img-fluid" style="margin-bottom: 15px;">`
+		            ).join('');
+
+		            // 3. contentSection의 내용을 생성된 이미지 태그들로 교체합니다.
+		            //    만약 파일이 없다면 imagesHtml은 빈 문자열이 되어 아무것도 표시되지 않습니다.
+		            contentSection.innerHTML = imagesHtml;
 		        },
 		        error: function(xhr) {
 		            console.error("포트폴리오 상세 정보 로딩 실패:", xhr);

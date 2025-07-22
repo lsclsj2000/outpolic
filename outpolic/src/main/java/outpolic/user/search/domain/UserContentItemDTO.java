@@ -13,5 +13,6 @@ public class UserContentItemDTO {
 	private LocalDateTime registrationDate;
 	private int price;
 	private String clCode;
+	private String thumbnailUrl;
 	private boolean isBookmarked; // 현재 사용자의 찜 여부
 }
