@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,14 +30,15 @@ public class OutsourcingFormDataDto {
 
     private BigDecimal osAmt;
     private int osFlfmtCnt;
-
     // 2단계: 카테고리 및 태그
     private List<String> categoryCodes;
     private String tags;
-
     // 3단계: 파일 정보
     private FileMetaData thumbnailFile;
 
     // 기타
     private String ctgryId;
+
+    private List<MultipartFile> newBodyImageFiles; // [!code ++]
+    private List<String> deletedBodyImageCds;    // [!code ++]
 }

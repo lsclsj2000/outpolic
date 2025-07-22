@@ -66,6 +66,34 @@
 	            });
 	        }
 	    });
+		
+		
+		// 탭 기능
+		document.addEventListener('DOMContentLoaded', function () {
+		    const sidebarLinks = document.querySelectorAll('.category-list .category-link');
+		    const sections = document.querySelectorAll('.wishlist-category');
+
+		    sidebarLinks.forEach(link => {
+		        link.addEventListener('click', function (e) {
+		            e.preventDefault();
+
+		            const selectedCategory = this.textContent.trim();
+
+		            // active 클래스 초기화
+		            sidebarLinks.forEach(l => l.classList.remove('active'));
+		            this.classList.add('active');
+
+		            sections.forEach(section => {
+		                const title = section.querySelector('h4').textContent.trim();
+		                if (selectedCategory === '전체보기' || selectedCategory === title) {
+		                    section.style.display = 'block';
+		                } else {
+		                    section.style.display = 'none';
+		                }
+		            });
+		        });
+		    });
+		});
 	</script>
 	
 	
@@ -75,15 +103,20 @@
 		    <div class="wishlist-category mb-5">
 		        <h4 class="mb-3">외주</h4>
 		        <hr />
-		        <div class="row g-4"  style="margin-bottom: 60px;">
-		            <div class="col-md-3" th:each="i : ${#numbers.sequence(1,4)}">
+				<div th:if="${#lists.isEmpty(osBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+			        <p style="color: #999; font-size: 1.1rem;">즐겨찾기한 목록이 없습니다.</p>
+			    </div>
+		        <div th:if="${not #lists.isEmpty(osBookmarks)}" class="row g-4"  style="margin-bottom: 60px;">
+		            <div class="bookmark-card outsourcing col-md-3" th:each="b : ${osBookmarks.size() > 4 ? osBookmarks.subList(0,4) : osBookmarks}">
 		                <div class="card h-100 shadow-sm">
-		                    <img src="https://picsum.photos/400/300?random=1" class="card-img-top" alt="외주 이미지">
+		                    <img th:if="${b != null and b.osThumbnailUrl != null}" th:src="${b.osThumbnailUrl}" class="card-img-top" alt="외주 이미지">
 		                    <div class="card-body">
-		                        <h5 class="card-title">외주 제목</h5>
-		                        <p class="card-text text-muted small">예상 금액: 1,200,000원</p>
-		                        <p class="card-text text-muted small">기업명: OO기업</p>
-		                        <a href="#" class="btn btn-sm btn-outline-primary w-100">
+		                    	<a th:href="@{'/user/contents/' + ${b.osCd}}">
+		                        	<h5 class="card-title"  th:if="${b != null and b.osTtl != null}" th:text="${b.osTtl}">외주 제목</h5>
+		                        </a>
+		                        <p class="card-text text-muted small" th:if="${b != null and b.osAmt != null}" th:text="'예상 금액: ' + ${#numbers.formatInteger(b.osAmt, 3, 'COMMA')} + '원'">예상 금액: 1,200,000원</p>
+		                        <p class="card-text text-muted small" th:if="${b != null and b.entNm != null}" th:text="'기업명: ' + ${b.entNm}">기업명: OO기업</p>
+		                        <a th:if="${b != null and b.osCd != null}" th:href="@{'/user/contents/' + ${b.osCd}}" class="btn btn-sm btn-outline-primary w-100">
 		                            <i class="fi-rs-heart"></i> 찜 취소
 		                        </a>
 		                    </div>
@@ -96,14 +129,19 @@
 		    <div class="wishlist-category mb-5">
 		        <h4 class="mb-3">포트폴리오</h4>
 		        <hr />
-		        <div class="row g-4" style="margin-bottom: 60px;">
-		            <div class="col-md-3" th:each="i : ${#numbers.sequence(1,4)}">
+				<div th:if="${#lists.isEmpty(poBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+			        <p style="color: #999; font-size: 1.1rem;">즐겨찾기한 목록이 없습니다.</p>
+			    </div>
+		        <div th:if="${not #lists.isEmpty(poBookmarks)}" class="row g-4"  style="margin-bottom: 60px;">
+		            <div class="bookmark-card portfolio col-md-3" th:each="b : ${poBookmarks.size() > 4 ? poBookmarks.subList(0,4) : poBookmarks}">
 		                <div class="card h-100 shadow-sm">
-		                    <img src="https://picsum.photos/400/300?random=2" class="card-img-top" alt="포트폴리오 이미지">
+		                    <img th:if="${b != null and b.prtfThumbnailUrl != null}" th:src="${b.prtfThumbnailUrl}" class="card-img-top" alt="포트폴리오 이미지">
 		                    <div class="card-body">
-		                        <h5 class="card-title">포트폴리오 제목</h5>
-		                        <p class="card-text text-muted small">카테고리: 디자인</p>
-		                        <p class="card-text text-muted small">작성자: 홍길동</p>
+		                    	<a th:href="@{'/user/contents/' + ${b.prtfCd}}">
+		                        	<h5 class="card-title" th:if="${b != null and b.prtfTtl != null}" th:text="${b.prtfTtl}">포트폴리오 제목</h5>
+		                        </a>
+		                        <p class="card-text text-muted small" th:if="${b != null and b.ctgryNm != null}" th:text="'카테고리: ' + ${b.ctgryNm}">카테고리: 디자인</p>
+		                        <p class="card-text text-muted small" th:if="${b != null and b.entNm != null}" th:text="'기업명: ' + ${b.entNm}">기업명:</p>
 		                        <a href="#" class="btn btn-sm btn-outline-primary w-100">
 		                            <i class="fi-rs-heart"></i> 찜 취소
 		                        </a>
@@ -117,14 +155,20 @@
 		    <div class="wishlist-category mb-5">
 		        <h4 class="mb-3">기업</h4>
 		        <hr />
-		        <div class="row g-4"  style="margin-bottom: 60px;">
-		            <div class="col-md-3" th:each="i : ${#numbers.sequence(1,4)}">
+				<div th:if="${#lists.isEmpty(eiBookmarks)}" class="text-center mt-4" style="height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+			        <p style="color: #999; font-size: 1.1rem;">즐겨찾기한 목록이 없습니다.</p>
+			    </div>
+		        <div th:if="${not #lists.isEmpty(eiBookmarks)}" class="row g-4"  style="margin-bottom: 60px;">
+		            <div class="bookmark-card enterprise col-md-3" th:each="b : ${eiBookmarks.size() > 4 ? eiBookmarks.subList(0,4) : eiBookmarks}">
 		                <div class="card h-100 shadow-sm">
-		                    <img src="https://picsum.photos/400/300?random=3" class="card-img-top" alt="기업 이미지">
+		                    <img th:if="${b != null and b.entImg != null}" th:src="${b.entImg}" class="card-img-top" alt="기업 이미지">
+							<img th:if="${b == null or b.entImg == null}" th:src="@{/enter/assets/imgs/outpolic/cutecat.jpg}" class="card-img-top" alt="기본 기업 이미지" />
 		                    <div class="card-body">
-		                        <h5 class="card-title">기업명: ㈜아웃폴릭</h5>
-		                        <p class="card-text text-muted small">대표자: 김대표</p>
-		                        <p class="card-text text-muted small">분야: IT / 개발</p>
+		                    	<!--a th:href="@{'/user/contents/' + ${b.entCd}}">-->
+								<a>
+		                        	<h5 class="card-title" th:if="${b != null and b.entNm != null}" th:text="${b.entNm}">기업명: ㈜아웃폴릭</h5>
+		                        </a<!--a>	
+		                        <p class="card-text text-muted small" th:if="${b != null and b.entRprsv != null}" th:text="'대표자: ' + ${b.entRprsv}">대표자: 김대표</p>
 		                        <a href="#" class="btn btn-sm btn-outline-primary w-100">
 		                            <i class="fi-rs-heart"></i> 찜 취소
 		                        </a>
@@ -134,10 +178,5 @@
 		        </div>
 		    </div>
 		</section>
-		
-		<!-- 4. 콘텐츠가 없을 때 표시할 메시지 예시 -->
-		<div class="col-12">
-		    <p class="text-center">찜한 콘텐츠가 없습니다.</p>
-		</div>
 	</th:block>
 </html>

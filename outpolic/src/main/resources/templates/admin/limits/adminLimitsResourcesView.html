@@ -7,139 +7,607 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
-		<title>신고 자원 등록</title>
+		<title>제재 자원 등록</title>
 	</head>
 	
 	<th:block layout:fragment="contents">
 		<section class="content-main">
-	        <div class="row">
-	            <div class="col-12">
-	                <div class="content-header">
-	                    <h2 class="content-title">신고 자원 등록</h2>
-	                </div>
-	            </div>
-	            <div class="col-12">
-	            	<div class="content-header mb-0">
-						<aside>
-						    <nav class="nav nav-pills mb-4">
-						        <a class="nav-link active" aria-current="page" href="#">제재 타입</a>
-						        <a class="nav-link" href="#">제재 기간</a>
-						        <a class="nav-link" href="#">제재 사유</a>
-						    </nav>
-						</aside>
-						<div>
-	                        <button class="btn btn-md rounded font-sm hover-up">등록</button>
-	                    </div>
-					</div>
-				</div>
-	            <div class="col-12">
-	            	<!-- 제재타입 목록 -->
-	            	<div class="card">
-	                	<div class="card-body">
-			                <div class="table-responsive">
-			                    <table class="table table-hover">
-			                        <thead>
-			                            <tr>
-			                                <th scope="col" class="start text-center col-1">제재타입코드</th>
-			                                <th scope="col" class="text-center col-1">제재타입명</th>
-			                                <th scope="col" class="text-center col-1">타입설명</th>
-			                                <th scope="col" class="text-center col-1">타입상태코드</th>
-			                                <th scope="col" class="text-center col-1">등록자</th>
-			                                <th scope="col" class="text-center col-1">최초등록일시</th>
-			                                <th scope="col" class="text-center col-1">수정자</th>
-			                                <th scope="col" class="text-center col-1">최종수정일시</th>
-			                                <th scope="col" class="end text-center col-1">Action</th>
-			                            </tr>
-			                        </thead>
-			                        <tbody  th:if="${adminLimitsTypeList != null}">
-										<tr class="start pt-30"
-										    style="border:0px; border-bottom: solid 1px #ececec;"
-										    th:each="dt : ${adminLimitsTypeList}">
-										    
-										    <td class="start text-center">
-										        <span th:text="${dt.limitsTypeCode}">제재타입코드</span>
-										    </td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeName}">제재타입명</td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeExpln}">타입설명</td>
-										    <td scope="col" class="text-center" th:switch="${dt.limitsTypeStcName}">
-			                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
-			                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
-			                                </td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeRegAdmCode}">등록자</td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeRegYmdt}">최초등록일시</td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeMdfcnAdmCode}">수정자</td>
-										    <td scope="col" class="text-center" th:text="${dt.limitsTypeMdfcnYmdt}">최종수정일시</td>
-										    <td scope="col" class="text-center">
-												<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${dt.limitsTypeCode}">수정</a>
-											</td>
-										</tr>
-									</tbody>
-			                    </table>
-			                </div>
-			            </div>
-	            	</div>
+            <div class="content-header">
+	            <h2 class="content-title">제재 자원 등록</h2>
+	            <div>
+	                <button class="btn btn-md rounded font-sm hover-up" id="tab-register-button">등록</button>
 	            </div>
 	        </div>
+           	<div class="card mb-4 search-filter-card">
+	            <div class="card-body search-filter-body">
+	                <div class="table-responsive">
+	                    <table class="search-filter-table">
+							<tbody>
+								<tr>
+									<th>기본검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>제목</option>
+											<option>내용</option>
+											<option>문의코드</option>
+											<option>작성자</option>
+										</select>
+										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+									</td>
+								</tr>
+								<tr>
+									<th>기간검색</th>
+									<td>
+										<select class="form-select" style="width: 120px;">
+											<option>작성일자</option>
+											<option>수정일자</option>
+										</select>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<span> ~ </span>
+										<input type="date" class="form-control" style="width: 150px;" />
+										<button type="button" class="btn btn-sm btn-light">오늘</button>
+										<button type="button" class="btn btn-sm btn-light">어제</button>
+										<button type="button" class="btn btn-sm btn-light">일주일</button>
+										<button type="button" class="btn btn-sm btn-light">지난달</button>
+										<button type="button" class="btn btn-sm btn-light">1개월</button>
+										<button type="button" class="btn btn-sm btn-light">3개월</button>
+										<button type="button" class="btn btn-sm btn-light">전체</button>
+									</td>
+								</tr>
+								<tr>
+									<th>처리상태</th>
+									<td>
+										<div class="radio-group">
+											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
+											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
+											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
+											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="search-filter-buttons">
+							<button type="button" class="btn btn-primary">검색</button>
+							<button type="button" class="btn btn-secondary">초기화</button>
+						</div>
+	                </div>
+	            </div>
+	        </div>
+	          
+            <div class="col-12">
+            	<div class="content-header mb-0">
+					<aside>
+					    <nav class="nav nav-pills mb-4" id="limits-tab">
+					        <a class="nav-link active" data-tab="type" href="#">제재 타입</a>
+					        <a class="nav-link" data-tab="period" href="#">제재 기간</a>
+					        <a class="nav-link" data-tab="reason" href="#">제재 사유</a>
+					    </nav>
+					</aside>
+				</div>
+			</div>
+			
+            <div class="col-12">
+            	<div class="card" id="type">
+                	<div class="card-body">
+		                <div class="table-responsive">
+		                    <table class="table table-hover">
+		                        <thead>
+		                            <tr>
+		                                <th scope="col" class="start text-center col-1">제재타입코드</th>
+		                                <th scope="col" class="text-center col-1">제재타입명</th>
+		                                <th scope="col" class="text-center col-1">타입설명</th>
+		                                <th scope="col" class="text-center col-1">타입상태코드</th>
+		                                <th scope="col" class="text-center col-1">등록자</th>
+		                                <th scope="col" class="text-center col-1">최초등록일시</th>
+		                                <th scope="col" class="text-center col-1">수정자</th>
+		                                <th scope="col" class="text-center col-1">최종수정일시</th>
+		                                <th scope="col" class="end text-center col-1">Action</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody  th:if="${adminLimitsTypeList != null}">
+									<tr class="start pt-30"
+									    style="border:0px; border-bottom: solid 1px #ececec;"
+									    th:each="dt : ${adminLimitsTypeList}">
+									    
+									    <td class="start text-center">
+									        <span th:text="${dt.limitsTypeCode}">제재타입코드</span>
+									    </td>
+									    <td scope="col" class="text-center" th:text="${dt.limitsTypeName}">제재타입명</td>
+									    <td scope="col" class="text-center" th:text="${dt.limitsTypeExpln}">타입설명</td>
+									    <td scope="col" class="text-center" th:switch="${dt.limitsTypeStcName}">
+		                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
+		                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
+		                                </td>
+									    <td scope="col" class="text-center" th:text="${dt.limitsTypeRegAdmCode}">등록자</td>
+									    <td scope="col" class="text-center" th:text="${dt.limitsTypeRegYmdt}">최초등록일시</td>
+									    <td scope="col" class="text-center" th:text="${dt.limitsTypeMdfcnAdmCode}">수정자</td>
+									    <td scope="col" class="text-center" th:text="${dt.limitsTypeMdfcnYmdt}">최종수정일시</td>
+									    <td scope="col" class="text-center">
+											<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn"
+											   data-modal-target="typeMdfcnModal"
+											   th:data-limits-type-code="${dt.limitsTypeCode}">수정</a>
+										</td>
+									</tr>
+								</tbody>
+		                    </table>
+		                </div>
+		            </div>
+            	</div>
+            	<div class="card d-none" id="period">
+                	<div class="card-body">
+		                <div class="table-responsive">
+		                    <table class="table table-hover">
+		                        <thead>
+		                            <tr>
+		                                <th scope="col" class="start text-center col-1">제재기간코드</th>
+		                                <th scope="col" class="text-center col-1">제재기간명</th>
+		                                <th scope="col" class="text-center col-1">제재기간일수</th>
+		                                <th scope="col" class="text-center col-1">상태</th>
+		                                <th scope="col" class="text-center col-1">등록자</th>
+		                                <th scope="col" class="text-center col-1">최초등록일시</th>
+		                                <th scope="col" class="text-center col-1">수정자</th>
+		                                <th scope="col" class="text-center col-1">최종수정일시</th>
+		                                <th scope="col" class="end text-center col-1">Action</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody th:if="${adminLimitsPeriodList != null}">
+									<tr class="start pt-30"
+									    style="border:0px; border-bottom: solid 1px #ececec;"
+									    th:each="dp : ${adminLimitsPeriodList}">
+									    
+									    <td class="start text-center">
+									        <span th:text="${dp.limitsPeriodCode}">제재기간코드</span>
+									    </td>
+									    <td scope="col" class="text-center" th:text="${dp.limitsPeriodName}">제재기간명</td>
+									    <td scope="col" class="text-center" th:text="${dp.limitsPeriodDays}">제재기간일수</td>
+									    <td scope="col" class="text-center" th:switch="${dp.limitsTypeStcName}">
+		                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
+		                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
+		                                </td>
+									    <td scope="col" class="text-center" th:text="${dp.limitsPeriodRegAdmCode}">등록자</td>
+									    <td scope="col" class="text-center" th:text="${dp.limitsPeriodRegYmdt}">최초등록일시</td>
+									    <td scope="col" class="text-center" th:text="${dp.limitsPeriodMdfcnAdmCode}">수정자</td>
+									    <td scope="col" class="text-center" th:text="${dp.limitsPeriodMdfcnYmdt}">최종수정일시</td>
+									    <td scope="col" class="text-center">
+											<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" 
+											   data-modal-target="periodMdfcnModal"
+											   th:data-limits-period-code="${dp.limitsPeriodCode}">수정</a>
+										</td>
+									</tr>
+								</tbody>
+		                    </table>
+		                </div>
+		            </div>
+            	</div>
+            	<div class="card d-none" id="reason">
+                	<div class="card-body">
+		                <div class="table-responsive">
+		                    <table class="table table-hover">
+		                        <thead>
+		                            <tr>
+		                                <th scope="col" class="start text-center col-1">제재사유코드</th>
+		                                <th scope="col" class="text-center col-1">신고타입</th>
+		                                <th scope="col" class="text-center col-1">신고사유</th>
+		                                <th scope="col" class="text-center col-1">제재타입</th>
+		                                <th scope="col" class="text-center col-1">제재기간</th>
+		                                <th scope="col" class="text-center col-1">제재조건</th>
+		                                <th scope="col" class="text-center col-3">사유설명</th>
+		                                <th scope="col" class="text-center col-1">상태</th>
+		                                <th scope="col" class="end text-center col-1">Action</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody th:if="${adminLimitsReasonList != null}">
+									<tr class="start pt-30"
+									    style="border:0px; border-bottom: solid 1px #ececec;"
+									    th:each="dr : ${adminLimitsReasonList}">
+									    
+									    <td class="start text-center">
+									        <span th:text="${dr.limitsReasonCode}">제재사유코드</span>
+									    </td>
+									    <td scope="col" class="text-center" th:text="${dr.DeclarationTypeName}">신고타입</td>
+									    <td scope="col" class="text-center" th:text="${dr.DeclarationReasonName}">신고사유</td>
+									    <td scope="col" class="text-center" th:text="${dr.limitsTypeName}">제재타입</td>
+									    <td scope="col" class="text-center" th:text="${dr.limitsPeriodName}">제재기간</td>
+									    <td scope="col" class="text-center" th:text="${dr.limitsReasonCnd}">제재조건</td>
+									    <td scope="col" class="text-center" th:text="${dr.limitsReasonExpln}">사유설명</td>
+									    <td scope="col" class="text-center" th:switch="${dr.limitsTypeStcName}">
+		                                	<span th:case="${'활성'}" class="badge rounded-pill alert-success">활성</span>
+		                                	<span th:case="${'비활성'}" class="badge rounded-pill alert-info">비활성</span>
+		                                </td>
+									    <td scope="col" class="text-center">
+											<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" data-modal-target="reasonMdfcnModal">수정</a>
+											<a href="#" class="btn btn-md rounded font-sm SR_open-answer-popup-btn">상세</a>
+										</td>
+									</tr>
+								</tbody>
+		                    </table>
+		                </div>
+		            </div>
+            	</div>
+            </div>
 	    </section>
 	    
-	    <div id="inquiryModal" class="SR_modal">
+	    <!-- 제재 타입 등록 모달 -->
+	    <div id="typeModal" class="SR_modal">
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
-					<h2>제재 자원 등록</h2>
+					<h2>제재 타입 등록</h2>
 					<button class="SR_close-button">&times;</button>
 				</div>
-                <form>
-					<div class="row mb-4">
-				       <label class="col-lg-3 col-form-label">등록자</label>
-				       <div class="col-lg-4">
-				           <input type="number" class="form-control" placeholder="자동 입력. 관리자 코드" readonly/>
-				       </div>
-				       <!-- col.// -->
+                <form id="typeRegisterForm">
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">제재타입코드*</label>
+                            <input type="text" id="typeCode" name="typeCode" class="SR_form-control"  placeholder="제재 타입 코드 영문명을 입력하세요">
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="typeName">제재타입명*</label>
+                            <input type="text" id="typeName" name="typeName" class="SR_form-control" placeholder="제재 타입명을 입력하세요">
+                        </div>
 					</div>
-					<!-- row.// -->
-					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">제재타입코드*</label>
-					    <div class="col-lg-9">
-					        <input type="text" class="form-control" placeholder="Type here"/>
-					    </div>
-					    <!-- col.// -->
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="typeExpln">타입설명*</label>
+						<textarea id="typeExpln" name="typeExpln" class="SR_form-control" rows="5"  placeholder="제재 타입에 대해 설명하세요"></textarea>
 					</div>
-					<!-- row.// -->
 					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">제재타입명*</label>
-					    <div class="col-lg-9">
-					        <input type="text" class="form-control" placeholder="Type here"/>
-					    </div>
-					    <!-- col.// -->
-					</div>
-					<!-- row.// -->
-					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">타입설명*</label>
-					    <div class="col-lg-9">
-					        <textarea class="form-control" placeholder="Type here" rows="4"></textarea>
-					    </div>
-					    <!-- col.// -->
-					</div>
-					<!-- row.// -->
-					<div class="row mb-4">
-					    <label class="col-lg-3 col-form-label">Status</label>
-					    <div class="col-lg-9" style="display: flex; flex-direction: row;">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status*</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
 							<label class="form-check my-2">
-								<input type="radio" class="form-check-input" name="status" value="active" />
+								<input type="radio" class="form-check-input" name="typeStatus" value="SD_ACTIVE" />
 								<span class="form-check-label">활성</span>
 							</label>
 							<label class="form-check my-2 ml-20">
-								<input type="radio" class="form-check-input" name="status" value="inactive" />
+								<input type="radio" class="form-check-input" name="typeStatus" value="SD_INACTIVE" />
 								<span class="form-check-label">비활성</span>
 							</label>
 						</div>
-					   <!-- col.// -->
+	               	</div>
+				    <div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button class="btn btn-primary" type="submit">등록</button>
 					</div>
-					<!-- row.// -->
-					<br />
-					<div style="display: flex; flex-direction: row-reverse;">
-				     	<button class="btn btn-primary" type="submit">등록</button>
-				    </div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 제재 타입 수정 모달 -->
+		<div id="typeMdfcnModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>제재 타입 수정</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+				<form id="typeEditForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">등록자</label>
+                            <input type="text" id="typeEditRegAdm" name="typeEditRegAdm" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="typeEditRegYmdt">등록일시</label>
+                            <input type="text" id="typeEditRegYmdt" name="typeEditRegYmdt" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="typeEditCode">제재타입 코드</label>
+                            <input type="text" id="typeEditCode" name="typeEditCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="typeEditName">제재타입명</label>
+                            <input type="text" id="typeEditName" name="typeEditName" class="SR_form-control">
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="typeEditExpln">타입 설명</label>
+						<textarea id="typeEditExpln" name="typeEditExpln" class="SR_form-control" rows="5"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="typeEditStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="typeEditStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 제재 기간 등록 모달 -->
+		<div id="periodModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>제재 기간 등록</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+                <form id="periodRegisterForm">
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">제재기간코드*</label>
+                            <input type="text" id="periodCode" name="periodCode" class="SR_form-control"  placeholder="제재 기간 코드 영문명을 입력하세요">
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="periodName">제재기간명*</label>
+                            <input type="text" id="periodName" name="periodName" class="SR_form-control" placeholder="제재 기간명을 입력하세요">
+                        </div>
+					</div>
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="periodDays">제재기간 일수*</label>
+						<input type="number" id="periodDays" name="periodDays" class="SR_form-control" placeholder="제재 기간 일수를 입력하세요">
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status*</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="periodStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="periodStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+				    <div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button class="btn btn-primary" type="submit">등록</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 제재 기간 수정 모달 -->
+		<div id="periodMdfcnModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>제재 기간 수정</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+				<form id="periodEditForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">등록자</label>
+                            <input type="text" id="periodEditRegAdm" name="periodEditRegAdm" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="periodEditRegYmdt">등록일시</label>
+                            <input type="text" id="periodEditRegYmdt" name="periodEditRegYmdt" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="periodEditCode">제재기간 코드</label>
+                            <input type="text" id="periodEditCode" name="periodEditCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="periodEditName">제재기간명</label>
+                            <input type="text" id="periodEditName" name="periodEditName" class="SR_form-control">
+                        </div>
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="periodEditDays">제재기간 일수</label>
+						<input type="number" id="periodEditDays" name="periodEditDays" class="SR_form-control">
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="periodEditStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="periodEditStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+					</div>
+				</form>
+			</div>
+		</div>
+			
+		<!-- 제재 사유 등록 모달 -->
+		<div id="reasonModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>제재 사유 등록</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+				<form id="reasonRegisterForm">
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" style="width: 50%;">제재사유코드*</label>
+                            <input type="text" id="reasonCode" name="reasonCode" class="SR_form-control"  placeholder="신고처리결과코드 영문명을 입력하세요">
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="limitsCountEdit">제재조건*</label>
+                            <select id="limitsMdfcnCount" name="limitsMdfcnCount" class="SR_form-control" style="height:39px;">
+                                <option value="">제재조건을 선택하세요</option>
+                                <option value="1회">1회</option>
+                                <option value="2회">2회</option>
+                                <option value="2회이상">2회이상</option>
+                                <option value="3회">3회</option>
+                                <option value="3회이상">3회이상</option>
+                            </select>
+                        </div>
+                    </div>
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="declarationTypeEdit">신고타입</label>
+                            <select id="declarationTypeEdit" name="declarationType" class="SR_form-control" style="height:39px;">
+							    <option value="">신고타입을 선택하세요</option>
+							</select>
+						</div>
+						<div class="SR_input-half">
+							<label class="col-lg-3 col-form-label" for="declarationReasonEdit">신고사유</label>
+                            <select id="declarationReasonEdit" name="declarationReason" class="SR_form-control" style="height:39px;">
+							    <option value="">신고사유를 선택하세요</option>
+							</select>
+                        </div>
+                    </div>
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="limitsTypeEdit">제재타입</label>
+                            <select id="limitsTypeEdit" name="limitsType" class="SR_form-control" style="height:39px;">
+							    <option value="">제재타입을 선택하세요</option>
+							</select>
+						</div>
+						<div class="SR_input-half">
+							<label class="col-lg-3 col-form-label" for="limitsPeriodEdit">제재기간</label>
+                            <select id="limitsPeriodEdit" name="limitsPeriod" class="SR_form-control" style="height:39px;">
+							    <option value="">제재기간을 선택하세요</option>
+							</select>
+                        </div>
+                    </div>
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="limitsExplnEdit">사유설명*</label>
+						<textarea id="limitsExpln" name="limitsExpln" class="SR_form-control" rows="5"  placeholder="제재사유에 대해 설명하세요"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status*</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="reasonEditStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="reasonEditStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+				    <div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button class="btn btn-primary" type="submit">등록</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 제재 사유 수정 모달 -->		
+	    <div id="reasonMdfcnModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>제재 사유 수정</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+				<form id="reasonEditForm">
+		            <input type="hidden" id="limitsMdfcnCountMin" name="limitsMdfcnCountMin">
+		            <input type="hidden" id="limitsMdfcnCountMax" name="limitsMdfcnCountMax">
+		        </form>
+                <form id="reasonRegisterForm">
+                	<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">등록자</label>
+                            <input type="text" id="periodEditRegAdm" name="periodEditRegAdm" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="periodRegYmdtEdit">등록일시</label>
+                            <input type="text" id="periodEditRegYmdt" name="periodEditRegYmdt" class="SR_form-control" readonly>
+                        </div>
+					</div>
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" style="width: 50%;">제재사유코드*</label>
+                            <input type="text" id="reasonCode" name="reasonCode" class="SR_form-control"  placeholder="신고처리결과코드 영문명을 입력하세요">
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="limitsCountEdit">제재조건*</label>
+                            <select id="limitsCountEdit" name="limitsCount" class="SR_form-control" style="height:39px;">
+							    <option value="">제재조건을 선택하세요</option>
+							    <option value="">1회</option>
+							    <option value="">2회</option>
+							    <option value="">2회이상</option>
+							    <option value="">3회</option>
+							    <option value="">3회이상</option>
+							</select>
+                        </div>
+                    </div>
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTypeEdit">신고타입</label>
+                            <select id="declarationTypeEdit" name="declarationType" class="SR_form-control" style="height:39px;">
+							    <option value="">신고타입을 선택하세요</option>
+							</select>
+						</div>
+						<div class="SR_input-half">
+							<label class="col-lg-3 col-form-label" for="inquiryTypeEdit">신고사유</label>
+                            <select id="declarationReasonEdit" name="declarationReason" class="SR_form-control" style="height:39px;">
+							    <option value="">신고사유를 선택하세요</option>
+							</select>
+                        </div>
+                    </div>
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="limitsTypeEdit">제재타입</label>
+                            <select id="limitsTypeEdit" name="limitsType" class="SR_form-control" style="height:39px;">
+							    <option value="">제재타입을 선택하세요</option>
+							</select>
+						</div>
+						<div class="SR_input-half">
+							<label class="col-lg-3 col-form-label" for="limitsPeriodEdit">제재기간</label>
+                            <select id="limitsPeriodEdit" name="limitsPeriod" class="SR_form-control" style="height:39px;">
+							    <option value="">제재기간을 선택하세요</option>
+							</select>
+                        </div>
+                   	</div>
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="reasonExplnEdit">사유설명*</label>
+						<textarea id="reasonExpln" name="reasonExpln" class="SR_form-control" rows="5"  placeholder="제재사유에 대해 설명하세요"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status*</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="reasonStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="reasonStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+				    <div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        </div>
+						<button class="btn btn-primary" type="submit">등록</button>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -147,169 +615,622 @@
 	
 	<th:block layout:fragment="jsScript">
 		<script>
-			document.addEventListener('DOMContentLoaded', function () {
-			    const modal = document.getElementById('inquiryModal');
-			    const closeButton = document.querySelector('#inquiryModal .SR_close-button');
-			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
-			    const registerButton = document.querySelector('.content-header .btn');
-		
-			    // 등록 버튼 클릭 시 모달 열기
-			    if (registerButton) {
-			        registerButton.addEventListener('click', function () {
-			            modal.style.display = 'flex';
-			            document.body.style.overflow = 'hidden';
-			        });
-			    }
-		
-				// 답변 팝업 관련 요소
-			    const answerModal = document.getElementById('answerModal');
-			    const closeAnswerButton = document.querySelector('#answerModal .SR_close-button'); 
-			    const openAnswerPopupButtons = document.querySelectorAll('.SR_open-answer-popup-btn');
-		
-		        let currentInquiryCodeForAnswer = null;
-		
-			    openPopupButtons.forEach(button => {
-			        button.addEventListener('click', function (event) {
-			            event.preventDefault();
-			            const inquiryCode = this.getAttribute('data-inquiry-code');
-		
-			            fetch(`/admin/adminInquiryMdfcn?inquiryCode=${inquiryCode}`)
-			                .then(response => response.json())
-			                .then(data => {
-			                    fetch('/admin/inquiryStatus')
-			                        .then(res => res.json())
-			                        .then(statusList => {
-			                            const select = document.getElementById('inquiryStatusEdit');
-			                            select.innerHTML = '';
-		
-			                            if (data.statusName === '처리완료') {
-			                                const option = document.createElement('option');
-			                                option.value = data.statusCode;
-			                                option.textContent = data.statusName;
-			                                option.selected = true;
-			                                select.appendChild(option);
-			                                select.disabled = true;
-			                            } else {
-			                                statusList.filter(status => status.statusName !== '처리완료')
-			                                    .forEach(status => {
-			                                        const option = document.createElement('option');
-			                                        option.value = status.statusCode;
-			                                        option.textContent = status.statusName;
-			                                        select.appendChild(option);
-			                                    });
-			                                select.value = data.statusCode || '';
-			                                select.disabled = false;
-			                            }
-		
-			                            const titleInput = document.getElementById('inquiryTitleEdit');
-			                            const contentInput = document.getElementById('inquiryContentEdit');
-			                            const typeSelect = document.getElementById('inquiryTypeEdit');
-			                            const saveButton = document.getElementById('saveButton');
-		
-			                            if (data.statusName === '처리완료') {
-			                                titleInput.readOnly = true;
-			                                contentInput.readOnly = true;
-			                                typeSelect.disabled = true;
-			                                saveButton.style.display = 'none';
-			                            } else {
-			                                titleInput.readOnly = true;
-			                                contentInput.readOnly = true;
-			                                typeSelect.disabled = false;
-			                                saveButton.style.display = 'inline-block';
-			                            }
-			                        });
-		
-			                    fetch('/admin/inquiryType')
-			                        .then(res => res.json())
-			                        .then(typeList => {
-			                            const select = document.getElementById('inquiryTypeEdit');
-			                            select.innerHTML = '';
-			                            typeList.forEach(type => {
-			                                const option = document.createElement('option');
-			                                option.value = type.inquiryTypeCode;
-			                                option.textContent = type.inquiryTypeName;
-			                                select.appendChild(option);
-			                            });
-			                            select.value = data.inquiryTypeCode || '';
-			                        });
-		
-			                    document.getElementById('inquiryCodeDisplay').value = data.inquiryCode;
-			                    document.getElementById('inquiryTitleEdit').value = data.inquiryTitle;
-			                    document.getElementById('inquiryTypeCodeDisplay').value = data.inquiryTypeCode;
-			                    const contentArea = document.getElementById('inquiryContentEdit');
-		
-			                    if (data.inquiryCn) {
-			                        const tempDiv = document.createElement('div');
-			                        tempDiv.innerHTML = data.inquiryCn;
-			                        tempDiv.querySelectorAll('img').forEach(img => img.remove());
-			                        const plainText = tempDiv.textContent || tempDiv.innerText || '';
-			                        contentArea.value = plainText.trim();
-			                    } else {
-			                        contentArea.value = '내용이 없습니다.';
-			                    }
-		
-			                    document.getElementById('SR_writerCode').textContent = data.memberCode;
-			                    document.getElementById('SR_writerName').textContent = data.memberName;
-			                    document.getElementById('SR_writeDate').textContent = data.inquiryRegYmdt;
-		
-			                    document.getElementById('SR_updaterName').textContent = data.inquiryMdfcnAdmCode || '-';
-			                    document.getElementById('SR_updateDate').textContent = data.inquiryMdfcnYmdt || '-';
-		
-			                    const fileListEl = document.getElementById('SR_fileList');
-			                    if (data.subAttchOrgnlName && data.subAttchSize) {
-			                        const sizeMB = (parseInt(data.subAttchSize, 10) / 1024 / 1024).toFixed(1);
-			                        fileListEl.innerHTML = `${data.subAttchOrgnlName} (${sizeMB}MB)`;
-			                    } else {
-			                        fileListEl.innerHTML = '첨부파일 없음';
-			                    }
-		
-			                    modal.style.display = 'flex';
-			                    document.body.style.overflow = 'hidden';
-			                });
-			        });
-			    });
-		
-			    closeButton.addEventListener('click', function () {
-			        modal.style.display = 'none';
-			        document.body.style.overflow = 'auto';
-			    });
-		
-			    window.addEventListener('click', function (event) {
-			        if (event.target === modal) {
-			            modal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			        }
-			    });
-		
-			    document.getElementById('inquiryForm').addEventListener('submit', function (event) {
-			        event.preventDefault();
-			        const payload = {
-			            inquiryCode: document.getElementById('inquiryCodeDisplay').value,
-			            inquiryTypeCode: document.getElementById('inquiryTypeEdit').value,
-			            statusCode: document.getElementById('inquiryStatusEdit').value
-			        };
-			        fetch('/admin/updateInquiry', {
-			            method: 'POST',
-			            headers: { 'Content-Type': 'application/json' },
-			            body: JSON.stringify(payload)
-			        })
-			        .then(res => res.ok ? res.text() : Promise.reject('저장 실패'))
-			        .then(result => {
-			            alert('저장이 완료되었습니다.');
-			            modal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			            location.reload();
-			        })
-			        .catch(error => {
-			            console.error('저장 오류:', error);
-			            alert('저장 중 오류가 발생했습니다.');
-			        });
-			    });
-		
-			    document.getElementById('inquiryTypeEdit').addEventListener('change', function () {
-			        document.getElementById('inquiryTypeCodeDisplay').value = this.value;
-			    });
-			});
+		document.addEventListener('DOMContentLoaded', function () {
+            console.log("스크립트가 실행됩니다!"); // 스크립트 실행 여부 확인용 로그
+
+            const tabLinks = document.querySelectorAll('#limits-tab .nav-link');
+            const tabContents = document.querySelectorAll('.col-12 > .card');
+            const registerButton = document.getElementById('tab-register-button');
+
+            const modals = {
+                type: {
+                    register: document.getElementById('typeModal'),
+                    modify: document.getElementById('typeMdfcnModal')
+                },
+                period: {
+                    register: document.getElementById('periodModal'),
+                    modify: document.getElementById('periodMdfcnModal')
+                },
+                reason: {
+                    register: document.getElementById('reasonModal'),
+                    modify: document.getElementById('reasonMdfcnModal')
+                }
+            };
+
+            let activeTabId = 'type'; // Default active tab
+
+            function showTab(tabId) {
+                tabContents.forEach(content => {
+                    if (content.id === tabId) {
+                        content.classList.remove('d-none');
+                    } else {
+                        content.classList.add('d-none');
+                    }
+                });
+
+                tabLinks.forEach(link => {
+                    if (link.dataset.tab === tabId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+                activeTabId = tabId;
+            }
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const tabId = this.dataset.tab;
+                    showTab(tabId);
+                });
+            });
+
+            // Initial display based on the active class
+            showTab(activeTabId);
+
+            // Handle register button click
+            registerButton.addEventListener('click', function() {
+                const modalToOpen = modals[activeTabId].register;
+                if (modalToOpen) {
+                    modalToOpen.style.display = 'flex';
+                    document.body.style.overflow = 'hidden'; // Disable scroll on body
+
+                    // 제재 사유 등록 모달인 경우에만 드롭다운 데이터 로드
+                    if (activeTabId === 'reason' && modalToOpen.id === 'reasonModal') {
+                        loadLimitsReasonDropdowns('register'); // 'register' 모드임을 전달
+                    }
+                }
+            });
+
+            // Handle modify button clicks (using event delegation)
+            document.querySelectorAll('.SR_open-popup-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const modalTargetId = this.dataset.modalTarget;
+                    const modalToOpen = document.getElementById(modalTargetId);
+
+                    if (modalToOpen) {
+                        modalToOpen.style.display = 'flex';
+                        document.body.style.overflow = 'hidden'; // Disable scroll on body
+
+                        // 제재 사유 수정 모달인 경우 데이터 로드 및 드롭다운 채우기
+                        if (modalTargetId === 'reasonMdfcnModal') {
+                            // HTML 구조에 따라 limitsReasonCode를 가져오는 방법 조정 필요
+                            // 예를 들어, data-limits-reason-code 속성을 사용하는 경우:
+                            const limitsReasonCode = this.dataset.limitsReasonCode;
+                            // 또는, 버튼이 위치한 행에서 코드를 찾는 경우:
+                            // const limitsReasonCode = this.closest('tr').querySelector('span').textContent.trim();
+
+                            if (limitsReasonCode) {
+                                fetchReasonMdfcnData(limitsReasonCode);
+                            } else {
+                                console.error('Limits Reason Code not found for modification. Ensure data-limits-reason-code is set or adjust selector.');
+                            }
+                        }
+                    }
+                });
+            });
+
+            // ====================================================================
+            // START: Consolidated and corrected form submission & data loading logic
+            // ====================================================================
+
+            // 제재 타입 등록 폼 제출 처리
+            const typeRegisterForm = document.getElementById('typeRegisterForm');
+            if (typeRegisterForm) {
+                typeRegisterForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const payload = {
+                        limitsTypeCode: document.getElementById('typeCode').value,
+                        limitsTypeName: document.getElementById('typeName').value,
+                        limitsTypeExpln: document.getElementById('typeExpln').value,
+                        limitsTypeStcCode: document.querySelector('input[name="typeStatus"]:checked').value
+                    };
+                    fetch('/admin/registerLimitsType', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 타입이 성공적으로 등록되었습니다.');
+                            location.reload();
+                        } else {
+                            alert('제재 타입 등록에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 타입 등록 중 오류가 발생했습니다.');
+                    });
+                });
+            }
+
+            // 제재 타입 수정 폼 제출 처리
+            const typeEditForm = document.getElementById('typeEditForm');
+            if (typeEditForm) {
+                typeEditForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const payload = {
+                        limitsTypeCode: document.getElementById('typeEditCode').value,
+                        limitsTypeName: document.getElementById('typeEditName').value,
+                        limitsTypeExpln: document.getElementById('typeEditExpln').value,
+                        limitsTypeStcCode: document.querySelector('input[name="typeEditStatus"]:checked').value
+                    };
+                    fetch('/admin/updateLimitsType', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 타입이 성공적으로 수정되었습니다.');
+                            location.reload();
+                        } else {
+                            alert('제재 타입 수정에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 타입 수정 중 오류가 발생했습니다.');
+                    });
+                });
+            }
+
+            // 특정 제재 타입 데이터 조회 및 수정 모달 채우기
+            document.querySelectorAll('#type .SR_open-popup-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const limitsTypeCode = this.dataset.limitsTypeCode;
+                    const modalTargetId = this.dataset.modalTarget;
+                    const modalToOpen = document.getElementById(modalTargetId);
+
+                    if (limitsTypeCode && modalToOpen) {
+                        fetch(`/admin/getLimitsType?limitsTypeCode=${limitsTypeCode}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data) {
+                                    document.getElementById('typeEditCode').value = data.limitsTypeCode;
+                                    document.getElementById('typeEditName').value = data.limitsTypeName;
+                                    document.getElementById('typeEditExpln').value = data.limitsTypeExpln;
+                                    document.getElementById('typeEditRegAdm').value = data.limitsTypeRegAdmCode;
+                                    document.getElementById('typeEditRegYmdt').value = data.limitsTypeRegYmdt;
+
+                                    document.querySelectorAll('input[name="typeEditStatus"]').forEach(radio => {
+                                        if (radio.value === data.limitsTypeStcCode) {
+                                            radio.checked = true;
+                                        } else {
+                                            radio.checked = false;
+                                        }
+                                    });
+                                    modalToOpen.style.display = 'flex';
+                                    document.body.style.overflow = 'hidden';
+                                } else {
+                                    alert('제재 타입 데이터를 불러오지 못했습니다.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching limits type data:', error);
+                                alert('제재 타입 데이터를 불러오는 중 오류가 발생했습니다.');
+                            });
+                    }
+                });
+            });
+
+            // 제재 기간 등록 폼 제출 처리
+            const periodRegisterForm = document.getElementById('periodRegisterForm');
+            if (periodRegisterForm) {
+                periodRegisterForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const periodCode = document.getElementById('periodCode').value.trim();
+                    const periodName = document.getElementById('periodName').value.trim();
+                    const periodDays = document.getElementById('periodDays').value.trim();
+                    const periodStcCode = document.querySelector('input[name="periodStatus"]:checked')?.value;
+
+                    if (!periodCode || !periodName || !periodDays || !periodStcCode) {
+                        alert('모든 필수 항목을 입력해주세요.');
+                        return;
+                    }
+                    if (isNaN(periodDays)) {
+                        alert('제재 기간 일수는 숫자여야 합니다.');
+                        return;
+                    }
+                    const payload = {
+                        limitsPeriodCode: periodCode,
+                        limitsPeriodName: periodName,
+                        limitsPeriodDays: parseInt(periodDays, 10),
+                        limitsTypeStcCode: periodStcCode
+                    };
+                    fetch('/admin/registerLimitsPeriod', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 기간이 성공적으로 등록되었습니다.');
+                            location.reload();
+                        } else if (data === "FAIL: Unauthorized") {
+                            alert('권한이 없습니다. 다시 로그인해주세요.');
+                        } else {
+                            alert('제재 기간 등록에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 기간 등록 중 오류가 발생했습니다.');
+                    });
+                });
+            }
+
+            // 특정 제재 기간 데이터 조회 및 수정 모달 채우기
+            document.querySelectorAll('#period .SR_open-popup-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const limitsPeriodCode = this.dataset.limitsPeriodCode;
+                    const modalTargetId = this.dataset.modalTarget;
+                    const modalToOpen = document.getElementById(modalTargetId);
+
+                    if (limitsPeriodCode && modalToOpen) {
+                        fetch(`/admin/getLimitsPeriod?limitsPeriodCode=${limitsPeriodCode}`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.text().then(text => { throw new Error(text) });
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data) {
+                                    document.getElementById('periodEditRegAdm').value = data.limitsPeriodRegAdmCode;
+                                    document.getElementById('periodEditRegYmdt').value = data.limitsPeriodRegYmdt;
+                                    document.getElementById('periodEditCode').value = data.limitsPeriodCode;
+                                    document.getElementById('periodEditName').value = data.limitsPeriodName;
+                                    document.getElementById('periodEditDays').value = data.limitsPeriodDays;
+
+                                    document.querySelectorAll('input[name="periodEditStatus"]').forEach(radio => {
+                                        if (radio.value === data.limitsTypeStcCode) {
+                                            radio.checked = true;
+                                        } else {
+                                            radio.checked = false;
+                                        }
+                                    });
+                                    modalToOpen.style.display = 'flex';
+                                    document.body.style.overflow = 'hidden';
+                                } else {
+                                    alert('제재 기간 데이터를 불러오지 못했습니다.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching limits period data:', error);
+                                alert('제재 기간 데이터를 불러오는 중 오류가 발생했습니다.');
+                            });
+                    }
+                });
+            });
+
+            // 제재 기간 수정 폼 제출 처리
+            const periodEditForm = document.getElementById('periodEditForm');
+            if (periodEditForm) {
+                periodEditForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const periodCode = document.getElementById('periodEditCode').value.trim();
+                    const periodName = document.getElementById('periodEditName').value.trim();
+                    const periodDays = document.getElementById('periodEditDays').value.trim();
+                    const periodStcCode = document.querySelector('input[name="periodEditStatus"]:checked')?.value;
+
+                    if (!periodName || !periodDays || !periodStcCode) {
+                        alert('모든 필수 항목을 입력해주세요.');
+                        return;
+                    }
+                    if (isNaN(periodDays)) {
+                        alert('제재 기간 일수는 숫자여야 합니다.');
+                        return;
+                    }
+                    const payload = {
+                        limitsPeriodCode: periodCode,
+                        limitsPeriodName: periodName,
+                        limitsPeriodDays: parseInt(periodDays, 10),
+                        limitsTypeStcCode: periodStcCode
+                    };
+                    fetch('/admin/updateLimitsPeriod', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 기간이 성공적으로 수정되었습니다.');
+                            location.reload();
+                        } else if (data === "FAIL: Unauthorized") {
+                            alert('권한이 없습니다. 다시 로그인해주세요.');
+                        } else {
+                            alert('제재 기간 수정에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 기간 수정 중 오류가 발생했습니다.');
+                    });
+                });
+            }
+
+            // 제재 사유 등록 및 수정 모달 내 드롭다운 데이터 로드 함수
+            function loadLimitsReasonDropdowns(mode, currentData = null) {
+                // 신고 타입 로드
+                fetch('/admin/getDeclarationTypeList')
+                    .then(response => response.json())
+                    .then(data => {
+                        const selectElement = (mode === 'register') ?
+                            document.getElementById('declarationTypeEdit') : // 등록 모달의 declarationTypeEdit
+                            document.getElementById('declarationTypeMdfcn'); // 수정 모달의 declarationTypeMdfcn
+                        if (selectElement) {
+                            selectElement.innerHTML = '<option value="">선택하세요</option>';
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.dt_cd;
+                                option.textContent = item.dt_nm;
+                                if (currentData && item.dt_cd === currentData.declarationTypeCode) {
+                                    option.selected = true;
+                                }
+                                selectElement.appendChild(option);
+                            });
+                            // 선택된 값이 있다면, 연관된 신고 사유 드롭다운도 로드
+                            if (currentData && currentData.declarationTypeCode) {
+                                // 기존의 onchange 이벤트 리스너를 강제로 트리거하여 신고 사유 로드
+                                if (declarationTypeSelectForReason && typeof declarationTypeSelectForReason.onchange === 'function') {
+                                    declarationTypeSelectForReason.onchange.apply(selectElement);
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error loading declaration types:', error));
+
+                // 제재 타입 로드
+                fetch('/admin/getAdminLimitsTypeList')
+                    .then(response => response.json())
+                    .then(data => {
+                        const selectElement = (mode === 'register') ?
+                            document.getElementById('limitsTypeEdit') : // 등록 모달의 limitsTypeEdit
+                            document.getElementById('limitsTypeMdfcn'); // 수정 모달의 limitsTypeMdfcn
+                        if (selectElement) {
+                            selectElement.innerHTML = '<option value="">선택하세요</option>';
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.lt_cd;
+                                option.textContent = item.lt_nm;
+                                if (currentData && item.lt_cd === currentData.limitsTypeCode) {
+                                    option.selected = true;
+                                }
+                                selectElement.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error loading limits types:', error));
+
+                // 제재 기간 로드
+                fetch('/admin/getAdminLimitsPeriodList')
+                    .then(response => response.json())
+                    .then(data => {
+                        const selectElement = (mode === 'register') ?
+                            document.getElementById('limitsPeriodEdit') : // 등록 모달의 limitsPeriodEdit
+                            document.getElementById('limitsPeriodMdfcn'); // 수정 모달의 limitsPeriodMdfcn
+                        if (selectElement) {
+                            selectElement.innerHTML = '<option value="">선택하세요</option>';
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.lp_cd;
+                                option.textContent = item.lp_nm;
+                                if (currentData && item.lp_cd === currentData.limitsPeriodCode) {
+                                    option.selected = true;
+                                }
+                                selectElement.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error loading limits periods:', error));
+
+                // 신고 사유 로드는 신고 타입 선택 시 동적으로 처리
+                const declarationTypeSelectForReason = (mode === 'register') ?
+                    document.getElementById('declarationTypeEdit') :
+                    document.getElementById('declarationTypeMdfcn');
+
+                if (declarationTypeSelectForReason) {
+                    // onchange 이벤트 리스너를 사용하여 신고 사유 드롭다운 업데이트
+                    declarationTypeSelectForReason.onchange = function() {
+                        const selectedDtCd = this.value;
+                        const declarationReasonSelect = (mode === 'register') ?
+                            document.getElementById('declarationReasonEdit') :
+                            document.getElementById('declarationReasonMdfcn');
+
+                        if (declarationReasonSelect) {
+                            declarationReasonSelect.innerHTML = '<option value="">선택하세요</option>';
+                            if (selectedDtCd) {
+                                fetch(`/admin/getDeclarationReasonList?dt_cd=${selectedDtCd}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        data.forEach(item => {
+                                            const option = document.createElement('option');
+                                            option.value = item.dr_cd;
+                                            option.textContent = item.dr_nm;
+                                            if (currentData && item.dr_cd === currentData.declarationReasonCode) {
+                                                option.selected = true;
+                                            }
+                                            declarationReasonSelect.appendChild(option);
+                                        });
+                                    })
+                                    .catch(error => console.error('Error loading declaration reasons:', error));
+                            }
+                        }
+                    };
+                }
+            }
+
+
+         	// 제재 사유 등록 폼 제출 처리
+            const reasonRegisterForm = document.getElementById('reasonRegisterForm');
+            if (reasonRegisterForm) {
+                reasonRegisterForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const formData = new FormData(reasonRegisterForm);
+
+                    // 제재 조건 매핑
+                    const limitsConditionMap = {
+                        "1회": { min: 1, max: 1 },
+                        "2회": { min: 2, max: 2 },
+                        "2회이상": { min: 2, max: 999 },
+                        "3회": { min: 3, max: 3 },
+                        "3회이상": { min: 3, max: 999 }
+                    };
+
+                    const selectedConditionLabel = formData.get('limitsMdfcnCount');
+                    const condition = limitsConditionMap[selectedConditionLabel] || { min: 0, max: 0 };
+
+                    const payload = {
+                        limitsReasonCode: formData.get('reasonCode'),
+                        limitsReasonCondition: selectedConditionLabel,
+                        limitsReasonConditionMin: condition.min,
+                        limitsReasonConditionMax: condition.max,
+                        declarationTypeCode: formData.get('declarationType'),
+                        declarationReasonCode: formData.get('declarationReason'),
+                        limitsTypeCode: formData.get('limitsType'),
+                        limitsPeriodCode: formData.get('limitsPeriod'),
+                        limitsReasonExpln: formData.get('limitsExpln'),
+                        limitsTypeStcCode: formData.get('reasonEditStatus')
+                    };
+
+                    fetch('/admin/registerLimitsReason', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 사유가 성공적으로 등록되었습니다.');
+                            location.reload();
+                        } else if (data === "FAIL: Unauthorized") {
+                            alert('권한이 없습니다. 다시 로그인해주세요.');
+                        } else {
+                            alert('제재 사유 등록에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 사유 등록 중 오류가 발생했습니다.');
+                    });
+                });
+            }
+
+            // 제재 사유 수정 폼 제출 처리 (새로운 ID: reasonEditForm 사용)
+            const reasonEditForm = document.getElementById('reasonEditForm');
+            if (reasonEditForm) {
+                reasonEditForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const formData = new FormData(reasonEditForm);
+
+                    // 페이로드 키를 백엔드 도메인 객체 필드명과 일치하도록 수정
+                    const payload = {
+                        limitsReasonCode: formData.get('reasonMdfcnCode'),
+                        limitsReasonCondition: parseInt(formData.get('limitsMdfcnCount') || '0'), // limitsMdfcnCount는 lr_cnd에 해당하며 int로 변환
+                        limitsReasonConditionMin: parseInt(formData.get('limitsMdfcnCountMin') || '0'), // lr_cnd_min에 해당하는 새로운 필드 (HTML에 ID 추가 필요)
+                        limitsReasonConditionMax: parseInt(formData.get('limitsMdfcnCountMax') || '0'), // lr_cnd_max에 해당하는 새로운 필드 (HTML에 ID 추가 필요)
+                        declarationTypeCode: formData.get('declarationTypeMdfcn'),
+                        declarationReasonCode: formData.get('declarationReasonMdfcn'),
+                        limitsTypeCode: formData.get('limitsTypeMdfcn'),
+                        limitsPeriodCode: formData.get('limitsPeriodMdfcn'),
+                        limitsReasonExpln: formData.get('reasonMdfcnExpln'),
+                        limitsTypeStcCode: formData.get('reasonMdfcnStatus') // 변경된 라디오 버튼 이름 사용
+                    };
+
+                    fetch('/admin/updateLimitsReason', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 사유가 성공적으로 수정되었습니다.');
+                            location.reload();
+                        } else if (data === "FAIL: Unauthorized") {
+                            alert('권한이 없습니다. 다시 로그인해주세요.');
+                        } else {
+                            alert('제재 사유 수정에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 사유 수정 중 오류가 발생했습니다.');
+                    });
+                });
+            }
+
+         	// 제재 사유 수정 모달 데이터 불러오기 및 채우기 함수
+            function fetchReasonMdfcnData(limitsReasonCode) {
+                fetch(`/admin/getLimitsReason?limitsReasonCode=${limitsReasonCode}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => { throw new Error(text) });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data) {
+                            document.getElementById('reasonMdfcnRegAdm').value = data.limitsReasonRegAdmCode;
+                            document.getElementById('reasonMdfcnRegYmdt').value = data.limitsReasonRegYmdt;
+                            
+                            document.getElementById('reasonMdfcnCode').value = data.limitsReasonCode;
+                            document.getElementById('limitsCountEdit').value = data.limitsReasonCnd; // Populating the select for the display string like "1회"
+
+                            // Populate the new hidden fields for min/max
+                            document.getElementById('limitsMdfcnCountMin').value = data.limitsReasonCndMin; // This line will now work
+                            document.getElementById('limitsMdfcnCountMax').value = data.limitsReasonCndMax; // This line will now work
+
+                            loadLimitsReasonDropdowns('modify', data);
+
+                            document.getElementById('reasonMdfcnExpln').value = data.limitsReasonExpln;
+
+                            document.querySelectorAll('input[name="reasonMdfcnStatus"]').forEach(radio => {
+                                if (radio.value === data.limitsTypeStcCode) {
+                                    radio.checked = true;
+                                } else {
+                                    radio.checked = false;
+                                }
+                            });
+                        } else {
+                            alert('제재 사유 데이터를 불러오지 못했습니다.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching limits reason data:', error);
+                        alert('제재 사유 데이터를 불러오는 중 오류가 발생했습니다.');
+                    });
+            }
+
+
+            // 모든 모달 공통 닫기 로직 (중복 제거 후 통합)
+            document.querySelectorAll('.SR_modal').forEach(modal => {
+                const closeButton = modal.querySelector('.SR_close-button');
+                if (closeButton) {
+                    closeButton.addEventListener('click', function() {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = 'auto'; // Enable scroll on body
+                    });
+                }
+
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+        });
 		</script>
 	</th:block>
 </html>

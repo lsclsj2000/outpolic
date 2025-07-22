@@ -31,6 +31,9 @@ public class UserHomeController {
     @GetMapping("/") // 메인 페이지 URL
     public String mainPage(HttpSession session, Model model) {
     	
+    	//main세션에 등급코드를 담는코드
+    	String gred = (String) session.getAttribute("SGrd");
+        model.addAttribute("SGrd", gred);
 
     	// ★★ 1. 세션에서 현재 로그인한 사용자의 ID를 가져옵니다. ★★
         String userId = (String) session.getAttribute("SCD"); // 비로그인 시 null이 됩니다.

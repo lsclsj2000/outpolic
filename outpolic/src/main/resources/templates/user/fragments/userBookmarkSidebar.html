@@ -1,27 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 	<div class="new-category-sidebar" th:fragment="userBookmarkSidebarFragment">
+		
+		<style>
+		        .category-list {
+		            list-style: none;
+		            padding: 0;
+		        }
+
+		        .category-list li {
+		            margin-bottom: 10px;
+		        }
+
+		        .category-link {
+		            display: inline-block;
+					width : 90%;
+		            padding: 8px 16px;
+		            color: #333;
+		            text-decoration: none;
+		            border-radius: 8px;
+		            transition: background-color 0.2s;
+		        }
+
+		        .category-link:hover {
+		            background-color: #f0f0f0;
+		            color: #000;
+		        }
+
+		        .category-link.active {
+		            background-color: #f0f0f0;
+		            font-weight: bold;
+		        }
+		    </style>
         
         <!-- 컨트롤러가 model에 담아준 'mainCategory'를 사용 -->
         <h2 class="sidebar-main-title">Bookmark</h2>
         
-        <ul class="category-list">
+        <ul class="category-list list-unstyled d-flex flex-column gap-4 mt-4">
             <!-- 컨트롤러가 model에 담아준 'categoryGroups'를 반복 -->
-            <li>
-                <h5 class="category-group-title">
-					<a>외주</a>
-                </h5>
-            </li>
-            <li>
-                <h5 class="category-group-title">
-					<a>포트폴리오</a>
-                </h5>
-            </li>
-            <li>
-                <h5 class="category-group-title">
-					<a>기업</a>
-                </h5>
-            </li>
+			<li><a href="#" class="category-link active category-btn text-dark fs-6 px-2 py-1 rounded hover-bg" data-category="all">전체보기</a></li>
+			<li><a href="#" class="category-link category-btn text-dark fs-6 px-2 py-1 rounded hover-bg" data-category="outsourcing">외주</a></li>
+			<li><a href="#" class="category-link category-btn text-dark fs-6 px-2 py-1 rounded hover-bg" data-category="portfolio">포트폴리오</a></li>
+			<li><a href="#" class="category-link category-btn text-dark fs-6 px-2 py-1 rounded hover-bg" data-category="enterprise">기업</a></li>
         </ul>
     </div>
 </html>

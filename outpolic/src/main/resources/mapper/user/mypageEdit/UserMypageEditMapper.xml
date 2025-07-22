@@ -87,6 +87,10 @@
 	        mbr_mdfcn_ymdt = NOW()
 	    WHERE mbr_cd = #{memberCode}
 	</update>
+	
+	<select id="selectPasswordByMemberCode" parameterType="String" resultType="String">
+	    SELECT mbr_pw FROM member WHERE mbr_cd = #{memberCode}
+	</select>
  </mapper>
  
  

@@ -25,7 +25,7 @@
         
         /* 액션 버튼 (새 외주 등록) 스타일 */
         .btn-action { 
-            background-color: #264796; 
+            background-color: #264796;
  color: white; 
             padding: 10px 20px; 
             border: none; 
@@ -39,8 +39,7 @@
             align-items: center; 
             gap: 8px; 
         }
-        .btn-action:hover { background-color: #5d8bf4;
- } /* 호버 시 색상 변경 */
+        .btn-action:hover { background-color: #5d8bf4; } /* 호버 시 색상 변경 */
 
         /* 외주 항목 그리드 레이아웃 */
         .outsourcing-items-grid { 
@@ -92,23 +91,15 @@
             font-size: 0.75em; 
             letter-spacing: 0.5px;
  }
-        .status-badge.primary { background-color: #6366f1;
- } /* 외주 뱃지 (보라색) */
-        .status-badge.secondary { background-color: #f97316;
- } /* 모집 D-N 뱃지 (주황색) */
-        .status-badge.grey { background-color: #94a3b8;
- } /* 모집 마감 뱃지 (회색) */
-        .status-badge.info { background-color: #0ea5e9;
- } /* 진행 중 뱃지 (파랑) */
-        .status-badge.success { background-color: #22c55e;
- } /* 완료 뱃지 (초록) */
+        .status-badge.primary { background-color: #6366f1; } /* 외주 뱃지 (보라색) */
+        .status-badge.secondary { background-color: #f97316; } /* 모집 D-N 뱃지 (주황색) */
+        .status-badge.grey { background-color: #94a3b8; } /* 모집 마감 뱃지 (회색) */
+        .status-badge.info { background-color: #0ea5e9; } /* 진행 중 뱃지 (파랑) */
+        .status-badge.success { background-color: #22c55e; } /* 완료 뱃지 (초록) */
 
-        .card-applicant-price { text-align: right;
- }
-        .applicant-count { font-size: 0.9em; color: #666; margin-bottom: 5px;
- }
-        .outsource-price { font-size: 1.5em; font-weight: 700; color: #264796;
- } /* 금액 강조 (초록) */
+        .card-applicant-price { text-align: right; }
+        .applicant-count { font-size: 0.9em; color: #666; margin-bottom: 5px; }
+        .outsource-price { font-size: 1.5em; font-weight: 700; color: #264796; } /* 금액 강조 (초록) */
 
         /* 카드 본문 (제목, 카테고리, 요약) */
         .card-title { 
@@ -290,8 +281,7 @@
             cursor: pointer;
             transition: background-color 0.2s ease;
  }
-        .copy-url-btn:hover { background-color: #0056b3;
- }
+        .copy-url-btn:hover { background-color: #0056b3; }
     
         /* ... (기존 스타일 유지) ... */
         /* 새롭게 추가하는 썸네일 관련 스타일 */
@@ -326,22 +316,48 @@
             .modal-dialog.modal-xxl {
                 /* XXL 사이즈(1400px 이상) 화면에서 모달의 최대 너비를 1320px로 설정합니다. */
                 max-width: 1320px;
-            }
+ }
         }
         
         .modal-body.custom-modal-body {
             /* 모달 내용이 화면의 85% 높이를 넘지 않도록 하고, 넘으면 스크롤 생성 */
             max-height: 85vh;
-            overflow-y: auto;
+ overflow-y: auto;
         }
 		/* 찜 했을 때의 색상 */
 		.fi-rs-heart.active {
 		    color: #F15B5B; 
-		    font-weight: 900; 
-		}
+		    font-weight: 900;
+ }
 		.bookmark-btn .fi-rs-heart.active {
 		    color: #F15B5B !important; 
 		}
+
+        /* 상세 모달 내 이미지 및 내용 스타일 추가 */
+        .modal-content-area img { /* [!code ++] */
+            max-width: 100%; /* [!code ++] */
+            height: auto; /* [!code ++] */
+            display: block; /* [!code ++] */
+            margin-bottom: 15px; /* [!code ++] */
+        } /* [!code ++] */
+        .modal-content-area .no-image-placeholder { /* [!code ++] */
+            height: 200px; /* [!code ++] */
+            display: flex; /* [!code ++] */
+            align-items: center; /* [!code ++] */
+            justify-content: center; /* [!code ++] */
+            background-color: #f0f0f0; /* [!code ++] */
+            color: #aaa; /* [!code ++] */
+            font-size: 1.2em; /* [!code ++] */
+            text-align: center; /* [!code ++] */
+            margin-bottom: 15px; /* [!code ++] */
+            border-radius: 8px; /* [!code ++] */
+        } /* [!code ++] */
+        .modal-content-area p { /* [!code ++] */
+            line-height: 1.6; /* [!code ++] */
+            color: #333; /* [!code ++] */
+            margin-bottom: 15px; /* [!code ++] */
+            white-space: pre-wrap; /* [!code ++] */
+        } /* [!code ++] */
     </style>
 </head>
 <body>
@@ -373,13 +389,15 @@
     		<div class="modal-body">
                 <div class="social-share-buttons">
                     <button id="shareFacebookBtn" class="social-button"><i class="fab fa-facebook-f"></i></button>
-    <button id="shareXBtn" class="social-button"><i class="fab fa-x-twitter"></i></button>
+    
+ <button id="shareXBtn" class="social-button"><i class="fab fa-x-twitter"></i></button>
                     <button id="shareInstagramBtn" class="social-button"><i class="fab fa-instagram"></i></button>
                 </div>
                 <div class="copy-url-section">
                     <input type="text" id="shareUrlInput" 
  class="copy-url-input" readonly>
-                    <button id="modalCopyUrlBtn" class="copy-url-btn">복사</button>
+              
+               <button id="modalCopyUrlBtn" class="copy-url-btn">복사</button>
                 </div>
             </div>
         </div>
@@ -388,14 +406,18 @@
     <div class="modal fade" id="portfolioDetailModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xxl"> 
             <div class="modal-content"> 
-                <div class="modal-header border-bottom-0">
+                
+ <div class="modal-header border-bottom-0">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body custom-modal-body pt-0">
                     <div class="d-flex h-100">
-                        <div id="modalInfoSection" class="p-4" style="width: 40%; overflow-y: auto;">
+                 
+                       <div id="modalInfoSection" class="p-4" style="width: 40%;
+ overflow-y: auto;">
                             </div>
-                        <div id="modalContentSection" class="p-3 ps-4 border-start" style="width: 60%; overflow-y: auto;">
+                        <div id="modalContentSection" class="p-3 ps-4 border-start" style="width: 60%;
+ overflow-y: auto;">
                             </div>
                     </div>
                 </div>
@@ -406,6 +428,7 @@
 
 <th:block layout:fragment="jsFile">
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
+ 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     function initializeFirebase() {
@@ -420,188 +443,223 @@
         const clCd = clickedButtonElement.dataset.clCd;
         if (!clCd) return;
 
-        const heartIcons = document.querySelectorAll(`.bookmark-btn[data-cl-cd="${clCd}"] i.fi-rs-heart`);
+        const
+ heartIcons = document.querySelectorAll(`.bookmark-btn[data-cl-cd="${clCd}"] i.fi-rs-heart`);
         if (heartIcons.length === 0) return;
 
         const isCurrentlyBookmarked = heartIcons[0].classList.contains('active');
         const apiUrl = '/api/enter/bookmarks';
-
-        heartIcons.forEach(icon => {
+ heartIcons.forEach(icon => {
             icon.classList.toggle('active');
         });
-
-        let options;
+ let options;
         if (isCurrentlyBookmarked) {
             options = { method: 'DELETE' };
-            fetch(`${apiUrl}/${clCd}`, options)
+ fetch(`${apiUrl}/${clCd}`, options)
                 .then(response => {
                     if (!response.ok) {
                         alert('찜 해제에 실패했습니다. 다시 시도해주세요.');
                         heartIcons.forEach(icon => icon.classList.add('active'));
-                        throw new Error('찜 해제 실패');
+     
+                    throw new Error('찜 해제 실패');
                     }
                 })
                 .catch(error => console.error('찜 해제 중 오류:', error));
-        } else {
+ } else {
             options = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ clCd: clCd })
             };
-            fetch(apiUrl, options)
+ fetch(apiUrl, options)
                 .then(response => {
                     if (!response.ok) {
                         if (response.status === 401 || response.status === 403) {
-                            alert('로그인이 필요한 기능입니다.');
+                           
+ alert('로그인이 필요한 기능입니다.');
                         } else {
                             alert('찜하기에 실패했습니다. 다시 시도해주세요.');
                         }
-                        heartIcons.forEach(icon => icon.classList.remove('active'));
+                
+                 heartIcons.forEach(icon => icon.classList.remove('active'));
                         throw new Error('찜 추가 실패');
                     }
                 })
                 .catch(error => console.error('찜 추가 중 오류:', error));
-        }
+ }
     }
 
     // --- openPortfolioModal 함수 (전역 스코프) ---
     function openPortfolioModal(contentsId) {
         const modalElement = document.getElementById('portfolioDetailModal');
-        if (!modalElement) return;
+ if (!modalElement) return;
             
         lastFocusedElement = document.activeElement; 
 
         const infoSection = modalElement.querySelector('#modalInfoSection');
         const contentSection = modalElement.querySelector('#modalContentSection');
         const portfolioModal = new bootstrap.Modal(modalElement);
-
-        // 모달을 열 때 로딩 스피너만 먼저 보여줍니다.
+ // 모달을 열 때 로딩 스피너만 먼저 보여줍니다.
         infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
-        contentSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`; // 이미지 영역도 로딩 스피너
+ contentSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`; // 이미지 영역도 로딩 스피너
         portfolioModal.show();
-            
-        $.ajax({
+ $.ajax({
             url: `/user/api/contents/${contentsId}`, // 포트폴리오/외주 통합 상세 API
             type: 'GET',
             dataType: 'json',
             success: function(detail) {
                 // 1. 필요한 기본 변수들 선언
-                const title = detail.contentsTitle || detail.enterName || '제목 없음';
+                const title = detail.contentsTitle || 
+ detail.enterName || '제목 없음';
                 const isBookmarked = detail.isBookmarked || false; 
                 const clCd = detail.clCd || '';
                 const inquiryTargetId = detail.contentsId; // 문의하기 버튼에 사용될 ID (osCd 또는 prtfCd)
                 
-                // 2. 썸네일 URL 가져오기 (포트폴리오 또는 외주)
+           
+       // 2. 썸네일 URL 가져오기 (포트폴리오 또는 외주)
                 const rawThumbnailUrl = detail.prtfThumbnailUrl || detail.osThumbnailUrl; 
                 let displayImageUrl = ''; 
 
                 // 3. displayImageUrl을 먼저 정의
                 if (rawThumbnailUrl) {
+        
                     if (!rawThumbnailUrl.startsWith('/attachment/')) {
                         displayImageUrl = '/attachment/' + rawThumbnailUrl;
                     } else {
                         displayImageUrl = rawThumbnailUrl;
-                    }
+ }
                 }
                 
                 // 4. infoHtml 정의 
                 const infoHtml = `
                     <div class="d-flex align-items-center mb-3">
-                        <img src="/user/assets/imgs/theme/icons/icon-user.svg" alt="logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
+      
+                    <img src="/user/assets/imgs/theme/icons/icon-user.svg" alt="logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
                         <div>
-                            <h6 class="mb-0 fw-bold">${detail.enterName || '회사명 없음'}</h6>
+                            <h6 class="mb-0 fw-bold">${detail.enterName ||
+ '회사명 없음'}</h6>
                             <small class="text-muted">MASTER</small>
                         </div>
                         <div class="ms-auto">
-                            <a href="/enter/outsourcing-requests/inquiry-form/${inquiryTargetId}" class="btn btn-primary">문의하기</a>
+                     
+               <a href="/enter/outsourcing-requests/inquiry-form/${inquiryTargetId}" class="btn btn-primary">문의하기</a>
                         </div>
                     </div>
             
                     <hr class="my-3">
             
-                    <p class="text-muted mb-2">${detail.ctgryName || '카테고리 정보 없음'}</p>
+ 
+                   <p class="text-muted mb-2">${detail.ctgryName ||
+ '카테고리 정보 없음'}</p>
                     <h3 class="fw-bold mb-3">${title}</h3>
                     
                     <div class="d-flex align-items-center mb-4">
-                        <a href="javascript:void(0);" 
-                           class="btn btn-outline-secondary d-flex align-items-center me-2 action-btn bookmark-btn" 
+                        <a href="javascript:void(0);"
+ class="btn btn-outline-secondary d-flex align-items-center me-2 action-btn bookmark-btn" 
                            data-cl-cd="${clCd}" 
                            aria-label="Add To Wishlist">
-                            <i class="fi-rs-heart me-2 ${isBookmarked ? 'active' : ''}"></i> 찜하기
+                            <i class="fi-rs-heart me-2 ${isBookmarked ? 'active' : ''}"></i>
+ 찜하기
                         </a>
-                        <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center">
+                        <a href="javascript:void(0);"
+ class="btn btn-outline-secondary d-flex align-items-center">
                             <i class="fi-rs-share me-2"></i> 공유하기
                         </a>
                     </div>
             
-                    <div class="mb-4">
+          
+                  <div class="mb-4">
                         <span class="badge bg-light text-dark border me-1 px-3 py-2">#상세페이지</span>
                     </div>
                     <div class="mb-4">
-                        <h6 class="fw-bold">프로젝트 설명</h6>
-                        <p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody || '설명 없음'}</p>
+                 
+               <h6 class="fw-bold">프로젝트 설명</h6>
+                        <p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody ||
+ '설명 없음'}</p>
                     </div>
                     
-                    ${detail.contentsType === 'Outsourcing' ? `
+                    ${detail.contentsType === 'Outsourcing' ?
+ `
                     <div class="mb-4">
                         <h6 class="fw-bold">희망 작업 시작일</h6>
-                        <p class="text-muted">${detail.osStrtYmdt ? new Date(detail.osStrtYmdt).toLocaleDateString() : '정보 없음'}</p>
+                        <p class="text-muted">${detail.osStrtYmdt ?
+ new Date(detail.osStrtYmdt).toLocaleDateString() : '정보 없음'}</p>
                     </div>
                     <div class="mb-4">
                         <h6 class="fw-bold">희망 작업 종료일</h6>
-                        <p class="text-muted">${detail.osEndYmdt ? new Date(detail.osEndYmdt).toLocaleDateString() : '정보 없음'}</p>
+                        <p class="text-muted">${detail.osEndYmdt ?
+ new Date(detail.osEndYmdt).toLocaleDateString() : '정보 없음'}</p>
                     </div>
                     <div class="mb-4">
                         <h6 class="fw-bold">계약 희망 금액</h6>
-                        <p class="text-muted">${detail.price ? detail.price.toLocaleString('ko-KR') + '원' : '협의'}</p>
+                        <p class="text-muted">${detail.price ?
+ detail.price.toLocaleString('ko-KR') + '원' : '협의'}</p>
                     </div>
                     <div class="mb-4">
                         <h6 class="fw-bold">수행 가능 인원</h6>
-                        <p class="text-muted">${detail.osFlfmtCnt ? detail.osFlfmtCnt + '명' : '정보 없음'}</p>
+                        <p class="text-muted">${detail.osFlfmtCnt ?
+ detail.osFlfmtCnt + '명' : '정보 없음'}</p>
                     </div>
                     ` : `
                     <div class="mb-4">
                         <h6 class="fw-bold">참여 기간</h6>
-                        <p class="text-muted">${(detail.participationStartDate ? new Date(detail.participationStartDate).toLocaleDateString() : '') + ' ~ ' + (detail.participationEndDate ? new Date(detail.participationEndDate).toLocaleDateString() : '')}</p>
+      
+                  <p class="text-muted">${(detail.participationStartDate ? new Date(detail.participationStartDate).toLocaleDateString() : '') + ' ~ ' + (detail.participationEndDate ? new Date(detail.participationEndDate).toLocaleDateString() : '')}</p>
                     </div>
                     <div class="mb-4">
-                        <h6 class="fw-bold">클라이언트</h6>
-                        <p class="text-muted">${detail.client || '정보 없음'}</p>
+                        
+ <h6 class="fw-bold">클라이언트</h6>
+                        <p class="text-muted">${detail.client ||
+ '정보 없음'}</p>
                     </div>
                     <div class="mb-4">
                         <h6 class="fw-bold">업종</h6>
-                        <p class="text-muted">${detail.industry || '정보 없음'}</p>
+                        <p class="text-muted">${detail.industry ||
+ '정보 없음'}</p>
                     </div>
                     `}
                     `;
-                infoSection.innerHTML = infoHtml; 
+ infoSection.innerHTML = infoHtml; 
 
-                // 5. dynamicThumbnailHtml 정의 (displayImageUrl 사용)
-                const dynamicThumbnailHtml = displayImageUrl 
-                    ? `<img src="${displayImageUrl}" class="img-fluid" alt="상세 이미지" style="width: 100%; height: auto; object-fit: contain;">` 
-                    : `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; background-color: #f0f0f0; color: #aaa; font-size: 1.2em; text-align: center;">
-                         <i class="fas fa-image" style="font-size: 2em; margin-bottom: 10px;"></i>
-                         <span>이미지 없음</span>
-                       </div>`;
+                // [!code diff --start]
+                // 5. contentSection에 이미지 및 본문 내용 채우기
+                let contentHtml = '';
 
-                contentSection.innerHTML = dynamicThumbnailHtml; 
+                // 대표 이미지 (displayImageUrl이 이미 /attachment/ 경로를 포함하고 있다고 가정)
+                if (displayImageUrl) {
+                    contentHtml += `<img src="${displayImageUrl}" class="img-fluid" alt="대표 이미지">`;
+                } else {
+                    contentHtml += `<div class="modal-content-area no-image-placeholder"><i class="fas fa-image"></i> 대표 이미지 없음</div>`;
+                }
+
+                // 본문 이미지들
+                if (detail.bodyImages && detail.bodyImages.length > 0) {
+                    detail.bodyImages.forEach(img => {
+                        // 서비스 레이어에서 이미 /attachment/ 경로로 변환되었으므로 그대로 사용
+                        contentHtml += `<img src="${img.filePath}" class="img-fluid" alt="본문 이미지">`;
+                    });
+                }
+
+                contentSection.innerHTML = `<div class="modal-content-area">${contentHtml}</div>`;
+                // [!code diff --end]
 
                 // 모달 내 찜하기 버튼에 클릭 이벤트 리스너 다시 추가 (동적으로 추가된 HTML 요소에 대해)
                 const modalBookmarkBtn = modalElement.querySelector('.bookmark-btn');
-                if (modalBookmarkBtn) {
+ if (modalBookmarkBtn) {
                     modalBookmarkBtn.addEventListener('click', function(event) {
                         event.preventDefault();
                         event.stopPropagation();
                         toggleBookmark(this);
-                    });
-                }
+    
+                 });
+ }
             },
             error: function(xhr) {
                 infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>';
-                contentSection.innerHTML = '<p class="text-center">이미지를 불러오는 데 실패했습니다.</p>'; 
+ contentSection.innerHTML = '<p class="text-center">이미지를 불러오는 데 실패했습니다.</p>'; 
             }
         });
-    }
+ }
 
   $(document).ready(function() {
             let grid = $('#outsourcingItemsGrid');
@@ -618,6 +676,7 @@
 			});
  // 날짜 차이를 계산하는 헬퍼 함수
             function getDaysDifference(startDate, endDate) {
+ 
                 if (!startDate || !endDate) return null;
  const start = new Date(startDate.split('T')[0]);
                 const end = new Date(endDate.split('T')[0]);
@@ -625,7 +684,8 @@
  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 return diffDays;
  }
-            
+    
+         
             // 포트폴리오 개수를 확인하고 버튼을 제어하는 로직
             function checkPortfolioCountAndControlButton(){
 				$.ajax({
@@ -637,7 +697,7 @@
 								'opacity':'0.5',
 								'cursor':'not-allowed'
 							});
-							$('#noPortfolioMessage').show();
+ $('#noPortfolioMessage').show();
 						}else {
 							$('#addOutsourcingBtn').prop('disabled',false).css({
 								'opacity' : '1',
@@ -652,7 +712,7 @@
 							'opacity':'0.5',
 							'cursor':'not-allowed'
 						});
-						$('#noPortfolioMessage').show().text('포트폴리오 개수 확인 중 오류가 발생했습니다.');
+ $('#noPortfolioMessage').show().text('포트폴리오 개수 확인 중 오류가 발생했습니다.');
 					}
 				});
  }
@@ -663,21 +723,24 @@
                     url: '/enter/outsourcing/listData',
                     cache: false,
                     success: 
+ 
 function(outsourcings) {
                         grid.empty();
                         if (outsourcings && outsourcings.length > 0) {
                             $('#noOutsourcingMessage').hide(); 
-                outsourcings.forEach(o => {
+                
+ outsourcings.forEach(o => {
                                 const osCd = o.osCd;
 
                                 const durationDays = getDaysDifference(o.osStrtYmdt, o.osEndYmdt);
-               const durationHtml = durationDays !== null ? `<i class="far fa-calendar-alt"></i> 진행 기간 ${durationDays}일` : '';
+               const durationHtml = durationDays !== null ? `<i class="far fa-calendar-alt"></i> 진행 기간
+ ${durationDays}일` : '';
 
-                                const categoriesHtml = o.categories && o.categories.length > 0 ?
-                             `<span>${o.categories.map(cat => cat.ctgryNm).join(' > ')}</span>` :
-                                    `<span>카테고리 없음</span>`;
+               const categoriesHtml = o.ctgryNm ? `<span>${o.ctgryNm}</span>` : '<span>카테고리 없음</span>';
+                             
  const tagsHtml = o.tagNames && o.tagNames.length > 0 ? 
-                                    `<div class="tags">${o.tagNames.join(', ')}</div>` : '';
+                                    
+ `<div class="tags">${o.tagNames.join(', ')}</div>` : '';
                                 
                                 const formattedAmount = o.osAmt ?
  o.osAmt.toLocaleString('ko-KR') + '원' : '금액 미정';
@@ -702,44 +765,56 @@ function(outsourcings) {
 
                                 // 썸네일 URL이 있는 경우 이미지 표시, 없는 경우 플레이스홀더 표시
                                 // [수정] 서비스에서 DB에 저장할 때 "attachment/"를 제거했으므로, 여기서 다시 붙여줍니다.
-                                let thumbnailUrl = o.osThumbnailUrl ?  o.osThumbnailUrl : null; 
+ let thumbnailUrl = o.osThumbnailUrl ?  o.osThumbnailUrl : null; 
                                 const thumbnailImageHtml = thumbnailUrl ?
-                                    `<img src="${thumbnailUrl}" alt="외주 썸네일" class="outsourcing-thumbnail">` :
+ `<img src="${thumbnailUrl}" alt="외주 썸네일" class="outsourcing-thumbnail">` :
                                     `<div class="outsourcing-thumbnail-placeholder"><i class="fas fa-image"></i> 이미지 없음</div>`;
-                                grid.append(`
+ grid.append(`
                                     <div class="outsourcing-item-card" data-os-cd="${osCd}">
                                         <div class="outsourcing-thumbnail-wrapper">
-                     ${thumbnailImageHtml}
+                     
+ ${thumbnailImageHtml}
                                         </div>
                                      <div class="card-header">
-                                            <div class="card-status">
+                      
+                                       <div class="card-status">
                                                 <span class="status-badge primary">외주</span>
  ${recruitmentStatusHtml} </div>
-                                            <div 
+                         
+                    <div
                                           class="card-applicant-price">
-                                                <div class="applicant-count">지원자 ${o.applicantCount || 0}명</div> <div class="outsource-price">${formattedAmount}</div>
+                                      
+                                           <div class="applicant-count">지원자 ${o.applicantCount || 0}명</div> <div class="outsource-price">${formattedAmount}</div>
      </div>
                                         </div>
                      <div class="card-content">
-                                            <h3 class="card-title">
+                 
+                            <h3 class="card-title">
                                                 <a href="javascript:void(0);" onclick="openPortfolioModal('${osCd}')">
-                                                    ${o.osTtl}
+                      
+                                ${o.osTtl}
                                                 </a>
-                                            </h3>
+                      
+                                       </h3>
                                             <div class="card-category">${categoriesHtml}</div>
-                                            <p class="card-summary">${o.osExpln}</p>
-                                            <div 
+                                 
+            <p class="card-summary">${o.osExpln}</p>
+                                            <div
  class="outsourcing-actions">
-                                                <button class="btn-edit" data-os-cd="${osCd}">수정</button>
-                                                <button class="btn-delete" 
+                                          
+       <button class="btn-edit" data-os-cd="${osCd}">수정</button>
+                                                <button class="btn-delete"
  data-os-cd="${osCd}">삭제</button>
-                                                <button class="btn-share" data-os-cd="${osCd}" data-os-ttl="${o.osTtl}">공유</button>
+                                         
+        <button class="btn-share" data-os-cd="${osCd}" data-os-ttl="${o.osTtl}">공유</button>
                                             </div>
                                         </div>
-                                        <div class="card-footer">
+      
+                                   <div class="card-footer">
                         ${durationHtml}
                                         </div>
-                                    </div>
+ 
+                                     </div>
     `);
  });
                         } else {
@@ -759,22 +834,27 @@ function(outsourcings) {
                 const osCd = clickedButton.data('os-cd');
 
                 if (clickedButton.hasClass('btn-edit')){
-            window.location.href = `/enter/outsourcing/edit/${osCd}`;
+            
+ window.location.href = `/enter/outsourcing/edit/${osCd}`;
                 } else if (clickedButton.hasClass('btn-delete')){
                     if (confirm('정말로 삭제하시겠습니까?')) {
                         $.ajax({
                         url: `/enter/outsourcing/delete/${osCd}`,
-                            type: 'DELETE',
+       
+                      type: 'DELETE',
                             success: function(res) {
                                 if (res.success) {
-                                    alert('외주가 성공적으로 삭제되었습니다.');
+              
+                       alert('외주가 성공적으로 삭제되었습니다.');
                                     loadAndRenderOutsourcingList();
                             } else {
-                                    alert('삭제 실패: ' + (res.message || '알 수 없는 오류'));
+          
+                            alert('삭제 실패: ' + (res.message || '알 수 없는 오류'));
  }
                             },
                             error: function(xhr) {
-                                const errorMsg = xhr.responseJSON ?
+      
+                            const errorMsg = xhr.responseJSON ?
  xhr.responseJSON.message : '삭제 중 서버 오류가 발생했습니다.';
                                 alert('오류가 발생했습니다: ' + errorMsg);
                                 console.error("삭제 오류:", xhr.status, xhr.responseText);
@@ -801,14 +881,16 @@ function(outsourcings) {
                     'display': 'none',
                     'opacity': '0',
                     'visibility': 'hidden'
-   });
+   
+ });
             });
  // 모달 바깥 영역 클릭 시 모달 닫기
             shareModal.on('click', (e) => { 
                 if ($(e.target).is(shareModal)) {
                     shareModal.css({
                         'display': 'none',
-              'opacity': '0',
+              
+ 'opacity': '0',
                         'visibility': 'hidden'
                     });
                 }
@@ -819,7 +901,8 @@ function(outsourcings) {
                 urlInput.select(); 
                 urlInput.setSelectionRange(0, 99999);
                 navigator.clipboard.writeText(urlInput.value).then(() => {
-         alert('URL이 클립보드에 복사되었습니다!');
+         
+ alert('URL이 클립보드에 복사되었습니다!');
                 }).catch(err => {
                     console.error('URL 복사 실패:', err);
                     alert('URL 복사에 실패했습니다. 직접 복사해주세요: ' + urlInput.value);
@@ -838,7 +921,8 @@ function(outsourcings) {
                 if (shareUrl) {
                     const xShareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`;
                     window.open(xShareUrl, '_blank', 'width=600,height=400');
-                }
+                
+ }
             });
  // ✨✨✨ 인스타그램 공유 버튼 이벤트 (URL 복사 유도) ✨✨✨
             // 인스타그램은 직접 공유를 지원하지 않으므로 URL 복사를 유도합니다.
@@ -847,18 +931,19 @@ function(outsourcings) {
                 urlInput.select();
                 urlInput.setSelectionRange(0, 99999);
                 navigator.clipboard.writeText(urlInput.value).then(() => {
-                    alert('인스타그램은 직접 공유를 지원하지 않습니다. URL이 클립보드에 복사되었습니다. \n인스타그램 앱에서 붙여넣어 공유해주세요!');
+                    alert('인스타그램은 직접 공유를 지원하지 않습니다. URL이 클립보드에 복사되었습니다.\n인스타그램 앱에서 붙여넣어 공유해주세요!');
                 }).catch(err => {
                     console.error('URL 복사 실패 (인스타그램):', err);
                     alert('URL 복사에 실패했습니다. 인스타그램 앱에서 직접 이 주소를 공유해주세요: ' + urlInput.value);
                 });
-        });
+        
+ });
 
 
             // 초기 목록 로드
             loadAndRenderOutsourcingList();
  });
-    </script>
+ </script>
 </th:block>
 </body>
 </html>

@@ -11,25 +11,12 @@
 		<th:block layout:fragment="contents">
 			<section class="content-main">
 		        <div class="row">
-		            <div class="col-12">
-		                <div class="content-header">
-		                    <h2 class="content-title">상품 관리</h2>
-		                </div>
-		            </div>
-		            <div class="col-12">
-		            	<div class="content-header mb-0">
-							<aside>
-							    <nav class="nav nav-pills mb-4">
-							        <a class="nav-link active" aria-current="page" href="#">제재 타입</a>
-							        <a class="nav-link" href="#">제재 기간</a>
-							        <a class="nav-link" href="#">제재 사유</a>
-							    </nav>
-							</aside>
-							<div>
-							    <button id="registerGoodsBtn" class="btn btn-md rounded font-sm hover-up">등록</button>
-							</div>
+	                <div class="content-header">
+	                    <h2 class="content-title">상품 관리</h2>
+						<div>
+						    <button id="registerGoodsBtn" class="btn btn-md rounded font-sm hover-up">등록</button>
 						</div>
-					</div>
+	                </div>
 		            <div class="col-12">
 		            	<div class="card">
 		                	<div class="card-body">
@@ -218,11 +205,11 @@
 		    openGoodsModalButtons.forEach(button => {
 		        button.addEventListener('click', function (event) {
 		            event.preventDefault(); // 기본 링크 동작 방지
-		            const gdsCd = this.getAttribute('data-gds-cd'); // 상품 코드 가져오기
+		            const gdsCd = String(this.getAttribute('data-gds-cd')); // 상품 코드 가져오기 및 문자열로 변환
                     console.log('Open Goods Modal Button Clicked for GdsCd:', gdsCd); // 수정 버튼 클릭 확인
 		            
                     // goodsList에서 해당 상품 코드에 맞는 데이터 찾기
-                    const selectedGoods = goodsList.find(g => g.gdsCd === gdsCd);
+                    const selectedGoods = goodsList.find(g => String(g.gdsCd) === gdsCd); // g.gdsCd도 문자열로 변환하여 비교
 
                     if (selectedGoods) {
                         // 모달 필드를 데이터로 채우기
@@ -250,18 +237,18 @@
 	
 		    // 모달 닫기 버튼 클릭 시
 		    closeButton.addEventListener('click', function () {
-                console.log('Close button clicked.'); // 닫기 버튼 클릭 확인
+                        console.log('Close button clicked.'); // 닫기 버튼 클릭 확인
 		        goodsModal.classList.remove('show'); // 모달 숨기기
-                goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
+                        goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
 		        document.body.style.overflow = 'auto'; // 스크롤 허용
 		    });
 	
 		    // 모달 외부 클릭 시 닫기
 		    window.addEventListener('click', function (event) {
 		        if (event.target === goodsModal) {
-                    console.log('Clicked outside modal.'); // 모달 외부 클릭 확인
+                            console.log('Clicked outside modal.'); // 모달 외부 클릭 확인
 		            goodsModal.classList.remove('show'); // 모달 숨기기
-                    goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
+                            goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
 		            document.body.style.overflow = 'auto'; // 스크롤 허용
 		        }
 		    });
@@ -269,75 +256,83 @@
 		    // 상품 등록/수정 폼 제출 이벤트
 		    goodsForm.addEventListener('submit', function (event) {
 		        event.preventDefault(); // 기본 폼 제출 방지
-                console.log('Goods Form Submitted!'); // 폼 제출 이벤트 확인
+                        console.log('Goods Form Submitted!'); // 폼 제출 이벤트 확인
 
-                const formData = new FormData(goodsForm);
-                const data = {};
-                for (let [key, value] of formData.entries()) {
-                    data[key] = value;
-                }
+                        const formData = new FormData(goodsForm);
+                        const data = {};
+                        for (let [key, value] of formData.entries()) {
+                            data[key] = value;
+                        }
 
-                // gdsStatus를 숫자로 변환 (데이터베이스 tinyint(1)에 맞추기 위해)
-                data.gdsStatus = parseInt(data.gdsStatus);
+                        // gdsStatus를 숫자로 변환 (데이터베이스 tinyint(1)에 맞추기 위해)
+                        data.gdsStatus = parseInt(data.gdsStatus);
 
-                const isUpdate = data.gdsCd !== ''; // modalGdsCd에 값이 있으면 수정 모드
+                        const isUpdate = data.gdsCd !== ''; // modalGdsCd에 값이 있으면 수정 모드
 
-                let url = '/admin/insert'; // 등록 API 엔드포인트 (기존 /admin/registerGoods에서 변경)
-                let successMessage = '상품이 성공적으로 등록되었습니다!'; // 상품 등록 성공 메시지
-                let errorMessage = '상품 등록에 실패했습니다.'; // 상품 등록 실패 메시지
+                        let url = '/admin/insert'; // 등록 API 엔드포인트 (기존 /admin/registerGoods에서 변경)
+                        let successMessage = '상품이 성공적으로 등록되었습니다!'; // 상품 등록 성공 메시지
+                        let errorMessage = '상품 등록에 실패했습니다.'; // 상품 등록 실패 메시지
 
-                if (isUpdate) {
-                    url = '/admin/updateGoods'; // 수정 API 엔드포인트
-                    successMessage = '상품이 성공적으로 수정되었습니다!'; // 상품 수정 성공 메시지
-                    errorMessage = '상품 수정에 실패했습니다.'; // 상품 수정 실패 메시지
-                }
+                        if (isUpdate) {
+                            url = '/admin/updateGoods'; // 수정 API 엔드포인트
 
-                console.log("Data to send:", data); // 전송할 데이터
+                            // --- 추가: 수정 시 수정자 코드와 수정일시 추가 ---
+                            // 현재는 임의의 관리자 코드 (실제로는 세션에서 가져와야 함)
+                            data.gdsMdfcnAdmCd = 'ADM_C001'; 
+                            // 현재 시간 (서버에서 설정할 수도 있지만, 프론트에서도 보낼 수 있음)
+                            data.gdsMdfcnYmdt = new Date().toISOString().slice(0, 19).replace('T', ' '); 
+                            // --------------------------------------------------
 
-                // 프론트엔드 유효성 검사 추가 (위에 제안된 내용)
-                if (!data.gdsNm || !data.gdsAmt || !data.gdsType || !data.gdsPeriodQuantity || !data.gdsUnit) {
-                    showCustomAlert('모든 필수 항목을 입력해주세요.');
-                    return; // 폼 제출 중단
-                }
+                            successMessage = '상품이 성공적으로 수정되었습니다!'; // 상품 수정 성공 메시지
+                            errorMessage = '상품 수정에 실패했습니다.'; // 상품 수정 실패 메시지
+                        }
 
-                if (isNaN(data.gdsAmt) || parseFloat(data.gdsAmt) <= 0) {
-                    showCustomAlert('가격은 0보다 큰 유효한 숫자여야 합니다.');
-                    return;
-                }
+                        console.log("Data to send:", data); // 전송할 데이터
 
-                if (isNaN(data.gdsPeriodQuantity) || parseInt(data.gdsPeriodQuantity) <= 0) {
-                    showCustomAlert('기간/수량은 0보다 큰 유효한 숫자여야 합니다.');
-                    return;
-                }
+                        // 프론트엔드 유효성 검사 추가 (위에 제안된 내용)
+                        if (!data.gdsNm || !data.gdsAmt || !data.gdsType || !data.gdsPeriodQuantity || !data.gdsUnit) {
+                            showCustomAlert('모든 필수 항목을 입력해주세요.');
+                            return; // 폼 제출 중단
+                        }
+
+                        if (isNaN(data.gdsAmt) || parseFloat(data.gdsAmt) <= 0) {
+                            showCustomAlert('가격은 0보다 큰 유효한 숫자여야 합니다.');
+                            return;
+                        }
+
+                        if (isNaN(data.gdsPeriodQuantity) || parseInt(data.gdsPeriodQuantity) <= 0) {
+                            showCustomAlert('기간/수량은 0보다 큰 유효한 숫자여야 합니다.');
+                            return;
+                        }
 
 
-                // 실제 서버로 데이터 전송 로직 (fetch API 사용)
-                fetch(url, {
-                    method: 'POST', // 등록 및 수정 모두 POST로 가정
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        // HTTP 상태 코드가 200번대가 아닌 경우 오류 처리
-                        return response.text().then(text => { throw new Error(text) });
-                    }
-                    // 응답이 JSON이 아닐 수 있으므로 text()로 받아서 처리
-                    return response.text(); 
-                })
-                .then(result => {
-                    console.log('Success:', result); // 성공
-                    showCustomAlert(successMessage);
-                    goodsModal.classList.remove("show"); // 모달 닫기
-                    goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
-                    location.reload(); // 페이지 새로고침하여 목록 업데이트
-                })
-                .catch(error => {
-                    console.error('Error:', error); // 오류
-                    showCustomAlert(errorMessage + '\n' + error.message);
-                });
+                        // 실제 서버로 데이터 전송 로직 (fetch API 사용)
+                        fetch(url, {
+                            method: 'POST', // 등록 및 수정 모두 POST로 가정
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                // HTTP 상태 코드가 200번대가 아닌 경우 오류 처리
+                                return response.text().then(text => { throw new Error(text) });
+                            }
+                            // 응답이 JSON이 아닐 수 있으므로 text()로 받아서 처리
+                            return response.text(); 
+                        })
+                        .then(result => {
+                            console.log('Success:', result); // 성공
+                            showCustomAlert(successMessage);
+                            goodsModal.classList.remove("show"); // 모달 닫기
+                            goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
+                            location.reload(); // 페이지 새로고침하여 목록 업데이트
+                        })
+                        .catch(error => {
+                            console.error('Error:', error); // 오류
+                            showCustomAlert(errorMessage + '\n' + error.message);
+                        });
 		    });
 
             // 커스텀 알림 모달 함수 (alert() 대체)

@@ -5,8 +5,10 @@
 			<div class="container">
 				<div class="header-wrap">
 				    <div class="logo logo-width-1">
-				        <a href="/"><img class="d-flex align-items-center" src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
-				    </div>
+					    <a th:href="${session.SGrd == 'ENTER'} ? '/enter' : '/'">
+						    <img src="/user/assets/imgs/outpolic/logo.png" alt="logo" />
+						</a>
+					</div>
 					<div class="header-right">
 						<div class="search-style-2">
                             <form class="outpolicTopSearch" th:action="@{/user/userSearch}" method="get">
@@ -50,7 +52,7 @@
 										    <li th:if="${session.SCD != null}"><a th:href="@{/user/mypage}"><i class="fi fi-rs-user mr-10"></i>마이페이지</a></li>
 										    <li th:if="${session.SCD == null}"><a th:href="@{/login}"><i class="fi fi-rs-log-in mr-10"></i>로그인</a></li>
 										    <li th:if="${session.SCD != null}"><a th:href="@{/logout}"><i class="fi fi-rs-log-out mr-10"></i>로그아웃</a></li>
-										    <li><a th:href="@{/forgotPswd}"><i class="fi fi-rs-log-out mr-10"></i>비밀번호찾기</a></li>
+										    <li th:if="${session.SCD != null}"><a th:href="@{/pswdCng}"><i class="fi fi-rs-log-out mr-10"></i>비밀번호 재설정</a></li>
 										    <li th:if="${session.SCD == null}"><a th:href="@{/user/registerInfo}"><i class="fi fi-rs-log-out mr-10"></i>회원가입</a></li>
 										</ul>
 									</div>
@@ -144,7 +146,7 @@
 									    </ul>
 									</li>
 									<li>
-										<a th:href="@{/user/bookmark}">찜목록</a>
+										<a th:if="${session.SCD != null}" th:href="@{/bookmark}">찜목록</a>
 									</li>
 								</ul>
 							</nav>
