@@ -41,7 +41,7 @@
 									</div>
 								</div>
 								<div class="header-action-icon-2">
-									<a href="#">
+									<a th:href="${session.SCD != null} ? @{/enter/mypage} : @{/login}">
 									    <img class="svgInject" alt="Nest" src="/user/assets/imgs/theme/icons/icon-user.svg" />
 									</a>
 									<a th:href="${session.SCD != null} ? @{/enter/mypage} : @{/login}"><span class="lable ml-0" th:text="${session.SCD != null} ? '내 정보' : '로그인'"></span></a>

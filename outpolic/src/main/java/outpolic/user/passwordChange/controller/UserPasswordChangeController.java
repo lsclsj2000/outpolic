@@ -49,24 +49,23 @@ public class UserPasswordChangeController {
             response.put("msg", "로그인이 만료되었습니다. 다시 로그인해주세요.");
             return response;
         }
-
-        if (!newPassword.equals(confirmPassword)) {
-            response.put("status", "fail");
-            response.put("msg", "새 비밀번호와 확인이 일치하지 않습니다.");
-            return response;
+        String encodedPw = userPasswordChangeService.getEncodedPassword(memberCode);
+        if (!passwordEncoder.matches(currentPassword, encodedPw)) {
+        	response.put("status", "fail");
+        	response.put("msg", "현재 비밀번호가 일치하지 않습니다.");
+        	return response;
         }
+
         if(newPassword.equals(currentPassword)) {
         	response.put("sataus", "fail");
         	response.put("msg", "현재 비밀번호와 같은 비밀번호로는 변경하실 수 없습니다");
         	return response;
         }
-
-        String encodedPw = userPasswordChangeService.getEncodedPassword(memberCode);
-        if (!passwordEncoder.matches(currentPassword, encodedPw)) {
-            response.put("status", "fail");
-            response.put("msg", "현재 비밀번호가 일치하지 않습니다.");
-            return response;
-        }
+        
+		/*
+		 * if (!newPassword.equals(confirmPassword)) { response.put("status", "fail");
+		 * response.put("msg", "새 비밀번호와 확인이 일치하지 않습니다."); return response; }
+		 */
 
         userPasswordChangeService.updatePassword(memberCode, newPassword); 
         session.invalidate();

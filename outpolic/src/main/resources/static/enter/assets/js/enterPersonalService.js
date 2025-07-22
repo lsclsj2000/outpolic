@@ -204,10 +204,9 @@ $(document).ready(function () {
 			//수정된 info 정보 가져오기
 		const userInfo = collectUserInfo();
 		
-		saveUserInfo('/userEdit/update', userInfo, () => {
+		saveUserInfo('/enter/enterEdit/update', userInfo, () => {
 			alert('정보가 성공적으로 수정되었습니다.')
-			  window.location.href = '/user/mypage';
-			}
+			 window.location.href = '/enter/mypage';
 		});
 	});
 });

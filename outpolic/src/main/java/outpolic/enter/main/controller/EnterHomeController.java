@@ -30,6 +30,9 @@ public class EnterHomeController {
 	@GetMapping("") // 메인 페이지 URL
     public String enterMainPage(HttpSession session, Model model) {
 		
+    	String gred = (String) session.getAttribute("SGrd");
+        model.addAttribute("SGrd", gred);
+		
 		// ★★ 1. 세션에서 현재 로그인한 사용자의 ID를 가져옵니다. ★★
         String userId = (String) session.getAttribute("SCD"); // 비로그인 시 null이 됩니다.
         
@@ -49,8 +52,12 @@ public class EnterHomeController {
 		List<EnterRankingContentsDTO> popularOutsourcingList = enterRankingService.getRankingContentsList(userId);
 		model.addAttribute("findOSList", popularOutsourcingList);
 		 
-
-        return "enterMain";
+		if("ENTER".equals(gred)) {
+			return "enterMain";
+        }else{
+        	return "redirect:/";
+        }
+        
     }
 	
     @GetMapping("/enterListpage")

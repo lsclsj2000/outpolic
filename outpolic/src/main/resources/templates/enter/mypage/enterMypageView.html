@@ -128,7 +128,7 @@
 								<tr th:each="p, stat : ${portfolioList}" th:if="${not #lists.isEmpty(portfolioList)}">
 									<td th:text="${stat.count}" style="border:0px; border-bottom: solid 1px #ececec;">1</td>
 									<td class="start pt-20" style="border:0px; border-bottom: solid 1px #ececec;">
-										<a th:href="@{/#}"
+										<a th:href="@{/enter/contents/{prtf_cd}(prtf_cd = ${p.prtfCd})}"
 										   th:text="${p.prtfTtl}"
 										   class="text-dark text-decoration-none"
 										   onmouseover="this.style.color='#3BB77E'"
@@ -146,7 +146,7 @@
 							</tbody>
 						</table>
 					</div>
-				<a href="#" class="btn btn-primary w-25" style="border:none;">내 포트폴리오 모아보기</a>
+				<a th:href="@{/enter/portfolio/list}" class="btn btn-primary w-25" style="border:none;">내 포트폴리오 모아보기</a>
 			</div>
 		</div>
 		<div class="tab-pane fade" id="myOutsorcing">
@@ -166,7 +166,7 @@
 								<tr th:each="o, stat : ${outsourcingList}" th:if="${not #lists.isEmpty(outsourcingList)}">
 									<td th:text="${stat.count}" style="border:0px; border-bottom: solid 1px #ececec;">1</td>
 									<td class="start pt-20" style="border:0px; border-bottom: solid 1px #ececec;">
-										<a th:href="@{/#}"
+										<a th:href="@{/enter/contents/{os_cd}(os_cd = ${o.osCd})}"
 										   th:text="${o.osTtl}"
 										   class="text-dark text-decoration-none"
 										   onmouseover="this.style.color='#3BB77E'"
@@ -184,7 +184,7 @@
 							</tbody>
 						</table>
 					</div>
-				<a href="#" class="btn btn-primary w-25" style="border:none;" >내 외주글 모아보기</a>
+				<a th:href="@{/enter/outsourcing/list}" class="btn btn-primary w-25" style="border:none;" >내 외주글 모아보기</a>
 			</div>
 		</div>
 		<div class="tab-pane fade" id="myReview">
