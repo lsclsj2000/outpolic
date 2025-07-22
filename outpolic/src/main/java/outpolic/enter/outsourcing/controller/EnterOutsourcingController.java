@@ -42,11 +42,18 @@ import outpolic.enter.portfolio.domain.EnterPortfolio;
 import outpolic.enter.portfolio.service.EnterPortfolioService;
 import outpolic.systems.file.domain.FileMetaData;
 
+import org.slf4j.Logger; // Logger 임포트 추가
+import org.slf4j.LoggerFactory; // LoggerFactory 임포트 추가
+
+
 @Slf4j
 @Controller
 @RequestMapping("/enter/outsourcing")
 @RequiredArgsConstructor
 public class EnterOutsourcingController {
+	
+    private static final Logger log = LoggerFactory.getLogger(EnterOutsourcingController.class); // log 객체 명시적 선언
+
 	
     private final ObjectMapper objectMapper;
     private final EnterOutsourcingService outsourcingService;
@@ -202,13 +209,15 @@ public class EnterOutsourcingController {
     }
 
     // [!code diff --start]
-    @PostMapping("/save-step4")
+    @PostMapping("/save-step4") // <-- 이 메서드가 올바르게 존재하는지 확인
     @ResponseBody
     public ResponseEntity<Map<String, Object>> saveStep4(
             @RequestParam(value = "bodyImageFiles", required = false) List<MultipartFile> bodyImageFiles,
             @SessionAttribute("outsourcingFormData") OutsourcingFormDataDto formData) {
         
-        // 새로 업로드된 본문 이미지 파일을 formData에 저장
+        // 이 메서드가 호출되는지 확인하는 로그를 추가
+        log.info("saveStep4 호출됨. 받은 파일 수: {}", bodyImageFiles != null ? bodyImageFiles.size() : 0);
+        
         formData.setNewBodyImageFiles(bodyImageFiles);
         
         return ResponseEntity.ok(Map.of("success", true));
@@ -217,10 +226,41 @@ public class EnterOutsourcingController {
 
     @PostMapping("/complete-registration")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> completeRegistration(@SessionAttribute("outsourcingFormData") OutsourcingFormDataDto formData, HttpSession session) {
-        outsourcingService.completeOutsourcingRegistration(formData, session);
-        session.removeAttribute("outsourcingFormData");
-        return ResponseEntity.ok(Map.of("success", true, "message", "외주 등록이 완료되었습니다.", "redirectUrl", "/enter/outsourcing/list"));
+    public ResponseEntity<Map<String, Object>> completeRegistration(
+            // JS에서 FormData에 담아 보낸 모든 데이터를 RequestParam으로 받습니다.
+            @RequestParam("osTtl") String osTtl,
+            @RequestParam("osExpln") String osExpln,
+            @RequestParam("osStrtYmdt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime osStrtYmdt,
+            @RequestParam("osEndYmdt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime osEndYmdt,
+            @RequestParam("osAmt") BigDecimal osAmt,
+            @RequestParam("osFlfmtCnt") int osFlfmtCnt,
+            @RequestParam(value = "categoryCodes", required = false) List<String> categoryCodes,
+            @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "outsourcingThumbnailFile", required = false) MultipartFile thumbnailFile,
+            @RequestParam(value = "bodyImageFiles", required = false) List<MultipartFile> bodyImageFiles,
+            HttpSession session) {
+
+        try {
+            // 받은 파라미터를 DTO에 설정
+            OutsourcingFormDataDto formData = new OutsourcingFormDataDto();
+            formData.setOsTtl(osTtl);
+            formData.setOsExpln(osExpln);
+            formData.setOsStrtYmdt(osStrtYmdt);
+            formData.setOsEndYmdt(osEndYmdt);
+            formData.setOsAmt(osAmt);
+            formData.setOsFlfmtCnt(osFlfmtCnt);
+            formData.setCategoryCodes(categoryCodes);
+            formData.setTags(tags);
+            
+            // 서비스 메서드 호출 시 파일도 함께 전달
+            outsourcingService.completeOutsourcingRegistration(formData, thumbnailFile, bodyImageFiles, session);
+
+            return ResponseEntity.ok(Map.of("success", true, "message", "외주 등록이 완료되었습니다.", "redirectUrl", "/enter/outsourcing/list"));
+        } catch (Exception e) {
+            log.error("외주 최종 등록 실패", e); // log는 Slf4j 로거를 사용해야 합니다.
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "등록 중 오류가 발생했습니다: " + e.getMessage()));
+        }
     }
 
     // ======================================================

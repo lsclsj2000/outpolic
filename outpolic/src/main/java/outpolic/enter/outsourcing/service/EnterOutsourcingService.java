@@ -21,7 +21,7 @@ public interface EnterOutsourcingService {
     // 등록 프로세스
     String saveStep1Data(OutsourcingFormDataDto formData, HttpSession session);
     FileMetaData uploadThumbnail(MultipartFile file);
-    void completeOutsourcingRegistration(OutsourcingFormDataDto formData, HttpSession session); // [!code modified]
+    void completeOutsourcingRegistration(OutsourcingFormDataDto formData, MultipartFile thumbnailFile, List<MultipartFile> bodyImageFiles, HttpSession session);
     
     // 수정 프로세스
     void updateOutsourcingStep1(EnterOutsourcing outsourcingToUpdate);

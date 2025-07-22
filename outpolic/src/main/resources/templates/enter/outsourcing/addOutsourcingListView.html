@@ -530,18 +530,49 @@ min-height: 80px; padding: 10px;"></div>
                 showStep(currentStep);
             });
             $('.btn-step.submit').on('click', function() {
-                 if (!confirm('모든 등록을 완료하시겠습니까?')) return;
-                 const osCdValue = $('#osCd').val();
-                 if (!osCdValue) {
-                     alert('외주 코드가 생성되지 않았습니다. 1단계부터 다시 진행해주세요.');
-                     return;
-                 }
-                 
-                 $.ajax({
+                if (!confirm('모든 등록을 완료하시겠습니까?')) return;
+
+                // 1. FormData 객체를 생성합니다.
+                const finalFormData = new FormData();
+
+                // 2. 폼의 모든 데이터를 FormData에 담습니다.
+                // 1단계: 기본 정보
+                finalFormData.append('osTtl', $('#osTtl').val());
+                finalFormData.append('osExpln', $('#osExpln').val());
+                finalFormData.append('osStrtYmdt', $('#osStrtYmdt').val());
+                finalFormData.append('osEndYmdt', $('#osEndYmdt').val());
+                finalFormData.append('osAmt', $('#osAmt').val());
+                finalFormData.append('osFlfmtCnt', $('#osFlfmtCnt').val());
+
+                // 2단계: 카테고리 및 태그
+                // currentCategoryCodes는 카테고리 선택 시 업데이트되는 JS 변수여야 합니다.
+                if (currentCategoryCodes && currentCategoryCodes.length > 0) {
+                    currentCategoryCodes.forEach(code => {
+                        finalFormData.append('categoryCodes', code);
+                    });
+                }
+                finalFormData.append('tags', $('#tags').val());
+
+                // 3단계: 대표 이미지 파일
+                const thumbnailFile = $('#outsourcingThumbnailFile')[0].files[0];
+                if (thumbnailFile) {
+                    finalFormData.append('outsourcingThumbnailFile', thumbnailFile);
+                }
+
+                // 4단계: 본문 이미지 파일 목록 (bodyImageFiles는 JS 변수)
+                if (bodyImageFiles && bodyImageFiles.length > 0) {
+                    bodyImageFiles.forEach(file => {
+                        finalFormData.append('bodyImageFiles', file);
+                    });
+                }
+                
+                // 3. AJAX를 통해 FormData를 서버로 전송합니다.
+                $.ajax({
                     url: '/enter/outsourcing/complete-registration',
                     type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ osCd: osCdValue }),
+                    data: finalFormData, // FormData 객체를 전송
+                    processData: false,  // FormData 사용 시 필수 설정
+                    contentType: false,  // FormData 사용 시 필수 설정
                     success: function(res) {
                         if (res.success) {
                             alert(res.message);
@@ -550,11 +581,11 @@ min-height: 80px; padding: 10px;"></div>
                             alert('최종 등록 실패: ' + res.message);
                         }
                     },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX 통신 오류 (최종 등록):", status, error, xhr.responseText);
+                    error: function(xhr) {
+                        console.error("AJAX 통신 오류 (최종 등록):", xhr.responseText);
                         alert('최종 등록 중 서버 오류가 발생했습니다.');
                     }
-                 });
+                });
             });
 
             $('#outsourcingThumbnailFile').on('change', function(event) {

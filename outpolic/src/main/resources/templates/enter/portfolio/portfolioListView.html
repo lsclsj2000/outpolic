@@ -251,132 +251,127 @@
         }
 
         // --- openPortfolioModal 함수 (전역 스코프로 이동) ---
-     function openPortfolioModal(contentsId) {
+  function openPortfolioModal(contentsId) {
     const modalElement = document.getElementById('portfolioDetailModal');
     if (!modalElement) return;
-        
-    lastFocusedElement = document.activeElement; 
+
+    lastFocusedElement = document.activeElement;
 
     const infoSection = modalElement.querySelector('#modalInfoSection');
     const contentSection = modalElement.querySelector('#modalContentSection');
     const portfolioModal = new bootstrap.Modal(modalElement);
 
-    // 모달을 열 때 로딩 스피너만 먼저 보여줍니다.
     infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
-    contentSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`; // 이미지 영역도 로딩 스피너
+    contentSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
     portfolioModal.show();
-        
-    $.ajax({
-        url: `/user/api/contents/${contentsId}`, 
-        type: 'GET',
-        dataType: 'json',
-        success: function(detail) {
-            // ▼▼▼ 이 success 콜백 내부의 변수 선언 및 할당 순서를 다음과 같이 조정합니다. ▼▼▼
 
-            // 1. 필요한 기본 변수들 선언
-            const title = detail.contentsTitle || detail.enterName || '제목 없음';
-            const isBookmarked = detail.isBookmarked || false; 
-            const clCd = detail.clCd || '';
-            const prtfCd = detail.contentsId; 
-            
-            // 2. 썸네일 URL 가져오기 (포트폴리오 또는 외주)
-            const rawThumbnailUrl = detail.prtfThumbnailUrl || detail.osThumbnailUrl; 
-            let displayImageUrl = ''; // 전역 displayImageUrl이 아님, 여기 지역 변수로 선언
+    /**
+     * ✨✨✨ [새로 추가된 함수] ✨✨✨
+     * 백엔드에서 보낸 중복된 파일 경로를 수정하는 함수입니다.
+     * 예: 'path/image.pngimage.png' -> 'path/image.png'
+     * @param {string} path - 수정이 필요한 파일 경로
+     * @returns {string} - 수정된 파일 경로
+     */
+    function fixDuplicatedPath(path) {
+        if (!path) return path;
 
-            // 3. displayImageUrl을 먼저 정의
-            if (rawThumbnailUrl) {
-                if (!rawThumbnailUrl.startsWith('/attachment/')) {
-                    displayImageUrl = '/attachment/' + rawThumbnailUrl;
-                } else {
-                    displayImageUrl = rawThumbnailUrl;
+        // 파일 경로에서 마지막 '.'의 위치를 찾아 확장자를 분리합니다.
+        const lastDotIndex = path.lastIndexOf('.');
+        if (lastDotIndex === -1) return path; // 확장자가 없으면 원본 반환
+
+        const pathWithoutExtension = path.substring(0, lastDotIndex);
+        const extension = path.substring(lastDotIndex); // 예: ".png"
+
+        // 경로의 중간 지점을 계산합니다.
+        const halfIndex = pathWithoutExtension.length / 2;
+
+        // 경로의 앞 절반과 뒤 절반을 비교합니다.
+        const firstHalf = pathWithoutExtension.substring(0, halfIndex);
+        const secondHalf = pathWithoutExtension.substring(halfIndex);
+
+        // 두 부분이 정확히 같다면 중복된 것이므로, 절반만 사용합니다.
+        if (firstHalf === secondHalf) {
+            return firstHalf + extension; // 올바른 경로 반환
+        }
+
+        // 중복이 아니면 원본 경로를 그대로 반환합니다.
+        return path;
+    }
+
+     $.ajax({
+         url: `/user/api/contents/${contentsId}`,
+         type: 'GET',
+         dataType: 'json',
+         success: function(detail) {
+             // --- 좌측 정보(infoSection) 채우기 (기존과 동일) ---
+             const title = detail.contentsTitle || '제목 없음';
+             const isBookmarked = detail.isBookmarked || false; 
+             const clCd = detail.clCd || '';
+             const prtfCd = detail.contentsId; 
+             const infoHtml = `
+                 <div class="d-flex align-items-center mb-3">
+                     <img src="/user/assets/imgs/theme/icons/icon-user.svg" alt="logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
+                     <div><h6 class="mb-0 fw-bold">${detail.enterName || '회사명 없음'}</h6><small class="text-muted">MASTER</small></div>
+                     <div class="ms-auto"><a href="/enter/outsourcing-requests/inquiry-form/${prtfCd}" class="btn btn-primary">문의하기</a></div>
+                 </div>
+                 <hr class="my-3">
+                 <p class="text-muted mb-2">${detail.ctgryName || '카테고리 정보 없음'}</p>
+                 <h3 class="fw-bold mb-3">${title}</h3>
+                 <div class="d-flex align-items-center mb-4">
+                     <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center me-2 action-btn bookmark-btn" data-cl-cd="${clCd}" aria-label="Add To Wishlist">
+                         <i class="fi-rs-heart me-2 ${isBookmarked ? 'active' : ''}"></i> 찜하기
+                     </a>
+                     <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center">
+                         <i class="fi-rs-share me-2"></i> 공유하기
+                     </a>
+                 </div>
+                 <div class="mb-4">
+                     <h6 class="fw-bold">프로젝트 설명</h6>
+                     <p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody || '설명 없음'}</p>
+                 </div>
+                 <div class="mb-4">
+                     <h6 class="fw-bold">참여 기간</h6>
+                     <p class="text-muted">${(detail.participationStartDate ? new Date(detail.participationStartDate).toLocaleDateString() : '') + ' ~ ' + (detail.participationEndDate ? new Date(detail.participationEndDate).toLocaleDateString() : '')}</p>
+                 </div>
+                 <div class="mb-4">
+                     <h6 class="fw-bold">클라이언트</h6>
+                     <p class="text-muted">${detail.client || '정보 없음'}</p>
+                 </div>
+                 <div>
+                     <h6 class="fw-bold">업종</h6>
+                     <p class="text-muted">${detail.industry || '정보 없음'}</p>
+                 </div>`;
+             infoSection.innerHTML = infoHtml;
+            // --- 우측 콘텐츠 섹션(contentSection) 이미지 채우기 ---
+            let imagesHtml = '<div class="no-image-placeholder"><i class="fas fa-image"></i> 등록된 이미지가 없습니다.</div>';
+
+            if (detail.filesJson) {
+                try {
+                    const files = JSON.parse(detail.filesJson);
+                    if (files && files.length > 0) {
+                        imagesHtml = files.map(file => {
+                            // 1. 백엔드에서 받은 깨진 경로와, 정상적인 서버 파일명을 가져옵니다.
+                            let buggyPath = file.filePath;
+                            let correctServerName = file.fileNewName; // DTO에 fileNewName(또는 fileSrvrNm)이 포함되어 있어야 합니다.
+
+                            // 2. 깨진 경로에서 뒤에 붙은 중복된 파일명을 제거하여 올바른 경로로 복구합니다.
+                            if (buggyPath && correctServerName && buggyPath.endsWith(correctServerName)) {
+                                buggyPath = buggyPath.substring(0, buggyPath.length - correctServerName.length);
+                            }
+                            
+                            // 3. 최종 URL을 생성합니다.
+                            const imageUrl = buggyPath.startsWith('/attachment/') ? buggyPath : '/attachment/' + buggyPath;
+                            
+                            return `<img src="${imageUrl}" alt="${file.fileOriginalName || '포트폴리오 이미지'}" class="img-fluid" style="margin-bottom: 15px;">`;
+                        }).join('');
+                    }
+                } catch (e) {
+                    console.error("filesJson 파싱 에러:", e);
+                    imagesHtml = '<p class="text-center text-danger">이미지를 불러오는 중 오류가 발생했습니다.</p>';
                 }
             }
             
-            // 4. infoHtml 정의 (displayImageUrl이 아닌 detail 객체의 다른 정보들을 사용)
-            const infoHtml = `
-                <div class="d-flex align-items-center mb-3">
-                    <img src="/user/assets/imgs/theme/icons/icon-user.svg" alt="logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
-                    <div>
-                        <h6 class="mb-0 fw-bold">${detail.enterName || '회사명 없음'}</h6>
-                        <small class="text-muted">MASTER</small>
-                    </div>
-                    <div class="ms-auto">
-                        <a href="/enter/outsourcing-requests/inquiry-form/${prtfCd}" class="btn btn-primary">문의하기</a>
-                    </div>
-                </div>
-        
-                <hr class="my-3">
-        
-                <p class="text-muted mb-2">${detail.ctgryName || '카테고리 정보 없음'}</p>
-                <h3 class="fw-bold mb-3">${title}</h3>
-                
-                <div class="d-flex align-items-center mb-4">
-                    <a href="javascript:void(0);" 
-                       class="btn btn-outline-secondary d-flex align-items-center me-2 action-btn bookmark-btn" 
-                       data-cl-cd="${clCd}" 
-                       aria-label="Add To Wishlist">
-                        <i class="fi-rs-heart me-2 ${isBookmarked ? 'active' : ''}"></i> 찜하기
-                    </a>
-                    <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center">
-                        <i class="fi-rs-share me-2"></i> 공유하기
-                    </a>
-                </div>
-        
-                <div class="mb-4">
-                    <span class="badge bg-light text-dark border me-1 px-3 py-2">#상세페이지</span>
-                </div>
-                <div class="mb-4">
-                    <h6 class="fw-bold">프로젝트 설명</h6>
-                    <p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody || '설명 없음'}</p>
-                </div>
-                <div class="mb-4">
-                    <h6 class="fw-bold">참여 기간</h6>
-                    <p class="text-muted">${(detail.participationStartDate ? new Date(detail.participationStartDate).toLocaleDateString() : '') + ' ~ ' + (detail.participationEndDate ? new Date(detail.participationEndDate).toLocaleDateString() : '')}</p>
-                </div>
-                <div class="mb-4">
-                    <h6 class="fw-bold">클라이언트</h6>
-                    <p class="text-muted">${detail.client || '정보 없음'}</p>
-                </div>
-                <div>
-                    <h6 class="fw-bold">업종</h6>
-                    <p class="text-muted">${detail.industry || '정보 없음'}</p>
-                </div>
-            `;
-            infoSection.innerHTML = infoHtml; // infoHtml을 먼저 업데이트
-
-            // [!code diff --start]
-            // 5. contentSection에 이미지 및 본문 내용 채우기
-            let contentHtml = '';
-
-            // 썸네일 이미지 (displayImageUrl이 이미 /attachment/ 경로를 포함하고 있다고 가정)
-            if (displayImageUrl) {
-                contentHtml += `<img src="${displayImageUrl}" class="img-fluid" alt="대표 이미지">`;
-            } else {
-                contentHtml += `<div class="no-image-placeholder"><i class="fas fa-image"></i> 대표 이미지 없음</div>`;
-            }
-
-            // 본문 이미지들
-            if (detail.bodyImages && detail.bodyImages.length > 0) {
-                detail.bodyImages.forEach(img => {
-                    // 서비스 레이어에서 이미 /attachment/ 경로로 변환되었으므로 그대로 사용
-                    contentHtml += `<img src="${img.filePath}" class="img-fluid" alt="본문 이미지">`;
-                });
-            } else if (!displayImageUrl) { // 썸네일도 없고, 본문 이미지도 없으면
-                 // contentHtml += `<p class="text-center text-muted">추가 이미지가 없습니다.</p>`; // 이미 플레이스홀더가 있다면 중복될 수 있음
-            }
-
-            contentSection.innerHTML = `<div class="modal-portfolio-content">${contentHtml}</div>`;
-            // [!code diff --end]
-
-            // 모달 내 찜하기 버튼에 클릭 이벤트 리스너 다시 추가
-            const modalBookmarkBtn = modalElement.querySelector('.bookmark-btn');
-            if (modalBookmarkBtn) {
-                modalBookmarkBtn.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    toggleBookmark(this);
-                });
-            }
+            contentSection.innerHTML = `<div class="modal-portfolio-content">${imagesHtml}</div>`;
         },
         error: function(xhr) {
             infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>';
