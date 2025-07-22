@@ -67,6 +67,11 @@ public class UserLoginController {
                 //날짜 업데이트
                 userLoginService.updateLoginDate(memberInfo);    
                 log.info("로그인 날짜 업데이트 호출: {}", member.getMemberId());
+                // 회원 프로필 이미지 
+                String profileImg = memberInfo.getMemberImg();
+                session.setAttribute("SProfilePath", 
+                	    (profileImg != null) ? "/" + profileImg : "/user/assets/imgs/outpolic/cutecat.jpg");
+                
 	            if("USER".equals(grade)) {
 	            	
 	            	redirectAttributes.addFlashAttribute("success", "로그인에 성공하였습니다");
