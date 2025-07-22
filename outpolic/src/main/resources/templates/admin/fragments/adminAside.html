@@ -80,15 +80,11 @@
 				        <a th:href="@{/admin/selectTag}">태그 조회</a>
 				    </div>
 				</li>
-				<li class="menu-item has-submenu">
-					<a class="menu-link" href="#">
-					    <i class="icon material-icons md-comment"></i>
-					    <span class="text">상품 관리</span>
-					</a>
-					<div class="submenu">
-				        <a th:href="@{/admin/goodsList}">상품 조회</a>
-				        <a th:href="@{/admin/goodsAdd}">상품 추가</a>
-				    </div>
+				<li class="menu-item">
+				    <a class="menu-link" th:href="@{/admin/goodsList}">
+				        <i class="icon material-icons md-comment"></i>
+				        <span class="text">상품 관리</span>
+				    </a>
 				</li>
 				<li class="menu-item has-submenu">
 					<a class="menu-link" href="#">

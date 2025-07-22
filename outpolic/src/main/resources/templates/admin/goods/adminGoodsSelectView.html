@@ -37,7 +37,7 @@
 				                                <th scope="col" class="end text-center col-1">Action</th>
 				                            </tr>
 				                        </thead>
-				                        <tbody th:if="${goodsList != null}">
+				                        <tbody id="goodsTableBody" th:if="${goodsList != null}">
 											<tr class="start pt-30"
 											    style="border:0px; border-bottom: solid 1px #ececec;"
 											    th:each="g : ${goodsList}">
@@ -72,81 +72,72 @@
 		            </div>
 		        </div>
 		    </section>
-		    <!-- 상품 등록/수정 모달 -->
-			<div id="goodsModal" class="SR_modal">
+		    <!-- 상품 등록 모달 -->
+			<div id="registerGoodsModal" class="SR_modal">
 				<div class="SR_modal-content-wrapper">
 					<div class="SR_popup-header">
 						<h2>상품 등록</h2>
 						<button class="SR_close-button">&times;</button>
 					</div>
-	                <form id="goodsForm">
-						<input type="hidden" id="modalGdsCd" name="gdsCd" /> <!-- 상품 코드 (수정 시 사용) -->
+	                <form id="registerGoodsForm">
+						<input type="hidden" id="registerGdsCd" name="gdsCd" />
 						<div class="row mb-4">
 					       <label class="col-lg-3 col-form-label">등록자</label>
 					       <div class="col-lg-4">
-					           <input type="text" id="admCd" name="admCd" class="form-control" value="ADM_C001" readonly/>
+					           <input type="text" id="registerAdmCd" name="gdsRegAdmCd" class="form-control" readonly/>
 					       </div>
-					       <!-- col.// -->
 						</div>
-						<!-- row.// -->
 						<div class="row mb-4">
 						    <label class="col-lg-3 col-form-label">상품명</label>
 						    <div class="col-lg-9">
-						        <input type="text" id="gdsNm" name="gdsNm" class="form-control" placeholder="상품명을 입력하세요"/>
+						        <input type="text" id="registerGdsNm" name="gdsNm" class="form-control" placeholder="상품명을 입력하세요" required/>
 						    </div>
-						    <!-- col.// -->
 						</div>
-						<!-- row.// -->
 						<div class="row mb-4">
 						    <label class="col-lg-3 col-form-label">가격</label>
 						    <div class="col-lg-9">
-						        <input type="number" id="gdsAmt" name="gdsAmt" class="form-control" placeholder="가격을 입력하세요"/>
+						        <input type="number" id="registerGdsAmt" name="gdsAmt" class="form-control" placeholder="가격을 입력하세요" required min="1"/>
 						    </div>
-						    <!-- col.// -->
 						</div>
-						<!-- row.// -->
                         <div class="row mb-4">
                             <label class="col-lg-3 col-form-label">상품 종류</label>
                             <div class="col-lg-9">
-                                <select id="gdsType" name="gdsType" class="form-select">
+                                <select id="registerGdsType" name="gdsType" class="form-select" required>
                                     <option value="">선택하세요</option>
                                     <option value="구독권">구독권</option>
                                     <option value="이용권">이용권</option>
                                 </select>
                             </div>
-                            <!-- col.// -->
                         </div>
-                        <!-- row.// -->
                         <div class="row mb-4">
                             <label class="col-lg-3 col-form-label">기간 / 수량</label>
                             <div class="col-lg-9">
-                                <input type="number" id="gdsPeriodQuantity" name="gdsPeriodQuantity" class="form-control" placeholder="기간 또는 수량을 입력하세요"/>
+                                <input type="number" id="registerGdsPeriodQuantity" name="gdsPeriodQuantity" class="form-control" placeholder="기간 또는 수량을 입력하세요" required min="1"/>
                             </div>
-                            <!-- col.// -->
                         </div>
-                        <!-- row.// -->
                         <div class="row mb-4">
                             <label class="col-lg-3 col-form-label">단위</label>
                             <div class="col-lg-9">
-                                <select id="gdsUnit" name="gdsUnit" class="form-select">
+                                <select id="registerGdsUnit" name="gdsUnit" class="form-select" required>
                                     <option value="">선택하세요</option>
                                     <option value="일">일</option>
                                     <option value="개수">개수</option>
                                 </select>
                             </div>
-                            <!-- col.// -->
                         </div>
                         <div class="row mb-4">
-                            <label class="col-lg-3 col-form-label">상품 상태</label> <!-- 상품 상태 필드 추가 -->
-                            <div class="col-lg-9">
-                                <select id="gdsStatus" name="gdsStatus" class="form-select">
-                                    <option value="1">활성</option>
-                                    <option value="0">비활성</option>
-                                </select>
+                            <label class="col-lg-3 col-form-label">상품 상태</label>
+                            <div class="col-lg-9" style="padding-top: 10px;">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gdsStatus" id="registerStatusActive" value="1" required checked>
+                                    <label class="form-check-label" for="registerStatusActive">활성</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gdsStatus" id="registerStatusInactive" value="0">
+                                    <label class="form-check-label" for="registerStatusInactive">비활성</label>
+                                </div>
                             </div>
-                            <!-- col.// -->
                         </div>
-                        <!-- row.// -->
 						<br />
 						<div style="display: flex; flex-direction: row-reverse;">
 					     	<button class="btn btn-primary" type="submit">등록</button>
@@ -154,222 +145,349 @@
 					</form>
 				</div>
 			</div>
+
+            <div id="editGoodsModal" class="SR_modal">
+			    <div class="SR_modal-content-wrapper">
+			        <div class="SR_popup-header">
+			            <h2>상품 수정</h2>
+			            <button class="SR_close-button">&times;</button>
+			        </div>
+			        <form id="editGoodsForm">
+					    <input type="hidden" id="editGdsCd" name="gdsCd" />
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">등록자</label>
+					        <div class="col-lg-4">
+					            <input type="text" id="editRegAdmCd" name="gdsRegAdmCd" class="form-control" readonly/>
+					        </div>
+					    </div>
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">등록일시</label>
+					        <div class="col-lg-9">
+					            <input type="text" id="editRegYmdt" name="gdsRegYmdt" class="form-control" readonly/>
+					        </div>
+					    </div>
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">상품명</label>
+					        <div class="col-lg-9">
+					            <input type="text" id="editGdsNm" name="gdsNm" class="form-control" readonly/>
+					        </div>
+					    </div>
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">가격</label>
+					        <div class="col-lg-9">
+					            <input type="number" id="editGdsAmt" name="gdsAmt" class="form-control" readonly min="1"/>
+					        </div>
+					    </div>
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">상품 종류</label>
+					        <div class="col-lg-9">
+					            <select id="editGdsType" class="form-select" disabled>
+					                <option value="">선택하세요</option>
+					                <option value="구독권">구독권</option>
+					                <option value="이용권">이용권</option>
+					            </select>
+					            <input type="hidden" id="hiddenGdsType" name="gdsType" />
+					        </div>
+					    </div>
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">기간 / 수량</label>
+					        <div class="col-lg-9">
+					            <input type="number" id="editGdsPeriodQuantity" name="gdsPeriodQuantity" class="form-control" readonly min="1"/>
+					        </div>
+					    </div>
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">단위</label>
+					        <div class="col-lg-9">
+					            <select id="editGdsUnit" class="form-select" disabled>
+					                <option value="">선택하세요</option>
+					                <option value="일">일</option>
+					                <option value="개수">개수</option>
+					            </select>
+					            <input type="hidden" id="hiddenGdsUnit" name="gdsUnit" />
+					        </div>
+					    </div>
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">상품 상태</label>
+					        <div class="col-lg-9" style="padding-top: 10px;">
+					            <div class="form-check form-check-inline">
+					                <input class="form-check-input" type="radio" name="gdsStatus" id="editStatusActive" value="1" required>
+					                <label class="form-check-label" for="editStatusActive">활성</label>
+					            </div>
+					            <div class="form-check form-check-inline">
+					                <input class="form-check-input" type="radio" name="gdsStatus" id="editStatusInactive" value="0">
+					                <label class="form-check-label" for="editStatusInactive">비활성</label>
+					            </div>
+					        </div>
+					    </div>
+					    <br />
+					    <div style="display: flex; flex-direction: row-reverse;">
+					        <button class="btn btn-primary" type="submit">저장</button>
+					    </div>
+					</form>
+			    </div>
+			</div>
 		</th:block>
 		<th:block layout:fragment="jsScript">
-		<script>
+		<script th:inline="javascript">
+		const sessionAdminCode = /*[[${adminCode}]]*/ 'ADM_TEST';
+		
 		document.addEventListener('DOMContentLoaded', function () {
-            console.log('DOM Content Loaded - Script Start'); // 스크립트 시작 확인
+            console.log('DOM Content Loaded - Script Start');
 
-		    const goodsModal = document.getElementById('goodsModal');
-		    const closeButton = goodsModal.querySelector('.SR_close-button');
-		    const registerGoodsBtn = document.getElementById('registerGoodsBtn');
-            console.log('registerGoodsBtn element:', registerGoodsBtn); // 요소가 찾아졌는지 확인
-		    
-		    const openGoodsModalButtons = document.querySelectorAll('.open-goods-modal');
-            const goodsForm = document.getElementById('goodsForm'); // goodsForm을 올바르게 타겟팅
+            // 등록 모달 관련 요소
+            const registerGoodsModal = document.getElementById('registerGoodsModal');
+            const registerGoodsBtn = document.getElementById('registerGoodsBtn');
+            const registerCloseButton = registerGoodsModal?.querySelector('.SR_close-button');
+            const registerGoodsForm = document.getElementById('registerGoodsForm');
+            
+            // 수정 모달 관련 요소
+            const editGoodsModal = document.getElementById('editGoodsModal');
+            const editCloseButton = editGoodsModal?.querySelector('.SR_close-button');
+            const goodsTableBody = document.getElementById('goodsTableBody');
+            const editGoodsForm = document.getElementById('editGoodsForm');
 
-            console.log('Found goodsModal:', goodsModal);
-            console.log('Found goodsForm:', goodsForm);
+            let goodsList = []; // 상품 데이터를 저장할 배열
 
-            // Thymeleaf에서 전달된 상품 목록 데이터 (JavaScript에서 사용)
-            // goodsList가 null인 경우 빈 배열로 초기화
-            const goodsList = /*[[ ${goodsList != null ? goodsList : '[]'} ]]*/ [];
-            console.log('Goods List from Thymeleaf:', goodsList); // Thymeleaf 데이터 확인
+            // 날짜 포맷팅 함수
+            const formatDateTime = (timestamp) => {
+                if (!timestamp) return '';
+                const date = new Date(timestamp);
+                const year = date.getFullYear();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                const seconds = date.getSeconds().toString().padStart(2, '0');
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            };
 
-            // 모달 필드를 초기화하는 함수
-            function resetGoodsForm() {
-                goodsForm.reset(); // 모든 폼 필드 초기화
-                document.getElementById('modalGdsCd').value = ''; // 숨겨진 상품 코드 초기화
-                goodsModal.querySelector('h2').textContent = '상품 등록'; // 모달 제목 변경
-                document.getElementById('admCd').value = 'ADM_C001'; // 등록자 필드 값 설정 (기본값)
-                document.getElementById('gdsStatus').value = '1'; // 상품 상태 기본값 '활성'(1)으로 설정
-                console.log('Goods form reset.');
+            // 상품 데이터를 테이블에 렌더링하는 함수
+            function renderGoodsTable(data) {
+                goodsTableBody.innerHTML = ''; // 기존 내용 지우기
+                if (!data || data.length === 0) {
+                    goodsTableBody.innerHTML = '<tr><td colspan="11" class="text-center">등록된 상품이 없습니다.</td></tr>';
+                    return;
+                }
+
+                data.forEach(g => {
+                    const row = document.createElement('tr');
+                    row.classList.add('start', 'pt-30');
+                    row.style.cssText = 'border:0px; border-bottom: solid 1px #ececec;';
+
+                    row.innerHTML = `
+                        <td class="start text-center"><span>${g.gdsCd || ''}</span></td>
+                        <td class="text-center">${g.gdsNm || ''}</td>
+                        <td class="text-center">${g.gdsAmt || ''}</td>
+                        <td class="text-center">
+                            ${g.gdsType === '구독권' ? '<span class="badge rounded-pill alert-success">구독권</span>' : 
+                            g.gdsType === '이용권' ? '<span class="badge rounded-pill alert-info">이용권</span>' : ''}
+                        </td>
+                        <td class="text-center">${g.gdsPeriodQuantity || ''}</td>
+                        <td class="text-center">${g.gdsUnit || ''}</td>
+                        <td class="text-center">
+                            ${g.gdsStatus === 1 ? '<span class="badge rounded-pill alert-success">활성</span>' : 
+                            g.gdsStatus === 0 ? '<span class="badge rounded-pill alert-danger">비활성</span>' : ''}
+                        </td>
+                        <td class="text-center">${formatDateTime(g.gdsRegYmdt) || ''}</td>
+                        <td class="text-center">${g.gdsMdfcnAdmCd || ''}</td>
+                        <td class="text-center">${formatDateTime(g.gdsMdfcnYmdt) || ''}</td>
+                        <td class="text-center">
+                            <a href="#" class="btn btn-md rounded font-sm open-goods-modal" data-gds-cd="${g.gdsCd}">수정</a>
+                        </td>
+                    `;
+                    goodsTableBody.appendChild(row);
+                });
             }
 
-		    // "등록" 버튼 클릭 시 모달 열기 (새 상품 등록용)
-		    if (registerGoodsBtn) {
-		        registerGoodsBtn.addEventListener('click', function () {
-                    console.log('Register Goods Button Clicked!'); // 클릭 이벤트 확인
-		            resetGoodsForm(); // 폼 초기화
-		            goodsModal.classList.add('show'); // 모달 표시
-                    goodsModal.style.display = 'flex'; // ✨ 추가: CSS 충돌 방지를 위해 inline style로 display 설정
-		            document.body.style.overflow = 'hidden'; // 스크롤 방지
-                    console.log('Modal should be visible now. goodsModal classes:', goodsModal.classList);
-                    console.log('Modal computed style display (after click):', window.getComputedStyle(goodsModal).display);
-		        });
-		    } else {
-                console.error('Error: Register Goods Button not found!'); // 버튼을 찾지 못한 경우 오류 메시지
+            // 상품 목록 데이터를 서버에서 다시 가져와 렌더링하는 함수
+            async function fetchAndReRenderGoods() {
+                goodsTableBody.innerHTML = '<tr><td colspan="11" class="text-center">상품 데이터를 불러오는 중...</td></tr>';
+                try {
+                    const response = await fetch('/admin/goodsListApi');
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    goodsList = await response.json();
+                    renderGoodsTable(goodsList);
+                    attachOpenModalListeners();
+                } catch (error) {
+                    console.error('Error fetching goods list:', error);
+                    goodsTableBody.innerHTML = '<tr><td colspan="11" class="text-center text-danger">상품 데이터를 불러오는데 실패했습니다.</td></tr>';
+                    showCustomAlert('상품 데이터를 불러오는데 실패했습니다.');
+                }
             }
-	
-		    // "수정" 버튼 클릭 시 모달 열기 (기존 상품 수정용)
-		    openGoodsModalButtons.forEach(button => {
-		        button.addEventListener('click', function (event) {
-		            event.preventDefault(); // 기본 링크 동작 방지
-		            const gdsCd = String(this.getAttribute('data-gds-cd')); // 상품 코드 가져오기 및 문자열로 변환
-                    console.log('Open Goods Modal Button Clicked for GdsCd:', gdsCd); // 수정 버튼 클릭 확인
-		            
-                    // goodsList에서 해당 상품 코드에 맞는 데이터 찾기
-                    const selectedGoods = goodsList.find(g => String(g.gdsCd) === gdsCd); // g.gdsCd도 문자열로 변환하여 비교
 
-                    if (selectedGoods) {
-                        // 모달 필드를 데이터로 채우기
-                        document.getElementById('modalGdsCd').value = selectedGoods.gdsCd;
-                        document.getElementById('admCd').value = selectedGoods.gdsRegAdmCd || 'ADM_C001'; // 등록자 (gdsRegAdmCd 사용)
-                        document.getElementById('gdsNm').value = selectedGoods.gdsNm;
-                        document.getElementById('gdsAmt').value = selectedGoods.gdsAmt;
-                        document.getElementById('gdsType').value = selectedGoods.gdsType;
-                        document.getElementById('gdsPeriodQuantity').value = selectedGoods.gdsPeriodQuantity;
-                        document.getElementById('gdsUnit').value = selectedGoods.gdsUnit;
-                        document.getElementById('gdsStatus').value = selectedGoods.gdsStatus; // 상품 상태 값 설정
+            // 등록 모달 필드를 초기화하는 함수
+            function resetRegisterGoodsForm() {
+                registerGoodsForm.reset();
+                document.getElementById('registerGdsCd').value = '';
+                registerGoodsModal.querySelector('h2').textContent = '상품 등록';
+                
+                /**
+                 * [변경점 2] 하드코딩된 값 대신, 세션에서 가져온 관리자 코드로 설정합니다.
+                 */
+                document.getElementById('registerAdmCd').value = sessionAdminCode; 
+                
+                document.getElementById('registerStatusActive').checked = true; // '활성'을 기본으로 체크
+                console.log('Register goods form reset.');
+            }
 
-                        goodsModal.querySelector('h2').textContent = '상품 수정'; // 모달 제목 변경
-                        goodsModal.classList.add('show'); // 모달 표시
-                        goodsModal.style.display = 'flex'; // ✨ 추가: CSS 충돌 방지를 위해 inline style로 display 설정
-                        document.body.style.overflow = 'hidden'; // 스크롤 방지
-                        console.log('Modal should be visible now for edit. goodsModal classes:', goodsModal.classList);
-                        console.log('Modal computed style display (for edit):', window.getComputedStyle(goodsModal).display);
+            if (registerGoodsBtn) {
+                registerGoodsBtn.addEventListener('click', function () {
+                    resetRegisterGoodsForm();
+                    registerGoodsModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+
+            registerCloseButton?.addEventListener('click', () => {
+                registerGoodsModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+
+            function attachOpenModalListeners() {
+                const openGoodsModalButtons = document.querySelectorAll('.open-goods-modal');
+                openGoodsModalButtons.forEach(button => {
+                    button.removeEventListener('click', handleOpenEditGoodsModalClick);
+                    button.addEventListener('click', handleOpenEditGoodsModalClick);
+
+                });
+            }
+
+            async function handleOpenEditGoodsModalClick(event) {
+                event.preventDefault();
+                const gdsCd = String(this.getAttribute('data-gds-cd'));
+
+                try {
+                    const response = await fetch(`/admin/getGoodsDetail?code=${gdsCd}`);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+
+                 // 수정 모달 필드 채우기
+                    document.getElementById('editGdsCd').value = data.gdsCd || '';
+                    document.getElementById('editRegAdmCd').value = data.gdsRegAdmCd || '';
+                    document.getElementById('editRegYmdt').value = formatDateTime(data.gdsRegYmdt) || '';
+                    document.getElementById('editGdsNm').value = data.gdsNm || '';
+                    document.getElementById('editGdsAmt').value = data.gdsAmt || '';
+
+                    // '상품 종류' 값을 보이는 select와 숨겨진 input 모두에 설정
+                    document.getElementById('editGdsType').value = data.gdsType || '';
+                    document.getElementById('hiddenGdsType').value = data.gdsType || '';
+
+                    document.getElementById('editGdsPeriodQuantity').value = data.gdsPeriodQuantity || '';
+
+                    // '단위' 값을 보이는 select와 숨겨진 input 모두에 설정
+                    document.getElementById('editGdsUnit').value = data.gdsUnit || '';
+                    document.getElementById('hiddenGdsUnit').value = data.gdsUnit || '';
+
+                    if (data.gdsStatus === 1) {
+                        document.getElementById('editStatusActive').checked = true;
                     } else {
-                        console.error('Product data not found:', gdsCd);
-                        showCustomAlert('상품 정보를 불러오는데 실패했습니다.'); // 상품 정보 로드 실패 메시지
+                        document.getElementById('editStatusInactive').checked = true;
                     }
-		        });
-		    });
-	
-		    // 모달 닫기 버튼 클릭 시
-		    closeButton.addEventListener('click', function () {
-                        console.log('Close button clicked.'); // 닫기 버튼 클릭 확인
-		        goodsModal.classList.remove('show'); // 모달 숨기기
-                        goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
-		        document.body.style.overflow = 'auto'; // 스크롤 허용
-		    });
-	
-		    // 모달 외부 클릭 시 닫기
-		    window.addEventListener('click', function (event) {
-		        if (event.target === goodsModal) {
-                            console.log('Clicked outside modal.'); // 모달 외부 클릭 확인
-		            goodsModal.classList.remove('show'); // 모달 숨기기
-                            goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
-		            document.body.style.overflow = 'auto'; // 스크롤 허용
-		        }
-		    });
-	
-		    // 상품 등록/수정 폼 제출 이벤트
-		    goodsForm.addEventListener('submit', function (event) {
-		        event.preventDefault(); // 기본 폼 제출 방지
-                        console.log('Goods Form Submitted!'); // 폼 제출 이벤트 확인
 
-                        const formData = new FormData(goodsForm);
-                        const data = {};
-                        for (let [key, value] of formData.entries()) {
-                            data[key] = value;
-                        }
+                    editGoodsModal.querySelector('h2').textContent = '상품 수정';
+                    editGoodsModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                } catch (err) {
+                    console.error('상품 상세 데이터 조회 오류:', err);
+                    showCustomAlert('상품 정보를 불러오지 못했습니다.');
+                }
+            }
 
-                        // gdsStatus를 숫자로 변환 (데이터베이스 tinyint(1)에 맞추기 위해)
-                        data.gdsStatus = parseInt(data.gdsStatus);
+            editCloseButton?.addEventListener('click', () => {
+                editGoodsModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
 
-                        const isUpdate = data.gdsCd !== ''; // modalGdsCd에 값이 있으면 수정 모드
+            window.addEventListener('click', (event) => {
+                if (event.target === registerGoodsModal) {
+                    registerGoodsModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+                if (event.target === editGoodsModal) {
+                    editGoodsModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
 
-                        let url = '/admin/insert'; // 등록 API 엔드포인트 (기존 /admin/registerGoods에서 변경)
-                        let successMessage = '상품이 성공적으로 등록되었습니다!'; // 상품 등록 성공 메시지
-                        let errorMessage = '상품 등록에 실패했습니다.'; // 상품 등록 실패 메시지
+            registerGoodsForm?.addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const formData = new FormData(registerGoodsForm);
+                const data = {};
+                formData.forEach((value, key) => { data[key] = value; });
 
-                        if (isUpdate) {
-                            url = '/admin/updateGoods'; // 수정 API 엔드포인트
+                try {
+                    const response = await fetch('/admin/insert', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
 
-                            // --- 추가: 수정 시 수정자 코드와 수정일시 추가 ---
-                            // 현재는 임의의 관리자 코드 (실제로는 세션에서 가져와야 함)
-                            data.gdsMdfcnAdmCd = 'ADM_C001'; 
-                            // 현재 시간 (서버에서 설정할 수도 있지만, 프론트에서도 보낼 수 있음)
-                            data.gdsMdfcnYmdt = new Date().toISOString().slice(0, 19).replace('T', ' '); 
-                            // --------------------------------------------------
+                    const resultText = await response.text();
+                    if (!response.ok) throw new Error(resultText);
+                    
+                    showCustomAlert(resultText);
+                    registerGoodsModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    await fetchAndReRenderGoods();
+                } catch (error) {
+                    console.error('등록 오류:', error);
+                    showCustomAlert('상품 등록 중 오류가 발생했습니다: ' + error.message);
+                }
+            });
 
-                            successMessage = '상품이 성공적으로 수정되었습니다!'; // 상품 수정 성공 메시지
-                            errorMessage = '상품 수정에 실패했습니다.'; // 상품 수정 실패 메시지
-                        }
+            editGoodsForm?.addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const formData = new FormData(editGoodsForm);
+                const data = {};
+                formData.forEach((value, key) => { data[key] = value; });
+                
+                try {
+                    const response = await fetch('/admin/updateGoods', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const resultText = await response.text();
+                    if (!response.ok) throw new Error(resultText);
 
-                        console.log("Data to send:", data); // 전송할 데이터
+                    showCustomAlert(resultText);
+                    editGoodsModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    await fetchAndReRenderGoods();
+                } catch (error) {
+                    console.error('수정 오류:', error);
+                    showCustomAlert('상품 수정 중 오류가 발생했습니다: ' + error.message);
+                }
+            });
 
-                        // 프론트엔드 유효성 검사 추가 (위에 제안된 내용)
-                        if (!data.gdsNm || !data.gdsAmt || !data.gdsType || !data.gdsPeriodQuantity || !data.gdsUnit) {
-                            showCustomAlert('모든 필수 항목을 입력해주세요.');
-                            return; // 폼 제출 중단
-                        }
-
-                        if (isNaN(data.gdsAmt) || parseFloat(data.gdsAmt) <= 0) {
-                            showCustomAlert('가격은 0보다 큰 유효한 숫자여야 합니다.');
-                            return;
-                        }
-
-                        if (isNaN(data.gdsPeriodQuantity) || parseInt(data.gdsPeriodQuantity) <= 0) {
-                            showCustomAlert('기간/수량은 0보다 큰 유효한 숫자여야 합니다.');
-                            return;
-                        }
-
-
-                        // 실제 서버로 데이터 전송 로직 (fetch API 사용)
-                        fetch(url, {
-                            method: 'POST', // 등록 및 수정 모두 POST로 가정
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(data)
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                // HTTP 상태 코드가 200번대가 아닌 경우 오류 처리
-                                return response.text().then(text => { throw new Error(text) });
-                            }
-                            // 응답이 JSON이 아닐 수 있으므로 text()로 받아서 처리
-                            return response.text(); 
-                        })
-                        .then(result => {
-                            console.log('Success:', result); // 성공
-                            showCustomAlert(successMessage);
-                            goodsModal.classList.remove("show"); // 모달 닫기
-                            goodsModal.style.display = 'none'; // ✨ 추가: inline style로 display 숨기기
-                            location.reload(); // 페이지 새로고침하여 목록 업데이트
-                        })
-                        .catch(error => {
-                            console.error('Error:', error); // 오류
-                            showCustomAlert(errorMessage + '\n' + error.message);
-                        });
-		    });
-
-            // 커스텀 알림 모달 함수 (alert() 대체)
             function showCustomAlert(message) {
                 const alertModal = document.createElement('div');
                 alertModal.classList.add('SR_modal');
-                alertModal.style.display = 'flex'; // 즉시 표시
-
+                alertModal.style.display = 'flex';
                 alertModal.innerHTML = `
                     <div class="SR_modal-content-wrapper" style="max-width: 400px; text-align: center;">
                         <div class="SR_popup-header">
                             <h2>알림</h2>
                             <button class="SR_close-button">&times;</button>
                         </div>
-                        <p>${message}</p>
-                        <div style="margin-top: 20px;">
+                        <p style="padding: 20px 0;">${message}</p>
+                        <div style="margin-top: 20px; padding-bottom: 20px;">
                             <button class="btn btn-primary" id="customAlertConfirmBtn">확인</button>
                         </div>
                     </div>
                 `;
                 document.body.appendChild(alertModal);
-
-                alertModal.querySelector('.SR_close-button').addEventListener('click', () => {
-                    document.body.removeChild(alertModal);
-                });
-                alertModal.querySelector('#customAlertConfirmBtn').addEventListener('click', () => {
-                    document.body.removeChild(alertModal);
-                });
-
+                const closeAndRemove = () => document.body.removeChild(alertModal);
+                alertModal.querySelector('.SR_close-button').addEventListener('click', closeAndRemove);
+                alertModal.querySelector('#customAlertConfirmBtn').addEventListener('click', closeAndRemove);
                 alertModal.addEventListener('click', (event) => {
-                    if (event.target === alertModal) {
-                        document.body.removeChild(alertModal);
-                    }
+                    if (event.target === alertModal) closeAndRemove();
                 });
             }
-            console.log('DOM Content Loaded - Script End'); // 스크립트 종료 확인
-		});
+
+            fetchAndReRenderGoods();
+        });
 		</script>
 	</th:block>
 	</body>
