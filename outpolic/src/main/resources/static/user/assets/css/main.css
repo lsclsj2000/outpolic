@@ -7097,6 +7097,7 @@ h6.post-title {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
+  padding-left: 60px;
 }
 
 .header-wrap .header-right {
