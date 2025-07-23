@@ -149,6 +149,7 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 	
 	@Override
 	public Page<UserAnn> getUserTotalList(Pageable pageable) {
+		// 전체 게시판 페이지네이션
 		int offset = (int) pageable.getOffset();
 		int limit = pageable.getPageSize();
 
@@ -158,6 +159,62 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 		return new PageImpl<>(list, pageable, total);
 	}
 	
+	@Override
+	public Page<UserInquiry> getUserInquiryList(Pageable pageable) {
+		// 문의 목록 페이지네이션
+	    int offset = (int) pageable.getOffset();
+	    int limit = pageable.getPageSize();
+	    List<UserInquiry> list = userInquiryMapper.getUserInquiryListPaged(offset, limit);
+	    int total = userInquiryMapper.getUserInquiryListCount();
+	    return new PageImpl<>(list, pageable, total);
+	}
+
+	@Override
+	public Page<UserAnn> getUserNoticeList(Pageable pageable, String sort) {
+		// 공지사항 목록 페이지네이션
+	    int offset = (int) pageable.getOffset();
+	    int limit = pageable.getPageSize();
+	    List<UserAnn> list = userInquiryMapper.getUserNoticeListPagedWithSort(offset, limit, sort);
+	    int total = userInquiryMapper.getUserNoticeCount();
+	    return new PageImpl<>(list, pageable, total);
+	}
+
+	@Override
+	public Page<UserInquiry> getUserInquiryListByMemberCodePaged(String memberCode, Pageable pageable) {
+		// 문의 목록 필터-사용자
+	    int offset = (int) pageable.getOffset();
+	    int limit = pageable.getPageSize();
+	    List<UserInquiry> list = userInquiryMapper.getUserInquiryListByCodePaged(memberCode, offset, limit);
+	    int total = userInquiryMapper.getUserInquiryListByCodeCount(memberCode);
+	    return new PageImpl<>(list, pageable, total);
+	}
+	
+	@Override
+	public Page<UserInquiry> getUserInquiryListPaged(Pageable pageable, String sort, String memberCode) {
+	    int offset = (int) pageable.getOffset();
+	    int limit = pageable.getPageSize();
+
+	    List<UserInquiry> list = userInquiryMapper.getUserInquiryListPaged(offset, limit, sort, memberCode);
+	    int total = userInquiryMapper.getUserInquiryListCount(memberCode);
+
+	    return new PageImpl<>(list, pageable, total);
+	}
+
+
+	@Override
+	public Page<UserInquiry> getUserInquiryListByMember(String memberCode, Pageable pageable) {
+	    return getUserInquiryListByMemberCodePaged(memberCode, pageable);
+	}
+	
+	@Override
+	public Page<UserAnn> getUserTotalList(Pageable pageable, String sort) { // 🔧 정렬 파라미터 추가
+	    int offset = (int) pageable.getOffset();
+	    int limit = pageable.getPageSize();
+	    List<UserAnn> list = userInquiryMapper.getUserTotalListPaged(offset, limit, sort);
+	    int total = userInquiryMapper.getUserTotalCount();
+	    return new PageImpl<>(list, pageable, total);
+	}
+
 	
 
 }

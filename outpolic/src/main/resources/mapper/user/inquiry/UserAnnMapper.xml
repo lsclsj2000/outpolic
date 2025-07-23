@@ -34,6 +34,65 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="reg_date" 			property="totalRegDate"/>
 	</resultMap>
 	
+	<!-- 🔽 정렬 가능한 공지사항 리스트 페이징 쿼리 -->
+	<select id="getUserNoticeListPagedWithSort" resultMap="userNoticeResultMap">
+		SELECT
+			a.ann_cd as ann_cd,
+			CASE 
+				WHEN a.ann_type = 'notice' THEN '공지사항'
+				ELSE a.ann_type
+			END as ann_type,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			adm.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		FROM
+			announcement a
+			LEFT JOIN admin adm ON a.adm_cd = adm.adm_cd
+			LEFT JOIN member m ON adm.mbr_cd = m.mbr_cd
+		WHERE
+			a.ann_type = 'notice' AND a.stc_cd = 'SD_ACTIVE'
+		ORDER BY
+			<choose>
+				<when test="sort == 'old'">a.ann_reg_ymdt ASC</when>
+				<otherwise>a.ann_reg_ymdt DESC</otherwise>
+			</choose>
+		LIMIT #{limit} OFFSET #{offset}
+	</select>
+	
+	
+	<select id="getUserNoticeListPaged" resultMap="userNoticeResultMap">
+		SELECT
+			a.ann_cd as ann_cd,
+			CASE 
+				WHEN a.ann_type = 'notice' THEN '공지사항'
+				ELSE a.ann_type
+			END as ann_type,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			adm.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		FROM
+			announcement a
+			LEFT JOIN admin adm ON a.adm_cd = adm.adm_cd
+			LEFT JOIN member m ON adm.mbr_cd = m.mbr_cd
+		WHERE
+			a.ann_type = 'notice' AND a.stc_cd = 'SD_ACTIVE'
+		ORDER BY
+			a.ann_reg_ymdt DESC
+		LIMIT #{limit} OFFSET #{offset}
+	</select>
+	
+	<select id="getUserNoticeCount" resultType="int">
+		SELECT COUNT(*) FROM announcement 
+		WHERE ann_type = 'notice' AND stc_cd = 'SD_ACTIVE'
+	</select>
 	
 	<select id="getUserTotalList" resultMap="userTotalResultMap">
 		/* 전체 게시판 조회 */

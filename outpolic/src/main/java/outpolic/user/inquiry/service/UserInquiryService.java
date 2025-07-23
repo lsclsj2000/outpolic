@@ -49,5 +49,15 @@ public interface UserInquiryService {
 	
 	// pagenation
 	Page<UserAnn> getUserTotalList(Pageable pageable); 	
+	Page<UserInquiry> getUserInquiryList(Pageable pageable);
+	Page<UserAnn> getUserNoticeList(Pageable pageable, String sort);
+	
+	// 문의 목록 필터
+	Page<UserInquiry> getUserInquiryListByMemberCodePaged(String memberCode, Pageable pageable);
+	Page<UserInquiry> getUserInquiryListByMember(String memberCode, Pageable pageable);
+	Page<UserInquiry> getUserInquiryListPaged(Pageable pageable, String sort, String memberCode);
+	
+	Page<UserAnn> getUserTotalList(Pageable pageable, String sort);
+
 	
 }
