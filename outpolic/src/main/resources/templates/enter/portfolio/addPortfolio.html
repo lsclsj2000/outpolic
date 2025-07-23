@@ -305,43 +305,33 @@
 <th:block layout:fragment="jsFile">
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        
-
         $(document).ready(function() {
 
-        	 const now = new Date();
-             now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // 시간대 오차 보정
-             const minDate = now.toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 자르기
-             $('#prtfPeriodStart').attr('min', minDate);
-        	
-             $('#prtfPeriodStart').on('change', function() {
-                 const startDateValue = $(this).val(); // YYYY-MM-DD 형식
-                 if (startDateValue) {
-                     // 1. 종료일의 최소 선택 가능일을 시작일로 설정
-                     $('#prtfPeriodEnd').attr('min', startDateValue);
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // 시간대 오차 보정
+            const minDate = now.toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 자르기
+            $('#prtfPeriodStart').attr('min', minDate);
+            
+            $('#prtfPeriodStart').on('change', function() {
+                const startDateValue = $(this).val(); // YYYY-MM-DD 형식
+                if (startDateValue) {
+                    // 1. 종료일의 최소 선택 가능일을 시작일로 설정
+                    $('#prtfPeriodEnd').attr('min', startDateValue);
+                    // 2. 시작일 값으로 Date 객체 생성 (시간은 00:00:00으로)
+                    const startDate = new Date(startDateValue + 'T00:00:00');
+                    // 3. 시작일에 하루를 더함
+                    startDate.setDate(startDate.getDate() + 1);
+                    // 4. YYYY-MM-DD 형식으로 변환
+                    const newEndDateValue = startDate.toISOString().slice(0, 10);
+                    // 5. 종료일 입력 필드에 새로운 값 설정
+                    $('#prtfPeriodEnd').val(newEndDateValue);
+                }
+            });
 
-                     // 2. 시작일 값으로 Date 객체 생성 (시간은 00:00:00으로)
-                     const startDate = new Date(startDateValue + 'T00:00:00');
-
-                     // 3. 시작일에 하루를 더함
-                     startDate.setDate(startDate.getDate() + 1);
-
-                     // 4. YYYY-MM-DD 형식으로 변환
-                     const newEndDateValue = startDate.toISOString().slice(0, 10);
-
-                     // 5. 종료일 입력 필드에 새로운 값 설정
-                     $('#prtfPeriodEnd').val(newEndDateValue);
-                 }
-             });
-             
             let currentStep = 1;
-            let currentFormData = {};
             let bodyImageFiles = []; // 본문 이미지 파일 목록
-
-          
 
             function showStep(step) {
                 $('.form-step').removeClass('active');
@@ -355,36 +345,32 @@
                 }
             }
             
-            function updateCurrentFormDataCategoryCodes() {
-                currentFormData.categoryCodes = []; // 배열을 초기화
-                // 모든 카테고리 행을 순회
-                $('.category-row-new').each(function() {
-                    // 각 행의 최종 선택된 카테고리 ID 값을 가져옴
-                    const finalCatIdInRow = $(this).find('.final-category-id').val();
-                    
-                    // 값이 있는 경우에만 배열에 추가
-                    if (finalCatIdInRow && finalCatIdInRow.trim() !== "") {
-                        currentFormData.categoryCodes.push(finalCatIdInRow);
-                    }
-                });
-            }
             function updateFinalSummary() {
-                // 1~3단계 데이터 요약
+                // 이 함수는 최종 확인 단계에서 UI에 요약 정보를 보여주는 역할을 합니다.
+                // 서버로 데이터를 보내는 로직과는 직접적인 관련이 없으므로 기존 로직을 유지합니다.
+                const prtfTtl = $('#prtfTtl').val();
+                const prtfCn = $('#prtfCn').val();
+                const prtfPeriodStart = $('#prtfPeriodStart').val();
+                const prtfPeriodEnd = $('#prtfPeriodEnd').val();
+                const prtfClient = $('#prtfClient').val();
+                const prtfIndustry = $('#prtfIndustry').val();
+                const tags = $('#tags').val();
+
                 const summaryHtml = `
                     <h5>[1단계] 기본 정보</h5>
-                    <p><strong>제목:</strong> ${currentFormData.prtfTtl || '미입력'}</p>
+                    <p><strong>제목:</strong> ${prtfTtl || '미입력'}</p>
                     <p><strong>내용:</strong></p>
-                    <div style="white-space: pre-wrap; border: 1px solid #eee; padding: 10px; max-height: 150px; overflow-y: auto;">${currentFormData.prtfCn || '미입력'}</div>
+                    <div style="white-space: pre-wrap; border: 1px solid #eee; padding: 10px; max-height: 150px; overflow-y: auto;">${prtfCn || '미입력'}</div>
                     <hr>
                     <h5>[2단계] 참여 기간 및 클라이언트 정보</h5>
-                    <p><strong>시작일:</strong> ${currentFormData.prtfPeriodStart || '미입력'}</p>
-                    <p><strong>종료일:</strong> ${currentFormData.prtfPeriodEnd || '미입력'}</p>
-                    <p><strong>클라이언트:</strong> ${currentFormData.prtfClient || '미입력'}</p>
-                    <p><strong>업종:</strong> ${currentFormData.prtfIndustry || '미입력'}</p>
+                    <p><strong>시작일:</strong> ${prtfPeriodStart || '미입력'}</p>
+                    <p><strong>종료일:</strong> ${prtfPeriodEnd || '미입력'}</p>
+                    <p><strong>클라이언트:</strong> ${prtfClient || '미입력'}</p>
+                    <p><strong>업종:</strong> ${prtfIndustry || '미입력'}</p>
                     <hr>
                     <h5>[3단계] 카테고리 및 태그</h5>
                     <p><strong>카테고리:</strong> <span id="summaryCategories">미선택</span></p>
-                    <p><strong>태그:</strong> ${currentFormData.tags || '미입력'}</p>
+                    <p><strong>태그:</strong> ${tags || '미입력'}</p>
                     <hr>
                     <h5>[4단계] 대표 이미지</h5>
                     <div id="summaryImagePreview" style="width:100px; height:100px; border: 1px solid #eee; display:flex; align-items:center; justify-content:center;"></div>
@@ -395,8 +381,9 @@
                 $('#final-summary').html(summaryHtml);
 
                 // 카테고리 이름 비동기 조회 및 표시
-                if (currentFormData.categoryCodes && currentFormData.categoryCodes.length > 0) {
-                    const promises = currentFormData.categoryCodes.map(id => $.get('/api/categories/search', { query: id }));
+                const categoryCodes = $('.final-category-id').map((_, el) => $(el).val()).get().filter(Boolean);
+                if (categoryCodes && categoryCodes.length > 0) {
+                    const promises = categoryCodes.map(id => $.get('/api/categories/search', { query: id }));
                     Promise.all(promises).then(results => {
                         const names = results.map(data => (data.length > 0 && data[0].ctgryNm) ? data[0].ctgryNm : '알 수 없음');
                         $('#summaryCategories').text(names.join(', '));
@@ -405,10 +392,11 @@
 
                 // 대표 이미지 미리보기
                 const $thumbPreview = $('#summaryImagePreview');
-                if (currentFormData.thumbnailFile) {
+                const thumbnailFile = $('#portfolioImage')[0].files[0];
+                if (thumbnailFile) {
                     const reader = new FileReader();
                     reader.onload = e => $thumbPreview.html(`<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`);
-                    reader.readAsDataURL(currentFormData.thumbnailFile);
+                    reader.readAsDataURL(thumbnailFile);
                 } else {
                     $thumbPreview.html('<span>없음</span>');
                 }
@@ -427,86 +415,93 @@
                 }
             }
 
-            // ... (카테고리/태그 관련 함수들: populateDropdown, handleCategoryChange, addNewCategoryRow, initializeCategorySelectors) ...
+            // '다음' 버튼 클릭 시, 각 단계의 데이터를 서버 세션으로 보내는 로직 (기존과 동일)
+            $('.btn-step.next').on('click', function() {
+                const step = $(this).data('step');
+                let isValid = true;
+                let payload = {};
+                let url = '';
 
-           $('.btn-step.next').on('click', function() {
-    const step = $(this).data('step');
-    let isValid = true;
+                if (step === 1) {
+                    const prtfTtl = $('#prtfTtl').val();
+                    const prtfCn = $('#prtfCn').val();
+                    if (!prtfTtl || !prtfCn) {
+                        alert('제목과 내용을 모두 입력해주세요.');
+                        isValid = false;
+                    } else {
+                        url = '/enter/portfolio/add/step1';
+                        payload = { prtfTtl, prtfCn };
+                    }
+                } else if (step === 2) {
+                    url = '/enter/portfolio/add/step2';
+                    payload = {
+                        prtfPeriodStart: $('#prtfPeriodStart').val(),
+                        prtfPeriodEnd: $('#prtfPeriodEnd').val(),
+                        prtfClient: $('#prtfClient').val(),
+                        prtfIndustry: $('#prtfIndustry').val()
+                    };
+                } else if (step === 3) {
+                    const categoryCodes = $('.final-category-id').map((_, el) => $(el).val()).get().filter(Boolean);
+                    if (categoryCodes.length === 0) {
+                        alert('카테고리는 최소 하나 이상 선택해야 합니다.');
+                        isValid = false;
+                    } else {
+                        url = '/enter/portfolio/add/step3';
+                        payload = {
+                            categoryCodes: categoryCodes,
+                            tags: $('#tags').val()
+                        };
+                    }
+                } else if (step === 4 || step === 5) {
+                    // 4단계(썸네일), 5단계(본문 이미지)는 파일 선택만 하고
+                    // 서버 세션으로 보내는 로직 없이 바로 다음으로 넘어갑니다.
+                    // 파일은 최종 제출 시 한 번만 보냅니다.
+                    currentStep++;
+                    showStep(currentStep);
+                    return; // AJAX 호출 없이 여기서 종료
+                }
 
-    // 각 단계별로 데이터를 currentFormData 객체에 저장
-    if (step === 1) {
-        const prtfTtl = $('#prtfTtl').val();
-        const prtfCn = $('#prtfCn').val();
-        if (!prtfTtl || !prtfCn) {
-            alert('제목과 내용을 모두 입력해주세요.');
-            isValid = false;
-        } else {
-            currentFormData.prtfTtl = prtfTtl;
-            currentFormData.prtfCn = prtfCn;
-        }
-    } else if (step === 2) {
-        currentFormData.prtfPeriodStart = $('#prtfPeriodStart').val();
-        currentFormData.prtfPeriodEnd = $('#prtfPeriodEnd').val();
-        currentFormData.prtfClient = $('#prtfClient').val();
-        currentFormData.prtfIndustry = $('#prtfIndustry').val();
-    } else if (step === 3) {
-        updateCurrentFormDataCategoryCodes(); // 카테고리 최신 정보 업데이트
-        if (currentFormData.categoryCodes.length === 0) {
-            alert('카테고리는 최소 하나 이상 선택해야 합니다.');
-            isValid = false;
-        } else {
-            currentFormData.tags = $('#tags').val();
-        }
-    } else if (step === 4) {
-        const thumbnailFile = $('#portfolioImage')[0].files[0];
-        if (!thumbnailFile) {
-            alert('대표 이미지를 등록해주세요.');
-            isValid = false;
-        } else {
-            currentFormData.thumbnailFile = thumbnailFile;
-        }
-    } else if (step === 5) {
-        // 5단계는 bodyImageFiles 배열에 이미 파일이 저장되어 있으므로 추가 처리 없음
-    }
-    
-    if (isValid) {
-        currentStep++;
-        showStep(currentStep);
-    }
-});
+                if (isValid && url) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(payload),
+                        success: function(res) {
+                            if (res.success) {
+                                currentStep++;
+                                showStep(currentStep);
+                            } else {
+                                alert('오류: ' + res.message);
+                            }
+                        },
+                        error: function() {
+                            alert('데이터 저장 중 오류가 발생했습니다.');
+                        }
+                    });
+                }
+            });
 
             $('.btn-step.prev').on('click', function() {
                 currentStep--;
                 showStep(currentStep);
             });
 
+            // ✨✨✨ [수정된 최종 등록 로직] ✨✨✨
             $('.btn-step.submit').on('click', function() {
+                if (!confirm('포트폴리오 등록을 완료하시겠습니까?')) return;
+
                 const finalFormData = new FormData();
                 
-                // 1단계 데이터
-                finalFormData.append('prtfTtl', $('#prtfTtl').val());
-                finalFormData.append('prtfCn', $('#prtfCn').val()); // [!code focus]
+                // [핵심] 텍스트 데이터를 제외하고, 파일 정보만 FormData에 추가합니다.
                 
-                // 2단계 데이터
-                finalFormData.append('prtfPeriodStart', $('#prtfPeriodStart').val());
-                finalFormData.append('prtfPeriodEnd', $('#prtfPeriodEnd').val());
-                finalFormData.append('prtfClient', $('#prtfClient').val());
-                finalFormData.append('prtfIndustry', $('#prtfIndustry').val());
-                
-                // 3단계 데이터
-                $('.final-category-id').each(function() {
-                    if ($(this).val()) {
-                        finalFormData.append('categoryCodes', $(this).val());
-                    }
-                });
-                finalFormData.append('tags', $('#tags').val());
-
-                // 4단계 데이터 (대표 이미지)
-                if ($('#portfolioImage')[0].files.length > 0) {
-                    finalFormData.append('thumbnailFile', $('#portfolioImage')[0].files[0]);
+                // 1. 대표 이미지 파일 추가
+                const thumbnailFile = $('#portfolioImage')[0].files[0];
+                if (thumbnailFile) {
+                    finalFormData.append('thumbnailFile', thumbnailFile);
                 }
 
-                // 5단계 데이터 (본문 이미지)
+                // 2. 본문 이미지 파일 목록 추가 (JS 변수 사용)
                 if (bodyImageFiles.length > 0) {
                     bodyImageFiles.forEach(file => {
                         finalFormData.append('bodyImageFiles', file);
@@ -514,9 +509,9 @@
                 }
 
                 $.ajax({
-                    url: '/enter/portfolio/add/complete', // 새로운 통합 엔드포인트
+                    url: '/enter/portfolio/add/complete',
                     type: 'POST',
-                    data: finalFormData,
+                    data: finalFormData, // 파일 정보만 담긴 FormData 객체 전송
                     processData: false,
                     contentType: false,
                     success: function(res) {
@@ -533,6 +528,7 @@
                 });
             });
 
+            // --- 파일 및 카테고리/태그 관련 UI 로직 (기존과 동일) ---
             $('#portfolioBodyImages').on('change', function(event) {
                 const previewContainer = $('#body-image-preview-container');
                 previewContainer.empty();
@@ -555,18 +551,14 @@
             $(document).on('click', '.remove-body-image-btn', function() {
                 const itemToRemove = $(this).closest('.body-image-preview-item');
                 const indexToRemove = parseInt(itemToRemove.data('index'));
-                
                 bodyImageFiles.splice(indexToRemove, 1);
-                
                 const dt = new DataTransfer();
                 bodyImageFiles.forEach(file => dt.items.add(file));
                 $('#portfolioBodyImages')[0].files = dt.files;
-                
                 itemToRemove.remove();
             });
 
-            // 대표 이미지 미리보기
-             $('#portfolioImage').on('change', function(event) {
+            $('#portfolioImage').on('change', function(event) {
                 const preview = $('#image-preview');
                 preview.empty();
                 const file = event.target.files[0];
@@ -579,8 +571,7 @@
                 }
             });
 
-            // ... (카테고리/태그 관련 JS는 생략하지 않고 모두 포함) ...
-             function populateDropdown($select, categories) {
+            function populateDropdown($select, categories) {
                 const level = $select.data('level');
                 if ($select.hasClass("select2-hidden-accessible")) { $select.select2('destroy'); }
                 $select.html(`<option value="">${level}차 선택</option>`).show();
@@ -633,9 +624,7 @@
                 });
             };
             
-            function initializeCategorySelectors() {
-                addNewCategoryRow();
-            }
+            function initializeCategorySelectors() { addNewCategoryRow(); }
             $('#add-category-row-btn').on('click', addNewCategoryRow);
 
             let tagSearchTimeout;
@@ -654,6 +643,7 @@
                     });
                 }, 300);
             });
+
             $(document).on('click', '.result-item-tag', function() {
                 const tagName = $(this).data('tag-name');
                 const $tagsInput = $('#tags');

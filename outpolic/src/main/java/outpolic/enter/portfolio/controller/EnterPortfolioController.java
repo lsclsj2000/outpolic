@@ -142,39 +142,17 @@ public class EnterPortfolioController {
 	@PostMapping("/add/complete")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> completeRegistration(
-	        // FormData에 담긴 데이터들을 @RequestParam으로 하나씩 받습니다.
-	        @RequestParam("prtfTtl") String prtfTtl,
-	        @RequestParam("prtfCn") String prtfCn,
-	        @RequestParam(value = "prtfPeriodStart", required = false) String prtfPeriodStart,
-	        @RequestParam(value = "prtfPeriodEnd", required = false) String prtfPeriodEnd,
-	        @RequestParam(value = "prtfClient", required = false) String prtfClient,
-	        @RequestParam(value = "prtfIndustry",
- required = false) String prtfIndustry,
-	        @RequestParam(value = "categoryCodes", required = false) List<String> categoryCodes,
-	        @RequestParam(value = "tags", required = false) String tags,
+	        @SessionAttribute("portfolioFormData") PortfolioFormDataDto formData, // 세션에서 모든 텍스트 데이터를 가져옵니다.
 	        @RequestParam(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
 	        @RequestParam(value = "bodyImageFiles", required = false) List<MultipartFile> bodyImageFiles,
 	        HttpSession session) {
 
 	    try {
-	        // 모든 데이터를 서비스 계층으로 전달하기 위해 DTO에 담습니다.
-	        PortfolioFormDataDto formData = new PortfolioFormDataDto();
-	        formData.setPrtfTtl(prtfTtl);
-	        formData.setPrtfCn(prtfCn);
-	        if (prtfPeriodStart != null && !prtfPeriodStart.isEmpty()) {
-	            formData.setPrtfPeriodStart(LocalDate.parse(prtfPeriodStart));
-	        }
-	        if (prtfPeriodEnd != null && !prtfPeriodEnd.isEmpty()) {
-	            formData.setPrtfPeriodEnd(LocalDate.parse(prtfPeriodEnd));
-	        }
-	        // [!code diff --start]
-	        formData.setPrtfClient(prtfClient);
-	        formData.setPrtfIndustry(prtfIndustry);
-	        // [!code diff --end]
-	        formData.setCategoryCodes(categoryCodes);
-	        formData.setTags(tags);
-	        // 서비스 메서드 호출
+	        // 서비스 계층으로 세션 DTO와 파일들을 전달합니다.
 	        portfolioService.registerNewPortfolio(formData, thumbnailFile, bodyImageFiles, session);
+	        
+            // 등록 완료 후 세션 데이터 정리
+	        session.removeAttribute("portfolioFormData");
 	        
 	        return ResponseEntity.ok(Map.of("success", true, "redirectUrl", "/enter/portfolio/list"));
 	    } catch (Exception e) {
@@ -306,16 +284,37 @@ public class EnterPortfolioController {
 
 	@PostMapping("/edit/complete")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> completeEdit(@SessionAttribute("portfolioEditFormData") PortfolioFormDataDto formData, HttpSession session) {
-		try {
-			portfolioService.updatePortfolioAllSteps(formData);
-			session.removeAttribute("portfolioEditFormData");
-			return ResponseEntity.ok(Map.of("success", true, "message", "포트폴리오 수정이 완료되었습니다.", "redirectUrl", "/enter/portfolio/list"));
-		} catch (IOException e) {
-			log.error("포트폴리오 최종 수정 실패", e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(Map.of("success", false, "message", "수정 중 오류가 발생했습니다."));
-		}
+	public ResponseEntity<Map<String, Object>> completeEdit(
+	        @SessionAttribute("portfolioEditFormData") PortfolioFormDataDto formData,
+	        // --- 아래 파라미터들을 추가해야 합니다 ---
+	        @RequestParam(value = "newThumbnailFile", required = false) MultipartFile newThumbnailFile,
+	        @RequestParam(value = "newBodyImageFiles", required = false) List<MultipartFile> newBodyImageFiles,
+	        @RequestParam(value = "deletedBodyImageCds", required = false) List<String> deletedBodyImageCds,
+	        @RequestParam(value = "isThumbnailDeleted", required = false) String isThumbnailDeleted,
+	        HttpSession session) {
+	    
+	    try {
+	        // DTO에 파일 관련 정보를 설정합니다.
+	        formData.setNewThumbnailFile(newThumbnailFile);
+	        formData.setNewBodyImageFiles(newBodyImageFiles);
+	        formData.setDeletedBodyImageCds(deletedBodyImageCds);
+	        
+	        // 썸네일 삭제 여부 처리 (JavaScript에서 'true' 문자열로 보냄)
+	        if ("true".equals(isThumbnailDeleted)) {
+	            // 서비스 로직에서 이 값을 확인하여 썸네일을 null로 업데이트하도록 구현 필요
+	            // 예: formData.setIsThumbnailDeleted("true"); 
+	        }
+
+	        // 이제 파일 정보가 포함된 formData로 서비스 로직을 호출합니다.
+	        portfolioService.updatePortfolioAllSteps(formData);
+	        
+	        session.removeAttribute("portfolioEditFormData");
+	        return ResponseEntity.ok(Map.of("success", true, "message", "포트폴리오 수정이 완료되었습니다.", "redirectUrl", "/enter/portfolio/list"));
+	    } catch (IOException e) {
+	        log.error("포트폴리오 최종 수정 실패", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body(Map.of("success", false, "message", "수정 중 오류가 발생했습니다."));
+	    }
 	}
 	
 	// --- 포트폴리오 삭제 (비동기 처리) ---
