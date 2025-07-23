@@ -11,42 +11,23 @@ import lombok.extern.slf4j.Slf4j;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-	@ExceptionHandler(NoResourceFoundException.class)
-	public void noResourceFoundHandle(HttpServletRequest request, NoResourceFoundException ex, Model model) {
-		String uri = request.getRequestURI();
-		String viewName = "error/404";
-		
-		if(uri.startsWith("/admin")) {
-			viewName = "admin/error/404";
-		}
-		
-		StackTraceElement[] stackTrace = ex.getStackTrace();
-		StackTraceElement origin = stackTrace[0];
-		log.error("[Exceptoion] {}\n[method]:{} ({}:{}) - message={}",
-					origin.getClassName(),
-					origin.getMethodName(),
-					origin.getFileName(),
-					origin.getLineNumber(),
-					ex.getMessage()
-				 );
-		
-		//return viewName;
-	}
 
-	@ExceptionHandler(Exception.class)
-	public void globalExceptionHandle(HttpServletRequest request, Exception ex, Model model) {
-		StackTraceElement[] stackTrace = ex.getStackTrace();
-		StackTraceElement origin = stackTrace[0];
-		log.error("[Exceptoion] {}\n[method]:{} ({}:{}) - message={}",
-					origin.getClassName(),
-					origin.getMethodName(),
-					origin.getFileName(),
-					origin.getLineNumber(),
-					ex.getMessage()
-				 );
-		
-		//reurn "error/500";
-	}
+    @ExceptionHandler({ NoResourceFoundException.class })
+    public String handleAllErrors(HttpServletRequest request, Exception ex, Model model) {
+        String uri = request.getRequestURI();
+        StackTraceElement origin = ex.getStackTrace()[0];
+
+        log.error("[Exception] {}\n[method]:{} ({} : {}) - message={}", 
+            origin.getClassName(),
+            origin.getMethodName(),
+            origin.getFileName(),
+            origin.getLineNumber(),
+            ex.getMessage()
+        );
+
+        // 공통 에러 뷰
+        return "error";  // ✅ 공통 에러 페이지 하나로 퉁침
+    }
 }
 
 
