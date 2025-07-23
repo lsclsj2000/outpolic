@@ -25,6 +25,68 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="sa_size" 			property="saSize"/>
 	</resultMap>
 	
+	<resultMap id="userTotalResultMap" type="outpolic.user.inquiry.domain.UserAnn">
+		<id 	column="cd" 				property="totalCode"/>
+		<result column="type" 				property="totalType"/>
+		<result column="title" 				property="totalTitle"/>
+		<result column="content" 			property="totalContent"/>
+		<result column="writer" 			property="totalWriter"/>
+		<result column="reg_date" 			property="totalRegDate"/>
+	</resultMap>
+	
+	
+	<select id="getUserTotalList" resultMap="userTotalResultMap">
+		/* 전체 게시판 조회 */
+		SELECT
+		    a.ann_cd AS cd,
+		    '공지사항' AS type,
+		    a.ann_ttl AS title,
+		    a.ann_cn AS content,
+		    m.mbr_nm AS writer,
+		    a.ann_reg_ymdt AS reg_date
+		FROM
+		    announcement a
+		    LEFT JOIN admin adm ON a.adm_cd = adm.adm_cd
+		    LEFT JOIN member m ON adm.mbr_cd = m.mbr_cd
+		WHERE
+		    a.ann_type = 'notice' AND a.stc_cd = 'SD_ACTIVE'
+		UNION ALL
+		SELECT
+		    i.iq_cd AS cd,
+		    '문의글' AS type,
+		    i.iq_ttl AS title,
+		    i.iq_cn AS content,
+		    m.mbr_nm AS writer,
+		    i.iq_reg_ymdt AS reg_date
+		FROM
+		    inquiry i
+		    JOIN inquiry_type it ON i.iqt_cd = it.iqt_cd
+		    LEFT JOIN member m ON i.mbr_cd = m.mbr_cd
+		    LEFT JOIN admin a ON i.iq_mdfcn_adm_cd = a.adm_cd
+		ORDER BY
+			reg_date desc;
+	</select>
+	
+	<select id="getUserFaqList" resultMap="userNoticeResultMap">
+		/* faq 목록 조회 */
+		select
+			a.ann_cd as ann_cd,
+			a.ann_type as ann_type,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			adm.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		from
+			announcement a
+			left join admin adm on a.adm_cd = adm.adm_cd
+			left join member m on adm.mbr_cd = m.mbr_cd
+		WHERE
+			a.ann_type = 'faq' and a.stc_cd = 'SD_ACTIVE';
+	</select>
+	
 	<select id="getUserNoticeByCode" parameterType="String" resultMap="userNoticeResultMap">
 		/* 공지사항 게시판 조회 */
 		select

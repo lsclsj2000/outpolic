@@ -3,6 +3,9 @@ package outpolic.user.inquiry.service.Impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -126,6 +129,33 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 	public UserAnn getUserNoticeByCode(String annCode) {
 		// 공지사항 상세내용 조회
 		return userInquiryMapper.getUserNoticeByCode(annCode);
+	}
+
+
+	@Override
+	public List<UserAnn> getUserFaqList() {
+		// faq 목록 조회
+		List<UserAnn> faqList = userInquiryMapper.getUserFaqList();
+		return faqList;
+	}
+
+
+	@Override
+	public List<UserAnn> getUserTotalList() {
+		// 전체 게시판 조회
+		List<UserAnn> totalList = userInquiryMapper.getUserTotalList();
+		return totalList;
+	}
+	
+	@Override
+	public Page<UserAnn> getUserTotalList(Pageable pageable) {
+		int offset = (int) pageable.getOffset();
+		int limit = pageable.getPageSize();
+
+		List<UserAnn> list = userInquiryMapper.getUserTotalListPaged(offset, limit);
+		int total = userInquiryMapper.getUserTotalCount();
+
+		return new PageImpl<>(list, pageable, total);
 	}
 	
 	

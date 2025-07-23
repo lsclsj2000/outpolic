@@ -2,6 +2,8 @@ package outpolic.user.inquiry.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import outpolic.user.inquiry.domain.UserAnn;
@@ -38,5 +40,14 @@ public interface UserInquiryService {
 	
 	// 공지사항 게시판 조회
 	List<UserAnn> getUserNoticeList();
+	
+	// faq 목록 조회
+	List<UserAnn> getUserFaqList();
+	
+	// 전체 게시판 조회
+	List<UserAnn> getUserTotalList();
+	
+	// pagenation
+	Page<UserAnn> getUserTotalList(Pageable pageable); 	
 	
 }
