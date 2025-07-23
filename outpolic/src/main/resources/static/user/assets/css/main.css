@@ -3728,7 +3728,8 @@ table .product-thumbnail img {
           flex-direction: column;
   background: url(../imgs/page/001.png) no-repeat center center;
   background-size: cover;
-  height: 330px;
+  min-height: 330px; 
+    width: 100%;
 }
 
 .hero-3 form {
