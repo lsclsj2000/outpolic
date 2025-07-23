@@ -34,14 +34,22 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
     private String cleanPathForDb(FileMetaData fileMetaData) {
         if (fileMetaData == null || fileMetaData.getFilePath() == null) return null;
-        
+
         String fullPath = fileMetaData.getFilePath().replace("\\", "/");
         String serverFileName = fileMetaData.getFileNewName();
-
+        
+        String pathOnly;
         if (fullPath.endsWith("/" + serverFileName)) {
-            return "/" + fullPath.substring(0, fullPath.length() - serverFileName.length());
+            pathOnly = fullPath.substring(0, fullPath.length() - serverFileName.length());
+        } else {
+            pathOnly = fullPath;
         }
-        return "/" + fullPath;
+
+        // 슬래시가 맨 앞에 없는 경우에만 붙여줍니다.
+        if (!pathOnly.startsWith("/")) {
+            return "/" + pathOnly;
+        }
+        return pathOnly;
     }
 
     private String restorePathForWebOrFileSystem(String dbPath) {
@@ -105,7 +113,11 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         if (file == null || file.isEmpty()) return null;
         FileMetaData uploadedFile = filesUtils.uploadFile(file, "outsourcing");
         if (uploadedFile != null && uploadedFile.getFilePath() != null) {
-            uploadedFile.setFilePath("/" + uploadedFile.getFilePath());
+            String path = uploadedFile.getFilePath().replace("\\", "/");
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+            uploadedFile.setFilePath(path);
         }
         return uploadedFile;
     }
