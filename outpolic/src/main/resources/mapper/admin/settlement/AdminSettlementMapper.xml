@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.admin.settlement.mapper.AdminSettlementMapper">
+
+    <select id="selectSettlementHistory" parameterType="map" resultType="outpolic.admin.settlement.dto.AdminSettlementDTO">
+        SELECT
+            s.stlm_cd           AS stlmCd,
+            s.mbr_cd            AS mbrCd,
+            s.gds_cd            AS gdsCd,
+            s.stc_cd            AS stcCd,
+            s.stlm_cnt          AS stlmCnt,
+            s.stlm_amt          AS stlmAmt,
+            s.stlm_used_points  AS stlmUsedPoints,
+            s.stlm_final_amt    AS stlmFinalAmt,
+            s.stlm_payment_info AS stlmPaymentInfo,
+            s.stlm_card_nm      AS stlmCardNm,
+            s.stlm_provider_nm  AS stlmProviderNm,
+            s.stlm_ymdt         AS stlmYmdt,
+            m.mbr_nm            AS mbrNm,
+            g.gds_nm            AS gdsNm,
+            sc.stc_nm           AS stcNm
+        FROM
+            settlement s
+        JOIN
+            member m ON s.mbr_cd = m.mbr_cd
+        JOIN
+            goods g ON s.gds_cd = g.gds_cd
+        JOIN
+            status_code sc ON s.stc_cd = sc.stc_cd
+        <where>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                <choose>
+                    <when test="searchType == 'mbrNm'"> AND m.mbr_nm LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+                    <when test="searchType == 'gdsNm'"> AND g.gds_nm LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+                    <when test="searchType == 'stlmCd'"> AND s.stlm_cd LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+                </choose>
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND DATE(s.stlm_ymdt) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE(s.stlm_ymdt) &lt;= #{endDate}
+            </if>
+            <if test="filterStatus != null and filterStatus != ''">
+                AND s.stc_cd = #{filterStatus}
+            </if>
+            <if test="filterPayType != null and filterPayType != ''">
+                <choose>
+                    <when test="filterPayType == 'card'"> AND s.stlm_payment_info != '간편결제' </when>
+                    <when test="filterPayType == 'easy'"> AND s.stlm_payment_info = '간편결제' </when>
+                </choose>
+            </if>
+        </where>
+        ORDER BY s.stlm_ymdt DESC
+    </select>
+</mapper>
