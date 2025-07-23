@@ -147,7 +147,7 @@ public class UserLoginController {
             	LoginFailDTO limitInfo = loginLimitService.getLimitInfo(memberInfo.getMemberCode());
             	
             	if (limitInfo != null) {
-            		model.addAttribute("limitInfo", limitInfo);
+            		
                     model.addAttribute("msg", "회원님의 계정은 제재 상태입니다.");
                     model.addAttribute("startbanDate", limitInfo.getLmtStartYmdt());  // 예: "2025-08-01"
                     model.addAttribute("unbanDate", limitInfo.getLmtEndYmdt());  // 예: "2025-08-01"
