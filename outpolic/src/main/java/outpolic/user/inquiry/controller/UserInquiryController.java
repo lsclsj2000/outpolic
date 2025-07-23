@@ -200,15 +200,28 @@ public class UserInquiryController {
 
 
 	@GetMapping("/userInquiryList")
-	public String userInquiryListView(Model model) {
-		// 문의 목록 조회
-		var inquiryList = userInquiryService.getUserInquiryList();
+	public String userInquiryListView(
+	        Model model,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "10") int size,
+	        @RequestParam(defaultValue = "recent") String sort,
+	        HttpSession session) {
 
-		model.addAttribute("title", "문의 내역");
-		model.addAttribute("inquiryList", inquiryList);
+	    Pageable pageable = PageRequest.of(page, size);
+	    String memberCode = (String) session.getAttribute("SCD");
 
-		return "user/inquiry/userInquiryListView";
+	    Page<UserInquiry> pageList = userInquiryService.getUserInquiryListPaged(pageable, sort, "mine".equals(sort) ? memberCode : null);
+
+	    model.addAttribute("inquiryList", pageList.getContent());
+	    model.addAttribute("pageInfo", pageList);
+	    model.addAttribute("title", "문의 내역");
+	    model.addAttribute("size", size);
+	    model.addAttribute("sort", sort);
+
+	    return "user/inquiry/userInquiryListView";
 	}
+
+
 	
 	@GetMapping("/userNoticeDetail")
 	public String userNoticeDetailView(@RequestParam("ann_cd") String annCode, Model model) {
@@ -227,27 +240,49 @@ public class UserInquiryController {
 	}
 
 	@GetMapping("/userInquiryNotice")
-	public String userInquiryNoticeView(Model model) {
-		// 공지사항 게시판 조회
-		var noticeList = userInquiryService.getUserNoticeList();
-		model.addAttribute("title", "공지사항");
-		model.addAttribute("noticeList", noticeList);
+	public String userInquiryNoticeView(Model model,
+	                                    @RequestParam(defaultValue = "0") int page,
+	                                    @RequestParam(defaultValue = "10") int size,
+	                                    @RequestParam(defaultValue = "recent") String sort) {
+	    // 🔽 정렬 조건 적용
+	    Sort sorting = switch (sort) {
+	        case "old" -> Sort.by("annRegYmdt").ascending();
+	        default -> Sort.by("annRegYmdt").descending();
+	    };
+	    Pageable pageable = PageRequest.of(page, size, sorting);
 
-		return "user/inquiry/userNoticeListView";
+	    // 🔽 페이징된 공지사항 조회
+	    Page<UserAnn> noticeList = userInquiryService.getUserNoticeList(pageable, sort);
+
+	    model.addAttribute("noticeList", noticeList.getContent());
+	    model.addAttribute("pageInfo", noticeList);
+	    model.addAttribute("size", size); // ✅ 필터 유지용
+	    model.addAttribute("sort", sort); // ✅ 필터 유지용
+	    model.addAttribute("title", "공지사항");
+
+	    return "user/inquiry/userNoticeListView";
 	}
 
 	@GetMapping("/userInquiryTotal")
 	public String userInquiryTotalView(Model model,
 	                                   @RequestParam(defaultValue = "0") int page,
-	                                   @RequestParam(defaultValue = "10") int size) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by("totalRegDate").descending());
-		Page<UserAnn> totalList = userInquiryService.getUserTotalList(pageable);
+	                                   @RequestParam(defaultValue = "10") int size,
+	                                   @RequestParam(defaultValue = "recent") String sort) {
+	    Sort sorting = switch (sort) {
+	        case "old" -> Sort.by("reg_date").ascending();
+	        default -> Sort.by("reg_date").descending();
+	    };
+	    Pageable pageable = PageRequest.of(page, size, sorting);
 
-		model.addAttribute("totalList", totalList.getContent());
-		model.addAttribute("pageInfo", totalList); // 🔁 fragment 용
-		model.addAttribute("title", "전체 게시판");
+	    Page<UserAnn> totalList = userInquiryService.getUserTotalList(pageable, sort);
 
-		return "user/inquiry/userInquiryTotalView";
+	    model.addAttribute("totalList", totalList.getContent());
+	    model.addAttribute("pageInfo", totalList);
+	    model.addAttribute("size", size); // ✅ 필터 유지용
+	    model.addAttribute("sort", sort); // ✅ 필터 유지용
+	    model.addAttribute("title", "전체 게시판");
+
+	    return "user/inquiry/userInquiryTotalView";
 	}
 
 	@GetMapping("/userInquiryFaq")
