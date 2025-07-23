@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="outpolic.enter.inquiry.mapper.EnterInquiryMapper">
+	<!-- EnterInquiry.DTO -->
+	<resultMap id="enterNoticeResultMap" type="outpolic.enter.inquiry.domain.EnterAnn">
+		<id 	column="ann_cd" 			property="annCode"/>
+		<result column="ann_type" 			property="annType"/>
+		<result column="ann_ttl" 			property="annTitle"/>
+		<result column="ann_cn" 			property="annCn"/>
+		<result column="stc_cd" 			property="stcCode"/>
+		<result column="adm_cd" 			property="admCode"/>
+		<result column="mbr_cd" 			property="mbrCode"/>
+		<result column="mbr_nm" 			property="mbrName"/>
+		<result column="ann_reg_ymdt" 		property="annRegYmdt"/>
+		
+		<result column="sa_cd" 				property="saCode"/>
+		<result column="sa_orgnl_nm" 		property="saOrgnlName"/>
+		<result column="sa_srvr_nm" 		property="saSrvrName"/>
+		<result column="sa_path" 			property="saPath"/>
+		<result column="sa_extn" 			property="saExtn"/>
+		<result column="sa_size" 			property="saSize"/>
+	</resultMap>
+	
+	<resultMap id="enterTotalResultMap" type="outpolic.enter.inquiry.domain.EnterAnn">
+		<id 	column="cd" 				property="totalCode"/>
+		<result column="type" 				property="totalType"/>
+		<result column="title" 				property="totalTitle"/>
+		<result column="content" 			property="totalContent"/>
+		<result column="writer" 			property="totalWriter"/>
+		<result column="reg_date" 			property="totalRegDate"/>
+	</resultMap>
+	
+	<!-- 🔽 정렬 가능한 공지사항 리스트 페이징 쿼리 -->
+	<select id="getEnterNoticeListPagedWithSort" resultMap="enterNoticeResultMap">
+		SELECT
+			a.ann_cd as ann_cd,
+			CASE 
+				WHEN a.ann_type = 'notice' THEN '공지사항'
+				ELSE a.ann_type
+			END as ann_type,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			adm.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		FROM
+			announcement a
+			LEFT JOIN admin adm ON a.adm_cd = adm.adm_cd
+			LEFT JOIN member m ON adm.mbr_cd = m.mbr_cd
+		WHERE
+			a.ann_type = 'notice' AND a.stc_cd = 'SD_ACTIVE'
+		ORDER BY
+			<choose>
+				<when test="sort == 'old'">a.ann_reg_ymdt ASC</when>
+				<otherwise>a.ann_reg_ymdt DESC</otherwise>
+			</choose>
+		LIMIT #{limit} OFFSET #{offset}
+	</select>
+	
+	
+	<select id="getEnterNoticeListPaged" resultMap="enterNoticeResultMap">
+		SELECT
+			a.ann_cd as ann_cd,
+			CASE 
+				WHEN a.ann_type = 'notice' THEN '공지사항'
+				ELSE a.ann_type
+			END as ann_type,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			adm.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		FROM
+			announcement a
+			LEFT JOIN admin adm ON a.adm_cd = adm.adm_cd
+			LEFT JOIN member m ON adm.mbr_cd = m.mbr_cd
+		WHERE
+			a.ann_type = 'notice' AND a.stc_cd = 'SD_ACTIVE'
+		ORDER BY
+			a.ann_reg_ymdt DESC
+		LIMIT #{limit} OFFSET #{offset}
+	</select>
+	
+	<select id="getEnterNoticeCount" resultType="int">
+		SELECT COUNT(*) FROM announcement 
+		WHERE ann_type = 'notice' AND stc_cd = 'SD_ACTIVE'
+	</select>
+	
+	<select id="getEnterTotalList" resultMap="enterTotalResultMap">
+		/* 전체 게시판 조회 */
+		SELECT
+		    a.ann_cd AS cd,
+		    '공지사항' AS type,
+		    a.ann_ttl AS title,
+		    a.ann_cn AS content,
+		    m.mbr_nm AS writer,
+		    a.ann_reg_ymdt AS reg_date
+		FROM
+		    announcement a
+		    LEFT JOIN admin adm ON a.adm_cd = adm.adm_cd
+		    LEFT JOIN member m ON adm.mbr_cd = m.mbr_cd
+		WHERE
+		    a.ann_type = 'notice' AND a.stc_cd = 'SD_ACTIVE'
+		UNION ALL
+		SELECT
+		    i.iq_cd AS cd,
+		    '문의글' AS type,
+		    i.iq_ttl AS title,
+		    i.iq_cn AS content,
+		    m.mbr_nm AS writer,
+		    i.iq_reg_ymdt AS reg_date
+		FROM
+		    inquiry i
+		    JOIN inquiry_type it ON i.iqt_cd = it.iqt_cd
+		    LEFT JOIN member m ON i.mbr_cd = m.mbr_cd
+		    LEFT JOIN admin a ON i.iq_mdfcn_adm_cd = a.adm_cd
+		ORDER BY
+			reg_date desc;
+	</select>
+	
+	<select id="getEnterFaqList" resultMap="enterNoticeResultMap">
+		/* faq 목록 조회 */
+		select
+			a.ann_cd as ann_cd,
+			a.ann_type as ann_type,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			adm.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		from
+			announcement a
+			left join admin adm on a.adm_cd = adm.adm_cd
+			left join member m on adm.mbr_cd = m.mbr_cd
+		WHERE
+			a.ann_type = 'faq' and a.stc_cd = 'SD_ACTIVE';
+	</select>
+	
+	<select id="getEnterNoticeByCode" parameterType="String" resultMap="enterNoticeResultMap">
+		/* 공지사항 게시판 조회 */
+		select
+			a.ann_cd as ann_cd,
+			CASE 
+				WHEN a.ann_type = 'notice' THEN '공지사항'
+				ELSE a.ann_type
+			END as ann_type,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			sa.sa_cd as sa_cd,
+			sa.sa_orgnl_nm as sa_orgnl_nm,
+			sa.sa_srvr_nm as sa_srvr_nm,
+			sa.sa_path as sa_path,
+			sa.sa_extn as sa_extn,
+			sa.sa_size as sa_size,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			adm.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		from
+			announcement a
+			left join admin adm on a.adm_cd = adm.adm_cd
+			left join member m on adm.mbr_cd = m.mbr_cd
+			left join submission_attachment sa on a.ann_cd = sa.sa_refer_cd
+		WHERE
+			a.ann_type = 'notice' and a.stc_cd = 'SD_ACTIVE'
+			and	a.ann_cd = #{annCode}
+		ORDER BY
+			a.ann_reg_ymdt DESC;
+	</select>
+	
+	<select id="getEnterNoticeList" resultMap="enterNoticeResultMap">
+		/* 공지사항 게시판 조회 */
+		select
+			a.ann_cd as ann_cd,
+			CASE 
+				WHEN a.ann_type = 'notice' THEN '공지사항'
+				ELSE a.ann_type
+			END as ann_type,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			adm.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		from
+			announcement a
+			left join admin adm on a.adm_cd = adm.adm_cd
+			left join member m on adm.mbr_cd = m.mbr_cd
+		WHERE
+			a.ann_type = 'notice' and a.stc_cd = 'SD_ACTIVE'
+		ORDER BY
+			a.ann_reg_ymdt DESC;
+	</select>
+</mapper>
