@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.admin.empowerment.mapper.AdminEmpowermentMapper">
+	<resultMap id="AdminEmpowermentMappingResultMap" type="outpolic.admin.empowerment.dto.AdminEmpowermentDTO">
+	    <!-- 관리자 테이블 -->
+	    <result property="admCd" column="adm_cd"/>
+	    <result property="mbrCd" column="mbr_cd"/>
+	    <result property="stcCd" column="stc_cd"/>
+	    <result property="admImpowerYmdt" column="adm_impower_ymdt"/>
+	    
+	    <!-- 권한코드 테이블 -->
+	    <result property="arCd" column="ar_cd"/>
+	    <result property="grdCd" column="grd_cd"/>
+	    <result property="arNm" column="ar_nm"/>
+	    <result property="arExpln" column="ar_expln"/>
+	    <result property="arRegAdmCd" column="ar_reg_adm_cd"/>
+	    <result property="arRegYmdt" column="ar_reg_ymdt"/>
+	    <result property="mdfcnAdmCd" column="mdfcn_adm_cd"/>
+	    <result property="arMdfcnYmdt" column="ar_mdfcn_ymdt"/>
+	    <result property="arSttsCd" column="ar_stts_cd"/>
+	    
+	    <!-- 관리자 권한 매핑 테이블 -->
+	    <result property="armId" column="arm_id"/>
+	    <result property="empwerAdmCd" column="empwer_adm_cd"/>
+	    <result property="ar2Cd" column="ar2_cd"/>
+	    <result property="armRegYmdt" column="arm_reg_ymdt"/>
+	    <!-- 권한 -->
+	    <result property="systemAdmin" column="system_admin"/>
+		<result property="adminEmpower" column="admin_empowerment"/>
+		<result property="contentAdmin" column="content_admin"/>
+		<result property="csAdmin" column="cs_admin"/>
+		<result property="memberAdmin" column="member_admin"/>
+		<result property="paymentAdmin" column="user_payment_admin"/>
+	</resultMap>
+	
+	<select id="AdminEmpowermentSelect" resultMap="AdminEmpowermentMappingResultMap">
+		SELECT
+    a.adm_cd              ,
+    a.stc_cd             ,
+    MAX(CASE WHEN ar.ar_cd = 'SYSTEM_ADMIN' THEN 1 ELSE 0 END) as system_admin,
+    MAX(CASE WHEN ar.ar_cd = 'ADMIN_EMPOWERMENT' THEN 1 ELSE 0 END) as admin_empowerment,
+    MAX(CASE WHEN ar.ar_cd = 'CONTENT_ADMIN' THEN 1 ELSE 0 END) as content_admin,
+    MAX(CASE WHEN ar.ar_cd = 'CS_ADMIN' THEN 1 ELSE 0 END) as cs_admin,
+    MAX(CASE WHEN ar.ar_cd = 'MEMBER_ADMIN' THEN 1 ELSE 0 END) as member_admin,
+    MAX(CASE WHEN ar.ar_cd = 'USER_PAYMENT_ADMIN' THEN 1 ELSE 0 END) as user_payment_admin
+FROM admin a
+LEFT JOIN admin_roles_mapping arm ON a.adm_cd = arm.adm_cd
+LEFT JOIN admin_roles ar ON arm.ar_cd = ar.ar_cd
+GROUP BY a.adm_cd, a.stc_cd
+ORDER BY a.adm_cd;
+	</select>
+</mapper>
