@@ -166,7 +166,7 @@
 			    contentSection.innerHTML = '';
 			    portfolioModal.show();
 			    $.ajax({
-			        url: `/user/api/contents/${contentsId}`,
+			        url: `/enter/api/contents/${contentsId}`,
 			        type: 'GET',
 			        dataType: 'json',
 			        success: function(detail) {
@@ -211,7 +211,7 @@
 			    // --- DOM 요소 캐싱 ---
 			    const contentsContainer = document.getElementById('contentsListContainer');
 			    const filterButtons = document.querySelectorAll('#myTab .nav-link');
-			    const headerSearchForm = document.querySelector('form[action="/user/userSearch"]');
+			    const headerSearchForm = document.querySelector('form[action="/enter/enterSearch"]');
 			    const headerSearchInput = headerSearchForm?.querySelector('input[name="keyword"]');
 			    const resultTitle = document.querySelector('.section-title h3');
 			
@@ -239,7 +239,7 @@
 			                                <div class="product-img-action-wrap">
 			                                    ${bookmarkButtonHtml}  <!-- ★★ 핵심 2: 여기에 북마크 버튼 삽입 ★★ -->
 			                                    <div class="product-img product-img-zoom">
-			                                        <a href="/user/contents/${content.contentsId}"><img class="default-img" src="${content.thumbnailUrl}" alt="외주 이미지"></a>
+			                                        <a href="/enter/contents/${content.contentsId}"><img class="default-img" src="${content.thumbnailUrl}" alt="외주 이미지"></a>
 			                                    </div>
 			                                </div>
 			                                <div class="product-content-wrap" style="padding: 15px;">
@@ -247,7 +247,7 @@
 			                                    <h2><span>${content.contentsTitle}</span></h2>
 			                                    ${ratingHtml}
 			                                    <div class="product-price"><span>${formattedPrice}</span></div>
-			                                    <a href="/user/contents/${content.contentsId}" class="stretched-link"></a>
+			                                    <a href="/enter/contents/${content.contentsId}" class="stretched-link"></a>
 			                                </div>
 			                            </div>
 			                        </div>`;
@@ -278,12 +278,12 @@
 			
 			    // --- AJAX 검색 및 필터링 함수 ---
 			    async function performAjaxSearch(keyword) {
-			        const newUrl = `/user/userSearch?keyword=${encodeURIComponent(keyword)}`;
+			        const newUrl = `/enter/enterSearch?keyword=${encodeURIComponent(keyword)}`;
 			        history.pushState({ keyword }, '', newUrl);
 			        resultTitle.innerHTML = '결과를 불러오는 중...';
 			        contentsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
 			        try {
-			            const response = await fetch(`/user/search/api?keyword=${encodeURIComponent(keyword)}`);
+			            const response = await fetch(`/enter/search/api?keyword=${encodeURIComponent(keyword)}`);
 			            if (!response.ok) throw new Error(`서버 응답 오류: ${response.status}`);
 			            const data = await response.json();
 			            resultTitle.innerHTML = (keyword && keyword.trim() !== '') ? `'<span class="text-brand">${keyword}</span>' 검색 결과` : '전체 콘텐츠';
@@ -336,7 +336,7 @@
 			    
 			    if (headerSearchForm) {
 			        headerSearchForm.addEventListener('submit', function(event) {
-			            if (window.location.pathname.includes('/user/userSearch')) {
+			            if (window.location.pathname.includes('/enter/enterSearch')) {
 			                event.preventDefault();
 			                performAjaxSearch(headerSearchInput.value);
 			            }
