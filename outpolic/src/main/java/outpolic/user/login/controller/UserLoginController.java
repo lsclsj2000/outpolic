@@ -95,11 +95,21 @@ public class UserLoginController {
                     if (prevPage != null) {
                         if (prevPage.startsWith("/user/userSearch")) {
                             // 특별히 대응해야 하는 케이스
-                            redirectUrl = prevPage.replace("/user/userSearch", "/enter/enterSearch");
+                        	String[] parts = prevPage.split("\\?", 2); // [0]=uri, [1]=query
+                            redirectUrl = "/enter/enterSearch";
+
+                            if (parts.length == 2) {
+                                redirectUrl += "?" + parts[1]; // 쿼리 붙여줌
+                            }
 
                         } else if (prevPage.startsWith("/user/products")) {
                             // 일반적인 경우: /user/ → /enter/
                             redirectUrl = prevPage.replaceFirst("/user/", "/enter/");
+                        } else if (prevPage.startsWith("/user/contents")) {
+                        	log.info("✅ prevPage matched /user/contents: {}", prevPage);
+                            // 일반적인 경우: /user/ → /enter/
+                            redirectUrl = prevPage.replaceFirst("^/user/", "/enter/");
+                            log.info("➡️ redirectUrl = {}", redirectUrl);
                         } else if(prevPage.startsWith("/userGoodsList")) {
                         	redirectUrl = prevPage.replaceFirst("/userGoodsList", "/enterGoodsList");
                         }else {
