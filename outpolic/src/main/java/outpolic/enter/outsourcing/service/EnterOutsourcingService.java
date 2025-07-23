@@ -40,6 +40,8 @@ public interface EnterOutsourcingService {
      * @param osCd
      * @return EnterOutsourcing
      */
+    void updateOutsourcingAll(OutsourcingFormDataDto formData, String osCd, MultipartFile thumbnailFile, List<MultipartFile> newBodyImageFiles, List<String> deletedBodyImageCds);
+
     EnterOutsourcing getOutsourcingByOsCd(String osCd);
     void unlinkPortfolioFromOutsourcing(String string, String string2);
 }

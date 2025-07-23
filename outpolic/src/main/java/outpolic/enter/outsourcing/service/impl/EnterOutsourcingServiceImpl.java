@@ -359,4 +359,32 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     public void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd) {
     	outsourcingMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
     }
+    
+    @Override
+    @Transactional // 모든 작업이 하나의 트랜잭션으로 묶여 데이터 정합성을 보장합니다.
+    public void updateOutsourcingAll(OutsourcingFormDataDto formData, String osCd, MultipartFile thumbnailFile, List<MultipartFile> newBodyImageFiles, List<String> deletedBodyImageCds) {
+        
+        // 1. 텍스트 정보 업데이트 (Step 1 로직)
+        EnterOutsourcing outsourcingToUpdate = new EnterOutsourcing();
+        outsourcingToUpdate.setOsCd(osCd);
+        outsourcingToUpdate.setOsTtl(formData.getOsTtl());
+        outsourcingToUpdate.setOsExpln(formData.getOsExpln());
+        outsourcingToUpdate.setOsStrtYmdt(formData.getOsStrtYmdt());
+        outsourcingToUpdate.setOsEndYmdt(formData.getOsEndYmdt());
+        outsourcingToUpdate.setOsAmt(formData.getOsAmt());
+        outsourcingToUpdate.setOsFlfmtCnt(formData.getOsFlfmtCnt());
+        
+        // 대표 카테고리 설정
+        if (formData.getCategoryCodes() != null && !formData.getCategoryCodes().isEmpty()) {
+            // (로직에 따라 대표 카테고리 ID를 설정하는 부분이 필요할 수 있습니다)
+        }
+        
+        updateOutsourcingStep1(outsourcingToUpdate);
+
+        // 2. 카테고리 및 태그 정보 업데이트 (Step 2 로직)
+        updateOutsourcingStep2(osCd, formData.getCategoryCodes(), formData.getTags());
+        
+        // 3. 파일 정보 업데이트 (Step 3 로직)
+        updateOutsourcingStep3(osCd, thumbnailFile, newBodyImageFiles, deletedBodyImageCds);
+    }
 }
