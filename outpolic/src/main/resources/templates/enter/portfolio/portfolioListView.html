@@ -7,67 +7,192 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* --- 기본 스타일 --- */
-        .flex { display: flex; }
-        .justify-between { justify-content: space-between; }
-        .items-center { align-items: center; }
-        .mb-10 { margin-bottom: 40px; }
-        .section-title { font-size: 2em; font-weight: 700; margin-bottom: 20px !important; color: #1f2937; display: inline-block;}
+        .flex { 
+        	display: flex; 
+        }
+        .justify-between { 
+        	justify-content: space-between; 
+        }
+        .items-center { 
+        	align-items: center;
+        }
+        .mb-10 { 
+        	margin-bottom: 40px; 
+        }
+        .section-title { 
+        	font-size: 2em; 
+        	font-weight: 700; 
+        	margin-bottom: 20px !important; 
+        	color: #1f2937; 
+        	display: inline-block;
+        }
         
-        .btn-action { background-color: #264796; border: none; color: white; padding: 10px 20px; text-align: center; display: inline-flex; align-items: center; gap: 8px; font-size: 16px; cursor: pointer;
-        border-radius: 5px; transition: background-color 0.2s ease; margin-bottom: 30px;}
-        .btn-action:hover { background-color: #29A56C; }
+        .btn-action { 
+        	background-color: #264796; 
+        	border: none; 
+        	color: white; 
+        	padding: 10px 20px; 
+        	text-align: center; 
+        	display: inline-flex; 
+        	align-items: center; 
+        	gap: 8px; 
+        	font-size: 16px; 
+        	cursor: pointer;
+        	border-radius: 5px; 
+        	transition: background-color 0.2s ease; 
+        	margin-bottom: 30px;
+        }
+        .btn-action:hover { 
+        	background-color: #29A56C;
+		}
         
-        .hidden { display: none !important; }
-        .portfolio-items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; margin-top: 20px; }
-        .portfolio-item-card { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background-color: #fff;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); display: flex; flex-direction: column; height: 100%;
-        transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .portfolio-item-card:hover { transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        .hidden { 
+        	display: none !important; 
         }
-        .portfolio-thumbnail-wrapper { width: 100%; height: 180px; overflow: hidden; background-color: #f3f4f6;
+        .portfolio-items-grid { 
+        	display: grid; 
+        	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+			gap: 24px; 
+			margin-top: 20px; 
+		}
+        .portfolio-item-card { 
+        	border: 1px solid #e5e7eb; 
+        	border-radius: 8px; 
+        	overflow: hidden; 
+        	background-color: #fff;
+        	box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); 
+        	display: flex; 
+        	flex-direction: column; 
+        	height: 100%;
+        	transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .portfolio-thumbnail { width: 100%; height: 100%; object-fit: cover;
+        .portfolio-item-card:hover { 
+        	transform: translateY(-5px);
+       	    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
         }
-        .portfolio-thumbnail-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-        color: #9ca3af; font-size: 1rem; }
-        .portfolio-content { padding: 15px; display: flex; flex-direction: column;
-        flex-grow: 1; }
-        .portfolio-title { font-size: 1.15em; font-weight: 600; margin-top: 0; margin-bottom: 10px;
-        color: #111827; }
-        .portfolio-category { font-size: 0.85em;
-        color: #6b7280; margin-bottom: 15px; }
-
-        .portfolio-actions { display: flex; gap: 10px; margin-top: auto;
-        border-top: 1px solid #f3f4f6; padding-top: 15px; }
-        .btn-edit, .btn-delete, .btn-share { border: none;
-        padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 500; transition: background-color 0.2s;
+        .portfolio-thumbnail-wrapper { 
+        	 width: 100%;
+        	 height: 180px; 
+        	 overflow: hidden; 
+        	 background-color: #f3f4f6;
         }
-        .btn-edit { background-color: #3b82f6; color: white;
+        .portfolio-thumbnail { 
+        	width: 100%; 
+        	height: 100%; 
+        	object-fit: cover;
         }
-        .btn-edit:hover { background-color: #2563eb;
+        .portfolio-thumbnail-placeholder { 
+        	width: 100%; 
+        	height: 100%; 
+        	display: flex; 
+        	align-items: center; 
+        	justify-content: center;
+        	color: #9ca3af; 
+        	font-size: 1rem; 
         }
-        .btn-delete { background-color: #ef4444; color: white;
+        .portfolio-content { 
+        	padding: 15px; 
+        	display: flex; 
+        	flex-direction: column;
+        	flex-grow: 1; 
         }
-        .btn-delete:hover { background-color: #dc2626;
+        .portfolio-title { 
+        	font-size: 1.15em; 
+        	font-weight: 600; 
+        	margin-top: 0; 
+        	margin-bottom: 10px;
+        	color: #111827; 
         }
-        .btn-share { background-color: #14b8a6; color: white;
+        .portfolio-category { 
+        	font-size: 0.85em;
+      	    color: #6b7280; 
+      	    margin-bottom: 15px; 
+      	}
+	
+        .portfolio-actions { 
+        	display: flex; 
+        	gap: 10px; 
+        	margin-top: auto;
+       	    border-top: 1px solid #f3f4f6; 
+       	    padding-top: 15px; 
+       	}
+        .btn-edit, .btn-delete, .btn-share { 
+        	border: none;
+        	padding: 8px 15px; 
+        	border-radius: 5px; 
+        	cursor: pointer; 
+        	font-weight: 500; 
+        	transition: background-color 0.2s;
         }
-        .btn-share:hover { background-color: #0d9488;
+        .btn-edit { 
+        	background-color: #3b82f6; 
+        	color: white;
         }
-        .no-portfolio-container { text-align: center; padding: 50px 20px; border: 2px dashed #e0e0e0;
-        border-radius: 8px; background-color: #fafafa; }
+        .btn-edit:hover { 
+        	background-color: #2563eb;
+        }
+        .btn-delete { 
+        	background-color: #ef4444; 
+        	color: white;
+        }
+        .btn-delete:hover { 
+        	background-color: #dc2626;
+        }
+        .btn-share { 
+        	background-color: #14b8a6; 
+        	color: white;
+        }
+        .btn-share:hover { 
+        	background-color: #0d9488;
+        }
+        .no-portfolio-container { 
+        	text-align: center; 
+        	padding: 50px 20px; 
+        	border: 2px dashed #e0e0e0;
+        	border-radius: 8px; 
+        	background-color: #fafafa; 
+        }
         
         /* --- 모달 관련 CSS --- */
         @media (min-width: 1400px) {
-            .modal-dialog.modal-xxl { max-width: 1320px; }
+            .modal-dialog.modal-xxl { 
+            max-width: 1320px; }
         }
-        .modal-body.custom-modal-body { max-height: 85vh; overflow-y: auto; }
-		.fi-rs-heart.active { color: #F15B5B; font-weight: 900; }
-		.bookmark-btn .fi-rs-heart.active { color: #F15B5B !important; }
-        .modal-portfolio-content img { max-width: 100%; height: auto; display: block; margin-bottom: 15px; }
-        .modal-portfolio-content .no-image-placeholder { height: 200px; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0; color: #aaa; font-size: 1.2em; text-align: center; margin-bottom: 15px; border-radius: 8px; }
-        .modal-portfolio-content p { line-height: 1.6; color: #333; margin-bottom: 15px; white-space: pre-wrap; }
+        .modal-body.custom-modal-body { 
+        	max-height: 85vh; 
+        	overflow-y: auto;
+       }
+		.fi-rs-heart.active { 
+			color: #F15B5B; 
+			font-weight: 900; 
+		}
+		.bookmark-btn .fi-rs-heart.active { 
+			color: #F15B5B !important;
+		}
+        .modal-portfolio-content img { 
+        	max-width: 100%; 
+        	height: auto; 
+        	display: block; 
+        	margin-bottom: 15px;
+        }
+        .modal-portfolio-content .no-image-placeholder { 
+        	height: 200px; 
+        	display: flex; 
+        	align-items: center; 
+        	justify-content: center; 
+        	background-color: #f0f0f0; 
+        	color: #aaa; 
+        	font-size: 1.2em; 
+        	text-align: center; 
+        	margin-bottom: 15px; 
+        	border-radius: 8px; 
+        }
+        .modal-portfolio-content p {
+        	 line-height: 1.6; 
+        	 color: #333; 
+        	 margin-bottom: 15px; 
+        	 white-space: pre-wrap; 
+       }
     </style>
 </head>
 <body>
@@ -196,7 +321,6 @@
                             <div><h6 class="mb-0 fw-bold">${detail.enterName || '회사명 없음'}</h6><small class="text-muted">MASTER</small></div>
                         </div>
                         <hr class="my-3">
-                        <p class="text-muted mb-2">${detail.ctgryName || '카테고리 정보 없음'}</p>
                         <h3 class="fw-bold mb-3">${title}</h3>
                         <div class="d-flex align-items-center mb-4">
                           

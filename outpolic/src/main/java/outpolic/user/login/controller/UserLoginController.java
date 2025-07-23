@@ -74,16 +74,56 @@ public class UserLoginController {
                 
 	            if("USER".equals(grade)) {
 	            	
+	            	String prevPage = (String) session.getAttribute("prevPage");
+	                session.removeAttribute("prevPage");
+	                String redirectUrl = (prevPage != null) ? prevPage : "/";
+	            	
 	            	redirectAttributes.addFlashAttribute("success", "로그인에 성공하였습니다");
 	            	log.info("로그인성공");    	
 	                model.addAttribute("msg", "로그인에 성공하였습니다.");
-	                model.addAttribute("url", "/");
+	                model.addAttribute("url", redirectUrl);
+	                log.info("prevPage = {}", prevPage);
+                    log.info("최종 redirectUrl = {}", redirectUrl);
 	            	return "user/mypage/alert";
+	            	
 	        	}else if("ENTER".equals(grade)) {
+	        		
+	        		String prevPage = (String) session.getAttribute("prevPage");
+	                session.removeAttribute("prevPage");
+	                String redirectUrl = "/enter";
+	                
+                    if (prevPage != null) {
+                        if (prevPage.startsWith("/user/userSearch")) {
+                            // 특별히 대응해야 하는 케이스
+                        	String[] parts = prevPage.split("\\?", 2); // [0]=uri, [1]=query
+                            redirectUrl = "/enter/enterSearch";
+
+                            if (parts.length == 2) {
+                                redirectUrl += "?" + parts[1]; // 쿼리 붙여줌
+                            }
+
+                        } else if (prevPage.startsWith("/user/products")) {
+                            // 일반적인 경우: /user/ → /enter/
+                            redirectUrl = prevPage.replaceFirst("/user/", "/enter/");
+                        } else if (prevPage.startsWith("/user/contents")) {
+                        	log.info("✅ prevPage matched /user/contents: {}", prevPage);
+                            // 일반적인 경우: /user/ → /enter/
+                            redirectUrl = prevPage.replaceFirst("^/user/", "/enter/");
+                            log.info("➡️ redirectUrl = {}", redirectUrl);
+                        } else if(prevPage.startsWith("/userGoodsList")) {
+                        	redirectUrl = prevPage.replaceFirst("/userGoodsList", "/enterGoodsList");
+                        }else {
+                            // prevPage는 있지만 매칭 안되면 기본 경로
+                            redirectUrl = "/enter";
+                        }
+                    }    
+                    log.info("prevPage = {}", prevPage);
+                    log.info("최종 redirectUrl = {}", redirectUrl);
 	            	redirectAttributes.addFlashAttribute("success", "로그인에 성공하였습니다");
 	            	log.info("로그인성공");
 	                model.addAttribute("msg", "기업회원 로그인에 성공하였습니다.");
-	                model.addAttribute("url", "/enter");
+	                model.addAttribute("url", redirectUrl);
+	                
 	            	return "user/mypage/alert";
 	        	}else {
 	        		model.addAttribute("msg", "올바르지못한 로그인 경로입니다");

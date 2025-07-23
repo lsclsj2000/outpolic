@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import outpolic.systems.interceptor.AdminInterceptor;
 import outpolic.systems.interceptor.LogInterceptor;
 import outpolic.systems.interceptor.LoginInterceptor;
+import outpolic.systems.interceptor.LoginUserBackInterceptor;
 import outpolic.systems.interceptor.LoginUserBlockInterceptor;
 
 @Configuration
@@ -30,6 +31,8 @@ public class WebConfig implements WebMvcConfigurer{
 	
 	private final AdminInterceptor adminInterceptor;
 	
+	private final LoginUserBackInterceptor loginUserBackInterceptor;
+	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		List<String> logExcludePath = List.of(
@@ -46,6 +49,11 @@ public class WebConfig implements WebMvcConfigurer{
 				.addPathPatterns("/**")
 				.excludePathPatterns(logExcludePath);
 		
+		registry.addInterceptor(loginUserBackInterceptor)
+				.addPathPatterns("/user/userSearch", "/userGoodsList", "/user/products", "/user/contents/**")
+				.excludePathPatterns("/login", "/user/registerInfo", "**/assets/**", "/error");
+		
+		
 		 // 로그인하지 않은 사용자의 접근 제한
 	    registry.addInterceptor(loginInterceptor)
 	            .addPathPatterns("/**") // 전체 경로에 적용
@@ -61,7 +69,9 @@ public class WebConfig implements WebMvcConfigurer{
 	                "/user/userInqueryList/**",
 	                "/user/userInqueryList**",
 	                "/user/userSearch**",
+	                "/enter/enterSearch**",
 	                "/user/search/api**",
+	                "/enter/search/api**",
 	                "/user/contents/**",
 	                "/user/api/contents/**",
 	                "/user/company/**",
@@ -71,12 +81,16 @@ public class WebConfig implements WebMvcConfigurer{
 	                "/user/userInquiryNotice/**",
 	                "/user/userInquiryDetail**",
 	                "/user/userInquiryDetail**",
+	                "/user/userInquiryFaq**",
+	                "/user/userInquiryFaq/**",
 	                "/user/products**",
 	                "/admin/login",
 	                "/favicon*",
 	                "/user/assets/**",
 	                "/enter/assets/**",
-	                "/admin/assets/**" // 정적 리소스
+	                "/admin/assets/**", // 정적 리소스
+	                "/attachment/**",
+	                "/api/enter/bookmark"
 	            );
 
 	    // 로그인된 사용자가 다시 로그인/회원가입 페이지 접근 못하도록 제한
@@ -92,8 +106,6 @@ public class WebConfig implements WebMvcConfigurer{
                 .addPathPatterns("/admin/**") // 관리자 URL만 제한
                 .excludePathPatterns("/admin/assets/**",   // 정적 리소스는 허용
                 					 "/admin/login");
-	    
-
 
 	}
 
