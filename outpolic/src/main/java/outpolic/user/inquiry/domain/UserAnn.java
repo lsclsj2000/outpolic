@@ -22,6 +22,13 @@ public class UserAnn {
 	private String saPath;
 	private String saExtn;
 	private String saSize;
+	
+	private String totalCode;
+	private String totalType;
+	private String totalTitle;
+	private String totalContent;
+	private String totalWriter;
+	private String totalRegDate;
 
 	private List<UserInquiryFile> userInquiryFiles;
 }

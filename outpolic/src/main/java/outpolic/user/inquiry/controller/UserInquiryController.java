@@ -15,6 +15,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -233,8 +237,14 @@ public class UserInquiryController {
 	}
 
 	@GetMapping("/userInquiryTotal")
-	public String userInquiryTotalView(Model model) {
-		// 전체 게시판 조회
+	public String userInquiryTotalView(Model model,
+	                                   @RequestParam(defaultValue = "0") int page,
+	                                   @RequestParam(defaultValue = "10") int size) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("totalRegDate").descending());
+		Page<UserAnn> totalList = userInquiryService.getUserTotalList(pageable);
+
+		model.addAttribute("totalList", totalList.getContent());
+		model.addAttribute("pageInfo", totalList); // 🔁 fragment 용
 		model.addAttribute("title", "전체 게시판");
 
 		return "user/inquiry/userInquiryTotalView";
@@ -243,7 +253,9 @@ public class UserInquiryController {
 	@GetMapping("/userInquiryFaq")
 	public String userInquiryFaqView(Model model) {
 		// 자주 묻는 질문
+		var faqList = userInquiryService.getUserFaqList();
 		model.addAttribute("title", "FAQ");
+		model.addAttribute("faqList", faqList);
 
 		return "user/inquiry/userInquiryFqaView";
 	}

@@ -3,6 +3,7 @@ package outpolic.user.inquiry.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.repository.query.Param;
 
 import outpolic.user.inquiry.domain.UserAnn;
 import outpolic.user.inquiry.domain.UserInquiry;
@@ -67,6 +68,16 @@ public interface UserInquiryMapper {
 	
 	// 공지사항 상세 페이지 조회
     UserAnn getUserNoticeByCode(String annCode);
+    
+    // faq 목록 조회
+ 	List<UserAnn> getUserFaqList();
+ 	
+ 	// 전체 게시판 조회
+ 	List<UserAnn> getUserTotalList();
+ 	
+ 	List<UserAnn> getUserTotalListPaged(@Param("offset") int offset, @Param("limit") int limit);
+
+ 	int getUserTotalCount();
 	
 }
 
