@@ -6,16 +6,67 @@
     <title>신청 상세 보기</title>
     <th:block layout:fragment="css">
         <style>
-            .request-card { background: #ffffff; border-radius: 12px; padding: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
-            .request-header h1 { font-size: 1.8rem; font-weight: 800; color: #1f2937; margin: 0 0 1rem 0; }
-            .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; padding: 1.5rem 0; margin-bottom: 1.5rem; }
-            .meta-item { font-size: 1rem; color: #4b5563; }
-            .meta-item strong { color: #111827; display: block; margin-bottom: 0.25rem; }
-            .request-body { line-height: 1.6; margin-bottom: 2rem;}
-            .request-body h3 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f3f4f6;}
-            .btn-back { display: inline-block; background-color: #6b7280; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s; }
-            .btn-back:hover { background-color: #4b5563; }
-            .status-badge { font-size: 1rem; font-weight: bold; padding: 0.4rem 0.8rem; border-radius: 9999px; color: white; }
+            .request-card {
+            	 background: #ffffff; 
+            	 border-radius: 12px; 
+            	 padding: 2rem; 
+            	 box-shadow: 0 8px 25px rgba(0,0,0,0.07); 
+            }
+            .request-header h1 { 
+            	font-size: 1.8rem; 
+            	font-weight: 800; 
+            	color: #1f2937; 
+            	margin: 0 0 1rem 0;
+             }
+            .meta-grid { 
+            	display: grid; 
+            	grid-template-columns: repeat(2, 1fr); 
+            	gap: 1rem; 
+            	border-top: 1px solid #e5e7eb; 
+            	border-bottom: 1px solid #e5e7eb; 
+            	padding: 1.5rem 0; 
+            	margin-bottom: 1.5rem; 
+            }
+            .meta-item {
+            	 font-size: 1rem; 
+            	 color: #4b5563; 
+            }
+            .meta-item strong { 
+            	color: #111827; 
+            	display: block; 
+            	margin-bottom: 0.25rem; 
+            }
+            .request-body { 
+            	line-height: 1.6; 
+            	margin-bottom: 2rem;
+            }
+            .request-body h3 { 
+            	font-size: 1.2rem; 
+            	font-weight: 700; 
+            	margin-top: 1.5rem; 
+            	padding-bottom: 0.5rem; 
+            	border-bottom: 1px solid #f3f4f6;
+            }
+            	
+            .btn-back { 
+            	display: inline-block; 
+            	background-color: #6b7280; 
+            	color: white; 
+            	padding: 0.75rem 1.5rem; 
+            	border-radius: 6px; 
+            	text-decoration: none; 
+            	transition: background-color 0.2s;
+             }
+            .btn-back:hover {
+            	 background-color: #4b5563; 
+            }
+            .status-badge { 
+            	font-size: 1rem; 
+            	font-weight: bold; 
+            	padding: 0.4rem 0.8rem; 
+            	border-radius: 9999px; 
+            	color: white;
+           }
         </style>
     </th:block>
 </head>
