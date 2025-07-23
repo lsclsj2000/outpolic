@@ -629,3 +629,421 @@ select {
 .SR_contact-avatar.customer {
     background-color: #264796; /* Changed from green to blue */
 }
+
+/* project-card 내부에 위치 조정을 위한 relative */
+.SR_project-card {
+    position: relative;
+}
+/* 역할 표시를 위한 스타일 */
+.SR_project-role-tag {
+    position: absolute;
+    top: 15px; /* 상단 여백 조정 */
+    right: 15px; /* 우측 여백 조정 */
+    background-color: #e0f2f7; /* 배경색 (라이트 블루 계열) */
+    color: #2a6f8b; /* 글자색 (짙은 파랑) */
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.85em;
+    font-weight: 600;
+    z-index: 10; /* 다른 요소 위에 표시 */
+}
+.SR_report-feedback-card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+    transition: transform 0.2s ease-in-out;
+}
+.SR_report-feedback-card:hover {
+    transform: translateY(-2px);
+}
+
+/* 모달 오버레이 (뒷 배경을 어둡게 하는 부분) */
+.SR_modal {
+	display: none; /* 기본적으로 숨김 */
+	position: fixed; /* 화면에 고정 */
+	z-index: 1000; /* 다른 요소 위에 표시 */
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto; /* 내용이 넘칠 경우 스크롤 */
+	background-color: rgba(0,0,0,0.4); /* 반투명 검정 배경 */
+	justify-content: center; /* 가로 중앙 정렬 */
+	align-items: center; /* 세로 중앙 정렬 */
+	animation: SR_fadeIn 0.3s ease-out; /* 부드러운 등장 효과 */
+}
+
+/* 팝업 컨테이너 */
+.SR_modal-content-wrapper {
+	background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 700px;
+    position: relative;
+    animation: SR_slideIn 0.3s ease-out;
+    box-sizing: border-box;
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+/* 팝업 헤더 */
+.SR_popup-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #eee;
+	padding-bottom: 10px;
+	margin-bottom: 15px;
+}
+
+.SR_popup-header h2 {
+	margin: 0;
+	font-size: 1.5em;
+	color: #333;
+}
+
+.SR_close-button {
+	background: none;
+	border: none;
+	font-size: 1.8em;
+	cursor: pointer;
+	color: #888;
+}
+
+.SR_close-button:hover {
+	color: #333;
+}
+
+/* 폼 그룹 스타일 */
+.SR_form-group {
+	margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+            
+/* 새로운 줄에 배치될 그룹의 마진 조정 */
+.SR_form-group.SR_full-width {
+	display: block;
+}
+
+/* 라벨과 입력 필드의 기본 스타일 */
+.SR_form-group label {
+	display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    min-width: 90px;
+}
+.SR_form-control {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+            
+/* readonly 필드 스타일 */
+.SR_form-control[readonly] {
+	background-color: #e9ecef;
+    opacity: 1;
+    cursor: default;
+}
+
+textarea.SR_form-control {
+	resize: vertical;
+    min-height: 120px;
+    overflow-y: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 0;
+    height: auto;
+}
+            
+/* 특정 요소들의 너비 조정 */
+.SR_form-group .SR_input-half {
+	display: flex; /* 라벨과 입력 필드를 세로로 쌓기 위함 */
+    flex-direction: column; /* 라벨 아래에 입력 필드가 오도록 */
+    box-sizing: border-box; /* 패딩과 보더를 너비 계산에 포함 */
+    margin-bottom: 0; /* 부모 SR_form-group의 margin-bottom으로 충분 */
+}
+
+.SR_form-group .SR_input-half:first-child {
+    width: calc(28% - 10px); /* 전체 공간의 약 28% 정도 차지, 간격 고려 */
+    margin-right: 20px; /* 두 요소 사이의 간격 */
+    flex-shrink: 0; /* 공간이 부족해도 이 너비를 유지하려고 시도 */
+}
+
+.SR_form-group .SR_input-half:last-child {
+    width: calc(72% - 10px); /* 남은 공간의 약 72% 정도 차지, 간격 고려 */
+    flex-grow: 1; /* 남은 공간을 유연하게 채웁니다. */
+    margin-right: 0; /* 오른쪽 여백 없음 */
+}
+
+.SR_form-group .SR_input-half input,
+.SR_form-group .SR_input-half select {
+    width: 100%; /* 부모 .SR_input-half의 너비를 꽉 채움 */
+    margin-right: 0; /* 중복 마진 방지 */
+}
+
+
+/* 팝업 상단 정보 */
+.SR_popup-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+.SR_status-dropdown {
+	flex-basis: 120px; /* 처리 상태 드롭박스 너비 */
+	margin-left: auto;
+	text-align: center;
+}
+.SR_writer-info {
+	font-size: 0.9em;
+	color: #666;
+	flex-grow: 1; /* 남은 공간 채우기 */
+	padding-right: 10px;
+}
+
+/* 첨부파일 목록 스타일 */
+.SR_file-list {
+	border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    min-height: 80px;
+    background-color: #f9f9f9;
+    color: #555;
+    font-size: 0.95em;
+    line-height: 1.5;
+    width: 100%; /* 너비를 100%로 설정하여 부모 요소에 꽉 차게 */
+    box-sizing: border-box;
+    margin-right: 0;
+}
+
+.SR_popup-footer {
+	margin-top: 20px;
+	text-align: right;
+	display: flex; /* 요소들을 가로로 정렬 */
+	justify-content: space-between; /* 양 끝 정렬 */
+	align-items: center; /* 세로 중앙 정렬 */
+}
+            
+.SR_update-info {
+	font-size: 0.9em;
+	color: #666;
+}
+
+.SR_popup-footer button {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	background-color: #007bff;
+	color: white;
+	font-size: 1em;
+	transition: background-color 0.2s ease;
+}
+
+.SR_popup-footer button:hover {
+	background-color: #0056b3;
+}
+
+/* 애니메이션 키프레임 */
+@keyframes SR_fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes SR_slideIn {
+	from { transform: translateY(-50px); opacity: 0; }
+	to { transform: translateY(0); opacity: 1; }
+}
+
+/* 문의 및 답변 팝업 공통 스타일 */
+			.SR_modal {
+				display: none; /* 기본적으로 숨김 */
+				position: fixed; /* 화면에 고정 */
+				z-index: 1000; /* 다른 요소 위에 표시 */
+				left: 0;
+				top: 0;
+				width: 100%; /* 전체 너비 */
+				height: 100%; /* 전체 높이 */
+				overflow: auto; /* 내용이 넘칠 경우 스크롤 허용 */
+				background-color: rgba(0,0,0,0.4); /* 반투명 검정 배경 */
+				justify-content: center; /* 가로 중앙 정렬 */
+				align-items: center; /* 세로 중앙 정렬 */
+			}
+
+			.SR_modal-content-wrapper {
+				background-color: #fefefe; /* 팝업 배경색 */
+				margin: auto; /* 중앙 정렬 */
+				padding: 20px;
+				border: 1px solid #888;
+				width: 80%; /* 반응형 너비 */
+				max-width: 700px; /* 최대 너비 */
+				border-radius: 8px; /* 둥근 모서리 */
+				box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 그림자 효과 */
+				position: relative;
+			}
+
+			.SR_popup-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				border-bottom: 1px solid #eee; /* 하단 경계선 */
+				padding-bottom: 10px;
+				margin-bottom: 20px;
+			}
+
+			.SR_popup-header h2 {
+				margin: 0;
+				font-size: 1.5em; /* 제목 글자 크기 */
+			}
+
+			.SR_close-button, .SR_close-button-answer {
+				color: #aaa; /* 닫기 버튼 색상 */
+				font-size: 28px;
+				font-weight: bold;
+				cursor: pointer;
+				background: none;
+				border: none;
+				padding: 0;
+			}
+
+			.SR_close-button:hover,
+			.SR_close-button:focus,
+			.SR_close-button-answer:hover,
+			.SR_close-button-answer:focus {
+				color: black;
+				text-decoration: none;
+				cursor: pointer;
+			}
+
+			.SR_popup-info {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 20px;
+				font-size: 0.9em;
+				color: #555;
+			}
+
+			.SR_writer-info span {
+				font-weight: bold;
+			}
+
+			.SR_form-group {
+				margin-bottom: 15px;
+				display: flex;
+				gap: 15px; /* 입력 필드 간 간격 */
+			}
+
+			.SR_input-half {
+				flex: 1; /* 절반 너비 */
+			}
+
+			.SR_full-width {
+				width: 100%; /* 전체 너비 */
+			}
+
+			.SR_form-control {
+				width: 100%;
+				padding: 8px 12px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				box-sizing: border-box; /* 패딩을 너비에 포함 */
+			}
+
+			textarea.SR_form-control {
+				resize: vertical; /* 세로 크기 조절 가능 */
+			}
+
+			.SR_file-list {
+				background-color: #f9f9f9;
+				padding: 10px;
+				border: 1px solid #eee;
+				border-radius: 4px;
+			}
+
+			.SR_popup-footer {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				border-top: 1px solid #eee; /* 상단 경계선 */
+				padding-top: 15px;
+				margin-top: 20px;
+			}
+
+			.SR_update-info {
+				font-size: 0.8em;
+				color: #777;
+			}
+
+			.SR_status-dropdown {
+				padding: 5px 10px;
+				border-radius: 4px;
+				border: 1px solid #ccc;
+			}
+
+			/* 검색 필터 스타일 (기존 테이블 스타일 참고) */
+			.search-filter-card {
+				margin-bottom: 24px; /* card mb-4와 유사 */
+				border: 1px solid #e3e6ef; /* card border와 유사 */
+				border-radius: 8px; /* card border-radius와 유사 */
+				background-color: #fff; /* card 배경색과 유사 */
+			}
+
+			.search-filter-body {
+				padding: 24px; /* card-body padding과 유사 */
+			}
+
+			.search-filter-table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-bottom: 20px;
+			}
+
+			.search-filter-table th,
+			.search-filter-table td {
+				padding: 12px 15px; /* table th, td padding과 유사 */
+				border: 1px solid #ececec; /* table border와 유사 */
+				vertical-align: middle;
+			}
+
+			.search-filter-table th {
+				background-color: #f8f9fa; /* thead 배경색과 유사 */
+				text-align: left;
+				font-weight: 600;
+				color: #343a40;
+				width: 15%; /* 검색어, 기간검색, 레벨검색 레이블 너비 */
+			}
+
+			.search-filter-table td {
+				text-align: left;
+			}
+
+			.search-filter-table .form-control,
+			.search-filter-table .form-select {
+				display: inline-block;
+				width: auto;
+				vertical-align: middle;
+				margin-right: 8px;
+			}
+
+			.search-filter-table .radio-group label {
+				margin-right: 15px;
+				font-weight: normal;
+			}
+
+			.search-filter-table .radio-group input[type="radio"] {
+				margin-right: 5px;
+			}
+
+			.search-filter-buttons {
+				text-align: center;
+				padding-top: 20px;
+			}
+
+			.search-filter-buttons .btn {
+				margin: 0 5px;
+			}

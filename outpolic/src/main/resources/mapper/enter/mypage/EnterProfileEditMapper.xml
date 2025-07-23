@@ -5,17 +5,17 @@
   
 <mapper namespace="outpolic.enter.mypage.mapper.EnterpriseMapper">
 
-    <resultMap type="outpolic.enter.mypage.dto.CorpInfo" id="EnterProfileImageResultMap">
+    <resultMap type="outpolic.enter.mypage.dto.EnterInfo" id="EnterProfileImageResultMap">
         <result column="mbr_cd" property="memberCode"/>
-    	<result column="ent_img" property="entImg"/>
+    	<result column="mbr_img" property="mbrImg"/>
     </resultMap>
 
     <select id="getCorpProfileFile" parameterType="String" resultMap="EnterProfileImageResultMap">
 		SELECT 
 	        mbr_cd,
-	        ent_img
+	        mbr_img
 	    FROM 
-	        enterprise
+	        member
 	    WHERE 
 	        mbr_cd = #{memberCode}
 	</select>

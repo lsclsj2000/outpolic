@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="outpolic.user.inquiry.mapper.UserInquiryMapper">
+	<!-- UserInquiry.DTO -->
+	<resultMap id="userNoticeResultMap" type="outpolic.user.inquiry.domain.UserAnn">
+		<id 	column="ann_cd" 			property="annCode"/>
+		<result column="ann_type" 			property="annType"/>
+		<result column="ann_ttl" 			property="annTitle"/>
+		<result column="ann_cn" 			property="annCn"/>
+		<result column="stc_cd" 			property="stcCode"/>
+		<result column="adm_cd" 			property="admCode"/>
+		<result column="mbr_cd" 			property="mbrCode"/>
+		<result column="mbr_nm" 			property="mbrName"/>
+		<result column="ann_reg_ymdt" 		property="annRegYmdt"/>
+		
+		<result column="sa_cd" 				property="saCode"/>
+		<result column="sa_orgnl_nm" 		property="saOrgnlName"/>
+		<result column="sa_srvr_nm" 		property="saSrvrName"/>
+		<result column="sa_path" 			property="saPath"/>
+		<result column="sa_extn" 			property="saExtn"/>
+		<result column="sa_size" 			property="saSize"/>
+	</resultMap>
+	
+	<select id="getUserNoticeByCode" parameterType="String" resultMap="userNoticeResultMap">
+		/* 공지사항 게시판 조회 */
+		select
+			a.ann_cd as ann_cd,
+			CASE 
+				WHEN a.ann_type = 'notice' THEN '공지사항'
+				ELSE a.ann_type
+			END as ann_type,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			sa.sa_cd as sa_cd,
+			sa.sa_orgnl_nm as sa_orgnl_nm,
+			sa.sa_srvr_nm as sa_srvr_nm,
+			sa.sa_path as sa_path,
+			sa.sa_extn as sa_extn,
+			sa.sa_size as sa_size,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			adm.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		from
+			announcement a
+			left join admin adm on a.adm_cd = adm.adm_cd
+			left join member m on adm.mbr_cd = m.mbr_cd
+			left join submission_attachment sa on a.ann_cd = sa.sa_refer_cd
+		WHERE
+			a.ann_type = 'notice' and a.stc_cd = 'SD_ACTIVE'
+			and	a.ann_cd = #{annCode}
+		ORDER BY
+			a.ann_reg_ymdt DESC;
+	</select>
+	
+	<select id="getUserNoticeList" resultMap="userNoticeResultMap">
+		/* 공지사항 게시판 조회 */
+		select
+			a.ann_cd as ann_cd,
+			CASE 
+				WHEN a.ann_type = 'notice' THEN '공지사항'
+				ELSE a.ann_type
+			END as ann_type,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			adm.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		from
+			announcement a
+			left join admin adm on a.adm_cd = adm.adm_cd
+			left join member m on adm.mbr_cd = m.mbr_cd
+		WHERE
+			a.ann_type = 'notice' and a.stc_cd = 'SD_ACTIVE'
+		ORDER BY
+			a.ann_reg_ymdt DESC;
+	</select>
+</mapper>

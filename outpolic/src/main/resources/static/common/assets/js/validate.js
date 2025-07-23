@@ -21,7 +21,7 @@ function isValidEmail(email) {
 
 // 전화번호 검사 (숫자만, 010 포함 10~11자리)
 function isValidTelNo(TelNo) {
-    const pattern = /^01[016789]-[0-9]{3,4}-[0-9]{4}$/
+    const pattern = /[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}$/
     return pattern.test(TelNo);
 }
 
@@ -35,4 +35,9 @@ function isValidName(name) {
 function isValidNickname(nickname) {
     const pattern = /^[가-힣a-zA-Z]{2,15}$/;
     return pattern.test(nickname);
+}
+
+function isValidCorpScale(scale) {
+	return /^[0-9]+$/.test(scale); 
+
 }

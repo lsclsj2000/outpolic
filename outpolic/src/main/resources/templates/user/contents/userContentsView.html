@@ -13,6 +13,36 @@
 			    color: #F15412; /* 찜 했을 때의 색상 */
 			    font-weight: 900; /* 채워진 아이콘처럼 보이게 */
 			}
+			.product-cart-wrap h2 {
+			    /* 제목 요소의 높이를 강제로 고정하기 위한 설정 */
+			    /* line-height * 줄 수 = 고정 높이 */
+			    /* 예: 1.5em * 2줄 = 3em */
+			    line-height: 1.4em; /* 줄 간격을 적절히 설정 */
+			    height: 1.4em;        /* 2줄 높이로 고정 (line-height * 2) */
+			    
+			    /* 아래 4줄이 말줄임표의 핵심입니다. */
+			    overflow: hidden;                 /* 영역을 넘어가는 텍스트 숨기기 */
+			    display: -webkit-box;             /* Webkit의 박스 모델 사용 */
+			    -webkit-line-clamp: 1;            /* 최대 2줄까지 표시 */
+			    -webkit-box-orient: vertical;     /* 수직 방향으로 배치 */
+			}
+			.product-cart-wrap .product-category a {
+			    /* 이 텍스트는 한 줄로 제한하는 것이 깔끔합니다. */
+			    line-height: 1.4em; /* 한 줄 텍스트에 맞는 줄 간격 */
+			    height: 1.4em;      /* 1줄 높이로 고정 (line-height * 1) */
+			    
+			    /* 말줄임표 핵심 속성들 */
+			    overflow: hidden;
+			    display: -webkit-box;
+			    -webkit-line-clamp: 1; /* 최대 1줄까지 표시 */
+			    -webkit-box-orient: vertical;
+			    
+			    /* 
+			      <a> 태그는 기본적으로 inline 요소이므로, 
+			      위 속성들이 잘 동작하려면 block 또는 inline-block으로 만들어주는 것이 좋습니다. 
+			    */
+			    display: block; /* 또는 inline-block */
+			}
 		</style>
 	</head>
 	<!-- 추가할 javaFile -->
@@ -91,14 +121,13 @@
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
                                         <a th:href="@{/user/contents/{id}(id=${content.contentsId})}" >
-                                            <img class="default-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 50) + '/400/300'}" alt="콘텐츠 이미지" >
-                                            <img class="hover-img" th:src="@{'https://picsum.photos/id/' + (${iterStat.index} + 150) + '/400/300'}" alt="콘텐츠 이미지" >
+                                            <img class="default-img" th:src="${content.thumbnailUrl}" alt="콘텐츠 이미지" >
                                         </a>
                                     </div>
                                     <div class="product-action-1">
-                                        <a th:attr="data-cl-cd=${content.clCode}" aria-label="Add To Wishlist" class="action-btn bookmark-btn" href="javascript:void(0);">
-									        <i class="fi-rs-heart" th:classappend="${content.isBookmarked ? 'active' : ''}"></i>
-									    </a>
+                                        <a th:attr="data-cl-cd=${content.clCd}" aria-label="Add To Wishlist" class="action-btn bookmark-btn" href="javascript:void(0);">
+										    <i class="fi-rs-heart" th:classappend="${content.isBookmarked ? 'active' : ''}"></i>
+										</a>
                                     </div>
                                 </div>
                                 <div class="product-content-wrap" style="margin-top: 15px;">

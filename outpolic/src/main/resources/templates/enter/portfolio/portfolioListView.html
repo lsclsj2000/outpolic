@@ -7,114 +7,197 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* --- 기본 스타일 --- */
-        .flex { display: flex; }
-        .justify-between { justify-content: space-between; }
-        .items-center { align-items: center; }
-        .mb-10 { margin-bottom: 40px; }
-        .section-title { font-size: 2em; font-weight: 700; margin-bottom: 20px !important; color: #1f2937; display: inline-block;}
+        .flex { 
+        	display: flex; 
+        }
+        .justify-between { 
+        	justify-content: space-between; 
+        }
+        .items-center { 
+        	align-items: center;
+        }
+        .mb-10 { 
+        	margin-bottom: 40px; 
+        }
+        .section-title { 
+        	font-size: 2em; 
+        	font-weight: 700; 
+        	margin-bottom: 20px !important; 
+        	color: #1f2937; 
+        	display: inline-block;
+        }
         
-        .btn-action { background-color: #264796; border: none; color: white; padding: 10px 20px; text-align: center; display: inline-flex; align-items: center; gap: 8px; font-size: 16px; cursor: pointer;
-        border-radius: 5px; transition: background-color 0.2s ease; margin-bottom: 30px;}
-        .btn-action:hover { background-color: #29A56C; }
+        .btn-action { 
+        	background-color: #264796; 
+        	border: none; 
+        	color: white; 
+        	padding: 10px 20px; 
+        	text-align: center; 
+        	display: inline-flex; 
+        	align-items: center; 
+        	gap: 8px; 
+        	font-size: 16px; 
+        	cursor: pointer;
+        	border-radius: 5px; 
+        	transition: background-color 0.2s ease; 
+        	margin-bottom: 30px;
+        }
+        .btn-action:hover { 
+        	background-color: #29A56C;
+		}
         
-        .hidden { display: none !important; }
-        .portfolio-items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; margin-top: 20px; }
-        .portfolio-item-card { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background-color: #fff;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); display: flex; flex-direction: column; height: 100%;
-        transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .portfolio-item-card:hover { transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        .hidden { 
+        	display: none !important; 
         }
-        .portfolio-thumbnail-wrapper { width: 100%; height: 180px; overflow: hidden; background-color: #f3f4f6;
+        .portfolio-items-grid { 
+        	display: grid; 
+        	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+			gap: 24px; 
+			margin-top: 20px; 
+		}
+        .portfolio-item-card { 
+        	border: 1px solid #e5e7eb; 
+        	border-radius: 8px; 
+        	overflow: hidden; 
+        	background-color: #fff;
+        	box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); 
+        	display: flex; 
+        	flex-direction: column; 
+        	height: 100%;
+        	transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .portfolio-thumbnail { width: 100%; height: 100%; object-fit: cover;
+        .portfolio-item-card:hover { 
+        	transform: translateY(-5px);
+       	    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
         }
-        .portfolio-thumbnail-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-        color: #9ca3af; font-size: 1rem; }
-        .portfolio-content { padding: 15px; display: flex; flex-direction: column;
-        flex-grow: 1; }
-        .portfolio-title { font-size: 1.15em; font-weight: 600; margin-top: 0; margin-bottom: 10px;
-        color: #111827; }
-        .portfolio-actions { display: flex; gap: 10px; margin-top: auto;
-        border-top: 1px solid #f3f4f6; padding-top: 15px; }
-        .btn-edit, .btn-delete, .btn-share { border: none;
-        padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 500; transition: background-color 0.2s;
+        .portfolio-thumbnail-wrapper { 
+        	 width: 100%;
+        	 height: 180px; 
+        	 overflow: hidden; 
+        	 background-color: #f3f4f6;
         }
-        .btn-edit { background-color: #3b82f6; color: white;
+        .portfolio-thumbnail { 
+        	width: 100%; 
+        	height: 100%; 
+        	object-fit: cover;
         }
-        .btn-edit:hover { background-color: #2563eb;
+        .portfolio-thumbnail-placeholder { 
+        	width: 100%; 
+        	height: 100%; 
+        	display: flex; 
+        	align-items: center; 
+        	justify-content: center;
+        	color: #9ca3af; 
+        	font-size: 1rem; 
         }
-        .btn-delete { background-color: #ef4444; color: white;
+        .portfolio-content { 
+        	padding: 15px; 
+        	display: flex; 
+        	flex-direction: column;
+        	flex-grow: 1; 
         }
-        .btn-delete:hover { background-color: #dc2626;
+        .portfolio-title { 
+        	font-size: 1.15em; 
+        	font-weight: 600; 
+        	margin-top: 0; 
+        	margin-bottom: 10px;
+        	color: #111827; 
         }
-        .btn-share { background-color: #14b8a6; color: white;
+        .portfolio-category { 
+        	font-size: 0.85em;
+      	    color: #6b7280; 
+      	    margin-bottom: 15px; 
+      	}
+	
+        .portfolio-actions { 
+        	display: flex; 
+        	gap: 10px; 
+        	margin-top: auto;
+       	    border-top: 1px solid #f3f4f6; 
+       	    padding-top: 15px; 
+       	}
+        .btn-edit, .btn-delete, .btn-share { 
+        	border: none;
+        	padding: 8px 15px; 
+        	border-radius: 5px; 
+        	cursor: pointer; 
+        	font-weight: 500; 
+        	transition: background-color 0.2s;
         }
-        .btn-share:hover { background-color: #0d9488;
+        .btn-edit { 
+        	background-color: #3b82f6; 
+        	color: white;
         }
-        .no-portfolio-container { text-align: center; padding: 50px 20px; border: 2px dashed #e0e0e0;
-        border-radius: 8px; background-color: #fafafa; }
+        .btn-edit:hover { 
+        	background-color: #2563eb;
+        }
+        .btn-delete { 
+        	background-color: #ef4444; 
+        	color: white;
+        }
+        .btn-delete:hover { 
+        	background-color: #dc2626;
+        }
+        .btn-share { 
+        	background-color: #14b8a6; 
+        	color: white;
+        }
+        .btn-share:hover { 
+        	background-color: #0d9488;
+        }
+        .no-portfolio-container { 
+        	text-align: center; 
+        	padding: 50px 20px; 
+        	border: 2px dashed #e0e0e0;
+        	border-radius: 8px; 
+        	background-color: #fafafa; 
+        }
         
-        /* --- 공유 모달 스타일 (기존 스타일) --- */
-        .modal-overlay { position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0;
-        visibility: hidden; transition: opacity 0.3s ease, visibility 0s 0.3s; }
-        .modal-overlay.active { opacity: 1;
-        visibility: visible; transition: opacity 0.3s ease; }
-        .modal-content { background: #fff; padding: 25px;
-        border-radius: 8px; width: 90%; max-width: 1000px; text-align: center; }
-        .modal-header { display: flex;
-        justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;
-        }
-        .modal-title { margin: 0; font-size: 1.5em;
-        }
-        .modal-close-btn { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #999;
-        }
-        .social-share-buttons { display: flex; justify-content: center; gap: 15px; margin: 20px 0;
-        }
-        .social-share-buttons button { border: none; border-radius: 50%; width: 50px; height: 50px;
-        display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.5em; color: white; transition: all 0.2s ease;
-        }
-        #shareFacebookBtn { background-color: #1877F2;
-        }
-        #shareXBtn { background-color: #000;
-        }
-        #shareInstagramBtn { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
-        }
-        .copy-url-section { display: flex; align-items: center; gap: 10px;
-        }
-        .copy-url-input { flex-grow: 1; padding: 8px 10px; border: 1px solid #ddd;
-        border-radius: 5px; font-size: 0.9em; }
-        .copy-url-btn { background-color: #007bff; color: white;
-        padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; }
-
-        /* --- 포트폴리오 상세 모달 관련 CSS (enterMain.html에서 가져옴) --- */
-        /* 크몽 스타일의 매우 넓은 모달을 위한 커스텀 CSS */
+        /* --- 모달 관련 CSS --- */
         @media (min-width: 1400px) {
-            .modal-dialog.modal-xxl {
-                /* XXL 사이즈(1400px 이상) 화면에서 모달의 최대 너비를 1320px로 설정합니다. */
-                max-width: 1320px;
-            }
+            .modal-dialog.modal-xxl { 
+            max-width: 1320px; }
         }
-        
-        .modal-body.custom-modal-body {
-            /* 모달 내용이 화면의 85% 높이를 넘지 않도록 하고, 넘으면 스크롤 생성 */
-            max-height: 85vh;
-            overflow-y: auto;
+        .modal-body.custom-modal-body { 
+        	max-height: 85vh; 
+        	overflow-y: auto;
+       }
+		.fi-rs-heart.active { 
+			color: #F15B5B; 
+			font-weight: 900; 
+		}
+		.bookmark-btn .fi-rs-heart.active { 
+			color: #F15B5B !important;
+		}
+        .modal-portfolio-content img { 
+        	max-width: 100%; 
+        	height: auto; 
+        	display: block; 
+        	margin-bottom: 15px;
         }
-		/* 찜 했을 때의 색상 */
-		.fi-rs-heart.active {
-		    color: #F15B5B; 
-		    font-weight: 900; 
-		}
-		.bookmark-btn .fi-rs-heart.active {
-		    color: #F15B5B !important; 
-		}
+        .modal-portfolio-content .no-image-placeholder { 
+        	height: 200px; 
+        	display: flex; 
+        	align-items: center; 
+        	justify-content: center; 
+        	background-color: #f0f0f0; 
+        	color: #aaa; 
+        	font-size: 1.2em; 
+        	text-align: center; 
+        	margin-bottom: 15px; 
+        	border-radius: 8px; 
+        }
+        .modal-portfolio-content p {
+        	 line-height: 1.6; 
+        	 color: #333; 
+        	 margin-bottom: 15px; 
+        	 white-space: pre-wrap; 
+       }
     </style>
 </head>
 <body>
 <th:block layout:fragment="contents">
-    <div class="page-container">
+    <div class="page-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
         <h1 class="section-title">내 포트폴리오</h1>
         
         <button id="addPortfolioBtn" class="btn-action">
@@ -123,32 +206,11 @@
 
         <div id="portfolioItemsGrid" class="portfolio-items-grid"></div>
         
-        <div id="noPortfolioMessage" 
-         class="no-portfolio-container hidden">
+        <div id="noPortfolioMessage" class="no-portfolio-container hidden">
             <p>등록된 포트폴리오가 없습니다. 새로운 포트폴리오를 등록해보세요!</p>
         </div>
     </div>
     
-    <div id="shareModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="shareModalTitle" class="modal-title">포트폴리오 공유</h3>
-                <button class="modal-close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="social-share-buttons">
-                    <button id="shareFacebookBtn" class="social-button"><i class="fab fa-facebook-f"></i></button>
-                    <button id="shareXBtn" class="social-button"><i class="fab fa-x-twitter"></i></button>
-                    <button id="shareInstagramBtn" class="social-button"><i class="fab fa-instagram"></i></button>
-                </div>
-                <div class="copy-url-section">
-                    <input type="text" id="shareUrlInput" class="copy-url-input" readonly>
-                    <button id="modalCopyUrlBtn" class="copy-url-btn">복사</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="portfolioDetailModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xxl"> 
             <div class="modal-content"> 
@@ -170,197 +232,153 @@
 
 <th:block layout:fragment="jsFile">
     <script th:src="@{/enter/assets/js/vendor/jquery-3.6.0.min.js}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // 전역 변수로 선언하여 모달이 닫힌 후에도 접근 가능하게 함
-        let lastFocusedElement = null;
+        let lastFocusedElement = null; // 모달이 닫힌 후 포커스를 돌려주기 위한 변수
 
-        // --- 찜하기 토글 함수 (전역 스코프로 이동) ---
-        function toggleBookmark(clickedButtonElement) {
-            const clCd = clickedButtonElement.dataset.clCd;
-            if (!clCd) return;
+        /**
+         * 찜 버튼 클릭을 처리하는 함수
+         */
+         function handleBookmarkClick(clickedButtonElement) {
+             const clCd = clickedButtonElement.dataset.clCd;
+             if (!clCd) return;
+             const heartIcons = document.querySelectorAll(`.bookmark-btn[data-cl-cd="${clCd}"] i.fi-rs-heart`);
+             if (heartIcons.length === 0) return;
+             const isCurrentlyBookmarked = heartIcons[0].classList.contains('active');
+             const apiUrl = '/api/enter/bookmarks';
+             heartIcons.forEach(icon => icon.classList.toggle('active'));
+             let options;
+             if (isCurrentlyBookmarked) {
+                 options = { method: 'DELETE' };
+                 fetch(`${apiUrl}/${clCd}`, options).then(response => {
+                     if (!response.ok) {
+                         alert('찜 해제에 실패했습니다.');
+                         heartIcons.forEach(icon => icon.classList.add('active'));
+                     }
+                 });
+             } else {
+                 options = {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify({ clCd: clCd })
+                 };
+                 fetch(apiUrl, options).then(response => {
+                     if (!response.ok) {
+                         if (response.status === 401 || response.status === 403) alert('로그인이 필요한 기능입니다.');
+                         else alert('찜하기에 실패했습니다.');
+                         heartIcons.forEach(icon => icon.classList.remove('active'));
+                     }
+                 });
+             }
+         }
 
-            const heartIcons = document.querySelectorAll(`.bookmark-btn[data-cl-cd="${clCd}"] i.fi-rs-heart`);
-            if (heartIcons.length === 0) return;
+        /**
+         * 포트폴리오 ID를 받아 상세 정보를 모달에 표시하는 함수
+         * @param {string} contentsId - 포트폴리오의 고유 ID (예: PO_C00001)
+         */
+         function openDetailModal(contentsId) {
+             const modalElement = document.getElementById('portfolioDetailModal');
+             if (!modalElement) return;
+             lastFocusedElement = document.activeElement;
+             const infoSection = modalElement.querySelector('#modalInfoSection');
+             const contentSection = modalElement.querySelector('#modalContentSection');
+             const detailModal = new bootstrap.Modal(modalElement);
+             infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
+             contentSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
+             detailModal.show();
+            
+            /**
+             * [프론트엔드 임시 해결책]
+             * 백엔드에서 보낸 중복된 파일 경로를 복구하는 함수
+             * @param {string} buggyPath - 백엔드에서 받은 깨진 경로 (예: 'path/to/file.pngfile.png')
+             * @param {string} correctFileName - DTO에 포함된 정상적인 서버 파일명 (예: 'file.png')
+             * @returns {string} - 복구된 경로 (예: 'path/to/file.png')
+             */
+             function fixDuplicatedPath(buggyPath, correctFileName) {
+                 if (!buggyPath || !correctFileName) {
+                     return buggyPath;
+                 }
+                 if (buggyPath.endsWith(correctFileName)) {
+                     const pathWithoutLastPart = buggyPath.substring(0, buggyPath.length - correctFileName.length);
+                     if(pathWithoutLastPart) return pathWithoutLastPart;
+                 }
+                 return buggyPath;
+             }
 
-            const isCurrentlyBookmarked = heartIcons[0].classList.contains('active');
-            const apiUrl = '/api/enter/bookmarks';
+            $.ajax({
+                url: `/user/api/contents/${contentsId}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(detail) {
+                    const title = detail.contentsTitle || '제목 없음';
+                    const isBookmarked = detail.isBookmarked || false; 
+                    const clCd = detail.clCd || '';
+                    const prtfCd = detail.contentsId; 
+                    const infoHtml = `
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/user/assets/imgs/theme/icons/icon-user.svg" alt="logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
+                            <div><h6 class="mb-0 fw-bold">${detail.enterName || '회사명 없음'}</h6><small class="text-muted">MASTER</small></div>
+                        </div>
+                        <hr class="my-3">
+                        <h3 class="fw-bold mb-3">${title}</h3>
+                        <div class="d-flex align-items-center mb-4">
+                          
+                            <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center">
+                                <i class="fi-rs-share me-2"></i> 공유하기
+                            </a>
+                        </div>
+                        <div class="mb-4">
+                            <h6 class="fw-bold">프로젝트 설명</h6>
+                            <p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody || '설명 없음'}</p>
+                        </div>
+                        <div class="mb-4">
+                            <h6 class="fw-bold">참여 기간</h6>
+                            <p class="text-muted">${(detail.participationStartDate ? new Date(detail.participationStartDate).toLocaleDateString() : '') + ' ~ ' + (detail.participationEndDate ? new Date(detail.participationEndDate).toLocaleDateString() : '')}</p>
+                        </div>
+                        <div class="mb-4">
+                            <h6 class="fw-bold">클라이언트</h6>
+                            <p class="text-muted">${detail.client || '정보 없음'}</p>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold">업종</h6>
+                            <p class="text-muted">${detail.industry || '정보 없음'}</p>
+                        </div>`;
+                    infoSection.innerHTML = infoHtml;
 
-            heartIcons.forEach(icon => {
-                icon.classList.toggle('active');
-            });
+                    let imagesHtml = '<div class="no-image-placeholder"><i class="fas fa-image"></i> 이미지가 없습니다.</div>';
+                    if (detail.filesJson) {
+                        try {
+                            const files = JSON.parse(detail.filesJson);
+                            if (files && files.length > 0) {
+                                imagesHtml = files.map(file => {
+                                    let correctedPath = fixDuplicatedPath(file.filePath, file.fileNewName);
+                                   
+                                    let imageUrl = file.filePath; 
 
-            let options;
-            if (isCurrentlyBookmarked) {
-                options = { method: 'DELETE' };
-                fetch(`${apiUrl}/${clCd}`, options)
-                    .then(response => {
-                        if (!response.ok) {
-                            alert('찜 해제에 실패했습니다. 다시 시도해주세요.');
-                            heartIcons.forEach(icon => icon.classList.add('active'));
-                            throw new Error('찜 해제 실패');
-                        }
-                    })
-                    .catch(error => console.error('찜 해제 중 오류:', error));
-            } else {
-                options = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ clCd: clCd })
-                };
-                fetch(apiUrl, options)
-                    .then(response => {
-                        if (!response.ok) {
-                            if (response.status === 401 || response.status === 403) {
-                                alert('로그인이 필요한 기능입니다.');
-                            } else {
-                                alert('찜하기에 실패했습니다. 다시 시도해주세요.');
+                                    if (imageUrl && !imageUrl.startsWith('/attachment/')) {
+                                        imageUrl = '/attachment/' + imageUrl;
+                                    }
+                                    return `<img src="${imageUrl}" alt="${file.fileOriginalName || '이미지'}" class="img-fluid" style="margin-bottom: 15px;">`;
+                                }).join('');
                             }
-                            heartIcons.forEach(icon => icon.classList.remove('active'));
-                            throw new Error('찜 추가 실패');
+                        } catch (e) {
+                            imagesHtml = '<p class="text-center text-danger">이미지를 불러오는 중 오류가 발생했습니다.</p>';
                         }
-                    })
-                    .catch(error => console.error('찜 추가 중 오류:', error));
-            }
-        }
-
-        // --- openPortfolioModal 함수 (전역 스코프로 이동) ---
-     function openPortfolioModal(contentsId) {
-    const modalElement = document.getElementById('portfolioDetailModal');
-    if (!modalElement) return;
-        
-    lastFocusedElement = document.activeElement; 
-
-    const infoSection = modalElement.querySelector('#modalInfoSection');
-    const contentSection = modalElement.querySelector('#modalContentSection');
-    const portfolioModal = new bootstrap.Modal(modalElement);
-
-    // 모달을 열 때 로딩 스피너만 먼저 보여줍니다.
-    infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
-    contentSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`; // 이미지 영역도 로딩 스피너
-    portfolioModal.show();
-        
-    $.ajax({
-        url: `/user/api/contents/${contentsId}`, 
-        type: 'GET',
-        dataType: 'json',
-        success: function(detail) {
-            // ▼▼▼ 이 success 콜백 내부의 변수 선언 및 할당 순서를 다음과 같이 조정합니다. ▼▼▼
-
-            // 1. 필요한 기본 변수들 선언
-            const title = detail.contentsTitle || detail.enterName || '제목 없음';
-            const isBookmarked = detail.isBookmarked || false; 
-            const clCd = detail.clCd || '';
-            const prtfCd = detail.contentsId; 
-            
-            // 2. 썸네일 URL 가져오기 (포트폴리오 또는 외주)
-            const rawThumbnailUrl = detail.prtfThumbnailUrl || detail.osThumbnailUrl; 
-            let displayImageUrl = ''; // 전역 displayImageUrl이 아님, 여기 지역 변수로 선언
-
-            // 3. displayImageUrl을 먼저 정의
-            if (rawThumbnailUrl) {
-                if (!rawThumbnailUrl.startsWith('/attachment/')) {
-                    displayImageUrl = '/attachment/' + rawThumbnailUrl;
-                } else {
-                    displayImageUrl = rawThumbnailUrl;
+                    }
+                    contentSection.innerHTML = `<div class="modal-portfolio-content">${imagesHtml}</div>`;
+                },
+                error: function(xhr) {
+                    infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>';
+                    contentSection.innerHTML = '<p class="text-center">이미지를 불러오는 데 실패했습니다.</p>'; 
                 }
-            }
-            
-            // 4. infoHtml 정의 (displayImageUrl이 아닌 detail 객체의 다른 정보들을 사용)
-            const infoHtml = `
-                <div class="d-flex align-items-center mb-3">
-                    <img src="/user/assets/imgs/theme/icons/icon-user.svg" alt="logo" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 1px solid #eee;">
-                    <div>
-                        <h6 class="mb-0 fw-bold">${detail.enterName || '회사명 없음'}</h6>
-                        <small class="text-muted">MASTER</small>
-                    </div>
-                    <div class="ms-auto">
-                        <a href="/enter/outsourcing-requests/inquiry-form/${prtfCd}" class="btn btn-primary">문의하기</a>
-                    </div>
-                </div>
-        
-                <hr class="my-3">
-        
-                <p class="text-muted mb-2">${detail.ctgryName || '카테고리 정보 없음'}</p>
-                <h3 class="fw-bold mb-3">${title}</h3>
-                
-                <div class="d-flex align-items-center mb-4">
-                    <a href="javascript:void(0);" 
-                       class="btn btn-outline-secondary d-flex align-items-center me-2 action-btn bookmark-btn" 
-                       data-cl-cd="${clCd}" 
-                       aria-label="Add To Wishlist">
-                        <i class="fi-rs-heart me-2 ${isBookmarked ? 'active' : ''}"></i> 찜하기
-                    </a>
-                    <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center">
-                        <i class="fi-rs-share me-2"></i> 공유하기
-                    </a>
-                </div>
-        
-                <div class="mb-4">
-                    <span class="badge bg-light text-dark border me-1 px-3 py-2">#상세페이지</span>
-                </div>
-                <div class="mb-4">
-                    <h6 class="fw-bold">프로젝트 설명</h6>
-                    <p class="text-muted" style="white-space: pre-wrap;">${detail.contentsBody || '설명 없음'}</p>
-                </div>
-                <div class="mb-4">
-                    <h6 class="fw-bold">참여 기간</h6>
-                    <p class="text-muted">${(detail.participationStartDate || '') + ' ~ ' + (detail.participationEndDate || '')}</p>
-                </div>
-                <div class="mb-4">
-                    <h6 class="fw-bold">클라이언트</h6>
-                    <p class="text-muted">${detail.client || '정보 없음'}</p>
-                </div>
-                <div>
-                    <h6 class="fw-bold">업종</h6>
-                    <p class="text-muted">${detail.industry || '정보 없음'}</p>
-                </div>
-            `;
-            infoSection.innerHTML = infoHtml; // infoHtml을 먼저 업데이트
-
-            // 5. dynamicThumbnailHtml 정의 (displayImageUrl 사용)
-            const dynamicThumbnailHtml = displayImageUrl 
-                ? `<img src="${displayImageUrl}" class="img-fluid" alt="상세 이미지" style="width: 100%; height: auto; object-fit: contain;">` 
-                : `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; background-color: #f0f0f0; color: #aaa; font-size: 1.2em; text-align: center;">
-                     <i class="fas fa-image" style="font-size: 2em; margin-bottom: 10px;"></i>
-                     <span>이미지 없음</span>
-                   </div>`;
-
-            contentSection.innerHTML = dynamicThumbnailHtml; // contentSection 업데이트
-
-            // 모달 내 찜하기 버튼에 클릭 이벤트 리스너 다시 추가
-            const modalBookmarkBtn = modalElement.querySelector('.bookmark-btn');
-            if (modalBookmarkBtn) {
-                modalBookmarkBtn.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    toggleBookmark(this);
-                });
-            }
-        },
-        error: function(xhr) {
-            infoSection.innerHTML = '<p class="text-center">상세 정보를 불러오는 데 실패했습니다.</p>';
-            contentSection.innerHTML = '<p class="text-center">이미지를 불러오는 데 실패했습니다.</p>'; 
+            });
         }
-    });
-}
+
         $(document).ready(function() {
-        	 const modalElement = document.getElementById('portfolioDetailModal');
-        	    if (modalElement) {
-        	        modalElement.addEventListener('hidden.bs.modal', function () {
-        	            if (lastFocusedElement) {
-        	                lastFocusedElement.focus(); // 모달을 열기 전에 포커스했던 요소로 포커스 이동
-        	                lastFocusedElement = null; // 저장된 요소 초기화
-        	            }
-        	        });
-        	    }
             const grid = $('#portfolioItemsGrid');
             const noPortfolioMessage = $('#noPortfolioMessage');
-            const shareModal = $('#shareModal');
-            let shareUrl = '';
 
-            // --- 포트폴리오 목록을 불러와서 화면에 그리는 함수 ---
             function loadAndRenderPortfolioList() {
                 $.ajax({
                     url: '/enter/portfolio/listData',
@@ -377,19 +395,20 @@
                                     `<img src="${thumbnailUrl}" alt="${p.prtfTtl} 썸네일" class="portfolio-thumbnail">` : 
                                     `<div class="portfolio-thumbnail-placeholder">이미지 없음</div>`;
                                     
+                                const categoryHtml = p.ctgryNm ? `<p class="portfolio-category">${p.ctgryNm}</p>` : '';
+
                                 const cardContent = `
                                     <div class="portfolio-thumbnail-wrapper">${thumbnailImageHtml}</div>
                                     <div class="portfolio-content">
-                                        <h3 class="portfolio-title">
-                                            <a href="javascript:void(0);" onclick="openPortfolioModal('${p.prtfCd}')">${p.prtfTtl}</a>
-                                        </h3>
+                                        <h3 class="portfolio-title">${p.prtfTtl}</h3>
+                                        ${categoryHtml}
                                         <div class="portfolio-actions">
                                             <button class="btn-edit" data-prtf-cd="${p.prtfCd}">수정</button>
                                             <button class="btn-delete" data-prtf-cd="${p.prtfCd}">삭제</button>
                                             <button class="btn-share" data-prtf-cd="${p.prtfCd}" data-prtf-ttl="${p.prtfTtl}">공유</button>
                                         </div>
                                     </div>`;
-                                const card = $(`<div class="portfolio-item-card">${cardContent}</div>`);
+                                const card = $(`<div class="portfolio-item-card portfolio-modal-trigger" role="button" style="cursor: pointer;" data-contents-id="${p.prtfCd}">${cardContent}</div>`);
                                 grid.append(card);
                             });
                         } else {
@@ -405,21 +424,30 @@
                 });
             }
 
-            // --- 이벤트 핸들러 설정 ---
-
             // '새 포트폴리오 등록' 버튼
             $('#addPortfolioBtn').on('click', () => window.location.href = '/enter/portfolio/add');
             
-            // '수정', '삭제', '공유' 버튼 (이벤트 위임 방식)
-            grid.on('click', 'button', function(e) {
-                e.preventDefault(); 
+            // 이벤트 위임을 사용하여 동적으로 생성된 카드에 이벤트 리스너 추가
+            grid.on('click', '.portfolio-modal-trigger', function(e) {
+                // 액션 버튼(.portfolio-actions 내부의 요소)을 클릭한 경우는 모달을 띄우지 않음
+                if ($(e.target).closest('.portfolio-actions').length === 0) {
+                    const contentsId = $(this).data('contents-id');
+                    if (contentsId) {
+                        // ✨ openPortfolioModal -> openDetailModal로 함수 이름 변경
+                        openDetailModal(contentsId);
+                    }
+                }
+            });
+
+            grid.on('click', '.portfolio-actions button', function(e) {
+                // 이 이벤트 핸들러는 수정/삭제 버튼만 처리하므로 이벤트 전파를 막을 필요가 없습니다.
+                // 상위 .portfolio-modal-trigger의 이벤트 핸들러에서 이미 방지 로직이 있습니다.
                 const $button = $(this);
                 const prtfCd = $button.data('prtf-cd');
 
                 if ($button.hasClass('btn-edit')) {
                     window.location.href = `/enter/portfolio/edit/${prtfCd}`;
-                } 
-                else if ($button.hasClass('btn-delete')) {
+                } else if ($button.hasClass('btn-delete')) {
                     if (confirm('정말로 삭제하시겠습니까? 관련 데이터가 모두 삭제됩니다.')) {
                         $.ajax({
                             url: `/enter/portfolio/delete/${prtfCd}`,
@@ -437,13 +465,15 @@
                             }
                         });
                     } 
-                }
-                else if ($button.hasClass('btn-share')) {
+                } else if ($button.hasClass('btn-share')) {
                     alert('공유 기능은 아직 구현되지 않았습니다.'); 
                 }
             });
 
-            // --- 초기 목록 로드 ---
+            // 초기 목록 로드
             loadAndRenderPortfolioList();
         });
     </script>
+</th:block>
+</body>
+</html>

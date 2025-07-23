@@ -22,10 +22,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result column="os_thumbnail_url" property="osThumbnailUrl"/>
 
         <result column="ctgry_nm"       property="ctgryNm"/>
-        <result column="stc_nm"         property="stcNm"/> </resultMap>
+        <result column="stc_nm"         property="stcNm"/>
+    </resultMap>
 		
-   <select id="findAllOutsourcingsForAdmin" resultMap="AdminOutsourcingDTOMap">
-       SELECT
+    <select id="findAllOutsourcingsForAdmin" resultMap="AdminOutsourcingDTOMap">
+        SELECT
             o.os_cd,
             o.ent_cd,
             o.ctgry_id,

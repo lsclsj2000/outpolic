@@ -9,10 +9,10 @@ import outpolic.enter.search.domain.EnterContentsDetailDTO;
 
 public interface EnterSearchService {
 	// 검색 목록 조회
-	List<EnterContents> getContentsList(String keyword);
+	List<EnterContents> getContentsList(String keyword,String userId);
 	
 	// 검색된 콘텐츠의 상세정보 
 	EnterContentsDetailDTO getContentsDetailById(String contentsId, String userId);
 	
-	List<EnterContentItemDTO> findContentsByCategoryId(String categoryId);
+	List<EnterContentItemDTO> findContentsByCategoryId(String categoryId,String userId);
 }

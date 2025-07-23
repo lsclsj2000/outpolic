@@ -67,6 +67,17 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-hover">
+                                <colgroup>
+							        <col style="width: 12%;">
+							        <col style="width: 10%;">
+							        <col style="width: 12%;">
+							        <col style="width: 12%;">
+							        <col style="width: 10%;">
+							        <col style="width: 14%;">
+							        <col style="width: 10%;">
+							        <col style="width: 8%;">
+							        <col style="width: 12%;">
+							    </colgroup>
                                 <thead>
                                     <tr class="text-center">
                                         <th scope="col">회원 코드</th>
@@ -123,86 +134,87 @@
 				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h3 >회원 상세 정보</h3>
+							<h3>회원 상세 정보</h3>
 							<button type="button" class="btn btnEditMember btn-primary w-70 fw-bold">정보 수정하기</button>
 						</div>
-						<div class="row justify-content-center">	
-							<form class="admin memberEdit col-10" th:action="@{/admin/memberList/detail}" method="post">
-								<div class="form-group mb-10 mt-10">
-								    <label for="memberCode">회원 코드</label>
-								    <input type="text" id="memberCode" name="memberCode" class="form-control" disabled />
+						<div class="modal-body">
+							<form class="admin memberEdit" th:action="@{/admin/memberList/detail}" method="post">
+								<div class="row g-3">
+									<div class="col-md-6">
+										<label for="memberCode">회원 코드</label>
+										<input type="text" id="memberCode" name="memberCode" class="form-control" disabled />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberName">이름</label>
+										<input type="text" id="modalMemberName" name="modalMemberName" class="form-control" disabled />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberGradeCode">등급</label>
+										<select id="modalMemberGradeCode" name="modalMemberGradeCode" class="form-select readonly-field" disabled>
+											<option value="ADMIN">관리자</option>
+											<option value="ENTER">기업회원</option>
+											<option value="USER">일반회원</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberNickname">닉네임</label>
+										<input type="text" id="modalMemberNickname" name="modalMemberNickname" class="form-control readonly-field" readonly />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberEmail">이메일</label>
+										<input type="email" id="modalMemberEmail" name="modalMemberEmail" class="form-control" disabled />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberTelNo">전화번호</label>
+										<input type="text" id="modalMemberTelNo" name="modalMemberTelNo" class="form-control" disabled />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberBirth">생일</label>
+										<input type="text" id="modalMemberBirth" name="modalMemberBirth" class="form-control" disabled />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberZip">우편번호</label>
+										<input type="text" id="modalMemberZip" name="modalMemberZip" class="form-control readonly-field" disabled />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberAddress">도로명 주소</label>
+										<input type="text" id="modalMemberAddress" name="modalMemberAddress" class="form-control readonly-field" disabled />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberDAddress">상세 주소</label>
+										<input type="text" id="modalMemberDAddress" name="modalMemberDAddress" class="form-control readonly-field" disabled />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberAgree">선택약관 동의여부</label>
+										<input type="text" id="modalMemberAgree" name="modalMemberAgree" class="form-control" disabled />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberJoinYmdt">가입일</label>
+										<input type="text" id="modalMemberJoinYmdt" name="modalMemberJoinYmdt" class="form-control" disabled />
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberStatusCode">상태</label>
+										<select id="modalMemberStatusCode" name="modalMemberStatusCode" class="form-select readonly-field" disabled>
+											<option value="SD_ACTIVE">활성</option>
+											<option value="SD_WITHDRAWN">휴면</option>
+											<option value="SD_DORMANT">탈퇴</option>
+											<option value="SD_LIMIT">제재</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<label for="modalMemberLastLoginYmdt">마지막 로그인 일시</label>
+										<input type="text" id="modalMemberLastLoginYmdt" name="modalMemberLastLoginYmdt" class="form-control" disabled />
+									</div>
 								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberName">이름</label>
-								    <input type="text" id="modalMemberName" name="modalMemberName" class="form-control" disabled/>
+			
+								<div class="text-center mt-4">
+									<button type="button" id="btnSave" class="btn btnSave btn-primary w-70 fw-bold">정보 수정</button>
 								</div>
-								<div class="form-group mb-10">
-									<label for="modalMemberGradeCode">등급</label>
-									<select id="modalMemberGradeCode" name="modalMemberGradeCode" class="form-select readonly-field" disabled>
-									  <option value="ADMIN">관리자</option>
-									  <option value="ENTER">기업회원</option>
-									  <option value="USER">일반회원</option>
-									</select>
-								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberNickname">닉네임</label>
-								    <input type="text" id="modalMemberNickname" name="modalMemberNickname" class="form-control readonly-field" readonly/>
-								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberEmail">이메일</label>
-								    <input type="email" id="modalMemberEmail" name="modalMemberEmail" class="form-control" disabled/>
-								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberTelNo">전화번호</label>
-								    <input type="text" id="modalMemberTelNo" name="modalMemberTelNo" class="form-control" disabled/>
-								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberBirth">생일</label>
-								    <input type="text" id="modalMemberBirth" name="modalMemberBirth" class="form-control" disabled/>
-								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberZip">우편번호</label>
-							        <input type="text" id="modalMemberZip" name="modalMemberZip" class="form-control readonly-field" readonly />
-								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberAddress">도로명 주소</label>
-								    <input type="text" id="modalMemberAddress" name="modalMemberAddress" class="form-control readonly-field" readonly />
-								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberDAddress">상세 주소</label>
-								    <input type="text" id="modalMemberDAddress" name="modalMemberDAddress" class="form-control readonly-field" readonly/>
-								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberAgree">선택약관 동의여부</label>
-								    <input type="text" id="modalMemberAgree" name="modalMemberAgree" class="form-control" disabled/>
-								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberJoinYmdt">가입일</label>
-								    <input type="text" id="modalMemberJoinYmdt" name="modalMemberJoinYmdt" class="form-control" disabled/>
-								</div>
-								<div class="form-group mb-10">
-								 <label for="modalMemberStatusCode">상태</label>
-								    <select id="modalMemberStatusCode" name="modalMemberStatusCode" class="form-select readonly-field" disabled>
-									    <option value="SD_ACTIVE">활성</option>
-									    <option value="SD_WITHDRAWN">휴면</option>
-									    <option value="SD_DORMANT">탈퇴</option>
-									    <option value="SD_LIMIT">제재</option>
-									  </select>
-								</div>
-								<div class="form-group mb-10">
-								    <label for="modalMemberLastLoginYmdt">마지막 로그인 일시</label>
-								    <input type="text" id="modalMemberLastLoginYmdt" name="modalMemberLastLoginYmdt" class="form-control" disabled/>
-								</div>
-
-					
-							 	<div class="form-group mb-30">
-					                <button type="button" id="btnSave" class="btn btnSave btn-primary w-70 fw-bold">정보 수정</button>
-					            </div>
-					        </form>
-	      				</div>
-	    			</div> 
-	    		</div>
-	    	</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
 		</th:block>
 		<th:block layout:fragment="jsScript">
 		<script>

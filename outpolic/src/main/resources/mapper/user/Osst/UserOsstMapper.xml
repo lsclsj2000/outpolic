@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="outpolic.user.osst.mapper.UserOsstMapper">
+	<resultMap id="userOsstResultMap" type="outpolic.user.osst.domain.UserOsst">
+		<id 	column="osp_cd" 			property="ospCode"/>
+		<id 	column="ocd_cd" 			property="ocdCd"/>
+		
+		<result column="ocd_ttl" 			property="ocdTitle"/>
+		<result column="ocd_expln" 			property="ocdExpln"/>
+		<result column="ocd_dmnd_ymdt" 		property="ocdDmndYmdt"/>
+		<result column="ocd_dedline" 		property="ocdDedline"/>
+		<result column="ocd_amt" 			property="ocdAmt"/>
+
+		<result column="osp_cust_yn" 		property="ospCustYn"/>
+		<result column="osp_sply_ymdt" 		property="ospSplyYmdt"/>
+		<result column="osp_cust_ymdt" 		property="ospCustYmdt"/>
+		<result column="osp_cust_stc_yn" 	property="ospCustStcYn"/>
+		<result column="osp_stc_order" 		property="ospStcOrder"/>
+		
+		<result column="mbr_cd" 			property="memberCode"/>
+		<result column="mbr_nm" 			property="memberName"/>
+		<result column="mbr_eml" 			property="memberEmail"/>
+		
+		<result column="ent_cd" 			property="entCode"/>
+		<result column="ent_nm" 			property="entName"/>
+		<result column="ent_mbr_nm" 		property="entMbrName"/>
+		<result column="ent_mbr_eml" 		property="entMbrEmail"/>
+		<result column="ent_mbr_cd" 		property="entMemberCode"/>
+		<result column="ent_mbr_nm" 		property="entMemberName"/>
+
+		<result column="stc_cd" 			property="stcCode"/>
+		<result column="stc_nm" 			property="stcName"/>
+		<result column="member_role"        property="memberRole"/>
+	</resultMap>
+	
+	<resultMap id="userOsstRecordResultMap" type="outpolic.user.osst.domain.UserOsstRecord">
+		<id 	column="osr_cd" 			property="osstRecordCode"/>
+		<result column="osp_cd" 			property="osstPrograssCode"/>
+		<result column="stc_cd" 			property="osstRecordStcCode"/>
+		<result column="stc_nm" 			property="osstRecordStcName"/>
+		<result column="osr_type" 			property="osstRecordType"/>
+		<result column="mbr_cd" 			property="osstRecordMbrCode"/>
+		<result column="mbr_nm" 			property="osstRecordMbrName"/>
+		<result column="osr_ttl" 			property="osstRecordTitle"/>
+		<result column="osr_cn" 			property="osstRecordCn"/>
+		<result column="osr_reg_ymdt" 		property="osstRecordRegYmdt"/>
+		<result column="osr_up_cd" 			property="osstRecordUpCode"/>
+	</resultMap>
+	
+	<update id="updateStepApproval">
+		/* 단계 승인 업데이트 */
+	    UPDATE outsourcing_prograss
+	    SET osp_cust_yn = 1,
+	        osp_cust_ymdt = NOW()
+	    WHERE osp_cd = #{ospCd}
+	</update>
+	
+	<select id="getNextOsrCode" resultType="String">
+		/* osr_cd 자동 생성 */
+	    SELECT
+	    CASE
+	        WHEN COUNT(*) = 0 THEN 'OSR_C1'
+	        ELSE CONCAT('OSR_C', MAX(CAST(SUBSTRING_INDEX(osr_cd, 'OSR_C', -1) AS UNSIGNED)) + 1)
+	    END
+	    FROM outsourcing_record;
+	</select>
+	
+	<insert id="insertRecord" parameterType="outpolic.user.osst.domain.UserOsstRecord">
+		/* 보고 피드백 제출 */
+	    INSERT INTO outsourcing_record (
+	        osr_cd, osp_cd, osr_type, mbr_cd, osr_ttl, osr_cn, osr_reg_ymdt, osr_up_cd
+	    ) VALUES (
+	        #{osstRecordCode}, #{osstPrograssCode}, #{osstRecordType}, #{osstRecordMbrCode},
+	        #{osstRecordTitle}, #{osstRecordCn}, NOW(), #{osstRecordUpCode}
+	    )
+	</insert>
+
+	<select id="getUserOsstStcCode" parameterType="String" resultMap="userOsstResultMap">
+		/* 진행 외주 단계 조회 */
+		SELECT
+	        op.osp_cd as osp_cd,
+	        op.ocd_cd as ocd_cd,
+	        op.stc_cd as stc_cd,
+	        sc.stc_nm as stc_nm,
+	        op.osp_sply_ymdt as osp_sply_ymdt,
+	        op.osp_cust_yn as osp_cust_yn,
+	        op.osp_cust_ymdt as osp_cust_ymdt
+	    FROM
+	        outsourcing_prograss op
+	        LEFT JOIN status_code sc ON op.stc_cd = sc.stc_cd
+	    WHERE
+	        op.ocd_cd = #{ocdCd}
+	    ORDER BY CASE op.stc_cd
+		    WHEN 'STC_01' THEN 1
+		    WHEN 'STC_02' THEN 2
+		    WHEN 'STC_03' THEN 3
+		    WHEN 'STC_04' THEN 4
+		    ELSE 99
+		END
+	</select>
+	
+	<select id="getOutsourcingRecordsByOcdCd" parameterType="String" resultMap="userOsstRecordResultMap">
+		/* 진행 외주 기록 조회 */
+		select
+			osr.osr_cd as osr_cd,
+			op.ocd_cd as ocd_cd,
+			osr.osp_cd as osp_cd,
+			op.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			osr.osr_type as osr_type,
+			osr.mbr_cd as mbr_cd,
+			m.mbr_nm as mbr_nm,
+			osr.osr_ttl as osr_ttl,
+			osr.osr_cn as osr_cn,
+			osr.osr_reg_ymdt as osr_reg_ymdt,
+			osr.osr_up_cd as osr_up_cd
+		from
+			outsourcing_record osr
+			left join member m on osr.mbr_cd = m.mbr_cd
+			left join outsourcing_prograss op on osr.osp_cd = op.osp_cd
+			left join status_code sc on op.stc_cd = sc.stc_cd
+		where
+			op.ocd_cd=#{ocdCd}
+		ORDER BY osr.osr_reg_ymdt ASC;
+	</select>
+	
+	<select id="getUserOsstDetail" parameterType="String" resultMap="userOsstResultMap">
+	    SELECT
+	        ocd.ocd_cd as ocd_cd,
+	        ocd.mbr_cd as mbr_cd,
+	        m.mbr_nm as mbr_nm,
+	        m.mbr_eml as mbr_eml,
+	        ocd.ent_cd as ent_cd,
+	        e.ent_nm as ent_nm,
+	        m2.mbr_nm as ent_mbr_nm,
+	        m2.mbr_eml as ent_mbr_eml,
+	        ocd.ocd_ttl as ocd_ttl,
+	        ocd.ocd_expln as ocd_expln,
+	        ocd.ocd_dedline as ocd_dedline,
+	        ocd.ocd_amt as ocd_amt,
+	        ocd.stc_cd as stc_cd,
+	        ocd.ocd_dmnd_ymdt as ocd_dmnd_ymdt,
+	        CASE
+	            WHEN ocd.mbr_cd = #{memberCode} THEN 'DEMANDER'
+	            WHEN e.mbr_cd = #{memberCode} THEN 'SUPPLIER'
+	            ELSE 'UNKNOWN'
+	        END AS member_role
+	    FROM
+	        outsourcing_contract_details ocd
+	        LEFT JOIN member m ON ocd.mbr_cd = m.mbr_cd
+	        LEFT JOIN enterprise e ON ocd.ent_cd = e.ent_cd
+	        LEFT JOIN member m2 ON e.mbr_cd = m2.mbr_cd
+	    WHERE
+	        ocd.stc_cd = 'SD_APPROVED'
+	        AND ocd.ocd_cd = #{osstDetailCode}
+	</select>
+	
+	
+	<select id="getUserOsstList" resultMap="userOsstResultMap">
+		/* 진행 외주 목록 조회 */
+		WITH StepRaw AS (
+		    SELECT
+		        op.osp_cd AS osp_cd,
+			    op.ocd_cd AS ocd_cd,
+			    ocd.ocd_ttl as ocd_ttl,
+			    ocd.mbr_cd as mbr_cd,
+			    m.mbr_nm as mbr_nm,
+			    ocd.ent_cd as ent_cd,
+			    e.mbr_cd as ent_mbr_cd,
+			    m2.mbr_nm as ent_mbr_nm,
+			    e.ent_nm as ent_nm,
+			    op.stc_cd AS stc_cd,
+			    sc.stc_nm AS stc_nm,
+			    op.osp_sply_ymdt AS osp_sply_ymdt,
+			    op.osp_cust_yn as osp_cust_yn,
+			    op.osp_cust_ymdt AS osp_cust_ymdt,
+		        CASE
+		            WHEN op.osp_cust_yn = 1 THEN '단계 완료'
+		            WHEN op.osp_cust_yn = 0 AND op.osp_sply_ymdt IS NOT NULL THEN '단계 진행중'
+		            WHEN op.osp_cust_yn = 0 AND op.osp_sply_ymdt IS NULL THEN '단계 진행전'
+		            ELSE '알 수 없음'
+		        END AS osp_cust_stc_yn,
+		        ROW_NUMBER() OVER (
+		        	PARTITION BY op.ocd_cd
+		            ORDER BY CASE WHEN op.osp_sply_ymdt IS NULL THEN 1 ELSE 0 END, op.osp_sply_ymdt DESC
+		        ) AS osp_stc_order,
+                CASE
+                    WHEN ocd.mbr_cd = #{memberCode} THEN 'DEMANDER'
+                    WHEN e.mbr_cd = #{memberCode} THEN 'SUPPLIER'
+                    ELSE 'UNKNOWN'
+                END AS member_role
+		    FROM
+		        outsourcing_prograss op
+			    LEFT JOIN status_code sc ON op.stc_cd = sc.stc_cd
+				left join outsourcing_contract_details ocd on op.ocd_cd = ocd.ocd_cd
+				left join member m on ocd.mbr_cd = m.mbr_cd
+				left join enterprise e on ocd.ent_cd = e.ent_cd
+				left join member m2 on e.mbr_cd = m2.mbr_cd
+		), ContractStatus AS (
+		    SELECT ocd_cd, COUNT(*) AS 단계수, SUM(osp_cust_yn) AS 완료단계수
+		    FROM StepRaw
+		    GROUP BY ocd_cd
+		), FilteredStep AS (
+		 	SELECT sr.* FROM StepRaw sr
+		    JOIN ContractStatus cs ON sr.ocd_cd = cs.ocd_cd
+		    WHERE ( cs.완료단계수 = cs.단계수 AND sr.osp_stc_order = 1)
+		       OR (cs.완료단계수 &lt; cs.단계수 AND sr.osp_cust_stc_yn = '단계 진행중')  
+		) SELECT
+			    fs.*,
+			    r.rvw_cd AS rvwCd,
+			    CASE WHEN r.rvw_cd IS NOT NULL THEN 'Y' ELSE 'N' END AS reviewWrittenYn
+			FROM FilteredStep fs
+			-- [수정된 부분] LEFT JOIN의 ON 조건절에서, 리뷰 작성자를 로그인한 사용자로 직접 지정합니다.
+			LEFT JOIN review r ON fs.ocd_cd = r.osc_id AND r.mbr_cd = #{memberCode}
+			WHERE fs.mbr_cd = #{memberCode} OR fs.ent_mbr_cd = #{memberCode}
+	</select>
+	
+	<!-- 리뷰 생성 쿼리들 -->
+	<!-- PK 생성을 위한 쿼리 -->
+	<select id="getNextReviewCode" resultType="String">
+	    /* rvw_cd 자동 생성 (Zero-padding 규칙 준수) */
+	    SELECT
+	        CASE
+	            -- 테이블에 데이터가 하나도 없을 경우, 첫 번째 코드를 형식에 맞게 생성
+	            WHEN COUNT(rvw_cd) = 0 THEN 'RVW_C00001'
+	            -- 데이터가 있을 경우, 숫자 부분만 추출하여 최댓값을 구하고 +1 한 뒤, LPAD 함수로 0을 채움
+	            ELSE CONCAT('RVW_C', LPAD(MAX(CAST(SUBSTRING(rvw_cd, 6) AS UNSIGNED)) + 1, 5, '0'))
+	        END
+	    FROM review
+	    WHERE rvw_cd LIKE 'RVW_C%'; -- PK 형식에 맞는 데이터만 대상으로 하여 안정성 확보
+	</select>
+	
+	<!-- 외주 계약 ID로 기업 코드를 가져오는 쿼리 -->
+	<select id="getEnterpriseCodeByOscId" parameterType="String" resultType="String">
+	    /* ocd_cd로 ent_cd 조회 */
+	    SELECT ent_cd
+	    FROM outsourcing_contract_details
+	    WHERE ocd_cd = #{oscId}
+	</select>
+	
+	<!-- 리뷰 저장을 위한 쿼리 (컬럼명 수정) -->
+	<insert id="insertReview" parameterType="outpolic.user.review.dto.UserOutsourcingReviewDTO">
+	    /* 신규 리뷰 등록 */
+	    INSERT INTO review (
+	        rvw_cd,
+	        osc_id,
+	        mbr_cd,      -- 리뷰 작성자
+	        ent_cd,      -- 리뷰 대상 기업
+	        rvw_cn,
+	        rvw_evl,
+	        rvw_reg_ymdt
+	    ) VALUES (
+	        #{rvwCd},
+	        #{oscId},
+	        #{reviewerMbrCd}, -- DTO의 reviewerMbrCd 필드 사용
+	        #{revieweeEntCd}, -- DTO의 revieweeEntCd 필드 사용
+	        #{rvwCn},
+	        #{rvwEvl},
+	        NOW()
+	    )
+	</insert>
+	
+	<!-- 리뷰 상세 정보 조회 쿼리 -->
+	<select id="findReviewByOscIdAndMbrCd" parameterType="map" resultType="outpolic.user.review.dto.UserOutsourcingReviewDTO">
+	    SELECT
+	        rvw_cd        AS rvwCd,
+	        osc_id        AS oscId,
+	        mbr_cd        AS mbrCd,
+	        ent_cd        AS entCd,
+	        rvw_cn        AS rvwCn,
+	        rvw_evl       AS rvwEvl,
+	        rvw_reg_ymdt  AS rvwRegYmdt,
+	        rvw_mdfcn_ymdt AS rvwMdfcnYmdt
+	    FROM review
+	    WHERE osc_id = #{oscId} AND mbr_cd = #{mbrCd}
+	</select>
+	
+	<!-- 리뷰 수정 쿼리 -->
+	<update id="updateReview" parameterType="outpolic.user.review.dto.UserOutsourcingReviewDTO">
+	    UPDATE review
+	    SET
+	        rvw_evl = #{rvwEvl},
+	        rvw_cn = #{rvwCn},
+	        rvw_mdfcn_ymdt = NOW()
+	    WHERE
+	        rvw_cd = #{rvwCd}
+	</update>
+</mapper>

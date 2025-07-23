@@ -19,10 +19,10 @@ public interface EnterSearchMapper {
 	 * @param keyword 검색할 키워드
 	 * @return 검색결과 리스트
 	 */
-	List<EnterContents> getContentsList(@Param("keyword") String keyword);
+	List<EnterContents> getContentsList(Map<String, Object> params);
 	
 	// 콘텐츠 상세정보 
 	EnterContentsDetailDTO getContentsDetailById(Map<String, Object> params);
 	
-	List<EnterContentItemDTO> findContentsByCategoryId(String categoryId);
+	List<EnterContentItemDTO> findContentsByCategoryId(Map<String, Object> params);
 }

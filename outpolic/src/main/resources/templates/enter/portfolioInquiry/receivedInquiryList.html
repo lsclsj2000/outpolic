@@ -7,26 +7,58 @@
     <title th:text="${listTitle}">받은 문의 목록</title>
     <th:block layout:fragment="css">
         <style>
-            .list-container { max-width: 960px; margin: 2rem auto; }
             .item-card {
-                border: 1px solid #e9ecef; border-radius: 8px; padding: 1.5rem;
-                margin-bottom: 1rem; display: flex; justify-content: space-between;
+                border: 1px solid #e9ecef;
+                border-radius: 8px; padding: 1.5rem;
+                margin-bottom: 1rem; margin-top:1rem; display: flex; justify-content: space-between;
                 align-items: center; transition: box-shadow 0.2s, border-color 0.2s;
             }
-            .item-card:hover { border-color: #4f46e5; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-            .item-info .item-title a { font-size: 1.2rem; font-weight: 600; color: #1f2937; text-decoration: none; }
-            .item-info .item-title a:hover { text-decoration: underline; color: #4f46e5; }
-            .item-info .item-meta { font-size: 0.9rem; color: #6b7280; margin-top: 0.5rem; }
+            .item-card:hover { 
+            	border-color: #4f46e5; 
+            	box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            }
+            .item-info .item-title a { 
+            	font-size: 1.2rem; 
+            	font-weight: 600; 
+            	color: #1f2937; 
+            	text-decoration: none; 
+            }
+            .item-info .item-title a:hover { 
+            	text-decoration: underline; 
+            	color: #4f46e5; 
+            }
+            .item-info .item-meta { 
+            	font-size: 0.9rem; 
+            	color: #6b7280; 
+            	margin-top: 0.5rem;
+             }
             .item-status .status-badge {
-                font-size: 0.8rem; font-weight: bold; padding: 0.3rem 0.75rem;
+                font-size: 0.8rem;
+                font-weight: bold; padding: 0.3rem 0.75rem;
                 border-radius: 9999px; color: white;
             }
             /* 상태 코드별 색상 */
-            .status-SD_BEFORE { background-color: #6b7280; } /* 확인 전 */
-            .status-SD_PROCESS_ING { background-color: #f59e0b; } /* 처리 중 */
-            .status-SD_APPROVED { background-color: #16a34a; } /* 승인 */
-            .status-SD_REJECTED { background-color: #dc2626; } /* 거절 */
-            .empty-message { text-align: center; padding: 3rem; color: #6b7280; border: 2px dashed #e5e7eb; border-radius: 8px; }
+            .status-SD_BEFORE { 
+            	background-color: #6b7280; 
+            }
+             /* 확인 전 */
+            .status-SD_PROCESS_ING { 
+            	background-color: #f59e0b;
+            } 
+            /* 처리 중 */
+            .status-SD_APPROVED { 
+            background-color: #16a34a;
+            } /* 승인 */
+            .status-SD_REJECTED { 
+            	background-color: #dc2626;
+            } /* 거절 */
+            .empty-message { 
+            	text-align: center; 
+            	padding: 3rem;
+                color: #6b7280; 
+                border: 2px dashed #e5e7eb; 
+                border-radius: 8px; 
+            }
         </style>
     </th:block>
 </head>
@@ -35,15 +67,39 @@
     <div class="list-container">
         <h1 th:text="${listTitle}" class="mb-4">받은 포트폴리오 문의 목록</h1>
         <div id="inquiry-list-container">
+            <th:block th:if="${not #lists.isEmpty(inquiries)}">
+                <div th:each="inquiry : ${inquiries}" class="item-card">
+                    <div class="item-info">
+                        <h3 class="item-title">
+                            <a th:href="@{/enter/outsourcing-requests/detail/{id}(id=${inquiry.ocd_cd})}" th:text="${inquiry.ocd_ttl}"></a>
+                        </h3>
+                        <div class="item-meta">
+                            <span th:if="${inquiry.demanderName}">From: <strong th:text="${inquiry.demanderName}"></strong></span> |
+                            <span>문의일: <span th:text="${#temporals.format(inquiry.ocd_dmnd_ymdt, 'yyyy-MM-dd')}"></span></span>
+                        </div>
+                    </div>
+                    <div class="item-status">
+                         <span class="status-badge" th:classappend="'status-' + ${inquiry.stc_cd}" th:text="${@statusTextFormatter.getStatusText(inquiry.stc_cd)}"></span>
+                    </div>
+                </div>
+            </th:block>
+            <div th:if="${#lists.isEmpty(inquiries)}" class="empty-message">
+                <p>받은 포트폴리오 문의가 없습니다.</p>
             </div>
+        </div>
     </div>
 </th:block>
 
 <th:block layout:fragment="js">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const listContainer = document.getElementById('inquiry-list-container');
+            // 이 JavaScript는 이제 초기 목록을 서버에서 직접 렌더링하므로,
+            // API를 통한 데이터 로딩 대신 추가적인 클라이언트 사이드 로직(예: 필터링, 검색)에 사용될 수 있습니다.
+            // 현재는 기존 statusTextFormatter 기능을 사용하기 위해 이 스크립트를 남겨둡니다.
+            console.log("받은 문의 목록 페이지가 로드되었습니다.");
 
+            // 상태 텍스트 포맷터 (서버에서 @statusTextFormatter를 사용해도 되지만, JS에서도 필요할 수 있으므로 유지)
+            // Thymeleaf에서 @statusTextFormatter를 사용하므로 이 부분은 선택사항입니다.
             const getStatusText = (statusCode) => {
                 const statuses = {
                     'SD_BEFORE': '확인 전', 'SD_PROCESS_ING': '처리 중',
@@ -53,28 +109,10 @@
                 return statuses[statusCode] || statusCode;
             };
 
-            const createInquiryItemHtml = (inquiry) => {
-                const requestedDate = new Date(inquiry.ocd_dmnd_ymdt).toLocaleDateString();
-                const statusText = getStatusText(inquiry.stc_cd);
-                return `
-                    <div class="item-card">
-                        <div class="item-info">
-                            <h3 class="item-title">
-                                <a href="/enter/outsourcing-requests/detail/${inquiry.ocd_cd}">${inquiry.ocd_ttl}</a>
-                            </h3>
-                            <div class="item-meta">
-                                <span>From: <strong>${inquiry.demanderName}</strong></span> |
-                                <span>문의일: ${requestedDate}</span>
-                            </div>
-                        </div>
-                        <div class="item-status">
-                             <span class="status-badge status-${inquiry.stc_cd}">${statusText}</span>
-                        </div>
-                    </div>
-                `;
-            };
-
-            // API 호출하여 받은 문의 목록 데이터 가져오기
+            // 만약 서버에서 초기 데이터를 받아오지 않고 JavaScript로만 동적 로딩을 원한다면
+            // 아래 주석 처리된 fetch API 호출 코드를 활성화하고, 위 Thymeleaf 렌더링 부분을 제거하면 됩니다.
+            /*
+            const listContainer = document.getElementById('inquiry-list-container');
             fetch('/enter/outsourcing-requests/api/received-inquiries')
                 .then(res => {
                     if (!res.ok) {
@@ -88,7 +126,26 @@
                 })
                 .then(data => {
                     if (data && data.length > 0) {
-                        listContainer.innerHTML = data.map(createInquiryItemHtml).join('');
+                        listContainer.innerHTML = data.map(inquiry => {
+                            const requestedDate = new Date(inquiry.ocd_dmnd_ymdt).toLocaleDateString();
+                            const statusText = getStatusText(inquiry.stc_cd);
+                            return `
+                                <div class="item-card">
+                                    <div class="item-info">
+                                        <h3 class="item-title">
+                                            <a href="/enter/outsourcing-requests/detail/${inquiry.ocd_cd}">${inquiry.ocd_ttl}</a>
+                                        </h3>
+                                        <div class="item-meta">
+                                            <span>From: <strong>${inquiry.demanderName}</strong></span> |
+                                            <span>문의일: ${requestedDate}</span>
+                                        </div>
+                                    </div>
+                                    <div class="item-status">
+                                        <span class="status-badge status-${inquiry.stc_cd}">${statusText}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
                     } else {
                         listContainer.innerHTML = '<div class="empty-message"><p>받은 포트폴리오 문의가 없습니다.</p></div>';
                     }
@@ -97,6 +154,7 @@
                     console.error('Error fetching received inquiries:', error);
                     listContainer.innerHTML = '<div class="empty-message"><p>목록을 불러오는 중 오류가 발생했습니다.</p></div>';
                 });
+            */
         });
     </script>
 </th:block>

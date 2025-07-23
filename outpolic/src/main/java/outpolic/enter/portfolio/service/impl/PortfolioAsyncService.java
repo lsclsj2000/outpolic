@@ -23,30 +23,29 @@ public class PortfolioAsyncService {
     @Async
     @Transactional
     public void deletePortfolio(String prtfCd) {
-        try {
-            String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd);
-            if (clCd != null) {
-                // 물리적 파일 삭제
-                List<FileMetaData> filesToDelete = portfolioMapper.findFilesByClCd(clCd);
-                for (FileMetaData file : filesToDelete) {
-                    filesUtils.deleteFileByPath(file.getFilePath());
-                }
-
-                // 모든 연관 테이블 데이터 삭제
-                portfolioMapper.deletePerusalContentByClCd(clCd);
-                portfolioMapper.deleteCategoryMappingByClCd(clCd);
-                portfolioMapper.deleteTagMappingByClCd(clCd);
-                portfolioMapper.deleteBookmarkByClCd(clCd);
-                portfolioMapper.deleteFilesByClCd(clCd);
-                portfolioMapper.deleteOutsourcingContractDetailsByClCd(clCd);
-                portfolioMapper.deleteRankingByClCd(clCd);
-                portfolioMapper.deleteTodayViewByClCd(clCd);
-                portfolioMapper.deleteTotalViewByClCd(clCd);
-                portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd); 
-                portfolioMapper.deleteContentListByClCd(clCd);
+        // try-catch 블록을 제거하여 에러가 발생하면 Spring이 처리하도록 합니다.
+        String clCd = portfolioMapper.findClCdByPrtfCd(prtfCd); 
+        if (clCd != null) {
+            // 물리적 파일 삭제
+            List<FileMetaData> filesToDelete = portfolioMapper.findFilesByClCd(clCd); 
+            for (FileMetaData file : filesToDelete) {
+                filesUtils.deleteFileByPath(file.getFilePath()); 
             }
-            portfolioMapper.deletePortfolioByPrtfCd(prtfCd);
-        } catch (Exception e) {
+
+            // 모든 연관 테이블 데이터 삭제
+            portfolioMapper.deletePerusalContentByClCd(clCd); 
+            portfolioMapper.deleteCategoryMappingByClCd(clCd); 
+            portfolioMapper.deleteTagMappingByClCd(clCd); 
+            portfolioMapper.deleteBookmarkByClCd(clCd); 
+            portfolioMapper.deleteFilesByClCd(clCd); 
+            portfolioMapper.deleteOutsourcingContractDetailsByClCd(clCd); 
+            portfolioMapper.deleteRankingByClCd(clCd); 
+            portfolioMapper.deleteTodayViewByClCd(clCd); 
+            portfolioMapper.deleteTotalViewByClCd(clCd); 
+            portfolioMapper.deleteOutsourcingPortfolioByPrtfCd(prtfCd); 
+            portfolioMapper.deleteContentListByClCd(clCd); 
         }
+        portfolioMapper.deletePortfolioByPrtfCd(prtfCd); 
     }
+    
 }

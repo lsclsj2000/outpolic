@@ -29,21 +29,36 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
     private static final Logger logger = LoggerFactory.getLogger(EnterOutsourcingServiceImpl.class);
     private final OutsourcingMapper outsourcingMapper;
-    private final PortfolioMapper portfolioMapper;
+    private final PortfolioMapper portfolioMapper; 
     private final FilesUtils filesUtils;
 
-    // DB 저장을 위해 파일 경로를 정리하는 유틸리티 메서드
-    private String cleanPathForDb(String filePath) {
-        if (filePath == null) return null;
-        String cleaned = filePath.startsWith("/") ? filePath.substring(1) : filePath;
-        return cleaned.startsWith("attachment/") ? cleaned.substring("attachment/".length()) : cleaned;
+    private String cleanPathForDb(FileMetaData fileMetaData) {
+        if (fileMetaData == null || fileMetaData.getFilePath() == null) return null;
+        
+        String fullPath = fileMetaData.getFilePath().replace("\\", "/");
+        String serverFileName = fileMetaData.getFileNewName();
+
+        if (fullPath.endsWith("/" + serverFileName)) {
+            return "/" + fullPath.substring(0, fullPath.length() - serverFileName.length());
+        }
+        return "/" + fullPath;
     }
 
-    // 웹 표시 또는 파일 시스템 접근을 위해 경로를 복원하는 유틸리티 메서드
     private String restorePathForWebOrFileSystem(String dbPath) {
         if (dbPath == null) return null;
-        return "/attachment/" + dbPath;
+        String normalizedPath = dbPath.replace("\\", "/");
+        if (normalizedPath.startsWith("/")) {
+            return normalizedPath;
+        }
+        return "/" + normalizedPath;
     }
+    
+    private String restoreFullPathForWeb(FileMetaData fileMetaData) {
+        if (fileMetaData == null || fileMetaData.getFilePath() == null || fileMetaData.getFileNewName() == null) return null;
+        String dbPath = fileMetaData.getFilePath();
+        return dbPath + fileMetaData.getFileNewName();
+    }
+
 
     @Override
     public List<EnterOutsourcing> getOutsourcingListByEntCd(String entCd) {
@@ -57,6 +72,12 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         EnterOutsourcing outsourcing = outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
         if (outsourcing != null) {
             outsourcing.setOsThumbnailUrl(restorePathForWebOrFileSystem(outsourcing.getOsThumbnailUrl()));
+            
+            if (outsourcing.getBodyImages() != null) {
+                outsourcing.getBodyImages().forEach(file ->
+                    file.setFilePath(restoreFullPathForWeb(file))
+                );
+            }
         }
         return outsourcing;
     }
@@ -75,24 +96,30 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     public List<String> getFilesByClCd(String clCd) {
         List<FileMetaData> fileMetaDataList = outsourcingMapper.findFilesByClCd(clCd);
         return fileMetaDataList.stream()
-                               .map(file -> restorePathForWebOrFileSystem(file.getFilePath()))
+                               .map(file -> restoreFullPathForWeb(file))
                                .collect(Collectors.toList());
     }
 
     @Override
     public FileMetaData uploadThumbnail(MultipartFile file) {
         if (file == null || file.isEmpty()) return null;
-        String serviceName = "outsourcing";
-        String imageTypeDir = (file.getContentType() != null && file.getContentType().startsWith("image")) ? "thumbnail" : "files";
-        String fullServicePath = serviceName + "/" + imageTypeDir;
-        
-        FileMetaData uploadedFile = filesUtils.uploadFile(file, fullServicePath);
+        FileMetaData uploadedFile = filesUtils.uploadFile(file, "outsourcing");
         if (uploadedFile != null && uploadedFile.getFilePath() != null) {
-            String cleanedPath = cleanPathForDb(uploadedFile.getFilePath());
-            uploadedFile.setFilePath(cleanedPath);
+            uploadedFile.setFilePath("/" + uploadedFile.getFilePath());
         }
         return uploadedFile;
     }
+    
+    @Override
+    public FileMetaData uploadBodyImage(MultipartFile file) {
+        if (file == null || file.isEmpty()) return null;
+        FileMetaData uploadedFile = filesUtils.uploadFile(file, "outsourcing");
+        if (uploadedFile != null && uploadedFile.getFilePath() != null) {
+            uploadedFile.setFilePath(cleanPathForDb(uploadedFile));
+        }
+        return uploadedFile;
+    }
+
 
     @Override
     public String saveStep1Data(OutsourcingFormDataDto formData, HttpSession session) {
@@ -107,11 +134,22 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     
     @Override
     @Transactional
-    public void completeOutsourcingRegistration(OutsourcingFormDataDto formData, HttpSession session) {
+    public void completeOutsourcingRegistration(OutsourcingFormDataDto formData, MultipartFile thumbnailFile, List<MultipartFile> bodyImageFiles, HttpSession session) {
+        
+        String mbrCd = (String) session.getAttribute("SCD");
+        if (mbrCd == null) {
+            throw new IllegalStateException("로그인한 사용자 코드를 찾을 수 없습니다.");
+        }
+        String entCd = outsourcingMapper.findEntCdByMbrCd(mbrCd);
+
         EnterOutsourcing finalOutsourcing = new EnterOutsourcing();
-        finalOutsourcing.setOsCd(formData.getOsCd());
-        finalOutsourcing.setEntCd(formData.getEntCd());
-        finalOutsourcing.setMbrCd(formData.getMbrCd());
+
+        String latestOsCd = outsourcingMapper.findLatestOsCd();
+        int nextNum = (latestOsCd == null || !latestOsCd.startsWith("OS_C")) ? 1 : Integer.parseInt(latestOsCd.substring(5)) + 1;
+        String newOsCd = String.format("OS_C%05d", nextNum);
+        finalOutsourcing.setOsCd(newOsCd);
+        finalOutsourcing.setEntCd(entCd);
+        finalOutsourcing.setMbrCd(mbrCd);
         finalOutsourcing.setOsTtl(formData.getOsTtl());
         finalOutsourcing.setOsExpln(formData.getOsExpln());
         finalOutsourcing.setOsStrtYmdt(formData.getOsStrtYmdt());
@@ -127,23 +165,33 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         
         finalOutsourcing.setOsRegYmdt(LocalDateTime.now());
         finalOutsourcing.setStcCd("SD_ACTIVE");
-        
-        if (formData.getThumbnailFile() != null) {
-            finalOutsourcing.setOsThumbnailUrl(formData.getThumbnailFile().getFilePath());
+
+        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+            FileMetaData thumbMeta = uploadThumbnail(thumbnailFile);
+            if (thumbMeta != null) {
+                finalOutsourcing.setOsThumbnailUrl(thumbMeta.getFilePath());
+            }
         }
 
         outsourcingMapper.insertOutsourcing(finalOutsourcing);
-
         String clCd = "LIST_" + finalOutsourcing.getOsCd();
         outsourcingMapper.insertContentList(clCd, finalOutsourcing.getOsCd());
         
-        if (formData.getThumbnailFile() != null) {
-            List<FileMetaData> fileList = new ArrayList<>();
-            fileList.add(formData.getThumbnailFile());
-            outsourcingMapper.insertFiles(fileList, clCd, finalOutsourcing.getMbrCd());
+        List<FileMetaData> bodyFilesToInsert = new ArrayList<>();
+        if (bodyImageFiles != null && !bodyImageFiles.isEmpty()) {
+            for (MultipartFile bodyFile : bodyImageFiles) {
+                FileMetaData bodyMeta = uploadBodyImage(bodyFile);
+                if (bodyMeta != null) {
+                    bodyFilesToInsert.add(bodyMeta);
+                }
+            }
         }
         
-        updateMappings(clCd, finalOutsourcing.getMbrCd(), formData.getCategoryCodes(), formData.getTags());
+        if (!bodyFilesToInsert.isEmpty()) {
+            outsourcingMapper.insertFiles(bodyFilesToInsert, clCd, finalOutsourcing.getMbrCd());
+        }
+        
+        updateMappings(clCd, finalOutsourcing.getMbrCd(), formData.getCategoryCodes(), formData.getTags()); // [!code changed]
     }
 
     @Override
@@ -155,7 +203,13 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
     @Override
     @Transactional
-    public void updateOutsourcingStep2(String osCd, List<String> categoryCodes, String tags) {
+    public void updateOutsourcingStep2(String osCd, List<String> categoryCodes, String tags) { // [!code changed]
+        // mbrCd를 세션에서 가져옵니다.
+        String mbrCd = (String) ((HttpSession)org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes().resolveReference("session")).getAttribute("SCD"); // [!code changed]
+        if (mbrCd == null) { // [!code changed]
+            throw new IllegalStateException("로그인한 사용자 코드를 찾을 수 없습니다."); // [!code changed]
+        } // [!code changed]
+
         String clCd = outsourcingMapper.findClCdByOsCd(osCd);
         if (clCd == null) throw new IllegalStateException("콘텐츠 목록 정보가 없습니다.");
         
@@ -164,49 +218,52 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
         outsourcingMapper.deleteCategoryMappingByClCd(clCd);
         outsourcingMapper.deleteTagMappingByClCd(clCd);
-
-        updateMappings(clCd, originalOutsourcing.getMbrCd(), categoryCodes, tags);
-        
-        if (categoryCodes != null && !categoryCodes.isEmpty()) {
-            outsourcingMapper.updateOutsourcingRepresentativeCategory(osCd, categoryCodes.get(0));
-        } else {
-            outsourcingMapper.updateOutsourcingRepresentativeCategory(osCd, null);
-        }
+        updateMappings(clCd, mbrCd, categoryCodes, tags); // [!code changed]
     }
     
     @Override
     @Transactional
-    public void updateOutsourcingStep3(String osCd, MultipartFile thumbnailFile) {
+    public void updateOutsourcingStep3(String osCd, MultipartFile thumbnailFile, List<MultipartFile> newBodyImageFiles, List<String> deletedBodyImageCds) {
         EnterOutsourcing outsourcing = outsourcingMapper.findOutsourcingDetailsByOsCd(osCd);
         if (outsourcing == null) throw new IllegalStateException("수정할 외주 정보가 없습니다.");
 
         String clCd = outsourcingMapper.findClCdByOsCd(osCd);
         if (clCd == null) throw new IllegalStateException("콘텐츠 목록 정보를 찾을 수 없습니다.");
-
-        List<FileMetaData> oldFiles = outsourcingMapper.findFilesByClCd(clCd);
-        if (oldFiles != null && !oldFiles.isEmpty()) {
-            for(FileMetaData oldFile : oldFiles) {
-                String fullPathToDelete = restorePathForWebOrFileSystem(oldFile.getFilePath());
-                filesUtils.deleteFileByPath(fullPathToDelete);
-            }
-            outsourcingMapper.deleteFilesByClCd(clCd);
-        }
-
-        List<FileMetaData> newUploadedFiles = new ArrayList<>();
-        String newThumbnailUrlForDb = null;
         
         if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
             FileMetaData newThumbnailMetaData = uploadThumbnail(thumbnailFile);
             if (newThumbnailMetaData != null) {
-                newUploadedFiles.add(newThumbnailMetaData);
-                newThumbnailUrlForDb = newThumbnailMetaData.getFilePath();
+                outsourcingMapper.updateOutsourcingThumbnail(osCd, newThumbnailMetaData.getFilePath());
             }
         }
-        
-        outsourcingMapper.updateOutsourcingThumbnail(osCd, newThumbnailUrlForDb);
-        
-        if (!newUploadedFiles.isEmpty()) {
-            outsourcingMapper.insertFiles(newUploadedFiles, clCd, outsourcing.getMbrCd());
+
+        if (deletedBodyImageCds != null && !deletedBodyImageCds.isEmpty()) {
+            for (String fileCd : deletedBodyImageCds) {
+                FileMetaData fileToDelete = outsourcingMapper.findFileMetaDataByFileCd(fileCd);
+                if (fileToDelete != null) {
+                    String fullPathToDelete = restoreFullPathForWeb(fileToDelete);
+                    filesUtils.deleteFileByPath(fullPathToDelete);
+                    outsourcingMapper.deleteFilesByFileCd(fileCd);
+                }
+            }
+        }
+
+        List<FileMetaData> bodyFilesToInsert = new ArrayList<>();
+        if (newBodyImageFiles != null && !newBodyImageFiles.isEmpty()) {
+            for (MultipartFile bodyFile : newBodyImageFiles) {
+                FileMetaData bodyMeta = uploadBodyImage(bodyFile);
+                if (bodyMeta != null) {
+                    bodyFilesToInsert.add(bodyMeta);
+                }
+            }
+            if (!bodyFilesToInsert.isEmpty()) {
+                // mbrCd를 세션에서 가져와야 합니다.
+                String mbrCd = (String) ((HttpSession)org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes().resolveReference("session")).getAttribute("SCD"); // [!code changed]
+                if (mbrCd == null) { // [!code changed]
+                    throw new IllegalStateException("로그인한 사용자 코드를 찾을 수 없습니다."); // [!code changed]
+                } // [!code changed]
+                outsourcingMapper.insertFiles(bodyFilesToInsert, clCd, mbrCd); // [!code changed]
+            }
         }
     }
 
@@ -217,7 +274,7 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
         if (clCd != null) {
             List<FileMetaData> filesToDelete = outsourcingMapper.findFilesByClCd(clCd);
             for (FileMetaData file : filesToDelete) {
-                String fullPathToDelete = restorePathForWebOrFileSystem(file.getFilePath());
+                String fullPathToDelete = restoreFullPathForWeb(file);
                 filesUtils.deleteFileByPath(fullPathToDelete);
             }
             outsourcingMapper.deletePerusalContentByClCd(clCd);
@@ -258,8 +315,8 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
 
     @Override
     @Transactional
-    public void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd) {
-        outsourcingMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
+    public void unlinkOutsourcingFromPortfolio(String osCd, String prtfCd) {
+    	outsourcingMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
     }
 
     @Override
@@ -268,14 +325,6 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
     }
     
     private void updateMappings(String clCd, String mbrCd, List<String> categoryCodes, String tags) {
-        if (categoryCodes != null) {
-            for (String ctgryId : categoryCodes) {
-                if (ctgryId != null && !ctgryId.trim().isEmpty()) {
-                    outsourcingMapper.insertCategoryMapping(ctgryId, clCd, mbrCd);
-                }
-            }
-        }
-
         if (tags != null && !tags.trim().isEmpty()) {
             String[] tagNames = tags.split(",");
             for (String tagName : tagNames) {
@@ -299,11 +348,43 @@ public class EnterOutsourcingServiceImpl implements EnterOutsourcingService {
                 outsourcingMapper.insertTagMapping(tagCd, clCd, mbrCd);
             }
         }
-     
     }
     @Override
     public EnterOutsourcing getOutsourcingByOsCd(String osCd) {
         return this.findOutsourcingDetailsByOsCd(osCd);
     }
+
+    @Override
+    @Transactional
+    public void unlinkPortfolioFromOutsourcing(String osCd, String prtfCd) {
+    	outsourcingMapper.unlinkOutsourcingFromPortfolio(osCd, prtfCd);
+    }
     
+    @Override
+    @Transactional // 모든 작업이 하나의 트랜잭션으로 묶여 데이터 정합성을 보장합니다.
+    public void updateOutsourcingAll(OutsourcingFormDataDto formData, String osCd, MultipartFile thumbnailFile, List<MultipartFile> newBodyImageFiles, List<String> deletedBodyImageCds) {
+        
+        // 1. 텍스트 정보 업데이트 (Step 1 로직)
+        EnterOutsourcing outsourcingToUpdate = new EnterOutsourcing();
+        outsourcingToUpdate.setOsCd(osCd);
+        outsourcingToUpdate.setOsTtl(formData.getOsTtl());
+        outsourcingToUpdate.setOsExpln(formData.getOsExpln());
+        outsourcingToUpdate.setOsStrtYmdt(formData.getOsStrtYmdt());
+        outsourcingToUpdate.setOsEndYmdt(formData.getOsEndYmdt());
+        outsourcingToUpdate.setOsAmt(formData.getOsAmt());
+        outsourcingToUpdate.setOsFlfmtCnt(formData.getOsFlfmtCnt());
+        
+        // 대표 카테고리 설정
+        if (formData.getCategoryCodes() != null && !formData.getCategoryCodes().isEmpty()) {
+            // (로직에 따라 대표 카테고리 ID를 설정하는 부분이 필요할 수 있습니다)
+        }
+        
+        updateOutsourcingStep1(outsourcingToUpdate);
+
+        // 2. 카테고리 및 태그 정보 업데이트 (Step 2 로직)
+        updateOutsourcingStep2(osCd, formData.getCategoryCodes(), formData.getTags());
+        
+        // 3. 파일 정보 업데이트 (Step 3 로직)
+        updateOutsourcingStep3(osCd, thumbnailFile, newBodyImageFiles, deletedBodyImageCds);
+    }
 }

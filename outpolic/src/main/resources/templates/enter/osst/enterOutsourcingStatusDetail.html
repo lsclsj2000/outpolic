@@ -23,7 +23,7 @@
 
 <body>
     <div layout:fragment="contents">
-        <!-- Main Content -->
+    	<input type="hidden" id="ocdCdHidden" th:value="${EnterOsstDetail.ocdCd}" />
         <main class="SR_flex-grow">
             <div class="SR_label-container">
                    <div class="SR_blue-bar"></div>
@@ -56,7 +56,6 @@
                                 <span class="SR_text-sm SR_text-gray-600"
                                    th:text="${#numbers.formatInteger(EnterOsstDetail.ocdAmt, 0, 'COMMA')}"></span>
                             </p>
-                            <!-- 내용이 길어지면 말줄임표로 표현되도록 수정 -->
                             <p class="SR_text-sm SR_text-gray-600 SR_flex SR_items-baseline">• 내용:
                                 <span class="SR_text-sm SR_text-gray-600 SR_flex-1 SR_truncate"
                                    th:text="${EnterOsstDetail.ocdExpln}"></span>
@@ -67,7 +66,6 @@
                     <div class="SR_w-full SR_lg:w-1/3 SR_section-card SR_mb-0">
                         <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">최근 활동</h3>
                         <div id="recent-activities-list" class="SR_scrollable-activity-list">
-                            <!-- Activities will be dynamically loaded here -->
                         </div>
                     </div>
 
@@ -86,7 +84,6 @@
                                 <div class="SR_contact-avatar customer">C</div>
                                 <div class="SR_contact-details">
                                     <div class="SR_contact-name" th:text="${EnterOsstDetail.memberName + '(수요자)'}">수요자 이름</div>
-                                    <!-- <div class="SR_contact-role">수요자 닉머ㅜ뭐쓰지</div> -->
                                     <a href="#" class="SR_contact-email" th:text="${EnterOsstDetail.memberEmail}">수요자 이메일</a>
                                 </div>
                             </div>
@@ -107,278 +104,183 @@
                     <div class="SR_w-full SR_lg:w-1/3 SR_bg-gray-50 SR_p-6 SR_rounded-lg SR_box-shadow">
                         <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">진행 단계</h3>
                         <ul id="progress-steps" class="SR_progress-steps-list">
-                            <!-- JavaScript will dynamically render these based on groupedStepData -->
                             <li th:each="step, stat : ${groupedStepData}"
                                 th:data-step-id="${stat.index + 1}"
                                 th:classappend="${step.isCompleted()} ? 'SR_completed-step' : (${step.isInProgress()} ? 'SR_current-step' : '')"
                                 onclick="displayStepDetails(this.dataset.stepId)">
                                 <div class="SR_step-icon" th:text="${stat.index + 1}">1</div>
                                 <span class="SR_step-name" th:text="${step.stcNm}">계약 체결</span>
-                                <span class="SR_step-status" th:text="${step.isCompleted()} ? '완료' : (${step.isInProgress()} ? '진행 중' : '대기')">완료</span>
+                                <span class="SR_step-status" th:text="${step.isCompleted()} ? '완료' : (${step.isInProgress()} ? '진행 중' : '예정')">완료</span>
                             </li>
                         </ul>
                     </div>
 
                     <div class="SR_w-full SR_lg:w-2\/3 SR_flex SR_flex-col SR_gap-8">
                         <div id="progress-list">
-                            <!-- Thymeleaf로 각 단계의 내용을 미리 렌더링하고 JavaScript로 토글하는 방식 -->
                             <div th:each="step, stat : ${groupedStepData}"
                                  th:data-step-id="${stat.index + 1}"
                                  th:classappend="${stat.index + 1 == 1} ? '' : 'SR_hidden'"
                                  class="SR_bg-white SR_p-6 SR_rounded-lg SR_box-shadow SR_border SR_border-gray-200 SR_step-container">
-                                <div class="SR_mb-4">
-                                    <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700" th:text="${step.stcNm}">계약 체결</h3>
-                                    <span class="SR_text-sm SR_text-gray-500" th:text="${step.isCompleted()} ? '완료' : (${step.isInProgress()} ? '진행 중' : '대기')">완료</span>
-                                </div>
                                 
                                 <div class="SR_mb-6">
-                                    <h4 class="SR_text-lg SR_font-semibold SR_text-gray-700 SR_mb-2">공급자 보고서</h4>
-                                    <!-- 보고서가 있을 경우 -->
+                                    <h5 class="SR_mb-3">[ 공급자 보고서 ]</h5>
                                     <th:block th:if="${not #lists.isEmpty(step.reports)}">
-                                        <div th:each="report : ${step.reports}" class="SR_bg-blue-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-200 SR_report-box SR_report-feedback-card">
+                                        <div th:each="report : ${step.reports}" class="SR_bg-gray-500 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-200 SR_report-box SR_report-feedback-card">
                                             <p><strong th:text="${report.osstRecordTitle}">초기 계약서 제출</strong></p>
                                             <p th:text="${report.osstRecordCn}">프로젝트 초기 계약서가 제출되었습니다.</p>
-                                            <!-- 파일이 있을 경우 (osstRecordUpCode가 null이 아닐 경우) -->
-                                            <p th:if="${report.osstRecordUpCode != null}"><a th:href="@{'/files/' + ${report.osstRecordUpCode}}" target="_blank" class="SR_text-blue-600 SR_underline" th:text="${report.osstRecordUpCode}">첨부 파일</a></p>
-                                            <p class="SR_text-xs SR_text-gray-500" th:text="${'작성일: ' + #dates.format(report.osstRecordRegYmdt, 'yyyy-MM-dd HH:mm:ss')}">작성일: 2025-07-07</p>
+                                            <p class="SR_text-xs SR_text-gray-500" th:text="${report != null ? '작성일: ' + report.osstRecordRegYmdt : '작성일 정보 없음'}">작성일: 2025-07-07</p>
                                         </div>
                                     </th:block>
-                                    <!-- 보고서가 없을 경우 -->
-                                    <div th:if="${#lists.isEmpty(step.reports)}" class="SR_text-gray-600">제출된 보고서가 없습니다.</div>
+                                    <div th:if="${#lists.isEmpty(step.reports)}" 
+                                    	 class="SR_bg-gray-500 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-300 SR_report-feedback-card"
+                                    	 style="text-align: center;">제출된 보고서가 없습니다.</div>
                                     
-                                    <!-- 보고서 제출 버튼 (현재 진행 중인 단계일 경우에만 표시) -->
-                                    <div th:if="${step.isInProgress()}" class="SR_flex SR_justify-end SR_gap-4 SR_mt-4">
-                                        <button type="button" class="SR_btn-primary" onclick="openModal('submitReportModal')">보고서 제출</button>
-                                    </div>
+                                    <div th:id="'submitReportBtnContainer-' + ${stat.index}"
+									     class="SR_flex SR_justify-end SR_gap-4 SR_mt-4"
+									     style="display: none;">
+									    <button type="button" class="SR_btn-primary" onclick="openModal('submitReportModal')">보고서 제출</button>
+									</div>
                                 </div>
 
-                                <div class="SR_mb-6 mt-40">
-                                    <h4 class="SR_text-lg SR_font-semibold SR_text-gray-700 SR_mb-2">수요자 피드백</h4>
-                                    <!-- 피드백이 있을 경우 -->
+                                <div class="SR_mb-6 mt-30">
+                                    <h5 class="SR_mb-3">[ 수요자 피드백 ]</h5>
                                     <th:block th:if="${not #lists.isEmpty(step.feedbacks)}">
-                                        <div th:each="feedback : ${step.feedbacks}" class="SR_bg-blue-50 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-200 SR_feedback-box SR_report-feedback-card">
+                                        <div th:each="feedback : ${step.feedbacks}" class="SR_bg-gray-500 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-200 SR_feedback-box SR_report-feedback-card">
                                             <p><strong th:text="${feedback.osstRecordTitle}">계약서 검토 완료</strong></p>
-                                            <p th:text="${feedback.osstRecordCn}">제출된 계약서 내용 확인했습니다.</p>
-                                            <!-- 파일이 있을 경우 (osstRecordUpCode가 null이 아닐 경우) -->
-                                            <p th:if="${feedback.osstRecordUpCode != null}"><a th:href="@{'/files/' + ${feedback.osstRecordUpCode}}" target="_blank" class="SR_text-blue-600 SR_underline" th:text="${feedback.osstRecordUpCode}">첨부 파일</a></p>
-                                            <p class="SR_text-xs SR_text-gray-500" th:text="${'작성일: ' + #dates.format(feedback.osstRecordRegYmdt, 'yyyy-MM-dd HH:mm:ss')}">작성일: 2025-07-08</p>
+                                            <p th:text="${feedback.osstRecordCn}">제출된 계약서 내용 확인했습니다.</p><p class="SR_text-xs SR_text-gray-500 text-left" th:text="${feedback != null ? '작성일: ' + feedback.osstRecordRegYmdt : '작성일 정보 없음'}">작성일: 2025-07-08</p>
                                         </div>
                                     </th:block>
-                                    <!-- 피드백이 없을 경우 -->
-                                    <div th:if="${#lists.isEmpty(step.feedbacks)}" class="SR_text-gray-600">제출된 피드백이 없습니다.</div>
+                                    <div th:if="${#lists.isEmpty(step.feedbacks)}" 
+                                    	 class="SR_bg-gray-500 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-300 SR_report-feedback-card"
+                                    	 style="text-align: center;">제출된 피드백이 없습니다.</div>
 
-                                    <!-- 피드백 작성 버튼 (현재 진행 중인 단계일 경우에만 표시) -->
-                                    <div th:if="${step.isInProgress()}" class="SR_flex SR_justify-end SR_gap-4 SR_mt-4">
+                                    <div th:if="${step.isInProgress() and memberRole == 'DEMANDER'}" class="SR_flex SR_justify-end SR_gap-4 SR_mt-4">
                                         <button type="button" class="SR_btn-primary" onclick="openModal('giveFeedbackModal')">피드백 작성</button>
                                     </div>
                                 </div>
 
-                                <div class="SR_mb-6 mt-40">
-                                    <h4 class="SR_text-lg SR_font-semibold SR_text-gray-700 SR_mb-2">최종 결과물</h4>
-                                    <!-- 최종 결과물이 있을 경우 (StepData DTO에 finalResults가 List<EnterOsstRecord>와 같은 형태로 정의되어 있어야 합니다.) -->
-                                    <!-- 현재 StepData DTO에는 finalResults가 없으므로, 이 부분은 예시로만 남겨두고 있습니다. -->
+                                <div class="SR_mb-6 mt-30">
+                                    <h5 class="SR_mb-3">[ 최종 결과물 ]</h5>
                                     <th:block th:if="${not #lists.isEmpty(step.finalResults)}">
                                         <ul>
-                                            <li th:each="result : ${step.finalResults}" class="SR_bg-blue-100 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-300 SR_report-feedback-card">
-                                                <a th:href="@{'/files/' + ${result.osstRecordUpCode}}" target="_blank" class="SR_text-blue-700 SR_underline" th:text="${result.osstRecordUpCode}">signed_contract.pdf</a>
+                                            <li th:each="result : ${step.finalResults}" class="SR_bg-gray-500 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-300 SR_report-feedback-card">
+                                                <a th:href="@{'/files/' + ${result.osstRecordUpCode}}" target="_blank" class="SR_text-blue-700 SR_underline" th:text="${result.osstRecordTitle}">signed_contract.pdf</a>
+                                                <p th:text="${result.osstRecordCn}"></p>
+                                                <p class="SR_text-xs SR_text-gray-500" th:text="${result != null ? '작성일: ' + result.osstRecordRegYmdt : '작성일 정보 없음'}">작성일: 2025-07-08</p>
                                             </li>
                                         </ul>
                                     </th:block>
-                                    <!-- 최종 결과물이 없을 경우 -->
-                                    <div th:if="${#lists.isEmpty(step.finalResults)}" class="SR_text-gray-600">제출된 결과물이 없습니다.</div>
+                                    <div th:if="${#lists.isEmpty(step.finalResults)}" 
+                                    	 class="SR_bg-gray-500 SR_p-3 SR_rounded-md SR_mb-2 SR_border SR_border-blue-300 SR_report-feedback-card" 
+                                    	 style="text-align: center;">제출된 결과물이 없습니다.</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-               <div id="step-approval-button-container" class="SR_flex SR_justify-end SR_mt-4 mt-30 SR_hidden">
+               <div id="step-approval-button-container"
+			        class="SR_flex SR_justify-end SR_mt-4 mt-30 SR_hidden">
                    <button class="SR_btn-secondary" onclick="approveStep()">단계 승인</button>
                </div>
             </div>
         </main>
 
 
-        <!-- Modals -->
-        <!-- Submit Report Modal -->
         <div id="submitReportModal" class="SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_hidden SR_z-50">
-            <div class="SR_bg-white SR_p-8 SR_rounded-lg SR_box-shadow SR_w-11\/12 SR_md\:w-1\/2 SR_lg\:w-1\/3 SR_modal-dialog-content">
+            <form id="reportForm" enctype="multipart/form-data" class="SR_bg-white SR_p-8 SR_rounded-lg SR_box-shadow SR_w-11\/12 SR_md\:w-1\/2 SR_lg\:w-1\/3 SR_modal-dialog-content">
                 <h3 class="SR_text-xl SR_font-bold SR_mb-4">결과물 제출</h3>
-                <input type="text" id="reportTitle" placeholder="보고서 제목을 입력하세요." class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
+                <input type="text" id="reportTitle" name="osrTtl" placeholder="보고서 제목을 입력하세요." maxlength="50" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
                 <label for="feedbackCodeSelect" class="SR_block SR_text-sm SR_font-semibold SR_text-gray-700 SR_mb-2">관련 피드백 선택 (선택 사항):</label>
-                <select id="feedbackCodeSelect" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
+                <select id="feedbackCodeSelect" name="osrUpCd" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
                     <option value="">피드백을 선택하세요</option>
-                    <!-- Options will be dynamically loaded here -->
                 </select>
-                <textarea id="reportContent" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4" rows="5" placeholder="보고서 내용을 입력하세요."></textarea>
-                <input type="file" id="reportFile" class="SR_mb-4">
+                <textarea id="reportContent" name="osrCn" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4" rows="5" placeholder="보고서 내용을 입력하세요."></textarea>
+                <input type="file" id="reportFile"name="attachment" class="SR_mb-4">
                 <div class="SR_flex SR_justify-end SR_gap-4">
-                    <button class="SR_btn-secondary" onclick="closeModal('submitReportModal')">취소</button>
-                    <button class="SR_btn-primary ml-10" onclick="submitReport()">제출</button>
+                    <button type="button" class="SR_btn-primary" onclick="closeModal('submitReportModal')">취소</button>
+                    <button type="button" class="SR_btn-primary ml-10" onclick="submitReport()">제출</button>
                 </div>
-            </div>
+            </form>
         </div>
 
-        <!-- Give Feedback Modal -->
         <div id="giveFeedbackModal" class="SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_hidden SR_z-50">
-            <div class="SR_bg-white SR_p-8 SR_rounded-lg SR_box-shadow SR_w-11\/12 SR_md\:w-1\/2 SR_lg\:w-1\/3 SR_modal-dialog-content">
+            <form id="feedbackForm" enctype="multipart/form-data" class="SR_bg-white SR_p-8 SR_rounded-lg SR_box-shadow SR_w-11\/12 SR_md\:w-1\/2 SR_lg\:w-1\/3 SR_modal-dialog-content">
                 <h3 class="SR_text-xl SR_font-bold SR_mb-4">피드백 하기</h3>
-                <input type="text" id="feedbackTitle" placeholder="피드백 제목을 입력하세요." class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
+                <input type="text" id="feedbackTitle" name="osrTtl" placeholder="피드백 제목을 입력하세요." maxlength="50" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
                 <label for="reportCodeSelect" class="SR_block SR_text-sm SR_font-semibold SR_text-gray-700 SR_mb-2">관련 보고서 선택 (선택 사항):</label>
-                <select id="reportCodeSelect" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
-                    <option value="">보고서를 선택하세요</option>
-                    <!-- Options will be dynamically loaded here -->
-                </select>
-                <textarea id="feedbackContent" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4" rows="5" placeholder="피드백 내용을 입력하세요."></textarea>
-                <input type="file" id="feedbackFile" class="SR_mb-4"> <!-- Added file input for feedback -->
-                <div class="SR_flex SR_justify-end SR_gap-4">
-                    <button class="SR_btn-secondary" onclick="closeModal('giveFeedbackModal')">취소</button>
-                    <button class="SR_btn-primary ml-10" onclick="submitFeedback()">피드백 제출</button>
+                <select id="reportCodeSelect" name="osrUpCd" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4">
+                    <option value="">보고서를 선택하세요</option>	
+                    </select>
+                <textarea id="feedbackContent" name="osrCn" class="SR_w-full SR_p-3 SR_border SR_rounded-md SR_mb-4" rows="5" placeholder="피드백 내용을 입력하세요."></textarea>
+                <input type="file" id="feedbackFile" name="attachment" class="SR_mb-4"> <div class="SR_flex SR_justify-end SR_gap-4">
+                    <button type="button" class="SR_btn-primary" onclick="closeModal('giveFeedbackModal')">취소</button>
+                    <button type="button" class="SR_btn-primary ml-10" onclick="submitFeedback()">피드백 제출</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
     
     <th:block layout:fragment="jsScript">
-        <script>
-            // JavaScript에서 직접 데이터를 정의하는 대신, Thymeleaf를 통해 서버에서 전달받은 데이터를 사용합니다.
-            // 하지만 Canvas 미리보기를 위해 임시로 더미 데이터를 유지합니다.
-            // 실제 배포 시에는 이 데이터는 서버에서 전달받은 groupedStepData를 기반으로 초기화되어야 합니다.
-            const progressStepsData = [
-                {
-                    id: 1,
-                    name: "계약 체결",
-                    stc_cd: "SD_CONTRACT",
-                    osp_sply_ymdt: "2022-04-07 00:00:00",
-                    osp_cust_yn: 1,
-                    osp_cust_ymdt: "2022-09-01 09:00:00",
-                    reports: [
-                        { osrTtl: "초기 계약서 제출", osrCn: "프로젝트 초기 계약서가 제출되었습니다.", osrRegYmdt: "2025-07-07 10:00:00", osrUpCd: "contract_v1.pdf" }
-                    ],
-                    feedbacks: [
-                        { osrTtl: "계약서 검토 완료", osrCn: "제출된 계약서 내용 확인했습니다.", osrRegYmdt: "2025-07-08 10:00:00", osrUpCd: null }
-                    ],
-                    finalResults: [
-                        { osrTtl: "최종 계약서", osrCn: "최종 서명된 계약서입니다.", osrRegYmdt: "2025-07-09 10:00:00", osrUpCd: "signed_contract.pdf" } // DTO에 맞게 수정
-                    ]
-                },
-                {
-                    id: 2,
-                    name: "초기 기획",
-                    stc_cd: "SD_PLANNING",
-                    osp_sply_ymdt: "2023-04-17 19:30:00",
-                    osp_cust_yn: 0,
-                    osp_cust_ymdt: null,
-                    reports: [
-                        { osrTtl: "기획서 초안 제출", osrCn: "초기 기획서 초안을 제출합니다.", osrRegYmdt: "2025-07-10 10:00:00", osrUpCd: "planning_draft_v1.docx" }
-                    ],
-                    feedbacks: [],
-                    finalResults: []
-                },
-                {
-                    id: 3,
-                    name: "작업 진행",
-                    stc_cd: "SD_WORKPROGRESS",
-                    osp_sply_ymdt: null,
-                    osp_cust_yn: 0,
-                    osp_cust_ymdt: null,
-                    reports: [],
-                    feedbacks: [],
-                    finalResults: []
-                },
-                {
-                    id: 4,
-                    name: "최종 완료",
-                    stc_cd: "SD_COMPLETION",
-                    osp_sply_ymdt: null,
-                    osp_cust_yn: 0,
-                    osp_cust_ymdt: null,
-                    reports: [],
-                    feedbacks: [],
-                    finalResults: []
-                }
-            ];
+        <script th:inline="javascript">
+            const groupedStepDataFromBackend = /*[[${groupedStepData}]]*/ []; 
+            
 
-            const recentActivitiesData = [
-                { date: "2025-07-07", description: "프로젝트 시작 및 계약 체결" },
-                { date: "2025-07-06", description: "외주 담당자 배정 완료" },
-                { date: "2025-07-05", description: "프로젝트 초기 설정 완료" },
-                { date: "2025-07-04", description: "초기 미팅 준비" },
-                { date: "2025-07-03", description: "프로젝트 문서 검토" },
-                { date: "2025-07-02", description: "내부 팀 구성" },
-                { date: "2025-07-01", description: "외주 공고 게시" }
-            ];
+            const progressStepsData = groupedStepDataFromBackend;
 
-            // JavaScript에서 현재 단계 정보 및 진행률을 계산하는 로직은 그대로 유지됩니다.
-            // Thymeleaf에서 전달받은 데이터가 있다면 이를 기반으로 계산하게 됩니다.
-            let currentStep = progressStepsData.find(step => step.osp_cust_yn === 0 && step.osp_sply_ymdt !== null)?.id || 1;
-            let progressPercentage = 0;
-            let activeContentStepId = currentStep; // 초기 로드 시 현재 진행 중인 단계의 내용 표시
+            const recentActivitiesData = /*[[${recentActivities}]]*/ [];
+            const memberRole = /*[[${memberRole}]]*/ "SUPPLIER";
 
+            let currentStepIndex = progressStepsData.findIndex(step => step.ospCustYn === 0 && step.ospSplyYmdt !== null);
+
+            if (currentStepIndex === -1) {
+                currentStepIndex = progressStepsData.findIndex(step => step.ospCustYn === 0 && step.ospSplyYmdt === null);
+            }
+            
+            let activeContentStepIndex = (currentStepIndex !== -1) ? currentStepIndex : 0;
+            
             document.addEventListener('DOMContentLoaded', () => {
                 renderRecentActivities();
-                renderProgressSteps();
                 updateProgressDisplay();
-                // 초기 로드 시 첫 번째 단계의 내용을 표시
-                displayStepDetails(1); 
+                displayStepDetails(activeContentStepIndex + 1); 
             });
 
-            // StepData 클래스의 메서드를 JavaScript 함수로 변환하여 사용
             function getStepStatus(step) {
-                if (step.osp_cust_yn === 1) {
+                if (step.ospCustYn === 1) { 
                     return '완료';
-                } else if (step.osp_cust_yn === 0 && step.osp_sply_ymdt !== null) {
+                } else if (step.ospCustYn === 0 && step.ospSplyYmdt !== null) { 
                     return '진행 중';
                 } else {
-                    return '대기';
+                    return '예정';
                 }
             }
 
             function isStepCompleted(step) {
-                return step.osp_cust_yn === 1;
+                return step.ospCustYn !== null && step.ospCustYn === 1; 
             }
 
             function isInProgress(step) {
-                return step.osp_cust_yn === 0 && step.osp_sply_ymdt !== null;
-            }
+                // 원래 조건
+                if (step.ospCustYn !== null && step.ospCustYn === 0 && step.ospSplyYmdt !== null) return true;
 
-            function renderProgressSteps() {
-                const stepsContainer = document.getElementById('progress-steps');
-                // 이 부분은 Thymeleaf th:each로 렌더링되므로 JavaScript에서는 더미 데이터로만 사용합니다.
-                // Canvas 미리보기를 위해 주석 처리하지 않습니다.
-                stepsContainer.innerHTML = ''; 
-                progressStepsData.forEach((step, index) => {
-                    const li = document.createElement('li');
-                    let stepClass = '';
-                    if (isStepCompleted(step)) {
-                        stepClass = 'SR_completed-step';
-                    } else if (isInProgress(step)) {
-                        stepClass = 'SR_current-step';
+                // 예외: 진행중 단계가 없고 이 단계가 첫 번째 예정 단계일 경우
+                const hasRealInProgress = progressStepsData.some(s => s.ospCustYn === 0 && s.ospSplyYmdt !== null);
+                if (!hasRealInProgress) {
+                    const firstPendingIndex = progressStepsData.findIndex(s => s.ospCustYn === 0 && s.ospSplyYmdt === null);
+                    if (progressStepsData.indexOf(step) === firstPendingIndex) {
+                        return true;
                     }
-                    li.className = `${stepClass}`;
-                    li.setAttribute('data-step-id', step.id);
-                    li.onclick = () => displayStepDetails(step.id);
+                }
 
-                    li.innerHTML = `
-                        <div class="SR_step-icon">
-                            ${step.id}
-                        </div>
-                        <span class="SR_step-name">${step.name}</span>
-                        <span class="SR_step-status">${getStepStatus(step)}</span>
-                    `;
-                    stepsContainer.appendChild(li);
-                });
+                return false;
             }
 
-            function activateStep(stepId) {
-                // 이 함수는 현재 사용되지 않습니다. displayStepDetails를 직접 호출합니다.
-            }
 
             function updateProgressDisplay() {
                 const segmentedProgressBar = document.getElementById('segmented-progress-bar');
                 const progressPercentageText = document.getElementById('progress-percentage-text');
                 const progressStatusMessage = document.getElementById('progress-status-message');
 
-                segmentedProgressBar.innerHTML = ''; // Clear existing segments
+                segmentedProgressBar.innerHTML = '';
 
                 progressStepsData.forEach(step => {
                     const segment = document.createElement('div');
@@ -388,7 +290,7 @@
                     } else if (isInProgress(step)) {
                         segment.classList.add('current');
                     }
-                    segment.textContent = step.id; // Display step number in segment
+                    segment.textContent = progressStepsData.indexOf(step) + 1; 
                     segmentedProgressBar.appendChild(segment);
                 });
 
@@ -396,13 +298,13 @@
                 const currentStepData = progressStepsData.find(step => isInProgress(step));
                 let calculatedProgress = completedStepsCount;
                 if (currentStepData) {
-                    calculatedProgress += 0.5; // 현재 단계는 절반 진행으로 간주
+                    calculatedProgress += 0.5;
                 }
-                progressPercentage = (calculatedProgress / progressStepsData.length) * 100;
+                const progressPercentage = (calculatedProgress / progressStepsData.length) * 100;
                 progressPercentageText.textContent = `${Math.round(progressPercentage)}%`;
 
                 if (currentStepData) {
-                    progressStatusMessage.textContent = `${currentStepData.name} 단계 (${getStepStatus(currentStepData)})`;
+                    progressStatusMessage.textContent = `${currentStepData.stcNm} 단계 (${getStepStatus(currentStepData)})`;
                 } else if (completedStepsCount === progressStepsData.length) {
                     progressStatusMessage.textContent = `모든 단계 완료`;
                 } else {
@@ -410,34 +312,85 @@
                 }
             }
 
-            // Function to display content for a specific step (now toggles visibility of pre-rendered HTML)
             function displayStepDetails(stepId) {
-                activeContentStepId = stepId;
-                // 모든 단계 컨테이너를 숨깁니다.
+                activeContentStepIndex = stepId - 1;
+
+                // 모든 단계 컨테이너 숨기기
                 document.querySelectorAll('.SR_step-container').forEach(container => {
                     container.classList.add('SR_hidden');
                 });
 
-                // 선택된 단계의 컨테이너만 보여줍니다.
+                // 선택한 단계 컨테이너 보이기
                 const selectedStepContainer = document.querySelector(`.SR_step-container[data-step-id="${stepId}"]`);
                 if (selectedStepContainer) {
                     selectedStepContainer.classList.remove('SR_hidden');
                 }
 
-                // 왼쪽 진행 단계 목록의 선택 상태를 업데이트합니다.
+                // 진행 단계 목록 하이라이팅
                 document.querySelectorAll('#progress-steps li').forEach(item => {
                     item.classList.remove('SR_selected-step');
                 });
                 document.querySelector(`#progress-steps li[data-step-id="${stepId}"]`).classList.add('SR_selected-step');
 
-                // "단계 승인" 버튼의 가시성을 제어합니다.
-                // 현재 activeContentStepId에 해당하는 단계 데이터를 찾습니다.
-                const step = progressStepsData.find(s => s.id === activeContentStepId);
+                // 현재 단계 데이터
+                const step = progressStepsData[activeContentStepIndex];
+
+                // ✅ 단계 승인 버튼 표시 여부
                 const approveButtonContainer = document.getElementById('step-approval-button-container');
-                if (step && isInProgress(step)) { // isInProgress는 JavaScript에서 정의된 함수입니다.
+                if (step && isInProgress(step)) {
                     approveButtonContainer.classList.remove('SR_hidden');
                 } else {
                     approveButtonContainer.classList.add('SR_hidden');
+                }
+
+                // ✅ 공급자 보고서 제출 버튼 표시 여부
+                const reportBtnContainer = document.getElementById(`submitReportBtnContainer-${activeContentStepIndex}`);
+
+				// 기존 조건 유지
+				if (step && isInProgress(step) && memberRole === 'SUPPLIER') {
+				    reportBtnContainer.style.display = 'flex';
+				} else {
+				    reportBtnContainer.style.display = 'none';
+				}
+
+                // ✅ 수요자 피드백 제출 버튼 표시 여부
+                const feedbackBtnContainer = document.querySelector('.SR_flex.SR_justify-end.SR_gap-4.SR_mt-4 > button[onclick*="giveFeedbackModal"]')?.parentElement;
+                if (feedbackBtnContainer) {
+                    if (step && isInProgress(step) && memberRole === 'DEMANDER') {
+                        feedbackBtnContainer.style.display = 'flex';
+                    } else {
+                        feedbackBtnContainer.style.display = 'none';
+                    }
+                }
+            }
+
+            // 모달 드롭다운을 현재 단계의 실제 보고서/피드백 데이터로 채우도록 수정
+            function populateFeedbackCodeDropdown() {
+                const dropdown = document.getElementById('feedbackCodeSelect');
+                dropdown.innerHTML = '<option value="">피드백을 선택하세요</option>';
+                const currentStepData = progressStepsData[activeContentStepIndex];
+                if (currentStepData && currentStepData.feedbacks) { 
+                    currentStepData.feedbacks.forEach(feedback => {
+                        const option = document.createElement('option');
+                        option.value = feedback.osstRecordCode; 
+                        option.textContent = feedback.osstRecordTitle; 
+                        dropdown.appendChild(option);
+                    });
+                }
+            }
+
+            function populateReportCodeDropdown() {
+                const dropdown = document.getElementById('reportCodeSelect');
+                dropdown.innerHTML = '<option value="">보고서를 선택하세요</option>';
+                // 현재 단계의 피드백 목록에서 보고서와 연관될 수 있는 피드백의 코드를 채웁니다.
+                const currentStepData = progressStepsData[activeContentStepIndex];
+                if (currentStepData && currentStepData.reports) { 
+                    currentStepData.reports.forEach(report => {
+                        const option = document.createElement('option');
+                        option.value = report.osstRecordCode; 
+                        option.textContent = report.osstRecordTitle; 
+                        dropdown.appendChild(option);
+                    });
                 }
             }
 
@@ -452,7 +405,7 @@
 
             function closeModal(modalId) {
                 document.getElementById(modalId).classList.add('SR_hidden');
-                // Clear modal inputs when closing
+                // 모달 닫을 때 입력 필드 초기화
                 if (modalId === 'submitReportModal') {
                     document.getElementById('reportTitle').value = '';
                     document.getElementById('feedbackCodeSelect').value = '';
@@ -465,45 +418,31 @@
                     document.getElementById('feedbackFile').value = '';
                 }
             }
-
-            function populateFeedbackCodeDropdown() {
-                const dropdown = document.getElementById('feedbackCodeSelect');
-                dropdown.innerHTML = '<option value="">피드백을 선택하세요</option>'; // Reset options
-                // This part should be populated based on actual feedback data from the backend.
-                // Example: const allFeedbacks = [[${allFeedbacksFromBackend}]];
-            }
-
-            function populateReportCodeDropdown() {
-                const dropdown = document.getElementById('reportCodeSelect');
-                dropdown.innerHTML = '<option value="">보고서를 선택하세요</option>'; // Reset options
-                // This part should be populated based on actual report data from the backend.
-                // Example: const allReports = [[${allReportsFromBackend}]];
-            }
-
-            function submitReport() {
-                // 보고서 제출 로직 (AJAX를 통해 백엔드로 데이터 전송 후 페이지 새로고침 또는 부분 업데이트 필요)
-                showMessageBox('보고서가 제출되었습니다. (실제 데이터 저장은 백엔드 구현 필요)');
-                closeModal('submitReportModal');
-                // addActivity(`새로운 보고서 제출: "${reportTitle}"`); // 실제 제출 후 백엔드에서 활동 내역 업데이트
-                // displayStepDetails(activeContentStepId); // 페이지 새로고침 또는 AJAX로 해당 섹션 업데이트
-            }
-
-            function submitFeedback() {
-                // 피드백 제출 로직 (AJAX를 통해 백엔드로 데이터 전송 후 페이지 새로고침 또는 부분 업데이트 필요)
-                showMessageBox('피드백이 제출되었습니다. (실제 데이터 저장은 백엔드 구현 필요)');
-                closeModal('giveFeedbackModal');
-                // addActivity(`새로운 피드백 제공: "${feedbackTitle}"`); // 실제 제출 후 백엔드에서 활동 내역 업데이트
-                // displayStepDetails(activeContentStepId); // 페이지 새로고침 또는 AJAX로 해당 섹션 업데이트
-            }
-
+            
             function approveStep() {
-                // 단계 승인 로직 (AJAX를 통해 백엔드로 상태 변경 요청 후 페이지 새로고침 또는 부분 업데이트 필요)
-                showMessageBox(`'현재 단계'가 승인되었습니다. (실제 단계 변경은 백엔드 구현 필요)`);
-                // activateStep(currentStep + 1); // 실제 승인 후 백엔드에서 다음 단계 활성화
-            }
+                const currentStep = progressStepsData[activeContentStepIndex];
+                const ocdCd = document.getElementById('ocdCdHidden').value;
 
-            // Custom Message Box functions (replaces alert())
-            function showMessageBox(message) {
+                fetch('/enter/approveStep', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `ospCd=${currentStep.ospCd}`
+                })
+                .then(res => res.text())
+                .then(data => {
+                    if (data === 'OK') {
+                        showMessageBox("'현재 단계'가 승인되었습니다.", () => {
+                            location.href = `/enter/enterOsstDetail?ocd_cd=${ocdCd}`;
+                        });
+                    } else {
+                        showMessageBox("단계 승인 실패: " + data);
+                    }
+                });
+            }
+            
+            function showMessageBox(message, callback) {
                 let messageBox = document.getElementById('SR_messageBox');
                 if (!messageBox) {
                     messageBox = document.createElement('div');
@@ -511,16 +450,25 @@
                     messageBox.className = 'SR_fixed SR_inset-0 SR_bg-gray-600 SR_bg-opacity-50 SR_flex SR_items-center SR_justify-center SR_z-50';
                     messageBox.innerHTML = `
                         <div class="SR_bg-white SR_p-6 SR_rounded-lg SR_shadow-lg SR_max-w-sm SR_w-full SR_text-center">
-                            <p class="SR_mb-4">${message}</p>
-                            <button class="SR_btn-primary" onclick="closeMessageBox()">확인</button>
+                            <p class="SR_mb-4" id="SR_messageText"></p>
+                            <button class="SR_btn-primary" id="SR_messageConfirmBtn">확인</button>
                         </div>
                     `;
                     document.body.appendChild(messageBox);
-                } else {
-                    messageBox.querySelector('p').textContent = message;
-                    messageBox.classList.remove('SR_hidden');
                 }
+
+                document.getElementById('SR_messageText').textContent = message;
+                messageBox.classList.remove('SR_hidden');
+
+                const confirmButton = document.getElementById('SR_messageConfirmBtn');
+                confirmButton.onclick = () => {
+                    messageBox.classList.add('SR_hidden');
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+                };
             }
+            
 
             function closeMessageBox() {
                 const messageBox = document.getElementById('SR_messageBox');
@@ -528,23 +476,104 @@
                     messageBox.classList.add('SR_hidden');
                 }
             }
+            
+            function submitReport() {
+                const title = document.getElementById('reportTitle').value.trim();
+                const content = document.getElementById('reportContent').value.trim();
 
-            // New: Render Recent Activities
+                if (title === '') {
+                    alert('보고서 제목을 입력해주세요.');
+                    return;
+                }
+                if (title.length > 50) {
+                    alert('보고서 제목은 50자 이하로 입력해주세요.');
+                    return;
+                }
+                if (content === '') {
+                    alert('보고서 내용을 입력해주세요.');
+                    return;
+                }
+
+                const form = document.getElementById('reportForm');
+                const formData = new FormData(form);
+
+                formData.append('ospCd', progressStepsData[activeContentStepIndex].ospCd);
+                formData.append('osrType', 'report'); // 타입 고정
+
+                fetch('/enter/submitRecord', {
+                    method: 'POST',
+                    body: formData
+                }).then(res => res.text())
+                  .then(data => {
+                    if (data === "OK") {
+                        alert('보고서가 등록되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('실패: ' + data);
+                    }
+                });
+            }
+
+
+            function submitFeedback() {
+                const title = document.getElementById('feedbackTitle').value.trim();
+                const content = document.getElementById('feedbackContent').value.trim();
+
+                if (title === '') {
+                    alert('피드백 제목을 입력해주세요.');
+                    return;
+                }
+                if (title.length > 50) {
+                    alert('피드백 제목은 50자 이하로 입력해주세요.');
+                    return;
+                }
+                if (content === '') {
+                    alert('피드백 내용을 입력해주세요.');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('osrTtl', title);
+                formData.append('osrCn', content);
+                formData.append('osrUpCd', document.getElementById('reportCodeSelect').value);
+                formData.append('osrType', 'feedback');
+                formData.append('ospCd', progressStepsData[activeContentStepIndex].ospCd);
+                formData.append('attachment', document.getElementById('feedbackFile').files[0]);
+
+                const ocdCd = document.getElementById('ocdCdHidden').value;
+
+                fetch('/enter/submitRecord', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.text())
+                .then(data => {
+                    if (data === "OK") {
+                        alert('피드백이 등록되었습니다.');
+                        location.href = `/enter/enterOsstDetail?ocd_cd=${ocdCd}`;
+                    } else {
+                        alert('실패: ' + data);
+                    }
+                });
+            }
+
             function renderRecentActivities() {
                 const activitiesListContainer = document.getElementById('recent-activities-list');
                 activitiesListContainer.innerHTML = '';
+
                 if (recentActivitiesData.length === 0) {
                     activitiesListContainer.innerHTML = `<p class="SR_text-gray-600">최근 활동 내역이 없습니다.</p>`;
                     return;
                 }
+
                 recentActivitiesData.forEach(activity => {
                     const activityItem = document.createElement('div');
                     activityItem.className = 'SR_activity-item';
                     activityItem.innerHTML = `
-                        <div class="SR_activity-icon">!</div>
+                        <div class="SR_activity-icon">📝</div>
                         <div class="SR_activity-content">
-                            <div class="SR_activity-date">${activity.date}</div>
-                            <div class="SR_activity-description">${activity.description}</div>
+                            <div class="SR_activity-date">${activity.osstRecordRegYmdt}</div>
+                            <div class="SR_activity-description">${activity.osstRecordTitle}</div>
                         </div>
                     `;
                     activitiesListContainer.appendChild(activityItem);
@@ -554,11 +583,10 @@
             // New: Add Activity to Recent Activities
             function addActivity(description) {
                 const today = new Date().toISOString().slice(0, 10);
-                recentActivitiesData.unshift({ date: today, description: description }); // 최신 활동을 맨 앞에 추가
+                recentActivitiesData.unshift({ date: today, description: description });	
                 renderRecentActivities();
             }
         </script>
     </th:block>
 </body>
 </html>
-	

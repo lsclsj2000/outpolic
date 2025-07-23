@@ -9,9 +9,376 @@
 	
 	<body>
 		<th:block layout:fragment="contents">
-		
-			<h2>적립 기준 생성 페이지</h2>
-		
+	        <section class="content-main">
+	        	<div class="content-header">
+			        <h2 class="content-title">마일리지 기준 생성</h2>
+			        <div>
+			            <button id="registerBtn" class="btn btn-md rounded font-sm hover-up">기준 등록</button>
+			        </div>
+			    </div>
+			
+			    <div class="card mb-4 search-filter-card">
+				    <div class="card-body search-filter-body">
+				        <div id="searchForm">
+				            <div class="table-responsive">
+				                <table class="search-filter-table">
+				                    <tbody>
+				                        <tr>
+				                            <th>검색</th>
+				                            <td>
+				                                <input type="text" id="searchKeyword" name="searchKeyword" placeholder="적립 설명을 입력하세요" class="form-control" style="width: 250px;" />
+				                            </td>
+				                        </tr>
+				                        <tr>
+				                            <th>상세조건</th>
+				                            <td>
+				                                <div class="filter-group">
+				                                    <strong class="filter-label">상태</strong>
+				                                    <div class="radio-group">
+				                                        <label><input type="radio" name="filterStatus" value="" checked /> 전체</label>
+				                                        <label><input type="radio" name="filterStatus" value="1" /> 활성</label>
+				                                        <label><input type="radio" name="filterStatus" value="0" /> 비활성</label>
+				                                    </div>
+				                                </div>
+				                                <div class="filter-group">
+				                                    <strong class="filter-label">적립액</strong>
+				                                    <input type="number" id="minAmount" name="minAmount" class="form-control" style="width: 100px;" placeholder="최소" />
+				                                    <span> ~ </span>
+				                                    <input type="number" id="maxAmount" name="maxAmount" class="form-control" style="width: 100px;" placeholder="최대" />
+				                                </div>
+				                            </td>
+				                        </tr>
+				                    </tbody>
+				                </table>
+				                <div class="search-filter-buttons">
+				                    <button type="button" id="searchBtn" class="btn btn-primary">검색</button>
+				                    <button type="button" id="resetBtn" class="btn btn-secondary">초기화</button>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+				        	
+	            <div class="card">
+	                <div class="card-body">
+	                    <div class="table-responsive">
+	                        <table class="table table-hover">
+	                            <thead>
+	                                <tr>
+	                                    <th class="text-center">적립코드</th>
+	                                    <th class="text-center">적립설명</th>
+	                                    <th class="text-center">적립금액</th>
+	                                    <th class="text-center">상태</th>
+	                                    <th class="text-center">등록자</th>
+	                                    <th class="text-center">등록일시</th>
+	                                    <th class="text-center">수정자</th>
+	                                    <th class="text-center">수정일시</th>
+	                                    <th class="text-center">Action</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody id="standardTableBody">
+								    <tr th:each="p : ${standardList}">
+								        <td class="text-center" th:text="${p.epCd}"></td>
+								        <td class="text-center" th:text="${p.epExpln}"></td>
+								        <td class="text-center" th:text="${#numbers.formatDecimal(p.epAmt, 0, 'COMMA', 0, 'POINT')}"></td>
+								        <td class="text-center">
+								            <span th:if="${p.epStatus == 1}" class="badge rounded-pill alert-success">활성</span>
+								            <span th:if="${p.epStatus == 0}" class="badge rounded-pill alert-danger">비활성</span>
+								        </td>
+								        <td class="text-center" th:text="${p.epRegAdmCd}"></td>
+								        <td class="text-center" th:text="${#dates.format(p.epRegYmdt, 'yyyy-MM-dd HH:mm')}"></td>
+								        <td class="text-center" th:text="${p.epMdfcnAdmCd}"></td>
+								        <td class="text-center" th:text="${p.epMdfcnYmdt != null ? #dates.format(p.epMdfcnYmdt, 'yyyy-MM-dd HH:mm') : ''}"></td>
+								        <td class="text-center">
+								            <a href="#" class="btn btn-md rounded font-sm edit-btn" th:data-ep-cd="${p.epCd}">수정</a>
+								        </td>
+								    </tr>
+								</tbody>
+	                        </table>
+	                    </div>
+	                </div>
+	            </div>
+	        </section>
+	
+	        <div id="registerModal" class="SR_modal">
+	            <div class="SR_modal-content-wrapper">
+	                <div class="SR_popup-header">
+	                    <h2>마일리지 기준 등록</h2>
+	                    <button class="SR_close-button">&times;</button>
+	                </div>
+	                <form id="registerForm">
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">등록자</label>
+					        <div class="col-lg-9">
+					            <input type="text" id="registerEpRegAdmCd" name="epRegAdmCd" class="form-control" readonly/>
+					        </div>
+					    </div>
+					
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">적립 설명</label>
+					        <div class="col-lg-9">
+					            <input type="text" name="epExpln" class="form-control" required/>
+					        </div>
+					    </div>
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">적립 금액</label>
+					        <div class="col-lg-9">
+					            <input type="number" name="epAmt" class="form-control" required min="0"/>
+					        </div>
+					    </div>
+					
+					    <div class="row mb-4">
+					        <label class="col-lg-3 col-form-label">상태</label>
+					        <div class="col-lg-9" style="padding-top: 10px;">
+					            <label class="form-check form-check-inline">
+					                <input class="form-check-input" type="radio" name="epStatus" value="1" checked> 활성
+					            </label>
+					            <label class="form-check form-check-inline">
+					                <input class="form-check-input" type="radio" name="epStatus" value="0"> 비활성
+					            </label>
+					        </div>
+					    </div>
+					
+					    <div style="display: flex; flex-direction: row-reverse;">
+					        <button class="btn btn-primary" type="submit">등록</button>
+					    </div>
+					</form>
+	            </div>
+	        </div>
+	
+	        <div id="editModal" class="SR_modal">
+	            <div class="SR_modal-content-wrapper">
+	                <div class="SR_popup-header">
+	                    <h2>마일리지 기준 수정</h2>
+	                    <button class="SR_close-button">&times;</button>
+	                </div>
+	                <form id="editForm">
+	                    <input type="hidden" id="editEpCd" name="epCd" />
+	                    <div class="row mb-4">
+	                        <label class="col-lg-3 col-form-label">등록자</label>
+	                        <div class="col-lg-9">
+	                            <input type="text" id="editEpRegAdmCd" class="form-control" readonly/>
+	                        </div>
+	                    </div>
+	                    <div class="row mb-4">
+	                        <label class="col-lg-3 col-form-label">적립 설명</label>
+	                        <div class="col-lg-9">
+	                            <input type="text" id="editEpExpln" name="epExpln" class="form-control" required/>
+	                        </div>
+	                    </div>
+	                    <div class="row mb-4">
+	                        <label class="col-lg-3 col-form-label">적립 금액</label>
+	                        <div class="col-lg-9">
+	                            <input type="number" id="editEpAmt" name="epAmt" class="form-control" required min="0"/>
+	                        </div>
+	                    </div>
+	                    <div class="row mb-4">
+	                        <label class="col-lg-3 col-form-label">상태</label>
+	                        <div class="col-lg-9" style="padding-top: 10px;">
+	                            <label class="form-check form-check-inline">
+	                                <input class="form-check-input" type="radio" name="epStatus" value="1"> 활성
+	                            </label>
+	                            <label class="form-check form-check-inline">
+	                                <input class="form-check-input" type="radio" name="epStatus" value="0"> 비활성
+	                            </label>
+	                        </div>
+	                    </div>
+	                    <div style="display: flex; flex-direction: row-reverse;">
+	                        <button class="btn btn-primary" type="submit">저장</button>
+	                    </div>
+	                </form>
+	            </div>
+	        </div>
+	    </th:block>
+		<th:block layout:fragment="jsScript">
+		    <script th:inline="javascript">
+		        const sessionAdminCode = /*[[${adminCode}]]*/ 'ADM_TEST';
+		    </script>
+		    <script>
+			    document.addEventListener('DOMContentLoaded', function () {
+			        // --- 요소 가져오기 ---
+			        const registerModal = document.getElementById('registerModal');
+			        const editModal = document.getElementById('editModal');
+			        const registerBtn = document.getElementById('registerBtn');
+			        const tableBody = document.getElementById('standardTableBody');
+			        const searchBtn = document.getElementById('searchBtn');
+			        const resetBtn = document.getElementById('resetBtn');
+			
+			        // --- 공통 함수 ---
+			        const formatDate = (timestamp) => {
+			            if (!timestamp) return '';
+			            const date = new Date(timestamp);
+			            return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+			        };
+			        
+			        const renderTable = (items) => {
+			            tableBody.innerHTML = '';
+			            if (!items || items.length === 0) {
+			                tableBody.innerHTML = '<tr><td colspan="9" class="text-center">데이터가 없습니다.</td></tr>';
+			                return;
+			            }
+			            items.forEach(p => {
+			                const mdfcnYmdt = p.epMdfcnYmdt ? formatDate(p.epMdfcnYmdt) : '';
+			                const statusBadge = p.epStatus === 1 ? '<span class="badge rounded-pill alert-success">활성</span>' : '<span class="badge rounded-pill alert-danger">비활성</span>';
+			                const row = `
+			                    <tr>
+			                        <td class="text-center">${p.epCd}</td>
+			                        <td class="text-center">${p.epExpln}</td>
+			                        <td class="text-center">${p.epAmt.toLocaleString()}</td>
+			                        <td class="text-center">${statusBadge}</td>
+			                        <td class="text-center">${p.epRegAdmCd}</td>
+			                        <td class="text-center">${formatDate(p.epRegYmdt)}</td>
+			                        <td class="text-center">${p.epMdfcnAdmCd || ''}</td>
+			                        <td class="text-center">${mdfcnYmdt}</td>
+			                        <td class="text-center"><a href="#" class="btn btn-md rounded font-sm edit-btn" data-ep-cd="${p.epCd}">수정</a></td>
+			                    </tr>
+			                `;
+			                tableBody.insertAdjacentHTML('beforeend', row);
+			            });
+			            attachEditListeners();
+			        };
+			
+			        const fetchAndRender = async (params) => {
+			            const queryParams = new URLSearchParams(params).toString();
+			            try {
+			                const response = await fetch(`/admin/api/standards?${queryParams}`);
+			                if (!response.ok) throw new Error('데이터 로드 실패');
+			                const data = await response.json();
+			                renderTable(data);
+			            } catch (error) {
+			                console.error(error);
+			                alert('데이터를 불러오는 중 오류가 발생했습니다.');
+			            }
+			        };
+			        
+			        // --- 검색 및 초기화 로직 ---
+			        const performSearch = () => {
+			            const params = {
+			                searchKeyword: document.getElementById('searchKeyword').value,
+			                filterStatus: document.querySelector('input[name="filterStatus"]:checked').value,
+			                minAmount: document.getElementById('minAmount').value,
+			                maxAmount: document.getElementById('maxAmount').value
+			            };
+			            fetchAndRender(params);
+			        };
+			
+			        searchBtn.addEventListener('click', performSearch);
+			        resetBtn.addEventListener('click', () => {
+			            document.getElementById('searchKeyword').value = '';
+			            document.querySelector('input[name="filterStatus"][value=""]').checked = true;
+			            document.getElementById('minAmount').value = '';
+			            document.getElementById('maxAmount').value = '';
+			            performSearch();
+			        });
+			
+			        // ... (이하 기존의 모달, 로그인 체크, 폼 제출 로직은 그대로 유지) ...
+			        
+			        // --- 로그인 체크 ---
+			        const checkLogin = () => {
+			            if (!sessionAdminCode) {
+			                alert('로그인이 필요한 기능입니다.');
+			                return false;
+			            }
+			            return true;
+			        };
+			
+			        // --- 등록 모달 로직 ---
+			        registerBtn.addEventListener('click', () => {
+			            if (!checkLogin()) return;
+			            registerModal.querySelector('form').reset();
+			            document.getElementById('registerEpRegAdmCd').value = sessionAdminCode;
+			            document.querySelector('#registerModal input[name="epStatus"][value="1"]').checked = true;
+			            registerModal.style.display = 'flex';
+			        });
+			        
+			        registerModal.querySelector('.SR_close-button').addEventListener('click', () => registerModal.style.display = 'none');
+			        registerModal.querySelector('form').addEventListener('submit', async (e) => {
+			            e.preventDefault();
+			            if (!checkLogin()) return;
+			            
+			            const formData = new FormData(e.target);
+			            const data = Object.fromEntries(formData.entries());
+			
+			            try {
+			                const response = await fetch('/admin/standards/register', {
+			                    method: 'POST',
+			                    headers: { 'Content-Type': 'application/json' },
+			                    body: JSON.stringify(data)
+			                });
+			                const resultText = await response.text();
+			                if (!response.ok) throw new Error(resultText);
+			                
+			                alert(resultText);
+			                registerModal.style.display = 'none';
+			                location.reload();
+			            } catch (error) {
+			                alert(error.message);
+			            }
+			        });
+			
+			        // --- 수정 모달 로직 ---
+			        const openEditModal = async (epCd) => {
+			            if (!checkLogin()) return;
+			            try {
+			                const response = await fetch(`/admin/api/standardDetail?epCd=${epCd}`);
+			                if (!response.ok) throw new Error('상세 정보 로드 실패');
+			                const data = await response.json();
+			                
+			                document.getElementById('editEpCd').value = data.epCd;
+			                document.getElementById('editEpRegAdmCd').value = data.epRegAdmCd;
+			                document.getElementById('editEpExpln').value = data.epExpln;
+			                document.getElementById('editEpAmt').value = data.epAmt;
+			                
+			                const statusRadio = editModal.querySelector(`input[name="epStatus"][value="${data.epStatus}"]`);
+			                if (statusRadio) {
+			                    statusRadio.checked = true;
+			                }
+			
+			                editModal.style.display = 'flex';
+			            } catch (error) {
+			                alert(error.message);
+			            }
+			        };
+			        
+			        const attachEditListeners = () => {
+			            document.querySelectorAll('.edit-btn').forEach(button => {
+			                button.addEventListener('click', (e) => {
+			                    e.preventDefault();
+			                    const epCd = e.target.getAttribute('data-ep-cd');
+			                    openEditModal(epCd);
+			                });
+			            });
+			        };
+			        
+			        editModal.querySelector('.SR_close-button').addEventListener('click', () => editModal.style.display = 'none');
+			        editModal.querySelector('form').addEventListener('submit', async (e) => {
+			            e.preventDefault();
+			            if (!checkLogin()) return;
+			
+			            const formData = new FormData(e.target);
+			            const data = Object.fromEntries(formData.entries());
+			
+			            try {
+			                const response = await fetch('/admin/standards/update', {
+			                    method: 'POST',
+			                    headers: { 'Content-Type': 'application/json' },
+			                    body: JSON.stringify(data)
+			                });
+			                const resultText = await response.text();
+			                if (!response.ok) throw new Error(resultText);
+			                
+			                alert(resultText);
+			                editModal.style.display = 'none';
+			                location.reload();
+			            } catch (error) {
+			                alert(error.message);
+			            }
+			        });
+			        
+			        // --- 초기화 ---
+			        attachEditListeners();
+			    });
+		    </script>
 		</th:block>
 	</body>
 	<!-- 추가할 js file -->

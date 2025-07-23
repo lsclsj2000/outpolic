@@ -2,7 +2,6 @@ package outpolic.enter.search.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.Data;
 
@@ -15,15 +14,19 @@ public class EnterContentsDetailDTO {
     private String enterName;
     private String enterCode;
     private LocalDateTime registrationDate;
-    private String clCd;
+    private String thumbnailUrl;
     
     // --- 상세 정보 필드들 ---
     private String contentsBody;
     private int price;
-    
+    private String clCd;
     private LocalDate participationStartDate; // 참여 시작일 (prtf_period_start)
     private LocalDate participationEndDate;   // 참여 종료일 (prtf_period_end)
     private String client;                    // 클라이언트 (prtf_client)
     private String industry;                  // 업종 (prtf_industry)
-    private boolean isBookmarked;
+    private boolean isBookmarked;   
+    private LocalDateTime osStrtYmdt; // 외주 시작일
+    private LocalDateTime osEndYmdt;  // 외주 종료일
+    private int osFlfmtCnt;           // 수행 인원수
+    private String filesJson;
 }

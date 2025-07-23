@@ -124,7 +124,12 @@ public class EnterMypageServiceImpl implements EnterMypageService {
 	@Override
     @Transactional 
     public void updateCorpProfileImage(String memberCode, String imagePath) {
-		enterpriseMapper.updateCorpProfileImg(memberCode, imagePath);
+		
+		Map<String, Object> param = new HashMap<>();
+	    param.put("memberCode", memberCode);
+	    param.put("imagePath", imagePath);
+	    
+		enterpriseMapper.updateCorpProfileImg(param);
 		enterpriseMapper.updateMemberModifiedDate(memberCode);
 		enterpriseMapper.updateMemberImgToCorp(memberCode);
     }

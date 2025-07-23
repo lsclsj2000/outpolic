@@ -29,5 +29,6 @@ public class CorpInfo {
 	private int corpOutsourcingCount;
 	
 	private String entImg;
+	private String adminCode;
 	
 }

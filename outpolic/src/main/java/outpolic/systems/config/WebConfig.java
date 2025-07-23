@@ -10,9 +10,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import lombok.RequiredArgsConstructor;
+import outpolic.systems.interceptor.AdminInterceptor;
 import outpolic.systems.interceptor.LogInterceptor;
-import outpolic.user.login.interceptor.LoginInterceptor;
-import outpolic.user.login.interceptor.LoginUserBlockInterceptor;
+import outpolic.systems.interceptor.LoginInterceptor;
+import outpolic.systems.interceptor.LoginUserBackInterceptor;
+import outpolic.systems.interceptor.LoginUserBlockInterceptor;
 
 @Configuration
 @RequiredArgsConstructor
@@ -27,6 +29,10 @@ public class WebConfig implements WebMvcConfigurer{
 	
 	private final LogInterceptor logInterceptor;
 	
+	private final AdminInterceptor adminInterceptor;
+	
+	private final LoginUserBackInterceptor loginUserBackInterceptor;
+	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		List<String> logExcludePath = List.of(
@@ -38,26 +44,68 @@ public class WebConfig implements WebMvcConfigurer{
 												, "/user/assets/**"
 											  );
 		
+		// 로그 기록 인터셉터
 		registry.addInterceptor(logInterceptor)
 				.addPathPatterns("/**")
 				.excludePathPatterns(logExcludePath);
 		
-		/*
-		 * // 로그인 안한 이용자 접근 차단 registry.addInterceptor(loginInterceptor)
-		 * .addPathPatterns("/**") // 인터셉터로 로그인 안한사람 막음 .excludePathPatterns("/",
-		 * "/main") // 메인화면 제외 .excludePathPatterns("/login") //로그인화면 제외
-		 * .excludePathPatterns("/forgotPswd") // 비밀번호 찾기 제외
-		 * .excludePathPatterns("/userGoodsList") // 상품리스트 제외
-		 * .excludePathPatterns("/user/userInquiryList", "/user/userInqueryList/**",
-		 * "/user/userInqueryList**")// 문의글 .excludePathPatterns("/favicon*")
-		 * .excludePathPatterns("/user/assets/**"); // 정적 리소스 //로그인 한 이용자 접근 차단
-		 * registry.addInterceptor(loginUserBlockInterceptor)
-		 * .addPathPatterns("/login")// 로그인 경로 .addPathPatterns("/forgotPswd")// 비밀번호 찾기
-		 * 경로 .addPathPatterns("/choiceRegister", "/user/registerInfo");// 회원가입 경로
-		 * 
-		 * WebMvcConfigurer.super.addInterceptors(registry);
-		 */
+		registry.addInterceptor(loginUserBackInterceptor)
+				.addPathPatterns("/user/userSearch", "/userGoodsList", "/user/products", "/user/contents/**")
+				.excludePathPatterns("/login", "/user/registerInfo", "**/assets/**", "/error");
+		
+		
+		 // 로그인하지 않은 사용자의 접근 제한
+	    registry.addInterceptor(loginInterceptor)
+	            .addPathPatterns("/**") // 전체 경로에 적용
+	            .excludePathPatterns(
+	                "/",                 // 메인화면
+	                "/main",            // 메인페이지(혹시 따로 있을 경우)
+	                "/login",           // 로그인 화면
+	                "/user/registerInfo",
+	                "/admin/**",
+	                "/admin/login",
+	                "/userGoodsList",   // 상품리스트
+	                "/user/userInquiryList",
+	                "/user/userInqueryList/**",
+	                "/user/userInqueryList**",
+	                "/user/userSearch**",
+	                "/enter/enterSearch**",
+	                "/user/search/api**",
+	                "/enter/search/api**",
+	                "/user/contents/**",
+	                "/user/api/contents/**",
+	                "/user/company/**",
+	                "/api/user/company/**",
+	                "/user/userInquiryTotal**",
+	                "/user/userInquiryNotice**",
+	                "/user/userInquiryNotice/**",
+	                "/user/userInquiryDetail**",
+	                "/user/userInquiryDetail**",
+	                "/user/userInquiryFaq**",
+	                "/user/userInquiryFaq/**",
+	                "/user/products**",
+	                "/admin/login",
+	                "/favicon*",
+	                "/user/assets/**",
+	                "/enter/assets/**",
+	                "/admin/assets/**", // 정적 리소스
+	                "/attachment/**",
+	                "/api/enter/bookmarks"
+	            );
 
+	    // 로그인된 사용자가 다시 로그인/회원가입 페이지 접근 못하도록 제한
+	    registry.addInterceptor(loginUserBlockInterceptor)
+	            .addPathPatterns(
+	                "/login",                         // 로그인 경로
+	                "/choiceRegister",                // 회원가입 선택
+	                "/user/registerInfo"              // 회원가입 정보 입력
+	            );
+	    
+	    // admin 페이지 접근제한
+        registry.addInterceptor(adminInterceptor)
+                .addPathPatterns("/admin/**") // 관리자 URL만 제한
+                .excludePathPatterns("/admin/assets/**",   // 정적 리소스는 허용
+                					 "/admin/login");
 
 	}
 

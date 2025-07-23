@@ -15,6 +15,8 @@ import outpolic.user.category.service.UserCategoryService;
 import outpolic.user.ranking.domain.UserPortfolioRankingContentsDTO;
 import outpolic.user.ranking.domain.UserRankingContentsDTO;
 import outpolic.user.ranking.service.UserRankingService;
+import outpolic.user.review.dto.UserReviewMainDTO;
+import outpolic.user.review.service.UserReviewMainService;
 
 @Controller
 @Slf4j
@@ -26,11 +28,15 @@ public class UserHomeController {
 	 
 	 private final UserRankingService userRankingService;
 	 
-	 
+	 private final UserReviewMainService userReviewMainService;
 
     @GetMapping("/") // 메인 페이지 URL
     public String mainPage(HttpSession session, Model model) {
     	
+    	//main세션에 등급코드를 담는코드
+    	String gred = (String) session.getAttribute("SGrd");
+        model.addAttribute("SGrd", gred);
+        
 
     	// ★★ 1. 세션에서 현재 로그인한 사용자의 ID를 가져옵니다. ★★
         String userId = (String) session.getAttribute("SCD"); // 비로그인 시 null이 됩니다.
@@ -50,8 +56,17 @@ public class UserHomeController {
         // 인기 외주 리스트 불러오기 (외주 목록도 찜 기능이 있다면 동일하게 userId를 전달해야 합니다)
         List<UserRankingContentsDTO> popularOutsourcingList = userRankingService.getRankingContentsList(userId);
         
+        List<UserReviewMainDTO> recentReviewList = userReviewMainService.getRecentReviewList();
+        // 5. 조회된 결과를 "recentReviews" 라는 이름으로 모델에 추가
+        model.addAttribute("recentReviews", recentReviewList);
+        
         model.addAttribute("findOSList", popularOutsourcingList);
-		return "main";
+        if("ENTER".equals(gred)) {
+        	return "redirect:/enter";
+        }else{
+        	return "main";
+        }
+
     }
     
 

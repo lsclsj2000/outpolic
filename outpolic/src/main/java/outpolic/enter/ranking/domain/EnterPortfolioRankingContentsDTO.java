@@ -12,6 +12,7 @@ public class EnterPortfolioRankingContentsDTO {
 	private String entName;
 	private String prtfTtl;
 	private String prtfDate;
+	private String prtfThumbnailUrl;
 	private String ctgryName;
 	private String stcCode;
 	private String clCd;

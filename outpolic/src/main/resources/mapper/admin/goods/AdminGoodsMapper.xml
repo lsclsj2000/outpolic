@@ -49,32 +49,64 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<update id="updateGoods" parameterType="AdminGoodsDTO">
 	/* 상품 수정 */
-
-		UPDATE
-			goods
-		SET 
-			gds_status = #{gdsStatus}
-		WHERE
-			gds_cd = #{gdsCd}
-
+    UPDATE
+        goods
+    SET 
+        gds_nm = #{gdsNm},
+        gds_amt = #{gdsAmt},
+        gds_type = #{gdsType},
+        gds_period_quantity = #{gdsPeriodQuantity},
+        gds_unit = #{gdsUnit},
+        gds_status = #{gdsStatus},
+        gds_mdfcn_adm_cd = #{gdsMdfcnAdmCd},
+        gds_mdfcn_ymdt = #{gdsMdfcnYmdt}
+    WHERE
+        gds_cd = #{gdsCd}
 	</update>
 
 	<select id="selectAllGoods" resultType="outpolic.admin.goods.dto.AdminGoodsDTO">
-	/* 상품 조회 */
-		SELECT
-		    gds_cd AS gdsCd,
-		    gds_nm AS gdsNm,
-		    gds_amt AS gdsAmt,
-		    gds_type AS gdsType,
-		    gds_period_quantity AS gdsPeriodQuantity,
-		    gds_unit AS gdsUnit,
-		    gds_reg_adm_cd AS gdsRegAdmCd,
-		    gds_reg_ymdt AS gdsRegYmdt,
-		    gds_mdfcn_adm_cd AS gdsMdfcnAdmCd,
-		    gds_mdfcn_ymdt AS gdsMdfcnYmdt,
-		    gds_status AS gdsStatus
-		FROM goods
-		ORDER BY gds_reg_ymdt ASC
+		/* 상품 조회 (동적 쿼리) */
+	    SELECT
+	        gds_cd AS gdsCd,
+	        gds_nm AS gdsNm,
+	        gds_amt AS gdsAmt,
+	        gds_type AS gdsType,
+	        gds_period_quantity AS gdsPeriodQuantity,
+	        gds_unit AS gdsUnit,
+	        gds_reg_adm_cd AS gdsRegAdmCd,
+	        gds_reg_ymdt AS gdsRegYmdt,
+	        gds_mdfcn_adm_cd AS gdsMdfcnAdmCd,
+	        gds_mdfcn_ymdt AS gdsMdfcnYmdt,
+	        gds_status AS gdsStatus
+	    FROM goods
+	    <where>
+	        <if test="searchKeyword != null and searchKeyword != ''">
+	            <choose>
+	                <when test="searchType == 'gdsNm'">
+	                    AND gds_nm LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	                <when test="searchType == 'gdsCd'">
+	                    AND gds_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	                <when test="searchType == 'gdsRegAdmCd'">
+	                    AND gds_reg_adm_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	            </choose>
+	        </if>
+	        <if test="startDate != null and startDate != ''">
+	            AND DATE(gds_reg_ymdt) &gt;= #{startDate}
+	        </if>
+	        <if test="endDate != null and endDate != ''">
+	            AND DATE(gds_reg_ymdt) &lt;= #{endDate}
+	        </if>
+	        <if test="gdsType != null and gdsType != ''">
+	            AND gds_type = #{gdsType}
+	        </if>
+	        <if test="gdsStatus != null and gdsStatus != ''">
+	            AND gds_status = #{gdsStatus}
+	        </if>
+	    </where>
+	    ORDER BY gds_reg_ymdt DESC
 	</select>
 	
 	<select id="selectGoodsByCode" resultType="outpolic.admin.goods.dto.AdminGoodsDTO">

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout/adminLayoutMain}">
+<head>
+    <meta name="description" content="환불 내역 조회" />
+</head>
+<body>
+    <th:block layout:fragment="contents">
+        <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">환불 내역 조회</h2>
+            </div>
+
+            <div class="card mb-4 search-filter-card">
+                <div class="card-body search-filter-body">
+                    <div id="searchForm">
+                        <div class="table-responsive">
+                            <table class="search-filter-table">
+                                <tbody>
+                                    <tr>
+                                        <th>기본검색</th>
+                                        <td>
+                                            <select id="searchType" class="form-select" style="width: 120px;">
+                                                <option value="mbrCd">회원코드</option>
+                                                <option value="mbrNm">회원이름</option>
+                                            </select>
+                                            <input type="text" id="searchKeyword" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>처리일</th>
+                                        <td>
+                                            <input type="date" id="startDate" class="form-control" style="width: 150px;" />
+                                            <span> ~ </span>
+                                            <input type="date" id="endDate" class="form-control" style="width: 150px;" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="search-filter-buttons">
+                                <button type="button" id="searchBtn" class="btn btn-primary">검색</button>
+                                <button type="button" id="resetBtn" class="btn btn-secondary">초기화</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+							    <tr>
+							        <th class="text-center">환불코드</th>
+							        <th class="text-center">결제코드</th>
+							        <th class="text-center">회원코드</th>
+							        <th class="text-center">회원이름</th>
+							        <th class="text-center">환불금액</th>
+							        <th class="text-center">사용 마일리지</th>
+							        <th class="text-center">처리일시</th> </tr>
+							</thead>
+							<tbody id="historyTableBody">
+							    <tr th:each="item : ${refundList}">
+							        <td class="text-center" th:text="${item.rfndCd}"></td>
+							        <td class="text-center" th:text="${item.stlmCd}"></td>
+							        <td class="text-center" th:text="${item.mbrCd}"></td>
+							        <td class="text-center" th:text="${item.mbrNm}"></td>
+							        <td class="text-center" th:text="${#numbers.formatDecimal(item.rfndAmt, 0, 'COMMA', 0, 'POINT')}"></td>
+							        <td class="text-center" th:text="${#numbers.formatDecimal(item.stlmUsedPoints, 0, 'COMMA', 0, 'POINT')}"></td>
+							        <td class="text-center" th:text="${item.rfndProcYmdt != null ? #dates.format(item.rfndProcYmdt, 'yyyy-MM-dd HH:mm') : ''}"></td>
+							    </tr>
+							</tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </th:block>
+    
+    <th:block layout:fragment="jsScript">
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchBtn = document.getElementById('searchBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const tableBody = document.getElementById('historyTableBody');
+
+            const formatDate = (timestamp) => {
+                if (!timestamp) return '';
+                const date = new Date(timestamp);
+                const year = date.getFullYear();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${year}-${month}-${day} ${hours}:${minutes}`;
+            };
+
+            const renderTable = (data) => {
+                tableBody.innerHTML = '';
+                if (!data || data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="8" class="text-center">조회된 내역이 없습니다.</td></tr>';
+                    return;
+                }
+                data.forEach(item => {
+                    // [수정] stlmUsedPoints가 null이나 undefined가 아닐 경우에만 toLocaleString()을 호출하도록 변경
+                    const usedPoints = (item.stlmUsedPoints != null) ? item.stlmUsedPoints.toLocaleString() : '0';
+
+                    const row = `
+                        <tr>
+                            <td class="text-center">${item.rfndCd}</td>
+                            <td class="text-center">${item.stlmCd}</td>
+                            <td class="text-center">${item.mbrCd}</td>
+                            <td class="text-center">${item.mbrNm}</td>
+                            <td class="text-center">${item.rfndAmt ? item.rfndAmt.toLocaleString() : ''}</td>
+                            <td class="text-center">${usedPoints}</td>
+                            <td class="text-center">${formatDate(item.rfndProcYmdt)}</td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+            };
+
+            const performSearch = async () => {
+                const params = {
+                    searchType: document.getElementById('searchType').value,
+                    searchKeyword: document.getElementById('searchKeyword').value,
+                    startDate: document.getElementById('startDate').value,
+                    endDate: document.getElementById('endDate').value
+                };
+                const queryParams = new URLSearchParams(params).toString();
+                
+                // [수정] colspan 값을 7로 변경
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center">검색 중...</td></tr>';
+                try {
+                    const response = await fetch(`/admin/api/refundList?${queryParams}`);
+                    if (!response.ok) throw new Error('서버 응답 오류');
+                    const data = await response.json();
+                    renderTable(data);
+                } catch (error) {
+                    console.error('검색 오류:', error);
+                    // [수정] colspan 값을 7로 변경
+                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">데이터를 불러오는 데 실패했습니다.</td></tr>';
+                }
+            };
+
+            searchBtn.addEventListener('click', performSearch);
+            resetBtn.addEventListener('click', () => {
+                document.getElementById('searchType').value = 'mbrCd';
+                document.getElementById('searchKeyword').value = '';
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+                performSearch();
+            });
+        });
+        </script>
+    </th:block>
+</body>
+</html>

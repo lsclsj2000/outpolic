@@ -7,14 +7,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute; // ModelAttribute 임포트
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.outsourcing.dto.AdminOutsourcingDTO;
-import outpolic.admin.outsourcing.dto.AdminOutsourcingSearchDTO; // 검색 DTO 임포트
+import outpolic.admin.outsourcing.dto.AdminOutsourcingSearchDTO;
 import outpolic.admin.outsourcing.service.AdminOutsourcingService;
 import outpolic.systems.file.domain.FileMetaData;
 
@@ -26,16 +26,14 @@ public class AdminOutsourcingController {
 	private final AdminOutsourcingService adminOutsourcingService;
 	
 	@GetMapping("/outsourcingList")
-	// AdminOutsourcingSearchDTO를 ModelAttribute로 받음
 	public String getOutsourcingList(
-	    @ModelAttribute AdminOutsourcingSearchDTO searchDTO, // 검색 DTO를 파라미터로 추가
+	    @ModelAttribute AdminOutsourcingSearchDTO searchDTO,
 	    Model model) {
 	    
-	    List<AdminOutsourcingDTO> outsourcingList = adminOutsourcingService.getAllOutsourcings(searchDTO); // 검색 DTO 전달
+	    List<AdminOutsourcingDTO> outsourcingList = adminOutsourcingService.getAllOutsourcings(searchDTO);
 	    model.addAttribute("title", "외주 관리");
 	    model.addAttribute("outsourcingList", outsourcingList);
-	    // 검색 조건을 뷰로 다시 전달하여 필터 상태를 유지 (restoreSearchConditions 함수가 사용)
-	    model.addAttribute("searchParams", searchDTO); 
+	    model.addAttribute("searchParams", searchDTO);
 	    return "admin/outsourcing/outsourcingList";
 	}
 

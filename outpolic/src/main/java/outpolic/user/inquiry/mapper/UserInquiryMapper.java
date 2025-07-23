@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import outpolic.user.inquiry.domain.UserAnn;
 import outpolic.user.inquiry.domain.UserInquiry;
 import outpolic.user.inquiry.domain.UserInquiryFile;
 import outpolic.user.inquiry.domain.UserInquiryProcess;
@@ -60,6 +61,12 @@ public interface UserInquiryMapper {
 	
 	//ssy 마이페이지용 추가 -> 특정 회원 문의 목록 조회
 	List<UserInquiry> getUserInquiryListByCode(String memberCode);
+	
+	// 공지사항 게시판 조회
+	List<UserAnn> getUserNoticeList();
+	
+	// 공지사항 상세 페이지 조회
+    UserAnn getUserNoticeByCode(String annCode);
 	
 }
 

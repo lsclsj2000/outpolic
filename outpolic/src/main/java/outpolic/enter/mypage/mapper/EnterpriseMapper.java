@@ -17,7 +17,11 @@ public interface EnterpriseMapper {
 	int updateEnterpriseInfo(CorpInfo corpInfo);
 	
 	
-	void updateCorpProfileImg(@Param("memberCode") String memberCode, @Param("imagePath") String imagePath);
+	/*
+	 * void updateCorpProfileImg(@Param("memberCode") String
+	 * memberCode, @Param("imagePath") String imagePath);
+	 */
 	void updateMemberModifiedDate(@Param("memberCode") String memberCode);
-	void updateMemberImgToCorp(@Param("memberCode") String memberCode);
+	 void updateMemberImgToCorp(@Param("memberCode") String memberCode); 
+	void updateCorpProfileImg(Map<String, Object> param);
 }

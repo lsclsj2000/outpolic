@@ -7,4 +7,5 @@ public class EnterCompanyPortfolioDTO {
 
 	private String prtfCd;
 	private String prtfTtl;
+	private String prtfThumbnailUrl;
 }

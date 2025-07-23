@@ -15,4 +15,6 @@ public class UserContents {
 	private String ctgryName;
 	private String osAmt;
     private Double reviewScore;
+    private String thumbnailUrl;
+    private String isBookmarked;
 }

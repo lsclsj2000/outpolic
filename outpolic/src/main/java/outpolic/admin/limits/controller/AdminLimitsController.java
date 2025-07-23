@@ -1,7 +1,6 @@
 package outpolic.admin.limits.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,18 +78,40 @@ public class AdminLimitsController {
         return adminLimitsService.getLimitsReasonById(limitsReasonCode);
     }
 
-    // 신고 타입 목록 조회 (AJAX용)
-    @GetMapping("/getDeclarationTypeList")
+    // 신고 타입 목록 조회 (AJAX용) - 프론트엔드와 경로 일치
+    @GetMapping("/api/declarationTypes") // 경로 수정
     @ResponseBody
     public List<AdminLimits> getDeclarationTypeList() {
-        return adminLimitsService.getDeclarationTypeList();
+        List<AdminLimits> list = adminLimitsService.getDeclarationTypeList();
+        log.info("Controller - getDeclarationTypeList: {}", list);
+        return list;
     }
 
-    // 신고 사유 목록 조회 (AJAX용, 신고 타입에 따라 필터링)
-    @GetMapping("/getDeclarationReasonList")
+    // 신고 사유 목록 조회 (AJAX용, 신고 타입에 따라 필터링) - 프론트엔드와 경로 일치
+    @GetMapping("/api/declarationReasons") // 경로 수정
     @ResponseBody
     public List<AdminLimits> getDeclarationReasonList(@RequestParam(value = "declarationTypeCode", required = false) String declarationTypeCode) {
-        return adminLimitsService.getDeclarationReasonList(declarationTypeCode);
+        List<AdminLimits> list = adminLimitsService.getDeclarationReasonList(declarationTypeCode);
+        log.info("Controller - getDeclarationReasonList (type: {}): {}", declarationTypeCode, list);
+        return list;
+    }
+
+    // 제재 타입 목록 조회 (AJAX용) - 새로 추가 및 프론트엔드와 경로 일치
+    @GetMapping("/api/limitsTypes") // 경로 추가
+    @ResponseBody
+    public List<AdminLimits> getLimitsTypeList() {
+        List<AdminLimits> list = adminLimitsService.getAdminLimitsTypeList(); // 기존 메서드 재활용 또는 새로운 서비스 메서드 호출
+        log.info("Controller - getLimitsTypeList: {}", list);
+        return list;
+    }
+
+    // 제재 기간 목록 조회 (AJAX용) - 새로 추가 및 프론트엔드와 경로 일치
+    @GetMapping("/api/limitsPeriods") // 경로 추가
+    @ResponseBody
+    public List<AdminLimits> getLimitsPeriodList() {
+        List<AdminLimits> list = adminLimitsService.getAdminLimitsPeriodList(); // 기존 메서드 재활용 또는 새로운 서비스 메서드 호출
+        log.info("Controller - getLimitsPeriodList: {}", list);
+        return list;
     }
 
     @GetMapping("/adminLimitsResources")
@@ -100,6 +121,9 @@ public class AdminLimitsController {
         List<AdminLimits> adminLimitsPeriodList = adminLimitsService.getAdminLimitsPeriodList();
         List<AdminLimits> adminLimitsReasonList = adminLimitsService.getAdminLimitsReasonList();
         List<AdminLimits> declarationTypeList = adminLimitsService.getDeclarationTypeList();
+        
+        log.info("Controller - adminLimitsTypeList: {}", adminLimitsTypeList);
+        log.info("Controller - adminLimitsPeriodList: {}", adminLimitsPeriodList);
         
         model.addAttribute("title", "제재 자원 등록");
         model.addAttribute("adminLimitsTypeList", adminLimitsTypeList);
@@ -169,10 +193,6 @@ public class AdminLimitsController {
 	@ResponseBody // JSON 또는 문자열 응답을 위해 추가
 	public String registerLimitsType(@RequestBody AdminLimits adminLimits, HttpSession session) { // HttpSession 파라미터 추가
 		try {
-			// 이전 단계에서 UUID 생성 로직을 제거했으므로, 이 부분은 비워둡니다.
-			// adminLimits.setLimitsTypeCode("LT_" + UUID.randomUUID().toString().substring(0, 17).replace("-", ""));
-
-			// 실제 로그인한 관리자 코드로 변경
 			String adminCode = (String) session.getAttribute("SACD"); // 세션에서 SACD 값 가져오기
 			if (adminCode == null) {
 				return "FAIL: Unauthorized"; // 세션에 관리자 코드가 없으면 실패 반환
@@ -196,7 +216,6 @@ public class AdminLimitsController {
 	@ResponseBody // JSON 또는 문자열 응답을 위해 추가
 	public String updateLimitsType(@RequestBody AdminLimits adminLimits, HttpSession session) { // HttpSession 파라미터 추가
 		try {
-			// 실제 로그인한 관리자 코드로 변경
 			String adminCode = (String) session.getAttribute("SACD"); // 세션에서 SACD 값 가져오기
 			if (adminCode == null) {
 				return "FAIL: Unauthorized"; // 세션에 관리자 코드가 없으면 실패 반환

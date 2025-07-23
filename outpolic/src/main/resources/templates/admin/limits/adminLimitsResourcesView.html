@@ -451,14 +451,14 @@
                         </div>
                         <div class="SR_input-half">
                             <label class="col-lg-3 col-form-label" for="limitsCountEdit">제재조건*</label>
-                            <select id="limitsCountEdit" name="limitsCount" class="SR_form-control" style="height:39px;">
-							    <option value="">제재조건을 선택하세요</option>
-							    <option value="">1회</option>
-							    <option value="">2회</option>
-							    <option value="">2회이상</option>
-							    <option value="">3회</option>
-							    <option value="">3회이상</option>
-							</select>
+                            <select id="limitsMdfcnCount" name="limitsMdfcnCount" class="SR_form-control" style="height:39px;">
+                                <option value="">제재조건을 선택하세요</option>
+                                <option value="1회">1회</option>
+                                <option value="2회">2회</option>
+                                <option value="2회이상">2회이상</option>
+                                <option value="3회">3회</option>
+                                <option value="3회이상">3회이상</option>
+                            </select>
                         </div>
                     </div>
 					<div class="SR_form-group">
@@ -524,6 +524,10 @@
 					<h2>제재 사유 수정</h2>
 					<button class="SR_close-button">&times;</button>
 				</div>
+				<form id="reasonEditForm">
+		            <input type="hidden" id="limitsMdfcnCountMin" name="limitsMdfcnCountMin">
+		            <input type="hidden" id="limitsMdfcnCountMax" name="limitsMdfcnCountMax">
+		        </form>
                 <form id="reasonRegisterForm">
                 	<div class="SR_form-group">
                         <div class="SR_input-half">
@@ -607,596 +611,626 @@
 				</form>
 			</div>
 		</div>
-		
+	</th:block>
+	
+	<th:block layout:fragment="jsScript">
+		<script>
+		document.addEventListener('DOMContentLoaded', function () {
+            console.log("스크립트가 실행됩니다!"); // 스크립트 실행 여부 확인용 로그
 
-		<script th:inline="javascript">
-		/*<![CDATA[*/
-			document.addEventListener('DOMContentLoaded', function () {
-			    const tabLinks = document.querySelectorAll('#limits-tab .nav-link');
-			    const tabContents = document.querySelectorAll('.col-12 > .card');
-			    const registerButton = document.getElementById('tab-register-button');
+            const tabLinks = document.querySelectorAll('#limits-tab .nav-link');
+            const tabContents = document.querySelectorAll('.col-12 > .card');
+            const registerButton = document.getElementById('tab-register-button');
 
-			    const modals = {
-			        type: {
-			            register: document.getElementById('typeModal'),
-			            modify: document.getElementById('typeMdfcnModal')
-			        },
-			        period: {
-			            register: document.getElementById('periodModal'),
-			            modify: document.getElementById('periodMdfcnModal')
-			        },
-			        reason: {
-			            register: document.getElementById('reasonModal'),
-			            modify: document.getElementById('reasonMdfcnModal')
-			        }
-			    };
+            const modals = {
+                type: {
+                    register: document.getElementById('typeModal'),
+                    modify: document.getElementById('typeMdfcnModal')
+                },
+                period: {
+                    register: document.getElementById('periodModal'),
+                    modify: document.getElementById('periodMdfcnModal')
+                },
+                reason: {
+                    register: document.getElementById('reasonModal'),
+                    modify: document.getElementById('reasonMdfcnModal')
+                }
+            };
 
-			    let activeTabId = 'type'; // Default active tab
+            let activeTabId = 'type'; // Default active tab
 
-			    function showTab(tabId) {
-			        tabContents.forEach(content => {
-			            if (content.id === tabId) {
-			                content.classList.remove('d-none');
-			            } else {
-			                content.classList.add('d-none');
-			            }
-			        });
+            function showTab(tabId) {
+                tabContents.forEach(content => {
+                    if (content.id === tabId) {
+                        content.classList.remove('d-none');
+                    } else {
+                        content.classList.add('d-none');
+                    }
+                });
 
-			        tabLinks.forEach(link => {
-			            if (link.dataset.tab === tabId) {
-			                link.classList.add('active');
-			            } else {
-			                link.classList.remove('active');
-			            }
-			        });
-			        activeTabId = tabId;
-			    }
+                tabLinks.forEach(link => {
+                    if (link.dataset.tab === tabId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+                activeTabId = tabId;
+            }
 
-			    tabLinks.forEach(link => {
-			        link.addEventListener('click', function (e) {
-			            e.preventDefault();
-			            const tabId = this.dataset.tab;
-			            showTab(tabId);
-			        });
-			    });
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const tabId = this.dataset.tab;
+                    showTab(tabId);
+                });
+            });
 
-			    // Initial display based on the active class
-			    showTab(activeTabId);
+            // Initial display based on the active class
+            showTab(activeTabId);
 
-			    // Handle register button click
-			    registerButton.addEventListener('click', function() {
-			        const modalToOpen = modals[activeTabId].register;
-			        if (modalToOpen) {
-			            modalToOpen.style.display = 'flex';
-			            document.body.style.overflow = 'hidden'; // Disable scroll on body
-			        }
-			    });
+            // Handle register button click
+            registerButton.addEventListener('click', function() {
+                const modalToOpen = modals[activeTabId].register;
+                if (modalToOpen) {
+                    modalToOpen.style.display = 'flex';
+                    document.body.style.overflow = 'hidden'; // Disable scroll on body
 
-			    // Handle modify button clicks (using event delegation)
-			    document.querySelectorAll('.SR_open-popup-btn').forEach(button => {
-			        button.addEventListener('click', function(e) {
-			            e.preventDefault();
-			            const modalTargetId = this.dataset.modalTarget;
-			            const modalToOpen = document.getElementById(modalTargetId);
-			            if (modalToOpen) {
-			                modalToOpen.style.display = 'flex';
-			                document.body.style.overflow = 'hidden'; // Disable scroll on body
-			            }
-			        });
-			    });
-			    
-			 // 제재 타입 등록 폼 제출 처리
-		        const typeRegisterForm = document.getElementById('typeRegisterForm');
-		        if (typeRegisterForm) {
-		            typeRegisterForm.addEventListener('submit', function (e) {
-		                e.preventDefault();
+                    // 제재 사유 등록 모달인 경우에만 드롭다운 데이터 로드
+                    if (activeTabId === 'reason' && modalToOpen.id === 'reasonModal') {
+                        loadLimitsReasonDropdowns('register'); // 'register' 모드임을 전달
+                    }
+                }
+            });
 
-		                const payload = {
-		                    limitsTypeCode: document.getElementById('typeCode').value, // 이 줄을 추가합니다.
-		                    limitsTypeName: document.getElementById('typeName').value,
-		                    limitsTypeExpln: document.getElementById('typeExpln').value,
-		                    limitsTypeStcCode: document.querySelector('input[name="typeStatus"]:checked').value
-		                };
+            // Handle modify button clicks (using event delegation)
+            document.querySelectorAll('.SR_open-popup-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const modalTargetId = this.dataset.modalTarget;
+                    const modalToOpen = document.getElementById(modalTargetId);
 
-		                // ... (나머지 코드는 동일)
-		                fetch('/admin/registerLimitsType', {
-		                    method: 'POST',
-		                    headers: {
-		                        'Content-Type': 'application/json'
-		                    },
-		                    body: JSON.stringify(payload)
-		                })
-		                .then(response => response.text())
-		                .then(data => {
-		                    if (data === "OK") {
-		                        alert('제재 타입이 성공적으로 등록되었습니다.');
-		                        location.reload();
-		                    } else {
-		                        alert('제재 타입 등록에 실패했습니다: ' + data);
-		                    }
-		                })
-		                .catch(error => {
-		                    console.error('Error:', error);
-		                    alert('제재 타입 등록 중 오류가 발생했습니다.');
-		                });
-		            });
-		        }
-		       
+                    if (modalToOpen) {
+                        modalToOpen.style.display = 'flex';
+                        document.body.style.overflow = 'hidden'; // Disable scroll on body
 
-		     	// 제재 타입 수정 폼 제출 처리
-		        const typeEditForm = document.getElementById('typeEditForm');
-		        if (typeEditForm) {
-		            typeEditForm.addEventListener('submit', function (e) {
-		                e.preventDefault();
+                        // 제재 사유 수정 모달인 경우 데이터 로드 및 드롭다운 채우기
+                        if (modalTargetId === 'reasonMdfcnModal') {
+                            // HTML 구조에 따라 limitsReasonCode를 가져오는 방법 조정 필요
+                            // 예를 들어, data-limits-reason-code 속성을 사용하는 경우:
+                            const limitsReasonCode = this.dataset.limitsReasonCode;
+                            // 또는, 버튼이 위치한 행에서 코드를 찾는 경우:
+                            // const limitsReasonCode = this.closest('tr').querySelector('span').textContent.trim();
 
-		                const payload = {
-		                    limitsTypeCode: document.getElementById('typeEditCode').value,
-		                    limitsTypeName: document.getElementById('typeEditName').value,
-		                    limitsTypeExpln: document.getElementById('typeEditExpln').value,
-		                    limitsTypeStcCode: document.querySelector('input[name="typeEditStatus"]:checked').value
-		                };
+                            if (limitsReasonCode) {
+                                fetchReasonMdfcnData(limitsReasonCode);
+                            } else {
+                                console.error('Limits Reason Code not found for modification. Ensure data-limits-reason-code is set or adjust selector.');
+                            }
+                        }
+                    }
+                });
+            });
 
-		                fetch('/admin/updateLimitsType', {
-		                    method: 'POST',
-		                    headers: {
-		                        'Content-Type': 'application/json'
-		                    },
-		                    body: JSON.stringify(payload)
-		                })
-		                .then(response => response.text()) // 이 부분을 수정했습니다.
-		                .then(data => {
-		                    if (data === "OK") {
-		                        alert('제재 타입이 성공적으로 수정되었습니다.');
-		                        location.reload(); // 페이지 새로고침
-		                    } else {
-		                        alert('제재 타입 수정에 실패했습니다: ' + data);
-		                    }
-		                })
-		                .catch(error => {
-		                    console.error('Error:', error);
-		                    alert('제재 타입 수정 중 오류가 발생했습니다.');
-		                });
-		            });
-		        }
-		       
+            // ====================================================================
+            // START: Consolidated and corrected form submission & data loading logic
+            // ====================================================================
 
-		        // 특정 제재 타입 데이터 조회 및 수정 모달 채우기
-		        document.querySelectorAll('#type .SR_open-popup-btn').forEach(button => {
-		            button.addEventListener('click', function(e) {
-		                e.preventDefault();
-		                const limitsTypeCode = this.dataset.limitsTypeCode; // HTML에서 추가한 data 속성 사용
-		                const modalTargetId = this.dataset.modalTarget;
-		                const modalToOpen = document.getElementById(modalTargetId);
+            // 제재 타입 등록 폼 제출 처리
+            const typeRegisterForm = document.getElementById('typeRegisterForm');
+            if (typeRegisterForm) {
+                typeRegisterForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const payload = {
+                        limitsTypeCode: document.getElementById('typeCode').value,
+                        limitsTypeName: document.getElementById('typeName').value,
+                        limitsTypeExpln: document.getElementById('typeExpln').value,
+                        limitsTypeStcCode: document.querySelector('input[name="typeStatus"]:checked').value
+                    };
+                    fetch('/admin/registerLimitsType', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 타입이 성공적으로 등록되었습니다.');
+                            location.reload();
+                        } else {
+                            alert('제재 타입 등록에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 타입 등록 중 오류가 발생했습니다.');
+                    });
+                });
+            }
 
-		                if (limitsTypeCode && modalToOpen) {
-		                    fetch(`/admin/getLimitsType?limitsTypeCode=${limitsTypeCode}`)
-		                        .then(response => response.json())
-		                        .then(data => {
-		                            if (data) {
-		                                document.getElementById('typeEditCode').value = data.limitsTypeCode;
-		                                document.getElementById('typeEditName').value = data.limitsTypeName;
-		                                document.getElementById('typeEditExpln').value = data.limitsTypeExpln;
-		                                document.getElementById('typeEditRegAdm').value = data.limitsTypeRegAdmCode;
-		                                document.getElementById('typeEditRegYmdt').value = data.limitsTypeRegYmdt;
+            // 제재 타입 수정 폼 제출 처리
+            const typeEditForm = document.getElementById('typeEditForm');
+            if (typeEditForm) {
+                typeEditForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const payload = {
+                        limitsTypeCode: document.getElementById('typeEditCode').value,
+                        limitsTypeName: document.getElementById('typeEditName').value,
+                        limitsTypeExpln: document.getElementById('typeEditExpln').value,
+                        limitsTypeStcCode: document.querySelector('input[name="typeEditStatus"]:checked').value
+                    };
+                    fetch('/admin/updateLimitsType', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 타입이 성공적으로 수정되었습니다.');
+                            location.reload();
+                        } else {
+                            alert('제재 타입 수정에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 타입 수정 중 오류가 발생했습니다.');
+                    });
+                });
+            }
 
-		                                // 라디오 버튼 상태 설정
-		                                document.querySelectorAll('input[name="typeEditStatus"]').forEach(radio => {
-		                                    if (radio.value === data.limitsTypeStcCode) {
-		                                        radio.checked = true;
-		                                    } else {
-		                                        radio.checked = false;
-		                                    }
-		                                });
+            // 특정 제재 타입 데이터 조회 및 수정 모달 채우기
+            document.querySelectorAll('#type .SR_open-popup-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const limitsTypeCode = this.dataset.limitsTypeCode;
+                    const modalTargetId = this.dataset.modalTarget;
+                    const modalToOpen = document.getElementById(modalTargetId);
 
-		                                modalToOpen.style.display = 'flex';
-		                                document.body.style.overflow = 'hidden';
-		                            } else {
-		                                alert('제재 타입 데이터를 불러오지 못했습니다.');
-		                            }
-		                        })
-		                        .catch(error => {
-		                            console.error('Error fetching limits type data:', error);
-		                            alert('제재 타입 데이터를 불러오는 중 오류가 발생했습니다.');
-		                        });
-		                }
-		            });
-		        });
-		        
-		     // 제재 기간 등록 폼 제출 처리
-		        const periodRegisterForm = document.getElementById('periodRegisterForm');
-		        if (periodRegisterForm) {
-		            periodRegisterForm.addEventListener('submit', function (e) {
-		                e.preventDefault();
+                    if (limitsTypeCode && modalToOpen) {
+                        fetch(`/admin/getLimitsType?limitsTypeCode=${limitsTypeCode}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data) {
+                                    document.getElementById('typeEditCode').value = data.limitsTypeCode;
+                                    document.getElementById('typeEditName').value = data.limitsTypeName;
+                                    document.getElementById('typeEditExpln').value = data.limitsTypeExpln;
+                                    document.getElementById('typeEditRegAdm').value = data.limitsTypeRegAdmCode;
+                                    document.getElementById('typeEditRegYmdt').value = data.limitsTypeRegYmdt;
 
-		                // 입력값 유효성 검사 (필요하다면 함수로 분리)
-		                const periodCode = document.getElementById('periodCode').value.trim();
-		                const periodName = document.getElementById('periodName').value.trim();
-		                const periodDays = document.getElementById('periodDays').value.trim();
-		                const periodStcCode = document.querySelector('input[name="periodStatus"]:checked')?.value;
+                                    document.querySelectorAll('input[name="typeEditStatus"]').forEach(radio => {
+                                        if (radio.value === data.limitsTypeStcCode) {
+                                            radio.checked = true;
+                                        } else {
+                                            radio.checked = false;
+                                        }
+                                    });
+                                    modalToOpen.style.display = 'flex';
+                                    document.body.style.overflow = 'hidden';
+                                } else {
+                                    alert('제재 타입 데이터를 불러오지 못했습니다.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching limits type data:', error);
+                                alert('제재 타입 데이터를 불러오는 중 오류가 발생했습니다.');
+                            });
+                    }
+                });
+            });
 
-		                if (!periodCode || !periodName || !periodDays || !periodStcCode) {
-		                    alert('모든 필수 항목을 입력해주세요.');
-		                    return;
-		                }
-		                if (isNaN(periodDays)) {
-		                    alert('제재 기간 일수는 숫자여야 합니다.');
-		                    return;
-		                }
+            // 제재 기간 등록 폼 제출 처리
+            const periodRegisterForm = document.getElementById('periodRegisterForm');
+            if (periodRegisterForm) {
+                periodRegisterForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const periodCode = document.getElementById('periodCode').value.trim();
+                    const periodName = document.getElementById('periodName').value.trim();
+                    const periodDays = document.getElementById('periodDays').value.trim();
+                    const periodStcCode = document.querySelector('input[name="periodStatus"]:checked')?.value;
 
-		                const payload = {
-		                    limitsPeriodCode: periodCode,
-		                    limitsPeriodName: periodName,
-		                    limitsPeriodDays: parseInt(periodDays, 10), // 숫자로 파싱
-		                    limitsTypeStcCode: periodStcCode // limitsPeriodStcCode -> limitsTypeStcCode로 도메인 필드명에 맞게 변경
-		                };
+                    if (!periodCode || !periodName || !periodDays || !periodStcCode) {
+                        alert('모든 필수 항목을 입력해주세요.');
+                        return;
+                    }
+                    if (isNaN(periodDays)) {
+                        alert('제재 기간 일수는 숫자여야 합니다.');
+                        return;
+                    }
+                    const payload = {
+                        limitsPeriodCode: periodCode,
+                        limitsPeriodName: periodName,
+                        limitsPeriodDays: parseInt(periodDays, 10),
+                        limitsTypeStcCode: periodStcCode
+                    };
+                    fetch('/admin/registerLimitsPeriod', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 기간이 성공적으로 등록되었습니다.');
+                            location.reload();
+                        } else if (data === "FAIL: Unauthorized") {
+                            alert('권한이 없습니다. 다시 로그인해주세요.');
+                        } else {
+                            alert('제재 기간 등록에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 기간 등록 중 오류가 발생했습니다.');
+                    });
+                });
+            }
 
-		                fetch('/admin/registerLimitsPeriod', {
-		                    method: 'POST',
-		                    headers: { 'Content-Type': 'application/json' },
-		                    body: JSON.stringify(payload)
-		                })
-		                .then(response => response.text()) // 텍스트 응답으로 변경
-		                .then(data => {
-		                    if (data === "OK") {
-		                        alert('제재 기간이 성공적으로 등록되었습니다.');
-		                        location.reload();
-		                    } else if (data === "FAIL: Unauthorized") {
-		                        alert('권한이 없습니다. 다시 로그인해주세요.');
-		                    } else {
-		                        alert('제재 기간 등록에 실패했습니다: ' + data);
-		                    }
-		                })
-		                .catch(error => {
-		                    console.error('Error:', error);
-		                    alert('제재 기간 등록 중 오류가 발생했습니다.');
-		                });
-		            });
-		        }
-		        
-		     // 특정 제재 기간 데이터 조회 및 수정 모달 채우기
-		        document.querySelectorAll('#period .SR_open-popup-btn').forEach(button => { /* */
-		            button.addEventListener('click', function(e) {
-		                e.preventDefault();
-		                const limitsPeriodCode = this.dataset.limitsPeriodCode; /* */
-		                const modalTargetId = this.dataset.modalTarget; /* */
-		                const modalToOpen = document.getElementById(modalTargetId); /* */
+            // 특정 제재 기간 데이터 조회 및 수정 모달 채우기
+            document.querySelectorAll('#period .SR_open-popup-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const limitsPeriodCode = this.dataset.limitsPeriodCode;
+                    const modalTargetId = this.dataset.modalTarget;
+                    const modalToOpen = document.getElementById(modalTargetId);
 
-		                if (limitsPeriodCode && modalToOpen) {
-		                    fetch(`/admin/getLimitsPeriod?limitsPeriodCode=${limitsPeriodCode}`) /* */
-		                        .then(response => {
-		                            if (!response.ok) {
-		                                return response.text().then(text => { throw new Error(text) }); /* */
-		                            }
-		                            return response.json(); /* */
-		                        })
-		                        .then(data => {
-		                            if (data) {
-		                                document.getElementById('periodEditRegAdm').value = data.limitsPeriodRegAdmCode; /* */
-		                                document.getElementById('periodEditRegYmdt').value = data.limitsPeriodRegYmdt; /* */
-		                                document.getElementById('periodEditCode').value = data.limitsPeriodCode; /* */
-		                                document.getElementById('periodEditName').value = data.limitsPeriodName; /* */
-		                                document.getElementById('periodEditDays').value = data.limitsPeriodDays; /* */
+                    if (limitsPeriodCode && modalToOpen) {
+                        fetch(`/admin/getLimitsPeriod?limitsPeriodCode=${limitsPeriodCode}`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.text().then(text => { throw new Error(text) });
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data) {
+                                    document.getElementById('periodEditRegAdm').value = data.limitsPeriodRegAdmCode;
+                                    document.getElementById('periodEditRegYmdt').value = data.limitsPeriodRegYmdt;
+                                    document.getElementById('periodEditCode').value = data.limitsPeriodCode;
+                                    document.getElementById('periodEditName').value = data.limitsPeriodName;
+                                    document.getElementById('periodEditDays').value = data.limitsPeriodDays;
 
-		                                // 라디오 버튼 상태 설정
-		                                document.querySelectorAll('input[name="periodEditStatus"]').forEach(radio => { /* */
-		                                    if (radio.value === data.limitsTypeStcCode) { /* */ // limitsPeriodStcCode -> limitsTypeStcCode로 도메인 필드명에 맞게 변경
-		                                        radio.checked = true; /* */
-		                                    } else {
-		                                        radio.checked = false; /* */
-		                                    }
-		                                });
+                                    document.querySelectorAll('input[name="periodEditStatus"]').forEach(radio => {
+                                        if (radio.value === data.limitsTypeStcCode) {
+                                            radio.checked = true;
+                                        } else {
+                                            radio.checked = false;
+                                        }
+                                    });
+                                    modalToOpen.style.display = 'flex';
+                                    document.body.style.overflow = 'hidden';
+                                } else {
+                                    alert('제재 기간 데이터를 불러오지 못했습니다.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching limits period data:', error);
+                                alert('제재 기간 데이터를 불러오는 중 오류가 발생했습니다.');
+                            });
+                    }
+                });
+            });
 
-		                                modalToOpen.style.display = 'flex'; /* */
-		                                document.body.style.overflow = 'hidden'; /* */
-		                            } else {
-		                                alert('제재 기간 데이터를 불러오지 못했습니다.'); /* */
-		                            }
-		                        })
-		                        .catch(error => {
-		                            console.error('Error fetching limits period data:', error); /* */
-		                            alert('제재 기간 데이터를 불러오는 중 오류가 발생했습니다.'); /* */
-		                        });
-		                }
-		            });
-		        });
-		     
-		     // 제재 기간 수정 폼 제출 처리
-		        const periodEditForm = document.getElementById('periodEditForm');
-		        if (periodEditForm) {
-		            periodEditForm.addEventListener('submit', function (e) {
-		                e.preventDefault();
+            // 제재 기간 수정 폼 제출 처리
+            const periodEditForm = document.getElementById('periodEditForm');
+            if (periodEditForm) {
+                periodEditForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const periodCode = document.getElementById('periodEditCode').value.trim();
+                    const periodName = document.getElementById('periodEditName').value.trim();
+                    const periodDays = document.getElementById('periodEditDays').value.trim();
+                    const periodStcCode = document.querySelector('input[name="periodEditStatus"]:checked')?.value;
 
-		                // 입력값 유효성 검사 (필요하다면 함수로 분리)
-		                const periodCode = document.getElementById('periodEditCode').value.trim();
-		                const periodName = document.getElementById('periodEditName').value.trim();
-		                const periodDays = document.getElementById('periodEditDays').value.trim();
-		                const periodStcCode = document.querySelector('input[name="periodEditStatus"]:checked')?.value;
+                    if (!periodName || !periodDays || !periodStcCode) {
+                        alert('모든 필수 항목을 입력해주세요.');
+                        return;
+                    }
+                    if (isNaN(periodDays)) {
+                        alert('제재 기간 일수는 숫자여야 합니다.');
+                        return;
+                    }
+                    const payload = {
+                        limitsPeriodCode: periodCode,
+                        limitsPeriodName: periodName,
+                        limitsPeriodDays: parseInt(periodDays, 10),
+                        limitsTypeStcCode: periodStcCode
+                    };
+                    fetch('/admin/updateLimitsPeriod', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 기간이 성공적으로 수정되었습니다.');
+                            location.reload();
+                        } else if (data === "FAIL: Unauthorized") {
+                            alert('권한이 없습니다. 다시 로그인해주세요.');
+                        } else {
+                            alert('제재 기간 수정에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 기간 수정 중 오류가 발생했습니다.');
+                    });
+                });
+            }
 
-		                if (!periodName || !periodDays || !periodStcCode) {
-		                    alert('모든 필수 항목을 입력해주세요.');
-		                    return;
-		                }
-		                if (isNaN(periodDays)) {
-		                    alert('제재 기간 일수는 숫자여야 합니다.');
-		                    return;
-		                }
+            // 제재 사유 등록 및 수정 모달 내 드롭다운 데이터 로드 함수
+            function loadLimitsReasonDropdowns(mode, currentData = null) {
+                // 신고 타입 로드
+                fetch('/admin/getDeclarationTypeList')
+                    .then(response => response.json())
+                    .then(data => {
+                        const selectElement = (mode === 'register') ?
+                            document.getElementById('declarationTypeEdit') : // 등록 모달의 declarationTypeEdit
+                            document.getElementById('declarationTypeMdfcn'); // 수정 모달의 declarationTypeMdfcn
+                        if (selectElement) {
+                            selectElement.innerHTML = '<option value="">선택하세요</option>';
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.dt_cd;
+                                option.textContent = item.dt_nm;
+                                if (currentData && item.dt_cd === currentData.declarationTypeCode) {
+                                    option.selected = true;
+                                }
+                                selectElement.appendChild(option);
+                            });
+                            // 선택된 값이 있다면, 연관된 신고 사유 드롭다운도 로드
+                            if (currentData && currentData.declarationTypeCode) {
+                                // 기존의 onchange 이벤트 리스너를 강제로 트리거하여 신고 사유 로드
+                                if (declarationTypeSelectForReason && typeof declarationTypeSelectForReason.onchange === 'function') {
+                                    declarationTypeSelectForReason.onchange.apply(selectElement);
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error loading declaration types:', error));
 
-		                const payload = {
-		                    limitsPeriodCode: periodCode,
-		                    limitsPeriodName: periodName,
-		                    limitsPeriodDays: parseInt(periodDays, 10), // 숫자로 파싱
-		                    limitsTypeStcCode: periodStcCode // limitsPeriodStcCode -> limitsTypeStcCode로 도메인 필드명에 맞게 변경
-		                };
+                // 제재 타입 로드
+                fetch('/admin/getAdminLimitsTypeList')
+                    .then(response => response.json())
+                    .then(data => {
+                        const selectElement = (mode === 'register') ?
+                            document.getElementById('limitsTypeEdit') : // 등록 모달의 limitsTypeEdit
+                            document.getElementById('limitsTypeMdfcn'); // 수정 모달의 limitsTypeMdfcn
+                        if (selectElement) {
+                            selectElement.innerHTML = '<option value="">선택하세요</option>';
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.lt_cd;
+                                option.textContent = item.lt_nm;
+                                if (currentData && item.lt_cd === currentData.limitsTypeCode) {
+                                    option.selected = true;
+                                }
+                                selectElement.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error loading limits types:', error));
 
-		                fetch('/admin/updateLimitsPeriod', {
-		                    method: 'POST',
-		                    headers: { 'Content-Type': 'application/json' },
-		                    body: JSON.stringify(payload)
-		                })
-		                .then(response => response.text()) // 텍스트 응답으로 변경
-		                .then(data => {
-		                    if (data === "OK") {
-		                        alert('제재 기간이 성공적으로 수정되었습니다.');
-		                        location.reload();
-		                    } else if (data === "FAIL: Unauthorized") {
-		                        alert('권한이 없습니다. 다시 로그인해주세요.');
-		                    } else {
-		                        alert('제재 기간 수정에 실패했습니다: ' + data);
-		                    }
-		                })
-		                .catch(error => {
-		                    console.error('Error:', error);
-		                    alert('제재 기간 수정 중 오류가 발생했습니다.');
-		                });
-		            });
-		        }
-		        
-		        document.addEventListener('DOMContentLoaded', function() {
-		            // 모든 모달 공통 닫기 로직 (기존 코드 유지)
-		            document.querySelectorAll('.SR_modal').forEach(modal => {
-		                const closeButton = modal.querySelector('.SR_close-button');
-		                if (closeButton) {
-		                    closeButton.addEventListener('click', function() {
-		                        modal.style.display = 'none';
-		                        document.body.style.overflow = 'auto'; // Enable scroll on body
-		                    });
-		                }
+                // 제재 기간 로드
+                fetch('/admin/getAdminLimitsPeriodList')
+                    .then(response => response.json())
+                    .then(data => {
+                        const selectElement = (mode === 'register') ?
+                            document.getElementById('limitsPeriodEdit') : // 등록 모달의 limitsPeriodEdit
+                            document.getElementById('limitsPeriodMdfcn'); // 수정 모달의 limitsPeriodMdfcn
+                        if (selectElement) {
+                            selectElement.innerHTML = '<option value="">선택하세요</option>';
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.lp_cd;
+                                option.textContent = item.lp_nm;
+                                if (currentData && item.lp_cd === currentData.limitsPeriodCode) {
+                                    option.selected = true;
+                                }
+                                selectElement.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error loading limits periods:', error));
 
-		                modal.addEventListener('click', function(event) {
-		                    if (event.target === modal) {
-		                        modal.style.display = 'none';
-		                        document.body.style.overflow = 'auto';
-		                    }
-		                });
-		            });
+                // 신고 사유 로드는 신고 타입 선택 시 동적으로 처리
+                const declarationTypeSelectForReason = (mode === 'register') ?
+                    document.getElementById('declarationTypeEdit') :
+                    document.getElementById('declarationTypeMdfcn');
 
-		            // '등록' 버튼 클릭 시 제재 사유 등록 모달 열기 및 드롭다운 데이터 로드
-		            const registerButton = document.getElementById('tab-register-button');
-		            const reasonModal = document.getElementById('reasonModal'); // 제재 사유 등록 모달 ID
-		            if (registerButton && reasonModal) {
-		                registerButton.addEventListener('click', function() {
-		                    reasonModal.style.display = 'block';
-		                    document.body.style.overflow = 'hidden'; // Disable scroll on body
-		                    loadLimitsReasonDropdowns(); // 드롭다운 데이터 로드 함수 호출
-		                });
-		            }
+                if (declarationTypeSelectForReason) {
+                    // onchange 이벤트 리스너를 사용하여 신고 사유 드롭다운 업데이트
+                    declarationTypeSelectForReason.onchange = function() {
+                        const selectedDtCd = this.value;
+                        const declarationReasonSelect = (mode === 'register') ?
+                            document.getElementById('declarationReasonEdit') :
+                            document.getElementById('declarationReasonMdfcn');
 
-		            // 제재 사유 등록 모달 내 드롭다운 데이터 로드 함수
-		            function loadLimitsReasonDropdowns() {
-		                // 신고 타입 로드
-		                fetch('/admin/getDeclarationTypeList')
-		                    .then(response => response.json())
-		                    .then(data => {
-		                        const declarationTypeCodeSelect = document.getElementById('declarationTypeCode');
-		                        declarationTypeCodeSelect.innerHTML = '<option value="">선택하세요</option>'; // 초기화
-		                        data.forEach(item => {
-		                            const option = document.createElement('option');
-		                            option.value = item.dt_cd;
-		                            option.textContent = item.dt_nm;
-		                            declarationTypeCodeSelect.appendChild(option);
-		                        });
-		                    })
-		                    .catch(error => console.error('Error loading declaration types:', error));
+                        if (declarationReasonSelect) {
+                            declarationReasonSelect.innerHTML = '<option value="">선택하세요</option>';
+                            if (selectedDtCd) {
+                                fetch(`/admin/getDeclarationReasonList?dt_cd=${selectedDtCd}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        data.forEach(item => {
+                                            const option = document.createElement('option');
+                                            option.value = item.dr_cd;
+                                            option.textContent = item.dr_nm;
+                                            if (currentData && item.dr_cd === currentData.declarationReasonCode) {
+                                                option.selected = true;
+                                            }
+                                            declarationReasonSelect.appendChild(option);
+                                        });
+                                    })
+                                    .catch(error => console.error('Error loading declaration reasons:', error));
+                            }
+                        }
+                    };
+                }
+            }
 
-		                // 제재 타입 로드
-		                fetch('/admin/getAdminLimitsTypeList')
-		                    .then(response => response.json())
-		                    .then(data => {
-		                        const limitsTypeCodeSelect = document.getElementById('limitsTypeCode');
-		                        limitsTypeCodeSelect.innerHTML = '<option value="">선택하세요</option>'; // 초기화
-		                        data.forEach(item => {
-		                            const option = document.createElement('option');
-		                            option.value = item.lt_cd;
-		                            option.textContent = item.lt_nm;
-		                            limitsTypeCodeSelect.appendChild(option);
-		                        });
-		                    })
-		                    .catch(error => console.error('Error loading limits types:', error));
 
-		                // 제재 기간 로드
-		                fetch('/admin/getAdminLimitsPeriodList')
-		                    .then(response => response.json())
-		                    .then(data => {
-		                        const limitsPeriodCodeSelect = document.getElementById('limitsPeriodCode');
-		                        limitsPeriodCodeSelect.innerHTML = '<option value="">선택하세요</option>'; // 초기화
-		                        data.forEach(item => {
-		                            const option = document.createElement('option');
-		                            option.value = item.lp_cd;
-		                            option.textContent = item.lp_nm;
-		                            limitsPeriodCodeSelect.appendChild(option);
-		                        });
-		                    })
-		                    .catch(error => console.error('Error loading limits periods:', error));
+         	// 제재 사유 등록 폼 제출 처리
+            const reasonRegisterForm = document.getElementById('reasonRegisterForm');
+            if (reasonRegisterForm) {
+                reasonRegisterForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const formData = new FormData(reasonRegisterForm);
 
-		                // 신고 사유 로드는 신고 타입 선택 시 동적으로 처리
-		                const declarationTypeCodeSelect = document.getElementById('declarationTypeCode');
-		                declarationTypeCodeSelect.addEventListener('change', function() {
-		                    const selectedDtCd = this.value;
-		                    const declarationReasonCodeSelect = document.getElementById('declarationReasonCode');
-		                    declarationReasonCodeSelect.innerHTML = '<option value="">선택하세요</option>'; // 초기화
+                    // 제재 조건 매핑
+                    const limitsConditionMap = {
+                        "1회": { min: 1, max: 1 },
+                        "2회": { min: 2, max: 2 },
+                        "2회이상": { min: 2, max: 999 },
+                        "3회": { min: 3, max: 3 },
+                        "3회이상": { min: 3, max: 999 }
+                    };
 
-		                    if (selectedDtCd) {
-		                        fetch(`/admin/getDeclarationReasonList?dt_cd=${selectedDtCd}`)
-		                            .then(response => response.json())
-		                            .then(data => {
-		                                data.forEach(item => {
-		                                    const option = document.createElement('option');
-		                                    option.value = item.dr_cd;
-		                                    option.textContent = item.dr_nm;
-		                                    declarationReasonCodeSelect.appendChild(option);
-		                                });
-		                            })
-		                            .catch(error => console.error('Error loading declaration reasons:', error));
-		                    }
-		                });
-		            }
+                    const selectedConditionLabel = formData.get('limitsMdfcnCount');
+                    const condition = limitsConditionMap[selectedConditionLabel] || { min: 0, max: 0 };
 
-		            // --- 기타 폼 제출 및 모달 관련 기존 JavaScript 로직 (유지) ---
-		            // typeRegisterForm Submission
-		            const typeRegisterForm = document.getElementById('typeRegisterForm');
-		            if (typeRegisterForm) {
-		                typeRegisterForm.addEventListener('submit', function(event) {
-		                    event.preventDefault();
-		                    const formData = new FormData(typeRegisterForm);
-		                    const data = Object.fromEntries(formData.entries());
+                    const payload = {
+                        limitsReasonCode: formData.get('reasonCode'),
+                        limitsReasonCondition: selectedConditionLabel,
+                        limitsReasonConditionMin: condition.min,
+                        limitsReasonConditionMax: condition.max,
+                        declarationTypeCode: formData.get('declarationType'),
+                        declarationReasonCode: formData.get('declarationReason'),
+                        limitsTypeCode: formData.get('limitsType'),
+                        limitsPeriodCode: formData.get('limitsPeriod'),
+                        limitsReasonExpln: formData.get('limitsExpln'),
+                        limitsTypeStcCode: formData.get('reasonEditStatus')
+                    };
 
-		                    fetch('/admin/registerLimitsType', {
-		                        method: 'POST',
-		                        headers: { 'Content-Type': 'application/json' },
-		                        body: JSON.stringify(data)
-		                    })
-		                    .then(response => response.text())
-		                    .then(data => {
-		                        if (data === "OK") {
-		                            alert('제재 타입이 성공적으로 등록되었습니다.');
-		                            location.reload();
-		                        } else if (data === "FAIL: Unauthorized") {
-		                            alert('권한이 없습니다. 다시 로그인해주세요.');
-		                        } else {
-		                            alert('제재 타입 등록에 실패했습니다: ' + data);
-		                        }
-		                    })
-		                    .catch(error => {
-		                        console.error('Error:', error);
-		                        alert('제재 타입 등록 중 오류가 발생했습니다.');
-		                    });
-		                });
-		            }
+                    fetch('/admin/registerLimitsReason', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 사유가 성공적으로 등록되었습니다.');
+                            location.reload();
+                        } else if (data === "FAIL: Unauthorized") {
+                            alert('권한이 없습니다. 다시 로그인해주세요.');
+                        } else {
+                            alert('제재 사유 등록에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 사유 등록 중 오류가 발생했습니다.');
+                    });
+                });
+            }
 
-		            // typeEditForm Submission
-		            const typeEditForm = document.getElementById('typeEditForm');
-		            if (typeEditForm) {
-		                typeEditForm.addEventListener('submit', function(event) {
-		                    event.preventDefault();
-		                    const formData = new FormData(typeEditForm);
-		                    const data = Object.fromEntries(formData.entries());
+            // 제재 사유 수정 폼 제출 처리 (새로운 ID: reasonEditForm 사용)
+            const reasonEditForm = document.getElementById('reasonEditForm');
+            if (reasonEditForm) {
+                reasonEditForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const formData = new FormData(reasonEditForm);
 
-		                    fetch('/admin/updateLimitsType', {
-		                        method: 'POST',
-		                        headers: { 'Content-Type': 'application/json' },
-		                        body: JSON.stringify(data)
-		                    })
-		                    .then(response => response.text())
-		                    .then(data => {
-		                        if (data === "OK") {
-		                            alert('제재 타입이 성공적으로 수정되었습니다.');
-		                            location.reload();
-		                        } else if (data === "FAIL: Unauthorized") {
-		                            alert('권한이 없습니다. 다시 로그인해주세요.');
-		                        } else {
-		                            alert('제재 타입 수정에 실패했습니다: ' + data);
-		                        }
-		                    })
-		                    .catch(error => {
-		                        console.error('Error:', error);
-		                        alert('제재 타입 수정 중 오류가 발생했습니다.');
-		                    });
-		                });
-		            }
+                    // 페이로드 키를 백엔드 도메인 객체 필드명과 일치하도록 수정
+                    const payload = {
+                        limitsReasonCode: formData.get('reasonMdfcnCode'),
+                        limitsReasonCondition: parseInt(formData.get('limitsMdfcnCount') || '0'), // limitsMdfcnCount는 lr_cnd에 해당하며 int로 변환
+                        limitsReasonConditionMin: parseInt(formData.get('limitsMdfcnCountMin') || '0'), // lr_cnd_min에 해당하는 새로운 필드 (HTML에 ID 추가 필요)
+                        limitsReasonConditionMax: parseInt(formData.get('limitsMdfcnCountMax') || '0'), // lr_cnd_max에 해당하는 새로운 필드 (HTML에 ID 추가 필요)
+                        declarationTypeCode: formData.get('declarationTypeMdfcn'),
+                        declarationReasonCode: formData.get('declarationReasonMdfcn'),
+                        limitsTypeCode: formData.get('limitsTypeMdfcn'),
+                        limitsPeriodCode: formData.get('limitsPeriodMdfcn'),
+                        limitsReasonExpln: formData.get('reasonMdfcnExpln'),
+                        limitsTypeStcCode: formData.get('reasonMdfcnStatus') // 변경된 라디오 버튼 이름 사용
+                    };
 
-		            // periodRegisterForm Submission
-		            const periodRegisterForm = document.getElementById('periodRegisterForm');
-		            if (periodRegisterForm) {
-		                periodRegisterForm.addEventListener('submit', function(event) {
-		                    event.preventDefault();
-		                    const formData = new FormData(periodRegisterForm);
-		                    const data = Object.fromEntries(formData.entries());
+                    fetch('/admin/updateLimitsReason', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === "OK") {
+                            alert('제재 사유가 성공적으로 수정되었습니다.');
+                            location.reload();
+                        } else if (data === "FAIL: Unauthorized") {
+                            alert('권한이 없습니다. 다시 로그인해주세요.');
+                        } else {
+                            alert('제재 사유 수정에 실패했습니다: ' + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('제재 사유 수정 중 오류가 발생했습니다.');
+                    });
+                });
+            }
 
-		                    fetch('/admin/insertLimitsPeriod', { // Endpoint changed from registerLimitsPeriod
-		                        method: 'POST',
-		                        headers: { 'Content-Type': 'application/json' },
-		                        body: JSON.stringify(data)
-		                    })
-		                    .then(response => response.text())
-		                    .then(data => {
-		                        if (data === "OK") {
-		                            alert('제재 기간이 성공적으로 등록되었습니다.');
-		                            location.reload();
-		                        } else if (data === "FAIL: Unauthorized") {
-		                            alert('권한이 없습니다. 다시 로그인해주세요.');
-		                        } else {
-		                            alert('제재 기간 등록에 실패했습니다: ' + data);
-		                        }
-		                    })
-		                    .catch(error => {
-		                        console.error('Error:', error);
-		                        alert('제재 기간 등록 중 오류가 발생했습니다.');
-		                    });
-		                });
-		            }
+         	// 제재 사유 수정 모달 데이터 불러오기 및 채우기 함수
+            function fetchReasonMdfcnData(limitsReasonCode) {
+                fetch(`/admin/getLimitsReason?limitsReasonCode=${limitsReasonCode}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => { throw new Error(text) });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data) {
+                            document.getElementById('reasonMdfcnRegAdm').value = data.limitsReasonRegAdmCode;
+                            document.getElementById('reasonMdfcnRegYmdt').value = data.limitsReasonRegYmdt;
+                            
+                            document.getElementById('reasonMdfcnCode').value = data.limitsReasonCode;
+                            document.getElementById('limitsCountEdit').value = data.limitsReasonCnd; // Populating the select for the display string like "1회"
 
-		            // periodEditForm Submission
-		            const periodEditForm = document.getElementById('periodEditForm');
-		            if (periodEditForm) {
-		                periodEditForm.addEventListener('submit', function(event) {
-		                    event.preventDefault();
-		                    const formData = new FormData(periodEditForm);
-		                    const data = Object.fromEntries(formData.entries());
+                            // Populate the new hidden fields for min/max
+                            document.getElementById('limitsMdfcnCountMin').value = data.limitsReasonCndMin; // This line will now work
+                            document.getElementById('limitsMdfcnCountMax').value = data.limitsReasonCndMax; // This line will now work
 
-		                    fetch('/admin/updateLimitsPeriod', {
-		                        method: 'POST',
-		                        headers: { 'Content-Type': 'application/json' },
-		                        body: JSON.stringify(data)
-		                    })
-		                    .then(response => response.text())
-		                    .then(data => {
-		                        if (data === "OK") {
-		                            alert('제재 기간이 성공적으로 수정되었습니다.');
-		                            location.reload();
-		                        } else if (data === "FAIL: Unauthorized") {
-		                            alert('권한이 없습니다. 다시 로그인해주세요.');
-		                        } else {
-		                            alert('제재 기간 수정에 실패했습니다: ' + data);
-		                        }
-		                    })
-		                    .catch(error => {
-		                        console.error('Error:', error);
-		                        alert('제재 기간 수정 중 오류가 발생했습니다.');
-		                    });
-		                });
-		            }
-		        });
+                            loadLimitsReasonDropdowns('modify', data);
 
-			    // Handle close buttons and outside clicks for all modals
-			    document.querySelectorAll('.SR_modal').forEach(modal => {
-			        const closeButton = modal.querySelector('.SR_close-button');
-			        if (closeButton) {
-			            closeButton.addEventListener('click', function() {
-			                modal.style.display = 'none';
-			                document.body.style.overflow = 'auto'; // Enable scroll on body
-			            });
-			        }
-			        
-			        // Close when clicking outside the modal content
-			        modal.addEventListener('click', function(event) {
-			            if (event.target === modal) {
-			                modal.style.display = 'none';
-			                document.body.style.overflow = 'auto';
-			            }
-			        });
-			    });
-			});
-		/*]]>*/
+                            document.getElementById('reasonMdfcnExpln').value = data.limitsReasonExpln;
+
+                            document.querySelectorAll('input[name="reasonMdfcnStatus"]').forEach(radio => {
+                                if (radio.value === data.limitsTypeStcCode) {
+                                    radio.checked = true;
+                                } else {
+                                    radio.checked = false;
+                                }
+                            });
+                        } else {
+                            alert('제재 사유 데이터를 불러오지 못했습니다.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching limits reason data:', error);
+                        alert('제재 사유 데이터를 불러오는 중 오류가 발생했습니다.');
+                    });
+            }
+
+
+            // 모든 모달 공통 닫기 로직 (중복 제거 후 통합)
+            document.querySelectorAll('.SR_modal').forEach(modal => {
+                const closeButton = modal.querySelector('.SR_close-button');
+                if (closeButton) {
+                    closeButton.addEventListener('click', function() {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = 'auto'; // Enable scroll on body
+                    });
+                }
+
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+        });
 		</script>
 	</th:block>
 </html>

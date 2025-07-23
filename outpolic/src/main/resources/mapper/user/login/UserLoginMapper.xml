@@ -10,11 +10,12 @@
  		<result column="grd_cd" property="gradeCode"/>
  		<result column="mbr_cd" property="memberCode"/>
  		<result column="stc_cd" property="statusCode"/>
+ 		<result column="mbr_img" property="memberImg"/>
  		<result column="mbr_last_lgn_ymdt" property="memberLastLoginYmdt"/>
 	</resultMap>
 
 	<select id="findMemberById" resultMap="UserLoginResultMap">
-	    SELECT mbr_id, mbr_pw, grd_cd, mbr_cd, stc_cd,mbr_nm
+	    SELECT mbr_id, mbr_pw, grd_cd, mbr_cd, stc_cd,mbr_nm, mbr_img
 	    FROM member 
 	    WHERE mbr_id = #{memberId};
 	</select>

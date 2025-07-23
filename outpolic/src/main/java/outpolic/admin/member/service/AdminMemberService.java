@@ -2,6 +2,7 @@ package outpolic.admin.member.service;
 
 import java.util.List;
 
+import outpolic.admin.member.dto.AdminMemberDTO;
 import outpolic.common.domain.Member;
 
 public interface AdminMemberService {
@@ -25,4 +26,5 @@ public interface AdminMemberService {
 	public List<Member> filterMembers(String statusCode, String gradeCode);
 
 	List<Member> searchMembers(String keyword);
+
 }

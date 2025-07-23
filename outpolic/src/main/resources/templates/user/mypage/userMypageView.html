@@ -50,7 +50,7 @@
 				                    <h5 class="card-title">내가 작성한 리뷰</h5>
 				                    <p class="card-text fs-4 fw-bold" th:classappend="${reviewList !=null} ? 'text-primary': ''" th:text="${reviewList != null ? reviewList.size() : 0} + '건'">3건</p>
 				                    <p class="text-muted small mb-3">다른 회원이 여러분의 피드백을 기다리고 있어요.</p>
-				                    <a href="#" class="btn btn-primarybtn-sm">자세히 보기</a>
+				                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
 				                </div>
 				            </div>
 				        </div>
@@ -59,9 +59,9 @@
 				        <div class="col-md-6">
 				            <div class="card h-100 border-dark shadow-sm h-100" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
-				                    <h5 class="card-title">전체 외주 신청 내역</h5>
-				                    <p class="card-text fs-4 fw-bold" th:text="${totalRequestCount != null ? totalRequestCount : 0} + '건'">10건</p>
-				                    <p class="text-muted small mb-3">. 수정중</p>
+				                    <h5 class="card-title mb-70">전체 외주 신청 내역</h5>
+				                    <!-- <p class="card-text fs-4 fw-bold" th:text="${totalRequestCount != null ? totalRequestCount : 0} + '건'">10건</p> -->
+				                    <!-- <p class="text-muted small mb-3">. 수정중</p> -->
 				                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
 				                </div>
 				            </div>
@@ -121,14 +121,13 @@
 					        <div class="SR_mb-4">
 					            <div th:text="${r.rvwCn}">리뷰 텍스트</div>
 					        </div>
-							<a href="#" class="btn btn-primary" style="border:none;">관련 콘텐츠로 이동</a>
 					    </div>
 					    <div th:if="${#lists.isEmpty(reviewList)}"class="SR_bg-white SR_p-6 SR_rounded-lg" 
 					         style="border:solid 3px #ececec; border-radius : 10px; padding : 15px; margin-top : 15px; cursor:pointer; height : 150px;">
 					    	<div>아직 작성하신 리뷰가 없습니다.</div>
 					    </div>
 					</div>
-					<a href="#" class="btn btn-primary w-25" style="border:none;" th:if="${not #lists.isEmpty(reviewList)}">내가 작성한 리뷰 자세히 보기</a>
+					<!-- <a href="#" class="btn btn-primary w-25" style="border:none;" th:if="${not #lists.isEmpty(reviewList)}">내가 작성한 리뷰 자세히 보기</a> -->
 				</div>
 			</div>
 			<div class="tab-pane fade" id="mySettList">

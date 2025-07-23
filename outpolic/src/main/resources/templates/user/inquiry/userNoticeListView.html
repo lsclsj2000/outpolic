@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{user/layout/userLayoutInquiryList}">
+
+	<head>
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	</head>
+	
+	<!-- 추가할 js file -->
+	
+	<th:block layout:fragment="contents">
+		<div class="mb-30 mt-50">
+			<div class="row">
+				<div class="col-lg-10 m-auto">
+					<div style="display:flex; justify-content:center">
+						<div class="mb-50 text-center" style="width:20%">
+						    <h1 class="heading-2 mb-10">Notice</h1>
+						    <div class="text-center">
+							    <ul style="display:flex; justify-content:space-around">
+							    	<li><a href="/user/userInquiryTotal">전체</a></li>|
+							    	<li><a href="/user/userInquiryNotice">Notice</a></li>|
+							    	<li><a href="/user/userInquiryList">문의</a></li>|
+							    	<li><a href="/user/userInquiryFaq">FAQ</a></li>
+							    </ul>				    
+						    </div>
+						</div>
+					</div>
+					<div class="shop-product-fillter" style="display:flex; flex-direction:row-reverse;">
+						<div class="totall-product">
+						    <p><a href="/user/userInquiryWrite">문의작성</a></p>
+						</div>
+						<div class="sort-by-product-area">
+							<div class="sort-by-cover mr-10">
+								<div class="sort-by-product-wrap">
+									<div class="sort-by">
+										<span><i class="fi-rs-apps"></i>Show:</span>
+									</div>
+									<div class="sort-by-dropdown-wrap">
+										<span> 10 <i class="fi-rs-angle-small-down"></i></span>
+									</div>
+								</div>
+								<div class="sort-by-dropdown">
+									<ul>
+										<li><a class="active" href="#">10</a></li>
+										<li><a href="#">15</a></li>
+										<li><a href="#">20</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="sort-by-cover">
+								<div class="sort-by-product-wrap">
+									<div class="sort-by">
+									    <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+									</div>
+									<div class="sort-by-dropdown-wrap">
+									    <span> 최근순 <i class="fi-rs-angle-small-down"></i></span>
+									</div>
+								</div>
+								<div class="sort-by-dropdown">
+									<ul>
+									    <li><a class="active" href="#">최근순</a></li>
+									    <li><a href="#">과거순</a></li>
+									    <li><a href="#">조회순</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="table-responsive shopping-summery">
+						<table class="table table-wishlist mb-60">
+							<thead>
+								<tr class="main-heading" style="border:0px">
+									<th scope="col" class="start text-center col-1">No.</th>
+									<th scope="col" class="col-6">제목</th>
+									<th scope="col" class="text-center col-2">분류</th>
+									<th scope="col" class="text-center col-1">작성자</th>
+									<th scope="col" class="end text-center col-2">작성일자</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="start pt-30"
+								    style="border:0px; border-bottom: solid 1px #ececec;"
+								    th:each="l, stat : ${noticeList}">
+									<td class="start text-center">
+										<span th:text="${noticeList.size() - stat.index}">번호</span>
+									</td>
+									<td scope="col">
+										<span>
+											<a th:href="@{/user/userNoticeDetail(ann_cd=${l.annCode})}"
+											   th:text="${l.annTitle}"
+											   style="color: black; text-decoration: none;"
+											   onmouseover="this.style.color='#3BB77E'"
+											   onmouseout="this.style.color='black'">
+											   제목
+											</a>
+										</span>
+									</td>
+									<td scope="col" class="text-center" th:text="${l.annType}"><span>공지사항</span></td>
+									<td scope="col" class="text-center" th:text="${l.mbrName}"><span>작성자</span></td>
+									<td scope="col" class="text-center" th:text="${l.annRegYmdt}"><span> 2025-06-24 </span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+						
+			<div style="display:flex; justify-content:center; flex-direction:column; align-items:center;">
+				<div style="display: flex; width:500px; flex-direction: column; margin:10px;">
+				    <form action="#">
+				        <select class="select-active" style="width:30%;">
+				            <option>선택</option>
+				            <option>제목</option>
+				            <option>내용</option>
+				            <option>타입</option>
+				        </select>
+						<input class="justify-content-center" type="text" placeholder="Search" style="height:40px; width:70%;"/>
+				    </form>
+				</div>
+				
+				
+				<div class="pagination-area mt-20 mb-20">
+					<nav aria-label="Page navigation example">
+						<ul class="pagination justify-content-center">
+							<li class="page-item">
+							    <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a>
+							</li>
+							<li class="page-item"><a class="page-link" href="#">1</a></li>
+							<li class="page-item active"><a class="page-link" href="#">2</a></li>
+							<li class="page-item"><a class="page-link" href="#">3</a></li>
+							<li class="page-item"><a class="page-link dot" href="#">...</a></li>
+							<li class="page-item"><a class="page-link" href="#">6</a></li>
+							<li class="page-item">
+							    <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	
+	
+	</th:block>
+	
+</html>

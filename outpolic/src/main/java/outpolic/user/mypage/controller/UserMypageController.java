@@ -56,7 +56,7 @@ public class UserMypageController {
 
  		String memberCode = (String) session.getAttribute("SCD");
  		String gradeCode = (String) session.getAttribute("SGrd");
- 		if(gradeCode == null ||!"USER".equals(gradeCode)) {
+ 		if(gradeCode == null ||"ENTER".equals(gradeCode)) {
  			model.addAttribute("msg", "접근 권한이 없습니다.");
     		model.addAttribute("url", "/");
     		System.out.println("❌ 접근 권한 없음 → 메인으로 리다이렉트");
@@ -176,7 +176,8 @@ public class UserMypageController {
     public String uploadProfileImage(@RequestParam("profileImage") MultipartFile file,
     								UserInfoDTO userInfoDTO,
                                      HttpSession session,
-                                     RedirectAttributes redirectAttributes) {
+                                     RedirectAttributes redirectAttributes,
+                                     Model model) {
  		System.out.println("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
         String memberCode = (String) session.getAttribute("SCD");
 
@@ -200,10 +201,12 @@ public class UserMypageController {
             userMypageEditService.updateProfileImg(memberCode, imagePath);
             log.info("🖼️ 마이페이지 프로필 이미지 경로: {}", userInfoDTO.getMemberImg());
 
-            redirectAttributes.addFlashAttribute("msg", "프로필 사진이 저장되었습니다.");
+            model.addAttribute("msg", "프로필사진이 성공적으로 수정되었습니다");
+            model.addAttribute("url", "/enter/mypage");
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("msg", "업로드 중 오류가 발생했습니다.");
+            model.addAttribute("msg", "업로드 중 오류가 발생했습니다.");
+            model.addAttribute("url", "/enter/mypage");
         }
 
         return "redirect:/user/mypage";

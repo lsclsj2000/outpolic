@@ -19,10 +19,10 @@ public interface UserSearchMapper {
 	 * @param keyword 검색할 키워드
 	 * @return 검색결과 리스트
 	 */
-	List<UserContents> getContentsList(@Param("keyword") String keyword);
+	List<UserContents> getContentsList(Map<String, Object> params);
 	
 	// 콘텐츠 상세정보 
 	UserContentsDetailDTO getContentsDetailById(Map<String, Object> params);
 	
-	List<UserContentItemDTO> findContentsByCategoryId(String categoryId);
+	List<UserContentItemDTO> findContentsByCategoryId(Map<String, Object>params);
 }

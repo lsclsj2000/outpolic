@@ -1,228 +1,227 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<header class="header-area header-style-1 header-height-2" th:fragment="enterHeaderFragment">
-		<div class="header-middle header-middle-ptb-1 d-none d-lg-block">
-			<div class="container">
-				<div class="header-wrap">
-				    <div class="logo logo-width-1">
-				        <a th:href="@{/enter}"><img class="d-flex align-items-center" src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
-				    </div>
-					<div class="header-right">
-						<div class="search-style-2">
-                            <form class="outpolicTopSearch" th:action="@{/enter/enterSearch}" method="get">
-                                <input  type="text" name="keyword" placeholder="Search for items..." required style="margin-bottom: 0px;"/>
-                                <button type="submit">검색</button>
-                            </form>
-						</div>
-						<div class="header-action-right">
-							<div class="header-action-2">
-							    <div class="header-action-icon-2" th:if="${session.SCD != null}">
-									<a class="mini-cart-icon" href="#">
-										<img style="max-width:30px;" src="/user/assets/imgs/outpolic/bell.png" />
-										<span class="pro-count blue">1</span>
-									</a>
-									<a href="#"><span class="lable">알림</span></a>
-								
-									<!-- 알림 드롭다운 시작 -->
-									<div class="cart-dropdown-wrap cart-dropdown-hm2">
-										<ul class="notification-list">
-											<!-- 알림이 있을 때 아래 항목이 반복됨 -->
-											<li class="notification-item">
-												<div class="shopping-cart-title">
-													<h4><a href="#">새 외주 요청이 도착했습니다.</a></h4>
-													<span class="font-xs text-muted">2025-07-09 10:23</span>
-												</div>
-											</li>
-											<!-- 알림이 없을 때 보여줄 영역 -->
-											<li class="notification-empty text-center" style="display: none;">
-												<p class="text-muted m-3">알림이 없습니다.</p>
-											</li>
-										</ul>
-									</div>
+<header class="header-area header-style-1 header-height-2" th:fragment="enterHeaderFragment">
+	<div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+		<div class="container"  style="padding-bottom : 30px">
+			<div class="header-wrap">
+				<div class="logo logo-width-1">
+					<a th:href="@{/enter}"><img class="d-flex align-items-center"
+							src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
+				</div>
+				<div class="header-right">
+					<div class="search-style-2 mb-10">
+						<form class="outpolicTopSearch" th:action="@{/enter/enterSearch}" method="get">
+							<input type="text" name="keyword" placeholder="Search for items..." required
+								style="margin-bottom: 0px;" />
+							<button type="submit">검색</button>
+						</form>
+					</div>
+					<div class="header-action-right">
+						<div class="header-action-2">
+							<div class="header-action-icon-2" th:if="${session.SCD != null}">
+								<a class="mini-cart-icon" href="#">
+									<img style="max-width:30px;" src="/user/assets/imgs/outpolic/bell.png" />
+									<span class="pro-count blue">1</span>
+								</a>
+								<a href="#"><span class="lable">알림</span></a>
+
+								<!-- 알림 드롭다운 시작 -->
+								<div class="cart-dropdown-wrap cart-dropdown-hm2">
+									<ul class="notification-list">
+										<!-- 알림이 있을 때 아래 항목이 반복됨 -->
+										<li class="notification-item">
+											<div class="shopping-cart-title">
+												<h4><a href="#">새 외주 요청이 도착했습니다.</a></h4>
+												<span class="font-xs text-muted">2025-07-09 10:23</span>
+											</div>
+										</li>
+										<!-- 알림이 없을 때 보여줄 영역 -->
+										<li class="notification-empty text-center" style="display: none;">
+											<p class="text-muted m-3">알림이 없습니다.</p>
+										</li>
+									</ul>
 								</div>
+							</div>
+
+							<div class="header-action-icon-2" th:if="${session.SCD != null}">
+								<a href="#">
+									<img class="svgInject" alt="Nest"
+										src="/user/assets/imgs/theme/icons/icon-bookmark.svg"
+										style="width:20px; margin-right:3px;" />
+								</a>
+								<a th:href="${session.SCD != null} ? @{/bookmark} : @{/login}"><span
+										class="lable ml-0">북마크</span></a>
+							</div>
+							<div class="header-action-icon-2">
+
 								<div class="header-action-icon-2">
-									<a href="#">
-									    <img class="svgInject" alt="Nest" src="/user/assets/imgs/theme/icons/icon-user.svg" />
-									</a>
-									<a th:href="${session.SCD != null} ? @{/enter/mypage} : @{/login}"><span class="lable ml-0" th:text="${session.SCD != null} ? '내 정보' : '로그인'"></span></a>
-									<div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
-										<ul>
-										    <li th:if="${session.SCD != null}"><a th:href="@{/enter/mypage}"><i class="fi fi-rs-user mr-10"></i>내정보</a></li>
-										    <li  th:if="${session.SCD == null}"><a th:href="@{/login}"><i class="fi fi-rs-log-in mr-10"></i>로그인</a></li>
-										    <li th:if="${session.SCD != null}"><a th:href="@{/logout}"><i class="fi fi-rs-log-out mr-10"></i>로그아웃</a></li>
-										    <li><a th:href="@{/forgotPswd}"><i class="fi fi-rs-log-out mr-10"></i>비밀번호찾기</a></li>
-										    <li  th:if="${session.SCD == null}"><a th:href="@{/user/registerInfo}"><i class="fi fi-rs-log-out mr-10"></i>회원가입</a></li>
-										</ul>
+
+									<!-- ✅ 비로그인 사용자용 -->
+									<div class="dropdown" th:if="${session.SCD == null}" style="display:inline-block;">
+										<div class="dropdown-toggle" data-bs-toggle="dropdown" id="dropdownAccount"
+											aria-expanded="false" style="cursor:pointer;">
+											<img class="svgInject" alt="User Icon"
+												src="/enter/assets/imgs/theme/icons/icon-user.svg" />
+										</div>
+
+										<div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
+											<ul class="nav flex-column text-start">
+												<li><a th:href="@{/login}"><i class="fi fi-rs-log-in mr-10"></i>로그인</a>
+												</li>
+												<li><a th:href="@{/user/registerInfo}"><i
+															class="fi fi-rs-user-add mr-10"></i>회원가입</a></li>
+											</ul>
+										</div>
 									</div>
+
+									<!-- ✅ 로그인 사용자용 -->
+									<div class="dropdown" th:if="${session.SCD != null}" style="display:inline-block;">
+										<div class="dropdown-toggle" data-bs-toggle="dropdown" id="dropdownAccount"
+											aria-expanded="false"
+											style="cursor:pointer; width:45px; height:45px; border:2px solid #ccc; border-radius:50%; overflow:hidden; display:inline-block;">
+
+											<!-- 프로필 이미지 -->
+											<img th:if="${session.SProfilePath != null}"
+												th:src="@{${session.SProfilePath}}" alt="User Profile"
+												style="width:100%; height:100%; object-fit:cover; object-position:center; display:block;" />
+
+											<!-- 기본 고양이 이미지 -->
+											<img th:if="${session.SProfilePath == null}"
+												th:src="@{/enter/assets/imgs/outpolic/cutecat.jpg}"
+												alt="Default Profile"
+												style="width:100%; height:100%; object-fit:cover; object-position:center; display:block;" />
+										</div>
+
+										<div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
+											<ul class="nav flex-column text-start">
+												<li><a th:href="@{/enter/mypage}"><i
+															class="fi fi-rs-user mr-10"></i>마이페이지</a></li>
+												<li><a th:href="@{/logout}"><i
+															class="fi fi-rs-log-out mr-10"></i>로그아웃</a></li>
+												<li><a th:href="@{/pswdCng}"><i class="fi fi-rs-lock mr-10"></i>비밀번호
+														재설정</a></li>
+											</ul>
+										</div>
+									</div>
+
 								</div>
-								
-								
-								
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		  <div class="header-bottom header-bottom-bg-color sticky-bar">
-			  <div class="container">
-				 <div class="header-wrap header-space-between position-relative">
+		<div class="header-bottom header-bottom-bg-color sticky-bar">
+			<div class="container">
+				<div class="header-wrap header-space-between position-relative">
 					<div class="logo logo-width-1 d-block d-lg-none">
-					    <a th:href="@{/enter}"><img src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
+						<a th:href="@{/enter}"><img src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
 					</div>
 					<div class="header-nav d-none d-lg-flex">
-						<div class="main-categori-wrap d-none d-lg-block">
-					        <a class="categories-button-active" href="#">
-					            <span class="fi-rs-apps"></span> <span class="et">전체</span> 카테고리
-					            <i class="fi-rs-angle-down"></i>
-					        </a>
-					        <!-- 이 아랫부분을 교체하거나 수정합니다. -->
-					        <div class="categories-dropdown-wrap categories-dropdown-active-large font-heading">
-					            
-					            <div class="mega-menu-container" th:if="${megaMenuCategories != null and !megaMenuCategories.isEmpty()}">
-					                
-					                <!-- 1. 왼쪽: 대분류 사이드바 (mainCat은 Category 객체) -->
-					                <div class="mega-menu-sidebar">
-					                    <ul class="main-category-list">
-					                        <li th:each="mainCat, iterStat : ${megaMenuCategories}">
-					                            <a th:href="@{/enter/products(category=${mainCat.categoryId})}"
-					                               th:classappend="${iterStat.index == 0} ? 'active'"
-					                               th:data-target-id="'content-panel-' + ${iterStat.index}">
-					                                <span th:text="${mainCat.categoryName}"></span>
-					                            </a>
-					                        </li>
-					                    </ul>
-					                </div>
-					
-					                <!-- 2. 오른쪽: 중/소분류 콘텐츠 (mainCat, group, sub 모두 Category 객체) -->
-					                <div class="mega-menu-content">
-					                    <div class="sub-category-panel"
-					                         th:each="mainCat, iterStat : ${megaMenuCategories}"
-					                         th:id="'content-panel-' + ${iterStat.index}"
-					                         th:classappend="${iterStat.index == 0} ? 'active'">
-					                        
-					                        <!-- 중분류 그룹 (mainCat의 children 리스트를 순회) -->
-					                        <div class="category-group" th:each="group : ${mainCat.children}">
-					                            <h5 class="category-group-title">
-					                                <a th:href="@{/enter/products(category=${group.categoryId})}" th:text="${group.categoryName}"></a>
-					                            </h5>
-					                            
-					                            <!-- 소분류 목록 (group의 children 리스트를 순회) -->
-					                            <ul class="sub-category-list" th:if="${group.children != null and !group.children.isEmpty()}">
-					                                <li th:each="sub : ${group.children}">
-					                                    <a th:href="@{/enter/products(category=${sub.categoryId})}" th:text="${sub.categoryName}"></a>
-					                                </li>
-					                            </ul>
-					                        </div>
-					                    </div>
-					                </div>
-					
-					            </div>
-					            <!-- 카테고리가 없을 경우를 대비한 메시지 -->
-					            <div th:if="${megaMenuCategories == null or megaMenuCategories.isEmpty()}">
-					                <p style="padding: 20px;">표시할 카테고리가 없습니다.</p>
-					            </div>
-					        </div>
-					    </div>
 						<div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
 							<nav>
 								<ul>
 									<li>
-								        <!-- [수정] filter=Outsourcing 파라미터 추가 -->
-								        <a th:href="@{/enter/enterSearch(filter='Outsourcing')}"> 외주 </a>
-								    </li>
-								    <li>
-								        <!-- [수정] filter=Portfolio 파라미터 추가 -->
-								        <a th:href="@{/enter/enterSearch(filter='Portfolio')}"> 포트폴리오 </a>
-								    </li> 
-									<li>
-									    <a href="#">콘텐츠<i class="fi-rs-angle-down"></i></a>
-									    <ul class="sub-menu">
-									        <li><a th:href="@{/enter/portfolio/list}">내 포트폴리오</a></li>
-									        <li><a th:href="@{/enter/outsourcing/list}">내 외주</a></li>
-									        <li><a th:href="@{/enter/enterOsstList}">내 진행 외주</a></li>
-									        <li><a th:href="@{/enter/outsourcing-requests/sent}">보낸 외주 신청 목록</a></li>							        
-									        <li><a th:href="@{/enter/outsourcing-requests/received}">받은 외주 신청 목록</a></li>
-									 		<li><a th:href="@{/enter/outsourcing-requests/sent-inquiries}">보낸 포폴 문의 목록</a></li>
-<li><a th:href="@{/enter/outsourcing-requests/received-inquiries}">받은 포폴 문의 목록</a></li>
-									 		
-									        
-									        
-									    </ul>
+										<!-- [수정] filter=Outsourcing 파라미터 추가 -->
+										<a th:href="@{/enter/enterSearch(filter='Outsourcing')}"> 외주 </a>
 									</li>
 									<li>
-									    <a th:href="@{/enterGoodsList}">서비스 상품</a>
+										<!-- [수정] filter=Portfolio 파라미터 추가 -->
+										<a th:href="@{/enter/enterSearch(filter='Portfolio')}"> 포트폴리오 </a>
 									</li>
 									<li>
-									    <a href="#">고객센터<i class="fi-rs-angle-down"></i></a>
-									    <ul class="sub-menu">
-									        <li><a th:href="@{/enter/enterInquiryTotal}">공지사항</a></li>
-									        <li><a th:href="@{/enter/enterInquiryList}">문의</a></li>
-									        <li><a th:href="@{/enter/enterDeclarationWrite}">신고</a></li>
-									    </ul>
+										<a href="#">콘텐츠<i class="fi-rs-angle-down"></i></a>
+										<ul class="sub-menu">
+											<li><a th:href="@{/enter/portfolio/list}">내 포트폴리오</a></li>
+											<li><a th:href="@{/enter/outsourcing/list}">내 외주</a></li>
+											<li><a th:href="@{/enter/enterOsstList}">내 진행 외주</a></li>
+											<li><a th:href="@{/enter/outsourcing-requests/sent}">보낸 외주 신청 목록</a></li>
+											<li><a th:href="@{/enter/outsourcing-requests/received}">받은 외주 신청 목록</a>
+											</li>
+											<li><a th:href="@{/enter/outsourcing-requests/sent-inquiries}">보낸 포폴 문의
+													목록</a></li>
+											<li><a th:href="@{/enter/outsourcing-requests/received-inquiries}">받은 포폴 문의
+													목록</a></li>
+
+
+
+										</ul>
+									</li>
+									<li>
+										<a th:href="@{/enterGoodsList}">서비스 상품</a>
+									</li>
+									<li>
+										<a href="#">고객센터<i class="fi-rs-angle-down"></i></a>
+										<ul class="sub-menu">
+											<li><a th:href="@{/enter/enterInquiryTotal}">공지사항</a></li>
+											<li><a th:href="@{/enter/enterInquiryList}">문의</a></li>
+											<li><a th:href="@{/enter/enterDeclarationWrite}">신고</a></li>
+										</ul>
 									</li>
 								</ul>
 							</nav>
 						</div>
 					</div>
 					<div class="hotline d-none d-lg-flex" th:if="${session.SCD != null}">
-					    <a th:href="@{/enter/portfolio/add}"><button class="btn mr-20">포트폴리오 올리기</button></a>
-					    <a th:href="@{/enter/outsourcing/add}"><button class="btn">외주 올리기</button></a>
+						<a th:href="@{/enter/portfolio/add}"><button class="btn mr-20">포트폴리오 올리기</button></a>
+						<a th:href="@{/enter/outsourcing/add}"><button class="btn">외주 올리기</button></a>
 					</div>
 					<div class="header-action-icon-2 d-block d-lg-none">
-					    <div class="burger-icon burger-icon-white">
-					        <span class="burger-icon-top"></span>
-					        <span class="burger-icon-mid"></span>
-					        <span class="burger-icon-bottom"></span>
-					    </div>
+						<div class="burger-icon burger-icon-white">
+							<span class="burger-icon-top"></span>
+							<span class="burger-icon-mid"></span>
+							<span class="burger-icon-bottom"></span>
+						</div>
 					</div>
 					<div class="header-action-right d-block d-lg-none">
 						<div class="header-action-2">
 							<div class="header-action-icon-2">
 								<a href="#">
-								    <img alt="Nest" src="/user/assets/imgs/theme/icons/icon-heart.svg" />
-								    <span class="pro-count white">4</span>
+									<img alt="Nest" src="/user/assets/imgs/theme/icons/icon-heart.svg" />
+									<span class="pro-count white">4</span>
 								</a>
 							</div>
 							<div class="header-action-icon-2">
-							    <a class="mini-cart-icon" href="#">
-							        <img alt="Nest" src="/user/assets/imgs/theme/icons/icon-cart.svg" />
-							        <span class="pro-count white">2</span>
-							    </a>
+								<a class="mini-cart-icon" href="#">
+									<img alt="Nest" src="/user/assets/imgs/theme/icons/icon-cart.svg" />
+									<span class="pro-count white">2</span>
+								</a>
 								<div class="cart-dropdown-wrap cart-dropdown-hm2">
 									<ul>
 										<li>
 											<div class="shopping-cart-img">
-											    <a href="#"><img alt="Nest" src="/user/assets/imgs/shop/thumbnail-3.jpg" /></a>
+												<a href="#"><img alt="Nest"
+														src="/user/assets/imgs/shop/thumbnail-3.jpg" /></a>
 											</div>
 											<div class="shopping-cart-title">
-											    <h4><a href="#">Plain Striola Shirts</a></h4>
-											    <h3><span>1 × </span>$800.00</h3>
+												<h4><a href="#">Plain Striola Shirts</a></h4>
+												<h3><span>1 × </span>$800.00</h3>
 											</div>
 											<div class="shopping-cart-delete">
-											    <a href="#"><i class="fi-rs-cross-small"></i></a>
+												<a href="#"><i class="fi-rs-cross-small"></i></a>
 											</div>
 										</li>
 										<li>
 											<div class="shopping-cart-img">
-											    <a href="#"><img alt="Nest" src="/user/assets/imgs/shop/thumbnail-4.jpg" /></a>
+												<a href="#"><img alt="Nest"
+														src="/user/assets/imgs/shop/thumbnail-4.jpg" /></a>
 											</div>
 											<div class="shopping-cart-title">
-											    <h4><a href="#">Macbook Pro 2022</a></h4>
-											    <h3><span>1 × </span>$3500.00</h3>
+												<h4><a href="#">Macbook Pro 2022</a></h4>
+												<h3><span>1 × </span>$3500.00</h3>
 											</div>
 											<div class="shopping-cart-delete">
-											    <a href="#"><i class="fi-rs-cross-small"></i></a>
+												<a href="#"><i class="fi-rs-cross-small"></i></a>
 											</div>
 										</li>
 									</ul>
 									<div class="shopping-cart-footer">
 										<div class="shopping-cart-total">
-										    <h4>Total <span>$383.00</span></h4>
+											<h4>Total <span>$383.00</span></h4>
 										</div>
 										<div class="shopping-cart-button">
-										    <a href="#">View cart</a>
-										    <a href="#">Checkout</a>
+											<a href="#">View cart</a>
+											<a href="#">Checkout</a>
 										</div>
 									</div>
 								</div>
@@ -232,5 +231,6 @@
 				</div>
 			</div>
 		</div>
-	</header>
+</header>
+
 </html>
