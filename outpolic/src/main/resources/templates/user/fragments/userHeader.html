@@ -112,63 +112,7 @@
 						<a th:href="@{/}"><img src="/user/assets/imgs/outpolic/logo.png" alt="logo" /></a>
 					</div>
 					<div class="header-nav d-none d-lg-flex">
-						<div class="main-categori-wrap d-none d-lg-block">
-							<a class="categories-button-active" href="#">
-								<span class="fi-rs-apps"></span> <span class="et">전체</span> 카테고리
-								<i class="fi-rs-angle-down"></i>
-							</a>
-							<!-- 이 아랫부분을 교체하거나 수정합니다. -->
-							<div class="categories-dropdown-wrap categories-dropdown-active-large font-heading">
-
-								<div class="mega-menu-container"
-									th:if="${megaMenuCategories != null and !megaMenuCategories.isEmpty()}">
-
-									<!-- 1. 왼쪽: 대분류 사이드바 (mainCat은 Category 객체) -->
-									<div class="mega-menu-sidebar">
-										<ul class="main-category-list">
-											<li th:each="mainCat, iterStat : ${megaMenuCategories}">
-												<a th:href="@{/user/products(category=${mainCat.categoryId})}"
-													th:classappend="${iterStat.index == 0} ? 'active'"
-													th:data-target-id="'content-panel-' + ${iterStat.index}">
-													<span th:text="${mainCat.categoryName}"></span>
-												</a>
-											</li>
-										</ul>
-									</div>
-
-									<!-- 2. 오른쪽: 중/소분류 콘텐츠 (mainCat, group, sub 모두 Category 객체) -->
-									<div class="mega-menu-content">
-										<div class="sub-category-panel"
-											th:each="mainCat, iterStat : ${megaMenuCategories}"
-											th:id="'content-panel-' + ${iterStat.index}"
-											th:classappend="${iterStat.index == 0} ? 'active'">
-
-											<!-- 중분류 그룹 (mainCat의 children 리스트를 순회) -->
-											<div class="category-group" th:each="group : ${mainCat.children}">
-												<h5 class="category-group-title">
-													<a th:href="@{/user/products(category=${group.categoryId})}"
-														th:text="${group.categoryName}"></a>
-												</h5>
-
-												<!-- 소분류 목록 (group의 children 리스트를 순회) -->
-												<ul class="sub-category-list"
-													th:if="${group.children != null and !group.children.isEmpty()}">
-													<li th:each="sub : ${group.children}">
-														<a th:href="@{/user/products(category=${sub.categoryId})}"
-															th:text="${sub.categoryName}"></a>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
-
-								</div>
-								<!-- 카테고리가 없을 경우를 대비한 메시지 -->
-								<div th:if="${megaMenuCategories == null or megaMenuCategories.isEmpty()}">
-									<p style="padding: 20px;">표시할 카테고리가 없습니다.</p>
-								</div>
-							</div>
-						</div>
+						
 						<div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
 							<nav>
 								<ul>
