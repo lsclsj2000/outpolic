@@ -73,13 +73,6 @@
 	</th:block>
 	<th:block layout:fragment="jsScript">
 		<script>
-			/*<![CDATA[*/
-			    // 1. 서버로부터 전달받는 초기값 (페이지 로드 시 한 번만 사용)
-			    const initialKeyword = /*[[${initialKeyword}]]*/ '';
-			    const initialFilter = /*[[${initialFilter}]]*/ 'Portfolio'; // 기본값을 'Portfolio'로 설정
-			/*]]>*/
-			
-			
 			// =================================================================================
 			// 헬퍼 함수 정의 (Helper Functions)
 			// =================================================================================
@@ -207,6 +200,11 @@
 			// 메인 로직 및 이벤트 리스너 설정 (DOM 로드 후 실행)
 			// =================================================================================
 			document.addEventListener('DOMContentLoaded', function() {
+				
+				const urlParams = new URLSearchParams(window.location.search);
+		        let currentKeyword = urlParams.get('keyword') || '';
+		        const initialFilter = urlParams.get('filter') || 'Portfolio';
+				
 			
 			    // --- DOM 요소 캐싱 ---
 			    const contentsContainer = document.getElementById('contentsListContainer');
@@ -278,8 +276,11 @@
 			
 			    // --- AJAX 검색 및 필터링 함수 ---
 			    async function performAjaxSearch(keyword) {
-			        const newUrl = `/enter/enterSearch?keyword=${encodeURIComponent(keyword)}`;
-			        history.pushState({ keyword }, '', newUrl);
+			    	if (keyword !== currentKeyword) {
+		                const newUrl = `/enter/enterSearch?keyword=${encodeURIComponent(keyword)}`;
+		                history.pushState({ keyword }, '', newUrl);
+		                currentKeyword = keyword; // 현재 키워드를 업데이트
+		            }
 			        resultTitle.innerHTML = '결과를 불러오는 중...';
 			        contentsContainer.innerHTML = '<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
 			        try {
@@ -335,13 +336,15 @@
 			    });
 			    
 			    if (headerSearchForm) {
-			        headerSearchForm.addEventListener('submit', function(event) {
-			            if (window.location.pathname.includes('/enter/enterSearch')) {
-			                event.preventDefault();
-			                performAjaxSearch(headerSearchInput.value);
-			            }
-			        });
-			    }
+		            headerSearchForm.addEventListener('submit', function(event) {
+		                // 페이지 내부에서 검색할 때만 AJAX를 사용
+		                if (window.location.pathname.includes('/enter/enterSearch')) {
+		                    event.preventDefault();
+		                    // input의 현재 값을 가지고 검색 실행
+		                    performAjaxSearch(headerSearchInput.value);
+		                }
+		            });
+		        }
 			
 			    // ★★ 이벤트 위임을 사용하여 동적으로 생성된 요소의 클릭 처리 ★★
 			    document.body.addEventListener('click', function(event) {
@@ -365,7 +368,7 @@
 			    });
 			
 			    // --- 페이지 최초 로드 시 실행 ---
-			    performAjaxSearch(initialKeyword);
+			    performAjaxSearch(currentKeyword);
 			});
 		</script>
 	</th:block>
