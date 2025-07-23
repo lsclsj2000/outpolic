@@ -3,7 +3,16 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="outpolic.user.login.mapper.UserLoginLimitMapper">
-	<select id="getLimitInfoByMemberCode" resultType="LoginFailDTO" parameterType="String">
+	<resultMap id="LimitInfoResultMap" type="LoginFailDTO">
+	    <result column="lmt_cd" property="lmtCd"/>
+	    <result column="mbr_cd" property="mbrCd"/>
+	    <result column="lmt_dock_rsn" property="lmtDockRsn"/>
+	    <result column="lmt_start_ymdt" property="lmtStartYmdt"/>
+	    <result column="lmt_end_ymdt" property="lmtEndYmdt"/>
+	    <result column="lmt_rmd_days" property="lmtRmdDays"/>
+	</resultMap>
+	
+	<select id="getLimitInfoByMemberCode" resultMap="LimitInfoResultMap" parameterType="String">
 	    SELECT lmt_cd, mbr_cd, lmt_dock_rsn, lmt_start_ymdt, lmt_end_ymdt, lmt_rmd_days
 	    FROM limits
 	    WHERE mbr_cd = #{memberCode}
