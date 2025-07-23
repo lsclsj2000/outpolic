@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import outpolic.user.inquiry.domain.UserAnn;
 import outpolic.user.inquiry.domain.UserInquiry;
 import outpolic.user.inquiry.domain.UserInquiryType;
 
@@ -31,5 +32,11 @@ public interface UserInquiryService {
 	
 	//특정 인물 문의 목록 조회
 	List<UserInquiry> getUserInquiryListByCode(String memberCode);
+	
+	// 공지사항 상세 페이지 조회
+    UserAnn getUserNoticeByCode(String annCode);
+	
+	// 공지사항 게시판 조회
+	List<UserAnn> getUserNoticeList();
 	
 }

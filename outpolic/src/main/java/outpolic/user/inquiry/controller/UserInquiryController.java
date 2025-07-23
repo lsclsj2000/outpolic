@@ -35,6 +35,7 @@ import jakarta.servlet.http.HttpSession; // HttpSession import 추가
 import lombok.RequiredArgsConstructor;
 import outpolic.systems.file.domain.FileMetaData;
 import outpolic.systems.util.FilesUtils;
+import outpolic.user.inquiry.domain.UserAnn;
 import outpolic.user.inquiry.domain.UserInquiry;
 import outpolic.user.inquiry.domain.UserInquiryType;
 import outpolic.user.inquiry.mapper.UserInquiryMapper;
@@ -204,13 +205,31 @@ public class UserInquiryController {
 
 		return "user/inquiry/userInquiryListView";
 	}
+	
+	@GetMapping("/userNoticeDetail")
+	public String userNoticeDetailView(@RequestParam("ann_cd") String annCode, Model model) {
+	    // 공지사항 상세 페이지 조회
+	    UserAnn noticeDetail = userInquiryService.getUserNoticeByCode(annCode);
+
+	    if (noticeDetail == null) {
+	        System.err.println("Error: Inquiry with code " + annCode + " not found. Redirecting to list page.");
+	        return "redirect:/user/userInquiryList?error=inquiryNotFound";
+	    }
+
+	    model.addAttribute("noticeDetail", noticeDetail);
+	    model.addAttribute("title", "문의 상세");
+	    
+	    return "user/inquiry/userNoticeDetailView";
+	}
 
 	@GetMapping("/userInquiryNotice")
 	public String userInquiryNoticeView(Model model) {
 		// 공지사항 게시판 조회
+		var noticeList = userInquiryService.getUserNoticeList();
 		model.addAttribute("title", "공지사항");
+		model.addAttribute("noticeList", noticeList);
 
-		return "user/inquiry/userInquiryNoticeView";
+		return "user/inquiry/userNoticeListView";
 	}
 
 	@GetMapping("/userInquiryTotal")

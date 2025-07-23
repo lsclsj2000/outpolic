@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.systems.file.domain.FileMetaData;
 import outpolic.systems.util.FilesUtils;
+import outpolic.user.inquiry.domain.UserAnn;
 import outpolic.user.inquiry.domain.UserInquiry;
 import outpolic.user.inquiry.domain.UserInquiryFile;
 import outpolic.user.inquiry.domain.UserInquiryType;
@@ -110,6 +111,21 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 	@Override
 	public List<UserInquiry> getUserInquiryListByCode(String memberCode) {
 		return userInquiryMapper.getUserInquiryListByCode(memberCode);
+	}
+
+
+	@Override
+	public List<UserAnn> getUserNoticeList() {
+		// 공지사항 게시판 조회
+		List<UserAnn> noticeList = userInquiryMapper.getUserNoticeList();
+		return noticeList;
+	}
+
+
+	@Override
+	public UserAnn getUserNoticeByCode(String annCode) {
+		// 공지사항 상세내용 조회
+		return userInquiryMapper.getUserNoticeByCode(annCode);
 	}
 	
 	
