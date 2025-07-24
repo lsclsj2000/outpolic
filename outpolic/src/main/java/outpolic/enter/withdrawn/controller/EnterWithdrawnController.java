@@ -27,7 +27,7 @@ public class EnterWithdrawnController {
 	
 	// 기업유저 회원탈퇴 페이지
 	@GetMapping("/enter/withdrawn")
-	public String userWithdrawn(HttpSession session, Model model) {
+	public String enterWithdrawn(HttpSession session, Model model) {
 		
 		String memberCode = (String) session.getAttribute("SCD");
 		

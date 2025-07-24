@@ -40,8 +40,8 @@
 						                <select id="filterStatus" class="form-select form-select-sm" style="width: 180px;">
 						                  <option value="">전체 상태</option>
 						                  <option value="SD_ACTIVE">활성 회원</option>
-						                  <option value="SD_DORMANT">탈퇴 회원</option>
-						                  <option value="SD_WITHDRAWN">휴면 회원</option>
+						                  <option value="SD_DORMANT">휴면 회원</option>
+						                  <option value="SD_WITHDRAWN">탈퇴 회원</option>
 						                  <option value="SD_LIMIT">제재 회원</option>
 						                </select>
 						
@@ -104,7 +104,8 @@
 											<span th:case="ENTER" class="badge rounded-pill alert-info">기업회원</span>
 											<span th:case="USER" class="badge rounded-pill alert-success">일반회원</span>
                                        </td>
-                                       <td th:text="${l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.substring(l.memberTelNo.length() - 4)}">연락처</td>
+                                       <td th:text="${#strings.length(l.memberTelNo) >= 7} ? 
+                ${l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.substring(l.memberTelNo.length() - 4)} : '-'">연락처</td>
                                        <td th:switch="${l.statusCode}">
                                            <span th:case="SD_ACTIVE" class="badge rounded-pill alert-success">활성</span>
                                            <span th:case="SD_WITHDRAWN" class="badge rounded-pill alert-info">휴면</span>
@@ -196,8 +197,8 @@
 										<label for="modalMemberStatusCode">상태</label>
 										<select id="modalMemberStatusCode" name="modalMemberStatusCode" class="form-select readonly-field" disabled>
 											<option value="SD_ACTIVE">활성</option>
-											<option value="SD_WITHDRAWN">휴면</option>
-											<option value="SD_DORMANT">탈퇴</option>
+											<option value="SD_DORMANT">휴면</option>
+											<option value="SD_WITHDRAWN">탈퇴</option>
 											<option value="SD_LIMIT">제재</option>
 										</select>
 									</div>
@@ -241,10 +242,7 @@
 				    // 검색
 				    $('#searchBtn').click(function () {
 				        const keyword = $('#searchInput').val().trim();
-				        if (keyword === '') {
-				            alert('검색어를 입력해주세요.');
-				            return;
-				        }
+
 						$('#filterStatus').val('');
  						$('#filterGrade').val('');
 				        $.ajax({
@@ -276,9 +274,9 @@
 					    const statusLabel = l.statusCode === 'SD_ACTIVE'
 					      ? '<span class="badge rounded-pill alert-success">활성</span>'
 					      : l.statusCode === 'SD_WITHDRAWN'
-					        ? '<span class="badge rounded-pill alert-info">휴면</span>'
+					        ? '<span class="badge rounded-pill alert-info">탈퇴</span>'
 					        : l.statusCode === 'SD_DORMANT'
-					          ? '<span class="badge rounded-pill alert-info">탈퇴</span>'
+					          ? '<span class="badge rounded-pill alert-info">휴면</span>'
 					          : '<span class="badge rounded-pill alert-warning">제재</span>';
 					
 					    const telMasked = l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.slice(-4);
