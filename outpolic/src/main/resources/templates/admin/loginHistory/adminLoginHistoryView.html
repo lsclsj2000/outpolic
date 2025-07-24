@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/layout/adminLayoutMain}">
+
+<head>
+	<meta name="description" content="로그인 기록" />
+</head>
+
+<body>
+	<th:block layout:fragment="contents">
+		<section class="content-main">
+			<div class="content-header">
+				<h2 class="content-title">로그인 기록</h2>
+			</div>
+
+			<div class="card mb-4 search-filter-card">
+				<div class="card-body search-filter-body">
+					<div id="searchForm">
+						<div class="table-responsive">
+							<table class="search-filter-table">
+								<tbody>
+									<tr>
+										<th>기본검색</th>
+										<td>
+											<select id="searchType" class="form-select" style="width: 120px;">
+												<option value="mbrCd">회원코드</option>
+												<option value="mbrNm">회원이름</option>
+											</select>
+											<input type="text" id="searchKeyword" placeholder="검색어를 입력하세요"
+												class="form-control" style="width: 250px;" />
+										</td>
+									</tr>
+									<tr>
+										<th>기간</th>
+										<td>
+											<input type="date" id="startDate" class="form-control"
+												style="width: 150px;" />
+											<span> ~ </span>
+											<input type="date" id="endDate" class="form-control"
+												style="width: 150px;" />
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="search-filter-buttons">
+								<button type="button" id="searchBtn" class="btn btn-primary">검색</button>
+								<button type="button" id="resetBtn" class="btn btn-secondary">초기화</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card mb-4">
+				<div class="card-body">
+					<h5 class="mb-3 fw-bold">최근 7일간 로그인 수</h5>
+					<canvas id="loginLineChart" height="60"></canvas>
+				</div>
+			</div>
+
+			<!-- 📋 로그인 기록 테이블 -->
+			<div class="card">
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table text-center">
+							<thead>
+								<tr>
+									<th>No.</th>
+									<th>회원코드</th>
+									<th>로그인시간</th>
+									<th>로그아웃시간</th>
+									<th>IP</th>
+									<th>관리자코드</th>
+									<th>수정일시</th>
+								</tr>
+							</thead>
+							<tbody>
+								<!-- 👉 더미데이터 -->
+								<tr>
+									<td>1</td>
+									<td>MB_C000001</td>
+									<td>2025-07-24 09:12:32</td>
+									<td>2025-07-24 12:45:01</td>
+									<td>192.168.0.1</td>
+									<td>ADM001</td>
+									<td>2025-07-24 12:50:00</td>
+								</tr>
+								<tr>
+									<td>2</td>
+									<td>MB_C000002</td>
+									<td>2025-07-23 11:05:15</td>
+									<td>2025-07-23 13:01:45</td>
+									<td>192.168.0.22</td>
+									<td>ADM002</td>
+									<td>2025-07-23 13:10:12</td>
+								</tr>
+								<!-- ... -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		</section>
+	</th:block>
+
+	<th:block layout:fragment="jsScript">
+			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+			<script>
+				const ctx = document.getElementById('loginLineChart').getContext('2d');
+
+				  const loginLineChart = new Chart(ctx, {
+				    type: 'line',
+				    data: {
+				      labels: ['07-18', '07-19', '07-20', '07-21', '07-22', '07-23', '07-24'],
+				      datasets: [{
+				        label: '일별 로그인 수',
+				        data: [5, 8, 4, 10, 3, 6, 7],
+				        fill: false,
+				        borderColor: '#264796',
+				        tension: 0.3,
+				        pointBackgroundColor: '#264796',
+				        pointRadius: 5
+				      }]
+				    },
+				    options: {
+				      responsive: true,
+				      plugins: {
+				        legend: { display: false },
+				        tooltip: { mode: 'index', intersect: false }
+				      },
+				      scales: {
+				        x: {
+				          title: {
+				            display: true,
+				            text: '날짜',
+				            color: '#666'
+				          }
+				        },
+				        y: {
+				          title: {
+				            display: true,
+				            text: '로그인 수',
+				            color: '#666'
+				          },
+				          beginAtZero: true,
+				          stepSize: 1
+				        }
+				      }
+				    }
+				  });
+			</script>
+
+	</th:block>
+</body>
+
+</html>

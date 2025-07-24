@@ -69,25 +69,29 @@
 			<div class="card mb-4">
 				<!-- card-header end// -->
 				<div class="card-body">
-					<div class="d-flex flex-wrap gap-3 align-items-center mb-3">
-						<p class="fs-6 mb-0">
-							<span class="badge bg-light text-dark px-3 py-2"> 전체 회원 수
-								: <span id="totalCount" class="fw-bold text-primary"
-								th:text="${memberList.size()}">0</span> 명
-							</span>
-						</p>
-
-						<p class="fs-6 mb-0" id="filteredCountWrap" style="display: none;">
-							<span class="badge bg-light text-dark px-3 py-2"> 검색 결과 :
-								<span id="filteredCount" class="fw-bold text-success">0</span> 건
-							</span>
-						</p>
+					<div class=" d-flex flex-row">
+						<div class="d-flex flex-wrap gap-3 align-items-center mb-3 w-50">
+							<p class="fs-6 mb-0">
+								<span class="badge bg-light text-dark px-3 py-2"> 전체 회원 수
+									: <span id="totalCount" class="fw-bold text-primary"
+									th:text="${memberList.size()}">0</span> 명
+								</span>
+							</p>
+	
+							<p class="fs-6 mb-0" id="filteredCountWrap" style="display: none;">
+								<span class="badge bg-light text-dark px-3 py-2"> 검색 결과 :
+									<span id="filteredCount" class="fw-bold text-success">0</span> 건
+								</span>
+							</p>
+						</div>
+						<div class="w-50 mb-3" style="display : flex; justify-content : flex-end;">
+							<select id="filterOrder" class="form-select w-auto d-inline-block ms-2">
+							  <option value="">정렬 기준</option>
+							  <option value="recent">최근 가입순</option>
+							  <option value="oldest">오래된 가입순</option>
+							</select>
+						</div>
 					</div>
-					<select id="filterOrder" class="form-select w-auto d-inline-block ms-2">
-					  <option value="">정렬 기준</option>
-					  <option value="recent">최근 가입순</option>
-					  <option value="oldest">오래된 가입순</option>
-					</select>
 
 					<div class="table-responsive">
 						<table class="table table-hover">
@@ -274,7 +278,7 @@
 				 $('#filterStatus, #filterGrade, #filterOrder').change(function () {
 				        const status = $('#filterStatus').val();
 				        const grade = $('#filterGrade').val();
-				       const order = $('#filterOrder').val();
+				       	const order = $('#filterOrder').val();
 					
 				        $.ajax({
 				        url: '/admin/memberList/filter',
