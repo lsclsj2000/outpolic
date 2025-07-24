@@ -1,11 +1,14 @@
 package outpolic.admin.limits.mapper;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
 
+import outpolic.admin.limits.domain.AdminDeclarationFullInfo;
 import outpolic.admin.limits.domain.AdminLimits;
+import outpolic.admin.limits.domain.AdminLimitsReason;
 
 @Mapper
 public interface AdminLimitsMapper {
@@ -57,4 +60,13 @@ public interface AdminLimitsMapper {
 
 	// 신고 사유 목록 조회 (타입별 필터링 가능)
 	List<AdminLimits> getDeclarationReasonList(@Param("dt_cd") String dt_cd);
+	
+	// 제재 처리 자동 로직
+	AdminDeclarationFullInfo getDeclarationInfo(String declCd);
+    Integer getCumulativeCount(@Param("mbrCd") String mbrCd, @Param("drCd") String drCd);
+    AdminLimitsReason getMatchedLimitsReason(@Param("dtCd") String dtCd, @Param("drCd") String drCd, @Param("cnt") int cnt);
+    Timestamp getEndDateByPeriod(@Param("lpCd") String lpCd, @Param("start") Timestamp start);
+    void insertLimits(AdminLimits limits);
+    void insertCumulative(@Param("mbrCd") String mbrCd, @Param("drCd") String drCd, @Param("cnt") int cnt);
+    void updateCumulative(@Param("mbrCd") String mbrCd, @Param("drCd") String drCd, @Param("cnt") int cnt);
 }

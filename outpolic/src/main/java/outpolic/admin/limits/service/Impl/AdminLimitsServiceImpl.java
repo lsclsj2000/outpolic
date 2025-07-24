@@ -1,13 +1,17 @@
 package outpolic.admin.limits.service.Impl;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import outpolic.admin.limits.domain.AdminDeclarationFullInfo;
 import outpolic.admin.limits.domain.AdminLimits;
+import outpolic.admin.limits.domain.AdminLimitsReason;
 import outpolic.admin.limits.mapper.AdminLimitsMapper;
 import outpolic.admin.limits.service.AdminLimitsService;
 
@@ -134,6 +138,87 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
 	    
 	    return reasons;
 	}
+	
+	@Override
+	public void applySanctionAutomatically(String drcCd, String dtCd, String declCd, String admCd) {
+	    log.debug("🚩[제재로직] 호출됨: drcCd={}, dtCd={}, declCd={}, admCd={}", drcCd, dtCd, declCd, admCd);
+
+	    AdminDeclarationFullInfo info = adminLimitsMapper.getDeclarationInfo(declCd);
+	    log.debug("🧾[제재로직] 신고 상세 정보: {}", info);
+
+	    if (info == null) {
+	        log.warn("⚠️ [제재로직] declCd={} 에 해당하는 신고 정보 없음", declCd);
+	        return;
+	    }
+
+	    String mbrCd = null;
+	    if ("DRC_VALID".equals(drcCd)) {
+	        mbrCd = info.getDeclarationTargetCode(); // 유효 신고 → 대상 제재
+	    } else if ("DRC_MALICE".equals(drcCd)) {
+	        mbrCd = info.getDeclarationMemberCode(); // 악의적 신고 → 신고자 제재
+	    } else {
+	        log.warn("⚠️ [제재로직] 처리 결과 코드 {} 는 처리되지 않음", drcCd);
+	        return;
+	    }
+
+	    dtCd = info.getDeclarationTypeCode();  // DB 기준값 우선
+	    String drCd = info.getDeclarationReasonCode();
+
+	    log.debug("👤[제재로직] 제재 대상 회원코드: {}", mbrCd);
+	    log.debug("📂[제재로직] 신고 타입코드: {}, 신고 사유코드: {}", dtCd, drCd);
+
+	    Integer cumCount = adminLimitsMapper.getCumulativeCount(mbrCd, drCd);
+	    log.debug("📈[제재로직] 누적 제재 횟수: {}", cumCount);
+
+	    int nextCount = (cumCount == null) ? 1 : cumCount + 1;
+
+	    AdminLimitsReason reason = adminLimitsMapper.getMatchedLimitsReason(dtCd, drCd, nextCount);
+	    log.debug("🔎[제재로직] 매칭된 제재 사유: {}", reason);
+
+	    if (reason == null) {
+	        log.warn("⚠️ [제재로직] 매칭되는 제재 사유 없음 → dtCd={}, drCd={}, cnt={}", dtCd, drCd, nextCount);
+	        return;
+	    }
+
+	    String lrCd = reason.getLimitsReasonCode();
+	    String lpCd = reason.getLimitsPeriodCode();
+
+	    Timestamp start = new Timestamp(System.currentTimeMillis());
+	    Timestamp end = adminLimitsMapper.getEndDateByPeriod(lpCd, start);
+	    int remainingDays = (end == null) ? 9999 : (int) ((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
+	    log.debug("🕒[제재로직] 제재 시작일: {}, 종료일: {}, 잔여일수: {}", start, end, remainingDays);
+
+	    AdminLimits limits = new AdminLimits();
+	    limits.setLimitsCode("LMT_" + UUID.randomUUID().toString().replace("-", "").substring(0, 16));
+	    limits.setLimitsMemberCode(mbrCd);
+	    limits.setDeclarationTypeCode(dtCd);
+	    limits.setDeclarationReasonCode(drCd);
+	    limits.setLimitsReasonCode(lrCd);
+	    limits.setLimitsStartYmdt(start);
+	    limits.setLimitsEndYmdt(end);
+	    limits.setLimitsClearYmdt(null);
+	    limits.setLimitsRmdDays(remainingDays);
+	    limits.setLimitsStatus(null); // 필요 시 설정
+	    limits.setLimitsTypeRegAdmCode(admCd);
+
+	    log.debug("✅[제재로직] 최종 제재 객체: {}", limits);
+
+	    adminLimitsMapper.insertLimits(limits);
+	    log.debug("🛠[제재로직] 제재 기록 insert 완료: {}", limits.getLimitsCode());
+
+	    if (cumCount == null) {
+	        adminLimitsMapper.insertCumulative(mbrCd, drCd, nextCount);
+	        log.debug("🧮[제재로직] 누적 제재 첫 insert 완료 → mbrCd={}, drCd={}, cnt={}", mbrCd, drCd, nextCount);
+	    } else {
+	        adminLimitsMapper.updateCumulative(mbrCd, drCd, nextCount);
+	        log.debug("🧮[제재로직] 누적 제재 update 완료 → mbrCd={}, drCd={}, cnt={}", mbrCd, drCd, nextCount);
+	    }
+
+	    log.info("🎉[제재로직] 제재 처리 완료 → 대상 회원: {}, 제재 사유: {}, 기간 코드: {}", mbrCd, lrCd, lpCd);
+	}
+
+
 
 
 }

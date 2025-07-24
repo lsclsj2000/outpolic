@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.declaration.domain.AdminDeclaration;
 import outpolic.admin.declaration.service.AdminDeclarationService;
+import outpolic.admin.limits.service.AdminLimitsService;
 
 @Slf4j
 @Controller
@@ -24,6 +25,7 @@ import outpolic.admin.declaration.service.AdminDeclarationService;
 public class AdminDeclarationController {
 	
 	private final AdminDeclarationService adminDeclarationService;
+	private final AdminLimitsService adminLimitsService;
 	
 	@GetMapping("/declarationResults")
     @ResponseBody
@@ -33,25 +35,34 @@ public class AdminDeclarationController {
         return adminDeclarationService.getAdminDeclarationResultList();
     }
 
-    @PostMapping("/processDeclaration")
-    @ResponseBody
-    public String processDeclaration(@RequestBody AdminDeclaration adminDeclaration, HttpSession session) {
-        // 신고 처리 내역 저장 및 신고 상태 업데이트
-        String adminCode = (String) session.getAttribute("SACD");
-        if (adminCode == null) {
-            log.warn("Unauthorized attempt to process declaration. Session adminCode is null.");
-            return "FAIL: Unauthorized";
-        }
-        adminDeclaration.setDeclarationMdfcnAdmCode(adminCode); // 처리자 코드로 사용
-        try {
-            adminDeclarationService.processDeclaration(adminDeclaration);
-            log.info("Declaration processed successfully for code: {}", adminDeclaration.getDeclarationCode());
-            return "OK";
-        } catch (Exception e) {
-            log.error("Error processing declaration for code: {}", adminDeclaration.getDeclarationCode(), e);
-            return "FAIL: " + e.getMessage();
-        }
-    }
+	@PostMapping("/processDeclaration")
+	@ResponseBody
+	public String processDeclaration(@RequestBody AdminDeclaration adminDeclaration, HttpSession session) {
+	    String adminCode = (String) session.getAttribute("SACD");
+
+	    if (adminCode == null) {
+	        log.warn("Unauthorized attempt to process declaration. Session adminCode is null.");
+	        return "FAIL: Unauthorized";
+	    }
+
+	    String dcCd = adminDeclaration.getDeclarationCode();
+	    String drcCd = adminDeclaration.getDeclarationResultCode(); // 처리 결과 코드
+	    String dtCd = adminDeclaration.getDeclarationTypeCode();  // 신고 타입 코드
+
+	    adminDeclaration.setDeclarationMdfcnAdmCode(adminCode); // 처리자 저장
+
+	    try {
+	        adminDeclarationService.processDeclaration(adminDeclaration);
+	        adminLimitsService.applySanctionAutomatically(drcCd, dtCd, dcCd, adminCode);
+	        log.info("Declaration processed successfully for code: {}", dcCd);
+	        return "OK";
+	    } catch (Exception e) {
+	        log.error("Error processing declaration for code: {}", dcCd, e);
+	        return "FAIL: " + e.getMessage();
+	    }
+	}
+
+
 	
 	
     @PostMapping("/updateDeclaration")
