@@ -78,7 +78,7 @@ public class UserLoginController {
                 // 회원 프로필 이미지 
                 String profileImg = memberInfo.getMemberImg();
                 session.setAttribute("SProfilePath", 
-                	    (profileImg != null) ? "/" + profileImg : "/user/assets/imgs/outpolic/cutecat.jpg");
+                	    (profileImg != null) ?  profileImg : "/user/assets/imgs/outpolic/cutecat.jpg");
                 
 	            if("USER".equals(grade)) {
 	            	
