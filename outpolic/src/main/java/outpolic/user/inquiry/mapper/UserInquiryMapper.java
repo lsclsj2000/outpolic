@@ -81,7 +81,6 @@ public interface UserInquiryMapper {
  	
  	// 문의 목록 페이지네이션
  	List<UserInquiry> getUserInquiryListPaged(@Param("offset") int offset, @Param("limit") int limit);
- 	int getUserInquiryListCount();
  	
  	// 공지사항 목록 페이지네이션
  	List<UserAnn> getUserNoticeListPaged(@Param("offset") int offset, @Param("limit") int limit);
@@ -91,7 +90,6 @@ public interface UserInquiryMapper {
  	List<UserInquiry> getUserInquiryListByCodePaged(@Param("mbrCd") String mbrCd, @Param("offset") int offset, @Param("limit") int limit);
  	int getUserInquiryListByCodeCount(@Param("mbrCd") String mbrCd);
  	
-
  	int getUserInquiryListCount(@Param("memberCode") String memberCode);
  	
  	List<UserInquiry> getUserInquiryListPaged(
