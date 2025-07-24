@@ -64,4 +64,5 @@ public interface AdminDeclarationService {
 
     // 신고 테이블의 상태 및 수정자/수정일시 업데이트 (이름 변경)
     void updateDeclarationStatusAndModifier(AdminDeclaration adminDeclaration);
+    
 }
