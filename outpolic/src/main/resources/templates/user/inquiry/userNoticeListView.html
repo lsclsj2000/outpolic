@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{enter/layout/enterLayoutInquiryList}">
+	  layout:decorate="~{user/layout/userLayoutInquiryList}">
 
 	<head>
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
@@ -15,23 +15,23 @@
 				<div class="col-lg-10 m-auto">
 					<div style="display:flex; justify-content:center">
 						<div class="mb-50 text-center" style="width:20%">
-						    <h1 class="heading-2 mb-10">전체</h1>
+						    <h1 class="heading-2 mb-10">Notice</h1>
 						    <div class="text-center">
 							    <ul style="display:flex; justify-content:space-around">
-							    	<li><a href="/enter/enterInquiryTotal">전체</a></li>|
-							    	<li><a href="/enter/enterInquiryNotice">Notice</a></li>|
-							    	<li><a href="/enter/enterInquiryList">문의</a></li>|
-							    	<li><a href="/enter/enterInquiryFaq">FAQ</a></li>
+							    	<li><a href="/user/userInquiryTotal">전체</a></li>|
+							    	<li><a href="/user/userInquiryNotice">Notice</a></li>|
+							    	<li><a href="/user/userInquiryList">문의</a></li>|
+							    	<li><a href="/user/userInquiryFaq">FAQ</a></li>
 							    </ul>				    
 						    </div>
 						</div>
 					</div>
 					<div class="shop-product-fillter" style="display:flex; flex-direction:row-reverse;">
 						<div class="totall-product">
-						    <p><a href="/enter/enterInquiryWrite">문의작성</a></p>
+						    <p><a href="/user/userInquiryWrite">문의작성</a></p>
 						</div>
 						<div class="sort-by-product-area">
-							<form id="filterForm" method="get" th:action="@{/enter/enterInquiryTotal}" style="display:flex; flex-direction:row-reverse;">
+							<form id="filterForm" method="get" th:action="@{/user/userInquiryNotice}" style="display:flex; flex-direction:row-reverse;">
 							    <!-- 페이지당 출력 수 -->
 							    <div class="sort-by-cover">
 							        <div class="sort-by-product-wrap">
@@ -78,41 +78,31 @@
 								</tr>
 							</thead>
 							<tbody>
-							    <tr class="start pt-30"
-							        style="border:0px; border-bottom: solid 1px #ececec;"
-							        th:each="l, stat : ${totalList}">
-							        
-							        <!-- No -->
-							        <td class="start text-center">
-							            <span th:text="${totalList.size() - stat.index}">번호</span>
-							        </td>
-							        
-							        <!-- 제목 (공지인지 문의인지에 따라 링크 변경) -->
-							        <td scope="col">
-							            <span>
-							                <a th:href="${l.totalType == '공지사항'} ? @{'/enter/enterNoticeDetail'(ann_cd=${l.totalCode})} : @{'/enter/enterInquiryDetail'(iq_cd=${l.totalCode})}"
-							                   th:text="${l.totalTitle}"
-							                   style="color: black; text-decoration: none;"
-							                   onmouseover="this.style.color='#3BB77E'"
-							                   onmouseout="this.style.color='black'">
-							                    제목
-							                </a>
-							            </span>
-							        </td>
-							        
-							        <!-- 분류 -->
-							        <td scope="col" class="text-center" th:text="${l.totalType}">분류</td>
-							        
-							        <!-- 작성자 -->
-							        <td scope="col" class="text-center" th:text="${l.totalWriter}">작성자</td>
-							        
-							        <!-- 작성일자 -->
-							        <td scope="col" class="text-center" th:text="${l.totalRegDate}">2025-06-24</td>
-							    </tr>
+								<tr class="start pt-30"
+								    style="border:0px; border-bottom: solid 1px #ececec;"
+								    th:each="l, stat : ${noticeList}">
+									<td class="start text-center">
+										<span th:text="${noticeList.size() - stat.index}">번호</span>
+									</td>
+									<td scope="col">
+										<span>
+											<a th:href="@{/user/userNoticeDetail(ann_cd=${l.annCode})}"
+											   th:text="${l.annTitle}"
+											   style="color: black; text-decoration: none;"
+											   onmouseover="this.style.color='#3BB77E'"
+											   onmouseout="this.style.color='black'">
+											   제목
+											</a>
+										</span>
+									</td>
+									<td scope="col" class="text-center" th:text="${l.annType}"><span>공지사항</span></td>
+									<td scope="col" class="text-center" th:text="${l.mbrName}"><span>작성자</span></td>
+									<td scope="col" class="text-center" th:text="${l.annRegYmdt}"><span> 2025-06-24 </span></td>
+								</tr>
 							</tbody>
 						</table>
 					</div>
-					<div th:replace="~{enter/fragments/enterPagination :: pagination(${pageInfo}, '/enter/enterInquiryList?page=&size=' + ${size} + '&sort=' + ${sort})}"></div>
+					<div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, '/user/userInquiryList?page=&size=' + ${size} + '&sort=' + ${sort})}"></div>
 				</div>
 			</div>
 		</div>

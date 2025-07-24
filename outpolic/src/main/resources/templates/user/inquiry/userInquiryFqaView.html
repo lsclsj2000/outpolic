@@ -11,7 +11,7 @@
 	
 	<th:block layout:fragment="contents">
 		<div class="mb-30 mt-50">
-			<div class="row">
+			<div class="row mb-70">
 				<div class="col-lg-10 m-auto">
 					<div style="display:flex; justify-content:center">
 						<div class="mb-50 text-center" style="width:20%">
@@ -32,47 +32,13 @@
 			<div class="row">
 				<div class="col-lg-10 m-auto">
 					<section class="faq">
-						<div class="faq-container">
-							<!-- 10개의 박스 -->
-							<div class="faq-item">
-								<div class="faq-question">Q1. 배송은 얼마나 걸리나요?</div>
-								<div class="faq-answer"><div class="faq-answer-inner">보통 2~3일 소요되며 지역에 따라 달라질 수 있습니다.</div></div>
-							</div>
-							<div class="faq-item">
-								<div class="faq-question">Q2. 반품은 어떻게 하나요?</div>
-								<div class="faq-answer"><div class="faq-answer-inner">고객센터 또는 마이페이지에서 반품 신청이 가능합니다.</div></div>
-							</div>
-							<div class="faq-item">
-								<div class="faq-question">Q3. 배송비는 얼마인가요?</div>
-								<div class="faq-answer"><div class="faq-answer-inner">3만원 이상 구매 시 무료배송, 미만 시 3,000원입니다.</div></div>
-							</div>
-							<div class="faq-item">
-								<div class="faq-question">Q4. 결제수단은 무엇이 있나요?</div>
-								<div class="faq-answer"><div class="faq-answer-inner">카드결제, 계좌이체, 간편결제(카카오페이, 네이버페이 등)가 가능합니다.</div></div>
-							</div>
-							<div class="faq-item">
-								<div class="faq-question">Q5. 상품은 언제 재입고되나요?</div>
-								<div class="faq-answer"><div class="faq-answer-inner">재입고 일정은 상품 상세 페이지에서 확인해주세요.</div></div>
-							</div>
-							<div class="faq-item">
-								<div class="faq-question">Q6. 회원 탈퇴는 어디서 하나요?</div>
-								<div class="faq-answer"><div class="faq-answer-inner">마이페이지 > 회원정보에서 직접 탈퇴하실 수 있습니다.</div></div>
-							</div>
-							<div class="faq-item">
-								<div class="faq-question">Q7. 주문 취소는 언제까지 가능한가요?</div>
-								<div class="faq-answer"><div class="faq-answer-inner">상품 준비 전까지 가능합니다. 이후에는 고객센터로 문의해주세요.</div></div>
-							</div>
-							<div class="faq-item">
-								<div class="faq-question">Q8. 적립금은 어디서 확인하나요?</div>
-								<div class="faq-answer"><div class="faq-answer-inner">마이페이지 > 적립금 메뉴에서 확인하실 수 있습니다.</div></div>
-							</div>
-							<div class="faq-item">
-								<div class="faq-question">Q9. 쿠폰은 어떻게 사용하나요?</div>
-								<div class="faq-answer"><div class="faq-answer-inner">결제 단계에서 적용 가능한 쿠폰을 선택하여 사용하시면 됩니다.</div></div>
-							</div>
-							<div class="faq-item">
-								<div class="faq-question">Q10. 영수증은 어디서 발급하나요?</div>
-								<div class="faq-answer"><div class="faq-answer-inner">주문내역에서 각 주문 건의 영수증 발급 버튼을 통해 출력 가능합니다.</div></div>
+						<div>						
+							<div class="faq-container">
+								<!-- 10개의 박스 -->
+								<div class="faq-item" th:each="l : ${faqList}">
+									<div class="faq-question" th:text="${l.annTitle}">Q1. 배송은 얼마나 걸리나요?</div>
+									<div class="faq-answer"><div class="faq-answer-inner" th:text="${l.annCn}">보통 2~3일 소요되며 지역에 따라 달라질 수 있습니다.</div></div>
+								</div>
 							</div>
 						</div>
 					</section>

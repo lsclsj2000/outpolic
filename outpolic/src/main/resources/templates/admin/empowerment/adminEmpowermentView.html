@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{admin/layout/adminLayoutMain}">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>관리자 권한 설정</title>
+	<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 </head>
 
 
@@ -17,63 +17,6 @@
 				<h2 class="content-title card-title">관리자 권한 설정</h2>
 			</div>
 		</div>
-		<!-- 검색 필터 -->
-		<!-- <div class="card mb-4 search-filter-card">
-	            <div class="card-body search-filter-body">
-	                <div class="table-responsive">
-	                    <table class="search-filter-table">
-							<tbody>
-								<tr>
-									<th>기본검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>제목</option>
-											<option>내용</option>
-											<option>문의코드</option>
-											<option>작성자</option>
-										</select>
-										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
-									</td>
-								</tr>
-								<tr>
-									<th>기간검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>작성일자</option>
-											<option>수정일자</option>
-										</select>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<span> ~ </span>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<button type="button" class="btn btn-sm btn-light">오늘</button>
-										<button type="button" class="btn btn-sm btn-light">어제</button>
-										<button type="button" class="btn btn-sm btn-light">일주일</button>
-										<button type="button" class="btn btn-sm btn-light">지난달</button>
-										<button type="button" class="btn btn-sm btn-light">1개월</button>
-										<button type="button" class="btn btn-sm btn-light">3개월</button>
-										<button type="button" class="btn btn-sm btn-light">전체</button>
-									</td>
-								</tr>
-								<tr>
-									<th>처리상태</th>
-									<td>
-										<div class="radio-group">
-											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
-											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
-											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
-											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<div class="search-filter-buttons">
-							<button type="button" class="btn btn-primary">검색</button>
-							<button type="button" class="btn btn-secondary">초기화</button>
-						</div>
-	                </div>
-	            </div>
-	        </div> -->
 		<div class="card mb-4">
 			<div class="card-body">
 				<div class="table-responsive">
@@ -93,8 +36,7 @@
 							</tr>
 						</thead>
 						<tbody th:if="${adminList != null}">
-							<tr class="start pt-30"
-								style="border: 0px; border-bottom: solid 1px #ececec;"
+							<tr class="start pt-30" style="border: 0px; border-bottom: solid 1px #ececec;"
 								th:each="admin, stat : ${adminList}">
 
 								<td class="start text-center" th:text="${stat.index + 1}">No.</td>
@@ -103,35 +45,44 @@
 								<td scope="col" class="text-center" th:text="${admin.stcCd}">관리자
 									상태</td>
 								<td class="text-center"><span class="badge rounded-pill"
-									th:classappend="${admin.systemAdmin == 1} ? 'alert-success' : 'alert-warning'"
-									th:text="${admin.systemAdmin == 1} ? '1' : '0'">0</span></td>
+										th:classappend="${admin.systemAdmin == 1} ? 'alert-success' : 'alert-warning'"
+										th:text="${admin.systemAdmin == 1} ? '1' : '0'">0</span></td>
 
 								<!-- 관리자 권한부여 -->
 								<td class="text-center"><span class="badge rounded-pill"
-									th:classappend="${admin.adminEmpower == 1} ? 'alert-success' : 'alert-warning'"
-									th:text="${admin.adminEmpower == 1} ? '1' : '0'">0</span></td>
+										th:classappend="${admin.adminEmpower == 1} ? 'alert-success' : 'alert-warning'"
+										th:text="${admin.adminEmpower == 1} ? '1' : '0'">0</span></td>
 
 								<!-- 콘텐츠 관리 -->
 								<td class="text-center"><span class="badge rounded-pill"
-									th:classappend="${admin.contentAdmin == 1} ? 'alert-success' : 'alert-warning'"
-									th:text="${admin.contentAdmin == 1} ? '1' : '0'">0</span></td>
+										th:classappend="${admin.contentAdmin == 1} ? 'alert-success' : 'alert-warning'"
+										th:text="${admin.contentAdmin == 1} ? '1' : '0'">0</span></td>
 
 								<!-- 고객센터 관리 -->
 								<td class="text-center"><span class="badge rounded-pill"
-									th:classappend="${admin.csAdmin == 1} ? 'alert-success' : 'alert-warning'"
-									th:text="${admin.csAdmin == 1} ? '1' : '0'">0</span></td>
+										th:classappend="${admin.csAdmin == 1} ? 'alert-success' : 'alert-warning'"
+										th:text="${admin.csAdmin == 1} ? '1' : '0'">0</span></td>
 
 								<!-- 회원 관리 -->
 								<td class="text-center"><span class="badge rounded-pill"
-									th:classappend="${admin.memberAdmin == 1} ? 'alert-success' : 'alert-warning'"
-									th:text="${admin.memberAdmin == 1} ? '1' : '0'">0</span></td>
+										th:classappend="${admin.memberAdmin == 1} ? 'alert-success' : 'alert-warning'"
+										th:text="${admin.memberAdmin == 1} ? '1' : '0'">0</span></td>
 
 								<!-- 결제 관리 -->
 								<td class="text-center"><span class="badge rounded-pill"
-									th:classappend="${admin.paymentAdmin == 1} ? 'alert-success' : 'alert-warning'"
-									th:text="${admin.paymentAdmin == 1} ? '1' : '0'">0</span></td>
-								<td scope="col" class="text-center"><a href="#"
-									class="btn btn-md rounded font-sm SR_open-popup-btn">수정</a></td>
+										th:classappend="${admin.paymentAdmin == 1} ? 'alert-success' : 'alert-warning'"
+										th:text="${admin.paymentAdmin == 1} ? '1' : '0'">0</span></td>
+								<td scope="col" class="text-center">
+									<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:attr="data-admin-code=${admin.admCd},
+									           data-system-manage=${admin.systemAdmin},
+									           data-admin-grant=${admin.adminEmpower},
+									           data-content-manage=${admin.contentAdmin},
+									           data-cs-manage=${admin.csAdmin},
+									           data-user-manage=${admin.memberAdmin},
+									           data-payment-manage=${admin.paymentAdmin}">
+										수정
+									</a>
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -203,44 +154,59 @@
 
 <th:block layout:fragment="jsScript">
 	<script>
-			document.addEventListener('DOMContentLoaded', function () {
-			    const modal = document.getElementById('authorityModal');
-			    const closeButton = document.querySelector('#authorityModal .SR_close-button');
-			    const saveButton = document.getElementById('saveButton');
-			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
-	
-			    // 팝업 열기
-			    openPopupButtons.forEach(button => {
-			        button.addEventListener('click', function (event) {
-			            event.preventDefault();
-			            modal.style.display = 'flex';
-			            document.body.style.overflow = 'hidden';
-			        });
-			    });
-	
-			    // 팝업 닫기 (닫기 버튼)
-			    closeButton.addEventListener('click', function () {
-			        modal.style.display = 'none';
-			        document.body.style.overflow = 'auto';
-			    });
-	
-			    // 팝업 닫기 (바깥 클릭 시)
-			    window.addEventListener('click', function (event) {
-			        if (event.target === modal) {
-			            modal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			        }
-			    });
-	
-			    // 저장 버튼 클릭
-			    const inquiryForm = document.getElementById('inquiryForm');
-			    inquiryForm.addEventListener('submit', function (event) {
-			        event.preventDefault();
-			        alert('저장 버튼이 클릭되었습니다! (저장 로직은 필요 시 추가)');
-			        modal.style.display = 'none';
-			        document.body.style.overflow = 'auto';
-			    });
+		document.addEventListener('DOMContentLoaded', function () {
+			const modal = document.getElementById('authorityModal');
+			const closeButton = document.querySelector('#authorityModal .SR_close-button');
+			const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+
+			// ✅ 팝업 열기
+			openPopupButtons.forEach(button => {
+				button.addEventListener('click', function (event) {
+					event.preventDefault();
+
+					const adminCode = button.getAttribute('data-admin-code');
+					modal.setAttribute('data-admin-code', adminCode);
+
+					const permissionMap = {
+						'SYSTEM_MANAGE': button.getAttribute('data-system-manage'),
+						'ADMIN_GRANT': button.getAttribute('data-admin-grant'),
+						'CONTENT_MANAGE': button.getAttribute('data-content-manage'),
+						'CS_MANAGE': button.getAttribute('data-cs-manage'),
+						'USER_MANAGE': button.getAttribute('data-user-manage'),
+						'PAYMENT_MANAGE': button.getAttribute('data-payment-manage'),
+					};
+
+					// 기존 체크 해제 후, 1인 권한 체크
+					document.querySelectorAll('input[name="permissions"]').forEach(cb => cb.checked = false);
+					for (const [code, val] of Object.entries(permissionMap)) {
+						if (val === '1') {
+							const checkbox = document.querySelector(`input[name="permissions"][value="${code}"]`);
+							if (checkbox) checkbox.checked = true;
+						}
+					}
+
+					modal.style.display = 'flex';
+					document.body.style.overflow = 'hidden';
+				});
 			});
-		</script>
+
+			// ✅ 닫기 버튼
+			if (closeButton) {
+				closeButton.addEventListener('click', function () {
+					modal.style.display = 'none';
+					document.body.style.overflow = 'auto';
+				});
+			}
+
+			// ✅ 바깥 클릭 시 닫기
+			window.addEventListener('click', function (event) {
+				if (event.target === modal) {
+					modal.style.display = 'none';
+					document.body.style.overflow = 'auto';
+				}
+			});
+		});
+	</script>
 </th:block>
+
 </html>

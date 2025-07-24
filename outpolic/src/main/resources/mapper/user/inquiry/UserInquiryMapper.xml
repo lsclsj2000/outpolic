@@ -73,6 +73,152 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="sa_reg_ymdt" 	property="saRegYmdt" jdbcType="TIMESTAMP"/> <!-- LocalDateTime 매핑 시 jdbcType 지정 권장 -->
 	</resultMap>
 	
+	<select id="getUserInquiryListFiltered" resultMap="userInquiryResultMap">
+		/* 페이징 + 정렬 + 내 글 필터 적용 */
+	    SELECT
+	        i.iq_cd AS iq_cd,
+	        i.iqt_cd AS iqt_cd,
+	        it.iqt_nm,
+	        i.mbr_cd AS mbr_cd,
+	        m.mbr_nm,
+	        i.iq_ttl AS iq_ttl,
+	        i.iq_cn AS iq_cn,
+	        i.iq_secret AS iq_secret,
+	        i.iq_reg_ymdt AS iq_reg_ymdt,
+	        it.iqt_expln AS inquiryTypeExpln,
+	        it.iqt_reg_ymdt AS inquiryTypeRegDate
+	    FROM
+	        inquiry i
+	        JOIN inquiry_type it ON i.iqt_cd = it.iqt_cd
+	        LEFT JOIN member m ON i.mbr_cd = m.mbr_cd
+	    <where>
+	        <if test="memberCode != null and memberCode != ''">
+	            i.mbr_cd = #{memberCode}
+	        </if>
+	    </where>
+	    ORDER BY
+	    <choose>
+	        <when test="sortType == 'oldest'">
+	            i.iq_reg_ymdt ASC
+	        </when>
+	        <when test="sortType == 'views'">
+	            i.iq_views DESC
+	        </when>
+	        <otherwise>
+	            i.iq_reg_ymdt DESC
+	        </otherwise>
+	    </choose>
+	    LIMIT #{limit} OFFSET #{offset}
+	</select>
+	
+	<select id="getUserInquiryListFilteredCount" resultType="int">
+		/* 필터 포함 전체 건수 */
+	    SELECT COUNT(*)
+	    FROM inquiry i
+	    <where>
+	        <if test="memberCode != null and memberCode != ''">
+	            i.mbr_cd = #{memberCode}
+	        </if>
+	    </where>
+	</select>
+		
+	
+	<select id="getUserInquiryListPaged" resultMap="userInquiryResultMap">
+	    SELECT
+	        i.iq_cd AS iq_cd,
+	        i.iqt_cd AS iqt_cd,
+	        it.iqt_nm,
+	        i.mbr_cd AS mbr_cd,
+	        m.mbr_nm,
+	        i.iq_ttl AS iq_ttl,
+	        i.iq_cn AS iq_cn,
+	        i.iq_secret AS iq_secret,
+	        i.iq_reg_ymdt AS iq_reg_ymdt,
+	        it.iqt_expln AS inquiryTypeExpln,
+	        it.iqt_reg_ymdt AS inquiryTypeRegDate
+	    FROM
+	        inquiry i
+	        JOIN inquiry_type it ON i.iqt_cd = it.iqt_cd
+	        LEFT JOIN member m ON i.mbr_cd = m.mbr_cd
+	    <where>
+	        <if test="memberCode != null and memberCode != ''">
+	            i.mbr_cd = #{memberCode}
+	        </if>
+	    </where>
+	    ORDER BY
+	    <choose>
+	        <when test="sort == 'old'">
+	            i.iq_reg_ymdt ASC
+	        </when>
+	        <when test="sort == 'views'">
+	            i.iq_views DESC
+	        </when>
+	        <otherwise>
+	            i.iq_reg_ymdt DESC
+	        </otherwise>
+	    </choose>
+	    LIMIT #{limit} OFFSET #{offset}
+	</select>
+	
+	<select id="getUserInquiryListCount" resultType="int">
+	    SELECT COUNT(*) FROM inquiry
+	    <where>
+	        <if test="memberCode != null and memberCode != ''">
+	            mbr_cd = #{memberCode}
+	        </if>
+	    </where>
+	</select>
+
+	<!-- 전체 게시글 수 조회 -->
+	<select id="getUserTotalCount" resultType="int">
+		SELECT
+			(
+				SELECT COUNT(*) FROM announcement
+				WHERE ann_type = 'notice' AND stc_cd = 'SD_ACTIVE'
+			) +
+			(
+				SELECT COUNT(*) FROM inquiry
+			)
+	</select>
+	
+	<select id="getUserTotalListPaged" resultMap="userTotalResultMap">
+		SELECT * FROM (
+		    SELECT
+		        a.ann_cd AS cd,
+		        '공지사항' AS type,
+		        a.ann_ttl AS title,
+		        a.ann_cn AS content,
+		        m.mbr_nm AS writer,
+		        a.ann_reg_ymdt AS reg_date
+		    FROM
+		        announcement a
+		        LEFT JOIN admin adm ON a.adm_cd = adm.adm_cd
+		        LEFT JOIN member m ON adm.mbr_cd = m.mbr_cd
+		    WHERE
+		        a.ann_type = 'notice' AND a.stc_cd = 'SD_ACTIVE'
+		    
+		    UNION ALL
+		    
+		    SELECT
+		        i.iq_cd AS cd,
+		        '문의글' AS type,
+		        i.iq_ttl AS title,
+		        i.iq_cn AS content,
+		        m.mbr_nm AS writer,
+		        i.iq_reg_ymdt AS reg_date
+		    FROM
+		        inquiry i
+		        JOIN inquiry_type it ON i.iqt_cd = it.iqt_cd
+		        LEFT JOIN member m ON i.mbr_cd = m.mbr_cd
+		        LEFT JOIN admin a ON i.iq_mdfcn_adm_cd = a.adm_cd
+		) AS total_union
+		ORDER BY
+		    <choose>
+		        <when test="sort == 'old'">reg_date ASC</when>
+		        <otherwise>reg_date DESC</otherwise>
+		    </choose>
+		LIMIT #{limit} OFFSET #{offset}
+	</select>
 	
 	<!-- 단일 문의첨부파일 업로드 -->
 	<insert id="addUserInquiryFile" parameterType="outpolic.user.inquiry.domain.UserInquiryFile">

@@ -35,16 +35,22 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
     // FilesUtils가 'attachment/...' 형태로 경로를 반환한다고 가정
     private String cleanPathForDb(FileMetaData fileMetaData) {
         if (fileMetaData == null || fileMetaData.getFilePath() == null) return null;
-        
-        String fullPath = fileMetaData.getFilePath().replace("\\", "/"); // FilesUtils가 반환하는 경로 (예: attachment/portfolio/20250721/image/file.png)
-        String serverFileName = fileMetaData.getFileNewName(); // 서버 파일명 (예: file.png)
 
-        // 파일명 부분을 제거하여 경로만 남기고, 앞에 '/'를 붙입니다. (예: /attachment/portfolio/20250721/image/)
+        String fullPath = fileMetaData.getFilePath().replace("\\", "/");
+        String serverFileName = fileMetaData.getFileNewName();
+        
+        String pathOnly;
         if (fullPath.endsWith("/" + serverFileName)) {
-            return "/" + fullPath.substring(0, fullPath.length() - serverFileName.length());
+            pathOnly = fullPath.substring(0, fullPath.length() - serverFileName.length());
+        } else {
+            pathOnly = fullPath;
         }
-        // 이 경우는 거의 없을 것이지만, 안전을 위해 앞에 '/'를 붙여 반환
-        return "/" + fullPath;
+
+        // 슬래시가 맨 앞에 없는 경우에만 붙여줍니다.
+        if (!pathOnly.startsWith("/")) {
+            return "/" + pathOnly;
+        }
+        return pathOnly;
     }
 
 
@@ -157,7 +163,11 @@ public class EnterPortfolioServiceImpl implements EnterPortfolioService {
         // 썸네일은 portfolio 테이블에 파일명까지 포함된 전체 웹 경로를 저장
         // FilesUtils가 반환하는 filePath는 'attachment/...' 형태일 것이므로, 앞에 '/'를 붙여서 저장
         if (uploadedFile != null && uploadedFile.getFilePath() != null) {
-            uploadedFile.setFilePath("/" + uploadedFile.getFilePath()); // [!code modified]
+            String path = uploadedFile.getFilePath().replace("\\", "/");
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+            uploadedFile.setFilePath(path);
         }
         return uploadedFile;
     }
