@@ -10,6 +10,8 @@
 		<title>문의 내역 조회</title>
 	</head>
 	
+	<!-- <th:block layout:fragment="contents"
+          th:with="paginationFragment=~{fragments/pagination :: pagination(${pageInfo}, ${size}, ${sort}, '/admin/adminInquiryList')}"> -->
 	
 	<th:block layout:fragment="contents">
 		<section class="content-main">
@@ -255,7 +257,7 @@
 			</div>
 		</div>
 	</th:block>
-
+	
     <th:block layout:fragment="jsScript">
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
