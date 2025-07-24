@@ -30,7 +30,7 @@ public interface AdminMemberMapper {
 	
 	//필터링
 	List<Member> selectFilteredMembers(@Param("statusCode") String statusCode,
-            @Param("gradeCode") String gradeCode);
+            @Param("gradeCode") String gradeCode, @Param("orderBy") String orderBy);
 	// 검색
 	List<Member> searchMembers(String keyword);
 }
