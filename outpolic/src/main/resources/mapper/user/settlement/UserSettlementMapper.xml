@@ -5,27 +5,30 @@
 
 <mapper namespace="outpolic.user.settlement.mapper.UserSettlementMapper">
 
-  <select id="selectByMbrCd" resultType="outpolic.user.settlement.dto.UserSettlement">
-    SELECT
-      stlm_cd AS stlmCd,
-      mbr_cd AS mbrCd,
-      gds_cd AS gdsCd,
-      stc_cd AS stcCd,
-      stlm_cnt AS stlmCnt,
-      stlm_pay_type AS stlmPayType,
-      stlm_amt AS stlmAmt,
-      stlm_used_points AS stlmUsedPoints,
-      stlm_final_amt AS stlmFinalAmt,
-      stlm_payment_info AS stlmPaymentInfo,
-      stlm_card_nm AS stlmCardNm,
-      stlm_provider_nm AS stlmProviderNm,
-      stlm_account_info AS stlmAccountInfo,
-      stlm_account_nm AS stlmAccountNm,
-      stlm_ymdt AS stlmYmdt,
-      stlm_agre_yn AS stlmAgreYn
-    FROM settlement
-    WHERE mbr_cd = #{mbrCd}
-    ORDER BY stlm_ymdt DESC
-  </select>
+	<select id="selectByMbrCd" resultType="outpolic.user.settlement.dto.UserSettlement">
+		SELECT
+		    s.stlm_cd           AS stlmCd,
+		    s.gds_cd            AS gdsCd,
+		    s.stc_cd            AS stcCd,
+		    s.stlm_cnt          AS stlmCnt,
+		    s.stlm_used_points  AS stlmUsedPoints,
+		    s.stlm_final_amt    AS stlmFinalAmt,
+		    s.stlm_ymdt         AS stlmYmdt,
+		    s.stlm_method       AS stlmMethod,
+		    s.stlm_card_type    AS stlmCardType,
+		    g.gds_nm            AS gdsNm,
+		    sc.stc_nm           AS stcNm
+		FROM
+		    settlement s
+		JOIN
+		    goods g ON s.gds_cd = g.gds_cd
+		JOIN
+		    status_code sc ON s.stc_cd = sc.stc_cd
+		WHERE
+		    s.mbr_cd = #{mbrCd}
+		ORDER BY
+		    s.stlm_ymdt DESC
+	</select>
+
 
 </mapper>

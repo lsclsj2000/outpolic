@@ -18,6 +18,7 @@ public class PaymentDTO {
 	private String approvedAt;			// 결제 승인 일시
 	private String useEscrow;			// 		필요없어보임
 	private String cultureExpense;		// 문화비 필요없어보임
+	private String method;
 	private CardDTO card;			// 카드로 결제하면 제공되는 카드 관련 정보
 	private EasyPayDTO easyPay;		// 간편결제로 결제하면 제공되는 정보
 	
