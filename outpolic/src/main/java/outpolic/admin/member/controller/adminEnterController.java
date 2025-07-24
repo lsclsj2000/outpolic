@@ -51,14 +51,18 @@ public class adminEnterController {
 	    return filtered;
 	}
 	
-	// 회원 검색
+	// 기업 검색
 	@GetMapping("/enterList/search")
 	@ResponseBody
 	public List<AdminMemberDTO> searchEnters(@RequestParam("keyword") String keyword) {
+		if(keyword == null) {
+			return adminEnterService.getEnterList();
+		}else {
 	    return adminEnterService.searchEnterpriseMembers(keyword);
+		}
 	}
 	
-	//회원정보 수정 디테일
+	//기업정보 수정 디테일
 	@GetMapping("/enterList/detail")
 	@ResponseBody
 	public AdminMemberDTO adminEnterDetailView(@RequestParam String memberCode) {

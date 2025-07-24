@@ -189,10 +189,5 @@ public class UserLoginController {
 		return "user/mypage/alert";
     }
     
-    @GetMapping("/limitInfoView")
-    public String limitInfoView() {
-    	return"LimitInfo";
-    }
-    
     
 }

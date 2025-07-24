@@ -61,7 +61,9 @@ public class WebConfig implements WebMvcConfigurer{
 	                "/",                 // 메인화면
 	                "/main",            // 메인페이지(혹시 따로 있을 경우)
 	                "/login",           // 로그인 화면
-	                "/user/registerInfo",
+	                "/user/registerInfo/**",
+	                "/user/register**",
+	                "/user/checkDuplicate**",
 	                "/admin/**",
 	                "/admin/login",
 	                "/userGoodsList",   // 상품리스트

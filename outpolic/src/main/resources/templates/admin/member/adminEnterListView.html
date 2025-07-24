@@ -159,15 +159,15 @@
 			                            <input type="text" id="corpDAddress" name="corpDAddress" class="form-control readonly-field" disabled />
 			                        </div>
 			                        <div class="col-md-6">
-			                            <label for="corpScl">기업 규모</label>
-			                            <input type="text" id="corpScl" name="corpScl" class="form-control readonly-field" readonly />
+			                            <label for="corpScale">기업 규모</label>
+			                            <input type="text" id="corpScale" name="corpScale" class="form-control readonly-field" readonly />
 			                        </div>
 			                        <div class="col-md-6">
 			                            <label for="corpUrl">홈페이지</label>
 			                            <input type="text" id="corpUrl" name="corpUrl" class="form-control readonly-field" readonly />
 			                        </div>
 			                        <div class="col-md-6">
-			                            <label for="corpScr">평점</label>
+			                            <label for="corpScr">평점 (0~5.0)</label>
 			                            <input type="text" id="corpScr" name="corpScr" class="form-control readonly-field" readonly />
 			                        </div>
 			                       
@@ -221,10 +221,7 @@ $(document).ready(function () {
     // 🔎 검색
     $('#searchBtn').click(function () {
         const keyword = $('#searchInput').val().trim();
-        if (keyword === '') {
-            alert('검색어를 입력해주세요.');
-            return;
-        }
+
         $('#filterStatus').val('');
         $('#filterGrade').val('');
         $.ajax({
@@ -320,7 +317,7 @@ $(document).ready(function () {
             corpName: $('#corpName').val(),
             corpScale: $('#corpScale').val(),
             corpScr: $('#corpScr').val(),
-            corpHomepageUrl: $('#corpUrl').val(),
+            corpUrl: $('#corpUrl').val(),
             corpExplain: $('#corpExplain').val(),
             memberCode: $('#memberCode').val(), 
             corpRprsv: $('#corpRprsv').val()
@@ -332,6 +329,10 @@ $(document).ready(function () {
 	   		console.log("📛 adminCode =", corpData.adminCode);
             alert("기업명은 필수입니다.");
             return;
+        }
+        if(corpData.corpScr>5){
+        	alert("평점은 5점 이하의 점수를 소수점 한자리까지 작성해주십시오.");
+        	return;
         }
 
         $.ajax({

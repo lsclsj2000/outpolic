@@ -126,6 +126,7 @@ public class UserMypageController {
         boolean duplicated = userMypageEditService.isUserInfoDuple(type, memberCode, memberNickname, memberEmail, memberTelNo);
         return ResponseEntity.ok(duplicated);
     }
+    
  	// userEditView 이동
  	@PostMapping("/user/userEditView")
  	public String usreProfileEditView(@RequestParam("password") String memberPw, HttpSession session, Model model) {
