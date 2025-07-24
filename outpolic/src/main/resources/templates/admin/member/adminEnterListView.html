@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{admin/layout/adminLayoutMain}">
 
 <head>
-<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 </head>
 
 <body>
@@ -40,8 +39,8 @@
 											<td>
 												<div class="d-flex align-items-center gap-3">
 													<!-- 상태 필터 -->
-													<select id="filterStatus"
-														class="form-select form-select-sm" style="width: 180px;">
+													<select id="filterStatus" class="form-select form-select-sm"
+														style="width: 180px;">
 														<option value="">전체 상태</option>
 														<option value="SD_ACTIVE">활성 기업</option>
 														<option value="SD_WITHDRAWN">탈퇴 기업</option>
@@ -61,19 +60,28 @@
 			<div class="card mb-4">
 				<!-- card-header end// -->
 				<div class="card-body">
-					<div class="d-flex flex-wrap gap-3 align-items-center mb-3">
-						<p class="fs-6 mb-0">
-							<span class="badge bg-light text-dark px-3 py-2"> 전체 기업 수
-								: <span id="totalCount" class="fw-bold text-primary"
-								th:text="${enterList.size()}">0</span> 건
-							</span>
-						</p>
+					<div class=" d-flex flex-row">
+						<div class="d-flex flex-wrap gap-3 align-items-center mb-3 w-50">
+							<p class="fs-6 mb-0">
+								<span class="badge bg-light text-dark px-3 py-2"> 전체 기업 수
+									: <span id="totalCount" class="fw-bold text-primary"
+										th:text="${enterList.size()}">0</span> 
+								</span>
+							</p>
 
-						<p class="fs-6 mb-0" id="filteredCountWrap" style="display: none;">
-							<span class="badge bg-light text-dark px-3 py-2"> 검색 결과 :
-								<span id="filteredCount" class="fw-bold text-success">0</span> 건
-							</span>
-						</p>
+							<p class="fs-6 mb-0" id="filteredCountWrap" style="display: none;">
+								<span class="badge bg-light text-dark px-3 py-2"> 검색 결과 :
+									<span id="filteredCount" class="fw-bold text-success">0</span> 건
+								</span>
+							</p>
+						</div>
+						<div class="w-50 mb-3" style="display : flex; justify-content : flex-end;">
+							<select id="filterOrder" class="form-select w-auto d-inline-block ms-2">
+								<option value="">정렬 기준</option>
+								<option value="recent">최근 가입순</option>
+								<option value="oldest">오래된 가입순</option>
+							</select>
+						</div>
 					</div>
 					<div class="table-responsive">
 						<table class="table table-hover table-fixed-layout">
@@ -102,8 +110,7 @@
 								</tr>
 							</thead>
 							<tbody id="enterTableBody" class="text-center">
-								<tr th:if="${not #lists.isEmpty(enterList)}"
-									th:each="corp, stat : ${enterList}">
+								<tr th:if="${not #lists.isEmpty(enterList)}" th:each="corp, stat : ${enterList}">
 									<td class="start text-center" th:text="${stat.index + 1}"></td>
 									<td th:text="${corp.corpCode}">기업 코드</td>
 									<td th:text="${corp.corpName}">기업명</td>
@@ -111,13 +118,12 @@
 									<td th:text="${corp.corpBrno}">사업자등록번호</td>
 									<td th:text="${corp.corpTelNo}">연락처</td>
 									<td th:text="${corp.corpAddress} + ' ' + ${corp.corpDAddress}">주소</td>
-									<td th:switch="${corp.statusCode}"><span
-										th:case="SD_ACTIVE" class="badge rounded-pill alert-success">활성</span>
-										<span th:case="SD_DORMANT"
-										class="badge rounded-pill alert-info">휴면</span> <span
-										th:case="SD_WITHDRAWN" class="badge rounded-pill alert-info">탈퇴</span>
-										<span th:case="SD_LIMIT"
-										class="badge rounded-pill alert-warning">제재</span></td>
+									<td th:switch="${corp.statusCode}"><span th:case="SD_ACTIVE"
+											class="badge rounded-pill alert-success">활성</span>
+										<span th:case="SD_DORMANT" class="badge rounded-pill alert-info">휴면</span> <span
+											th:case="SD_WITHDRAWN" class="badge rounded-pill alert-info">탈퇴</span>
+										<span th:case="SD_LIMIT" class="badge rounded-pill alert-warning">제재</span>
+									</td>
 									<td>
 										<button class="btn btn-primary w-55 fw-bold btn-detail"
 											th:data-code="${corp.memberCode}" data-bs-toggle="modal"
@@ -133,89 +139,73 @@
 			</div>
 		</section>
 
-		<div class="modal fade p-10" id="enterDetailModal" tabindex="-1"
-			aria-hidden="true">
+		<div class="modal fade p-10" id="enterDetailModal" tabindex="-1" aria-hidden="true">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h3>기업 상세 정보</h3>
-						<button type="button"
-							class="btn btnEditMember btn-primary w-70 fw-bold">정보
+						<button type="button" class="btn btnEditMember btn-primary w-70 fw-bold">정보
 							수정하기</button>
 					</div>
 					<div class="modal-body">
-						<form class="admin memberEdit"
-							th:action="@{/admin/enterList/detail}" method="post">
+						<form class="admin memberEdit" th:action="@{/admin/enterList/detail}" method="post">
 							<div class="row g-3">
 								<div class="col-md-6">
-									<label for="memberCode">회원 코드</label> <input type="text"
-										id="memberCode" name="memberCode" class="form-control"
-										disabled />
+									<label for="memberCode">회원 코드</label> <input type="text" id="memberCode"
+										name="memberCode" class="form-control" disabled />
 								</div>
 								<div class="col-md-6">
-									<label for="corpName">기업명</label> <input type="text"
-										id="corpName" name="corpName"
+									<label for="corpName">기업명</label> <input type="text" id="corpName" name="corpName"
 										class="form-control readonly-field" readonly />
 								</div>
 								<div class="col-md-6">
-									<label for="corpRprsv">대표자명</label> <input type="text"
-										id="corpRprsv" name="corpRprsv"
-										class="form-control readonly-field" readonly />
+									<label for="corpRprsv">대표자명</label> <input type="text" id="corpRprsv"
+										name="corpRprsv" class="form-control readonly-field" readonly />
 								</div>
 								<div class="col-md-6">
-									<label for="corpBrno">사업자등록번호</label> <input type="text"
-										id="corpBrno" name="corpBrno"
+									<label for="corpBrno">사업자등록번호</label> <input type="text" id="corpBrno"
+										name="corpBrno" class="form-control readonly-field" disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="corpTelNo">연락처</label> <input type="text" id="corpTelNo"
+										name="corpTelNo" class="form-control" disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="corpFndnYmdt">설립일</label> <input type="text" id="corpFndnYmdt"
+										name="corpFndnYmdt" class="form-control" disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="corpZip">우편번호</label> <input type="text" id="corpZip" name="corpZip"
 										class="form-control readonly-field" disabled />
 								</div>
 								<div class="col-md-6">
-									<label for="corpTelNo">연락처</label> <input type="text"
-										id="corpTelNo" name="corpTelNo" class="form-control" disabled />
+									<label for="corpAddress">주소</label> <input type="text" id="corpAddress"
+										name="corpAddress" class="form-control readonly-field" disabled />
 								</div>
 								<div class="col-md-6">
-									<label for="corpFndnYmdt">설립일</label> <input type="text"
-										id="corpFndnYmdt" name="corpFndnYmdt" class="form-control"
-										disabled />
+									<label for="corpDAddress">상세주소</label> <input type="text" id="corpDAddress"
+										name="corpDAddress" class="form-control readonly-field" disabled />
 								</div>
 								<div class="col-md-6">
-									<label for="corpZip">우편번호</label> <input type="text"
-										id="corpZip" name="corpZip"
-										class="form-control readonly-field" disabled />
+									<label for="corpScale">기업 규모</label> <input type="text" id="corpScale"
+										name="corpScale" class="form-control readonly-field" readonly />
 								</div>
 								<div class="col-md-6">
-									<label for="corpAddress">주소</label> <input type="text"
-										id="corpAddress" name="corpAddress"
-										class="form-control readonly-field" disabled />
-								</div>
-								<div class="col-md-6">
-									<label for="corpDAddress">상세주소</label> <input type="text"
-										id="corpDAddress" name="corpDAddress"
-										class="form-control readonly-field" disabled />
-								</div>
-								<div class="col-md-6">
-									<label for="corpScale">기업 규모</label> <input type="text"
-										id="corpScale" name="corpScale"
+									<label for="corpUrl">홈페이지</label> <input type="text" id="corpUrl" name="corpUrl"
 										class="form-control readonly-field" readonly />
 								</div>
 								<div class="col-md-6">
-									<label for="corpUrl">홈페이지</label> <input type="text"
-										id="corpUrl" name="corpUrl"
-										class="form-control readonly-field" readonly />
-								</div>
-								<div class="col-md-6">
-									<label for="corpScr">평점 (0~5.0)</label> <input type="text"
-										id="corpScr" name="corpScr"
-										class="form-control readonly-field" readonly />
+									<label for="corpScr">평점 (0~5.0)</label> <input type="text" id="corpScr"
+										name="corpScr" class="form-control readonly-field" readonly />
 								</div>
 
 								<div class="col-md-6">
-									<label for="corpJoinYmdt">가입일</label> <input type="text"
-										id="corpJoinYmdt" name="corpJoinYmdt"
-										class="form-control readonly-field" disabled />
+									<label for="corpJoinYmdt">가입일</label> <input type="text" id="corpJoinYmdt"
+										name="corpJoinYmdt" class="form-control readonly-field" disabled />
 								</div>
 								<div class="col-md-6">
-									<label for="corpStatusCode">상태</label> <select
-										id="corpStatusCode" name="corpStatusCode"
-										class="form-select readonly-field" disabled>
+									<label for="corpStatusCode">상태</label> <select id="corpStatusCode"
+										name="corpStatusCode" class="form-select readonly-field" disabled>
 										<option value="SD_ACTIVE">활성</option>
 										<option value="SD_DORMANT">휴면</option>
 										<option value="SD_WITHDRAWN">탈퇴</option>
@@ -225,8 +215,8 @@
 								<input type="hidden" id="adminCode" th:value="${adminCode}" />
 							</div>
 							<div class="text-center mt-4">
-								<button type="button" id="btnSave"
-									class="btn btnSave btn-primary w-70 fw-bold" disabled>정보
+								<button type="button" id="btnSave" class="btn btnSave btn-primary w-70 fw-bold"
+									disabled>정보
 									수정</button>
 							</div>
 						</form>
@@ -237,71 +227,72 @@
 	</th:block>
 	<th:block layout:fragment="jsScript">
 		<script>
-		console.log("스크립트 로딩됨");
+			console.log("스크립트 로딩됨");
 
-$(document).ready(function () {
+			$(document).ready(function () {
 
-    // 🔍 필터
-    $('#filterStatus, #filterGrade').change(function () {
-        const status = $('#filterStatus').val();
-        const grade = $('#filterGrade').val();
+				// 🔍 필터
+				$('#filterStatus, #filterOrder').change(function () {
+					const status = $('#filterStatus').val();
+					const order = $('#filterOrder').val();
 
-        $.ajax({
-            url: '/admin/enterList/filter',
-            type: 'GET',
-            data: {
-                statusCode: status,
-            },
-            dataType: 'json',
-            success: renderEnterList,
-            error: () => alert("필터링 실패")
-        });
-    });
+					$.ajax({
+						url: '/admin/enterList/filter',
+						type: 'GET',
+						data: {
+							statusCode: status,
+							orderBy: order
+						},
+						dataType: 'json',
+						success: renderEnterList,
+						error: () => alert("필터링 실패")
+					});
+				});
 
-    // 🔎 검색
-    $('#searchBtn').click(function () {
-        const keyword = $('#searchInput').val().trim();
+				// 🔎 검색
+				$('#searchBtn').click(function () {
+					const keyword = $('#searchInput').val().trim();
 
-        $('#filterStatus').val('');
-        $('#filterGrade').val('');
-        $.ajax({
-            url: '/admin/enterList/search',
-            type: 'GET',
-            data: { keyword: keyword },
-            success: renderEnterList,
-            error: () => alert("검색 실패")
-        });
-    });
-    $('#searchInput').on('input', function () {
-		  const keyword = $(this).val().trim();
-		  if (keyword === '') {
-		    $('#filteredCountWrap').hide(); // 👉 '검색 결과 N명' 영역 숨기기
-		  }
-		});
+					$('#filterStatus').val('');
+					$('#filterOrder').val('');
+					$.ajax({
+						url: '/admin/enterList/search',
+						type: 'GET',
+						data: {keyword: keyword},
+						success: renderEnterList,
+						error: () => alert("검색 실패")
+					});
+				});
+				$('#searchInput').on('input', function () {
+					const keyword = $(this).val().trim();
+					if (keyword === '') {
+						$('#filteredCountWrap').hide(); // 👉 '검색 결과 N명' 영역 숨기기
+					}
+				});
 
-    // 📋 회원 목록 렌더링 함수
-    function renderEnterList(data) {
-        const tbody = $('#enterTableBody');
-        tbody.empty();
-         // 결과 개수 출력
-		  $('#filteredCount').text(data.length);
-		  $('#filteredCountWrap').show();
+				// 📋 회원 목록 렌더링 함수
+				function renderEnterList(data) {
+					const tbody = $('#enterTableBody');
+					tbody.empty();
+					// 결과 개수 출력
+					$('#filteredCount').text(data.length);
+					$('#filteredCountWrap').show();
 
-        if (!data || data.length === 0) {
-            tbody.append('<tr><td colspan="9" class="text-center">조회된 기업이 없습니다.</td></tr>');
-            return;
-        }
+					if (!data || data.length === 0) {
+						tbody.append('<tr><td colspan="9" class="text-center">조회된 기업이 없습니다.</td></tr>');
+						return;
+					}
 
-        data.forEach((corp, index) => {
-            const statusLabel = corp.statusCode === 'SD_ACTIVE'
-                ? '<span class="badge rounded-pill alert-success">활성</span>'
-                : corp.statusCode === 'SD_DORMANT'
-                    ? '<span class="badge rounded-pill alert-info">휴면</span>'
-                    : corp.statusCode === 'SD_WITHDRAWN'
-                        ? '<span class="badge rounded-pill alert-info">탈퇴</span>'
-                        : '<span class="badge rounded-pill alert-warning">제재</span>';
+					data.forEach((corp, index) => {
+						const statusLabel = corp.statusCode === 'SD_ACTIVE'
+							? '<span class="badge rounded-pill alert-success">활성</span>'
+							: corp.statusCode === 'SD_DORMANT'
+								? '<span class="badge rounded-pill alert-info">휴면</span>'
+								: corp.statusCode === 'SD_WITHDRAWN'
+									? '<span class="badge rounded-pill alert-info">탈퇴</span>'
+									: '<span class="badge rounded-pill alert-warning">제재</span>';
 
-            const row = `
+						const row = `
                 <tr class="text-center">
                 	<td>${index + 1}</td>
                     <td>${corp.memberCode}</td>
@@ -320,99 +311,99 @@ $(document).ready(function () {
                     </td>
                 </tr>
             `;
-            tbody.append(row);
-        });
-    }
+						tbody.append(row);
+					});
+				}
 
-    console.log("🚨 document.ready 실행됨");
+				console.log("🚨 document.ready 실행됨");
 
-    // 📄 상세정보 보기 버튼 클릭
-    $(document).on('click', '.btn-detail', function () {
-        const memberCode = $(this).data('code');
+				// 📄 상세정보 보기 버튼 클릭
+				$(document).on('click', '.btn-detail', function () {
+					const memberCode = $(this).data('code');
 
-        $.ajax({
-            url: '/admin/enterList/detail',
-            type: 'GET',
-            data: { memberCode },
-            success: function (data) {
-                $('#memberCode').val(data.memberCode);
-                $('#corpName').val(data.corpName);
-                $('#corpRprsv').val(data.corpRprsv);
-                $('#corpBrno').val(data.corpBrno);
-                $('#corpTelNo').val(data.corpTelNo);
-                $('#corpFndnYmdt').val(data.corpFoundationYmdt);
-                $('#corpZip').val(data.corpZip);
-                $('#corpAddress').val(data.corpAddress);
-                $('#corpDAddress').val(data.corpDAddress);
-                $('#corpScale').val(data.corpScale);
-                $('#corpUrl').val(data.corpUrl);
-                $('#corpScr').val(data.corpScr);
-                $('#corpJoinYmdt').val(data.corpJoinYmdt);
-                $('#corpStatusCode').val(data.statusCode);
-            },
-            error: function () {
-                alert('기업 정보를 불러오지 못했습니다.');
-            }
-        });
-    });
+					$.ajax({
+						url: '/admin/enterList/detail',
+						type: 'GET',
+						data: {memberCode},
+						success: function (data) {
+							$('#memberCode').val(data.memberCode);
+							$('#corpName').val(data.corpName);
+							$('#corpRprsv').val(data.corpRprsv);
+							$('#corpBrno').val(data.corpBrno);
+							$('#corpTelNo').val(data.corpTelNo);
+							$('#corpFndnYmdt').val(data.corpFoundationYmdt);
+							$('#corpZip').val(data.corpZip);
+							$('#corpAddress').val(data.corpAddress);
+							$('#corpDAddress').val(data.corpDAddress);
+							$('#corpScale').val(data.corpScale);
+							$('#corpUrl').val(data.corpUrl);
+							$('#corpScr').val(data.corpScr);
+							$('#corpJoinYmdt').val(data.corpJoinYmdt);
+							$('#corpStatusCode').val(data.statusCode);
+						},
+						error: function () {
+							alert('기업 정보를 불러오지 못했습니다.');
+						}
+					});
+				});
 
-    // 📝 수정모드 활성화
-    $('.btnEditMember').click(function () {
-        $('.readonly-field').prop('readonly', false);
-        $('#btnSave').prop('disabled', false);
-    });
+				// 📝 수정모드 활성화
+				$('.btnEditMember').click(function () {
+					$('.readonly-field').prop('readonly', false);
+					$('#btnSave').prop('disabled', false);
+				});
 
-    // 💾 저장 버튼 클릭 시 수정 요청
-    $(document).on('click', '#btnSave', function () {
-        const corpData = {
-            corpName: $('#corpName').val(),
-            corpScale: $('#corpScale').val(),
-            corpScr: $('#corpScr').val(),
-            corpUrl: $('#corpUrl').val(),
-            corpExplain: $('#corpExplain').val(),
-            memberCode: $('#memberCode').val(), 
-            corpRprsv: $('#corpRprsv').val()
-        };
+				// 💾 저장 버튼 클릭 시 수정 요청
+				$(document).on('click', '#btnSave', function () {
+					const corpData = {
+						corpName: $('#corpName').val(),
+						corpScale: $('#corpScale').val(),
+						corpScr: $('#corpScr').val(),
+						corpUrl: $('#corpUrl').val(),
+						corpExplain: $('#corpExplain').val(),
+						memberCode: $('#memberCode').val(),
+						corpRprsv: $('#corpRprsv').val()
+					};
 
-        // 필수값 유효성 검사
-        if (!corpData.corpName) {
-	        console.log("📛 corpName =", corpData.corpName);
-	   		console.log("📛 adminCode =", corpData.adminCode);
-            alert("기업명은 필수입니다.");
-            return;
-        }
-        if(corpData.corpScr>5){
-        	alert("평점은 5점 이하의 점수를 소수점 한자리까지 작성해주십시오.");
-        	return;
-        }
+					// 필수값 유효성 검사
+					if (!corpData.corpName) {
+						console.log("📛 corpName =", corpData.corpName);
+						console.log("📛 adminCode =", corpData.adminCode);
+						alert("기업명은 필수입니다.");
+						return;
+					}
+					if (corpData.corpScr > 5) {
+						alert("평점은 5점 이하의 점수를 소수점 한자리까지 작성해주십시오.");
+						return;
+					}
 
-        $.ajax({
-            url: '/admin/enterList/detail/update',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(corpData),
-            success: function (result) {
-                if (result === 'success') {
-                    alert('기업 정보가 성공적으로 수정되었습니다.');
-                    location.reload();
-                } else {
-                    alert('수정에 실패했습니다.');
-                }
-            },
-            error: function () {
-                alert('서버 오류가 발생했습니다.');
-            }
-        });
-    });
+					$.ajax({
+						url: '/admin/enterList/detail/update',
+						method: 'POST',
+						contentType: 'application/json',
+						data: JSON.stringify(corpData),
+						success: function (result) {
+							if (result === 'success') {
+								alert('기업 정보가 성공적으로 수정되었습니다.');
+								location.reload();
+							} else {
+								alert('수정에 실패했습니다.');
+							}
+						},
+						error: function () {
+							alert('서버 오류가 발생했습니다.');
+						}
+					});
+				});
 
-    // 🧼 모달 닫힐 때 필드 원복
-    $('#enterDetailModal').on('hidden.bs.modal', function () {
-        $('.readonly-field').prop('readonly', true);
-        $('#corpStatusCode').prop('disabled', true);
-    });
+				// 🧼 모달 닫힐 때 필드 원복
+				$('#enterDetailModal').on('hidden.bs.modal', function () {
+					$('.readonly-field').prop('readonly', true);
+					$('#corpStatusCode').prop('disabled', true);
+				});
 
-});
-			
+			});
+
 		</script>
 	</th:block>
 </body>

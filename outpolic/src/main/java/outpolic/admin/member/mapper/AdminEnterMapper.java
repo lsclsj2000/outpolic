@@ -24,7 +24,8 @@ public interface AdminEnterMapper {
 	int updateAdminEnterEditInfo(AdminMemberDTO adminMemberDTO);
 	
 	//필터링
-	List<AdminMemberDTO> selectFilteredEnterpriseMembers(@Param("statusCode") String statusCode);
+	List<AdminMemberDTO> selectFilteredEnterpriseMembers(@Param("statusCode") String statusCode,
+														 @Param("orderBy") String orderBy);
             
 	// 검색
 	List<AdminMemberDTO> searchEnterpriseMembers(String keyword);
