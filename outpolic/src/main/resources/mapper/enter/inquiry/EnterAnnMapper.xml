@@ -4,9 +4,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="outpolic.user.inquiry.mapper.UserInquiryMapper">
-	<!-- UserInquiry.DTO -->
-	<resultMap id="userNoticeResultMap" type="outpolic.user.inquiry.domain.UserAnn">
+<mapper namespace="outpolic.enter.inquiry.mapper.EnterInquiryMapper">
+	<!-- EnterInquiry.DTO -->
+	<resultMap id="enterNoticeResultMap" type="outpolic.enter.inquiry.domain.EnterAnn">
 		<id 	column="ann_cd" 			property="annCode"/>
 		<result column="ann_type" 			property="annType"/>
 		<result column="ann_ttl" 			property="annTitle"/>
@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="sa_size" 			property="saSize"/>
 	</resultMap>
 	
-	<resultMap id="userTotalResultMap" type="outpolic.user.inquiry.domain.UserAnn">
+	<resultMap id="enterTotalResultMap" type="outpolic.enter.inquiry.domain.EnterAnn">
 		<id 	column="cd" 				property="totalCode"/>
 		<result column="type" 				property="totalType"/>
 		<result column="title" 				property="totalTitle"/>
@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<!-- 🔽 정렬 가능한 공지사항 리스트 페이징 쿼리 -->
-	<select id="getUserNoticeListPagedWithSort" resultMap="userNoticeResultMap">
+	<select id="getEnterNoticeListPagedWithSort" resultMap="enterNoticeResultMap">
 		SELECT
 			a.ann_cd as ann_cd,
 			CASE 
@@ -64,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	
-	<select id="getUserNoticeListPaged" resultMap="userNoticeResultMap">
+	<select id="getEnterNoticeListPaged" resultMap="enterNoticeResultMap">
 		SELECT
 			a.ann_cd as ann_cd,
 			CASE 
@@ -89,12 +89,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		LIMIT #{limit} OFFSET #{offset}
 	</select>
 	
-	<select id="getUserNoticeCount" resultType="int">
+	<select id="getEnterNoticeCount" resultType="int">
 		SELECT COUNT(*) FROM announcement 
 		WHERE ann_type = 'notice' AND stc_cd = 'SD_ACTIVE'
 	</select>
 	
-	<select id="getUserTotalList" resultMap="userTotalResultMap">
+	<select id="getEnterTotalList" resultMap="enterTotalResultMap">
 		/* 전체 게시판 조회 */
 		SELECT
 		    a.ann_cd AS cd,
@@ -126,7 +126,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			reg_date desc;
 	</select>
 	
-	<select id="getUserFaqList" resultMap="userNoticeResultMap">
+	<select id="getEnterFaqList" resultMap="enterNoticeResultMap">
 		/* faq 목록 조회 */
 		select
 			a.ann_cd as ann_cd,
@@ -146,7 +146,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			a.ann_type = 'faq' and a.stc_cd = 'SD_ACTIVE';
 	</select>
 	
-	<select id="getUserNoticeByCode" parameterType="String" resultMap="userNoticeResultMap">
+	<select id="getEnterNoticeByCode" parameterType="String" resultMap="enterNoticeResultMap">
 		/* 공지사항 게시판 조회 */
 		select
 			a.ann_cd as ann_cd,
@@ -179,7 +179,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			a.ann_reg_ymdt DESC;
 	</select>
 	
-	<select id="getUserNoticeList" resultMap="userNoticeResultMap">
+	<select id="getEnterNoticeList" resultMap="enterNoticeResultMap">
 		/* 공지사항 게시판 조회 */
 		select
 			a.ann_cd as ann_cd,

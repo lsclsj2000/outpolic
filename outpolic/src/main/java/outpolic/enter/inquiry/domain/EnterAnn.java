@@ -1,11 +1,11 @@
-package outpolic.user.inquiry.domain;
+package outpolic.enter.inquiry.domain;
 
 import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class UserAnn {
+public class EnterAnn {
 	private String annCode;
 	private String annType; 
 	private String annTitle;
@@ -30,5 +30,5 @@ public class UserAnn {
 	private String totalWriter;
 	private String totalRegDate;
 
-	private List<UserInquiryFile> userInquiryFiles;
+	private List<EnterInquiryFile> enterInquiryFiles;
 }
