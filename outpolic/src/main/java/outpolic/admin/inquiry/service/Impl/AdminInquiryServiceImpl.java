@@ -84,5 +84,17 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 		// 문의 자원 수정
 		adminInquiryMapper.updateInquiryType(inquiryType);
 	}
+	
+	@Override
+	public List<AdminInquiry> getAdminInquiryListPaged(int offset, int size) {
+		// 페이지네이션
+	    return adminInquiryMapper.getAdminInquiryListPaged(offset, size);
+	}
+
+	@Override
+	public int getAdminInquiryTotalCount() {
+		// 페이지네이션
+	    return adminInquiryMapper.getAdminInquiryTotalCount();
+	}
 
 }
