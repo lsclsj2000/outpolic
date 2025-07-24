@@ -37,18 +37,18 @@
 	
 	<select id="AdminEmpowermentSelect" resultMap="AdminEmpowermentMappingResultMap">
 		SELECT
-    a.adm_cd              ,
-    a.stc_cd             ,
-    MAX(CASE WHEN ar.ar_cd = 'SYSTEM_ADMIN' THEN 1 ELSE 0 END) as system_admin,
-    MAX(CASE WHEN ar.ar_cd = 'ADMIN_EMPOWERMENT' THEN 1 ELSE 0 END) as admin_empowerment,
-    MAX(CASE WHEN ar.ar_cd = 'CONTENT_ADMIN' THEN 1 ELSE 0 END) as content_admin,
-    MAX(CASE WHEN ar.ar_cd = 'CS_ADMIN' THEN 1 ELSE 0 END) as cs_admin,
-    MAX(CASE WHEN ar.ar_cd = 'MEMBER_ADMIN' THEN 1 ELSE 0 END) as member_admin,
-    MAX(CASE WHEN ar.ar_cd = 'USER_PAYMENT_ADMIN' THEN 1 ELSE 0 END) as user_payment_admin
-FROM admin a
-LEFT JOIN admin_roles_mapping arm ON a.adm_cd = arm.adm_cd
-LEFT JOIN admin_roles ar ON arm.ar_cd = ar.ar_cd
-GROUP BY a.adm_cd, a.stc_cd
-ORDER BY a.adm_cd;
+		    a.adm_cd,
+		    a.stc_cd,
+		    MAX(CASE WHEN ar.ar_cd = 'SYSTEM_ADMIN' THEN 1 ELSE 0 END) as system_admin,
+		    MAX(CASE WHEN ar.ar_cd = 'ADMIN_EMPOWERMENT' THEN 1 ELSE 0 END) as admin_empowerment,
+		    MAX(CASE WHEN ar.ar_cd = 'CONTENT_ADMIN' THEN 1 ELSE 0 END) as content_admin,
+		    MAX(CASE WHEN ar.ar_cd = 'CS_ADMIN' THEN 1 ELSE 0 END) as cs_admin,
+		    MAX(CASE WHEN ar.ar_cd = 'MEMBER_ADMIN' THEN 1 ELSE 0 END) as member_admin,
+		    MAX(CASE WHEN ar.ar_cd = 'USER_PAYMENT_ADMIN' THEN 1 ELSE 0 END) as user_payment_admin
+		FROM admin a
+		LEFT JOIN admin_roles_mapping arm ON a.adm_cd = arm.adm_cd
+		LEFT JOIN admin_roles ar ON arm.ar_cd = ar.ar_cd
+		GROUP BY a.adm_cd, a.stc_cd
+		ORDER BY a.adm_cd;
 	</select>
 </mapper>

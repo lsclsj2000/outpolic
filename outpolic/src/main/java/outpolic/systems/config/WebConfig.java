@@ -86,11 +86,13 @@ public class WebConfig implements WebMvcConfigurer{
 	                "/user/products**",
 	                "/admin/login",
 	                "/favicon*",
+	                "/common/assets/**",
 	                "/user/assets/**",
 	                "/enter/assets/**",
 	                "/admin/assets/**", // 정적 리소스
 	                "/attachment/**",
-	                "/api/enter/bookmarks"
+	                "/api/enter/bookmarks",
+	                "/limitInfoView**"
 	            );
 
 	    // 로그인된 사용자가 다시 로그인/회원가입 페이지 접근 못하도록 제한
