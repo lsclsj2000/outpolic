@@ -31,40 +31,38 @@
 						    <p><a href="/user/userInquiryWrite">문의작성</a></p>
 						</div>
 						<div class="sort-by-product-area">
-							<div class="sort-by-cover mr-10">
-								<div class="sort-by-product-wrap">
-									<div class="sort-by">
-										<span><i class="fi-rs-apps"></i>Show:</span>
-									</div>
-									<div class="sort-by-dropdown-wrap">
-										<span> 10 <i class="fi-rs-angle-small-down"></i></span>
-									</div>
-								</div>
-								<div class="sort-by-dropdown">
-									<ul>
-										<li><a class="active" href="#">10</a></li>
-										<li><a href="#">15</a></li>
-										<li><a href="#">20</a></li>
-									</ul>
-								</div>
-							</div>
-							<div class="sort-by-cover">
-								<div class="sort-by-product-wrap">
-									<div class="sort-by">
-									    <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
-									</div>
-									<div class="sort-by-dropdown-wrap">
-									    <span> 최근순 <i class="fi-rs-angle-small-down"></i></span>
-									</div>
-								</div>
-								<div class="sort-by-dropdown">
-									<ul>
-									    <li><a class="active" href="#">최근순</a></li>
-									    <li><a href="#">과거순</a></li>
-									    <li><a href="#">조회순</a></li>
-									</ul>
-								</div>
-							</div>
+							<form id="filterForm" method="get" th:action="@{/user/userInquiryNotice}" style="display:flex; flex-direction:row-reverse;">
+							    <!-- 페이지당 출력 수 -->
+							    <div class="sort-by-cover">
+							        <div class="sort-by-product-wrap">
+							            <div class="sort-by">
+							                <span><i class="fi-rs-apps"></i>Show:</span>
+							            </div>
+							            <div class="sort-by-dropdown-wrap">
+							                <select name="size" onchange="document.getElementById('filterForm').submit()">
+							                    <option th:selected="${size == 10}" value="10">10</option>
+							                    <option th:selected="${size == 15}" value="15">15</option>
+							                    <option th:selected="${size == 20}" value="20">20</option>
+							                </select>
+							            </div>
+							        </div>
+							    </div>
+							
+							    <!-- 정렬 -->
+							    <div class="sort-by-cover mr-10">
+							        <div class="sort-by-product-wrap">
+							            <div class="sort-by">
+							                <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+							            </div>
+							            <div class="sort-by-dropdown-wrap">
+							                <select name="sort" onchange="document.getElementById('filterForm').submit()">
+							                    <option th:selected="${sort == 'recent'}" value="recent">최근순</option>
+							                    <option th:selected="${sort == 'old'}" value="old">과거순</option>
+							                </select>
+							            </div>
+							        </div>
+							    </div>
+							</form>
 						</div>
 					</div>
 					
@@ -104,45 +102,9 @@
 							</tbody>
 						</table>
 					</div>
-				</div>
-			</div>
-			
-						
-			<div style="display:flex; justify-content:center; flex-direction:column; align-items:center;">
-				<div style="display: flex; width:500px; flex-direction: column; margin:10px;">
-				    <form action="#">
-				        <select class="select-active" style="width:30%;">
-				            <option>선택</option>
-				            <option>제목</option>
-				            <option>내용</option>
-				            <option>타입</option>
-				        </select>
-						<input class="justify-content-center" type="text" placeholder="Search" style="height:40px; width:70%;"/>
-				    </form>
-				</div>
-				
-				
-				<div class="pagination-area mt-20 mb-20">
-					<nav aria-label="Page navigation example">
-						<ul class="pagination justify-content-center">
-							<li class="page-item">
-							    <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a>
-							</li>
-							<li class="page-item"><a class="page-link" href="#">1</a></li>
-							<li class="page-item active"><a class="page-link" href="#">2</a></li>
-							<li class="page-item"><a class="page-link" href="#">3</a></li>
-							<li class="page-item"><a class="page-link dot" href="#">...</a></li>
-							<li class="page-item"><a class="page-link" href="#">6</a></li>
-							<li class="page-item">
-							    <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a>
-							</li>
-						</ul>
-					</nav>
+					<div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, ${size}, ${sort})}"></div>
 				</div>
 			</div>
 		</div>
-	
-	
 	</th:block>
-	
 </html>

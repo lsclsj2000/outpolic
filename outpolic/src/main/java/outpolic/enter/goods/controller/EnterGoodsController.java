@@ -38,6 +38,6 @@ public class EnterGoodsController {
 			// 로그인하지 않은 경우 0으로 설정 (또는 로그인 페이지로 리다이렉트 등 처리)
 			model.addAttribute("availableMileage", BigDecimal.ZERO);
 		}
-		return "user/goods/userGoodsList";
+		return "enter/goods/enterGoodsList";
 	}
 }

@@ -37,7 +37,7 @@ public class UserWithdrawnController {
 		if(memberCode == null) {
 			return "redirect:/login";
 		}
-		return "user/withdrawn/userWithdrawnView";
+		return "user/withdrawn/";
 	}
 	
 	@PostMapping("/user/withdrawn")

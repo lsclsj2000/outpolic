@@ -38,4 +38,8 @@ public interface AdminInquiryMapper {
     
     // 문의답변 저장
     void updateInquiryAnswer(AdminInquiry adminInquiry);
+    
+    // 페이지네이션
+    List<AdminInquiry> getAdminInquiryListPaged(@Param("offset") int offset, @Param("size") int size);
+    int getAdminInquiryTotalCount();
 }

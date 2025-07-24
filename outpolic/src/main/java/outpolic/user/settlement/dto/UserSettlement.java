@@ -7,20 +7,17 @@ import lombok.Data;
 
 @Data
 public class UserSettlement {
-	private String stlmCd;				// 결제 코드
-	private String mbrCd;				// 회원 코드
-	private String gdsCd;				// 상품 코드
-	private String stcCd;				// 상태 코드
-	private int stlmCnt;				// 상품 개수
-	private String stlmPayType;			// 결제 방식
-	private BigDecimal stlmAmt;			// 결제 예정 금액
-    private Integer stlmUsedPoints;		// 사용된 마일리지
-    private BigDecimal stlmFinalAmt;	// 최종 결제 금액
-    private String stlmPaymentInfo;		// 카드 결제 세부 정보
-    private String stlmCardNm;			// 카드사
-    private String stlmProviderNm;		// 간편결제사
-    private String stlmAccountInfo;		// 계좌 세부 정보
-    private String stlmAccountNm;		// 결제자
-    private Timestamp stlmYmdt;			// 결제일시
-    private boolean stlmAgreYn;			// 결제 약관 동의 여부
+	private String stlmCd;
+    private String gdsCd;
+    private String stcCd;
+    private int stlmCnt;
+    private Integer stlmUsedPoints;
+    private BigDecimal stlmFinalAmt;
+    private Timestamp stlmYmdt;
+    private String stlmMethod;
+    private String stlmCardType;
+
+    // JOIN을 통해 가져올 추가 정보
+    private String gdsNm;      // goods 테이블의 상품명
+    private String stcNm;      // status_code 테이블의 상태명
 }

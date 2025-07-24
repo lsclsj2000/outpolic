@@ -34,11 +34,6 @@ public class UserMypageEditServiceImpl implements UserMypageEditService {
 		    log.info("🧾 수정 쿼리 실행 결과: {}건 반영됨", result);
 	}
 
-	@Override
-	public List<UserInfoDTO> getMemberList() {
-
-		return null;
-	}
 
 	// 회원 닉네임 중복검사 -> 0이 아니고 1이 나오면 중복이 존재한다는 뜻.
 	@Override

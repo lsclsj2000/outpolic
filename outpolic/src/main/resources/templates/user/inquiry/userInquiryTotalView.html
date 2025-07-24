@@ -18,9 +18,9 @@
 						    <h1 class="heading-2 mb-10">전체</h1>
 						    <div class="text-center">
 							    <ul style="display:flex; justify-content:space-around">
-							    	<li><a href="/user/userInquiryTotal">전체</a></li>
-							    	<li><a href="/user/userInquiryNotice">Notice</a></li>
-							    	<li><a href="/user/userInquiryList">문의</a></li>
+							    	<li><a href="/user/userInquiryTotal">전체</a></li>|
+							    	<li><a href="/user/userInquiryNotice">Notice</a></li>|
+							    	<li><a href="/user/userInquiryList">문의</a></li>|
 							    	<li><a href="/user/userInquiryFaq">FAQ</a></li>
 							    </ul>				    
 						    </div>
@@ -31,41 +31,38 @@
 						    <p><a href="/user/userInquiryWrite">문의작성</a></p>
 						</div>
 						<div class="sort-by-product-area">
-							<div class="sort-by-cover mr-10">
-								<div class="sort-by-product-wrap">
-									<div class="sort-by">
-										<span><i class="fi-rs-apps"></i>Show:</span>
-									</div>
-									<div class="sort-by-dropdown-wrap">
-										<span> 10 <i class="fi-rs-angle-small-down"></i></span>
-									</div>
-								</div>
-								<div class="sort-by-dropdown">
-									<ul>
-										<li><a class="active" href="#">10</a></li>
-										<li><a href="#">15</a></li>
-										<li><a href="#">20</a></li>
-									</ul>
-								</div>
-							</div>
-							<div class="sort-by-cover">
-								<div class="sort-by-product-wrap">
-									<div class="sort-by">
-									    <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
-									</div>
-									<div class="sort-by-dropdown-wrap">
-									    <span> 최근순 <i class="fi-rs-angle-small-down"></i></span>
-									</div>
-								</div>
-								<div class="sort-by-dropdown">
-									<ul>
-									    <li><a class="active" href="#">최근순</a></li>
-									    <li><a href="#">과거순</a></li>
-									    <li><a href="#">조회순</a></li>
-										<li><a href="#">내가 쓴 글</a></li>
-									</ul>
-								</div>
-							</div>
+							<form id="filterForm" method="get" th:action="@{/user/userInquiryTotal}" style="display:flex; flex-direction:row-reverse;">
+							    <!-- 페이지당 출력 수 -->
+							    <div class="sort-by-cover">
+							        <div class="sort-by-product-wrap">
+							            <div class="sort-by">
+							                <span><i class="fi-rs-apps"></i>Show:</span>
+							            </div>
+							            <div class="sort-by-dropdown-wrap">
+							                <select name="size" onchange="document.getElementById('filterForm').submit()">
+							                    <option th:selected="${size == 10}" value="10">10</option>
+							                    <option th:selected="${size == 15}" value="15">15</option>
+							                    <option th:selected="${size == 20}" value="20">20</option>
+							                </select>
+							            </div>
+							        </div>
+							    </div>
+							
+							    <!-- 정렬 -->
+							    <div class="sort-by-cover mr-10">
+							        <div class="sort-by-product-wrap">
+							            <div class="sort-by">
+							                <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+							            </div>
+							            <div class="sort-by-dropdown-wrap">
+							                <select name="sort" onchange="document.getElementById('filterForm').submit()">
+							                    <option th:selected="${sort == 'recent'}" value="recent">최근순</option>
+							                    <option th:selected="${sort == 'old'}" value="old">과거순</option>
+							                </select>
+							            </div>
+							        </div>
+							    </div>
+							</form>
 						</div>
 					</div>
 					
@@ -81,165 +78,67 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="start pt-30" style="border:0px; border-bottom: solid 1px #ececec;">
-									<td class="start text-center"><span>1</span></td>
-									<td scope="col">
-										<span>
-											<a href="/user/userInquiryDetail" style="color: black; text-decoration: none;" onmouseover="this.style.color='#3BB77E'" onmouseout="this.style.color='black'">
-												제목
-											</a>
-										</span>
+							    <tr class="start pt-30"
+							        style="border:0px; border-bottom: solid 1px #ececec;"
+							        th:each="l, stat : ${totalList}">
+							        
+							        <!-- No -->
+							        <td class="start text-center">
+							            <span th:text="${totalList.size() - stat.index}">번호</span>
+							        </td>
+							        
+							        <!-- 제목 (공지인지 문의인지에 따라 링크 변경) -->
+							        <td scope="col">
+									    <!-- 문의 & 비밀글 -->
+									    <span th:if="${l.totalType == '문의' and l.inquirySecret == 1}">
+									        <i class="fas fa-lock" style="color: #6c757d; font-size: 0.9em; margin-right: 5px;" title="비밀글"></i>
+									
+									        <!-- 작성자 또는 관리자 -->
+									        <a th:if="${sessionMemberCode == l.memberCode or sessionMemberCode == 'ADMIN'}"
+									           th:href="@{/user/userInquiryDetail(iq_cd=${l.totalCode})}"
+									           th:text="${l.totalTitle}"
+									           style="color: black; text-decoration: none;"
+									           onmouseover="this.style.color='#3BB77E'"
+									           onmouseout="this.style.color='black'">
+									        </a>
+									
+									        <!-- 다른 사람은 alert -->
+									        <a th:if="${sessionMemberCode != l.memberCode and sessionMemberCode != 'ADMIN'}"
+									           href="javascript:void(0);"
+									           th:text="${l.totalTitle}"
+									           onclick="alert('비밀글은 작성자만 열람 가능합니다.');"
+									           style="color: black; text-decoration: none; cursor: pointer;"
+									           onmouseover="this.style.color='#3BB77E'"
+									           onmouseout="this.style.color='black'">
+									        </a>
+									    </span>
+									
+									    <!-- 공지사항 또는 일반 문의글 -->
+									    <span th:if="${l.totalType != '문의' or l.inquirySecret != 1}">
+									        <a th:href="${l.totalType == '공지사항'} ? @{'/user/userNoticeDetail'(ann_cd=${l.totalCode})} : @{'/user/userInquiryDetail'(iq_cd=${l.totalCode})}"
+									           th:text="${l.totalTitle}"
+									           style="color: black; text-decoration: none;"
+									           onmouseover="this.style.color='#3BB77E'"
+									           onmouseout="this.style.color='black'">
+									        </a>
+									    </span>
 									</td>
-									<td scope="col" class="text-center"><span>문의</span></td>
-									<td scope="col" class="text-center"><span>작성자</span></td>
-									<td scope="col" class="text-center"><span> 2025-06-24 </span></td>
-								</tr>
-								<tr class="start pt-30" style="border:0px; border-bottom: solid 1px #ececec;">
-									<td class="start text-center"><span>1</span></td>
-									<td scope="col">
-										<span>
-											<a href="/user/userInquiryDetail" style="color: black; text-decoration: none;" onmouseover="this.style.color='#3BB77E'" onmouseout="this.style.color='black'">
-												제목
-											</a>
-										</span>
-									</td>
-									<td scope="col" class="text-center"><span>공지사항</span></td>
-									<td scope="col" class="text-center"><span>작성자</span></td>
-									<td scope="col" class="text-center"><span> 2025-06-24 </span></td>
-								</tr>
-								<tr class="start pt-30" style="border:0px; border-bottom: solid 1px #ececec;">
-									<td class="start text-center"><span>1</span></td>
-									<td scope="col">
-										<span>
-											<a href="/user/userInquiryDetail" style="color: black; text-decoration: none;" onmouseover="this.style.color='#3BB77E'" onmouseout="this.style.color='black'">
-												제목
-											</a>
-										</span>
-									</td>
-									<td scope="col" class="text-center"><span>공지사항</span></td>
-									<td scope="col" class="text-center"><span>작성자</span></td>
-									<td scope="col" class="text-center"><span> 2025-06-24 </span></td>
-								</tr>
-								<tr class="start pt-30" style="border:0px; border-bottom: solid 1px #ececec;">
-									<td class="start text-center"><span>1</span></td>
-									<td scope="col">
-										<span>
-											<a href="/user/userInquiryDetail" style="color: black; text-decoration: none;" onmouseover="this.style.color='#3BB77E'" onmouseout="this.style.color='black'">
-												제목
-											</a>
-										</span>
-									</td>
-									<td scope="col" class="text-center"><span>문의</span></td>
-									<td scope="col" class="text-center"><span>작성자</span></td>
-									<td scope="col" class="text-center"><span> 2025-06-24 </span></td>
-								</tr>
-								<tr class="start pt-30" style="border:0px; border-bottom: solid 1px #ececec;">
-									<td class="start text-center"><span>1</span></td>
-									<td scope="col">
-										<span>
-											<a href="/user/userInquiryDetail" style="color: black; text-decoration: none;" onmouseover="this.style.color='#3BB77E'" onmouseout="this.style.color='black'">
-												제목
-											</a>
-										</span>
-									</td>
-									<td scope="col" class="text-center"><span>공지사항</span></td>
-									<td scope="col" class="text-center"><span>작성자</span></td>
-									<td scope="col" class="text-center"><span> 2025-06-24 </span></td>
-								</tr>
-								<tr class="start pt-30" style="border:0px; border-bottom: solid 1px #ececec;">
-									<td class="start text-center"><span>1</span></td>
-									<td scope="col">
-										<span>
-											<a href="/user/userInquiryDetail" style="color: black; text-decoration: none;" onmouseover="this.style.color='#3BB77E'" onmouseout="this.style.color='black'">
-												제목
-											</a>
-										</span>
-									</td>
-									<td scope="col" class="text-center"><span>문의</span></td>
-									<td scope="col" class="text-center"><span>작성자</span></td>
-									<td scope="col" class="text-center"><span> 2025-06-24 </span></td>
-								</tr>
-								<tr class="start pt-30" style="border:0px; border-bottom: solid 1px #ececec;">
-									<td class="start text-center"><span>1</span></td>
-									<td scope="col">
-										<span>
-											<a href="/user/userInquiryDetail" style="color: black; text-decoration: none;" onmouseover="this.style.color='#3BB77E'" onmouseout="this.style.color='black'">
-												제목
-											</a>
-										</span>
-									</td>
-									<td scope="col" class="text-center"><span>문의</span></td>
-									<td scope="col" class="text-center"><span>작성자</span></td>
-									<td scope="col" class="text-center"><span> 2025-06-24 </span></td>
-								</tr>
-								<tr class="start pt-30" style="border:0px; border-bottom: solid 1px #ececec;">
-									<td class="start text-center"><span>1</span></td>
-									<td scope="col">
-										<span>
-											<a href="/user/userInquiryDetail" style="color: black; text-decoration: none;" onmouseover="this.style.color='#3BB77E'" onmouseout="this.style.color='black'">
-												제목
-											</a>
-										</span>
-									</td>
-									<td scope="col" class="text-center"><span>공지사항</span></td>
-									<td scope="col" class="text-center"><span>작성자</span></td>
-									<td scope="col" class="text-center"><span> 2025-06-24 </span></td>
-								</tr>
-								<tr class="start pt-30" style="border:0px; border-bottom: solid 1px #ececec;">
-									<td class="start text-center"><span>1</span></td>
-									<td scope="col">
-										<span>
-											<a href="/user/userInquiryDetail" style="color: black; text-decoration: none;" onmouseover="this.style.color='#3BB77E'" onmouseout="this.style.color='black'">
-												제목
-											</a>
-										</span>
-									</td>
-									<td scope="col" class="text-center"><span>문의</span></td>
-									<td scope="col" class="text-center"><span>작성자</span></td>
-									<td scope="col" class="text-center"><span> 2025-06-24 </span></td>
-								</tr>
+							        
+							        <!-- 분류 -->
+							        <td scope="col" class="text-center" th:text="${l.totalType}">분류</td>
+							        
+							        <!-- 작성자 -->
+							        <td scope="col" class="text-center" th:text="${l.totalWriter}">작성자</td>
+							        
+							        <!-- 작성일자 -->
+							        <td scope="col" class="text-center" th:text="${l.totalRegDate}">2025-06-24</td>
+							    </tr>
 							</tbody>
 						</table>
 					</div>
-				</div>
-			</div>
-			
-						
-			<div style="display:flex; justify-content:center; flex-direction:column; align-items:center;">
-				<div style="display: flex; width:500px; flex-direction: column; margin:10px;">
-				    <form action="#">
-				        <select class="select-active" style="width:30%;">
-				            <option>선택</option>
-				            <option>제목</option>
-				            <option>내용</option>
-				            <option>타입</option>
-				        </select>
-						<input class="justify-content-center" type="text" placeholder="Search" style="height:40px; width:70%;"/>
-				    </form>
-				</div>
-				
-				
-				<div class="pagination-area mt-20 mb-20">
-					<nav aria-label="Page navigation example">
-						<ul class="pagination justify-content-center">
-							<li class="page-item">
-							    <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a>
-							</li>
-							<li class="page-item"><a class="page-link" href="#">1</a></li>
-							<li class="page-item active"><a class="page-link" href="#">2</a></li>
-							<li class="page-item"><a class="page-link" href="#">3</a></li>
-							<li class="page-item"><a class="page-link dot" href="#">...</a></li>
-							<li class="page-item"><a class="page-link" href="#">6</a></li>
-							<li class="page-item">
-							    <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a>
-							</li>
-						</ul>
-					</nav>
+					<div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, ${size}, ${sort})}"></div>	
 				</div>
 			</div>
 		</div>
-	
-	
 	</th:block>
-	
 </html>

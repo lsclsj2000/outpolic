@@ -3,6 +3,7 @@ package outpolic.user.inquiry.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.repository.query.Param;
 
 import outpolic.user.inquiry.domain.UserAnn;
 import outpolic.user.inquiry.domain.UserInquiry;
@@ -67,7 +68,45 @@ public interface UserInquiryMapper {
 	
 	// 공지사항 상세 페이지 조회
     UserAnn getUserNoticeByCode(String annCode);
+    
+    // faq 목록 조회
+ 	List<UserAnn> getUserFaqList();
+ 	
+ 	// 전체 게시판 조회
+ 	List<UserAnn> getUserTotalList();
+ 	
+ 	// 전체 게시판 페이지네이션
+ 	List<UserAnn> getUserTotalListPaged(@Param("offset") int offset, @Param("limit") int limit);
+ 	int getUserTotalCount();
+ 	
+ 	// 문의 목록 페이지네이션
+ 	List<UserInquiry> getUserInquiryListPaged(@Param("offset") int offset, @Param("limit") int limit);
+ 	
+ 	// 공지사항 목록 페이지네이션
+ 	List<UserAnn> getUserNoticeListPaged(@Param("offset") int offset, @Param("limit") int limit);
+ 	int getUserNoticeCount();
+ 	
+ 	// 문의 목록 필터-사용자
+ 	List<UserInquiry> getUserInquiryListByCodePaged(@Param("mbrCd") String mbrCd, @Param("offset") int offset, @Param("limit") int limit);
+ 	int getUserInquiryListByCodeCount(@Param("mbrCd") String mbrCd);
+ 	
+ 	int getUserInquiryListCount(@Param("memberCode") String memberCode);
+ 	
+ 	List<UserInquiry> getUserInquiryListPaged(
+ 		    @Param("offset") int offset,
+ 		    @Param("limit") int limit,
+ 		    @Param("sort") String sort,
+ 		    @Param("memberCode") String memberCode
+ 		);
 	
+ 	
+ 	List<UserAnn> getUserTotalListPaged(@Param("offset") int offset,
+            @Param("limit") int limit,
+            @Param("sort") String sort);
+ 	
+ 	List<UserAnn> getUserNoticeListPagedWithSort(@Param("offset") int offset,
+            @Param("limit") int limit,
+            @Param("sort") String sort);
 }
 
 

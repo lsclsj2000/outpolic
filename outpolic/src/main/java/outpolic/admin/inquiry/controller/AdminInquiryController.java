@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.inquiry.domain.AdminInquiry;
 import outpolic.admin.inquiry.domain.AdminInquiryType;
 import outpolic.admin.inquiry.service.AdminInquiryService;
+import outpolic.common.domain.PageInfo;
 
 @Slf4j
 @Controller
@@ -81,14 +82,20 @@ public class AdminInquiryController {
 	}
 	
 	@GetMapping("/adminInquiryList")
-	public String adminInquiryView(Model model) {
-		// 문의내역 조회 페이지
-		var inquiryList = adminInquiryService.getAdminInquiryList();
-		
-		model.addAttribute("title", "관리자 문의 내역");
-		model.addAttribute("inquiryList", inquiryList);
-		
-		return "admin/inquiry/adminInquiryView";
+	public String adminInquiryView(
+	    @RequestParam(defaultValue = "1") int page,
+	    @RequestParam(defaultValue = "10") int size,
+	    Model model
+	) {
+	    int offset = (page - 1) * size;
+	    List<AdminInquiry> inquiryList = adminInquiryService.getAdminInquiryListPaged(offset, size);
+	    int total = adminInquiryService.getAdminInquiryTotalCount();
+
+	    model.addAttribute("title", "관리자 문의 내역");
+	    model.addAttribute("inquiryList", inquiryList);
+	    model.addAttribute("pageInfo", new PageInfo(page, size, total));
+	    model.addAttribute("size", size);
+	    return "admin/inquiry/adminInquiryView";
 	}
 	
 	@PostMapping("/updateInquiry")

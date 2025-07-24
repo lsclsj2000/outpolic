@@ -276,12 +276,8 @@ public class enterMypageController {
         return "enter/mypage/alert";
     }
     
+   
     
-    
-    
-    
-    
-    
-    
-    
+  
+
 }

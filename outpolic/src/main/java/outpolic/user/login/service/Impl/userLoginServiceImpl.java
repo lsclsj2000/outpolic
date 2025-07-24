@@ -16,7 +16,7 @@ import outpolic.user.login.service.UserLoginService;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserLoginServiceImpl implements UserLoginService {
+public class userLoginServiceImpl implements UserLoginService {
 	
 	private final UserLoginMapper userLoginMapper;
 	private final PasswordEncoder passwordEncoder;

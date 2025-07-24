@@ -65,22 +65,22 @@
 			#{memberAgreeYN});
 	</insert>
 
-	<select id="isNickNameDuplicated" resultType="int">
+	<select id="isNickNameDuplicated" parameterType="String" resultType="int">
 	    SELECT COUNT(*) > 0
 	    FROM member
 	    WHERE mbr_nicknm = #{memberNickname}
 	</select>
-	<select id="isEmailDuplicated" resultType="int">
+	<select id="isEmailDuplicated" parameterType="String" resultType="int">
 	    SELECT COUNT(*) > 0
 	    FROM member
 	    WHERE mbr_eml = #{memberEmail}
 	</select>
-	<select id="isTelDuplicated" resultType="int">
+	<select id="isTelDuplicated" parameterType="String" resultType="int">
 	    SELECT COUNT(*) > 0
 	    FROM member
 	    WHERE mbr_telno = #{memberTelNo}
 	</select>
-	<select id="isIdDuplicated" resultType="int">
+	<select id="isIdDuplicated" parameterType="String" resultType="int">
 	    SELECT COUNT(*) > 0
 	    FROM member
 	    WHERE mbr_id = #{memberId}

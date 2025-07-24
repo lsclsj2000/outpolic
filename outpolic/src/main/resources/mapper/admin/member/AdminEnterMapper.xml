@@ -15,7 +15,7 @@
 		<result column="ent_zip" property="corpZip"/>
 		<result column="ent_scl" property="corpScale"/>
 		<result column="ent_expln" property="corpExplain"/>
-		<result column="ent_url" property="corpHomepageUrl"/>
+		<result column="ent_url" property="corpUrl"/>
 		<result column="ent_mdfcn_ymdt" property="corpModificationYmdt"/>
 		<result column="mbr2_cd" property="adminCode"/>
 		<result column="ent_scr" property="corpScr"/>
@@ -108,7 +108,7 @@
 			e.ent_mdfcn_ymdt = curdate(),
 			e.ent_scl = #{corpScale},
 			e.ent_scr = #{corpScr},
-			e.ent_url = #{corpHomepageUrl},
+			e.ent_url = #{corpUrl},
 			e.ent_expln = #{corpExplain},
 			e.ent_rprsv = #{corpRprsv}
 		where

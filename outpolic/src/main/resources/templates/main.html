@@ -3,82 +3,82 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{user/layout/userLayoutMain}">
 <head>
-	<meta charset="utf-8" />
-	<title>outPolic</title>
-	<meta name="description" content="" />
+<meta charset="utf-8" />
+<title>outPolic</title>
+<meta name="description" content="" />
 </head>
 <th:block layout:fragment="cssScript">
-    <style>
-        /* 크몽 스타일의 매우 넓은 모달을 위한 커스텀 CSS */
-        @media (min-width: 1400px) {
-            .modal-dialog.modal-xxl {
-                /* XXL 사이즈(1400px 이상) 화면에서 모달의 최대 너비를 1320px로 설정합니다. */
-                max-width: 1320px; 
-            }
-        }
-        
-        .modal-body.custom-modal-body {
-            /* 모달 내용이 화면의 85% 높이를 넘지 않도록 하고, 넘으면 스크롤 생성 */
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-		.slick-prev, .slick-next{
-			display : none !important;
+	<style>
+		/* 크몽 스타일의 매우 넓은 모달을 위한 커스텀 CSS */
+		@media ( min-width : 1400px) {
+			.modal-dialog.modal-xxl {
+				/* XXL 사이즈(1400px 이상) 화면에서 모달의 최대 너비를 1320px로 설정합니다. */
+				max-width: 1320px;
+			}
 		}
+		
+		.modal-body.custom-modal-body {
+			/* 모달 내용이 화면의 85% 높이를 넘지 않도록 하고, 넘으면 스크롤 생성 */
+			max-height: 85vh;
+			overflow-y: auto;
+		}
+		
+		.slick-prev, .slick-next {
+			display: none !important;
+		}
+		
 		.product-action-1 .action-btn i.fi-rs-heart.active {
-		    color: #F15412; /* 찜 했을 때의 색상 (주황색 계열) */
-		    font-weight: 900; /* 채워진 아이콘처럼 보이도록 폰트 굵게 */
+			color: #F15412; /* 찜 했을 때의 색상 (주황색 계열) */
+			font-weight: 900; /* 채워진 아이콘처럼 보이도록 폰트 굵게 */
 		}
 		/* .fi-rs-heart 아이콘에 .active 클래스가 추가되었을 때 적용될 스타일 */
 		.fi-rs-heart.active {
-		    color: #F15B5B; /* 하트 아이콘을 빨간색 계열로 변경 */
-		    font-weight: 900;  /* 폰트 아이콘의 경우, 굵기를 주면 채워진 모양으로 보이기도 합니다. */
+			color: #F15B5B; /* 하트 아이콘을 빨간색 계열로 변경 */
+			font-weight: 900; /* 폰트 아이콘의 경우, 굵기를 주면 채워진 모양으로 보이기도 합니다. */
 		}
 		
 		/* 기존 버튼 스타일과 어울리도록 active 상태일 때의 버튼 스타일도 정의할 수 있습니다. */
 		.bookmark-btn .fi-rs-heart.active {
-		    color: #F15B5B !important; /* 다른 스타일에 의해 덮어쓰이지 않도록 우선순위 부여 */
+			color: #F15B5B !important; /* 다른 스타일에 의해 덮어쓰이지 않도록 우선순위 부여 */
 		}
+		
 		.product-cart-wrap h2 {
-			    /* 제목 요소의 높이를 강제로 고정하기 위한 설정 */
-			    /* line-height * 줄 수 = 고정 높이 */
-			    /* 예: 1.5em * 2줄 = 3em */
-			    line-height: 1.4em; /* 줄 간격을 적절히 설정 */
-			    height: 1.4em;        /* 2줄 높이로 고정 (line-height * 2) */
-			    
-			    /* 아래 4줄이 말줄임표의 핵심입니다. */
-			    overflow: hidden;                 /* 영역을 넘어가는 텍스트 숨기기 */
-			    display: -webkit-box;             /* Webkit의 박스 모델 사용 */
-			    -webkit-line-clamp: 1;            /* 최대 2줄까지 표시 */
-			    -webkit-box-orient: vertical;     /* 수직 방향으로 배치 */
-			}
-			.product-cart-wrap .product-category a {
-			    /* 이 텍스트는 한 줄로 제한하는 것이 깔끔합니다. */
-			    line-height: 1.4em; /* 한 줄 텍스트에 맞는 줄 간격 */
-			    height: 1.4em;      /* 1줄 높이로 고정 (line-height * 1) */
-			    
-			    /* 말줄임표 핵심 속성들 */
-			    overflow: hidden;
-			    display: -webkit-box;
-			    -webkit-line-clamp: 1; /* 최대 1줄까지 표시 */
-			    -webkit-box-orient: vertical;
-			    
-			    /* 
-			      <a> 태그는 기본적으로 inline 요소이므로, 
-			      위 속성들이 잘 동작하려면 block 또는 inline-block으로 만들어주는 것이 좋습니다. 
-			    */
-			    display: block; /* 또는 inline-block */
-			}
-    </style>
+			/* 제목 요소의 높이를 강제로 고정하기 위한 설정 */
+			/* line-height * 줄 수 = 고정 높이 */
+			/* 예: 1.5em * 2줄 = 3em */
+			line-height: 1.4em; /* 줄 간격을 적절히 설정 */
+			height: 1.4em; /* 2줄 높이로 고정 (line-height * 2) */
+			/* 아래 4줄이 말줄임표의 핵심입니다. */
+			overflow: hidden; /* 영역을 넘어가는 텍스트 숨기기 */
+			display: -webkit-box; /* Webkit의 박스 모델 사용 */
+			-webkit-line-clamp: 1; /* 최대 2줄까지 표시 */
+			-webkit-box-orient: vertical; /* 수직 방향으로 배치 */
+		}
+		
+		.product-cart-wrap .product-category a {
+			/* 이 텍스트는 한 줄로 제한하는 것이 깔끔합니다. */
+			line-height: 1.4em; /* 한 줄 텍스트에 맞는 줄 간격 */
+			height: 1.4em; /* 1줄 높이로 고정 (line-height * 1) */
+			/* 말줄임표 핵심 속성들 */
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-line-clamp: 1; /* 최대 1줄까지 표시 */
+			-webkit-box-orient: vertical;
+			/* 
+					      <a> 태그는 기본적으로 inline 요소이므로, 
+					      위 속성들이 잘 동작하려면 block 또는 inline-block으로 만들어주는 것이 좋습니다. 
+					    */
+			display: block; /* 또는 inline-block */
+		}
+	</style>
 </th:block>
 <th:block layout:fragment="contents">
 	<main class="main">
 		<!-- 메인화면 사진 영역. 수정 필요.  -->
-		<section class="hero-3 position-relative align-items">
-			<h2 class="mb-30 text-center"></h2>
+		<section class="hero-3 position-relative align-items" style="border:2px solid #f0f0f0; border-radius:20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
 		</section>
 		<!--End hero-->
-		
+
 		<div class="mb-30">
 			<div class="row d-flex justify-content-center">
 				<div class="col-lg-10">
@@ -90,24 +90,24 @@
 							<div
 								class="slider-arrow slider-arrow-2 flex-right carausel-8-columns-arrow"
 								id="carausel-8-columns-arrows"></div>
-							</div>
-							<div class="carausel-8-columns-cover position-relative">
-								<div class="carausel-8-columns" id="carausel-8-columns"
-									 th:if="${!mainCategories.isEmpty()}">
-									<div class="card-1" th:each="cat : ${mainCategories}">
-										<figure class="img-hover-scale overflow-hidden">
-											<a th:href="@{/user/products(category=${cat.categoryId})}">
+						</div>
+						<div class="carausel-8-columns-cover position-relative">
+							<div class="carausel-8-columns" id="carausel-8-columns"
+								th:if="${!mainCategories.isEmpty()}">
+								<div class="card-1" th:each="cat : ${mainCategories}">
+									<figure class="img-hover-scale overflow-hidden">
+										<a th:href="@{/user/products(category=${cat.categoryId})}">
 											<th:block th:switch="${cat.categoryName}">
 												<!-- case 1: 카테고리 이름이 '디자인'일 경우 -->
 												<img th:case="'디자인'"
 													src="/user/assets/imgs/icon/graphic-designerBlue.png"
 													th:alt="${cat.categoryName}" />
-		
+
 												<!-- case 2: 카테고리 이름이 'IT·프로그래밍'일 경우 -->
 												<img th:case="'IT·프로그래밍'"
 													src="/user/assets/imgs/icon/technical-supportBlue.png"
 													th:alt="${cat.categoryName}" />
-		
+
 												<!-- case 3: 카테고리 이름이 '영상·사진·음향'일 경우 -->
 												<img th:case="'영상·사진·음향'"
 													src="/user/assets/imgs/icon/pictureBlue.png"
@@ -147,56 +147,68 @@
 							</div>
 						</div>
 					</section>
-					
+
 					<!-- 외주 랭킹 시작 -->
 					<section class="section-padding">
-					    <!-- 섹션 제목 부분 -->
-					    <div class="section-title style-2 wow animate__animated animate__fadeIn">
-					        <h3>인기있는 외주</h3>
+						<!-- 섹션 제목 부분 -->
+						<div
+							class="section-title style-2 wow animate__animated animate__fadeIn">
+							<h3>인기있는 외주</h3>
 
-					    </div> 
-					    <div th:if="${not #lists.isEmpty(findOSList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
-					        <div th:each="content, iterStat : ${findOSList}" class="slider-item">
-					        
-					            <div class="product-cart-wrap mb-30">
-					                <div class="product-img-action-wrap">
-					                    <div class="product-img product-img-zoom">
-					                        <a th:href="@{/user/contents/{id}(id=${content.osCode})}">
-					                            <img class="default-img"
-					                                 th:src="${content.osThumbnailUrl}" 
-					                                 alt="외주 이미지" />
-					                        </a>
-					                    </div>
-					                    <div class="product-action-1">
-					                        <div th:replace="~{user/fragments/userBookmarkButton :: bookmarkButton(content=${content})}"></div>
-					                    </div>
-					                </div>
-					                <div class="product-content-wrap" style="padding: 15px;">
-					                    <div class="product-category">
-					                        <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" th:href="@{/user/company/{id}(id=${content.entCode})}">카테고리 | 기업명</a>
-					                    </div>
-					                    <h2>
-					                        <a th:href="@{/user/contents/{id}(id=${content.osCode})}">
-								                <span th:text="${content.osTtl}">콘텐츠 제목</span>
-								            </a>
-					                    </h2>
-					                    <div class="product-rate-cover">
-					                       <div class="product-rate d-inline-block">
-					                          <div class="product-rating" th:style="'width:' + (${content.reviewScore} * 20) + '%'"></div>
-					                       </div>
-					                       <span class="font-small ml-5 text-muted" th:text="' (' + ${#numbers.formatDecimal(content.reviewScore, 1, 1)} + ')'"> (4.5)</span>
-					                    </div>
-					                    <div class="product-price">
-					                       <span th:text="${#numbers.formatInteger({content.osAtm}, 3, 'COMMA')} + '원'">가격 정보~</span>
-					                    </div>
-					                    
-					                </div>
-					            </div>
-					        </div> 
-					    </div>
-					    <div th:if="${#lists.isEmpty(findOSList)}" class="text-center py-5">
-					        <p>표시할 인기 콘텐츠가 없습니다.</p>
-					    </div> 
+						</div>
+						<div th:if="${not #lists.isEmpty(findOSList)}"
+							class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
+							<div th:each="content, iterStat : ${findOSList}"
+								class="slider-item">
+
+								<div class="product-cart-wrap mb-30">
+									<div class="product-img-action-wrap">
+										<div class="product-img product-img-zoom">
+											<a th:href="@{/user/contents/{id}(id=${content.osCode})}">
+												<img class="default-img" th:src="${content.osThumbnailUrl}"
+												alt="외주 이미지" />
+											</a>
+										</div>
+										<div class="product-action-1">
+											<div
+												th:replace="~{user/fragments/userBookmarkButton :: bookmarkButton(content=${content})}"></div>
+										</div>
+									</div>
+									<div class="product-content-wrap" style="padding: 15px;">
+										<div class="product-category">
+											<a
+												th:text="${content.ctgryName} + ' | ' + ${content.entName}"
+												th:href="@{/user/company/{id}(id=${content.entCode})}">카테고리
+												| 기업명</a>
+										</div>
+										<h2>
+											<a th:href="@{/user/contents/{id}(id=${content.osCode})}">
+												<span th:text="${content.osTtl}">콘텐츠 제목</span>
+											</a>
+										</h2>
+										<div class="product-rate-cover">
+											<div class="product-rate d-inline-block">
+												<div class="product-rating"
+													th:style="'width:' + (${content.reviewScore} * 20) + '%'"></div>
+											</div>
+											<span class="font-small ml-5 text-muted"
+												th:text="' (' + ${#numbers.formatDecimal(content.reviewScore, 1, 1)} + ')'">
+												(4.5)</span>
+										</div>
+										<div class="product-price">
+											<span
+												th:text="${#numbers.formatInteger({content.osAtm}, 3, 'COMMA')} + '원'">가격
+												정보~</span>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+						<div th:if="${#lists.isEmpty(findOSList)}"
+							class="text-center py-5">
+							<p>표시할 인기 콘텐츠가 없습니다.</p>
+						</div>
 					</section>
 					<!-- 외주 랭킹 끝 -->
 					<!--Products Tabs-->
@@ -209,45 +221,50 @@
 				<div class="col-lg-10 m-auto">
 					<section class="section-padding">
 						<!-- 섹션 제목 부분 -->
-				        <div class="section-title style-2 wow animate__animated animate__fadeIn">
-				            <h3>인기있는 포트폴리오</h3>
-				        </div> 
+						<div
+							class="section-title style-2 wow animate__animated animate__fadeIn">
+							<h3>인기있는 포트폴리오</h3>
+						</div>
 
-				        <div th:if="${not #lists.isEmpty(findPOList)}" class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
-				            <div th:each="content, iterStat : ${findPOList}" class="slider-item">
-							    <div class="product-cart-wrap mb-30 position-relative portfolio-modal-trigger"
-							         th:data-contents-id="${content.prtfCode}"
-							         role="button"
-							         style="cursor: pointer;">
-							        
-							        <div class="product-img-action-wrap">
-							            <div class="product-img product-img-zoom">
-							                <a href="javascript:void(0);">
-												<img class="default-img"
-												     th:src="${content.prtfThumbnailUrl}" 
-												     alt="" />
-												<img class="hover-img"
-												     th:src="${content.prtfThumbnailUrl}" 
-												     alt="" />
-							                </a>
-							            </div>
-							            <div class="product-action-1">
-					                        <div th:replace="~{user/fragments/userBookmarkButton :: bookmarkButton(content=${content})}"></div>
-					                    </div>
-							        </div>
-							        
-							        <div class="product-content-wrap" style="padding: 15px;">
-							            <div class="product-category">
-							                <a th:text="${content.ctgryName} + ' | ' + ${content.entName}" th:href="@{/user/company/{id}(id=${content.entCode})}">카테고리 | 기업명</a>
-							            </div>
-							            <h2 th:text="${content.prtfTtl}">콘텐츠 제목</h2>
-							        </div>
-							    </div>
+						<div th:if="${not #lists.isEmpty(findPOList)}"
+							class="popular-outsourcing-slider wow animate__animated animate__fadeIn">
+							<div th:each="content, iterStat : ${findPOList}"
+								class="slider-item">
+								<div
+									class="product-cart-wrap mb-30 position-relative portfolio-modal-trigger"
+									th:data-contents-id="${content.prtfCode}" role="button"
+									style="cursor: pointer;">
+
+									<div class="product-img-action-wrap">
+										<div class="product-img product-img-zoom">
+											<a href="javascript:void(0);"> <img class="default-img"
+												th:src="${content.prtfThumbnailUrl}" alt="" /> <img
+												class="hover-img" th:src="${content.prtfThumbnailUrl}"
+												alt="" />
+											</a>
+										</div>
+										<div class="product-action-1">
+											<div
+												th:replace="~{user/fragments/userBookmarkButton :: bookmarkButton(content=${content})}"></div>
+										</div>
+									</div>
+
+									<div class="product-content-wrap" style="padding: 15px;">
+										<div class="product-category">
+											<a
+												th:text="${content.ctgryName} + ' | ' + ${content.entName}"
+												th:href="@{/user/company/{id}(id=${content.entCode})}">카테고리
+												| 기업명</a>
+										</div>
+										<h2 th:text="${content.prtfTtl}">콘텐츠 제목</h2>
+									</div>
+								</div>
 							</div>
-				        </div>
-				        <div th:if="${#lists.isEmpty(findPOList)}" class="text-center py-5">
-				            <p>표시할 인기 콘텐츠가 없습니다.</p>
-				        </div>
+						</div>
+						<div th:if="${#lists.isEmpty(findPOList)}"
+							class="text-center py-5">
+							<p>표시할 인기 콘텐츠가 없습니다.</p>
+						</div>
 					</section>
 				</div>
 			</div>
@@ -255,59 +272,68 @@
 		<!-- 인기있는 포트폴리오 영역 끝 -->
 		<!-- 리뷰 영역 시작 -->
 		<div class="comments-area">
-		    <div class="container" id="review-area" style="width: 1341.66px;">
-		        <h3 class="mb-30">최근에 작성된 리뷰</h3>
-		        
-		        <div class="review-slider-active" th:if="${not #lists.isEmpty(recentReviews)}">
-		            <div class="single-comment justify-content-between d-flex" th:each="review : ${recentReviews}">
-		                <div class="user justify-content-between d-flex">
-		                    <div class="thumb text-center">
-		                        <img src="/user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
-		                        <a href="#" class="font-heading text-brand" th:text="${review.mbrNicknm}"></a>
-		                    </div>
-		                    
-		                    <!-- [핵심 수정 1] 부모 요소에 position-relative 클래스 추가 -->
-		                    <div class="desc position-relative">
-		                        <div class="d-flex justify-content-between mb-10">
-		                            <span class="font-xs text-muted" th:text="${review.rvwRegYmdt}"></span>
-		                            <div class="product-rate d-inline-block">
-		                                <div class="product-rating" th:style="|width: ${review.rvwEvl * 20}%|"></div>
-		                            </div>
-		                        </div>
-		                        <p class="mb-10" th:text="${review.rvwCn}"></p>
-		
-		                        <!-- [핵심 수정 2] <a> 태그를 맨 마지막에 배치하고 stretched-link 클래스 추가 -->
-		                        <a th:href="${review.contentsId.startsWith('OS_C')} ? @{/user/contents/{id}(id=${review.contentsId})} : 'javascript:void(0);'"
-		                           th:classappend="${review.contentsId.startsWith('PO_C')} ? 'js-portfolio-modal-trigger' : ''"
-		                           th:attr="data-contents-id=${review.contentsId.startsWith('PO_C')} ? ${review.contentsId} : null"
-		                           class="stretched-link">
-		                           <!-- 이 링크는 눈에 보이지 않지만 전체 영역을 덮습니다. -->
-		                        </a>
-		                    </div>
-		                </div>
-		            </div>
-		        </div>
-		        
-		        <div class="text-center py-5" th:if="${#lists.isEmpty(recentReviews)}">
-		            <p class="font-lg">아직 작성된 리뷰가 없습니다.</p>
-		        </div>
-		    </div>
+			<div class="container" id="review-area" style="width: 1341.66px;">
+				<h3 class="mb-30">최근에 작성된 리뷰</h3>
+
+				<div class="review-slider-active"
+					th:if="${not #lists.isEmpty(recentReviews)}">
+					<div class="single-comment justify-content-between d-flex"
+						th:each="review : ${recentReviews}">
+						<div class="user justify-content-between d-flex">
+							<div class="thumb text-center">
+								<img src="/user/assets/imgs/blog/author-2.png" alt="리뷰어 이미지" />
+								<a href="#" class="font-heading text-brand"
+									th:text="${review.mbrNicknm}"></a>
+							</div>
+
+							<!-- [핵심 수정 1] 부모 요소에 position-relative 클래스 추가 -->
+							<div class="desc position-relative">
+								<div class="d-flex justify-content-between mb-10">
+									<span class="font-xs text-muted" th:text="${review.rvwRegYmdt}"></span>
+									<div class="product-rate d-inline-block">
+										<div class="product-rating"
+											th:style="|width: ${review.rvwEvl * 20}%|"></div>
+									</div>
+								</div>
+								<p class="mb-10" th:text="${review.rvwCn}"></p>
+
+								<!-- [핵심 수정 2] <a> 태그를 맨 마지막에 배치하고 stretched-link 클래스 추가 -->
+								<a
+									th:href="${review.contentsId.startsWith('OS_C')} ? @{/user/contents/{id}(id=${review.contentsId})} : 'javascript:void(0);'"
+									th:classappend="${review.contentsId.startsWith('PO_C')} ? 'js-portfolio-modal-trigger' : ''"
+									th:attr="data-contents-id=${review.contentsId.startsWith('PO_C')} ? ${review.contentsId} : null"
+									class="stretched-link"> <!-- 이 링크는 눈에 보이지 않지만 전체 영역을 덮습니다. -->
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="text-center py-5"
+					th:if="${#lists.isEmpty(recentReviews)}">
+					<p class="font-lg">아직 작성된 리뷰가 없습니다.</p>
+				</div>
+			</div>
 		</div>
 		<!-- 리뷰 영역 끝  -->
-		
+
 		<!-- 모달창 -->
-		<div class="modal fade" id="portfolioDetailModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered modal-xxl"> 
-				<div class="modal-content"> 
+		<div class="modal fade" id="portfolioDetailModal" tabindex="-1"
+			aria-labelledby="portfolioModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-xxl">
+				<div class="modal-content">
 					<div class="modal-header border-bottom-0">
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
 					</div>
 					<div class="modal-body custom-modal-body pt-0">
 						<div class="d-flex h-100">
-							<div id="modalInfoSection" class="p-4" style="width: 40%; overflow-y: auto;">
+							<div id="modalInfoSection" class="p-4"
+								style="width: 40%; overflow-y: auto;">
 								<!-- JS가 이 안에 내용을 채웁니다 -->
 							</div>
-							<div id="modalContentSection" class="p-3 ps-4 border-start" style="width: 60%; overflow-y: auto;">
+							<div id="modalContentSection" class="p-3 ps-4 border-start"
+								style="width: 60%; overflow-y: auto;">
 								<!-- JS가 이 안에 내용을 채웁니다 -->
 							</div>
 						</div>

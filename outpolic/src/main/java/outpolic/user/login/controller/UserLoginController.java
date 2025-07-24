@@ -14,7 +14,9 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.common.domain.Member;
+import outpolic.user.login.dto.LoginFailDTO;
 import outpolic.user.login.mapper.UserLoginMapper;
+import outpolic.user.login.service.LoginLimitService;
 import outpolic.user.login.service.UserLoginService;
 
 @Controller
@@ -24,6 +26,7 @@ public class UserLoginController {
 	
 	private final UserLoginService userLoginService;
 	private final UserLoginMapper userLoginMapper;
+	private final LoginLimitService loginLimitService;
 
 	
     // 로그인 페이지 GET 요청
@@ -60,6 +63,11 @@ public class UserLoginController {
         	
         	// 세션등록
             if("SD_ACTIVE".equals(status)) {
+            	
+            	session.invalidate();
+            	
+            	session = request.getSession(true);
+            	
             	session.setAttribute("SID", memberInfo.getMemberId());
             	session.setAttribute("SName", memberInfo.getMemberName());
             	session.setAttribute("SGrd", memberInfo.getGradeCode());
@@ -134,6 +142,23 @@ public class UserLoginController {
             	model.addAttribute("msg", "휴면을 해제 후 로그인해주세요");
         		model.addAttribute("url", "/login");
         		return "user/mypage/alert";
+            }else if("SD_LIMIT".equals(status)) {
+            	
+            	LoginFailDTO limitInfo = loginLimitService.getLimitInfo(memberInfo.getMemberCode());
+            	
+            	if (limitInfo != null) {
+            		
+                    model.addAttribute("msg", "회원님의 계정은 제재 상태입니다.");
+                    model.addAttribute("startbanDate", limitInfo.getLmtStartYmdt());  // 예: "2025-08-01"
+                    model.addAttribute("unbanDate", limitInfo.getLmtEndYmdt());  // 예: "2025-08-01"
+                    model.addAttribute("url", "/");
+                    return "LimitInfo";  // 별도 페이지 or 기존 alert 재활용
+                } else {
+                    // 혹시 제재 기록 없음 → 로그인 차단
+                    model.addAttribute("msg", "접속이 제한된 계정입니다. 고객센터에 문의하세요.");
+                    model.addAttribute("url", "/");
+                    return "user/mypage/alert";
+                }
             }else {
             	model.addAttribute("msg", "로그인하실 수 없습니다.\n문의사항이 있을 경우 페이지 하단의 고객센터 연락처를 이용해주세요.");
         		model.addAttribute("url", "/login");

@@ -32,35 +32,33 @@
 				<li class="menu-item has-submenu">
 					<a class="menu-link" th:href="@{/admin/adminInquiryList}">
 					    <i class="icon material-icons md-shopping_cart"></i>
-					    <span class="text">문의</span>
+					    <span class="text">문의 관리</span>
 					</a>
 					<div class="submenu">
-					    <a th:href="@{/admin/adminInquiryList}">문의내역</a>
+					    <a th:href="@{/admin/adminInquiryList}">문의 내역 처리</a>
 					    <a th:href="@{/admin/adminInquiryResources}">문의 자원 등록</a>
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
 					<a class="menu-link" th:href="@{/admin/adminOsst}">
 					    <i class="icon material-icons md-store"></i>
-					    <span class="text">외주&채팅</span>
+					    <span class="text">외주 관리</span>
 					</a>
 					<div class="submenu">
 						<a th:href="@{/admin/outsourcingList}">외주</a>
 						<a th:href="@{/admin/portfolioList}">포폴</a>
 					    <a th:href="@{/admin/adminOsst}">외주 진행 현황</a>
-					    <a th:href="@{/admin/adminChatRoom}">채팅방 관리</a>
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
 					<a class="menu-link" th:href="@{/admin/adminDeclaration}">
 					    <i class="icon material-icons md-add_box"></i>
-					    <span class="text">신고&제재</span>
+					    <span class="text">신고&제재 관리</span>
 					</a>
 					<div class="submenu">
-						<a th:href="@{/admin/adminDeclaration}">신고 내역</a>
+						<a th:href="@{/admin/adminDeclaration}">신고 내역 처리</a>
 						<a th:href="@{/admin/adminDeclarationResources}">신고 자원 등록</a>
 					    <a th:href="@{/admin/adminLimits}">제재 내역</a>
-					    <a th:href="@{/admin/adminLimitsProcess}">제재 처리</a>
 					    <a th:href="@{/admin/adminLimitsAuthority}">권한 설정</a>
 					    <a th:href="@{/admin/adminLimitsResources}">제재 자원 등록</a>
 					</div>
@@ -107,7 +105,7 @@
 					    <span class="text">결제&환불 내역</span>
 					</a>
 					<div class="submenu">
-						<a th:href="@{/admin/earnPointsList}">결제 내역</a>
+						<a th:href="@{/admin/settlementList}">결제 내역</a>
 						<a th:href="@{/admin/refundList}">환불 내역</a>
 				    </div>
 				</li>

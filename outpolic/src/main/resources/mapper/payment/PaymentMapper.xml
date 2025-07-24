@@ -5,9 +5,8 @@
 <mapper
 	namespace="outpolic.systems.payment.mapper.PaymentMapper">
 
-	<insert id="insertSettlement" parameterType="SettlementDTO">
-		<selectKey keyColumn="newCode" keyProperty="stlmCd"
-			resultType="String" order="BEFORE">
+	<insert id="insertSettlement" parameterType="outpolic.systems.payment.dto.SettlementDTO">
+		<selectKey keyProperty="stlmCd" resultType="String" order="BEFORE">
 			SELECT
 				CASE
 					WHEN COUNT(*) = 0 THEN 'STLM_C1'
@@ -20,40 +19,36 @@
 			WHERE stlm_cd LIKE 'STLM_C%';
 		</selectKey>
 		INSERT INTO settlement (
-		stlm_cd,
-		mbr_cd,
-		gds_cd,
-		stc_cd,
-		stlm_cnt,
-		stlm_pay_type,
-		stlm_amt,
-		stlm_used_points,
-		stlm_final_amt,
-		stlm_payment_info,
-		stlm_card_nm,
-		stlm_provider_nm,
-		stlm_account_info,
-		stlm_account_nm,
-		stlm_ymdt,
-		stlm_agre_yn
+			stlm_cd,
+			mbr_cd,
+			gds_cd,
+			stc_cd,
+			stlm_cnt,
+			stlm_amt,
+			stlm_used_points,
+			stlm_final_amt,
+			stlm_payment_info,
+			stlm_card_nm,
+			stlm_provider_nm,
+			stlm_ymdt,
+			stlm_method,
+			stlm_card_type
 		)
 		VALUES (
-		#{stlmCd},
-		#{mbrCd},
-		#{gdsCd},
-		#{stcCd},
-		#{stlmCnt},
-		#{stlmPayType},
-		#{stlmAmt},
-		#{stlmUsedPoints},
-		#{stlmFinalAmt},
-		#{stlmPaymentInfo},
-		#{stlmCardNm},
-		#{stlmProviderNm},
-		#{stlmAccountInfo},
-		#{stlmAccountNm},
-		#{stlmYmdt},
-		#{stlmAgreYn}
+			#{stlmCd},
+			#{mbrCd},
+			#{gdsCd},
+			#{stcCd},
+			#{stlmCnt},
+			#{stlmAmt},
+			#{stlmUsedPoints},
+			#{stlmFinalAmt},
+			#{stlmPaymentInfo},
+			#{stlmCardNm},
+			#{stlmProviderNm},
+			#{stlmYmdt},
+			#{stlmMethod},
+			#{stlmCardType}
 		)
 	</insert>
 
