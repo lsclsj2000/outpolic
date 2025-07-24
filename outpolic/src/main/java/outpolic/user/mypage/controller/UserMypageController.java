@@ -199,6 +199,7 @@ public class UserMypageController {
 
             // DB 업데이트
             userMypageEditService.updateProfileImg(memberCode, imagePath);
+            session.setAttribute("SProfilePath", "/" + imagePath);
             log.info("🖼️ 마이페이지 프로필 이미지 경로: {}", userInfoDTO.getMemberImg());
 
             model.addAttribute("msg", "프로필사진이 성공적으로 수정되었습니다");

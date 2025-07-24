@@ -2,7 +2,7 @@
 <html class="no-js" lang="en" xmlns:th="http://www.thymeleaf.org"
 		 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 		 	<meta charset="UTF-8">
-	<title>error</title>
+	<title>Sorry</title>
 	<meta http-equiv="x-ua-compatible" content="ie=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<!-- Favicon -->
@@ -17,16 +17,15 @@
 	<meta name="description" content="" />
 </head>
 	
-	<body>
+	<body >
         <div class="container" style="min-height: 80vh; display: flex; align-items: center; justify-content: center;">
             <div class="row">
                 <section class="content-main">
-                    <div class="row mt-60">
-                        <div class="col-sm-12" style="width:700px; height:420px; border:2px dotted #264796; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 12px; background-color:#fdfdfd;">
-                            <div class="mx-auto text-center d-flex flex-column justify-content-center align-items-center" style=" display: flex; flex-direction : column; align-items: center; justify-content: center;">
-                            	<img th:src="@{/common/assets/imgs/error/error.png}" style="width : 500px;"/>                        
+                    <div class="row mt-60 d-flex justify-content-center align-items-center" style="width : 710px; height : 430px; border : 2px solid #264796; border-radius : 12px;">
+                        <div class="col-sm-12 d-flex justify-content-center align-items-center" style="width:700px; height:420px; border:2px solid #264796; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 12px; background-color:#fdfdfd;">
+                            <div class="mx-auto text-center">                       
                                 <h1 class="mt-20 mb-15  d-flex justify-content-center" style="color:black;">제재된 계정입니다</h1>
-								<p>제재 시작일: <span th:text="${startbanDate}">2025-08-01</span></p>
+								<p>제재 시작일: <span class="fw-700" th:text="${startbanDate}">2025-08-01</span></p>
 								<p>제재 종료일: <span th:if="${unbanDate != null}" th:text="${unbanDate}"></span>
 											<span th:unless="${unbanDate != null}">영구정지</span></p>
                                 <p class="fs-6 mb-10">문의사항이 있으실 경우 관리자에게 문의해 주시기 바랍니다</p>
