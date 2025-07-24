@@ -89,16 +89,40 @@
 							        
 							        <!-- 제목 (공지인지 문의인지에 따라 링크 변경) -->
 							        <td scope="col">
-							            <span>
-							                <a th:href="${l.totalType == '공지사항'} ? @{'/enter/enterNoticeDetail'(ann_cd=${l.totalCode})} : @{'/enter/enterInquiryDetail'(iq_cd=${l.totalCode})}"
-							                   th:text="${l.totalTitle}"
-							                   style="color: black; text-decoration: none;"
-							                   onmouseover="this.style.color='#3BB77E'"
-							                   onmouseout="this.style.color='black'">
-							                    제목
-							                </a>
-							            </span>
-							        </td>
+									    <!-- 문의 & 비밀글 -->
+									    <span th:if="${l.totalType == '문의' and l.inquirySecret == 1}">
+									        <i class="fas fa-lock" style="color: #6c757d; font-size: 0.9em; margin-right: 5px;" title="비밀글"></i>
+									
+									        <!-- 작성자 또는 관리자 -->
+									        <a th:if="${sessionMemberCode == l.memberCode or sessionMemberCode == 'ADMIN'}"
+									           th:href="@{/enter/enterInquiryDetail(iq_cd=${l.totalCode})}"
+									           th:text="${l.totalTitle}"
+									           style="color: black; text-decoration: none;"
+									           onmouseover="this.style.color='#3BB77E'"
+									           onmouseout="this.style.color='black'">
+									        </a>
+									
+									        <!-- 다른 사람은 alert -->
+									        <a th:if="${sessionMemberCode != l.memberCode and sessionMemberCode != 'ADMIN'}"
+									           href="javascript:void(0);"
+									           th:text="${l.totalTitle}"
+									           onclick="alert('비밀글은 작성자만 열람 가능합니다.');"
+									           style="color: black; text-decoration: none; cursor: pointer;"
+									           onmouseover="this.style.color='#3BB77E'"
+									           onmouseout="this.style.color='black'">
+									        </a>
+									    </span>
+									
+									    <!-- 공지사항 또는 일반 문의글 -->
+									    <span th:if="${l.totalType != '문의' or l.inquirySecret != 1}">
+									        <a th:href="${l.totalType == '공지사항'} ? @{'/enter/enterNoticeDetail'(ann_cd=${l.totalCode})} : @{'/enter/enterInquiryDetail'(iq_cd=${l.totalCode})}"
+									           th:text="${l.totalTitle}"
+									           style="color: black; text-decoration: none;"
+									           onmouseover="this.style.color='#3BB77E'"
+									           onmouseout="this.style.color='black'">
+									        </a>
+									    </span>
+									</td>
 							        
 							        <!-- 분류 -->
 							        <td scope="col" class="text-center" th:text="${l.totalType}">분류</td>
@@ -112,7 +136,7 @@
 							</tbody>
 						</table>
 					</div>
-					<div th:replace="~{enter/fragments/enterPagination :: pagination(${pageInfo}, '/enter/enterInquiryList?page=&size=' + ${size} + '&sort=' + ${sort})}"></div>
+					<div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, ${size}, ${sort})}"></div>
 				</div>
 			</div>
 		</div>
