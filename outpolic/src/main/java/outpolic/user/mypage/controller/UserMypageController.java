@@ -197,10 +197,13 @@ public class UserMypageController {
             // 실제 경로: /attachment/user/날짜/image/uuid.확장자
             // DB에는 이 경로를 저장
             String imagePath =fileMetaData.getFilePath();
+            if (!imagePath.startsWith("/")) {
+            	imagePath = "/" + imagePath;
+            }
 
             // DB 업데이트
             userMypageEditService.updateProfileImg(memberCode, imagePath);
-            session.setAttribute("SProfilePath", "/" + imagePath);
+            session.setAttribute("SProfilePath", imagePath);
             log.info("🖼️ 마이페이지 프로필 이미지 경로: {}", userInfoDTO.getMemberImg());
 
             model.addAttribute("msg", "프로필사진이 성공적으로 수정되었습니다");
