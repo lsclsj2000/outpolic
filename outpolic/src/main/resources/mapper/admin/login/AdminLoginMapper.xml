@@ -29,10 +29,5 @@
 		where mbr_cd = #{memberInfo.memberCode};
 	</update>
 	
-<!-- 	<insert id="insertFailHistory" parameterType="LoginFailHistoryDTO">
-		INSERT INTO 
-			login_fail_history
-			(lfh_cd, lfh_ip, lfh_attemp_ymdt, lfh_cnt, lfh_in_ymdt, lfh_out_ymdt, lfr_cd)
-		VALUES('', '', '', , '', '', '');
-	</insert> -->
+
 </mapper>

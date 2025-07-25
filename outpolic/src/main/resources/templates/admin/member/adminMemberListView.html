@@ -1,237 +1,292 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{admin/layout/adminLayoutMain}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/layout/adminLayoutMain}">
 
-	<head>
-		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
-	</head>
+<head>
+<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+</head>
+
+<body>
+	<th:block layout:fragment="contents">
+		<section class="content-main">
+			<div class="content-header">
+				<h2 class="content-title card-title">회원 목록</h2>
+			</div>
+			<div class="card mb-4">
+				<header class="card-header">
+					<div class="card mb-4 search-filter-card" style="border: none;">
+						<div class="card-body search-filter-body">
+							<div class="table-responsive">
+								<table class="search-filter-table">
+									<tbody>
+										<!-- 🔍 검색바 라인 -->
+										<tr>
+											<th>검색</th>
+											<td>
+												<div class="d-flex align-items-center gap-2">
+													<input type="text" id="searchInput" class="form-control"
+														placeholder="이름, 아이디, 닉네임, 회원코드 검색" style="width: 300px;" />
+													<button type="button" class="btn btn-primary btn-sm"
+														id="searchBtn">검색</button>
+												</div>
+											</td>
+										</tr>
+
+										<!-- 🔽 드롭다운 2개 라인 -->
+										<tr>
+											<th>필터</th>
+											<td>
+												<div class="d-flex align-items-center gap-3">
+													<!-- 상태 필터 -->
+													<select id="filterStatus"
+														class="form-select form-select-sm" style="width: 180px;">
+														<option value="">전체 상태</option>
+														<option value="SD_ACTIVE">활성 회원</option>
+														<option value="SD_DORMANT">휴면 회원</option>
+														<option value="SD_WITHDRAWN">탈퇴 회원</option>
+														<option value="SD_LIMIT">제재 회원</option>
+													</select>
+
+													<!-- 등급 필터 -->
+													<select id="filterGrade" class="form-select form-select-sm"
+														style="width: 180px;">
+														<option value="">전체 등급</option>
+														<option value="ADMIN">관리자</option>
+														<option value="ENTER">기업회원</option>
+														<option value="USER">일반회원</option>
+													</select>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</header>
+			</div>
+			<div class="card mb-4">
+				<!-- card-header end// -->
+				<div class="card-body">
+					<div class=" d-flex flex-row">
+						<div class="d-flex flex-wrap gap-3 align-items-center mb-3 w-50">
+							<p class="fs-6 mb-0">
+								<span class="badge bg-light text-dark px-3 py-2"> 전체 회원 수
+									: <span id="totalCount" class="fw-bold text-primary"
+									th:text="${memberList.size()}">0</span> 명
+								</span>
+							</p>
 	
-	<body>
-		<th:block layout:fragment="contents">
-			<section class="content-main">
-                <div class="content-header">
-                	<h2 class="content-title card-title">회원 목록</h2>
-                </div>
-                <div class="card mb-4">
-                    <header class="card-header">
-                        <div class="card mb-4 search-filter-card" style="border:none;">
-						  <div class="card-body search-filter-body" >
-						    <div class="table-responsive">
-						      <table class="search-filter-table" >
-						        <tbody>
-						          <!-- 🔍 검색바 라인 -->
-						          <tr>
-						            <th>검색</th>
-						            <td>
-						              <div class="d-flex align-items-center gap-2">
-						                <input type="text" id="searchInput" class="form-control" placeholder="이름, 아이디, 닉네임, 회원코드 검색" style="width: 300px;" />
-						                <button type="button" class="btn btn-primary btn-sm" id="searchBtn">검색</button>
-						              </div>
-						            </td>
-						          </tr>
-						
-						          <!-- 🔽 드롭다운 2개 라인 -->
-						          <tr>
-						            <th>필터</th>
-						            <td>
-						              <div class="d-flex align-items-center gap-3">
-						                <!-- 상태 필터 -->
-						                <select id="filterStatus" class="form-select form-select-sm" style="width: 180px;">
-						                  <option value="">전체 상태</option>
-						                  <option value="SD_ACTIVE">활성 회원</option>
-						                  <option value="SD_DORMANT">휴면 회원</option>
-						                  <option value="SD_WITHDRAWN">탈퇴 회원</option>
-						                  <option value="SD_LIMIT">제재 회원</option>
-						                </select>
-						
-						                <!-- 등급 필터 -->
-						                <select id="filterGrade" class="form-select form-select-sm" style="width: 180px;">
-						                  <option value="">전체 등급</option>
-						                  <option value="ADMIN">관리자</option>
-						                  <option value="ENTER">기업회원</option>
-						                  <option value="USER">일반회원</option>
-						                </select>
-						              </div>
-						            </td>
-						          </tr>
-						        </tbody>
-						      </table>
-						    </div>
-						  </div>
+							<p class="fs-6 mb-0" id="filteredCountWrap" style="display: none;">
+								<span class="badge bg-light text-dark px-3 py-2"> 검색 결과 :
+									<span id="filteredCount" class="fw-bold text-success">0</span> 건
+								</span>
+							</p>
 						</div>
-                    </header>
-                    </div>
-                    <div class="card mb-4">
-                    <!-- card-header end// -->
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <colgroup>
-							        <col style="width: 12%;">
-							        <col style="width: 10%;">
-							        <col style="width: 12%;">
-							        <col style="width: 12%;">
-							        <col style="width: 10%;">
-							        <col style="width: 14%;">
-							        <col style="width: 10%;">
-							        <col style="width: 8%;">
-							        <col style="width: 12%;">
-							    </colgroup>
-                                <thead>
-                                    <tr class="text-center">
-                                        <th scope="col">회원 코드</th>
-                                        <th scope="col">이름</th>
-                                        <th scope="col">아이디</th>
-                                        <th scope="col">닉네임</th>
-                                        <th scope="col">등급</th>
-                                        <th scope="col">연락처</th>
-                                        <th scope="col">상태</th>
-                                        <!--<th scope="col">가입일</th>-->
-                                        <th scope="col">약관동의</th>
-                                        <th scope="col">상세정보</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="memberTableBody" class="text-center">
-                                    <tr th:if="${not #lists.isEmpty(memberList)}"
-                                    	th:each="l : ${memberList}">
-                                       <td th:text="${l.memberCode}">회원 코드</td>
-                                       <td th:text="${l.memberName}">이름</td>
-                                       <td th:text="${l.memberId}">아이디</td>
-                                       <td th:text="${l.memberNickname}">닉네임</td>
-                                       <td th:switch="${l.gradeCode}">
-											<span th:case="ADMIN" class="badge rounded-pill alert-warning">관리자</span>
-											<span th:case="ENTER" class="badge rounded-pill alert-info">기업회원</span>
-											<span th:case="USER" class="badge rounded-pill alert-success">일반회원</span>
-                                       </td>
-                                       <td th:text="${#strings.length(l.memberTelNo) >= 7} ? 
-                ${l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.substring(l.memberTelNo.length() - 4)} : '-'">연락처</td>
-                                       <td th:switch="${l.statusCode}">
-                                           <span th:case="SD_ACTIVE" class="badge rounded-pill alert-success">활성</span>
-                                           <span th:case="SD_WITHDRAWN" class="badge rounded-pill alert-info">휴면</span>
-                                           <span th:case="SD_DORMANT" class="badge rounded-pill alert-info">탈퇴</span>
-                                           <span th:case="SD_LIMIT" class="badge rounded-pill alert-warning">제재</span>
-                                       </td>
-                                     <!--  <th th:text="${l.memberJoinYmdt}">가입일</th>-->
-                                       <td th:switch="${l.memberAgreeYN}">
-											<span th:case="1" >Y</span>
-											<span th:case="0" >N</span>
-										</td>
-                                       <td scope="col"><button class="btn btn-primary w-55 fw-bold btn-detail" 
-													           th:data-code="${l.memberCode}" 
-													           data-bs-toggle="modal" 
-													           data-bs-target="#memberDetailModal">상세정보</button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- table-responsive //end -->
-                    </div>
-                    <!-- card-body end// -->
-                </div>
-            </section>
-            
-            <div class="modal fade p-10" id="memberDetailModal" tabindex="-1" aria-hidden="true">
-				<div class="modal-dialog modal-lg">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h3>회원 상세 정보</h3>
-							<button type="button" class="btn btnEditMember btn-primary w-70 fw-bold">정보 수정하기</button>
+						<div class="w-50 mb-3" style="display : flex; justify-content : flex-end;">
+							<select id="filterOrder" class="form-select w-auto d-inline-block ms-2">
+							  <option value="">정렬 기준</option>
+							  <option value="recent">최근 가입순</option>
+							  <option value="oldest">오래된 가입순</option>
+							</select>
 						</div>
-						<div class="modal-body">
-							<form class="admin memberEdit" th:action="@{/admin/memberList/detail}" method="post">
-								<div class="row g-3">
-									<div class="col-md-6">
-										<label for="memberCode">회원 코드</label>
-										<input type="text" id="memberCode" name="memberCode" class="form-control" disabled />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberName">이름</label>
-										<input type="text" id="modalMemberName" name="modalMemberName" class="form-control" disabled />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberGradeCode">등급</label>
-										<select id="modalMemberGradeCode" name="modalMemberGradeCode" class="form-select readonly-field" disabled>
-											<option value="ADMIN">관리자</option>
-											<option value="ENTER">기업회원</option>
-											<option value="USER">일반회원</option>
-										</select>
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberNickname">닉네임</label>
-										<input type="text" id="modalMemberNickname" name="modalMemberNickname" class="form-control readonly-field" readonly />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberEmail">이메일</label>
-										<input type="email" id="modalMemberEmail" name="modalMemberEmail" class="form-control" disabled />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberTelNo">전화번호</label>
-										<input type="text" id="modalMemberTelNo" name="modalMemberTelNo" class="form-control" disabled />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberBirth">생일</label>
-										<input type="text" id="modalMemberBirth" name="modalMemberBirth" class="form-control" disabled />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberZip">우편번호</label>
-										<input type="text" id="modalMemberZip" name="modalMemberZip" class="form-control readonly-field" disabled />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberAddress">도로명 주소</label>
-										<input type="text" id="modalMemberAddress" name="modalMemberAddress" class="form-control readonly-field" disabled />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberDAddress">상세 주소</label>
-										<input type="text" id="modalMemberDAddress" name="modalMemberDAddress" class="form-control readonly-field" disabled />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberAgree">선택약관 동의여부</label>
-										<input type="text" id="modalMemberAgree" name="modalMemberAgree" class="form-control" disabled />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberJoinYmdt">가입일</label>
-										<input type="text" id="modalMemberJoinYmdt" name="modalMemberJoinYmdt" class="form-control" disabled />
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberStatusCode">상태</label>
-										<select id="modalMemberStatusCode" name="modalMemberStatusCode" class="form-select readonly-field" disabled>
-											<option value="SD_ACTIVE">활성</option>
-											<option value="SD_DORMANT">휴면</option>
-											<option value="SD_WITHDRAWN">탈퇴</option>
-											<option value="SD_LIMIT">제재</option>
-										</select>
-									</div>
-									<div class="col-md-6">
-										<label for="modalMemberLastLoginYmdt">마지막 로그인 일시</label>
-										<input type="text" id="modalMemberLastLoginYmdt" name="modalMemberLastLoginYmdt" class="form-control" disabled />
-									</div>
+					</div>
+
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<colgroup>
+								<col style="width: 3%;">
+								<col style="width: 7%;">
+								<col style="width: 10%;">
+								<col style="width: 12%;">
+								<col style="width: 12%;">
+								<col style="width: 10%;">
+								<col style="width: 14%;">
+								<col style="width: 10%;">
+								<col style="width: 8%;">
+								<col style="width: 14%;">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th scope="col" class="start text-center col-1">no.</th>
+									<th scope="col">회원 코드</th>
+									<th scope="col">이름</th>
+									<th scope="col">아이디</th>
+									<th scope="col">닉네임</th>
+									<th scope="col">등급</th>
+									<th scope="col">연락처</th>
+									<th scope="col">상태</th>
+									<!--<th scope="col">가입일</th>-->
+									<th scope="col">약관동의</th>
+									<th scope="col">상세정보</th>
+								</tr>
+							</thead>
+							<tbody id="memberTableBody" class="text-center">
+								<tr th:if="${not #lists.isEmpty(memberList)}"
+									th:each="l, stat : ${memberList}">
+									<td class="start text-center" th:text="${stat.index + 1}"></td>
+									<td th:text="${l.memberCode}">회원 코드</td>
+									<td th:text="${l.memberName}">이름</td>
+									<td th:text="${l.memberId}">아이디</td>
+									<td th:text="${l.memberNickname}">닉네임</td>
+									<td th:switch="${l.gradeCode}"><span th:case="ADMIN"
+										class="badge rounded-pill alert-warning">관리자</span> <span
+										th:case="ENTER" class="badge rounded-pill alert-info">기업회원</span>
+										<span th:case="USER" class="badge rounded-pill alert-success">일반회원</span>
+									</td>
+									<td
+										th:text="${#strings.length(l.memberTelNo) >= 7} ? 
+                									${l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.substring(l.memberTelNo.length() - 4)} : '-'">
+										연락처</td>
+									<td th:switch="${l.statusCode}"><span th:case="SD_ACTIVE"
+										class="badge rounded-pill alert-success">활성</span> <span
+										th:case="SD_WITHDRAWN" class="badge rounded-pill alert-info">휴면</span>
+										<span th:case="SD_DORMANT"
+										class="badge rounded-pill alert-info">탈퇴</span> <span
+										th:case="SD_LIMIT" class="badge rounded-pill alert-warning">제재</span>
+									</td>
+									<!--  <th th:text="${l.memberJoinYmdt}">가입일</th>-->
+									<td th:switch="${l.memberAgreeYN}"><span th:case="1">Y</span>
+										<span th:case="0">N</span></td>
+									<td scope="col"><button
+											class="btn btn-primary fw-bold btn-detail"
+											th:data-code="${l.memberCode}" data-bs-toggle="modal"
+											data-bs-target="#memberDetailModal"
+											style="padding: 5px 20px;">상세정보</button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- table-responsive //end -->
+				</div>
+				<!-- card-body end// -->
+			</div>
+		</section>
+
+		<div class="modal fade p-10" id="memberDetailModal" tabindex="-1"
+			aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>회원 상세 정보</h3>
+						<button type="button"
+							class="btn btnEditMember btn-primary w-70 fw-bold">정보
+							수정하기</button>
+					</div>
+					<div class="modal-body">
+						<form class="admin memberEdit"
+							th:action="@{/admin/memberList/detail}" method="post">
+							<div class="row g-3">
+								<div class="col-md-6">
+									<label for="memberCode">회원 코드</label> <input type="text"
+										id="memberCode" name="memberCode" class="form-control"
+										disabled />
 								</div>
-			
-								<div class="text-center mt-4">
-									<button type="button" id="btnSave" class="btn btnSave btn-primary w-70 fw-bold">정보 수정</button>
+								<div class="col-md-6">
+									<label for="modalMemberName">이름</label> <input type="text"
+										id="modalMemberName" name="modalMemberName"
+										class="form-control" disabled />
 								</div>
-							</form>
-						</div>
+								<div class="col-md-6">
+									<label for="modalMemberGradeCode">등급</label> <select
+										id="modalMemberGradeCode" name="modalMemberGradeCode"
+										class="form-select readonly-field" disabled>
+										<option value="ADMIN">관리자</option>
+										<option value="ENTER">기업회원</option>
+										<option value="USER">일반회원</option>
+									</select>
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberNickname">닉네임</label> <input type="text"
+										id="modalMemberNickname" name="modalMemberNickname"
+										class="form-control readonly-field" readonly />
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberEmail">이메일</label> <input type="email"
+										id="modalMemberEmail" name="modalMemberEmail"
+										class="form-control" disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberTelNo">전화번호</label> <input type="text"
+										id="modalMemberTelNo" name="modalMemberTelNo"
+										class="form-control" disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberBirth">생일</label> <input type="text"
+										id="modalMemberBirth" name="modalMemberBirth"
+										class="form-control" disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberZip">우편번호</label> <input type="text"
+										id="modalMemberZip" name="modalMemberZip"
+										class="form-control readonly-field" disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberAddress">도로명 주소</label> <input
+										type="text" id="modalMemberAddress" name="modalMemberAddress"
+										class="form-control readonly-field" disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberDAddress">상세 주소</label> <input
+										type="text" id="modalMemberDAddress"
+										name="modalMemberDAddress" class="form-control readonly-field"
+										disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberAgree">선택약관 동의여부</label> <input
+										type="text" id="modalMemberAgree" name="modalMemberAgree"
+										class="form-control" disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberJoinYmdt">가입일</label> <input type="text"
+										id="modalMemberJoinYmdt" name="modalMemberJoinYmdt"
+										class="form-control" disabled />
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberStatusCode">상태</label> <select
+										id="modalMemberStatusCode" name="modalMemberStatusCode"
+										class="form-select readonly-field" disabled>
+										<option value="SD_ACTIVE">활성</option>
+										<option value="SD_DORMANT">휴면</option>
+										<option value="SD_WITHDRAWN">탈퇴</option>
+										<option value="SD_LIMIT">제재</option>
+									</select>
+								</div>
+								<div class="col-md-6">
+									<label for="modalMemberLastLoginYmdt">마지막 로그인 일시</label> <input
+										type="text" id="modalMemberLastLoginYmdt"
+										name="modalMemberLastLoginYmdt" class="form-control" disabled />
+								</div>
+							</div>
+
+							<div class="text-center mt-4">
+								<button type="button" id="btnSave"
+									class="btn btnSave btn-primary w-70 fw-bold">정보 수정</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
-		</th:block>
-		<th:block layout:fragment="jsScript">
+		</div>
+	</th:block>
+	<th:block layout:fragment="jsScript">
 		<script>
 		console.log("스크립트 로딩됨");
 			$(document).ready(function () {
 				// 필터
-				 $('#filterStatus, #filterGrade').change(function () {
+				 $('#filterStatus, #filterGrade, #filterOrder').change(function () {
 				        const status = $('#filterStatus').val();
 				        const grade = $('#filterGrade').val();
+				       	const order = $('#filterOrder').val();
 					
 				        $.ajax({
 				        url: '/admin/memberList/filter',
 				            type: 'GET',
 				            data: {
 				                statusCode: status,
-				                gradeCode: grade
+				                gradeCode: grade,
+				                orderBy: order
 				            },
 				            dataType: 'json',
 				            success: renderMemberList,
@@ -245,6 +300,7 @@
 
 						$('#filterStatus').val('');
  						$('#filterGrade').val('');
+ 						$('#filterOrder').val('');
 				        $.ajax({
 				            url: '/admin/memberList/search',
 				            type: 'GET',
@@ -253,18 +309,29 @@
 				            error: () => alert("검색 실패")
 				        });
 				    });
+				    
+				    $('#searchInput').on('input', function () {
+					  const keyword = $(this).val().trim();
+					  if (keyword === '') {
+					    $('#filteredCountWrap').hide(); // 👉 '검색 결과 N명' 영역 숨기기
+					  }
+					});
 				
 				    // 회원 목록 렌더링 함수 (공통)
 				    function renderMemberList(data) {
 					  const tbody = $('#memberTableBody');
 					  tbody.empty();
+					  
+					   // 결과 개수 출력
+					  $('#filteredCount').text(data.length);
+					  $('#filteredCountWrap').show();
 					
 					  if (!data || data.length === 0) {
 					    tbody.append('<tr><td colspan="9" class="text-center">조회된 회원이 없습니다.</td></tr>');
 					    return;
 					  }
 					
-					  data.forEach(l => {
+					  data.forEach((l, index) => {
 					    const gradeLabel = l.gradeCode === 'ADMIN'
 					      ? '<span class="badge rounded-pill alert-warning">관리자</span>'
 					      : l.gradeCode === 'ENTER'
@@ -280,9 +347,10 @@
 					          : '<span class="badge rounded-pill alert-warning">제재</span>';
 					
 					    const telMasked = l.memberTelNo.substring(0, 3) + '-****-' + l.memberTelNo.slice(-4);
-					
+
 					    const row = `
 					      <tr class="text-center">
+					      	<td>${index + 1}</td>
 					        <td>${l.memberCode}</td>
 					        <td>${l.memberName}</td>
 					        <td>${l.memberId}</td>
@@ -295,7 +363,8 @@
 					          <button class="btn btn-primary w-55 fw-bold btn-detail"
 					                  data-code="${l.memberCode}"
 					                  data-bs-toggle="modal"
-					                  data-bs-target="#memberDetailModal">상세정보</button>
+					                  data-bs-target="#memberDetailModal"
+					                  style="padding: 5px 20px;">상세정보</button>
 					        </td>
 					      </tr>
 					    `;
@@ -427,7 +496,7 @@
 			});
 			
 		</script>
-		</th:block>
-	</body>
-	
+	</th:block>
+</body>
+
 </html>

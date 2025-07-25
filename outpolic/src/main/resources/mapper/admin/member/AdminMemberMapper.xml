@@ -121,7 +121,17 @@
 	    <if test="gradeCode != null and gradeCode != ''">
 	        AND grd_cd = #{gradeCode}
 	    </if>
-	    ORDER BY CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED)
+	   <choose>
+	        <when test="orderBy == 'recent'">
+	            ORDER BY mbr_join_ymdt DESC
+	        </when>
+	        <when test="orderBy == 'oldest'">
+	            ORDER BY mbr_join_ymdt ASC
+	        </when>
+	        <otherwise>
+	            ORDER BY CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED)
+	        </otherwise>
+	    </choose>
 	</select>
 	
   	<select id="searchMembers" resultMap="memberInfo">

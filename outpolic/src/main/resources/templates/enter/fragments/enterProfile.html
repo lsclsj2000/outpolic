@@ -49,7 +49,7 @@
 		          <!-- 기존 프로필 이미지 -->
 			          <img id="enterPreviewImg"
 			               th:src="${(enterInfo != null and !#strings.isEmpty(enterInfo.mbrImg)) 
-						           ? '/'+ enterInfo.mbrImg 
+						           ? enterInfo.mbrImg 
 						           : '/enter/assets/imgs/outpolic/cutecat.jpg'}"
 			               class="img-thumbnail mb-3"
 			               style="max-width: 150px;" />

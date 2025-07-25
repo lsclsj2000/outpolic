@@ -38,12 +38,14 @@ public class adminMemberController {
 	@ResponseBody
 	public List<Member> filterMembers(@RequestParam(required = false) String statusCode,
 	                                  @RequestParam(required = false) String gradeCode,
-	                                  @RequestParam(required = false) String keyword) {
+	                                  @RequestParam(required = false) String keyword,
+	                                  @RequestParam(required = false) String orderBy) {
 		System.out.println("🔥 필터 요청 진입");
 	    System.out.println("📦 statusCode: " + statusCode);
 	    System.out.println("📦 gradeCode: " + gradeCode);
+	    System.out.println("📦 orderBy: " + orderBy);
 
-	    List<Member> filtered = adminMemberService.filterMembers(statusCode, gradeCode);
+	    List<Member> filtered = adminMemberService.filterMembers(statusCode, gradeCode, orderBy);
 
 	    System.out.println("✅ 필터링 결과 개수: " + filtered.size());
 
