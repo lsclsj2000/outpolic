@@ -9,7 +9,7 @@
 
 <!-- 3. 내 JS (add.js 등)는 마지막에 -->
     
-    <style>
+   <style>
 		body { 
 			font-family: "Inter", sans-serif;
 		 }
@@ -33,6 +33,16 @@
         .form-group { 
         	margin-bottom: 25px;
         }
+        
+        /* Select2 컨테이너 너비 100% 적용 */
+        .select2-container { 
+            width: 100% !important; 
+        }
+        /* Select2에서 선택된 항목 제거 버튼 (X 아이콘) 숨기기 */
+        .select2-selection__clear {
+            display: none !important; 
+        }
+
         .form-group label, .linking-section h4 {
         	 display: block; 
         	 font-weight: 600; 
@@ -116,25 +126,48 @@
         	font-size: 0.875rem; 
         	margin-top: 5px; 
         }
-        .category-row-new { 
-        	display: flex; 
-        	gap: 10px;
-            margin-bottom: 10px; 
-            align-items: center;
-       }
-        .category-select {
-        	 flex-grow: 1;
-        }
-        .remove-category-row-btn {
-        	 background-color: #dc3545; 
-        	 border-color: #dc3545; 
-        	 color: white; 
-        	 padding: 5px 10px;
-			 line-height: 1; 
-			 border: none; 
-			 border-radius: 5px; 
-			 cursor: pointer;
-		 }
+             /* 외주 수정 카테고리 넓이 적용 시작 */
+             .category-row-new {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+                align-items: center;
+                /* 기존에 있던 background, padding, border는 필요하다면 다시 추가하세요. */
+                /* background: #f9f9f9; */
+                /* padding: 15px; */
+                /* border: 1px solid #ddd; */
+                border-radius: 8px;
+            }
+            .category-select {
+                flex-grow: 1;
+                min-width: 150px;
+            }
+            .remove-category-row-btn {
+                background-color: #dc3545; /* 빨간색 배경 */
+                color: white; /* 흰색 글씨 */
+                padding: 5px 10px; /* 패딩 */
+                line-height: 1; /* 라인 높이 */
+                border: none; /* 테두리 없음 */
+                border-radius: 5px; /* 둥근 모서리 */
+                cursor: pointer; /* 마우스 오버 시 포인터 */
+                /* transition: transform 0.2s ease; /* 호버 효과를 위해 */
+            }
+
+            /* .remove-category-row-btn:hover {
+                transform: scale(1.2);
+            } */
+             /* 외주 수정 카테고리 넓이 적용 끝 */
+
+.btn-add-category {
+    margin-top: 10px;
+    background-color: #264796;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
         .linking-section .result-item, .linking-section .linked-item { 
         	display: flex;
 			gap: 10px; 
@@ -211,6 +244,7 @@
             gap: 10px;
             margin-top: 15px;
         }
+    
     </style>
 </head>
 <body>
@@ -235,11 +269,8 @@
                         <label for="osTtl">외주 프로젝트 제목 <span style="color:red;">*</span></label>
                         <input type="text" id="osTtl" name="osTtl" class="form-control" required>
                     </div>
-                    <div class="form-group">
-                        <label for="osExpln">외주 프로젝트 내용 <span style="color:red;">*</span></label>
-                        <textarea id="osExpln" name="osExpln" class="form-control" rows="8" required></textarea>
-                    </div>
-                    <div class="flex-row">
+                   
+                   
                         <div class="form-group">
                             <label for="osStrtYmdt">희망 작업 시작일시 <span style="color:red;">*</span></label>
                             <input type="datetime-local" id="osStrtYmdt" name="osStrtYmdt" class="form-control" required>
@@ -248,8 +279,8 @@
                             <label for="osEndYmdt">희망 작업 종료일시 <span style="color:red;">*</span></label>
                             <input type="datetime-local" id="osEndYmdt" name="osEndYmdt" class="form-control" required>
                         </div>
-                    </div>
-                    <div class="flex-row">
+                  
+                   
                         <div class="form-group">
                             <label for="osAmt">희망 금액 <span style="color:red;">*</span></label>
                             <input type="number" id="osAmt" name="osAmt" class="form-control" min="0" required>
@@ -257,7 +288,11 @@
                         <div class="form-group">
                             <label for="osFlfmtCnt">수행 가능 인원 <span style="color:red;">*</span></label>
                             <input type="number" id="osFlfmtCnt" name="osFlfmtCnt" class="form-control" min="1" required>
-                        </div>
+                       
+                    </div>
+                     <div class="form-group">
+                        <label for="osExpln">외주 프로젝트 내용 <span style="color:red;">*</span></label>
+                        <textarea id="osExpln" name="osExpln" class="form-control" rows="8" required></textarea>
                     </div>
                     <div class="form-navigation">
                         <button type="button" class="btn-step next" data-step="1">다음</button>
@@ -268,8 +303,8 @@
                     <div class="form-group">
                         <label>카테고리 <span style="color:red;">*</span></label>
                         <div id="category-rows-container"></div>
-                        
-                        <div class="error-message" id="categoryError"></div>
+                        <div id="category-rows-container" class="category-block-list"></div>
+    <div class="error-message" id="categoryError"></div>
                     </div>
                     <div class="form-group">
                         <label for="tags">태그 (쉼표로 구분)</label>
@@ -379,7 +414,7 @@ color: #aaa;">
                 $select.html(`<option value="">${level}차 선택</option>`).show();
                 if (categories && categories.length > 0) {
                     categories.forEach(cat => { $select.append(`<option value="${cat.ctgryId}">${cat.ctgryNm}</option>`); });
-                    $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: 'style', allowClear: true });
+                    $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: '100%', allowClear: true }); 
                 } else { $select.hide(); }
             }
 
@@ -397,7 +432,7 @@ color: #aaa;">
             
             function addNewCategoryRow() {
                 const uniqueId = new Date().getTime();
-                const newRowHtml = `<div class="category-row-new d-flex gap-2" data-row-id="${uniqueId}"><select class="form-control category-select flex-grow-1" data-level="1"><option value="">1차 선택</option></select><select class="form-control category-select flex-grow-1" data-level="2" style="display:none;"><option value="">2차 선택</option></select><select class="form-control category-select flex-grow-1" data-level="3" style="display:none;"><option value="">3차 선택</option></select><input type="hidden" class="final-category-id"><button type="button" class="remove-category-row-btn btn btn-danger btn-sm">삭제</button></div>`;
+                const newRowHtml = `<div class="category-row-new d-flex gap-2" data-row-id="${uniqueId}"><select class="form-control category-select flex-grow-1" data-level="1"><option value="">1차 선택</option></select><select class="form-control category-select flex-grow-1" data-level="2" style="display:none;"><option value="">2차 선택</option></select><select class="form-control category-select flex-grow-1" data-level="3" style="display:none;"><option value="">3차 선택</option></select><input type="hidden" class="final-category-id"><button type="button" class="remove-category-row-btn btn btn-danger btn-sm" style="width:80px;">삭제</button></div>`;
                 $('#category-rows-container').append(newRowHtml);
                 const $newRow = $(`div.category-row-new[data-row-id="${uniqueId}"]`);
                 $.get('/api/categories', { parentId: '' }, (categories) => { populateDropdown($newRow.find(`[data-level="1"]`), categories); });

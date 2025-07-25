@@ -125,21 +125,61 @@
         	font-size: 0.875rem; 
         	margin-top: 5px; 
         }
+        /* START: Category and Select2 specific styles */
         .category-row-new { 
-        	display: flex; 
-        	gap: 10px; 
+        	display: flex; /* Apply flexbox for horizontal alignment */
+        	gap: 10px; /* Space between elements in the row */
         	margin-bottom: 10px; 
-        	align-items: center; 
+        	align-items: center; /* Vertically align items in the center */
+            /* Add padding and border if desired for block appearance, similar to outsourced add */
+            /* background: #f9f9f9; */
+            /* padding: 15px; */
+            /* border: 1px solid #ddd; */
+            border-radius: 8px;
+        }
+        /* This rule was missing in your Portfolio Edit styles, added for width control */
+        .category-select {
+            flex-grow: 1; /* Allow select boxes to grow and fill available space */
+            min-width: 150px; /* Minimum width for each select box */
         }
         .remove-category-row-btn { 
-        	background-color: #dc3545; 
+        	background-color: #dc3545; /* Red background for delete button */
         	color: white; 
         	padding: 5px 10px; 
         	line-height: 1; 
         	border: none; 
         	border-radius: 5px; 
         	cursor: pointer; 
+            /* Added hover effect for consistency */
+            transition: transform 0.2s ease;
         }
+        .remove-category-row-btn:hover {
+            transform: scale(1.1); /* Slightly enlarge on hover */
+        }
+        /* Select2 specific overrides for consistent look and feel */
+        .select2-container {
+            width: 100% !important; /* Force full width for Select2 */
+            z-index: 9999; /* Ensure dropdown appears on top */
+        }
+        .select2-selection__clear { /* Hide the default 'X' clear icon */
+            display: none !important; 
+        }
+        .select2-container .select2-selection--single {
+            height: calc(2.25rem + 14px); /* Match form-control height for single select */
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            display: flex;
+            align-items: center;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: normal;
+            padding-left: 15px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(2.25rem + 12px);
+        }
+        /* END: Category and Select2 specific styles */
+
         .body-image-preview-item { 
         	position: relative; 
         }
@@ -157,6 +197,20 @@
             font-size: 12px; 
             line-height: 20px; 
             text-align: center; 
+        }
+        /* Style for the add category button to make it look consistent */
+        #add-category-row-btn {
+            background-color: #264796; /* Consistent blue background */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px; /* Space above the button */
+        }
+        #add-category-row-btn:hover {
+            background-color: #1a3674; /* Darker blue on hover */
         }
     </style>
 </head>
@@ -344,7 +398,7 @@ padding: 15px; border-radius: 8px;"></div>
                 $select.html(`<option value="">${level}차 선택</option>`).show();
                 if (categories && categories.length > 0) {
                     categories.forEach(cat => $select.append(`<option value="${cat.ctgryId}" ${cat.ctgryId === selectedId ? 'selected' : ''}>${cat.ctgryNm}</option>`));
-                    $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: 'style', allowClear: true });
+                    $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: '100%', allowClear: true }); 
                     if (selectedId) $select.val(selectedId).trigger('change.select2');
                 } else {
                     $select.hide();
