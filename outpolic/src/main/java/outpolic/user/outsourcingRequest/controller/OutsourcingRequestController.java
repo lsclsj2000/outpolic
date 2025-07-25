@@ -162,6 +162,6 @@ public class OutsourcingRequestController {
         // ▼▼▼ 이 부분의 경로를 수정합니다. ▼▼▼
         // "user/portfolioInquiry/requestDetailView" 대신 "enter/outsourcingRequest/requestDetailView"로 변경
         // 또는 "user/outsourcingRequest/requestDetailView"로 변경 (권장)
-        return "enter/outsourcingRequest/requestDetailView"; // 기존 enter측 템플릿 사용
+        return "user/outsourcingRequest/requestDetailView"; // 기존 enter측 템플릿 사용
     }
 }
