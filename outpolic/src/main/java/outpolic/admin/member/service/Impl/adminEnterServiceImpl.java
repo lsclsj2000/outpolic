@@ -43,8 +43,8 @@ public class adminEnterServiceImpl implements AdminEnterService {
 	}
 
 	@Override
-	public List<AdminMemberDTO> selectFilteredEnterpriseMembers(String statusCode) {
-		return adminEnterMapper.selectFilteredEnterpriseMembers(statusCode);
+	public List<AdminMemberDTO> selectFilteredEnterpriseMembers(String statusCode, String orderBy) {
+		return adminEnterMapper.selectFilteredEnterpriseMembers(statusCode, orderBy);
 	}
 
 

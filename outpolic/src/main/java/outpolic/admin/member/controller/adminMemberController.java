@@ -33,27 +33,19 @@ public class adminMemberController {
 		return "admin/member/adminMemberListView";
 	}
 	
-	//상태에 따른 회원목록
-	@GetMapping("/memberList/{status}")
-	public String adminMemberListByStatus(@PathVariable("status") String statusCode ,Model model) {
-		var memberList = adminMemberService.getMemberListByStatus(statusCode);
-		model.addAttribute("title", "회원목록");
-		model.addAttribute("memberList", memberList);				
-		model.addAttribute("status", statusCode);				
-		return "admin/member/adminMemberListViewByStatus";		
-	}
-	
 	// 회원 목록 필터링
 	@GetMapping("/memberList/filter")
 	@ResponseBody
 	public List<Member> filterMembers(@RequestParam(required = false) String statusCode,
 	                                  @RequestParam(required = false) String gradeCode,
-	                                  @RequestParam(required = false) String keyword) {
+	                                  @RequestParam(required = false) String keyword,
+	                                  @RequestParam(required = false) String orderBy) {
 		System.out.println("🔥 필터 요청 진입");
 	    System.out.println("📦 statusCode: " + statusCode);
 	    System.out.println("📦 gradeCode: " + gradeCode);
+	    System.out.println("📦 orderBy: " + orderBy);
 
-	    List<Member> filtered = adminMemberService.filterMembers(statusCode, gradeCode);
+	    List<Member> filtered = adminMemberService.filterMembers(statusCode, gradeCode, orderBy);
 
 	    System.out.println("✅ 필터링 결과 개수: " + filtered.size());
 
@@ -64,7 +56,11 @@ public class adminMemberController {
 	@GetMapping("/memberList/search")
 	@ResponseBody
 	public List<Member> searchMembers(@RequestParam("keyword") String keyword) {
+		if(keyword == null) {
+			return adminMemberService.getMemberList() ;
+		}else {
 	    return adminMemberService.searchMembers(keyword);
+		}
 	}
 	
 	//회원정보 수정 디테일

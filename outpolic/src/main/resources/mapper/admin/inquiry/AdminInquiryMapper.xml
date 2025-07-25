@@ -50,6 +50,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="iqt_mdfcn_ymdt" 	property="inquiryTypeMdfcnDate"/>
 	</resultMap>
 	
+	<select id="getAdminInquiryListPaged" resultMap="AdminInquiryResultMap">
+		/* 페이지네이션 */
+	    SELECT
+	        i.iq_cd AS iq_cd,
+	        m.mbr_nm AS mbr_nm,
+	        i.iqt_cd AS iqt_cd,
+	        iqt.iqt_nm AS iqt_nm,
+	        i.iq_ttl AS iq_ttl,
+	        i.iq_reg_ymdt AS iq_reg_ymdt,
+	        ip.iqp_cd AS iqp_cd,
+	        COALESCE(ip.stc_cd, 'SD_BEFORE') AS stc_cd,
+	        COALESCE(sc.stc_nm, '확인전') AS stc_nm
+	    FROM
+	        inquiry i
+	        LEFT JOIN member m ON i.mbr_cd = m.mbr_cd
+	        LEFT JOIN inquiry_type iqt ON i.iqt_cd = iqt.iqt_cd
+	        LEFT JOIN inquiry_process ip ON i.iq_cd = ip.iq_cd
+	        LEFT JOIN status_code sc ON ip.stc_cd = sc.stc_cd
+	    ORDER BY
+	        i.iq_reg_ymdt DESC
+	    LIMIT #{size} OFFSET #{offset}
+	</select>
+	
+	<select id="getAdminInquiryTotalCount" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM inquiry
+	</select>
+	
 	<update id="updateInquiryType" parameterType="outpolic.admin.inquiry.domain.AdminInquiryType">
 	    /* 관리자 문의 타입 수정 */
 	    UPDATE inquiry_type

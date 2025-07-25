@@ -59,6 +59,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="ma_mdfcn_ymdt" 				property="authorityMdfcnYmdt"/>
 	</resultMap>
 	
+	<resultMap id="limitsReasonMap" type="outpolic.admin.limits.domain.AdminLimitsReason">
+		<id     column="lr_cd"              property="limitsReasonCode"/>
+		<result column="dt_cd"              property="declarationTypeCode"/>
+		<result column="dr_cd"              property="declarationReasonCode"/>
+		<result column="lp_cd"              property="limitsPeriodCode"/>
+		<result column="lr_cnd"             property="limitsReasonCnd"/>
+		<result column="lr_cnd_min"         property="limitsReasonCndMin"/>
+		<result column="lr_cnd_max"         property="limitsReasonCndMax"/>
+		<result column="lr_expln"           property="limitsReasonExpln"/>
+		<result column="lr_reg_adm_cd"      property="limitsReasonRegAdmCode"/>
+		<result column="lr_reg_ymdt"        property="limitsReasonRegYmdt"/>
+		<result column="lr_mdfcn_adm_cd"    property="limitsReasonMdfcnAdmCode"/>
+		<result column="lr_mdfcn_ymdt"      property="limitsReasonMdfcnYmdt"/>
+	</resultMap>	
+	
+	<resultMap id="declarationFullInfoMap" type="outpolic.admin.limits.domain.AdminDeclarationFullInfo">
+		<result column="dt_cd"              property="declarationTypeCode"/>
+		<result column="dr_cd"              property="declarationReasonCode"/>
+		<result column="mbr_cd"             property="declarationMemberCode"/>
+		<result column="decl_target_cd"     property="declarationTargetCode"/>
+	</resultMap>
+	
 	<insert id="insertLimitsType" parameterType="outpolic.admin.limits.domain.AdminLimits">
 		/* 제재 타입 등록 */
 		INSERT INTO limits_type (
@@ -337,4 +359,65 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    WHERE dt_cd = #{dt_cd} AND stc_cd = 'SD_ACTIVE'
 	</select>
 	
+	<select id="getDeclarationInfo" resultMap="declarationFullInfoMap">		
+		/* 신고 내역 조회 */
+        SELECT d.dt_cd, d.dr_cd, d.mbr_cd, d.decl_target_cd
+        FROM declaration d
+        WHERE d.decl_cd = #{declCd}
+    </select>
+
+    <select id="getCumulativeCount" resultType="int">
+        /* 동일제재누적현황 조회 */
+        SELECT lc_cum_cnt FROM limits_cumulative
+        WHERE mbr_cd = #{mbrCd} AND dr_cd = #{drCd}
+    </select>
+
+    <select id="getMatchedLimitsReason" resultMap="limitsReasonMap">
+        /* 제재 조건 매치 */
+        SELECT * FROM limits_reason
+        WHERE dt_cd = #{dtCd}
+          AND dr_cd = #{drCd}
+          AND lr_cnd_min &lt; #{cnt}
+          AND lr_cnd_max &gt; #{cnt}
+          AND stc_cd = 'SD_ACTIVE'
+        LIMIT 1
+    </select>
+
+    <select id="getEndDateByPeriod" resultType="java.sql.Timestamp">
+    	/* 제재 기간 */
+        SELECT
+        CASE
+            WHEN #{lpCd} = 'LP_INF' THEN NULL
+            WHEN #{lpCd} = 'LP_D3' THEN DATE_ADD(#{start}, INTERVAL 3 DAY)
+            WHEN #{lpCd} = 'LP_D7' THEN DATE_ADD(#{start}, INTERVAL 7 DAY)
+            WHEN #{lpCd} = 'LP_D30' THEN DATE_ADD(#{start}, INTERVAL 30 DAY)
+            ELSE #{start}
+        END
+    </select>
+
+    <insert id="insertLimits">
+    	/* 제재 등록 */
+        INSERT INTO limits (
+            lmt_cd, mbr_cd, dp_cd, dr_cd, lr_cd,
+            lmt_start_ymdt, lmt_end_ymdt, lmt_clear_ymdt,
+            lmt_rmd_days, lmt_dock_rsn, lmt_reg_adm_cd
+        ) VALUES (
+            #{lmtCd}, #{mbrCd}, #{dpCd}, #{drCd}, #{lrCd},
+            #{lmtStartYmdt}, #{lmtEndYmdt}, #{lmtClearYmdt},
+            #{lmtRmdDays}, #{lmtDockRsn}, #{lmtRegAdmCd}
+        )
+    </insert>
+
+    <insert id="insertCumulative">
+    	/* 동일제재누적현황 등록 */
+        INSERT INTO limits_cumulative (mbr_cd, dr_cd, lc_cum_cnt, lc_lmt_ymdt)
+        VALUES (#{mbrCd}, #{drCd}, #{cnt}, NOW())
+    </insert>
+
+    <update id="updateCumulative">
+   	 	/* 동일제재누적현황 업데이트 */
+        UPDATE limits_cumulative
+        SET lc_cum_cnt = #{cnt}, lc_lmt_ymdt = NOW()
+        WHERE mbr_cd = #{mbrCd} AND dr_cd = #{drCd}
+    </update>
 </mapper>

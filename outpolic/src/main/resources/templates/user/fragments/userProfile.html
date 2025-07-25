@@ -20,7 +20,7 @@
 						 <img class="userProfileImg"
      								th:src="${#strings.isEmpty(userInfo.memberImg)} 
 							                ? @{/user/assets/imgs/outpolic/cutecat.jpg} 
-							                : @{'/' + ${userInfo.memberImg}}" 
+							                : @{${userInfo.memberImg}}" 
 							                style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%;"/> 
 						<h5 class="mt-10 mb-10" th:text="${userInfo.memberNickname}">기본닉네임</h5>
 						<button type="button"
@@ -54,7 +54,7 @@
 				<!-- 업로드한 이미지 -->
 				<img id="previewImg"
 				     th:if="${!#strings.isEmpty(userInfo.memberImg)}"
-				     th:src="@{'/' + ${userInfo.memberImg}}"
+				     th:src="@{${userInfo.memberImg}}"
 				     class="img-thumbnail mb-3"
 				     style="max-width: 150px;" />
 		          <input type="file" name="profileImage" accept="image/*" class="form-control" onchange="previewProfileImage(event)">

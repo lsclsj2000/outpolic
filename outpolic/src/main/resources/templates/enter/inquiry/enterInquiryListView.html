@@ -89,18 +89,39 @@
 								    <td class="start text-center">
 								        <span th:text="${inquiryList.size() - stat.index}">번호</span>
 								    </td>
-								    <td scope="col">
-								        <span>
-								        	<i th:if="${l.inquirySecret == 1}" class="fas fa-lock" style="color: #6c757d; font-size: 0.9em; margin-right: 5px;" title="비밀글"></i>
-								            <a th:href="@{/enter/enterInquiryDetail(iq_cd=${l.inquiryCode})}"
-											   th:text="${l.inquiryTitle}"
-											   style="color: black; text-decoration: none;"
-											   onmouseover="this.style.color='#3BB77E'"
-											   onmouseout="this.style.color='black'">
-											   제목
-											</a>
-								        </span>
-								    </td>
+								    <td>
+	                                    <span th:if="${l.inquirySecret == 1}">
+	                                        <i class="fas fa-lock" style="color: #6c757d; font-size: 0.9em; margin-right: 5px;" title="비밀글"></i>
+	                                        
+	                                        <!-- 본인 or 관리자면 링크 허용 -->
+	                                        <a th:if="${sessionMemberCode == l.memberCode or sessionMemberCode == 'ADMIN'}"
+	                                           th:href="@{/enter/enterInquiryDetail(iq_cd=${l.inquiryCode})}"
+	                                           th:text="${l.inquiryTitle}"
+	                                           style="color: black; text-decoration: none;"
+	                                           onmouseover="this.style.color='#3BB77E'"
+	                                           onmouseout="this.style.color='black'">
+	                                        </a>
+	                                        
+	                                        <!-- 다른 사람은 alert만 -->
+	                                        <a th:if="${sessionMemberCode != l.memberCode and sessionMemberCode != 'ADMIN'}"
+	                                           href="javascript:void(0);"
+	                                           th:text="${l.inquiryTitle}"
+	                                           onclick="alert('비밀글은 작성자만 열람 가능합니다.');"
+	                                           style="color: black; text-decoration: none; cursor: pointer;"
+	                                           onmouseover="this.style.color='#3BB77E'"
+	                                           onmouseout="this.style.color='black'">
+	                                        </a>
+	                                    </span>
+	
+	                                    <span th:if="${l.inquirySecret != 1}">
+	                                        <a th:href="@{/enter/enterInquiryDetail(iq_cd=${l.inquiryCode})}"
+	                                           th:text="${l.inquiryTitle}"
+	                                           style="color: black; text-decoration: none;"
+	                                           onmouseover="this.style.color='#3BB77E'"
+	                                           onmouseout="this.style.color='black'">
+	                                        </a>
+	                                    </span>
+	                                </td>
 								    <td scope="col" class="text-center" th:text="${l.inquiryTypeName}">문의타입</td>
 								    <td scope="col" class="text-center" th:text="${l.memberName}">작성자</td>
 								    <td scope="col" class="text-center" th:text="${l.inquiryRegDate}">등록일자</td>
@@ -108,7 +129,7 @@
 							</tbody>
 						</table>
 					</div>
-					<div th:replace="~{enter/fragments/enterPagination :: pagination(${pageInfo}, '/enter/enterInquiryList?page=&size=' + ${size} + '&sort=' + ${sort})}"></div>
+					<div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, ${size}, ${sort})}"></div>
 				</div>
 			</div>
 		</div>

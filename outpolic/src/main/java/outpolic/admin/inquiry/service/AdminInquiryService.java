@@ -31,4 +31,8 @@ public interface AdminInquiryService {
 	
 	// 문의답변 저장
 	void updateInquiryAnswer(AdminInquiry adminInquiry);
+	
+	// 페이지네이션
+	List<AdminInquiry> getAdminInquiryListPaged(int offset, int size);
+	int getAdminInquiryTotalCount();
 }

@@ -102,7 +102,7 @@
 							</tbody>
 						</table>
 					</div>
-					<div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, '/user/userInquiryList?page=&size=' + ${size} + '&sort=' + ${sort})}"></div>
+					<div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, ${size}, ${sort})}"></div>
 				</div>
 			</div>
 		</div>

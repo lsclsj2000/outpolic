@@ -15,7 +15,7 @@
 		<result column="ent_zip" property="corpZip"/>
 		<result column="ent_scl" property="corpScale"/>
 		<result column="ent_expln" property="corpExplain"/>
-		<result column="ent_url" property="corpHomepageUrl"/>
+		<result column="ent_url" property="corpUrl"/>
 		<result column="ent_mdfcn_ymdt" property="corpModificationYmdt"/>
 		<result column="mbr2_cd" property="adminCode"/>
 		<result column="ent_scr" property="corpScr"/>
@@ -108,7 +108,7 @@
 			e.ent_mdfcn_ymdt = curdate(),
 			e.ent_scl = #{corpScale},
 			e.ent_scr = #{corpScr},
-			e.ent_url = #{corpHomepageUrl},
+			e.ent_url = #{corpUrl},
 			e.ent_expln = #{corpExplain},
 			e.ent_rprsv = #{corpRprsv}
 		where
@@ -143,7 +143,17 @@
 		        m.stc_cd = #{statusCode}
 		    </if>
 		</where>
-		ORDER BY CAST(SUBSTRING_INDEX(e.ent_cd, 'EI_C', -1) AS UNSIGNED)
+		<choose>
+		  <when test="orderBy == 'recent'">
+		    ORDER BY e.ent_join_ymdt DESC
+		  </when>
+		  <when test="orderBy == 'oldest'">
+		    ORDER BY e.ent_join_ymdt ASC
+		  </when>
+		  <otherwise>
+		    ORDER BY CAST(SUBSTRING_INDEX(e.ent_cd, 'EI_C', -1) AS UNSIGNED)
+		  </otherwise>
+		</choose>
 	</select>
 
 	<select id="searchEnterpriseMembers" resultMap="adminCorpInfoResultMap">

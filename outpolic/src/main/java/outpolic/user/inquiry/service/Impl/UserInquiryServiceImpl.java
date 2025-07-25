@@ -161,12 +161,7 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 	
 	@Override
 	public Page<UserInquiry> getUserInquiryList(Pageable pageable) {
-		// 문의 목록 페이지네이션
-	    int offset = (int) pageable.getOffset();
-	    int limit = pageable.getPageSize();
-	    List<UserInquiry> list = userInquiryMapper.getUserInquiryListPaged(offset, limit);
-	    int total = userInquiryMapper.getUserInquiryListCount();
-	    return new PageImpl<>(list, pageable, total);
+	    return getUserInquiryListPaged(pageable, "recent", null); // 기본 정렬 recent, memberCode 없음
 	}
 
 	@Override

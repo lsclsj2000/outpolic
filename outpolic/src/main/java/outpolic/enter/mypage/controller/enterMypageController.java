@@ -254,6 +254,9 @@ public class enterMypageController {
         try {
             FileMetaData fileMetaData = filesUtils.uploadFile(file, "enterMypageProfile");
             String imagePath = fileMetaData.getFilePath();
+            if (!imagePath.startsWith("/")) {
+            	imagePath = "/" + imagePath;
+            }
             enterMypageService.updateCorpProfileImage(memberCode, imagePath);
             Map<String, Object> param = new HashMap<>();
             param.put("memberCode", memberCode);
@@ -276,12 +279,8 @@ public class enterMypageController {
         return "enter/mypage/alert";
     }
     
+   
     
-    
-    
-    
-    
-    
-    
-    
+  
+
 }

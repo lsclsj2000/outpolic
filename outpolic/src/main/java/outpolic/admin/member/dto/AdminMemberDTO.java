@@ -17,7 +17,7 @@ public class AdminMemberDTO {
 	private String corpZip; 
 	private String corpScale; 
 	private String corpExplain; 
-	private String corpHomepageUrl; 
+	private String corpUrl; 
 	private String corpJoinYmdt; 
 	private LocalDate corpModificationYmdt; 
 	private String adminCode; 

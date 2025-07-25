@@ -82,6 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result column="sa_reg_ymdt"   property="saRegYmdt"/>
     </resultMap>
     
+    
     <update id="updateDeclarationProcessContentAndResult" parameterType="outpolic.admin.declaration.domain.AdminDeclaration">
         /* 신고 처리 내역 내용 및 결과 업데이트 */
         UPDATE declaration_process

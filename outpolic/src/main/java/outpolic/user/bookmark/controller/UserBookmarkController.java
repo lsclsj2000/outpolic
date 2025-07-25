@@ -37,7 +37,7 @@ public class UserBookmarkController {
         model.addAttribute("poBookmarks", poBookmarks);
         model.addAttribute("eiBookmarks", eiBookmarks);
         
-        return "/user/bookmark/userBookmarkView";
+        return "user/bookmark/userBookmarkView";
 	}
 	
  	 

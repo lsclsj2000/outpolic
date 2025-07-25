@@ -1,5 +1,9 @@
 package outpolic.admin.limits.domain;
 
+
+
+import java.sql.Timestamp;
+
 import lombok.Data;
 
 @Data
@@ -20,8 +24,8 @@ public class AdminLimits {
 	private String DeclarationTypeName;
 	private String DeclarationReasonCode;
 	private String DeclarationReasonName;
-	private String limitsStartYmdt;
-	private String limitsEndYmdt;
+	private Timestamp limitsStartYmdt;
+	private Timestamp limitsEndYmdt;
 	private String limitsClearYmdt;
 	private int limitsRmdDays;
 	private String limitsStatus;
@@ -58,4 +62,16 @@ public class AdminLimits {
 	private String limitsReasonCondition;
 	private int limitsReasonMinCount;
 	private int limitsReasonMaxCount;
+	
+	private String lmtCd;
+    private String mbrCd;
+	private String dpCd;
+	private String drCd;
+	private String lrCd;
+	private Timestamp lmtStartYmdt;
+	private Timestamp lmtEndYmdt;
+	private Timestamp lmtClearYmdt;
+	private Integer lmtRmdDays;
+	private String lmtDockRsn;
+	private String lmtRegAdmCd;
 }

@@ -42,23 +42,32 @@ public class adminEnterController {
 	@GetMapping("/enterList/filter")
 	@ResponseBody
 	public List<AdminMemberDTO> filterEnters(@RequestParam(required = false) String statusCode,
-	                                  @RequestParam(required = false) String keyword) {
-
-	    List<AdminMemberDTO> filtered = adminEnterService.getEnterListByStatus(statusCode);
+	                                  @RequestParam(required = false) String keyword,
+	                                  @RequestParam(required = false) String orderBy) {
+		
+		System.out.println("🔥 필터 요청 진입");
+	    System.out.println("📦 statusCode: " + statusCode);
+	    System.out.println("📦 orderBy: " + orderBy);
+	    
+	    List<AdminMemberDTO> filtered = adminEnterService.selectFilteredEnterpriseMembers(statusCode, orderBy);
 
 	    System.out.println("✅ 필터링 결과 개수: " + filtered.size());
 
 	    return filtered;
 	}
 	
-	// 회원 검색
+	// 기업 검색
 	@GetMapping("/enterList/search")
 	@ResponseBody
 	public List<AdminMemberDTO> searchEnters(@RequestParam("keyword") String keyword) {
+		if(keyword == null) {
+			return adminEnterService.getEnterList();
+		}else {
 	    return adminEnterService.searchEnterpriseMembers(keyword);
+		}
 	}
 	
-	//회원정보 수정 디테일
+	//기업정보 수정 디테일
 	@GetMapping("/enterList/detail")
 	@ResponseBody
 	public AdminMemberDTO adminEnterDetailView(@RequestParam String memberCode) {

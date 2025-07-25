@@ -1,16 +1,22 @@
 package outpolic.admin.declaration.service.Impl;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ch.qos.logback.core.util.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.declaration.domain.AdminDeclaration;
 import outpolic.admin.declaration.domain.SubmissionAttachment;
 import outpolic.admin.declaration.mapper.AdminDeclarationMapper;
 import outpolic.admin.declaration.service.AdminDeclarationService;
+import outpolic.admin.limits.domain.AdminLimits;
+import outpolic.admin.limits.mapper.AdminLimitsMapper;
 
 @Service
 @Transactional
@@ -19,6 +25,7 @@ import outpolic.admin.declaration.service.AdminDeclarationService;
 public class AdminDeclarationServiceImpl implements AdminDeclarationService {
 	
 	private final AdminDeclarationMapper adminDeclarationMapper;
+	private final AdminLimitsMapper adminLimitsMapper;
 
 	@Override
 	public List<AdminDeclaration> getAdminDeclarationList() {
@@ -159,4 +166,6 @@ public class AdminDeclarationServiceImpl implements AdminDeclarationService {
     public void updateDeclarationStatusAndModifier(AdminDeclaration adminDeclaration) {
         adminDeclarationMapper.updateDeclarationStatusAndModifier(adminDeclaration);
     }
+    
+    
 }
