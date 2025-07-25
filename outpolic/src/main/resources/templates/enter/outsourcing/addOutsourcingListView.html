@@ -375,6 +375,10 @@ color: #aaa;">
    <script th:inline="javascript">
         $(document).ready(function() {
 
+        	 const now = new Date();
+             now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // 시간대 오차 보정
+             const minDateTime = now.toISOString().slice(0, 16); // YYYY-MM-DDThh:mm 형식으로 자르기
+             $('#osStrtYmdt').attr('min', minDateTime);
             // --- 1. 초기 데이터 및 변수 설정 ---
             let currentStep = 1;
             const entCd = /*[[${entCd}]]*/ null;
