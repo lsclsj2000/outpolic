@@ -10,7 +10,6 @@
         	font-family: "Inter", sans-serif; 
         }
         .main-container { 
-        	max-width: 960px; 
         	margin: 40px auto; 
         	padding: 30px; 
         	background: #fff; 
@@ -19,7 +18,7 @@
         }
         .section-title { 
         	text-align: center; 
-        	margin-bottom: 30px; 
+        	margin-bottom: 50px; 
         	font-size: 1.8em; 
         }
         .form-step { 
@@ -122,9 +121,9 @@
             align-items: center; /* 세로 중앙 정렬 */
             gap: 10px; /* 아이템 간 간격 */
             margin-bottom: 10px; /* 각 카테고리 행 아래 여백 */
-            background: #f9f9f9; /* 기존 배경색 유지 */
+            background: white; /* 기존 배경색 유지 */
             padding: 15px;      /* 기존 패딩 유지 */
-            border: 1px solid #ddd; /* 기존 테두리 유지 */
+            border: 1px solid white; /* 기존 테두리 유지 */
             border-radius: 8px; /* 둥근 모서리 */
         }
         .category-select {
@@ -171,7 +170,6 @@
         }
 
         .btn-add-category {
-            margin-top: 10px;
             background-color: #264796;
             color: white;
             border: none;
@@ -179,6 +177,7 @@
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
+            
         }
         .tag-search-wrapper { 
         	position: relative; 
@@ -235,7 +234,7 @@
 <th:block layout:fragment="contents">
     <div class="main-container">
         <h3 class="section-title">새 포트폴리오 등록</h3>
-        <div class="progress-indicator">
+        <div class="progress-indicator" style="margin-bottom:40px;">
             <div class="progress-step active" data-step="1">1</div>
             <div class="progress-step" data-step="2">2</div>
             <div class="progress-step" data-step="3">3</div>
@@ -291,7 +290,7 @@
                 <div class="form-group">
     <label>카테고리 선택 <span style="color:red;">*</span></label>
     <div id="category-rows-container" class="category-block-list"></div>
-    <button type="button" id="add-category-row-btn" class="btn btn-add-category">+ 카테고리 추가</button>
+    <button type="button" id="add-category-row-btn" class="btn btn-add-category" style="height:40px; width:200px; margin-left:20px;">+ 카테고리 추가</button>
     <div class="error-message" id="categoryError"></div>
 </div>
                 <div class="form-group">
@@ -660,7 +659,7 @@
                         <select class="form-control category-select" data-level="2" data-row-id="${uniqueId}" style="display:none;"></select>
                         <select class="form-control category-select" data-level="3" data-row-id="${uniqueId}" style="display:none;"></select>
                         <input type="hidden" class="final-category-id">
-                        <button type="button" class="remove-category-row-btn">삭제</button>
+                        <button type="button" class="remove-category-row-btn" style="width:80px; height:43px;">삭제</button>
                     </div>`;
                 $('#category-rows-container').append(newRowHtml);
                 const $newRow = $(`div.category-row-new[data-row-id="${uniqueId}"]`);

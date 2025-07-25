@@ -12,7 +12,6 @@
         	font-family: "Inter", sans-serif; 
         }
         .main-container { 
-        	max-width: 960px; 
         	margin: 40px auto; 
         	padding: 30px; 
         	background: #fff;
@@ -219,7 +218,7 @@
 <th:block layout:fragment="contents">
     <div class="main-container">
         <h1 class="section-title">포트폴리오 수정</h1>
-        <div class="card">
+        <div>
             <div class="progress-indicator">
                 <div class="progress-step active" data-step="1">1</div>
                 <div class="progress-step" data-step="2">2</div>
@@ -258,8 +257,7 @@
                     <div class="form-group">
                         <label>카테고리 <span style="color:red;">*</span></label>
                         <div id="category-rows-container"></div>
-                        <button type="button" id="add-category-row-btn" class="btn btn-secondary mt-2" style="background-color: #6c757d;
-border-color: #6c757d;">+ 카테고리 추가</button>
+                        <button type="button" id="add-category-row-btn" class="btn btn-secondary mt-2" style="height:40px; width:200px; margin-left:20px;">+ 카테고리 추가</button>
                         <div class="error-message" id="categoryError"></div>
                     </div>
                     <div class="form-group">
@@ -424,7 +422,7 @@ padding: 15px; border-radius: 8px;"></div>
                         <select class="form-control category-select" data-level="2" style="display:none;"></select>
                         <select class="form-control category-select" data-level="3" style="display:none;"></select>
                         <input type="hidden" class="final-category-id">
-                        <button type="button" class="remove-category-row-btn">삭제</button>
+                        <button type="button" class="remove-category-row-btn" style="width:80px; height:43px;">삭제</button>
                     </div>`;
                 $('#category-rows-container').append(newRowHtml);
                 const $newRow = $(`div.category-row-new[data-row-id="${uniqueId}"]`);
