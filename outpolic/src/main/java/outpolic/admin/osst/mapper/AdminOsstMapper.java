@@ -18,4 +18,9 @@ public interface AdminOsstMapper {
 	
 	// 외주 진행 수정 팝업창 데이터 조회
 	List<AdminOsst> getOsstStepsByOcdCd(String ocdCd);
+	
+	// 외주 진행 필터
+		List<AdminOsst> getAdminOsstListFiltered(@Param("field") String field,
+	            @Param("keyword") String keyword,
+	            @Param("stepStatus") String stepStatus);
 }

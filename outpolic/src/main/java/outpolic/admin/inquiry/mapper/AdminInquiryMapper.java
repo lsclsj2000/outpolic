@@ -1,6 +1,7 @@
 package outpolic.admin.inquiry.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,9 @@ import outpolic.admin.inquiry.domain.AdminInquiryType;
 
 @Mapper
 public interface AdminInquiryMapper {
+	
+	// 문의 수정 테이블 유무 확인
+	void insertInquiryProcessIfNotExists(AdminInquiry adminInquiry);
 	
 	// 문의 자원 수정
 	void updateInquiryType(AdminInquiryType inquiryType);
@@ -39,7 +43,10 @@ public interface AdminInquiryMapper {
     // 문의답변 저장
     void updateInquiryAnswer(AdminInquiry adminInquiry);
     
-    // 페이지네이션
-    List<AdminInquiry> getAdminInquiryListPaged(@Param("offset") int offset, @Param("size") int size);
-    int getAdminInquiryTotalCount();
+    // 문의 필터
+    List<AdminInquiry> getFilteredInquiryList(Map<String, Object> paramMap);
+    
+    // 문의 자원 필터
+ 	List<AdminInquiryType> getFilteredInquiryTypeList(Map<String, Object> paramMap);
+    
 }
