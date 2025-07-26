@@ -217,6 +217,7 @@ public class EnterInquiryController {
 	    model.addAttribute("title", "문의 내역");
 	    model.addAttribute("size", size);
 	    model.addAttribute("sort", sort);
+	    model.addAttribute("sessionMemberCode", memberCode);
 
 	    return "enter/inquiry/enterInquiryListView";
 	}

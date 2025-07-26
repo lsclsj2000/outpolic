@@ -217,6 +217,7 @@ public class UserInquiryController {
 	    model.addAttribute("title", "문의 내역");
 	    model.addAttribute("size", size);
 	    model.addAttribute("sort", sort);
+	    model.addAttribute("sessionMemberCode", memberCode);
 
 	    return "user/inquiry/userInquiryListView";
 	}
@@ -267,7 +268,9 @@ public class UserInquiryController {
 	public String userInquiryTotalView(Model model,
 	                                   @RequestParam(defaultValue = "0") int page,
 	                                   @RequestParam(defaultValue = "10") int size,
-	                                   @RequestParam(defaultValue = "recent") String sort) {
+	                                   @RequestParam(defaultValue = "recent") String sort,
+	                                   HttpSession session) {
+
 	    Sort sorting = switch (sort) {
 	        case "old" -> Sort.by("reg_date").ascending();
 	        default -> Sort.by("reg_date").descending();
@@ -276,14 +279,18 @@ public class UserInquiryController {
 
 	    Page<UserAnn> totalList = userInquiryService.getUserTotalList(pageable, sort);
 
+	    String memberCode = (String) session.getAttribute("SCD");
+
 	    model.addAttribute("totalList", totalList.getContent());
 	    model.addAttribute("pageInfo", totalList);
-	    model.addAttribute("size", size); // ✅ 필터 유지용
-	    model.addAttribute("sort", sort); // ✅ 필터 유지용
+	    model.addAttribute("size", size);
+	    model.addAttribute("sort", sort);
 	    model.addAttribute("title", "전체 게시판");
+	    model.addAttribute("sessionMemberCode", memberCode);
 
 	    return "user/inquiry/userInquiryTotalView";
 	}
+
 
 	@GetMapping("/userInquiryFaq")
 	public String userInquiryFaqView(Model model) {

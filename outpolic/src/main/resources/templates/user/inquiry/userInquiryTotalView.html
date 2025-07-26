@@ -5,9 +5,8 @@
 
 	<head>
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	</head>
-	
-	<!-- 추가할 js file -->
 	
 	<th:block layout:fragment="contents">
 		<div class="mb-30 mt-50">
@@ -32,7 +31,6 @@
 						</div>
 						<div class="sort-by-product-area">
 							<form id="filterForm" method="get" th:action="@{/user/userInquiryTotal}" style="display:flex; flex-direction:row-reverse;">
-							    <!-- 페이지당 출력 수 -->
 							    <div class="sort-by-cover">
 							        <div class="sort-by-product-wrap">
 							            <div class="sort-by">
@@ -48,7 +46,6 @@
 							        </div>
 							    </div>
 							
-							    <!-- 정렬 -->
 							    <div class="sort-by-cover mr-10">
 							        <div class="sort-by-product-wrap">
 							            <div class="sort-by">
@@ -82,61 +79,64 @@
 							        style="border:0px; border-bottom: solid 1px #ececec;"
 							        th:each="l, stat : ${totalList}">
 							        
-							        <!-- No -->
 							        <td class="start text-center">
 							            <span th:text="${totalList.size() - stat.index}">번호</span>
 							        </td>
 							        
-							        <!-- 제목 (공지인지 문의인지에 따라 링크 변경) -->
 							        <td scope="col">
-									    <!-- 문의 & 비밀글 -->
-									    <span th:if="${l.totalType == '문의' and l.inquirySecret == 1}">
-									        <i class="fas fa-lock" style="color: #6c757d; font-size: 0.9em; margin-right: 5px;" title="비밀글"></i>
+									    <th:block th:if="${l.totalType == '문의글' or l.totalType == '문의' or l.totalType == 'inquiry'}">
+                                            <span th:if="${l.inquirySecret != null and l.inquirySecret.equals(1)}">
+												<i class="fas fa-lock" style="color: #6c757d; font-size: 0.9em; margin-right: 5px;" title="비밀글"></i>
 									
-									        <!-- 작성자 또는 관리자 -->
-									        <a th:if="${sessionMemberCode == l.memberCode or sessionMemberCode == 'ADMIN'}"
-									           th:href="@{/user/userInquiryDetail(iq_cd=${l.totalCode})}"
-									           th:text="${l.totalTitle}"
-									           style="color: black; text-decoration: none;"
-									           onmouseover="this.style.color='#3BB77E'"
-									           onmouseout="this.style.color='black'">
-									        </a>
+												<a th:if="${session.memberCode == l.memberCode or session.memberCode == 'ADMIN'}"
+												   th:href="@{/user/userInquiryDetail(iq_cd=${l.totalCode})}"
+												   th:text="${l.totalTitle}"
+												   style="color: black; text-decoration: none;"
+												   onmouseover="this.style.color='#3BB77E'"
+												   onmouseout="this.style.color='black'">
+												</a>
 									
-									        <!-- 다른 사람은 alert -->
-									        <a th:if="${sessionMemberCode != l.memberCode and sessionMemberCode != 'ADMIN'}"
-									           href="javascript:void(0);"
-									           th:text="${l.totalTitle}"
-									           onclick="alert('비밀글은 작성자만 열람 가능합니다.');"
-									           style="color: black; text-decoration: none; cursor: pointer;"
-									           onmouseover="this.style.color='#3BB77E'"
-									           onmouseout="this.style.color='black'">
-									        </a>
-									    </span>
+												<a th:if="${session.memberCode != l.memberCode and session.memberCode != 'ADMIN'}"
+												   href="javascript:void(0);"
+												   th:text="${l.totalTitle}"
+												   onclick="alert('비밀글은 작성자만 열람 가능합니다.');"
+												   style="color: black; text-decoration: none; cursor: pointer;"
+												   onmouseover="this.style.color='#3BB77E'"
+												   onmouseout="this.style.color='black'">
+												</a>
+											</span>
 									
-									    <!-- 공지사항 또는 일반 문의글 -->
-									    <span th:if="${l.totalType != '문의' or l.inquirySecret != 1}">
-									        <a th:href="${l.totalType == '공지사항'} ? @{'/user/userNoticeDetail'(ann_cd=${l.totalCode})} : @{'/user/userInquiryDetail'(iq_cd=${l.totalCode})}"
-									           th:text="${l.totalTitle}"
-									           style="color: black; text-decoration: none;"
-									           onmouseover="this.style.color='#3BB77E'"
-									           onmouseout="this.style.color='black'">
-									        </a>
-									    </span>
+											<span th:unless="${l.inquirySecret != null and l.inquirySecret.equals(1)}">
+												<a th:href="@{/user/userInquiryDetail(iq_cd=${l.totalCode})}"
+												   th:text="${l.totalTitle}"
+												   style="color: black; text-decoration: none;"
+												   onmouseover="this.style.color='#3BB77E'"
+												   onmouseout="this.style.color='black'">
+												</a>
+											</span>
+										</th:block>
+									
+										<th:block th:if="${l.totalType == '공지사항'}">
+											<a th:href="@{/user/userNoticeDetail(ann_cd=${l.totalCode})}"
+											   th:text="${l.totalTitle}"
+											   style="color: black; text-decoration: none;"
+											   onmouseover="this.style.color='#3BB77E'"
+											   onmouseout="this.style.color='black'">
+											</a>
+										</th:block>
 									</td>
+
 							        
-							        <!-- 분류 -->
 							        <td scope="col" class="text-center" th:text="${l.totalType}">분류</td>
 							        
-							        <!-- 작성자 -->
 							        <td scope="col" class="text-center" th:text="${l.totalWriter}">작성자</td>
 							        
-							        <!-- 작성일자 -->
 							        <td scope="col" class="text-center" th:text="${l.totalRegDate}">2025-06-24</td>
 							    </tr>
 							</tbody>
 						</table>
 					</div>
-					<div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, ${size}, ${sort})}"></div>	
+					<div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, ${size}, ${sort}, '/user/userInquiryTotal')}"></div>	
 				</div>
 			</div>
 		</div>
