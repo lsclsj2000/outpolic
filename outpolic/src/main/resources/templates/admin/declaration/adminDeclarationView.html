@@ -21,59 +21,61 @@
 	        <div class="card mb-4 search-filter-card">
 	            <div class="card-body search-filter-body">
 	                <div class="table-responsive">
-	                    <table class="search-filter-table">
-							<tbody>
-								<tr>
-									<th>기본검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>제목</option>
-											<option>내용</option>
-											<option>문의코드</option>
-											<option>작성자</option>
+	                    <form id="searchForm" method="get" action="/admin/adminDeclaration">
+							<table class="search-filter-table">
+								<tbody>
+								 	<tr>
+								  		<th>기본검색</th>
+								  	<td>
+									    <select class="form-select" name="keywordField" style="width: 120px;">
+										    <option value="type" th:selected="${searchField} == 'type'">신고타입</option>
+										    <option value="reason" th:selected="${searchField} == 'reason'">신고사유</option>
+										    <option value="result" th:selected="${searchField} == 'result'">처리결과</option>
 										</select>
-										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
-									</td>
+										<input type="text" name="keyword" placeholder="검색어를 입력하세요"
+										       class="form-control" style="width: 250px;" th:value="${searchKeyword}" />
+								  	</td>
 								</tr>
 								<tr>
-									<th>기간검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>작성일자</option>
-											<option>수정일자</option>
-										</select>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<span> ~ </span>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<button type="button" class="btn btn-sm btn-light">오늘</button>
-										<button type="button" class="btn btn-sm btn-light">어제</button>
-										<button type="button" class="btn btn-sm btn-light">일주일</button>
-										<button type="button" class="btn btn-sm btn-light">지난달</button>
-										<button type="button" class="btn btn-sm btn-light">1개월</button>
-										<button type="button" class="btn btn-sm btn-light">3개월</button>
-										<button type="button" class="btn btn-sm btn-light">전체</button>
-									</td>
-								</tr>
+									    <th>기간검색</th>
+									    <td>
+									        <select name="dateField" class="form-select" style="width: 120px;">
+											    <option value="reg" th:selected="${dateField} == 'reg'">작성일자</option>
+											    <option value="mod" th:selected="${dateField} == 'mod'">수정일자</option>
+											</select>
+									        <input type="date" id="startDate" name="startDate" class="form-control" style="width: 150px;" th:value="${startDate}" />
+									        <span> ~ </span>
+									        <input type="date" id="endDate" name="endDate" class="form-control" style="width: 150px;" th:value="${endDate}" />
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="today">오늘</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="yesterday">어제</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="7days">일주일</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="lastmonth">지난달</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="1month">1개월</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="3months">3개월</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="all">전체</button>
+									    </td>
+									</tr>
 								<tr>
 									<th>처리상태</th>
-									<td>
+								    <td>
 										<div class="radio-group">
-											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
-											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
-											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
-											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
+											<label><input type="radio" name="status" value="" th:checked="${status == null or status == ''}" /> 전체</label>
+											<label><input type="radio" name="status" value="SD_INQUIRY_ING" th:checked="${status == 'SD_INQUIRY_ING'}" /> 요청중</label>
+											<label><input type="radio" name="status" value="SD_PROCESS_ING" th:checked="${status == 'SD_PROCESS_ING'}" /> 처리중</label>
+											<label><input type="radio" name="status" value="SD_PROCESS_END" th:checked="${status == 'SD_PROCESS_END'}" /> 처리완료</label>
 										</div>
-									</td>
+								    </td>
 								</tr>
 							</tbody>
 						</table>
 						<div class="search-filter-buttons">
-							<button type="button" class="btn btn-primary">검색</button>
-							<button type="button" class="btn btn-secondary">초기화</ 보통>
+							<button type="submit" class="btn btn-primary">검색</button>
+							<button type="button" id="resetButton" class="btn btn-secondary">초기화</button>
 						</div>
-	                </div>
-	            </div>
-	        </div>
+					</form>
+                </div>
+            </div>
+        </div>
 	        <div class="card mb-4">
 	            <div class="card-body">
 	                <div class="table-responsive">
@@ -342,6 +344,71 @@
 			    let currentDeclarationData = null; // 수정 모달용
                 let currentProcessDeclarationData = null; // 처리 모달용
                 let originalDeclarationStcCode = ''; // 수정 모달용
+                
+             // 3. 초기화 버튼 클릭 시 필터 제거
+        	    const resetBtn = document.getElementById('resetButton');
+        	    if (resetBtn) { // 요소가 존재하는지 확인
+        	        resetBtn.addEventListener('click', function () {
+        	            window.location.href = '/admin/adminDeclaration'; // 신고 내역 페이지 URL로 리다이렉트
+        	        });
+        	    }
+        	
+        	 // 4. 날짜 버튼 기능
+        	    document.querySelectorAll('.date-btn').forEach(btn => {
+        	        btn.addEventListener('click', function () {
+        	            const today = new Date();
+        	            const startDateInput = document.getElementById('startDate');
+        	            const endDateInput = document.getElementById('endDate');
+        	            let start, end;
+        	
+        	            switch (this.dataset.range) {
+        	                case 'today':
+        	                    start = end = today;
+        	                    break;
+        	                case 'yesterday':
+        	                    start = end = new Date(today.setDate(today.getDate() - 1));
+        	                    break;
+        	                case '7days':
+        	                    end = new Date();
+        	                    start = new Date();
+        	                    start.setDate(start.getDate() - 6);
+        	                    break;
+        	                case 'lastmonth':
+        	                    start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        	                    end = new Date(today.getFullYear(), today.getMonth(), 0);
+        	                    break;
+        	                case '1month':
+        	                    end = new Date();
+        	                    start = new Date();
+        	                    start.setMonth(start.getMonth() - 1);
+        	                    break;
+        	                case '3months':
+        	                    end = new Date();
+        	                    start = new Date();
+        	                    start.setMonth(start.getMonth() - 3);
+        	                    break;
+        	                case 'all':
+        	                    if (startDateInput) startDateInput.value = '';
+        	                    if (endDateInput) endDateInput.value = '';
+        	                    // '전체' 선택 시 폼을 자동으로 제출하지 않습니다.
+        	                    return;
+        	            }
+        	
+        	            // 날짜 포맷팅
+        	            const formatDate = (date) => {
+        	                const year = date.getFullYear();
+        	                const month = (`0${(date.getMonth() + 1)}`).slice(-2);
+        	                const day = (`0${date.getDate()}`).slice(-2);
+        	                return `${year}-${month}-${day}`;
+        	            };
+        	
+        	            if (startDateInput) startDateInput.value = formatDate(start);
+        	            if (endDateInput) endDateInput.value = formatDate(end);
+        	
+        	            // 날짜 선택 후 폼을 자동으로 제출하지 않습니다.
+        	            // 사용자가 직접 '검색' 버튼을 눌러야 폼이 제출됩니다.
+        	        });
+        	    });
 
 			    function stripHtmlAndRemoveImages(html) {
 			        if (!html) return '';
@@ -810,7 +877,6 @@
                         showCustomAlert('처리에 실패했습니다: ' + error.message);
                     });
                 });
-
 			});
 			</script>
 		</th:block>
