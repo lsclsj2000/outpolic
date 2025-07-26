@@ -1,9 +1,23 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{admin/layout/adminLayoutMain}">
 
 <head>
-	<meta name="description" content="로그인 기록" />
+<meta name="description" content="로그인 기록" />
+<style>
+.pagination .page-item .page-link {
+	min-width: 40px; /* 너비 확보 */
+	height: 40px;
+	padding: 6px 10px; /* 내부 여백 */
+	text-align: center; /* 텍스트 가운데 정렬 */
+	line-height: 1.5; /* 줄간격 조정 */
+	display: inline-flex; /* 정렬 개선 */
+	justify-content: center;
+	align-items: center;
+	font-size: 14px; /* 필요 시 폰트 사이즈 조정 */
+}
+</style>
 </head>
 
 <body>
@@ -21,24 +35,19 @@
 								<tbody>
 									<tr>
 										<th>기본검색</th>
-										<td>
-											<select id="searchType" class="form-select" style="width: 120px;">
+										<td><select id="searchType" class="form-select"
+											style="width: 120px;">
 												<option value="mbrCd">회원코드</option>
-												<option value="mbrNm">회원이름</option>
-											</select>
-											<input type="text" id="searchKeyword" placeholder="검색어를 입력하세요"
-												class="form-control" style="width: 250px;" />
-										</td>
+										</select> <input type="text" id="searchKeyword"
+											placeholder="검색어를 입력하세요" class="form-control"
+											style="width: 250px;" /></td>
 									</tr>
 									<tr>
 										<th>기간</th>
-										<td>
-											<input type="date" id="startDate" class="form-control"
-												style="width: 150px;" />
-											<span> ~ </span>
-											<input type="date" id="endDate" class="form-control"
-												style="width: 150px;" />
-										</td>
+										<td><input type="date" id="startDate"
+											class="form-control" style="width: 150px;" /> <span>
+												~ </span> <input type="date" id="endDate" class="form-control"
+											style="width: 150px;" /></td>
 									</tr>
 								</tbody>
 							</table>
@@ -61,96 +70,210 @@
 			<!-- 📋 로그인 기록 테이블 -->
 			<div class="card">
 				<div class="card-body">
+					<div class=" d-flex flex-row">
+						<div class="d-flex flex-wrap gap-3 align-items-center mb-3 w-50">
+							<p class="fs-6 mb-0">
+								<span class="badge bg-light text-dark px-3 py-2"> 전체 : <span
+									id="totalCount" class="fw-bold text-primary total-count"
+									th:text="${totalCount}">0</span> 건
+								</span>
+							</p>
+
+							<p class="fs-6 mb-0" id="filteredCountWrap"
+								style="display: none;">
+								<span class="badge bg-light text-dark px-3 py-2"> 검색 결과 :
+									<span id="filteredCount" class="fw-bold text-success">0</span>
+									건
+								</span>
+							</p>
+						</div>
+					</div>
 					<div class="table-responsive">
 						<table class="table text-center">
 							<thead>
 								<tr>
-									<th>No.</th>
-									<th>회원코드</th>
-									<th>로그인시간</th>
-									<th>로그아웃시간</th>
-									<th>IP</th>
-									<th>관리자코드</th>
-									<th>수정일시</th>
+									<th scope="col">No.</th>
+									<th scope="col">회원코드</th>
+									<th scope="col">로그인시간</th>
+									<th scope="col">로그아웃시간</th>
+									<th scope="col">IP</th>
 								</tr>
 							</thead>
-							<tbody>
-								<!-- 👉 더미데이터 -->
-								<tr>
-									<td>1</td>
-									<td>MB_C000001</td>
-									<td>2025-07-24 09:12:32</td>
-									<td>2025-07-24 12:45:01</td>
-									<td>192.168.0.1</td>
-									<td>ADM001</td>
-									<td>2025-07-24 12:50:00</td>
+							<tbody id="loginHistoryTableBody">
+								<tr th:if="${loginList == null or #lists.isEmpty(loginList)}">
+									<td colspan="7">로그인 기록이 없습니다.</td>
 								</tr>
-								<tr>
-									<td>2</td>
-									<td>MB_C000002</td>
-									<td>2025-07-23 11:05:15</td>
-									<td>2025-07-23 13:01:45</td>
-									<td>192.168.0.22</td>
-									<td>ADM002</td>
-									<td>2025-07-23 13:10:12</td>
+								<tr th:each="log, iterStat : ${loginList}">
+									<td
+										th:text="${(currentPage - 1) * pageSize + iterStat.index + 1}"></td>
+									<td th:text="${log?.memberCode ?: '-'}"></td>
+									<td th:text="${log?.loginTime ?: '-'}"></td>
+									<td th:text="${log?.logoutTime ?: '-'}"></td>
+									<td th:text="${log?.ip ?: '-'}"></td>
 								</tr>
-								<!-- ... -->
 							</tbody>
 						</table>
+						<div id="paginationArea">
+							<div
+								th:insert="~{admin/fragments/pagination :: paginationFragment}"></div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		</section>
 	</th:block>
 
 	<th:block layout:fragment="jsScript">
-			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-			<script>
-				const ctx = document.getElementById('loginLineChart').getContext('2d');
-
-				  const loginLineChart = new Chart(ctx, {
-				    type: 'line',
-				    data: {
-				      labels: ['07-18', '07-19', '07-20', '07-21', '07-22', '07-23', '07-24'],
-				      datasets: [{
-				        label: '일별 로그인 수',
-				        data: [5, 8, 4, 10, 3, 6, 7],
-				        fill: false,
-				        borderColor: '#264796',
-				        tension: 0.3,
-				        pointBackgroundColor: '#264796',
-				        pointRadius: 5
-				      }]
-				    },
-				    options: {
-				      responsive: true,
-				      plugins: {
-				        legend: { display: false },
-				        tooltip: { mode: 'index', intersect: false }
-				      },
-				      scales: {
-				        x: {
-				          title: {
-				            display: true,
-				            text: '날짜',
-				            color: '#666'
-				          }
-				        },
-				        y: {
-				          title: {
-				            display: true,
-				            text: '로그인 수',
-				            color: '#666'
-				          },
-				          beginAtZero: true,
-				          stepSize: 1
-				        }
-				      }
-				    }
-				  });
-			</script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script>
+			// 차트 그리기
+			$(document).ready(function () {
+			  $.ajax({
+			    type: 'GET',
+			    url: '/admin/loginHistory/chartData',
+			    success: function (data) {
+			      const labels = data.map(item => item.date);
+			      const counts = data.map(item => item.count);
+			
+			      const ctx = document.getElementById('loginLineChart').getContext('2d');
+			      new Chart(ctx, {
+			        type: 'line',
+			        data: {
+			          labels: labels,
+			          datasets: [{
+			            label: '로그인 수',
+			            data: counts,
+						borderColor: '#264796', // ✅ 선 색상
+						backgroundColor: 'rgba(38, 71, 150, 0.1)',
+						pointBackgroundColor: '#264796', // ✅ 점 색상
+						pointBorderColor: '#264796',
+			            borderWidth: 2,
+			            fill: false,
+			            tension: 0.2
+			          }]
+			        },
+			        options: {
+			          scales: {
+			            y: {
+			              beginAtZero: true,
+			              ticks: {
+			                precision: 0 // 정수만
+			              }
+			            }
+			          }
+			        }
+			      });
+			    },
+			    error: function () {
+			      alert("차트 데이터를 불러오는 중 오류가 발생했습니다.");
+			    }
+			  });
+			});
+		</script>
+		<script>
+			// 검색
+			$('#searchBtn').on('click', function () {
+			  const keyword = $('#searchKeyword').val();
+			  const startDate = $('#startDate').val();
+			  const endDate = $('#endDate').val();
+			
+			  $.ajax({
+			    type: 'GET',
+			    url: '/admin/loginHistory/search',
+			    data: { keyword, startDate, endDate },
+			    success: function (data) {
+			      const $tbody = $('#loginHistoryTableBody');
+			      $tbody.empty(); // 기존 내용 비움
+			      const list = data;         // 검색된 리스트
+      			  const count = list.length;   // 검색된 개수
+					
+			      // 🔽 페이지네이션 숨기기
+			      $('#paginationArea').hide();
+			
+			      if (data.length === 0) {
+			        $tbody.append('<tr><td colspan="7">로그인 기록이 없습니다.</td></tr>');
+			      } else {
+			        data.forEach((log, index) => {
+			          $tbody.append(`
+			            <tr>
+			              <td>${index + 1}</td>
+			              <td>${log.memberCode ?? '-'}</td>
+			              <td>${log.loginTime ?? '-'}</td>
+			              <td>${log.logoutTime ?? '-'}</td>
+			              <td>${log.ip ?? '-'}</td>
+			            </tr>
+			          `);
+			        });
+			      }
+			      // ✅ 검색 결과 수 표시
+			      $('#filteredCount').text(count);       // 숫자 표시
+			      $('#filteredCountWrap').show();        // 영역 보여주기
+			
+			      // ✅ 전체 수 유지 (필요 시)
+			      $('#totalCount').text(data.totalCount);
+			    },
+			    error: function () {
+			      alert('로그인 기록 검색 중 오류가 발생했습니다.');
+			    }
+			  });
+			});
+			
+			$('#resetBtn').on('click', function(){
+				 window.location.href = '/admin/loginHistory';
+			});
+			
+			
+			/* 그냥 리로드 시켜!
+			
+			// 🔁 reset 버튼
+			$('#resetBtn').on('click', function () {
+			  // 입력 필드 초기화
+			  $('#startDate').val('');
+			  $('#endDate').val('');
+			  $('#searchKeyword').val('');
+			  $('#searchType').val('mbrCd');
+			  $("input[name='currentPage']").val(1);
+			
+			  // ✅ 전체 로그인 기록 다시 불러오기 (1페이지 기준)
+			  $.ajax({
+			    type: 'GET',
+			    url: '/admin/loginHistory/init?page=1',
+			    success: function (data) {
+			      const $tbody = $('#loginHistoryTableBody');
+			      $tbody.empty();
+			
+			      // 🔼 페이지네이션 다시 보이기
+			      $('#paginationArea').show();
+			
+			      if (data.length === 0) {
+			        $tbody.append('<tr><td colspan="7">로그인 기록이 없습니다.</td></tr>');
+			      } else {
+			      	const page = 1; // 또는 URL에서 page 파싱
+				    const rowPerPage = 30;
+				    const startNumber = (page - 1) * rowPerPage;
+			        data.forEach((log, index) => {
+			          $tbody.append(`
+			            <tr>
+			              <td>${startNumber + index + 1}</td>
+			              <td>${log.memberCode ?? '-'}</td>
+			              <td>${log.loginTime ?? '-'}</td>
+			              <td>${log.logoutTime ?? '-'}</td>
+			              <td>${log.ip ?? '-'}</td>
+			            </tr>
+			          `);
+			        });
+			
+			        // 👉 페이징 다시 그리기 함수 호출 필요 시 여기에 추가
+			        // renderPagination(data.totalCount, data.currentPage);
+			      }
+			    },
+			    error: function () {
+			      alert('전체 로그인 기록을 불러오는 중 오류가 발생했습니다.');
+			    }
+			  });
+			}); */
+		</script>
 
 	</th:block>
 </body>
