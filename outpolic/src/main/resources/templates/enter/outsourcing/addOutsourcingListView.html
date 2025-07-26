@@ -309,7 +309,7 @@
                     <div class="form-group">
                         <label for="tags">태그 (쉼표로 구분)</label>
                         <div class="tag-search-wrapper">
-                            <input type="text" id="tags" name="tags" class="form-control" placeholder="예: 웹개발, 디자인, 모바일앱">
+                            <input type="text" id="tags" name="tags" class="form-control" placeholder="예: 웹개발, 디자인, 모바일앱" style="width:480px; height:50px;" >
                             <div id="tag-search-results" class="tag-search-results-dropdown"></div>
                         </div>
                     </div>
@@ -436,7 +436,7 @@ color: #aaa;">
             
             function addNewCategoryRow() {
                 const uniqueId = new Date().getTime();
-                const newRowHtml = `<div class="category-row-new d-flex gap-2" data-row-id="${uniqueId}"><select class="form-control category-select flex-grow-1" data-level="1"><option value="">1차 선택</option></select><select class="form-control category-select flex-grow-1" data-level="2" style="display:none;"><option value="">2차 선택</option></select><select class="form-control category-select flex-grow-1" data-level="3" style="display:none;"><option value="">3차 선택</option></select><input type="hidden" class="final-category-id"><button type="button" class="remove-category-row-btn btn btn-danger btn-sm" style="width:80px;">삭제</button></div>`;
+                const newRowHtml = `<div class="category-row-new d-flex gap-2" data-row-id="${uniqueId}"><select class="form-control category-select flex-grow-1" data-level="1"><option value="">1차 선택</option></select><select class="form-control category-select flex-grow-1" data-level="2" style="display:none;"><option value="">2차 선택</option></select><select class="form-control category-select flex-grow-1" data-level="3" style="display:none;"><option value="">3차 선택</option></select><input type="hidden" class="final-category-id"><button type="button" class="remove-category-row-btn btn btn-danger btn-sm" style="width:200px; height:35px;">삭제</button></div>`;
                 $('#category-rows-container').append(newRowHtml);
                 const $newRow = $(`div.category-row-new[data-row-id="${uniqueId}"]`);
                 $.get('/api/categories', { parentId: '' }, (categories) => { populateDropdown($newRow.find(`[data-level="1"]`), categories); });
