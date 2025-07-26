@@ -1,6 +1,8 @@
 package outpolic.admin.inquiry.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.inquiry.domain.AdminInquiry;
 import outpolic.admin.inquiry.domain.AdminInquiryType;
 import outpolic.admin.inquiry.service.AdminInquiryService;
-import outpolic.common.domain.PageInfo;
 
 @Slf4j
 @Controller
@@ -62,15 +63,38 @@ public class AdminInquiryController {
 	
 	
 	@GetMapping("/adminInquiryResources") 
-	public String adminInquiryResourcesView(Model model) {
-		// 문의 자원 등록 페이지
-		List<AdminInquiryType> adminInquiryTypeList = adminInquiryService.getAdminInquiryTypeList();
-		 
-		model.addAttribute("title", "문의 자원 등록");
-		model.addAttribute("adminInquiryTypeList", adminInquiryTypeList);
-		 
-		return "admin/inquiry/adminInquiryResourcesView"; 
-	 }
+	public String adminInquiryResourcesView(
+	    @RequestParam(required = false) String searchField,
+	    @RequestParam(required = false) String searchKeyword,
+	    @RequestParam(required = false) String status,
+	    @RequestParam(required = false) String dateField,
+	    @RequestParam(required = false) String startDate,
+	    @RequestParam(required = false) String endDate,
+	    Model model) {
+
+	    Map<String, Object> paramMap = new HashMap<>();
+	    paramMap.put("searchField", searchField);
+	    paramMap.put("searchKeyword", searchKeyword);
+	    paramMap.put("status", status);
+	    paramMap.put("dateField", dateField);
+	    paramMap.put("startDate", startDate);
+	    paramMap.put("endDate", endDate);
+
+	    List<AdminInquiryType> adminInquiryTypeList = adminInquiryService.getFilteredInquiryTypeList(paramMap);
+
+	    model.addAttribute("adminInquiryTypeList", adminInquiryTypeList);
+
+	    // 필터값도 다시 넣어줌
+	    model.addAttribute("searchField", searchField);
+	    model.addAttribute("searchKeyword", searchKeyword);
+	    model.addAttribute("status", status);
+	    model.addAttribute("dateField", dateField);
+	    model.addAttribute("startDate", startDate);
+	    model.addAttribute("endDate", endDate);
+
+	    return "admin/inquiry/adminInquiryResourcesView"; 
+	}
+
 	
 	@GetMapping("/adminInquiryMdfcn")
 	@ResponseBody
@@ -82,21 +106,39 @@ public class AdminInquiryController {
 	}
 	
 	@GetMapping("/adminInquiryList")
-	public String adminInquiryView(
-	    @RequestParam(defaultValue = "1") int page,
-	    @RequestParam(defaultValue = "10") int size,
-	    Model model
-	) {
-	    int offset = (page - 1) * size;
-	    List<AdminInquiry> inquiryList = adminInquiryService.getAdminInquiryListPaged(offset, size);
-	    int total = adminInquiryService.getAdminInquiryTotalCount();
+	public String adminInquiryList(
+	        @RequestParam(required = false) String searchField,
+	        @RequestParam(required = false) String searchKeyword,
+	        @RequestParam(required = false) String status,
+	        @RequestParam(required = false) String dateField,
+	        @RequestParam(required = false) String startDate,
+	        @RequestParam(required = false) String endDate,
+	        Model model) {
 
-	    model.addAttribute("title", "관리자 문의 내역");
+	    Map<String, Object> paramMap = new HashMap<>();
+	    paramMap.put("searchField", searchField);
+	    paramMap.put("searchKeyword", searchKeyword);
+	    paramMap.put("status", status);
+	    paramMap.put("dateField", dateField);
+	    paramMap.put("startDate", startDate);
+	    paramMap.put("endDate", endDate);
+
+	    List<AdminInquiry> inquiryList = adminInquiryService.getFilteredInquiryList(paramMap);
+
 	    model.addAttribute("inquiryList", inquiryList);
-	    model.addAttribute("pageInfo", new PageInfo(page, size, total));
-	    model.addAttribute("size", size);
-	    return "admin/inquiry/adminInquiryView";
+
+	    // 검색 조건도 모델에 추가하여 HTML에서 유지되도록 한다
+	    model.addAttribute("searchField", searchField);
+	    model.addAttribute("searchKeyword", searchKeyword);
+	    model.addAttribute("status", status);
+	    model.addAttribute("dateField", dateField);
+	    model.addAttribute("startDate", startDate);
+	    model.addAttribute("endDate", endDate);
+
+	    return "admin/inquiry/adminInquiryView";  // 또는 해당 Thymeleaf 경로
 	}
+
+
 	
 	@PostMapping("/updateInquiry")
 	@ResponseBody

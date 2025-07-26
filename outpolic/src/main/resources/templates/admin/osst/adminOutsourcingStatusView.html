@@ -21,62 +21,45 @@
                     </div>
                 </div>
                 <!-- 검색 필터 -->
-	        <div class="card mb-4 search-filter-card">
-	            <div class="card-body search-filter-body">
-	                <div class="table-responsive">
-	                    <table class="search-filter-table">
-							<tbody>
-								<tr>
-									<th>기본검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>제목</option>
-											<option>내용</option>
-											<option>문의코드</option>
-											<option>작성자</option>
-										</select>
-										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
-									</td>
-								</tr>
-								<tr>
-									<th>기간검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>작성일자</option>
-											<option>수정일자</option>
-										</select>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<span> ~ </span>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<button type="button" class="btn btn-sm btn-light">오늘</button>
-										<button type="button" class="btn btn-sm btn-light">어제</button>
-										<button type="button" class="btn btn-sm btn-light">일주일</button>
-										<button type="button" class="btn btn-sm btn-light">지난달</button>
-										<button type="button" class="btn btn-sm btn-light">1개월</button>
-										<button type="button" class="btn btn-sm btn-light">3개월</button>
-										<button type="button" class="btn btn-sm btn-light">전체</button>
-									</td>
-								</tr>
-								<tr>
-									<th>처리상태</th>
-									<td>
-										<div class="radio-group">
-											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
-											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
-											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
-											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<div class="search-filter-buttons">
-							<button type="button" class="btn btn-primary">검색</button>
-							<button type="button" class="btn btn-secondary">초기화</button>
-						</div>
-	                </div>
-	            </div>
-	        </div>
+		        <div class="card mb-4 search-filter-card">
+		            <div class="card-body search-filter-body">
+		                <div class="table-responsive">
+		                    <form id="searchForm" method="get" action="/admin/adminOsst">
+								<table class="search-filter-table">
+									<tbody>
+										<tr>
+											<th>기본검색</th>
+											<td>
+												<select class="form-select" name="searchField" style="width: 120px;">
+													<option value="ocd_ttl" th:selected="${searchField} == 'ocd_ttl'">외주명</option>
+													<option value="ent_nm" th:selected="${searchField} == 'ent_nm'">공급자</option>
+													<option value="mbr_nm" th:selected="${searchField} == 'mbr_nm'">수요자</option>
+												</select>
+												<input type="text" name="searchKeyword" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" th:value="${searchKeyword}" />
+											</td>
+										</tr>
+										<tr>
+											<th>현재단계</th>
+											<td>
+												<div class="radio-group">
+													<label><input type="radio" name="stepStatus" value="" th:checked="${stepStatus == null or stepStatus == ''}" /> 전체</label>
+													<label><input type="radio" name="stepStatus" value="SD_CONTRACT" th:checked="${stepStatus == 'SD_CONTRACT'}" /> 계약 체결</label>
+													<label><input type="radio" name="stepStatus" value="SD_PLANNING" th:checked="${stepStatus == 'SD_PLANNING'}" /> 초기 기획</label>
+													<label><input type="radio" name="stepStatus" value="SD_WORKPROGRESS" th:checked="${stepStatus == 'SD_WORKPROGRESS'}" /> 작업 진행</label>
+													<label><input type="radio" name="stepStatus" value="SD_COMPLETION" th:checked="${stepStatus == 'SD_COMPLETION'}" /> 최종 완료</label>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="search-filter-buttons">
+									<button type="submit" class="btn btn-primary">검색</button>
+									<button type="button" class="btn btn-secondary" id="resetButton">초기화</button>
+								</div>
+							</form>
+		                </div>
+		            </div>
+		        </div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card mb-4">
@@ -176,6 +159,7 @@
     <th:block layout:fragment="jsScript">
 	    <script>
 	        document.addEventListener('DOMContentLoaded', function () {
+	            // === [1] 외주 진행 단계 팝업 관련 ===
 	            const osstModal = document.getElementById('osstModal');
 	            const osstCloseBtn = document.querySelector('#osstModal .SR_close-button');
 	            const openOsstPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
@@ -261,14 +245,67 @@
 	                                    },
 	                                    body: JSON.stringify({ ocdCode: ocdCd, stcCode: stcCd, ospCustYn })
 	                                })
-	                                .then(res => res.text())
-	                                .then(msg => console.log('상태 업데이트 완료:', msg))
-	                                .catch(err => console.error('업데이트 오류:', err));
+	                                    .then(res => res.text())
+	                                    .then(msg => console.log('상태 업데이트 완료:', msg))
+	                                    .catch(err => console.error('업데이트 오류:', err));
 	                            });
 	                        });
 	                    });
 	                }, 0);
 	            }
+	
+	            // === [2] 검색 필터 초기화 버튼 ===
+	            const resetBtn = document.getElementById('resetButton');
+	            resetBtn?.addEventListener('click', function () {
+	                window.location.href = '/admin/adminOsst';
+	            });
+	
+	            // === [3] 날짜 버튼 (기간 필터가 있을 경우) ===
+	            document.querySelectorAll('.date-btn')?.forEach(btn => {
+	                btn.addEventListener('click', function () {
+	                    const today = new Date();
+	                    const startDateInput = document.getElementById('startDate');
+	                    const endDateInput = document.getElementById('endDate');
+	                    let start, end;
+	
+	                    switch (this.dataset.range) {
+	                        case 'today':
+	                            start = end = new Date();
+	                            break;
+	                        case 'yesterday':
+	                            start = end = new Date();
+	                            start.setDate(start.getDate() - 1);
+	                            break;
+	                        case '7days':
+	                            end = new Date();
+	                            start = new Date();
+	                            start.setDate(start.getDate() - 6);
+	                            break;
+	                        case 'lastmonth':
+	                            start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+	                            end = new Date(today.getFullYear(), today.getMonth(), 0);
+	                            break;
+	                        case '1month':
+	                            end = new Date();
+	                            start = new Date();
+	                            start.setMonth(start.getMonth() - 1);
+	                            break;
+	                        case '3months':
+	                            end = new Date();
+	                            start = new Date();
+	                            start.setMonth(start.getMonth() - 3);
+	                            break;
+	                        case 'all':
+	                            startDateInput.value = '';
+	                            endDateInput.value = '';
+	                            return;
+	                    }
+	
+	                    startDateInput.value = start.toISOString().slice(0, 10);
+	                    endDateInput.value = end.toISOString().slice(0, 10);
+	                });
+	            });
+	
 	        });
 	    </script>
 	</th:block>

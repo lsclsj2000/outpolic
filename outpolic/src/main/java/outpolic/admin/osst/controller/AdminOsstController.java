@@ -36,14 +36,19 @@ public class AdminOsstController {
 	}
 	
 	@GetMapping("/adminOsst")
-	public String adminOutsourcingStatusView(Model model) {
-		// 외주 진행 목록 조회
-		List<AdminOsst> adminOsst = adminOsstService.getAdminOsstList();
-		
-		model.addAttribute("title", "외주 진행 현황");
-		model.addAttribute("adminOsst", adminOsst);
-		
-		return "admin/osst/adminOutsourcingStatusView";
+	public String adminOutsourcingStatusView(@RequestParam(required = false) String searchField,
+	                                         @RequestParam(required = false) String searchKeyword,
+	                                         @RequestParam(required = false) String stepStatus,
+	                                         Model model) {
+		// 외주 진행 목록
+	    List<AdminOsst> adminOsst = adminOsstService.getAdminOsstListFiltered(searchField, searchKeyword, stepStatus);
+
+	    model.addAttribute("adminOsst", adminOsst);
+	    model.addAttribute("searchField", searchField);
+	    model.addAttribute("searchKeyword", searchKeyword);
+	    model.addAttribute("stepStatus", stepStatus);
+
+	    return "admin/osst/adminOutsourcingStatusView";
 	}
 	
 	@PostMapping("/adminUpdateStepStatus")

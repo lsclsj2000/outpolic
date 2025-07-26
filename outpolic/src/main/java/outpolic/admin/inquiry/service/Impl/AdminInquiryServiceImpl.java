@@ -1,6 +1,7 @@
 package outpolic.admin.inquiry.service.Impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,18 +47,15 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 
 	@Override
 	public void updateInquiry(AdminInquiry adminInquiry) {
-		int count1 = adminInquiryMapper.updateInquiryTable(adminInquiry);
+	    int count1 = adminInquiryMapper.updateInquiryTable(adminInquiry);
 	    int count2 = adminInquiryMapper.updateInquiryProcessTable(adminInquiry);
 
-	    System.out.println("🟢 update count: inquiry = " + count1 + ", process = " + count2);
-
-	    // 혹시 두 update 중 하나라도 실패했는지 로그로 확인
-	    if (count1 == 0) {
-	        System.err.println("⚠️ [inquiry] 테이블 업데이트 실패: " + adminInquiry.getInquiryCode());
-	    }
+	    // 존재하지 않으면 insert
 	    if (count2 == 0) {
-	        System.err.println("⚠️ [inquiry_process] 테이블 업데이트 실패: " + adminInquiry.getInquiryCode());
+	        adminInquiryMapper.insertInquiryProcessIfNotExists(adminInquiry);
 	    }
+
+	    System.out.println("🟢 update count: inquiry = " + count1 + ", process = " + count2);
 	}
 
 	@Override
@@ -86,15 +84,16 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 	}
 	
 	@Override
-	public List<AdminInquiry> getAdminInquiryListPaged(int offset, int size) {
-		// 페이지네이션
-	    return adminInquiryMapper.getAdminInquiryListPaged(offset, size);
+	public List<AdminInquiry> getFilteredInquiryList(Map<String, Object> paramMap) {
+		// 문의 필터
+	    return adminInquiryMapper.getFilteredInquiryList(paramMap);
+	}
+	
+	@Override
+	public List<AdminInquiryType> getFilteredInquiryTypeList(Map<String, Object> paramMap) {
+		// 문의 자원 필터
+	    return adminInquiryMapper.getFilteredInquiryTypeList(paramMap);
 	}
 
-	@Override
-	public int getAdminInquiryTotalCount() {
-		// 페이지네이션
-	    return adminInquiryMapper.getAdminInquiryTotalCount();
-	}
 
 }

@@ -1,6 +1,7 @@
 package outpolic.admin.inquiry.service;
 
 import java.util.List;
+import java.util.Map;
 
 import outpolic.admin.inquiry.domain.AdminInquiry;
 import outpolic.admin.inquiry.domain.AdminInquiryType;
@@ -32,7 +33,10 @@ public interface AdminInquiryService {
 	// 문의답변 저장
 	void updateInquiryAnswer(AdminInquiry adminInquiry);
 	
-	// 페이지네이션
-	List<AdminInquiry> getAdminInquiryListPaged(int offset, int size);
-	int getAdminInquiryTotalCount();
+	// 문의 필터
+	List<AdminInquiry> getFilteredInquiryList(Map<String, Object> paramMap);
+	
+	// 문의 자원 필터
+	List<AdminInquiryType> getFilteredInquiryTypeList(Map<String, Object> paramMap);
+	
 }

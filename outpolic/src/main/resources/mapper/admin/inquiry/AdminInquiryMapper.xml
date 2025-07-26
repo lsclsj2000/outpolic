@@ -50,8 +50,51 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="iqt_mdfcn_ymdt" 	property="inquiryTypeMdfcnDate"/>
 	</resultMap>
 	
-	<select id="getAdminInquiryListPaged" resultMap="AdminInquiryResultMap">
-		/* 페이지네이션 */
+	<select id="getFilteredInquiryTypeList" parameterType="map" resultMap="AdminInquiryTypeMap">
+		/* 문의 자원 필터 */
+	    SELECT 
+	        it.*, sc.stc_nm 
+	    FROM 
+	        inquiry_type it
+	        LEFT JOIN status_code sc ON it.stc_cd = sc.stc_cd
+	    <where>
+	        <if test="searchField != null and searchKeyword != null and searchKeyword != ''">
+	            <choose>
+	                <when test="searchField == 'type'">
+	                    it.iqt_nm LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	                <when test="searchField == 'code'">
+	                    it.iqt_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	                <when test="searchField == 'expln'">
+	                    it.iqt_expln LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	                <when test="searchField == 'writer'">
+	                    it.iqt_reg_adm_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	            </choose>
+	        </if>
+	
+	        <if test="status != null and status != ''">
+	            AND it.stc_cd = #{status}
+	        </if>
+	
+	        <if test="dateField != null and startDate != null and endDate != null and startDate != '' and endDate != ''">
+	            <choose>
+	                <when test="dateField == 'reg'">
+	                    AND DATE(it.iqt_reg_ymdt) BETWEEN #{startDate} AND #{endDate}
+	                </when>
+	                <when test="dateField == 'mod'">
+	                    AND DATE(it.iqt_mdfcn_ymdt) BETWEEN #{startDate} AND #{endDate}
+	                </when>
+	            </choose>
+	        </if>
+	    </where>
+	    ORDER BY it.iqt_reg_ymdt DESC
+	</select>
+	
+	<select id="getFilteredInquiryList" parameterType="map" resultMap="AdminInquiryResultMap">
+		/* 문의 필터 */
 	    SELECT
 	        i.iq_cd AS iq_cd,
 	        m.mbr_nm AS mbr_nm,
@@ -68,15 +111,71 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        LEFT JOIN inquiry_type iqt ON i.iqt_cd = iqt.iqt_cd
 	        LEFT JOIN inquiry_process ip ON i.iq_cd = ip.iq_cd
 	        LEFT JOIN status_code sc ON ip.stc_cd = sc.stc_cd
-	    ORDER BY
-	        i.iq_reg_ymdt DESC
-	    LIMIT #{size} OFFSET #{offset}
+	    <where>
+		    <!-- 기본 검색 -->
+		    <if test="searchField != null and searchKeyword != null and searchKeyword != ''">
+		        <choose>
+		            <when test="searchField == 'title'">
+		                i.iq_ttl LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </when>
+		            <when test="searchField == 'writer'">
+		                m.mbr_nm LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </when>
+		            <when test="searchField == 'code'">
+		                i.iq_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </when>
+		            <when test="searchField == 'type'">
+		                iqt.iqt_nm LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </when>
+		        </choose>
+		    </if>
+		
+		    <!-- 상태 검색 -->
+		    <if test="status != null and status != ''">
+		        AND ip.stc_cd = #{status}
+		    </if>
+		
+		    <!-- 날짜 검색 -->
+		    <if test="dateField != null and startDate != null and endDate != null and startDate != '' and endDate != ''">
+		        <choose>
+		            <when test="dateField == 'reg'">
+		                AND DATE(i.iq_reg_ymdt) BETWEEN #{startDate} AND #{endDate}
+		            </when>
+		            <when test="dateField == 'mod'">
+		                AND DATE(ip.iqp_mdfcn_ymdt) BETWEEN #{startDate} AND #{endDate}
+		            </when>
+		        </choose>
+		    </if>
+		</where>
+	    ORDER BY i.iq_reg_ymdt DESC
 	</select>
 	
-	<select id="getAdminInquiryTotalCount" resultType="int">
-	    SELECT COUNT(*) 
-	    FROM inquiry
-	</select>
+	<!-- 문의 프로세스 테이블 삽입 -->
+	<insert id="insertInquiryProcessIfNotExists" parameterType="outpolic.admin.inquiry.domain.AdminInquiry">
+	    <selectKey keyColumn="newCode" keyProperty="inquiryProcessCode" resultType="String" order="BEFORE">
+	        /* 자동 코드 생성 */
+	        SELECT
+	            CASE
+	                WHEN COUNT(*) = 0 THEN 'IQP_C1'
+	                ELSE CONCAT('IQP_C', MAX(CAST(SUBSTRING_INDEX(iqp.iqp_cd, 'IQP_C', -1) AS UNSIGNED)) + 1)
+	            END AS newCode
+	        FROM inquiry_process iqp;
+	    </selectKey>
+	
+	    INSERT INTO inquiry_process (
+	        iqp_cd,
+	        iq_cd,
+	        stc_cd,
+	        iqp_mdfcn_adm_cd,
+	        iqp_mdfcn_ymdt
+	    ) VALUES (
+	        #{inquiryProcessCode},
+	        #{inquiryCode},
+	        #{statusCode},
+	        #{inquiryMdfcnAdmCode},
+	        NOW()
+	    )
+	</insert>
 	
 	<update id="updateInquiryType" parameterType="outpolic.admin.inquiry.domain.AdminInquiryType">
 	    /* 관리자 문의 타입 수정 */
