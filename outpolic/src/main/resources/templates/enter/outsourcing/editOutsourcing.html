@@ -439,7 +439,10 @@ border-radius: 8px;">
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
      <script th:inline="javascript">
         $(document).ready(function() {
-
+        	const now = new Date();
+        	now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        	const minDateTime = now.toISOString().slice(0, 16); // YYYY-MM-DDThh:mm 형식으로 자르기
+            $('#osStrtYmdt').attr('min', minDateTime);
             // --- 1. 초기 데이터 및 변수 설정 ---
             const categoryPathsJson = /*[[${categoryPathsJson}]]*/ '[]';
             const initialCategoryPaths = JSON.parse(categoryPathsJson);

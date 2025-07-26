@@ -19,25 +19,28 @@
 		<result column="mbr_join_ymdt" property="memberJoinDate"/>
 		<result column="mbr_mdfcn_ymdt" property="memberModifyDate"/>
 		<result column="mbr_img" property="mbrImg"/>
+		<result column="ent_nm" property="corpName"/>
 	</resultMap>
 	<select id="getEnterInfoByCode" parameterType="String" resultMap="EnterMypageResultMap"> 
 		 SELECT 
-			mbr_id, 
-			mbr_cd,
-			mbr_nm, 
-			mbr_pw,
-			mbr_nicknm, 
-			mbr_telno, 
-			mbr_addr, 
-			mbr_daddr, 
-			mbr_zip, 
-			mbr_eml, 
-			mbr_birth,
-			mbr_join_ymdt,
-			mbr_mdfcn_ymdt,
-			mbr_img
-		FROM member
-		WHERE mbr_cd=#{memberCode};
+			m.mbr_id, 
+			m.mbr_cd,
+			m.mbr_nm, 
+			m.mbr_pw,
+			m.mbr_nicknm, 
+			m.mbr_telno, 
+			m.mbr_addr, 
+			m.mbr_daddr, 
+			m.mbr_zip, 
+			m.mbr_eml, 
+			m.mbr_birth,
+			m.mbr_join_ymdt,
+			m.mbr_mdfcn_ymdt,
+			m.mbr_img,
+			e.ent_nm
+		FROM member m inner join enterprise e
+		on m.mbr_cd = e.mbr_cd
+		WHERE m.mbr_cd=#{memberCode};
 	</select>
 	<update id="updateEnterInfo" parameterType="EnterInfo">
  		UPDATE member

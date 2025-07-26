@@ -38,5 +38,12 @@ public class AdminOsstServiceImpl implements AdminOsstService {
 		// 외주 진행 수정 팝업창 업데이트
 		adminOsstMapper.updateStepStatus(ocdCd, stcCd, ospCustYn);
 	}
+	
+	@Override
+	public List<AdminOsst> getAdminOsstListFiltered(String field, String keyword, String stepStatus) {
+		// 외주 진행 목록 필터 조회
+		return adminOsstMapper.getAdminOsstListFiltered(field, keyword, stepStatus);
+	}
+
 
 }

@@ -30,5 +30,8 @@ public class UserAnn {
 	private String totalWriter;
 	private String totalRegDate;
 
+	private Integer inquirySecret;
+	private String memberCode;
+			
 	private List<UserInquiryFile> userInquiryFiles;
 }

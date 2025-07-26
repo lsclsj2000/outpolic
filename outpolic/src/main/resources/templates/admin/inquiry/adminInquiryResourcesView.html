@@ -22,56 +22,65 @@
 	        <div class="card mb-4 search-filter-card">
 	            <div class="card-body search-filter-body">
 	                <div class="table-responsive">
-	                    <table class="search-filter-table">
-							<tbody>
-								<tr>
-									<th>기본검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>제목</option>
-											<option>내용</option>
-											<option>문의코드</option>
-											<option>작성자</option>
-										</select>
-										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
-									</td>
-								</tr>
-								<tr>
-									<th>기간검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>작성일자</option>
-											<option>수정일자</option>
-										</select>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<span> ~ </span>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<button type="button" class="btn btn-sm btn-light">오늘</button>
-										<button type="button" class="btn btn-sm btn-light">어제</button>
-										<button type="button" class="btn btn-sm btn-light">일주일</button>
-										<button type="button" class="btn btn-sm btn-light">지난달</button>
-										<button type="button" class="btn btn-sm btn-light">1개월</button>
-										<button type="button" class="btn btn-sm btn-light">3개월</button>
-										<button type="button" class="btn btn-sm btn-light">전체</button>
-									</td>
-								</tr>
-								<tr>
-									<th>처리상태</th>
-									<td>
-										<div class="radio-group">
-											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
-											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
-											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
-											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<div class="search-filter-buttons">
-							<button type="button" class="btn btn-primary">검색</button>
-							<button type="button" class="btn btn-secondary">초기화</button>
-						</div>
+	                    <form id="searchForm" method="get" action="/admin/adminInquiryResources">
+						    <table class="search-filter-table">
+						        <tbody>
+						            <!-- 기본 검색 -->
+						            <tr>
+						                <th>기본검색</th>
+						                <td>
+						                    <select class="form-select" name="searchField" style="width: 120px;">
+						                        <option value="type" th:selected="${searchField} == 'type'">문의명</option>
+						                        <option value="code" th:selected="${searchField} == 'code'">문의타입코드</option>
+						                        <option value="expln" th:selected="${searchField} == 'expln'">설명</option>
+						                        <option value="writer" th:selected="${searchField} == 'writer'">작성자</option>
+						                    </select>
+						                    <input type="text" name="searchKeyword" placeholder="검색어를 입력하세요" class="form-control"
+						                           style="width: 250px;" th:value="${searchKeyword}" />
+						                </td>
+						            </tr>
+						
+						            <!-- 기간 검색 -->
+						            <tr>
+						                <th>기간검색</th>
+						                <td>
+						                    <select class="form-select" name="dateField" style="width: 120px;">
+						                        <option value="reg" th:selected="${dateField} == 'reg'">등록일자</option>
+						                    </select>
+						                    <input type="date" class="form-control" name="startDate" id="startDate"
+						                           style="width: 150px;" th:value="${startDate}" />
+						                    <span> ~ </span>
+						                    <input type="date" class="form-control" name="endDate" id="endDate"
+						                           style="width: 150px;" th:value="${endDate}" />
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="today">오늘</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="yesterday">어제</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="7days">일주일</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="lastmonth">지난달</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="1month">1개월</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="3months">3개월</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="all">전체</button>
+						                </td>
+						            </tr>
+						
+						            <!-- 상태 검색 -->
+						            <tr>
+						                <th>타입상태</th>
+						                <td>
+						                    <div class="radio-group">
+						                        <label><input type="radio" name="status" value="" th:checked="${status == null or status == ''}" /> 전체</label>
+												<label><input type="radio" name="status" value="SD_ACTIVE" th:checked="${status == 'SD_ACTIVE'}" /> 활성</label>
+												<label><input type="radio" name="status" value="SD_INACTIVE" th:checked="${status == 'SD_INACTIVE'}" /> 비활성</label>
+						                    </div>
+						                </td>
+						            </tr>
+						        </tbody>
+						    </table>
+						
+						    <div class="search-filter-buttons">
+						        <button type="submit" class="btn btn-primary">검색</button>
+						        <button type="button" class="btn btn-secondary" id="resetButton">초기화</button>
+						    </div>
+						</form>
 	                </div>
 	            </div>
 	        </div>
@@ -224,178 +233,234 @@
 	
 	
 	<th:block layout:fragment="jsScript">
-		<script>
-			document.addEventListener('DOMContentLoaded', function () {
-			    const registerModal = document.getElementById('inquiryModal');
-			    const registerButton = document.querySelector('.content-header .btn');
-			    const registerCloseBtn = registerModal?.querySelector('.SR_close-button');
-			
-			    const editModal = document.getElementById('inquiryMdfcnModal');
-			    const editCloseBtn = editModal?.querySelector('.SR_close-button');
-			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
-			
-			    registerButton?.addEventListener('click', () => {
-			        registerModal.style.display = 'flex';
-			        document.body.style.overflow = 'hidden';
-			    });
-			
-			    registerCloseBtn?.addEventListener('click', () => {
-			        registerModal.style.display = 'none';
-			        document.body.style.overflow = 'auto';
-			    });
-			
-			    openPopupButtons.forEach(button => {
-			        button.addEventListener('click', function (event) {
-			            event.preventDefault();
-			            const inquiryCode = button.getAttribute('data-inquiry-code');
-			            fetch(`/admin/getInquiryTypeDetail?code=${inquiryCode}`)
-			                .then(res => res.json())
-			                .then(data => {
-			                    document.getElementById('editRegAdm').value = data.inquiryTypeRegAdm || '';
-			                    document.getElementById('editRegDate').value = data.inquiryTypeRegDate || '';
-			                    document.getElementById('editCode').value = data.inquiryTypeCode || '';
-			                    document.getElementById('editName').value = data.inquiryTypeName || '';
-			                    document.getElementById('editExpln').value = data.inquiryTypeExpln || '';
-			                    const statusRadios = document.querySelectorAll('input[name="editStatus"]');
-			                    statusRadios.forEach(radio => {
-			                        radio.checked = radio.value === data.statusCode;
-			                    });
-			                    editModal.style.display = 'flex';
-			                    document.body.style.overflow = 'hidden';
-			                })
-			                .catch(err => {
-			                    console.error('데이터 조회 오류:', err);
-			                    alert('데이터를 불러오지 못했습니다.');
-			                });
-			        });
-			    });
-			
-			    editCloseBtn?.addEventListener('click', () => {
-			        editModal.style.display = 'none';
-			        document.body.style.overflow = 'auto';
-			    });
-			
-			    window.addEventListener('click', function (event) {
-			        if (event.target === registerModal) {
-			            registerModal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			        }
-			        if (event.target === editModal) {
-			            editModal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			        }
-			    });
-			
-			    const registerForm = document.getElementById('inquiryRegisterForm');
-			    registerForm?.addEventListener('submit', function (event) {
-			        event.preventDefault();
-			        const inquiryTypeCode = document.getElementById('inquiryCodeDisplay').value.trim();
-			        const inquiryTypeName = document.getElementById('inquiryTitleEdit').value.trim();
-			        const inquiryTypeExpln = document.getElementById('inquiryContentEdit').value.trim();
-			        const statusValue = document.querySelector('#inquiryModal input[name="status"]:checked')?.value;
-			
-			        const codeRegex = /^IQT_[A-Z]{1,16}$/;
-			        const nameRegex = /^[가-힣\s]{1,30}$/;
-			        const explnMaxLength = 255;
-			
-			        if (!inquiryTypeCode || !inquiryTypeName || !inquiryTypeExpln || !statusValue) {
-			            alert('모든 항목을 입력해주세요.');
-			            return;
-			        }
-			
-			        if (!codeRegex.test(inquiryTypeCode)) {
-			            alert('문의타입코드는 "IQT_"로 시작하며 대문자 영문만 사용할 수 있고, 최대 20자입니다.');
-			            return;
-			        }
-			
-			        if (!nameRegex.test(inquiryTypeName)) {
-			            alert('문의타입명은 한글과 공백만 입력 가능합니다. (최대 30자)');
-			            return;
-			        }
-			
-			        if (inquiryTypeExpln.length > explnMaxLength) {
-			            alert('문의타입설명은 최대 255자까지 입력할 수 있습니다.');
-			            return;
-			        }
-			
-			        const payload = {
-			            inquiryTypeCode,
-			            inquiryTypeName,
-			            inquiryTypeExpln,
-			            statusCode: statusValue
-			        };
-			
-			        fetch('/admin/adminAddInquiryType', {
-			            method: 'POST',
-			            headers: { 'Content-Type': 'application/json' },
-			            body: JSON.stringify(payload)
-			        })
-			        .then(res => res.ok ? res.text() : Promise.reject(res.statusText))
-			        .then(() => {
-			            alert('등록이 완료되었습니다.');
-			            registerModal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			            location.reload();
-			        })
-			        .catch(err => {
-			            console.error('등록 오류:', err);
-			            alert('등록 중 오류가 발생했습니다.');
-			        });
-			    });
-			
-			    const editForm = document.getElementById('inquiryEditForm');
-			    editForm?.addEventListener('submit', function (event) {
-			        event.preventDefault();
-			        const inquiryTypeCode = document.getElementById('editCode').value.trim();
-			        const inquiryTypeName = document.getElementById('editName').value.trim();
-			        const inquiryTypeExpln = document.getElementById('editExpln').value.trim();
-			        const statusValue = document.querySelector('input[name="editStatus"]:checked')?.value;
-			
-			        const nameRegex = /^[가-힣\s]{1,30}$/;
-			        const explnMaxLength = 255;
-			
-			        if (!inquiryTypeCode || !inquiryTypeName || !inquiryTypeExpln || !statusValue) {
-			            alert('모든 항목을 입력해주세요.');
-			            return;
-			        }
-			
-			        if (!nameRegex.test(inquiryTypeName)) {
-			            alert('문의타입명은 한글과 공백만 입력 가능합니다. (최대 30자)');
-			            return;
-			        }
-			
-			        if (inquiryTypeExpln.length > explnMaxLength) {
-			            alert('문의타입설명은 최대 255자까지 입력할 수 있습니다.');
-			            return;
-			        }
-			
-			        const payload = {
-			            inquiryTypeCode,
-			            inquiryTypeName,
-			            inquiryTypeExpln,
-			            statusCode: statusValue
-			        };
-			
-			        fetch('/admin/updateInquiryType', {
-			            method: 'POST',
-			            headers: { 'Content-Type': 'application/json' },
-			            body: JSON.stringify(payload)
-			        })
-			        .then(res => res.ok ? res.text() : Promise.reject(res.statusText))
-			        .then(() => {
-			            alert('수정이 완료되었습니다.');
-			            editModal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			            location.reload();
-			        })
-			        .catch(err => {
-			            console.error('수정 오류:', err);
-			            alert('수정 중 오류가 발생했습니다.');
-			        });
-			    });
-			});
-		</script>
+	    <script>
+	        document.addEventListener('DOMContentLoaded', function () {
+	            // ✅ 등록 모달
+	            const registerModal = document.getElementById('inquiryModal');
+	            const registerButton = document.querySelector('.content-header .btn');
+	            const registerCloseBtn = registerModal?.querySelector('.SR_close-button');
+	
+	            registerButton?.addEventListener('click', () => {
+	                registerModal.style.display = 'flex';
+	                document.body.style.overflow = 'hidden';
+	            });
+	
+	            registerCloseBtn?.addEventListener('click', () => {
+	                registerModal.style.display = 'none';
+	                document.body.style.overflow = 'auto';
+	            });
+	
+	            // ✅ 수정 모달
+	            const editModal = document.getElementById('inquiryMdfcnModal');
+	            const editCloseBtn = editModal?.querySelector('.SR_close-button');
+	            const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+	
+	            openPopupButtons.forEach(button => {
+	                button.addEventListener('click', function (event) {
+	                    event.preventDefault();
+	                    const inquiryCode = button.getAttribute('data-inquiry-code');
+	                    fetch(`/admin/getInquiryTypeDetail?code=${inquiryCode}`)
+	                        .then(res => res.json())
+	                        .then(data => {
+	                            document.getElementById('editRegAdm').value = data.inquiryTypeRegAdm || '';
+	                            document.getElementById('editRegDate').value = data.inquiryTypeRegDate || '';
+	                            document.getElementById('editCode').value = data.inquiryTypeCode || '';
+	                            document.getElementById('editName').value = data.inquiryTypeName || '';
+	                            document.getElementById('editExpln').value = data.inquiryTypeExpln || '';
+	
+	                            const statusRadios = document.querySelectorAll('input[name="editStatus"]');
+	                            statusRadios.forEach(radio => {
+	                                radio.checked = radio.value === data.statusCode;
+	                            });
+	
+	                            editModal.style.display = 'flex';
+	                            document.body.style.overflow = 'hidden';
+	                        })
+	                        .catch(err => {
+	                            console.error('데이터 조회 오류:', err);
+	                            alert('데이터를 불러오지 못했습니다.');
+	                        });
+	                });
+	            });
+	
+	            editCloseBtn?.addEventListener('click', () => {
+	                editModal.style.display = 'none';
+	                document.body.style.overflow = 'auto';
+	            });
+	
+	            window.addEventListener('click', function (event) {
+	                if (event.target === registerModal) {
+	                    registerModal.style.display = 'none';
+	                    document.body.style.overflow = 'auto';
+	                }
+	                if (event.target === editModal) {
+	                    editModal.style.display = 'none';
+	                    document.body.style.overflow = 'auto';
+	                }
+	            });
+	
+	            // ✅ 등록 form
+	            const registerForm = document.getElementById('inquiryRegisterForm');
+	            registerForm?.addEventListener('submit', function (event) {
+	                event.preventDefault();
+	                const inquiryTypeCode = document.getElementById('inquiryCodeDisplay').value.trim();
+	                const inquiryTypeName = document.getElementById('inquiryTitleEdit').value.trim();
+	                const inquiryTypeExpln = document.getElementById('inquiryContentEdit').value.trim();
+	                const statusValue = document.querySelector('#inquiryModal input[name="status"]:checked')?.value;
+	
+	                const codeRegex = /^IQT_[A-Z]{1,16}$/;
+	                const nameRegex = /^[가-힣\s]{1,30}$/;
+	                const explnMaxLength = 255;
+	
+	                if (!inquiryTypeCode || !inquiryTypeName || !inquiryTypeExpln || !statusValue) {
+	                    alert('모든 항목을 입력해주세요.');
+	                    return;
+	                }
+	
+	                if (!codeRegex.test(inquiryTypeCode)) {
+	                    alert('문의타입코드는 "IQT_"로 시작하며 대문자 영문만 사용할 수 있고, 최대 20자입니다.');
+	                    return;
+	                }
+	
+	                if (!nameRegex.test(inquiryTypeName)) {
+	                    alert('문의타입명은 한글과 공백만 입력 가능합니다. (최대 30자)');
+	                    return;
+	                }
+	
+	                if (inquiryTypeExpln.length > explnMaxLength) {
+	                    alert('문의타입설명은 최대 255자까지 입력할 수 있습니다.');
+	                    return;
+	                }
+	
+	                const payload = {
+	                    inquiryTypeCode,
+	                    inquiryTypeName,
+	                    inquiryTypeExpln,
+	                    statusCode: statusValue
+	                };
+	
+	                fetch('/admin/adminAddInquiryType', {
+	                    method: 'POST',
+	                    headers: { 'Content-Type': 'application/json' },
+	                    body: JSON.stringify(payload)
+	                })
+	                .then(res => res.ok ? res.text() : Promise.reject(res.statusText))
+	                .then(() => {
+	                    alert('등록이 완료되었습니다.');
+	                    registerModal.style.display = 'none';
+	                    document.body.style.overflow = 'auto';
+	                    location.reload();
+	                })
+	                .catch(err => {
+	                    console.error('등록 오류:', err);
+	                    alert('등록 중 오류가 발생했습니다.');
+	                });
+	            });
+	
+	            // ✅ 수정 form
+	            const editForm = document.getElementById('inquiryEditForm');
+	            editForm?.addEventListener('submit', function (event) {
+	                event.preventDefault();
+	                const inquiryTypeCode = document.getElementById('editCode').value.trim();
+	                const inquiryTypeName = document.getElementById('editName').value.trim();
+	                const inquiryTypeExpln = document.getElementById('editExpln').value.trim();
+	                const statusValue = document.querySelector('input[name="editStatus"]:checked')?.value;
+	
+	                const nameRegex = /^[가-힣\s]{1,30}$/;
+	                const explnMaxLength = 255;
+	
+	                if (!inquiryTypeCode || !inquiryTypeName || !inquiryTypeExpln || !statusValue) {
+	                    alert('모든 항목을 입력해주세요.');
+	                    return;
+	                }
+	
+	                if (!nameRegex.test(inquiryTypeName)) {
+	                    alert('문의타입명은 한글과 공백만 입력 가능합니다. (최대 30자)');
+	                    return;
+	                }
+	
+	                if (inquiryTypeExpln.length > explnMaxLength) {
+	                    alert('문의타입설명은 최대 255자까지 입력할 수 있습니다.');
+	                    return;
+	                }
+	
+	                const payload = {
+	                    inquiryTypeCode,
+	                    inquiryTypeName,
+	                    inquiryTypeExpln,
+	                    statusCode: statusValue
+	                };
+	
+	                fetch('/admin/updateInquiryType', {
+	                    method: 'POST',
+	                    headers: { 'Content-Type': 'application/json' },
+	                    body: JSON.stringify(payload)
+	                })
+	                .then(res => res.ok ? res.text() : Promise.reject(res.statusText))
+	                .then(() => {
+	                    alert('수정이 완료되었습니다.');
+	                    editModal.style.display = 'none';
+	                    document.body.style.overflow = 'auto';
+	                    location.reload();
+	                })
+	                .catch(err => {
+	                    console.error('수정 오류:', err);
+	                    alert('수정 중 오류가 발생했습니다.');
+	                });
+	            });
+	
+	            // ✅ 초기화 버튼 - 필터 리셋
+	            const resetBtn = document.getElementById('resetButton');
+	            resetBtn?.addEventListener('click', function () {
+	                window.location.href = '/admin/adminInquiryResources';
+	            });
+	
+	            // ✅ 날짜 버튼 - 자동 입력
+	            document.querySelectorAll('.date-btn').forEach(btn => {
+	                btn.addEventListener('click', function () {
+	                    const today = new Date();
+	                    const startDateInput = document.getElementById('startDate');
+	                    const endDateInput = document.getElementById('endDate');
+	                    let start, end;
+	
+	                    switch (this.dataset.range) {
+	                        case 'today':
+	                            start = end = new Date();
+	                            break;
+	                        case 'yesterday':
+	                            start = end = new Date();
+	                            start.setDate(start.getDate() - 1);
+	                            break;
+	                        case '7days':
+	                            end = new Date();
+	                            start = new Date();
+	                            start.setDate(start.getDate() - 6);
+	                            break;
+	                        case 'lastmonth':
+	                            start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+	                            end = new Date(today.getFullYear(), today.getMonth(), 0);
+	                            break;
+	                        case '1month':
+	                            end = new Date();
+	                            start = new Date();
+	                            start.setMonth(start.getMonth() - 1);
+	                            break;
+	                        case '3months':
+	                            end = new Date();
+	                            start = new Date();
+	                            start.setMonth(start.getMonth() - 3);
+	                            break;
+	                        case 'all':
+	                            startDateInput.value = '';
+	                            endDateInput.value = '';
+	                            return;
+	                    }
+	
+	                    startDateInput.value = start.toISOString().slice(0, 10);
+	                    endDateInput.value = end.toISOString().slice(0, 10);
+	                });
+	            });
+	        });
+	    </script>
 	</th:block>
-
-
 </html>

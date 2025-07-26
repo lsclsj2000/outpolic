@@ -24,22 +24,22 @@
 		<th:block layout:fragment="osstSidebar">
 			<div class="col-md-2">
 				<div class="dashboard-menu">
-					<ul class="nav flex-column" role="tablist">
-						<li class="nav-item">
-							<a class="nav-link active" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">전체</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">진행중인 외주</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">진행 완료된 외주</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">신청 받은 외주</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="dashboard-tab" href="#" role="tab" aria-controls="dashboard" aria-selected="false">신청한 외주</a>
-						</li>
+					<ul class="nav flex-column" role="tablist" id="osstFilterMenu">
+					    <li class="nav-item">
+					        <a class="nav-link active" data-filter="ALL">전체</a>
+					    </li>
+					    <li class="nav-item">
+					        <a class="nav-link" data-filter="IN_PROGRESS">진행중인 외주</a>
+					    </li>
+					    <li class="nav-item">
+					        <a class="nav-link" data-filter="COMPLETED">진행 완료된 외주</a>
+					    </li>
+					    <li class="nav-item">
+					        <a class="nav-link" data-filter="SUPPLIER">신청 받은 외주</a>
+					    </li>
+					    <li class="nav-item">
+					        <a class="nav-link" data-filter="DEMANDER">신청한 외주</a>
+					    </li>
 					</ul>
 				</div>
 			</div>
@@ -52,9 +52,17 @@
 			            <div class="SR_max-w-6xl SR_mx-auto SR_container-bg SR_p-8 SR_rounded-lg SR_box-shadow">
 			                <div id="project-list" class="SR_project-list-container">
 	                            
+	                            <div id="noProjectsMessage"
+							         class="SR_p-6 SR_text-center SR_rounded-md SR_text-gray-600"
+							         style="display: none;">
+							        해당 외주가 없습니다.
+							    </div>
+	                            
 	                            <div class="SR_project-card"
-	                            	 th:each="l : ${osstList}"
-	                            	 th:attr="data-url=@{/user/userOsstDetail(ocd_cd=${l.ocdCd})}">
+								     th:each="l : ${osstList}"
+								     th:attr="data-url=@{/user/userOsstDetail(ocd_cd=${l.ocdCd})},
+								              data-status=${l.stcCode},
+								              data-role=${l.memberRole}">
                            	 	<span th:if="${l.memberRole == 'SUPPLIER'}" class="SR_project-role-tag">신청 받은 외주</span>
                                 <span th:if="${l.memberRole == 'DEMANDER'}" class="SR_project-role-tag">신청한 외주</span>
 	                                <div class="SR_card-content">
@@ -253,6 +261,8 @@
 		        
 		        document.addEventListener('DOMContentLoaded', () => {
 		        	
+		        	filterProjects('ALL');
+		        	
 		        	document.querySelectorAll('.SR_project-card').forEach(card => {
                         card.addEventListener('click', (event) => {
                             if (!event.target.closest('.SR_review-btn')) {
@@ -340,6 +350,66 @@
 		                    closeReviewModal();
 		                }
 		            });
+		            
+		            document.querySelectorAll('#osstFilterMenu .nav-link').forEach(link => {
+		                link.addEventListener('click', function (e) {
+		                    e.preventDefault();
+
+		                    // active 클래스 재설정
+		                    document.querySelectorAll('#osstFilterMenu .nav-link').forEach(l => l.classList.remove('active'));
+		                    this.classList.add('active');
+
+		                    const filter = this.dataset.filter;
+		                    filterProjects(filter);
+		                });
+		            });
+
+		            function filterProjects(filterType) {
+		                const cards = document.querySelectorAll('.SR_project-card');
+		                const message = document.getElementById('noProjectsMessage');
+
+		                let visibleCount = 0;
+
+		                cards.forEach(card => {
+		                    const status = card.dataset.status;
+		                    const role = card.dataset.role;
+
+		                    let show = false;
+		                    switch (filterType) {
+		                        case 'ALL':
+		                            show = true;
+		                            break;
+		                        case 'IN_PROGRESS':
+		                            show = (status === 'SD_CONTRACT' || status === 'SD_PLANNING' || status === 'SD_WORKPROGRESS');
+		                            break;
+		                        case 'COMPLETED':
+		                            show = (status === 'SD_COMPLETION');
+		                            break;
+		                        case 'SUPPLIER':
+		                            show = (role === 'SUPPLIER');
+		                            break;
+		                        case 'DEMANDER':
+		                            show = (role === 'DEMANDER');
+		                            break;
+		                    }
+
+		                    if (show) {
+		                        card.style.display = 'block';
+		                        visibleCount++;
+		                    } else {
+		                        card.style.display = 'none';
+		                    }
+		                });
+
+		                // 카드가 하나도 안 보일 경우 메시지 표시
+		                if (visibleCount === 0) {
+		                    message.style.display = 'block';
+		                } else {
+		                    message.style.display = 'none';
+		                }
+		            }
+		            
+		            
 		        });
 		    </script>
 		</th:block>
