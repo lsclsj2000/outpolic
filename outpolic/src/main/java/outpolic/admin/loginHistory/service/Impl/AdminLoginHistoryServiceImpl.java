@@ -36,6 +36,12 @@ public class AdminLoginHistoryServiceImpl implements AdminLoginHistoryService {
 	public List<AdminLoginHistoryDTO> searchLoginHistory(String keyword, String startDate, String endDate) {
 	    return adminLoginHistoryMapper.searchLoginHistory(keyword, startDate, endDate);
 	}
+	
+	@Override
+	public void updateLogoutTimeBySession(String memberCode) {
+		adminLoginHistoryMapper.updateLogoutTimeByMemberCode(memberCode);
+		
+	}
 
 
 	

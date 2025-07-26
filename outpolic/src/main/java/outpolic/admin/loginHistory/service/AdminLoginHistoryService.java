@@ -15,4 +15,6 @@ public interface AdminLoginHistoryService {
 	List<Map<String, Object>> getLoginCountForLast7Days();
 	
 	List<AdminLoginHistoryDTO> searchLoginHistory(String keyword, String startDate, String endDate);
+
+	void updateLogoutTimeBySession(String memberCode);
 }

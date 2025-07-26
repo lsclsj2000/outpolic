@@ -81,6 +81,15 @@
 			</if>
 		</where>
 	</select>
+	
+	<update id="updateLogoutTimeByMemberCode">
+	  UPDATE login_history
+	  SET lh_out_ymdt = NOW()
+	  WHERE mbr_cd = #{memberCode}
+	  AND lh_out_ymdt IS NULL
+	  ORDER BY lh_in_ymdt DESC
+	  LIMIT 1
+	</update>
 </mapper>
 
 

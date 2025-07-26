@@ -28,5 +28,7 @@ public interface AdminLoginHistoryMapper {
 		);
 
 	int getAllHistoryCount();
+	
+	void updateLogoutTimeByMemberCode(String memberCode);
 		    
 }
