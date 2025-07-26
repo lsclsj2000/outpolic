@@ -13,4 +13,18 @@ public interface AdminLoginMapper {
 	
 	//로그인 유저의 마지막 로그인 날짜 업데이트
 	int updateAdminMemberLoginDate(Member member);
+	
+	//로그인 기록 테이블 기본키 생성
+	String getNextAdminLoginHistoryCode();
+	
+	//로그인 기록 테이블에 데이터 삽입
+	void insertAdminLoginHistory(@Param("loginHistoryCode") String loginHistoryCode,
+			@Param("memberCode") String memberCode,
+			@Param("loginIp") String loginIp);
+	
+	// 회원의 가장 마지막 로그인 기록 가져오기
+	String getAdminLastLoginCode(@Param("memberCode") String memberCode);
+	
+	//로그아웃 시간 업데이트
+	int updateAdminLogoutHistory(@Param("loginHistoryCode") String loginHistoryCode);
 }

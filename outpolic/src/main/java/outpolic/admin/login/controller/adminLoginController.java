@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.login.dto.AdminLoginDTO;
+import outpolic.admin.login.mapper.AdminLoginMapper;
 import outpolic.admin.login.service.AdminLoginService;
 import outpolic.common.domain.Member;
 
@@ -23,6 +24,7 @@ import outpolic.common.domain.Member;
 public class adminLoginController {
 
 	private final AdminLoginService adminLoginService;
+	private final AdminLoginMapper adminLoginMapper;
 
 	@GetMapping("")
 	public String adminMain(Model model, HttpSession session) {
@@ -47,8 +49,11 @@ public class adminLoginController {
 			Member member, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
 		Map<String, Object> loginResult = adminLoginService.loginAdmin(memberId, memberPw);
 		boolean isMatched = (boolean) loginResult.get("isMatched");
+		String clientIp = request.getRemoteAddr();
+		
 		if (isMatched) {
 			AdminLoginDTO adminLoginDTO = (AdminLoginDTO) loginResult.get("adminLoginDTO");
+			
 			if (adminLoginDTO == null || adminLoginDTO.getMemberInfo() == null) {
 				model.addAttribute("msg", "로그인 정보가 잘못되었습니다.");
 				model.addAttribute("url", "/admin/login");
@@ -57,13 +62,17 @@ public class adminLoginController {
 
 			Member memberInfo = adminLoginDTO.getMemberInfo();
 			String grade = memberInfo.getGradeCode();
+			
+			adminLoginMapper.insertAdminLoginHistory(adminLoginMapper.getNextAdminLoginHistoryCode(),
+														memberInfo.getMemberCode(), request.getRemoteAddr());
+			
 
 			if ("ADMIN".equals(grade)) {
 
 				session.invalidate();
 
 				session = request.getSession(true);
-
+				
 				session.setAttribute("SID", memberInfo.getMemberId());
 				session.setAttribute("SName", memberInfo.getMemberName());
 				session.setAttribute("SGrd", memberInfo.getGradeCode());
@@ -71,6 +80,8 @@ public class adminLoginController {
 				session.setAttribute("SACD", adminLoginDTO.getAdminCode());
 				System.out.println("세션 저장 전 이름: " + memberInfo.getMemberName());
 				redirectAttributes.addFlashAttribute("success", "로그인에 성공하였습니다");
+				
+				adminLoginService.updateAdminMemberLoginDate(memberInfo);
 
 				return "redirect:/admin";
 			} else {
@@ -91,6 +102,8 @@ public class adminLoginController {
 	public String adminLogout(HttpSession session, Model model) {
 		String memberCode = (String) session.getAttribute("SCD");
 		if (memberCode != null) {
+			String loginHistoryCode = adminLoginService.getAdminLastLoginCode(memberCode);
+			adminLoginService.updateAdminLogoutHistory(loginHistoryCode);
 			session.invalidate(); // 세션 전체 제거
 			model.addAttribute("msg", "로그아웃되었습니다.");
 			model.addAttribute("url", "/admin/login");

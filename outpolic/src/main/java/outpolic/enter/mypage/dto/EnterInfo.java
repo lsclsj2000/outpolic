@@ -24,4 +24,6 @@ public class EnterInfo {
 	private LocalDate memberModifyDate;
 	
 	private String mbrImg;
+	
+	private String corpName;
 }

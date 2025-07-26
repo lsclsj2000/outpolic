@@ -258,6 +258,7 @@ public class enterMypageController {
             	imagePath = "/" + imagePath;
             }
             enterMypageService.updateCorpProfileImage(memberCode, imagePath);
+            session.setAttribute("SProfilePath", imagePath);
             Map<String, Object> param = new HashMap<>();
             param.put("memberCode", memberCode);
             param.put("imagePath", imagePath);
