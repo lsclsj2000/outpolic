@@ -1,6 +1,7 @@
 package outpolic.admin.declaration.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
@@ -76,4 +77,7 @@ public interface AdminDeclarationMapper {
 
     // 신고 처리 내역 상세 조회 (이 메서드는 getAdminDeclarationDetail에서 dp_cd를 가져오므로 필요 없을 수 있습니다.)
     // AdminDeclaration getDeclarationProcessDetailByDeclarationCode(@Param("declCd") String declCd);
+	
+	// 신고 내역 조회 - 필터
+    List<AdminDeclaration> getAdminDeclarationListFiltered(Map<String, Object> searchParams);
 }

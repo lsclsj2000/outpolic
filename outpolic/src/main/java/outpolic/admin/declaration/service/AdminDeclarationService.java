@@ -1,6 +1,7 @@
 package outpolic.admin.declaration.service;
 
 import java.util.List;
+import java.util.Map;
 
 import outpolic.admin.declaration.domain.AdminDeclaration;
 
@@ -64,5 +65,8 @@ public interface AdminDeclarationService {
 
     // 신고 테이블의 상태 및 수정자/수정일시 업데이트 (이름 변경)
     void updateDeclarationStatusAndModifier(AdminDeclaration adminDeclaration);
+    
+    // 신고 내역 조회 - 필터
+    List<AdminDeclaration> getAdminDeclarationListFiltered(Map<String, Object> searchParams);
     
 }
