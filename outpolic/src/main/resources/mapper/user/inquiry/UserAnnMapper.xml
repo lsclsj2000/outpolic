@@ -5,7 +5,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
 <mapper namespace="outpolic.user.inquiry.mapper.UserInquiryMapper">
-	<!-- UserInquiry.DTO -->
 	<resultMap id="userNoticeResultMap" type="outpolic.user.inquiry.domain.UserAnn">
 		<id 	column="ann_cd" 			property="annCode"/>
 		<result column="ann_type" 			property="annType"/>
@@ -32,9 +31,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="content" 			property="totalContent"/>
 		<result column="writer" 			property="totalWriter"/>
 		<result column="reg_date" 			property="totalRegDate"/>
+		<result column="inquiry_secret" 	property="inquirySecret"/>
+		<result column="member_code" property="memberCode"/>
 	</resultMap>
 	
-	<!-- 🔽 정렬 가능한 공지사항 리스트 페이징 쿼리 -->
 	<select id="getUserNoticeListPagedWithSort" resultMap="userNoticeResultMap">
 		SELECT
 			a.ann_cd as ann_cd,
@@ -94,7 +94,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		WHERE ann_type = 'notice' AND stc_cd = 'SD_ACTIVE'
 	</select>
 	
-	<select id="getUserTotalList" resultMap="userTotalResultMap">
+	<select id="getUserAnnList" resultMap="userTotalResultMap">
 		/* 전체 게시판 조회 */
 		SELECT
 		    a.ann_cd AS cd,
@@ -102,7 +102,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		    a.ann_ttl AS title,
 		    a.ann_cn AS content,
 		    m.mbr_nm AS writer,
-		    a.ann_reg_ymdt AS reg_date
+		    a.ann_reg_ymdt AS reg_date,
+		    0 AS inquiry_secret,
+		    'SYSTEM' AS member_code
 		FROM
 		    announcement a
 		    LEFT JOIN admin adm ON a.adm_cd = adm.adm_cd
@@ -116,7 +118,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		    i.iq_ttl AS title,
 		    i.iq_cn AS content,
 		    m.mbr_nm AS writer,
-		    i.iq_reg_ymdt AS reg_date
+		    i.iq_reg_ymdt AS reg_date,
+		    CAST(i.iq_secret AS UNSIGNED) AS inquiry_secret,
+		    i.mbr_cd AS member_code
 		FROM
 		    inquiry i
 		    JOIN inquiry_type it ON i.iqt_cd = it.iqt_cd
@@ -203,4 +207,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		ORDER BY
 			a.ann_reg_ymdt DESC;
 	</select>
-</mapper>
+</mapper>	
