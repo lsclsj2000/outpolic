@@ -22,6 +22,18 @@ import outpolic.admin.limits.service.AdminLimitsService;
 public class AdminLimitsServiceImpl implements AdminLimitsService {
 	
 	private final AdminLimitsMapper adminLimitsMapper;
+	
+	// 새로 추가할 메서드 구현
+	@Override
+	public AdminLimits getMemberAuthorityByMemberCode(String memberCode) {
+	    return adminLimitsMapper.selectMemberAuthorityByMemberCode(memberCode);
+	}
+	
+	@Override
+	public int updateMemberAuthority(AdminLimits adminLimits) {
+	    return adminLimitsMapper.updateMemberAuthority(adminLimits);
+	}
+
 
 	@Override
 	public List<AdminLimits> getAdminLimitsTypeList() {

@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="mbr_cd" 			property="limitsMemberCode"/>
 		<result column="dt_cd" 				property="DeclarationTypeCode"/>
 		<result column="dt_nm" 				property="DeclarationTypeName"/>
-		<result column="dr_cd" 				property="DeclarationReasonCode"/>
+		<result column="dr_cd" 				property="DeclarationReasonCode"/> 
 		<result column="dr_nm" 				property="DeclarationReasonName"/>
 		<result column="lmt_start_ymdt" 	property="limitsStartYmdt"/>
 		<result column="lmt_end_ymdt" 		property="limitsEndYmdt"/>
@@ -50,6 +50,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<resultMap id="AdminLimitsAuthorityMap" type="outpolic.admin.limits.domain.AdminLimits">
 		<id 	column="mbr_cd" 					property="authorityMemberCode"/>
 		<result column="grd_cd" 					property="authorityGrdCode"/>
+		<result column="stc_cd" 					property="authorityStcCode"/>
+		<result column="stc_nm" 					property="authorityStcName"/>
 		<result column="ma_portfolio" 				property="authorityPortfolio"/>
 		<result column="ma_outsourcing_write" 		property="authorityOsWrite"/>
 		<result column="ma_outsourcing_contract" 	property="authorityOsContract"/>
@@ -81,6 +83,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="decl_target_cd"     property="declarationTargetCode"/>
 	</resultMap>
 	
+	<update id="updateMemberAuthority" parameterType="outpolic.admin.limits.domain.AdminLimits">
+    UPDATE member_authority
+    SET
+        ma_portfolio = #{authorityPortfolio},
+        ma_outsourcing_write = #{authorityOsWrite},
+        ma_outsourcing_contract = #{authorityOsContract},
+        ma_outsourcing = #{authorityOs},
+        ma_chat = #{authorityChat},
+        ma_review = #{authorityReview},
+        ma_mdfcn_ymdt = #{authorityMdfcnYmdt}
+    WHERE
+        mbr_cd = #{authorityMemberCode}
+	</update>
+
+	<select id="selectMemberAuthorityByMemberCode" parameterType="string" resultMap="AdminLimitsAuthorityMap">
+		select
+			ma.mbr_cd as mbr_cd,
+			m.grd_cd as grd_cd,
+			ma.ma_portfolio as ma_portfolio,
+			ma.ma_outsourcing_write as ma_outsourcing_write,
+			ma.ma_outsourcing_contract as ma_outsourcing_contract,
+			ma.ma_outsourcing as ma_outsourcing,
+			ma.ma_chat as ma_chat,
+			ma.ma_review as ma_review,
+			ma.ma_mdfcn_ymdt as ma_mdfcn_ymdt
+		from
+			member_authority ma 
+			left join member m on ma.mbr_cd = m.mbr_cd
+		where
+			ma.mbr_cd = #{memberCode}
+	</select>
+	
 	<insert id="insertLimitsType" parameterType="outpolic.admin.limits.domain.AdminLimits">
 		/* 제재 타입 등록 */
 		INSERT INTO limits_type (
@@ -100,7 +134,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			lt_mdfcn_adm_cd = #{limitsTypeMdfcnAdmCode},
 			lt_mdfcn_ymdt = NOW()
 		WHERE
-			lt_cd = #{limitsTypeCode}
+			lt.lt_cd = #{limitsTypeCode}
 	</update>
 
 	<select id="selectLimitsTypeById" parameterType="string" resultMap="AdminLimitsTypeMap">
@@ -127,6 +161,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select
 			ma.mbr_cd as mbr_cd,
 			m.grd_cd as grd_cd,
+			m.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
 			ma.ma_portfolio as ma_portfolio,
 			ma.ma_outsourcing_write as ma_outsourcing_write,
 			ma.ma_outsourcing_contract as ma_outsourcing_contract,
@@ -137,6 +173,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		from
 			member_authority ma 
 			left join member m on ma.mbr_cd = m.mbr_cd
+			left join status_code sc on m.stc_cd = sc.stc_cd
 		order by
 			m.mbr_join_ymdt;
 	</select>
@@ -302,122 +339,157 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<update id="updateLimitsReason" parameterType="outpolic.admin.limits.domain.AdminLimits">
 		/* 제재 사유 수정 */
-	    UPDATE limits_reason
-	    SET
-	        dt_cd = #{declarationTypeCode},
-	        dr_cd = #{declarationReasonCode},
-	        lt_cd = #{limitsTypeCode},
-	        lp_cd = #{limitsPeriodCode},
-	        lr_cnd = #{limitsReasonCnd},
-	        lr_cnd_min = #{limitsReasonCndMin},
-	        lr_cnd_max = #{limitsReasonCndMax},
-	        lr_expln = #{limitsReasonExpln},
-	        stc_cd = #{limitsTypeStcCode},
-	        lr_mdfcn_adm_cd = #{limitsReasonMdfcnAdmCode},
-	        lr_mdfcn_ymdt = NOW()
-	    WHERE
-	        lr_cd = #{limitsReasonCode}
+		UPDATE limits_reason
+		SET
+			dt_cd = #{declarationTypeCode},
+			dr_cd = #{declarationReasonCode},
+			lt_cd = #{limitsTypeCode},
+			lp_cd = #{limitsPeriodCode},
+			lr_cnd = #{limitsReasonCnd},
+			lr_cnd_min = #{limitsReasonCndMin},
+			lr_cnd_max = #{limitsReasonCndMax},
+			lr_expln = #{limitsReasonExpln},
+			stc_cd = #{limitsTypeStcCode},
+			lr_mdfcn_adm_cd = #{limitsReasonMdfcnAdmCode},
+			lr_mdfcn_ymdt = NOW()
+		WHERE
+			lr_cd = #{limitsReasonCode}
 	</update>
-	
+
 	<select id="selectLimitsReasonById" parameterType="string" resultMap="AdminLimitsTypeMap">
 		/* 특정 제재 사유 조회 (수정 모달용) */
-	    SELECT
-	        lr.lr_cd, lr.dt_cd, lr.dr_cd, lr.lt_cd, lr.lp_cd, lr.lr_cnd, lr.lr_cnd_min, lr.lr_cnd_max, lr.lr_expln, lr.stc_cd,
-	        lr.lr_reg_adm_cd, DATE_FORMAT(lr.lr_reg_ymdt, '%Y-%m-%d %H:%i:%s') AS lr_reg_ymdt, lr.lr_mdfcn_adm_cd, DATE_FORMAT(lr.lr_mdfcn_ymdt, '%Y-%m-%d %H:%i:%s') AS lr_mdfcn_ymdt,
-	        dt.dt_nm, dr.dr_nm, lt.lt_nm, lp.lp_nm, sc.stc_nm
-	    FROM
-	        limits_reason lr
-	    LEFT JOIN
-	        declaration_type dt ON lr.dt_cd = dt.dt_cd
-	    LEFT JOIN
-	        declaration_reason dr ON lr.dr_cd = dr.dr_cd
-	    LEFT JOIN
-	        limits_type lt ON lr.lt_cd = lt.lt_cd
-	    LEFT JOIN
-	        limits_period lp ON lr.lp_cd = lp.lp_cd
-	    LEFT JOIN
-	        status_code sc ON lr.stc_cd = sc.stc_cd
-	    WHERE
-	        lr.lr_cd = #{limitsReasonCode}
+		SELECT
+			lr.lr_cd as lr_cd,
+			lr.dt_cd as dt_cd,
+			dt.dt_nm as dt_nm,
+			lr.dr_cd as dr_cd,
+			dr.dr_nm as dr_nm,
+			lr.lt_cd as lt_cd,
+			lt.lt_nm as lt_nm,
+			lr.lp_cd as lp_cd,
+			lp.lp_nm as lp_nm,
+			lp.lp_days as lp_days,
+			lr.lr_cnd as lr_cnd,
+			lr.lr_cnd_min as lr_cnd_min,
+			lr.lr_cnd_max as lr_cnd_max,
+			lr.lr_expln as lr_expln,
+			lr.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			lr.lr_reg_adm_cd as lr_reg_adm_cd,
+			lr.lr_reg_ymdt as lr_reg_ymdt,
+			lr.lr_mdfcn_adm_cd as lr_mdfcn_adm_cd,
+			lr.lr_mdfcn_ymdt as lr_mdfcn_ymdt
+		FROM
+			limits_reason lr
+			LEFT JOIN declaration_type dt ON lr.dt_cd = dt.dt_cd
+			LEFT JOIN declaration_reason dr ON lr.dr_cd = dr.dr_cd
+			LEFT JOIN limits_type lt ON lr.lt_cd = lt.lt_cd
+			LEFT JOIN limits_period lp ON lr.lp_cd = lp.lp_cd
+			LEFT JOIN status_code sc ON lr.stc_cd = sc.stc_cd
+		WHERE
+			lr.lr_cd = #{limitsReasonCode}
 	</select>
-	
+
 	<select id="getDeclarationTypeList" resultMap="AdminLimitsTypeMap">
-		/* 신고 타입 목록 조회 */
-	    SELECT
-	        dt_cd, dt_nm
-	    FROM
-	        declaration_type
-	    WHERE stc_cd = 'SD_ACTIVE'
+		SELECT
+			dt_cd,
+			dt_nm
+		FROM
+			declaration_type
+		ORDER BY
+			dt_cd;
+	</select>
+
+	<select id="getDeclarationReasonList" resultMap="AdminLimitsTypeMap">
+		SELECT
+			dr_cd,
+			dr_nm
+		FROM
+			declaration_reason
+		<where>
+			<if test="dt_cd != null and dt_cd != ''">
+				dt_cd = #{dt_cd}
+			</if>
+		</where>
+		ORDER BY
+			dr_cd;
 	</select>
 	
-	<select id="getDeclarationReasonList" parameterType="string" resultMap="AdminLimitsTypeMap">
-		/* 신고 사유 목록 조회 (타입별 필터링 가능) */
-	    SELECT
-	        dr_cd, dr_nm
-	    FROM
-	        declaration_reason
-	    WHERE dt_cd = #{dt_cd} AND stc_cd = 'SD_ACTIVE'
+	<select id="getDeclarationInfo" parameterType="string" resultMap="declarationFullInfoMap">
+	    SELECT
+	        decl_cd,
+	        dt_cd,
+	        dr_cd,
+	        mbr_cd,
+	        decl_target_cd
+	    FROM
+	        declaration
+	    WHERE
+	        decl_cd = #{declCd}
 	</select>
 	
-	<select id="getDeclarationInfo" resultMap="declarationFullInfoMap">		
-		/* 신고 내역 조회 */
-        SELECT d.dt_cd, d.dr_cd, d.mbr_cd, d.decl_target_cd
-        FROM declaration d
-        WHERE d.decl_cd = #{declCd}
-    </select>
-
-    <select id="getCumulativeCount" resultType="int">
-        /* 동일제재누적현황 조회 */
-        SELECT lc_cum_cnt FROM limits_cumulative
-        WHERE mbr_cd = #{mbrCd} AND dr_cd = #{drCd}
-    </select>
-
-    <select id="getMatchedLimitsReason" resultMap="limitsReasonMap">
-        /* 제재 조건 매치 */
-        SELECT * FROM limits_reason
-        WHERE dt_cd = #{dtCd}
-          AND dr_cd = #{drCd}
-          AND lr_cnd_min &lt; #{cnt}
-          AND lr_cnd_max &gt; #{cnt}
-          AND stc_cd = 'SD_ACTIVE'
-        LIMIT 1
-    </select>
-
-    <select id="getEndDateByPeriod" resultType="java.sql.Timestamp">
-    	/* 제재 기간 */
-        SELECT
-        CASE
-            WHEN #{lpCd} = 'LP_INF' THEN NULL
-            WHEN #{lpCd} = 'LP_D3' THEN DATE_ADD(#{start}, INTERVAL 3 DAY)
-            WHEN #{lpCd} = 'LP_D7' THEN DATE_ADD(#{start}, INTERVAL 7 DAY)
-            WHEN #{lpCd} = 'LP_D30' THEN DATE_ADD(#{start}, INTERVAL 30 DAY)
-            ELSE #{start}
-        END
-    </select>
-
-    <insert id="insertLimits">
-    	/* 제재 등록 */
-        INSERT INTO limits (
-            lmt_cd, mbr_cd, dp_cd, dr_cd, lr_cd,
-            lmt_start_ymdt, lmt_end_ymdt, lmt_clear_ymdt,
-            lmt_rmd_days, lmt_dock_rsn, lmt_reg_adm_cd
-        ) VALUES (
-            #{lmtCd}, #{mbrCd}, #{dpCd}, #{drCd}, #{lrCd},
-            #{lmtStartYmdt}, #{lmtEndYmdt}, #{lmtClearYmdt},
-            #{lmtRmdDays}, #{lmtDockRsn}, #{lmtRegAdmCd}
-        )
-    </insert>
-
-    <insert id="insertCumulative">
-    	/* 동일제재누적현황 등록 */
-        INSERT INTO limits_cumulative (mbr_cd, dr_cd, lc_cum_cnt, lc_lmt_ymdt)
-        VALUES (#{mbrCd}, #{drCd}, #{cnt}, NOW())
-    </insert>
-
-    <update id="updateCumulative">
-   	 	/* 동일제재누적현황 업데이트 */
-        UPDATE limits_cumulative
-        SET lc_cum_cnt = #{cnt}, lc_lmt_ymdt = NOW()
-        WHERE mbr_cd = #{mbrCd} AND dr_cd = #{drCd}
-    </update>
+	<select id="getCumulativeCount" resultType="int">
+	    SELECT
+	        lrc_cnt
+	    FROM
+	        limits_reason_cumulative
+	    WHERE
+	        mbr_cd = #{mbrCd} AND dr_cd = #{drCd}
+	</select>
+	
+	<select id="getMatchedLimitsReason" resultMap="limitsReasonMap">
+	    SELECT
+	        lr_cd,
+	        dt_cd,
+	        dr_cd,
+	        lp_cd,
+	        lr_cnd,
+	        lr_cnd_min,
+	        lr_cnd_max,
+	        lr_expln
+	    FROM
+	        limits_reason
+	    WHERE
+	        dt_cd = #{dtCd} AND dr_cd = #{drCd}
+	        AND (
+	            (lr_cnd = 'COUNT' AND lr_cnd_min <![CDATA[ <= ]]> #{cnt} AND lr_cnd_max <![CDATA[ >= ]]> #{cnt})
+	            OR lr_cnd IS NULL OR lr_cnd = ''
+	        )
+	    ORDER BY
+	        lr_cnd_min DESC
+	    LIMIT 1
+	</select>
+	
+	<select id="getEndDateByPeriod" resultType="java.sql.Timestamp">
+	    SELECT
+	        DATE_ADD(#{start}, INTERVAL lp_days DAY)
+	    FROM
+	        limits_period
+	    WHERE
+	        lp_cd = #{lpCd}
+	</select>
+	
+	<insert id="insertLimits" parameterType="outpolic.admin.limits.domain.AdminLimits">
+	    INSERT INTO limits (
+	        lmt_cd, mbr_cd, dt_cd, dr_cd, lr_cd, lmt_start_ymdt, lmt_end_ymdt, lmt_clear_ymdt, lmt_rmd_days, lmt_status, lmt_reg_adm_cd, lmt_reg_ymdt
+	    ) VALUES (
+	        #{limitsCode}, #{limitsMemberCode}, #{declarationTypeCode}, #{declarationReasonCode}, #{limitsReasonCode}, #{limitsStartYmdt}, #{limitsEndYmdt}, #{limitsClearYmdt}, #{limitsRmdDays}, 'LMS001', #{limitsTypeRegAdmCode}, NOW()
+	    )
+	</insert>
+	
+	<insert id="insertCumulative">
+	    INSERT INTO limits_reason_cumulative (
+	        mbr_cd, dr_cd, lrc_cnt
+	    ) VALUES (
+	        #{mbrCd}, #{drCd}, #{cnt}
+	    )
+	</insert>
+	
+	<update id="updateCumulative">
+	    UPDATE limits_reason_cumulative
+	    SET
+	        lrc_cnt = #{cnt}
+	    WHERE
+	        mbr_cd = #{mbrCd} AND dr_cd = #{drCd}
+	</update>
 </mapper>
