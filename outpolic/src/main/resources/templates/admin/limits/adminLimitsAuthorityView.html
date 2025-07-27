@@ -25,22 +25,9 @@
 	                    <table class="search-filter-table">
 							<tbody>
 								<tr>
-									<th>기본검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>제목</option>
-											<option>내용</option>
-											<option>문의코드</option>
-											<option>작성자</option>
-										</select>
-										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
-									</td>
-								</tr>
-								<tr>
 									<th>기간검색</th>
 									<td>
 										<select class="form-select" style="width: 120px;">
-											<option>작성일자</option>
 											<option>수정일자</option>
 										</select>
 										<input type="date" class="form-control" style="width: 150px;" />
@@ -60,9 +47,8 @@
 									<td>
 										<div class="radio-group">
 											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
-											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
-											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
-											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
+											<label><input type="radio" name="levelSearch" value="general" /> USER</label>
+											<label><input type="radio" name="levelSearch" value="excellent" /> ENTER</label>
 										</div>
 									</td>
 								</tr>
@@ -84,6 +70,7 @@
 	                                <th scope="col" class="start text-center col-1">No.</th>
 	                                <th scope="col" class="text-center col-1">회원코드</th>
 	                                <th scope="col" class="text-center col-1">회원등급</th>
+	                                <th scope="col" class="text-center col-1">회원상태</th>
 	                                <th scope="col" class="text-center col-1">포트폴리오</th>
 	                                <th scope="col" class="text-center col-1">외주 게시</th>
 	                                <th scope="col" class="text-center col-1">외주 신청</th>
@@ -102,6 +89,7 @@
 								    <!-- <td scope="col" class="text-center" th:text="${l.limitsCode}">No.</td> -->
 								    <td scope="col" class="text-center" th:text="${l.authorityMemberCode}">회원코드</td>
 								    <td scope="col" class="text-center" th:text="${l.authorityGrdCode}">회원코드</td>
+								    <td scope="col" class="text-center" th:text="${l.authorityStcName}">회원상태</td>
 								    <td scope="col" class="text-center" th:switch="${l.authorityPortfolio}">
 								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
 	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
@@ -127,7 +115,7 @@
 	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
 	                                </td>
 								    <td scope="col" class="text-center">
-										<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${l.authorityMemberCode}">수정</a>
+										<a class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${l.authorityMemberCode}">수정</a>
 									</td>
 								</tr>
 							</tbody>
@@ -136,116 +124,173 @@
 	            </div>
 	        </div>
 	    </section>
-
+		
 		<div id="authorityModal" class="SR_modal">
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
-					<h2>신고 처리</h2>
+					<h2>권한 관리</h2>
 					<button class="SR_close-button">&times;</button>
 				</div>
-                <div class="SR_popup-info">
-                    <div class="SR_writer-info">
-                        <span id="SR_writerCode">작성자 코드</span> | <span id="SR_writerName">작성자명</span> | <span id="SR_writeDate">작성일자</span>
-                    </div>
-                    <select id="inquiryStatusEdit" name="status" class="SR_form-control SR_status-dropdown">
-                        <option value="CONFIRMED">확인전</option>
-                        <option value="PROCESSING">처리중</option>
-                        <option value="COMPLETED">처리완료</option>
-                    </select>
-                </div>
-
-				<form id="inquiryForm">
-                    <div class="SR_form-group">
-                        <div class="SR_input-half">
-                            <label for="inquiryCodeDisplay">문의코드</label>
-                            <input type="text" id="inquiryCodeDisplay" name="inquiryCode" class="SR_form-control" readonly>
-                        </div>
-                        <div class="SR_input-half">
-                            <label for="inquiryTitleEdit">제목</label>
-                            <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
-                        </div>
-					</div>
-
-                    <div class="SR_form-group">
-                        <div class="SR_input-half">
-                            <label for="inquiryTypeCodeDisplay">문의타입 코드</label>
-                            <input type="text" id="inquiryTypeCodeDisplay" name="inquiryTypeCode" class="SR_form-control" readonly>
-                        </div>
-                        <div class="SR_input-half">
-                            <label for="inquiryTypeEdit">문의타입 이름</label>
-                            <select id="inquiryTypeEdit" name="inquiryType" class="SR_form-control">
-                                <option value="1">상품 문의</option>
-                                <option value="2">배송 문의</option>
-                                <option value="3">기술 지원</option>
-                                <option value="4">기타</option>
-                            </select>
-                        </div>
-					</div>
-
-                    <div class="SR_form-group SR_full-width">
-						<label for="inquiryContentEdit">문의 내용</label>
-						<textarea id="inquiryContentEdit" name="inquiryContent" class="SR_form-control" rows="5" readonly></textarea>
-					</div>
-
-                    <div class="SR_form-group SR_full-width">
-                        <label>첨부파일 목록</label>
-                        <div id="SR_fileList" class="SR_form-control SR_file-list">
-                            파일1.jpg (1.2MB) <br>
-                            파일2.pdf (3.5MB)
-                        </div>
-                    </div>
-                    
-					<div class="SR_popup-footer">
-                        <div class="SR_update-info">
-                            <span id="SR_updaterName">수정자</span> | <span id="SR_updateDate">수정일시</span>
-                        </div>
-						<button type="submit" id="saveButton" class="SR_btn-primary">저장</button>
+				<form id="empowermentForm" method="post" th:action="@{/admin/empowerment/save}">
+					<input type="hidden" name="admCd" id="adminCodeInput" />
+					<table class="table table-hover mb-0">
+						<thead>
+							<tr>
+								<th class="px-4 text-center col-3">권한명</th>
+								<th class="px-4 text-center col-3">부여상태</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="px-4 text-center">포트폴리오</td>
+								<td class="px-4 text-center">
+									<input type="checkbox" name="permissions" value="SYSTEM_ADMIN" />
+								</td>
+							</tr>
+							<tr>
+								<td class="px-4 text-center">외주 게시</td>
+								<td class="px-4 text-center">
+									<input type="checkbox" name="permissions" value="ADMIN_EMPOWERMENT" />
+								</td>
+							</tr>
+							<tr>
+								<td class="px-4 text-center">외주 신청</td>
+								<td class="px-4 text-center">
+									<input type="checkbox" name="permissions" value="CONTENT_ADMIN" />
+								</td>
+							</tr>
+							<tr>
+								<td class="px-4 text-center">외주</td>
+								<td class="px-4 text-center">
+									<input type="checkbox" name="permissions" value="CS_ADMIN" />
+								</td>
+							</tr>
+							<tr>
+								<td class="px-4 text-center">채팅</td>
+								<td class="px-4 text-center">
+									<input type="checkbox" name="permissions" value="MEMBER_ADMIN" />
+								</td>
+							</tr>
+							<tr>
+								<td class="px-4 text-center">리뷰</td>
+								<td class="px-4 text-center">
+									<input type="checkbox" name="permissions" value="USER_PAYMENT_ADMIN" />
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="text-end mt-3">
+						<button type="submit" class="btn btn-primary">저장</button>
 					</div>
 				</form>
 			</div>
 		</div>
-		</th:block>
+	</th:block>
 
     <th:block layout:fragment="jsScript">
 		<script>
-			document.addEventListener('DOMContentLoaded', function () {
-			    const modal = document.getElementById('authorityModal');
-			    const closeButton = document.querySelector('#authorityModal .SR_close-button');
-			    const saveButton = document.getElementById('saveButton');
-			    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
-	
-			    // 팝업 열기
-			    openPopupButtons.forEach(button => {
-			        button.addEventListener('click', function (event) {
-			            event.preventDefault();
-			            modal.style.display = 'flex';
-			            document.body.style.overflow = 'hidden';
-			        });
-			    });
-	
-			    // 팝업 닫기 (닫기 버튼)
-			    closeButton.addEventListener('click', function () {
-			        modal.style.display = 'none';
-			        document.body.style.overflow = 'auto';
-			    });
-	
-			    // 팝업 닫기 (바깥 클릭 시)
-			    window.addEventListener('click', function (event) {
-			        if (event.target === modal) {
-			            modal.style.display = 'none';
-			            document.body.style.overflow = 'auto';
-			        }
-			    });
-	
-			    // 저장 버튼 클릭
-			    const inquiryForm = document.getElementById('inquiryForm');
-			    inquiryForm.addEventListener('submit', function (event) {
-			        event.preventDefault();
-			        alert('저장 버튼이 클릭되었습니다! (저장 로직은 필요 시 추가)');
-			        modal.style.display = 'none';
-			        document.body.style.overflow = 'auto';
-			    });
-			});
+		document.addEventListener('DOMContentLoaded', function () {
+		    const modal = document.getElementById('authorityModal');
+		    const closeButton = document.querySelector('#authorityModal .SR_close-button');
+		    const openPopupButtons = document.querySelectorAll('.SR_open-popup-btn');
+		    const empowermentForm = document.getElementById('empowermentForm'); // 저장 버튼이 있는 폼
+		    const permissionCheckboxes = document.querySelectorAll('#empowermentForm input[name="permissions"]');
+
+		    // 팝업 열기 로직
+		    openPopupButtons.forEach(button => {
+		        button.addEventListener('click', function (event) {
+		            event.preventDefault();
+
+		            const memberCode = this.getAttribute('data-declaration-code'); // 회원 코드 가져오기
+		            document.getElementById('adminCodeInput').value = memberCode; // hidden input에 설정
+
+		            // AJAX를 통해 해당 회원의 권한 정보를 불러옴
+		            fetch(`/admin/getAuthority?mbrCd=${memberCode}`)
+		                .then(response => {
+		                    if (!response.ok) {
+		                        throw new Error('네트워크 응답이 올바르지 않습니다.');
+		                    }
+		                    return response.json();
+		                })
+		                .then(data => {
+		                    // 받아온 데이터로 체크박스 상태 설정
+		                    permissionCheckboxes[0].checked = data.authorityPortfolio === 1;   // 포트폴리오
+		                    permissionCheckboxes[1].checked = data.authorityOsWrite === 1;      // 외주 게시
+		                    permissionCheckboxes[2].checked = data.authorityOsContract === 1;   // 외주 신청
+		                    permissionCheckboxes[3].checked = data.authorityOs === 1;           // 외주
+		                    permissionCheckboxes[4].checked = data.authorityChat === 1;         // 채팅
+		                    permissionCheckboxes[5].checked = data.authorityReview === 1;       // 리뷰
+
+		                    modal.style.display = 'flex';
+		                    document.body.style.overflow = 'hidden';
+		                })
+		                .catch(error => {
+		                    console.error('권한 정보를 불러오는 중 오류 발생:', error);
+		                    alert('권한 정보를 불러오지 못했습니다. 오류: ' + error.message);
+		                });
+		        });
+		    });
+
+		    // 팝업 닫기 (닫기 버튼) - 닫을 때 체크박스 초기화 로직 추가
+		    closeButton.addEventListener('click', function () {
+		        modal.style.display = 'none';
+		        document.body.style.overflow = 'auto';
+		        // 팝업 닫을 때는 현재 선택 상태를 유지하지 않고 초기화
+		        permissionCheckboxes.forEach(checkbox => {
+		            checkbox.checked = false;
+		        });
+		    });
+
+		    // 팝업 닫기 (바깥 클릭 시) - 닫을 때 체크박스 초기화 로직 추가
+		    window.addEventListener('click', function (event) {
+		        if (event.target === modal) {
+		            modal.style.display = 'none';
+		            document.body.style.overflow = 'auto';
+		            // 팝업 닫을 때는 현재 선택 상태를 유지하지 않고 초기화
+		            permissionCheckboxes.forEach(checkbox => {
+		                checkbox.checked = false;
+		            });
+		        }
+		    });
+
+		    // "저장" 버튼 클릭 이벤트 (empowermentForm submit)
+		    empowermentForm.addEventListener('submit', function (event) {
+		        event.preventDefault(); // 기본 폼 제출 방지
+
+		        const memberCode = document.getElementById('adminCodeInput').value;
+		        const payload = {
+		            authorityMemberCode: memberCode,
+		            authorityPortfolio: permissionCheckboxes[0].checked ? 1 : 0,
+		            authorityOsWrite: permissionCheckboxes[1].checked ? 1 : 0,
+		            authorityOsContract: permissionCheckboxes[2].checked ? 1 : 0,
+		            authorityOs: permissionCheckboxes[3].checked ? 1 : 0,
+		            authorityChat: permissionCheckboxes[4].checked ? 1 : 0,
+		            authorityReview: permissionCheckboxes[5].checked ? 1 : 0
+		        };
+
+		        fetch('/admin/updateMemberAuthority', {
+		            method: 'POST',
+		            headers: { 'Content-Type': 'application/json' },
+		            body: JSON.stringify(payload)
+		        })
+		        .then(res => res.text())
+		        .then(result => {
+		            if (result === 'OK') {
+		                alert('권한이 성공적으로 저장되었습니다.');
+		                modal.style.display = 'none'; // 팝업 닫기
+		                document.body.style.overflow = 'auto'; // 스크롤 다시 활성화
+		                location.reload(); // 페이지 새로고침하여 최신 상태 반영
+		            } else {
+		                alert('권한 저장 실패: ' + result);
+		                // 저장 실패 시 특별한 롤백이 필요 없다면 그냥 메시지만 표시
+		            }
+		        })
+		        .catch(error => {
+		            console.error('권한 저장 중 오류 발생:', error);
+		            alert('네트워크 오류 또는 서버 오류: ' + error);
+		        });
+		    });
+		});
 		</script>
 	</th:block>
 </html>
