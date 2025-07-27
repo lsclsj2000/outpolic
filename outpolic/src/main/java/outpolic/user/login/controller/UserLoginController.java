@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.common.domain.Member;
+import outpolic.systems.util.IpUtils;
 import outpolic.user.login.dto.LoginFailDTO;
 import outpolic.user.login.mapper.UserLoginMapper;
 import outpolic.user.login.service.LoginLimitService;
@@ -47,7 +48,7 @@ public class UserLoginController {
    	  
     	  Map<String, Object> loginResult = userLoginService.loginUser(memberId, memberPw);
     	  boolean isMatched = (boolean) loginResult.get("isMatched");
-    	  String clientIp = request.getRemoteAddr();
+    	  String clientIp = IpUtils.getClientIp(request);
     	  String redirectUri = "redirect:/login";
         
         if (isMatched) {
@@ -57,7 +58,7 @@ public class UserLoginController {
         	
         	userLoginMapper.insertLoginHistory(userLoginMapper.getNextLoginHistoryCode(), 
         										memberInfo.getMemberCode(), 
-        										request.getRemoteAddr());
+        										clientIp);
         	
         	log.info("로그인 등급: {}", grade);
         	

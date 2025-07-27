@@ -32,3 +32,4 @@ public interface AdminLoginHistoryMapper {
 	void updateLogoutTimeByMemberCode(String memberCode);
 		    
 }
+
