@@ -192,74 +192,64 @@
 		        //          리뷰 모달 관련 함수 추가
 		        //===============================================
 		        
-		        // 별점 시각화 함수 분리
-				function setStars(rating) {
-				    const stars = document.querySelectorAll('#starRating .star');
-				    stars.forEach(s => {
-				        s.classList.toggle('selected', s.dataset.value <= rating);
-				    });
-				    document.getElementById('reviewRatingValue').value = rating;
-				}
-		        	
-		        async function openReviewModal(isEdit, projectId, projectTitle, reviewId) {
-				    const reviewModal = document.getElementById('reviewModal');
-				    const modalTitle = document.getElementById('reviewModalTitle');
-				    const projectIdInput = document.getElementById('reviewProjectId');
-				    const reviewContent = document.getElementById('reviewContent');
-				    const form = document.getElementById('reviewForm');
-				
-				    // 폼 초기화
-				    form.reset();
-				    setStars(0);
-				
-				    // 공통 정보 설정
-				    projectIdInput.value = projectId;
-				    form.dataset.mode = isEdit ? 'edit' : 'create'; // 현재 모드 저장
-				    form.dataset.reviewId = reviewId || ''; // 수정 시 리뷰 ID 저장
-				
-				    if (isEdit) {
-				        // --- 수정 모드 ---
-				        modalTitle.textContent = `[${projectTitle}] 리뷰 수정`;
-				        
-				        try {
-				            // 서버에서 기존 리뷰 데이터 가져오기
-				            const response = await fetch(`/user/api/review?oscId=${projectId}`);
-				            if (!response.ok) throw new Error('Failed to fetch review data');
-				            
-				            const reviewData = await response.json();
-				            
-				            // 모달에 데이터 채우기
-				            reviewContent.value = reviewData.rvwCn;
-				            setStars(parseFloat(reviewData.rvwEvl));
-				            
-				        } catch (error) {
-				            console.error('Error fetching review for edit:', error);
-				            showMessageBox('리뷰 정보를 불러오는 데 실패했습니다.');
-				            return; // 데이터 로드 실패 시 모달 열지 않음
-				        }
-				
-				    } else {
-				        // --- 신규 작성 모드 ---
-				        modalTitle.textContent = `[${projectTitle}] 리뷰 작성`;
-				    }
-				    
-				    reviewModal.classList.remove('SR_hidden');
-				}
-
-		        
-		        // 리뷰 모달을 닫는 함수
-		        function closeReviewModal() {
-		            const reviewModal = document.getElementById('reviewModal');
-		            // 폼 초기화
-		            document.getElementById('reviewForm').reset();
-		            // 별점 초기화
-		            document.querySelectorAll('#starRating .star').forEach(star => star.classList.remove('selected'));
-		            
-		            // 모달을 숨깁니다.
-		            reviewModal.classList.add('SR_hidden');
-		        }
-		        
-		        document.addEventListener('DOMContentLoaded', () => {
+		        // 별점 시각화 함수
+			    function setStars(rating) {
+			        const stars = document.querySelectorAll('#starRating .star');
+			        stars.forEach(s => {
+			            s.classList.toggle('selected', s.dataset.value <= rating);
+			        });
+			        document.getElementById('reviewRatingValue').value = rating;
+			    }
+			        
+			    async function openReviewModal(isEdit, projectId, projectTitle, reviewId) {
+			        const reviewModal = document.getElementById('reviewModal');
+			        const modalTitle = document.getElementById('reviewModalTitle');
+			        const projectIdInput = document.getElementById('reviewProjectId');
+			        const reviewContent = document.getElementById('reviewContent');
+			        const form = document.getElementById('reviewForm');
+			    
+			        form.reset();
+			        setStars(0);
+			    
+			        projectIdInput.value = projectId;
+			        form.dataset.mode = isEdit ? 'edit' : 'create';
+			        form.dataset.reviewId = reviewId || '';
+			    
+			        if (isEdit) {
+			            modalTitle.textContent = `[${projectTitle}] 리뷰 수정`;
+			            
+			            try {
+			                // [수정 1] API 엔드포인트를 /user/api/reviews 로 변경
+			                const response = await fetch(`/user/api/reviews?oscId=${projectId}`);
+			                if (!response.ok) throw new Error('Failed to fetch review data');
+			                
+			                const reviewData = await response.json();
+			                
+			                reviewContent.value = reviewData.rvwCn;
+			                setStars(parseFloat(reviewData.rvwEvl));
+			                
+			            } catch (error) {
+			                console.error('Error fetching review for edit:', error);
+			                showMessageBox('리뷰 정보를 불러오는 데 실패했습니다.');
+			                return;
+			            }
+			    
+			        } else {
+			            modalTitle.textContent = `[${projectTitle}] 리뷰 작성`;
+			        }
+			        
+			        reviewModal.classList.remove('SR_hidden');
+			    }
+			
+			    
+			    function closeReviewModal() {
+			        const reviewModal = document.getElementById('reviewModal');
+			        document.getElementById('reviewForm').reset();
+			        document.querySelectorAll('#starRating .star').forEach(star => star.classList.remove('selected'));
+			        reviewModal.classList.add('SR_hidden');
+			    }
+			    
+			    document.addEventListener('DOMContentLoaded', () => {
 		        	
 		        	filterProjects('ALL');
 		        	
@@ -274,33 +264,34 @@
                         });
                     });
 
-		            // '리뷰 작성' 버튼 이벤트 리스너
+		        	// '리뷰 작성' 버튼 이벤트 리스너
 		            document.querySelectorAll('.SR_review-btn').forEach(button => {
 		                button.addEventListener('click', (event) => {
 		                    event.stopPropagation();
 		                    const projectId = button.dataset.projectId;
 		                    const projectTitle = button.dataset.projectTitle;
-		                    openReviewModal(false, projectId, projectTitle, null); // isEdit: false
+		                    openReviewModal(false, projectId, projectTitle, null);
 		                });
 		            });
 
-		            // '리뷰 수정' 버튼 이벤트 리스너 (신규 추가)
+		            // '리뷰 수정' 버튼 이벤트 리스너
 		            document.querySelectorAll('.SR_review-edit-btn').forEach(button => {
 		                button.addEventListener('click', (event) => {
 		                    event.stopPropagation();
 		                    const projectId = button.dataset.projectId;
 		                    const projectTitle = button.dataset.projectTitle;
 		                    const reviewId = button.dataset.reviewId;
-		                    openReviewModal(true, projectId, projectTitle, reviewId); // isEdit: true
+		                    openReviewModal(true, projectId, projectTitle, reviewId);
 		                });
 		            });
 		            
-		            // 별점 클릭 이벤트 (setStars 함수 사용으로 간소화)
+		            // 별점 클릭 이벤트
 		            document.querySelectorAll('#starRating .star').forEach(star => {
 		                star.addEventListener('click', () => setStars(star.dataset.value));
 		            });
 
-		            // 폼 제출 이벤트 핸들러 (신규/수정 분기 처리)
+		            // =================== [핵심 수정 영역] ===================
+		            // [수정 2] 폼 제출 이벤트 핸들러 전체를 아래 내용으로 교체
 		            const reviewForm = document.getElementById('reviewForm');
 		            reviewForm.addEventListener('submit', async function(event) {
 		                event.preventDefault();
@@ -308,40 +299,50 @@
 		                const mode = this.dataset.mode;
 		                const reviewId = this.dataset.reviewId;
 		                const projectId = this.elements.projectId.value;
-		                const rating = this.elements.rating.value;
-		                const content = this.elements.content.value;
 		                
-		                // 유효성 검사
-		                if (rating === "0" || content.trim() === "") {
+		                // DTO 필드명과 일치시키기 위해 변수명 변경 (rating -> rvwEvl, content -> rvwCn)
+		                const rvwEvl = this.elements.reviewRatingValue.value;
+		                const rvwCn = this.elements.reviewContent.value;
+		                
+		                if (rvwEvl === "0" || rvwCn.trim() === "") {
 		                    showMessageBox("별점과 리뷰 내용을 모두 입력해주세요.");
 		                    return;
 		                }
 
-		                const reviewData = { rating, content };
+		                // 요청 본문에 사용할 객체 (Key를 DTO 필드명과 정확히 일치시킴)
+		                const bodyPayload = {
+		                    rvwEvl: rvwEvl,
+		                    rvwCn: rvwCn
+		                };
+
 		                let url, method;
 
 		                if (mode === 'edit') {
-		                    url = `/user/api/review/${reviewId}`;
+		                    // 수정 API 엔드포인트로 변경
+		                    url = `/user/api/reviews/${reviewId}`;
 		                    method = 'PUT';
 		                } else {
-		                    url = '/user/osst/review';
+		                    // 생성 API 엔드포인트로 변경
+		                    url = '/user/api/reviews';
 		                    method = 'POST';
-		                    reviewData.projectId = projectId; // 신규 작성 시에만 projectId 필요
+		                    // 생성 시에만 projectId 추가
+		                    bodyPayload.projectId = projectId; 
 		                }
 		                
 		                try {
 		                    const response = await fetch(url, {
 		                        method: method,
 		                        headers: { 'Content-Type': 'application/json' },
-		                        body: JSON.stringify(reviewData)
+		                        body: JSON.stringify(bodyPayload) // DTO와 일치하는 객체를 JSON으로 변환
 		                    });
 		                    const result = await response.text();
 
-		                    if (result === 'OK') {
+		                    // response.ok는 HTTP 상태 코드가 200-299 범위에 있는지 확인
+		                    if (response.ok && result === 'OK') {
 		                        showMessageBox(`리뷰가 성공적으로 ${mode === 'edit' ? '수정' : '제출'}되었습니다.`);
 		                        setTimeout(() => window.location.reload(), 1500);
 		                    } else {
-		                        throw new Error('Server returned an error: ' + result);
+		                        throw new Error('Server returned an error: ' + (await response.text()));
 		                    }
 		                } catch (error) {
 		                    console.error('Form submission error:', error);
