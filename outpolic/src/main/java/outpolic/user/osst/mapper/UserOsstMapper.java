@@ -42,4 +42,5 @@ public interface UserOsstMapper {
 	String getEnterpriseCodeByOscId(String oscId);
 	UserOutsourcingReviewDTO findReviewByOscIdAndMbrCd(Map<String, Object> params);
 	int updateReview(UserOutsourcingReviewDTO reviewDTO);
+	String findOscIdByOcdId(String ocdId);
 }

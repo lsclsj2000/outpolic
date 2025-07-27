@@ -248,28 +248,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    INSERT INTO review (
 	        rvw_cd,
 	        osc_id,
-	        mbr_cd,      -- 리뷰 작성자 (reviewerMbrCd DTO 필드와 매핑)
-	        ent_cd,      -- 리뷰 대상 기업 (revieweeEntCd DTO 필드와 매핑)
+	        mbr_cd,      -- 리뷰 작성자
 	        rvw_cn,
 	        rvw_evl,
 	        rvw_reg_ymdt
 	    ) VALUES (
 	        #{rvwCd},
 	        #{oscId},
-	        #{reviewerMbrCd}, 
-	        #{revieweeEntCd}, 
+	        #{reviewerMbrCd},
 	        #{rvwCn},
 	        #{rvwEvl},
 	        NOW()
 	    )
 	</insert>
 	
+	<select id="findOscIdByOcdId" parameterType="String" resultType="String">
+	    /* ocd_cd를 사용하여 outsourcing_contract 테이블의 osc_id를 조회 */
+	    SELECT
+	        oc.osc_id
+	    FROM outsourcing_contract oc
+	    JOIN outsourcing_prograss op ON oc.osp_cd = op.osp_cd  -- 'outsourcing_progress' -> 'outsourcing_prograss'로 수정
+	    WHERE op.ocd_cd = #{ocdId}
+	    LIMIT 1
+	</select>
+	
 	<select id="findReviewByOscIdAndMbrCd" parameterType="map" resultType="outpolic.user.review.dto.UserOutsourcingReviewDTO">
 	    SELECT
 	        rvw_cd        AS rvwCd,
 	        osc_id        AS oscId,
 	        mbr_cd        AS reviewerMbrCd, -- 리뷰 작성자
-	        ent_cd        AS revieweeEntCd, -- 리뷰 대상
 	        rvw_cn        AS rvwCn,
 	        rvw_evl       AS rvwEvl,
 	        rvw_reg_ymdt  AS rvwRegYmdt,

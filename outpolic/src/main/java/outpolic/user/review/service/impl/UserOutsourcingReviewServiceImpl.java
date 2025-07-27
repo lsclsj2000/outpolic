@@ -20,22 +20,32 @@ public class UserOutsourcingReviewServiceImpl implements UserOutsourcingReviewSe
 	@Override
 	@Transactional
 	public boolean createReview(UserOutsourcingReviewDTO reviewDTO) {
-		// 1. 새로운 리뷰 코드(PK) 생성
+		// Controller로부터 전달받은 값은 사실 ocd_cd 임
+		String ocdIdFromRequest = reviewDTO.getOscId();
+
+		// 1. 전달받은 ocd_cd를 사용하여 실제 osc_id를 조회한다.
+		// (이제 이 쿼리는 'outsourcing_prograss' 테이블을 사용하여 정상적으로 실행됩니다.)
+		String realOscId = userOsstMapper.findOscIdByOcdId(ocdIdFromRequest);
+
+		// 1.1. 방어 코드: 유효한 osc_id를 찾지 못하면 실패 처리
+        if (realOscId == null || realOscId.isBlank()) {
+            return false;
+        }
+        
+        // 1.2. 조회한 실제 osc_id를 DTO에 다시 설정한다.
+        reviewDTO.setOscId(realOscId);
+
+		// 2. 새로운 리뷰 코드(PK) 생성
         String newReviewCode = userOsstMapper.getNextReviewCode();
         reviewDTO.setRvwCd(newReviewCode);
 
-        // 2. 리뷰 대상 기업 코드(ent_cd) 조회
-        // oscId는 Controller에서 받은 프로젝트 식별 코드(ocd_cd)임
-        String enterpriseCode = userOsstMapper.getEnterpriseCodeByOscId(reviewDTO.getOscId());
-        
-        if (enterpriseCode == null || enterpriseCode.isBlank()) {
-            return false; // 비정상 요청
-        }
-        reviewDTO.setRevieweeEntCd(enterpriseCode);
+        // 3. ent_cd 관련 로직은 없음.
 
-        // 3. Mapper 호출 (Mapper는 reviewerMbrCd와 revieweeEntCd를 사용)
+        // 4. 완성된 DTO를 사용하여 DB에 저장
+        // (Mapper의 insertReview는 이제 ent_cd 없이, 올바른 osc_id를 가지고 실행됩니다.)
         int insertedRows = userOsstMapper.insertReview(reviewDTO);
 
+        // 5. 성공 여부 반환
         return insertedRows > 0;
 	}
 	
@@ -50,8 +60,9 @@ public class UserOutsourcingReviewServiceImpl implements UserOutsourcingReviewSe
     @Override
     @Transactional
     public boolean updateReview(UserOutsourcingReviewDTO reviewDTO) {
-        // Controller에서 rvwCd, rvwEvl, rvwCn을 담아 전달하면 그대로 Mapper에 전달
         int updatedRows = userOsstMapper.updateReview(reviewDTO);
         return updatedRows > 0;
     }
+	
+
 }
