@@ -37,18 +37,9 @@ public interface UserOsstMapper {
 	
 	// 김한별 추가 영역
 	
-	// 신규 리뷰 저장을 위한 메소드
-    int insertReview(UserOutsourcingReviewDTO reviewDTO);
-
-    // 신규 리뷰 코드를 생성하기 위한 메소드
-    String getNextReviewCode();
-    
-    // 외주 계약 코드로 기업 코드를 조회하기 위한 메소드
-    String getEnterpriseCodeByOscId(String oscId);
-    
-    // 외주계약 ID와 작성자 회원 코드로 작성된 리뷰 정보를 조회
-    UserOutsourcingReviewDTO findReviewByOscIdAndMbrCd(Map<String, Object> params);
-    
-    // 기존 리뷰의 내용을 수정
-    int updateReview(UserOutsourcingReviewDTO reviewDTO);
+	int insertReview(UserOutsourcingReviewDTO reviewDTO);
+	String getNextReviewCode();
+	String getEnterpriseCodeByOscId(String oscId);
+	UserOutsourcingReviewDTO findReviewByOscIdAndMbrCd(Map<String, Object> params);
+	int updateReview(UserOutsourcingReviewDTO reviewDTO);
 }

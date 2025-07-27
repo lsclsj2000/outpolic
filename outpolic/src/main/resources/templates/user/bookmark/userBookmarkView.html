@@ -26,9 +26,8 @@
 	<!-- 추가할 script -->
 	<script layout:fragment="jsScript">
 	    document.addEventListener('DOMContentLoaded', () => {
-	        // 이벤트 위임을 사용하여 모든 찜 버튼 클릭을 효율적으로 처리
-	        // ✨✨✨ '.product-grid'를 '.product-grid-4'로 수정합니다 ✨✨✨
-	        const productGrid = document.querySelector('.product-grid-4');
+	        
+	        const productGrid = document.querySelector('.wishlist-section');
 	
 	        // ✨ 방어 코드 추가: productGrid가 없을 경우를 대비합니다.
 	        if (productGrid) {
@@ -135,9 +134,11 @@
 		                        </a>
 		                        <p class="card-text text-muted small" th:if="${b != null and b.osAmt != null}" th:text="'예상 금액: ' + ${#numbers.formatInteger(b.osAmt, 3, 'COMMA')} + '원'">예상 금액: 1,200,000원</p>
 		                        <p class="card-text text-muted small" th:if="${b != null and b.entNm != null}" th:text="'기업명: ' + ${b.entNm}">기업명: OO기업</p>
-		                        <a th:if="${b != null and b.osCd != null}" th:href="@{'/user/contents/' + ${b.osCd}}" class="btn btn-sm btn-outline-primary w-100">
-		                            <i class="fi-rs-heart"></i> 찜 취소
-		                        </a>
+		                        <a href="#" 
+								   class="btn btn-sm btn-outline-primary w-100 bookmark-btn" 
+								   th:attr="data-cl-cd=${b.clCd}">
+								    <i class="fi-rs-heart" th:classappend="${b.bookmarked} ? ' active'"></i> 찜 취소
+								</a>
 		                    </div>
 		                </div>
 		            </div>
@@ -161,9 +162,11 @@
 		                        </a>
 		                        <p class="card-text text-muted small" th:if="${b != null and b.ctgryNm != null}" th:text="'카테고리: ' + ${b.ctgryNm}">카테고리: 디자인</p>
 		                        <p class="card-text text-muted small" th:if="${b != null and b.entNm != null}" th:text="'기업명: ' + ${b.entNm}">기업명:</p>
-		                        <a href="#" class="btn btn-sm btn-outline-primary w-100">
-		                            <i class="fi-rs-heart"></i> 찜 취소
-		                        </a>
+		                        <a href="#" 
+								   class="btn btn-sm btn-outline-primary w-100 bookmark-btn" 
+								   th:attr="data-cl-cd=${b.clCd}">
+								    <i class="fi-rs-heart" th:classappend="${b.bookmarked} ? ' active'"></i> 찜 취소
+								</a>
 		                    </div>
 		                </div>
 		            </div>
@@ -187,9 +190,11 @@
 		                        	<h5 class="card-title" th:if="${b != null and b.entNm != null}" th:text="${b.entNm}">기업명: ㈜아웃폴릭</h5>
 		                        </a>	
 		                        <p class="card-text text-muted small" th:if="${b != null and b.entRprsv != null}" th:text="'대표자: ' + ${b.entRprsv}">대표자: 김대표</p>
-		                        <a href="#" class="btn btn-sm btn-outline-primary w-100">
-		                            <i class="fi-rs-heart"></i> 찜 취소
-		                        </a>
+		                        <a href="#" 
+								   class="btn btn-sm btn-outline-primary w-100 bookmark-btn" 
+								   th:attr="data-cl-cd=${b.osCd}">
+								    <i class="fi-rs-heart" th:classappend="${b.bookmarked} ? ' active'"></i> 찜 취소
+								</a>
 		                    </div>
 		                </div>
 		            </div>

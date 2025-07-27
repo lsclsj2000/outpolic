@@ -248,29 +248,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    INSERT INTO review (
 	        rvw_cd,
 	        osc_id,
-	        mbr_cd,      -- 리뷰 작성자
-	        ent_cd,      -- 리뷰 대상 기업
+	        mbr_cd,      -- 리뷰 작성자 (reviewerMbrCd DTO 필드와 매핑)
+	        ent_cd,      -- 리뷰 대상 기업 (revieweeEntCd DTO 필드와 매핑)
 	        rvw_cn,
 	        rvw_evl,
 	        rvw_reg_ymdt
 	    ) VALUES (
 	        #{rvwCd},
 	        #{oscId},
-	        #{reviewerMbrCd}, -- DTO의 reviewerMbrCd 필드 사용
-	        #{revieweeEntCd}, -- DTO의 revieweeEntCd 필드 사용
+	        #{reviewerMbrCd}, 
+	        #{revieweeEntCd}, 
 	        #{rvwCn},
 	        #{rvwEvl},
 	        NOW()
 	    )
 	</insert>
 	
-	<!-- 리뷰 상세 정보 조회 쿼리 -->
 	<select id="findReviewByOscIdAndMbrCd" parameterType="map" resultType="outpolic.user.review.dto.UserOutsourcingReviewDTO">
 	    SELECT
 	        rvw_cd        AS rvwCd,
 	        osc_id        AS oscId,
-	        mbr_cd        AS mbrCd,
-	        ent_cd        AS entCd,
+	        mbr_cd        AS reviewerMbrCd, -- 리뷰 작성자
+	        ent_cd        AS revieweeEntCd, -- 리뷰 대상
 	        rvw_cn        AS rvwCn,
 	        rvw_evl       AS rvwEvl,
 	        rvw_reg_ymdt  AS rvwRegYmdt,

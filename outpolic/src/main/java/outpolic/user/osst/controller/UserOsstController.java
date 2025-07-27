@@ -133,7 +133,36 @@ public class UserOsstController {
 	
 	// 김한별 추가 부분
 	
-	@GetMapping("/api/review")
+	/**
+     * 신규 리뷰를 생성하는 API
+     * @param reviewDTO (projectId, rvwEvl, rvwCn 포함)
+     * @return 성공 시 "OK", 실패 시 에러 메시지
+     */
+    @PostMapping("/api/reviews")
+    @ResponseBody
+    public String submitReview(@RequestBody UserOutsourcingReviewDTO reviewDTO, HttpSession session) {
+        String reviewerMbrCd = (String) session.getAttribute("SCD");
+        if (reviewerMbrCd == null) {
+            return "FAIL_AUTH";
+        }
+        
+        // DTO에 세션 정보(리뷰 작성자) 설정
+        reviewDTO.setReviewerMbrCd(reviewerMbrCd);
+        
+        
+        // reviewDTO.getProjectId()가 정상적으로 호출됩니다.
+        reviewDTO.setOscId(reviewDTO.getProjectId());
+
+        boolean success = userOutsourcingReviewService.createReview(reviewDTO);
+        return success ? "OK" : "FAIL_DB";
+    }
+
+    /**
+     * 수정할 리뷰의 기존 정보를 조회하는 API
+     * @param oscId 외주 계약 ID
+     * @return 리뷰 정보 DTO
+     */
+    @GetMapping("/api/reviews")
     public ResponseEntity<UserOutsourcingReviewDTO> getReviewForEdit(@RequestParam("oscId") String oscId, HttpSession session) {
         String mbrCd = (String) session.getAttribute("SCD");
         if (mbrCd == null) {
@@ -146,59 +175,32 @@ public class UserOsstController {
         return ResponseEntity.ok(review);
     }
 
-    @PutMapping("/api/review/{rvwCd}")
+    /**
+     * 기존 리뷰를 수정하는 API
+     * @param rvwCd 수정할 리뷰의 PK
+     * @param reviewDTO (rating, content 포함)
+     * @return 성공 시 "OK", 실패 시 에러 메시지
+     */
+    @PutMapping("/api/reviews/{rvwCd}")
     @ResponseBody
     public String updateReview(@PathVariable("rvwCd") String rvwCd,
-                               @RequestBody Map<String, String> payload,
+                               @RequestBody UserOutsourcingReviewDTO reviewDTO,
                                HttpSession session) {
         String mbrCd = (String) session.getAttribute("SCD");
-        if (mbrCd == null) return "FAIL_AUTH";
+        if (mbrCd == null) {
+            return "FAIL_AUTH";
+        }
 
-        UserOutsourcingReviewDTO reviewDTO = new UserOutsourcingReviewDTO();
         reviewDTO.setRvwCd(rvwCd);
-        reviewDTO.setRvwEvl(new BigDecimal(payload.get("rating")));
-        reviewDTO.setRvwCn(payload.get("content"));
-
-        // TODO: 수정 권한 검증 로직 추가 가능 (해당 리뷰의 작성자인지 확인)
-
+        // TODO: 로그인한 사용자가 실제 리뷰 작성자인지 검증하는 로직 추가 가능
+        
         boolean success = userOutsourcingReviewService.updateReview(reviewDTO);
         return success ? "OK" : "FAIL_DB";
     }
-	
-	@PostMapping("/osst/review")
-    @ResponseBody
-    public String submitReview(@RequestBody Map<String, String> payload, HttpSession session) {
-		String reviewerMbrCd = (String) session.getAttribute("SCD");
-        if (reviewerMbrCd == null) {
-            return "FAIL_AUTH"; // 인증 실패
-        }
-
-        try {
-            String oscId = payload.get("projectId");
-            BigDecimal rvwEvl = new BigDecimal(payload.get("rating"));
-            String rvwCn = payload.get("content");
-            
-            if (oscId == null || rvwEvl == null || rvwCn == null || rvwCn.trim().isEmpty()) {
-                return "FAIL_VALIDATION"; // 필수 데이터 누락
-            }
-
-            UserOutsourcingReviewDTO reviewDTO = new UserOutsourcingReviewDTO();
-            reviewDTO.setOscId(oscId);
-            reviewDTO.setReviewerMbrCd(reviewerMbrCd); // 세션에서 가져온 작성자 코드
-            reviewDTO.setRvwEvl(rvwEvl);
-            reviewDTO.setRvwCn(rvwCn);
-
-            boolean success = userOutsourcingReviewService.createReview(reviewDTO);
-
-
-            return success ? "OK" : "FAIL_DB";
-        } catch (NumberFormatException e) {
-            return "FAIL_RATING_FORMAT"; // 별점 숫자 형식 오류
-        } catch (Exception e) {
-            // 로그 기록 (실제 운영 시)
-            return "FAIL_SERVER"; // 기타 서버 오류
-        }
     
-    }
-
+    // projectId 필드를 받기 위해 UserOutsourcingReviewDTO에 필드를 추가하거나,
+    // 아래와 같이 Map으로 받은 후 DTO로 변환할 수도 있습니다.
+    // 하지만 일관성을 위해 DTO에 projectId 필드를 추가하는 것을 권장합니다.
+    // 여기서는 JS와의 호환성을 위해 DTO에 임시 필드를 추가하는 방식을 제안합니다.
+    // UserOutsourcingReviewDTO에 private String projectId; 를 추가해주세요.
 }
