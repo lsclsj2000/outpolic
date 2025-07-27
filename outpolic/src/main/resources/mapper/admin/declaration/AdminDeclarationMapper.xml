@@ -82,6 +82,63 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result column="sa_reg_ymdt"   property="saRegYmdt"/>
     </resultMap>
     
+    <select id="getAdminDeclarationListFiltered" resultMap="AdminDeclarationResultMap">
+    	/* 신고 내역 조회 - 필터 */
+	    SELECT
+	        d.decl_cd as decl_cd,
+	        d.dt_cd as dt_cd,
+	        dt.dt_nm as dt_nm,
+	        d.dr_cd as dr_cd,
+	        dr.dr_nm as dr_nm,
+	        d.mbr_cd as mbr_cd,
+	        d.decl_target_cd as decl_target_cd,
+	        d.decl_reg_ymdt as decl_reg_ymdt,
+	        d.stc_cd as stc_cd,
+	        sc.stc_nm as stc_nm,
+	        dp.drc_cd as drc_cd,
+	        COALESCE(drc.drc_nm, '-') as drc_nm
+	    FROM declaration d
+	        LEFT JOIN declaration_type dt ON d.dt_cd = dt.dt_cd
+	        LEFT JOIN declaration_reason dr ON d.dr_cd = dr.dr_cd
+	        LEFT JOIN status_code sc ON d.stc_cd = sc.stc_cd
+	        LEFT JOIN declaration_process dp ON d.decl_cd = dp.decl_cd
+	        LEFT JOIN declaration_result_code drc ON dp.drc_cd = drc.drc_cd
+	    WHERE 1 = 1
+	    <if test="params.keyword != null and params.keyword != ''">
+	        <choose>
+	            <when test="params.keywordField == 'title'">
+	                AND d.decl_cn LIKE CONCAT('%', #{params.keyword}, '%')
+	            </when>
+	            <when test="params.keywordField == 'type'">
+	                AND dt.dt_nm LIKE CONCAT('%', #{params.keyword}, '%')
+	            </when>
+	            <when test="params.keywordField == 'reason'">
+	                AND dr.dr_nm LIKE CONCAT('%', #{params.keyword}, '%')
+	            </when>
+	            <when test="params.keywordField == 'result'">
+	                AND drc.drc_nm LIKE CONCAT('%', #{params.keyword}, '%')
+	            </when>
+	        </choose>
+	    </if>
+	
+	    <if test="params.dateField != null and params.startDate != null and params.endDate != null">
+	        <choose>
+	            <when test="params.dateField == 'reg'">
+	                AND DATE(d.decl_reg_ymdt) BETWEEN #{params.startDate} AND #{params.endDate}
+	            </when>
+	            <when test="params.dateField == 'mod'">
+	                AND DATE(d.decl_mdfcn_ymdt) BETWEEN #{params.startDate} AND #{params.endDate}
+	            </when>
+	        </choose>
+	    </if>
+	
+	    <if test="params.status != null and params.status != ''">
+	        AND d.stc_cd = #{params.status}
+	    </if>
+	
+	    ORDER BY d.decl_reg_ymdt DESC
+	</select>
+    
     
     <update id="updateDeclarationProcessContentAndResult" parameterType="outpolic.admin.declaration.domain.AdminDeclaration">
         /* 신고 처리 내역 내용 및 결과 업데이트 */

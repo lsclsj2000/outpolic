@@ -17,6 +17,7 @@ import outpolic.admin.login.dto.AdminLoginDTO;
 import outpolic.admin.login.mapper.AdminLoginMapper;
 import outpolic.admin.login.service.AdminLoginService;
 import outpolic.common.domain.Member;
+import outpolic.systems.util.IpUtils;
 
 @Controller
 @RequestMapping(value = "/admin")
@@ -49,7 +50,7 @@ public class adminLoginController {
 			Member member, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
 		Map<String, Object> loginResult = adminLoginService.loginAdmin(memberId, memberPw);
 		boolean isMatched = (boolean) loginResult.get("isMatched");
-		String clientIp = request.getRemoteAddr();
+		String clientIp = IpUtils.getClientIp(request);
 		
 		if (isMatched) {
 			AdminLoginDTO adminLoginDTO = (AdminLoginDTO) loginResult.get("adminLoginDTO");
@@ -64,7 +65,7 @@ public class adminLoginController {
 			String grade = memberInfo.getGradeCode();
 			
 			adminLoginMapper.insertAdminLoginHistory(adminLoginMapper.getNextAdminLoginHistoryCode(),
-														memberInfo.getMemberCode(), request.getRemoteAddr());
+														memberInfo.getMemberCode(), clientIp);
 			
 
 			if ("ADMIN".equals(grade)) {

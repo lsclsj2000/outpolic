@@ -1,21 +1,17 @@
 package outpolic.admin.declaration.service.Impl;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ch.qos.logback.core.util.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.declaration.domain.AdminDeclaration;
 import outpolic.admin.declaration.domain.SubmissionAttachment;
 import outpolic.admin.declaration.mapper.AdminDeclarationMapper;
 import outpolic.admin.declaration.service.AdminDeclarationService;
-import outpolic.admin.limits.domain.AdminLimits;
 import outpolic.admin.limits.mapper.AdminLimitsMapper;
 
 @Service
@@ -165,6 +161,11 @@ public class AdminDeclarationServiceImpl implements AdminDeclarationService {
     @Override
     public void updateDeclarationStatusAndModifier(AdminDeclaration adminDeclaration) {
         adminDeclarationMapper.updateDeclarationStatusAndModifier(adminDeclaration);
+    }
+    
+    public List<AdminDeclaration> getAdminDeclarationListFiltered(Map<String, Object> searchParams) {
+    	// 신고 내역 조회 - 필터
+        return adminDeclarationMapper.getAdminDeclarationListFiltered(searchParams);
     }
     
     
