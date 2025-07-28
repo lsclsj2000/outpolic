@@ -18,12 +18,18 @@
 	    <result property="osThumbnailUrl" column="os_thumbnail_url" />
 	    <result property="entNm" column="ent_nm" />
 	    <result property="osStcCd" column="stc_cd" />
+	    <result property="isBookmarked" column="isBookmarked"/>
 	</resultMap>
+	
+<sql id="modalIsBookmarkedSelectSql">
+   , CASE WHEN b.bm_cd IS NOT NULL THEN 1 ELSE 0 END AS isBookmarked
+</sql>
 	
 	<select id="getBookmarkOsByCode" resultMap="OutsourcingBookmarkResultMap" parameterType="String">
 	    SELECT b.bm_cd, b.mbr_cd, b.cl_cd, b.bm_reg_ymdt, cl.cntd_cd,
 	           o.os_cd, o.os_ttl, o.os_amt, o.os_thumbnail_url,
 	           e.ent_nm, o.stc_cd as osStcCd
+	           <include refid="modalIsBookmarkedSelectSql"/>
 	    FROM bookmark b
 	    INNER JOIN content_list cl ON b.cl_cd = cl.cl_cd
 	    INNER JOIN outsourcing o ON cl.cntd_cd = o.os_cd
@@ -45,12 +51,14 @@
     <result property="ctgryNm" column="ctgry_nm" />
     <result property="entNm" column="ent_nm" />
     <result property="poStcCd" column="stc_cd" />
+    <result property="isBookmarked" column="isBookmarked"/>
 </resultMap>
 
 <select id="getBookmarkPoByCode" resultMap="PortfolioBookmarkResultMap" parameterType="String">
     SELECT b.bm_cd, b.mbr_cd, b.cl_cd, b.bm_reg_ymdt, cl.cntd_cd,
            p.prtf_cd, p.prtf_ttl, p.prtf_thumbnail_url,
            c.ctgry_nm, e.ent_nm, p.stc_cd as poStcCd
+           <include refid="modalIsBookmarkedSelectSql"/>
     FROM bookmark b
     INNER JOIN content_list cl ON b.cl_cd = cl.cl_cd
     INNER JOIN portfolio p ON cl.cntd_cd = p.prtf_cd
@@ -74,17 +82,20 @@
     <result property="entRprsv" column="ent_rprsv" />
     <result property="entImg" column="ent_img" />
     <result property="eiStcCd" column="stc_cd" />
+    <result property="isBookmarked" column="isBookmarked"/>
 </resultMap>
 
 <select id="getBookmarkEiByCode" resultMap="EnterpriseBookmarkResultMap" parameterType="String">
     SELECT b.bm_cd, b.mbr_cd, b.cl_cd, b.bm_reg_ymdt, cl.cntd_cd,
            e.ent_cd, e.ent_nm, e.ent_rprsv, e.ent_img, e.stc_cd as eiStcCd
+           <include refid="modalIsBookmarkedSelectSql"/>
     FROM bookmark b
     INNER JOIN content_list cl ON b.cl_cd = cl.cl_cd
     INNER JOIN enterprise e ON cl.cntd_cd = e.ent_cd
     WHERE b.mbr_cd = #{memberCode} AND cl.cntd_cd LIKE 'EI%' and e.stc_cd = 'SD_ACTIVE'
     ORDER BY b.bm_reg_ymdt DESC
 </select>
+
 
 
 </mapper>
