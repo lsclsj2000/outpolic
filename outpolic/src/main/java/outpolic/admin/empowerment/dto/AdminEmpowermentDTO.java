@@ -24,7 +24,6 @@ public class AdminEmpowermentDTO {
 	 private String arSttsCd;
 	 
 	 // 관리자 권한 매핑
-	 private String armId; 
 	 private String empwerAdmCd; 
 	 // 
 	 private String ar2Cd; 

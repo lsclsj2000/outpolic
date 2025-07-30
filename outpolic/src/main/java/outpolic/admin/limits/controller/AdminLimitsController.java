@@ -25,6 +25,34 @@ public class AdminLimitsController {
 	
 	private final AdminLimitsService adminLimitsService;
 	
+	// 특정 회원의 권한 정보 조회 (새로 추가)
+	@GetMapping("/getAuthority")
+	@ResponseBody // JSON 응답을 위해 추가
+	public AdminLimits getAuthority(@RequestParam("mbrCd") String memberCode) {
+	    log.info("회원 권한 조회 요청: {}", memberCode);
+	    return adminLimitsService.getMemberAuthorityByMemberCode(memberCode);
+	}
+	
+	@PostMapping("/updateMemberAuthority")
+	@ResponseBody
+	public String updateMemberAuthority(@RequestBody AdminLimits adminLimits, HttpSession session) {
+	    try {
+	        String adminCode = (String) session.getAttribute("SACD");
+	        if (adminCode == null) {
+	            return "FAIL: Unauthorized";
+	        }
+
+	        adminLimits.setAuthorityMdfcnYmdt(new java.sql.Timestamp(System.currentTimeMillis()));
+
+	        int result = adminLimitsService.updateMemberAuthority(adminLimits);
+	        return (result > 0) ? "OK" : "FAIL";
+	    } catch (Exception e) {
+	        log.error("회원 권한 수정 실패", e);
+	        return "Error: " + e.getMessage();
+	    }
+	}
+
+	
 	// 제재 사유 등록 처리
 	@PostMapping("/registerLimitsReason")
 	@ResponseBody

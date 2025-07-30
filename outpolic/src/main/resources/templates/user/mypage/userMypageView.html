@@ -25,8 +25,9 @@
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">진행중인 외주</h5>
 				                    <p class="card-text fs-4 fw-bold" th:classappend="${ingOs !=null} ? 'text-primary': ''" th:text="${ingOs != null ? ingOs.size() : 0} + '건'">2건</p>
-				                    <p class="text-muted small mb-3">작업이 진행 중입니다. 상태를 확인해보세요!</p>
-				                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
+				                    <p class="text-muted small mb-3" th:if="${ingOs.size() !=0}">작업이 진행 중입니다. 상태를 확인해보세요!</p>
+				                    <p class="text-muted small mb-25" th:if="${ingOs.size() ==0}">진행중인 외주가 없습니다.</p>
+				                    <a th:href="@{/user/userOsstList}" class="btn btn-primary btn-sm">자세히 보기</a>
 				                </div>
 				            </div>
 				        </div>
@@ -37,8 +38,9 @@
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">완료된 외주</h5>
 				                    <p class="card-text fs-4 fw-bold" th:classappend="${endedOs !=0} ? 'text-primary': ''" th:text="${endedOs != 0 ? endedOs : 0} + '건'">0건</p>
-				                    <p class="text-muted small mb-3">완료된 외주를 다시 확인하거나 리뷰를 작성해보세요.</p>
-				                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
+				                    <p class="text-muted small mb-3" th:if="${endedOs !=0}">완료된 외주를 다시 확인하거나 리뷰를 작성해보세요.</p>
+				                    <p class="text-muted small mb-25" th:if="${endedOs ==0}">완료된 외주가 없습니다. 외주를 진행해보세요.</p>
+				                    <a th:href="@{/user/userOsstList}" class="btn btn-primary btn-sm">자세히 보기</a>
 				                </div>
 				            </div>
 				        </div>
@@ -49,8 +51,8 @@
 				                <div class="card-body text-center" style="align-content: space-around;">
 				                    <h5 class="card-title">내가 작성한 리뷰</h5>
 				                    <p class="card-text fs-4 fw-bold" th:classappend="${reviewList !=null} ? 'text-primary': ''" th:text="${reviewList != null ? reviewList.size() : 0} + '건'">3건</p>
-				                    <p class="text-muted small mb-3">다른 회원이 여러분의 피드백을 기다리고 있어요.</p>
-				                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
+				                    <p class="text-muted small mb-20" th:if="${reviewList.size() !=0}">다른 회원이 여러분의 피드백을 기다리고 있어요.</p>
+				                    <p class="text-muted small mb-45" th:if="${reviewList.size() ==0}">작성한 리뷰가 없습니다</p>
 				                </div>
 				            </div>
 				        </div>
@@ -59,10 +61,10 @@
 				        <div class="col-md-6">
 				            <div class="card h-100 border-dark shadow-sm h-100" style="min-height: 220px;">
 				                <div class="card-body text-center" style="align-content: space-around;">
-				                    <h5 class="card-title mb-70">전체 외주 신청 내역</h5>
+				                    <h5 class="card-title mb-75">전체 외주 신청 내역</h5>
 				                    <!-- <p class="card-text fs-4 fw-bold" th:text="${totalRequestCount != null ? totalRequestCount : 0} + '건'">10건</p> -->
 				                    <!-- <p class="text-muted small mb-3">. 수정중</p> -->
-				                    <a href="#" class="btn btn-primary btn-sm">자세히 보기</a>
+				                    <a th:href="@{/user/outsourcing-requests/sent}" class="btn btn-primary btn-sm">자세히 보기</a>
 				                </div>
 				            </div>
 				        </div>

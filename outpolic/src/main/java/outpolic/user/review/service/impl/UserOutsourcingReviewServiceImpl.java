@@ -20,27 +20,32 @@ public class UserOutsourcingReviewServiceImpl implements UserOutsourcingReviewSe
 	@Override
 	@Transactional
 	public boolean createReview(UserOutsourcingReviewDTO reviewDTO) {
-		// 1. 새로운 리뷰 코드(PK) 생성 (예: 'RVW_C00007')
+		// Controller로부터 전달받은 값은 사실 ocd_cd 임
+		String ocdIdFromRequest = reviewDTO.getOscId();
+
+		// 1. 전달받은 ocd_cd를 사용하여 실제 osc_id를 조회한다.
+		// (이제 이 쿼리는 'outsourcing_prograss' 테이블을 사용하여 정상적으로 실행됩니다.)
+		String realOscId = userOsstMapper.findOscIdByOcdId(ocdIdFromRequest);
+
+		// 1.1. 방어 코드: 유효한 osc_id를 찾지 못하면 실패 처리
+        if (realOscId == null || realOscId.isBlank()) {
+            return false;
+        }
+        
+        // 1.2. 조회한 실제 osc_id를 DTO에 다시 설정한다.
+        reviewDTO.setOscId(realOscId);
+
+		// 2. 새로운 리뷰 코드(PK) 생성
         String newReviewCode = userOsstMapper.getNextReviewCode();
         reviewDTO.setRvwCd(newReviewCode);
 
-        // 2. 리뷰 대상 기업 코드(ent_cd) 조회
-        // 작성자님께서 확인해주신 대로, review 테이블에는 리뷰 대상의 ent_cd가 저장되어야 합니다.
-        // osc_id (ocd_cd와 동일)를 사용하여 outsourcing_contract_details 테이블에서 ent_cd를 조회합니다.
-        String enterpriseCode = userOsstMapper.getEnterpriseCodeByOscId(reviewDTO.getOscId());
-        
-        // 2.1. 방어 코드: 만약 유효하지 않은 oscId로 인해 기업코드를 찾지 못하면 실패 처리
-        if (enterpriseCode == null || enterpriseCode.isBlank()) {
-            // 이 경우는 비정상적인 요청이므로 false를 반환하여 작업을 중단합니다.
-            return false; 
-        }
-        reviewDTO.setRevieweeEntCd(enterpriseCode);
+        // 3. ent_cd 관련 로직은 없음.
 
-        // 3. 완성된 DTO를 사용하여 리뷰 정보 DB에 저장
-        // mapper의 insertReview는 reviewerMbrCd, revieweeEntCd 필드를 사용합니다.
+        // 4. 완성된 DTO를 사용하여 DB에 저장
+        // (Mapper의 insertReview는 이제 ent_cd 없이, 올바른 osc_id를 가지고 실행됩니다.)
         int insertedRows = userOsstMapper.insertReview(reviewDTO);
 
-        // 4. INSERT 쿼리가 성공적으로 1개 행을 추가했는지 여부를 반환
+        // 5. 성공 여부 반환
         return insertedRows > 0;
 	}
 	
@@ -58,4 +63,6 @@ public class UserOutsourcingReviewServiceImpl implements UserOutsourcingReviewSe
         int updatedRows = userOsstMapper.updateReview(reviewDTO);
         return updatedRows > 0;
     }
+	
+
 }

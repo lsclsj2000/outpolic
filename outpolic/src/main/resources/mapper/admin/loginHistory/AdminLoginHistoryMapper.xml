@@ -1,0 +1,97 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="outpolic.admin.loginHistory.mapper.AdminLoginHistoryMapper">
+	<resultMap id="loginHistoryResultMap"
+		type="outpolic.admin.loginHistory.dto.AdminLoginHistoryDTO">
+		<id property="loginCode" column="lh_cd" />
+		<result property="memberCode" column="mbr_cd" />
+		<result property="loginTime" column="lh_in_ymdt" />
+		<result property="logoutTime" column="lh_out_ymdt" />
+		<result property="ip" column="lh_ip" />
+		<result property="adminCode" column="adm_cd" />
+		<result property="modifiedTime" column="lh_mdfcn_ymdt" />
+	</resultMap>
+
+	<select id="getAllHistoryCount" resultType="int">
+		SELECT COUNT(*) FROM login_history
+	</select>
+
+
+	<select id="getAllHistory" resultMap="loginHistoryResultMap">
+		SELECT
+		lh_cd,
+		mbr_cd,
+		lh_in_ymdt,
+		lh_out_ymdt,
+		lh_ip,
+		adm_cd,
+		lh_mdfcn_ymdt
+		FROM login_history
+		ORDER BY lh_in_ymdt DESC
+		<if test="startRow != null and rowPerPage != null">
+			LIMIT #{startRow}, #{rowPerPage}
+		</if>
+	</select>
+
+	<select id="getLoginCountForLast7Days" resultType="map">
+		select
+		DATE_FORMAT(lh_in_ymdt, '%m-%d') AS date,
+		count(*) as count
+		from
+		login_history
+		WHERE lh_in_ymdt >= DATE_SUB(NOW(),
+		INTERVAL 7 DAY)
+		GROUP
+		BY DATE_FORMAT(lh_in_ymdt, '%m-%d')
+		ORDER BY date ASC
+	</select>
+
+
+
+	<select id="searchLoginHistory"
+		resultMap="loginHistoryResultMap">
+		SELECT * FROM login_history
+		<where>
+			<if test="keyword != null and keyword != ''">
+				mbr_cd LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="startDate != null and startDate != ''">
+				AND lh_in_ymdt &gt;= #{startDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND lh_in_ymdt &lt;= #{endDate}
+			</if>
+		</where>
+		ORDER BY lh_in_ymdt DESC
+	</select>
+
+	<select id="countSearchLoginHistory" resultType="int">
+		SELECT COUNT(*) FROM login_history
+		<where>
+			<if test="keyword != null and keyword != ''">
+				mbr_cd LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="startDate != null and startDate != ''">
+				AND lh_in_ymdt &gt;= #{startDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND lh_in_ymdt &lt;= #{endDate}
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateLogoutTimeByMemberCode">
+	  UPDATE login_history
+	  SET lh_out_ymdt = NOW()
+	  WHERE mbr_cd = #{memberCode}
+	  AND lh_out_ymdt IS NULL
+	  ORDER BY lh_in_ymdt DESC
+	  LIMIT 1
+	</update>
+</mapper>
+
+
+
+

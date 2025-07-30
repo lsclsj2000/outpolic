@@ -143,7 +143,7 @@ public class UserInquiryServiceImpl implements UserInquiryService {
 	@Override
 	public List<UserAnn> getUserTotalList() {
 		// 전체 게시판 조회
-		List<UserAnn> totalList = userInquiryMapper.getUserTotalList();
+		List<UserAnn> totalList = userInquiryMapper.getUserAnnList();
 		return totalList;
 	}
 	

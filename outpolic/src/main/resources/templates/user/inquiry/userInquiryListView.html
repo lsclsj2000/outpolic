@@ -133,8 +133,7 @@
                 </div>
 
                 <!-- 페이지네이션 -->
-                <div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, ${size}, ${sort})}"></div>
-
+                <div th:replace="~{user/fragments/userPagination :: pagination(${pageInfo}, ${size}, ${sort}, '/user/userInquiryList')}"></div>
             </div>
         </div>
     </div>

@@ -32,13 +32,15 @@ public class AdminLimits {
 	
 	private String authorityMemberCode;
 	private String authorityGrdCode;
+	private String authorityStcCode;
+	private String authorityStcName;
 	private int authorityPortfolio;
 	private int authorityOsWrite;
 	private int authorityOsContract;
 	private int authorityOs;
 	private int authorityChat;
 	private int authorityReview;
-	private int authorityMdfcnYmdt;
+	private Timestamp authorityMdfcnYmdt;
 	
 	
 	private String limitsPeriodCode;

@@ -74,12 +74,12 @@
 										th:text="${admin.paymentAdmin == 1} ? '1' : '0'">0</span></td>
 								<td scope="col" class="text-center">
 									<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:attr="data-admin-code=${admin.admCd},
-									           data-system-manage=${admin.systemAdmin},
-									           data-admin-grant=${admin.adminEmpower},
-									           data-content-manage=${admin.contentAdmin},
-									           data-cs-manage=${admin.csAdmin},
-									           data-user-manage=${admin.memberAdmin},
-									           data-payment-manage=${admin.paymentAdmin}">
+									           data-system-admin=${admin.systemAdmin},
+									           data-admin-empowerment=${admin.adminEmpower},
+									           data-content-admin=${admin.contentAdmin},
+									           data-cs-admin=${admin.csAdmin},
+									           data-member-admin=${admin.memberAdmin},
+									           data-user-payment-admin=${admin.paymentAdmin}">
 										수정
 									</a>
 								</td>
@@ -98,6 +98,7 @@
 				<button class="SR_close-button">&times;</button>
 			</div>
 			<form id="empowermentForm" method="post" th:action="@{/admin/empowerment/save}">
+				<input type="hidden" name="admCd" id="adminCodeInput" />
 				<table class="table table-hover mb-0">
 					<thead>
 						<tr>
@@ -109,37 +110,37 @@
 						<tr>
 							<td class="px-4 text-center">시스템관리</td>
 							<td class="px-4 text-center">
-								<input type="checkbox" name="permissions" value="SYSTEM_MANAGE" />
+								<input type="checkbox" name="permissions" value="SYSTEM_ADMIN" />
 							</td>
 						</tr>
 						<tr>
 							<td class="px-4 text-center">관리자 권한부여</td>
 							<td class="px-4 text-center">
-								<input type="checkbox" name="permissions" value="ADMIN_GRANT" />
+								<input type="checkbox" name="permissions" value="ADMIN_EMPOWERMENT" />
 							</td>
 						</tr>
 						<tr>
 							<td class="px-4 text-center">콘텐츠 관리</td>
 							<td class="px-4 text-center">
-								<input type="checkbox" name="permissions" value="CONTENT_MANAGE" />
+								<input type="checkbox" name="permissions" value="CONTENT_ADMIN" />
 							</td>
 						</tr>
 						<tr>
 							<td class="px-4 text-center">고객센터 관리</td>
 							<td class="px-4 text-center">
-								<input type="checkbox" name="permissions" value="CS_MANAGE" />
+								<input type="checkbox" name="permissions" value="CS_ADMIN" />
 							</td>
 						</tr>
 						<tr>
 							<td class="px-4 text-center">회원 관리</td>
 							<td class="px-4 text-center">
-								<input type="checkbox" name="permissions" value="USER_MANAGE" />
+								<input type="checkbox" name="permissions" value="MEMBER_ADMIN" />
 							</td>
 						</tr>
 						<tr>
 							<td class="px-4 text-center">결제 관리</td>
 							<td class="px-4 text-center">
-								<input type="checkbox" name="permissions" value="PAYMENT_MANAGE" />
+								<input type="checkbox" name="permissions" value="USER_PAYMENT_ADMIN" />
 							</td>
 						</tr>
 					</tbody>
@@ -166,14 +167,15 @@
 
 					const adminCode = button.getAttribute('data-admin-code');
 					modal.setAttribute('data-admin-code', adminCode);
+					document.getElementById('adminCodeInput').value = adminCode;
 
 					const permissionMap = {
-						'SYSTEM_MANAGE': button.getAttribute('data-system-manage'),
-						'ADMIN_GRANT': button.getAttribute('data-admin-grant'),
-						'CONTENT_MANAGE': button.getAttribute('data-content-manage'),
-						'CS_MANAGE': button.getAttribute('data-cs-manage'),
-						'USER_MANAGE': button.getAttribute('data-user-manage'),
-						'PAYMENT_MANAGE': button.getAttribute('data-payment-manage'),
+					  'SYSTEM_ADMIN': button.getAttribute('data-system-admin'),
+					  'ADMIN_EMPOWERMENT': button.getAttribute('data-admin-empowerment'),
+					  'CONTENT_ADMIN': button.getAttribute('data-content-admin'),
+					  'CS_ADMIN': button.getAttribute('data-cs-admin'),
+					  'MEMBER_ADMIN': button.getAttribute('data-member-admin'),
+					  'USER_PAYMENT_ADMIN': button.getAttribute('data-user-payment-admin'),
 					};
 
 					// 기존 체크 해제 후, 1인 권한 체크
@@ -205,6 +207,37 @@
 					document.body.style.overflow = 'auto';
 				}
 			});
+			
+			  // ✅ 폼 Ajax 저장 처리
+			  $('#empowermentForm').on('submit', function (e) {
+			    e.preventDefault();
+			
+			    const admCd = $('#adminCodeInput').val();
+			    const permissions = [];
+			
+			    $('input[name="permissions"]:checked').each(function () {
+			      permissions.push($(this).val());
+			    });
+			
+			    $.ajax({
+			      url: '/admin/empowerment/save',
+			      type: 'POST',
+			      data: {
+			        admCd: admCd,
+			        permissions: permissions
+			      },
+			      traditional: true,
+			      success: function () {
+			        alert('권한이 저장되었습니다.');
+			        modal.style.display = 'none';
+			        document.body.style.overflow = 'auto';
+			        location.reload(); // 원하지 않으면 이 줄은 삭제 가능
+			      },
+			      error: function () {
+			        alert('저장 중 오류가 발생했습니다.');
+			      }
+			    });
+			  });
 		});
 	</script>
 </th:block>

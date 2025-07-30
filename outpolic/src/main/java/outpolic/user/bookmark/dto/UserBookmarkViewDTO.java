@@ -42,4 +42,7 @@ public class UserBookmarkViewDTO {
     private Double entScr;
     private String entImg;
     private String eiStcCd;
+    
+    // 북마크 활성상태 체크
+    private boolean isBookmarked; 
 }

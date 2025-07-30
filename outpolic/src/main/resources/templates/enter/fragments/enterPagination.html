@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:fragment="pagination(pageInfo, size, sort)">
+<th:block th:fragment="pagination(pageInfo, size, sort, baseUrl)">
     <div style="display:flex; justify-content:center; flex-direction:column; align-items:center;">
         <div class="pagination-area mt-20 mb-20">
             <nav aria-label="Page navigation example">
@@ -9,7 +9,7 @@
                     <!-- 이전 페이지 -->
                     <li class="page-item" th:classappend="${!pageInfo.hasPrevious} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/user/userInquiryList(size=${size}, sort=${sort}, page=${pageInfo.number - 1})}">
+                           th:href="@{${baseUrl}(size=${size}, sort=${sort}, page=${pageInfo.number - 1})}">
                             <i class="fi-rs-arrow-small-left"></i>
                         </a>
                     </li>
@@ -19,14 +19,14 @@
                         th:each="i : ${#numbers.sequence(0, pageInfo.totalPages - 1)}"
                         th:classappend="${i == pageInfo.number} ? 'active'">
                         <a class="page-link"
-                           th:href="@{/user/userInquiryList(size=${size}, sort=${sort}, page=${i})}"
+                           th:href="@{${baseUrl}(size=${size}, sort=${sort}, page=${i})}"
                            th:text="${i + 1}">1</a>
                     </li>
 
                     <!-- 다음 페이지 -->
                     <li class="page-item" th:classappend="${!pageInfo.hasNext} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/user/userInquiryList(size=${size}, sort=${sort}, page=${pageInfo.number + 1})}">
+                           th:href="@{${baseUrl}(size=${size}, sort=${sort}, page=${pageInfo.number + 1})}">
                             <i class="fi-rs-arrow-small-right"></i>
                         </a>
                     </li>

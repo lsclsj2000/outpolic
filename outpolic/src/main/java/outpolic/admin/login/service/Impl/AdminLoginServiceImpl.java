@@ -49,5 +49,19 @@ public class AdminLoginServiceImpl implements AdminLoginService {
 	public void updateAdminMemberLoginDate(Member member) {
 		adminLoginMapper.updateAdminMemberLoginDate(member);
 	}
+	
+	@Override
+	public String getAdminLastLoginCode(String memberCode) {
+		return adminLoginMapper.getAdminLastLoginCode(memberCode);
+	}
+	
+	@Override
+	public void updateAdminLogoutHistory(String loginHistoryCode) {
+		adminLoginMapper.updateAdminLogoutHistory(loginHistoryCode);
+		
+	}
+
+
+
 
 }

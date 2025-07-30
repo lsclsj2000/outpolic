@@ -32,7 +32,7 @@ public class EnterCategoryController {
     
     @GetMapping("/enter/contents/category/{categoryCode}")
     public String showContentsByCategory(@PathVariable String categoryCode, Model model, HttpSession session) {
-        // [수정] 새로 만든 공통 로직 처리 메서드를 호출합니다.
+       
         return renderCategoryPage(categoryCode, model, session);
     }
 
@@ -41,7 +41,7 @@ public class EnterCategoryController {
      */
     @GetMapping("/enter/products")
     public String showContentsBySubCategory(@RequestParam("category") String categoryCode, Model model, HttpSession session) {
-        // [수정] 새로 만든 공통 로직 처리 메서드를 호출합니다.
+        
         return renderCategoryPage(categoryCode, model, session);
     }
 

@@ -7,6 +7,12 @@
 	
 	public interface AdminLimitsService {
 		
+		// 새로 추가할 메서드
+		AdminLimits getMemberAuthorityByMemberCode(String memberCode); // 특정 회원 권한 조회
+		
+		int updateMemberAuthority(AdminLimits adminLimits);
+
+		
 		// 회원 권한 조회
 		List<AdminLimits> getAdminLimitsAuthorityList();
 		
