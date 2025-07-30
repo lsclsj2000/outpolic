@@ -110,8 +110,7 @@
 	                                	<span th:case="${'제재중'}" class="badge rounded-pill alert-warning">처리중</span>
 	                                </td>
 								    <td scope="col" class="text-center">
-										<a href="#" class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${l.limitsMemberCode}">상세</a>
-										<a href="#" class="btn btn-md rounded font-sm">수정</a>
+										<a class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${l.limitsMemberCode}">상세</a>
 									</td>
 								</tr>
 							</tbody>
@@ -124,47 +123,48 @@
 		<div id="limitsModal" class="SR_modal">
 			<div class="SR_modal-content-wrapper">
 				<div class="SR_popup-header">
-					<h2>신고 처리</h2>
+					<h2>제재 내역</h2>
 					<button class="SR_close-button">&times;</button>
 				</div>
                 <div class="SR_popup-info">
                     <div class="SR_writer-info">
-                        <span id="SR_writerCode">작성자 코드</span> | <span id="SR_writerName">작성자명</span> | <span id="SR_writeDate">작성일자</span>
+                        <span id="SR_writerCode">제재회원 코드</span> | <span id="SR_writerName">제재회원명</span>
                     </div>
                     <select id="inquiryStatusEdit" name="status" class="SR_form-control SR_status-dropdown">
-                        <option value="CONFIRMED">확인전</option>
-                        <option value="PROCESSING">처리중</option>
-                        <option value="COMPLETED">처리완료</option>
+                        <option value="general">확인전</option>
+                        <option value="excellent">처리중</option>
+                        <option value="special">처리완료</option>
                     </select>
                 </div>
 
 				<form id="inquiryForm">
                     <div class="SR_form-group">
                         <div class="SR_input-half">
-                            <label for="inquiryCodeDisplay">문의코드</label>
+                            <label for="inquiryCodeDisplay">신고코드</label>
                             <input type="text" id="inquiryCodeDisplay" name="inquiryCode" class="SR_form-control" readonly>
                         </div>
                         <div class="SR_input-half">
-                            <label for="inquiryTitleEdit">제목</label>
+                            <label for="inquiryTitleEdit">신고타입</label>
                             <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
                         </div>
 					</div>
 
                     <div class="SR_form-group">
                         <div class="SR_input-half">
-                            <label for="inquiryTypeCodeDisplay">문의타입 코드</label>
-                            <input type="text" id="inquiryTypeCodeDisplay" name="inquiryTypeCode" class="SR_form-control" readonly>
+                            <label for="inquiryCodeDisplay">신고사유</label>
+                            <input type="text" id="inquiryCodeDisplay" name="inquiryCode" class="SR_form-control" readonly>
                         </div>
                         <div class="SR_input-half">
-                            <label for="inquiryTypeEdit">문의타입 이름</label>
-                            <select id="inquiryTypeEdit" name="inquiryType" class="SR_form-control">
-                                <option value="1">상품 문의</option>
-                                <option value="2">배송 문의</option>
-                                <option value="3">기술 지원</option>
-                                <option value="4">기타</option>
-                            </select>
+                            <label for="inquiryTitleEdit">제재타입</label>
+                            <input type="text" id="inquiryTitleEdit" name="inquiryTitle" class="SR_form-control" readonly>
                         </div>
 					</div>
+					<div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label for="inquiryCodeDisplay">제재사유</label>
+                            <input type="text" id="inquiryCodeDisplay" name="inquiryCode" class="SR_form-control" readonly>
+                        </div>
+                    </div>
 
                     <div class="SR_form-group SR_full-width">
 						<label for="inquiryContentEdit">문의 내용</label>

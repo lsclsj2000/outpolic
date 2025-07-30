@@ -5,12 +5,11 @@
 <head>
     <title>새 포트폴리오 등록</title>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <style>
+   <style>
         body { 
         	font-family: "Inter", sans-serif; 
         }
         .main-container { 
-        	max-width: 960px; 
         	margin: 40px auto; 
         	padding: 30px; 
         	background: #fff; 
@@ -19,7 +18,7 @@
         }
         .section-title { 
         	text-align: center; 
-        	margin-bottom: 30px; 
+        	margin-bottom: 50px; 
         	font-size: 1.8em; 
         }
         .form-step { 
@@ -116,24 +115,69 @@
         	font-size: 0.875rem; 
         	margin-top: 5px; 
         }
-        .category-row-new { 
-        	display: flex; 
-        	gap: 10px; 
-        	margin-bottom: 10px; 
-        	align-items: center; 
+        /* 카테고리 선택 영역 스타일 (외주 수정/등록 페이지와 동일하게 반영) */
+        .category-row-new {
+            display: flex; /* Flexbox 레이아웃 적용 */
+            align-items: center; /* 세로 중앙 정렬 */
+            gap: 10px; /* 아이템 간 간격 */
+            margin-bottom: 10px; /* 각 카테고리 행 아래 여백 */
+            background: white; /* 기존 배경색 유지 */
+            padding: 15px;      /* 기존 패딩 유지 */
+            border: 1px solid white; /* 기존 테두리 유지 */
+            border-radius: 8px; /* 둥근 모서리 */
         }
-        .category-select { 
-        	flex-grow: 1; 
+        .category-select {
+            flex-grow: 1; /* 사용 가능한 공간을 채우도록 확장 */
+            min-width: 150px; /* 최소 너비 설정 */
         }
-        .remove-category-row-btn { 
-        	background-color: #dc3545; 
-        	border-color: #dc3545; 
-        	color: white; 
-        	padding: 5px 10px; 
-        	line-height: 1; 
-        	border: none;
-            border-radius: 5px;
-            cursor: pointer; 
+        .remove-category-row-btn {
+            background-color: #dc3545; /* 빨간색 배경 */
+            color: white; /* 흰색 글씨 */
+            padding: 5px 10px; /* 패딩 */
+            line-height: 1; /* 라인 높이 */
+            border: none; /* 테두리 없음 */
+            border-radius: 5px; /* 둥근 모서리 */
+            cursor: pointer; /* 마우스 오버 시 포인터 */
+            transition: transform 0.2s ease; /* 호버 효과 */
+        }
+        .remove-category-row-btn:hover {
+            transform: scale(1.2);
+        }
+
+        /* Select2 관련 스타일 */
+        .select2-container {
+            width: 100% !important; /* Select2 컨테이너의 너비를 부모 요소에 맞춥니다. */
+            z-index: 9999; /* 다른 요소 위에 표시되도록 z-index 설정 */
+        }
+        /* Select2에서 선택된 항목 제거 버튼 (X 아이콘) 숨기기 */
+        .select2-selection__clear {
+            display: none !important; 
+        }
+        /* Select2가 선택된 항목을 표시하는 부분의 높이 조정 */
+        .select2-container .select2-selection--single {
+            height: calc(2.25rem + 14px); /* .form-control과 유사한 높이로 조정 */
+            border-radius: 8px; /* 둥근 모서리 */
+            border: 1px solid #d1d5db; /* 테두리 */
+            display: flex; /* 내부 요소 정렬을 위해 flex 사용 */
+            align-items: center; /* 세로 중앙 정렬 */
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: normal; /* 텍스트 라인 높이 */
+            padding-left: 15px; /* 왼쪽 패딩 */
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(2.25rem + 12px); /* 화살표 높이 조정 */
+        }
+
+        .btn-add-category {
+            background-color: #264796;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            
         }
         .tag-search-wrapper { 
         	position: relative; 
@@ -159,9 +203,6 @@
         .note-editor.note-frame { 
         	z-index: 1; 
         }
-        .select2-container {
-			z-index: 9999; 
-		}
         .body-image-preview-item { 
         	position: relative;
         }
@@ -179,6 +220,13 @@
         	 line-height: 20px;
         	 text-align: center; 
        }
+       
+       
+       .category-block-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
     </style>
 </head>
 <body>
@@ -186,7 +234,7 @@
 <th:block layout:fragment="contents">
     <div class="main-container">
         <h3 class="section-title">새 포트폴리오 등록</h3>
-        <div class="progress-indicator">
+        <div class="progress-indicator" style="margin-bottom:40px;">
             <div class="progress-step active" data-step="1">1</div>
             <div class="progress-step" data-step="2">2</div>
             <div class="progress-step" data-step="3">3</div>
@@ -240,11 +288,11 @@
             <div class="form-step" id="step3">
                 <h4>3단계: 카테고리 및 태그</h4>
                 <div class="form-group">
-                    <label>카테고리 <span style="color:red;">*</span></label>
-                    <div id="category-rows-container"></div>
-                    <button type="button" id="add-category-row-btn" class="btn btn-secondary mt-2" style="background-color: #6c757d; border-color: #6c757d;">+ 카테고리 추가</button>
-                    <div class="error-message" id="categoryError"></div>
-                </div>
+    <label>카테고리 선택 <span style="color:red;">*</span></label>
+    <div id="category-rows-container" class="category-block-list"></div>
+    <button type="button" id="add-category-row-btn" class="btn btn-add-category" style="height:40px; width:200px; margin-left:20px;">+ 카테고리 추가</button>
+    <div class="error-message" id="categoryError"></div>
+</div>
                 <div class="form-group">
                     <label for="tags">태그 (쉼표로 구분)</label>
                     <div class="tag-search-wrapper">
@@ -579,7 +627,7 @@
                     categories.forEach(cat => {
                         $select.append(`<option value="${cat.ctgryId}">${cat.ctgryNm}</option>`);
                     });
-                    $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: 'style', allowClear: true });
+                    $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: '100%', allowClear: true }); 
                 } else {
                     $select.hide();
                 }
@@ -611,7 +659,7 @@
                         <select class="form-control category-select" data-level="2" data-row-id="${uniqueId}" style="display:none;"></select>
                         <select class="form-control category-select" data-level="3" data-row-id="${uniqueId}" style="display:none;"></select>
                         <input type="hidden" class="final-category-id">
-                        <button type="button" class="remove-category-row-btn">삭제</button>
+                        <button type="button" class="remove-category-row-btn" style="width:180px; height:43px;">삭제</button>
                     </div>`;
                 $('#category-rows-container').append(newRowHtml);
                 const $newRow = $(`div.category-row-new[data-row-id="${uniqueId}"]`);

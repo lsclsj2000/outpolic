@@ -22,7 +22,6 @@
 	    <result property="arSttsCd" column="ar_stts_cd"/>
 	    
 	    <!-- 관리자 권한 매핑 테이블 -->
-	    <result property="armId" column="arm_id"/>
 	    <result property="empwerAdmCd" column="empwer_adm_cd"/>
 	    <result property="ar2Cd" column="ar2_cd"/>
 	    <result property="armRegYmdt" column="arm_reg_ymdt"/>
@@ -51,4 +50,23 @@
 		GROUP BY a.adm_cd, a.stc_cd
 		ORDER BY a.adm_cd;
 	</select>
+	
+	<select id="selectPermissionCodesByAdmCd" resultType="string">
+	  SELECT ar_cd FROM admin_roles_mapping WHERE adm_cd = #{admCd}
+	</select>
+	
+	<insert id="insertPermission">
+	  INSERT INTO admin_roles_mapping (adm_cd, ar_cd, arm_reg_ymdt)
+	  VALUES (#{admCd}, #{arCd}, NOW())
+	</insert>
+	
+	<delete id="deletePermission">
+	  DELETE FROM admin_roles_mapping
+	  WHERE adm_cd = #{admCd} AND ar_cd = #{arCd}
+	</delete>
 </mapper>
+
+
+
+
+

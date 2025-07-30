@@ -73,7 +73,7 @@ public interface UserInquiryMapper {
  	List<UserAnn> getUserFaqList();
  	
  	// 전체 게시판 조회
- 	List<UserAnn> getUserTotalList();
+ 	List<UserAnn> getUserAnnList();
  	
  	// 전체 게시판 페이지네이션
  	List<UserAnn> getUserTotalListPaged(@Param("offset") int offset, @Param("limit") int limit);

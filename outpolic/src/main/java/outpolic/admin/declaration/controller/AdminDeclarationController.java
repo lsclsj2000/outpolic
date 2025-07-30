@@ -1,6 +1,8 @@
 package outpolic.admin.declaration.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -217,13 +219,28 @@ public class AdminDeclarationController {
 	}
 	
 	@GetMapping("/adminDeclaration")
-	public String adminDeclarationView(Model model) {
-		// 신고 내역 조회 페이지
-		List<AdminDeclaration> adminDeclarationList = adminDeclarationService.getAdminDeclarationList();
-		
-		model.addAttribute("title", "신고 내역 조회");
-		model.addAttribute("adminDeclarationList", adminDeclarationList);
-		
-		return "admin/declaration/adminDeclarationView";
+	public String adminDeclarationView(
+	    @RequestParam(required = false) String keywordField,
+	    @RequestParam(required = false) String keyword,
+	    @RequestParam(required = false) String dateField,
+	    @RequestParam(required = false) String startDate,
+	    @RequestParam(required = false) String endDate,
+	    @RequestParam(required = false) String status,
+	    Model model
+	) {
+		// 신고 내역 조회 - 필터
+	    Map<String, Object> searchParams = new HashMap<>();
+	    searchParams.put("keywordField", keywordField);
+	    searchParams.put("keyword", keyword);
+	    searchParams.put("dateField", dateField);
+	    searchParams.put("startDate", startDate);
+	    searchParams.put("endDate", endDate);
+	    searchParams.put("status", status);
+
+	    List<AdminDeclaration> adminDeclarationList = adminDeclarationService.getAdminDeclarationListFiltered(searchParams);
+	    model.addAttribute("adminDeclarationList", adminDeclarationList);
+
+	    return "admin/declaration/adminDeclarationView";
 	}
+
 }

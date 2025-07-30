@@ -9,4 +9,6 @@ public interface UserOutsourcingReviewService {
 	UserOutsourcingReviewDTO getReviewForEdit(String oscId, String mbrCd);
 
     boolean updateReview(UserOutsourcingReviewDTO reviewDTO);
+    
+    
 }

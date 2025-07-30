@@ -13,6 +13,11 @@ import outpolic.admin.limits.domain.AdminLimitsReason;
 @Mapper
 public interface AdminLimitsMapper {
 	
+	int updateMemberAuthority(AdminLimits adminLimits);
+	
+	AdminLimits selectMemberAuthorityByMemberCode(String memberCode);
+
+	
 	// 회원 권한 조회
 	List<AdminLimits> getAdminLimitsAuthorityList();
 	

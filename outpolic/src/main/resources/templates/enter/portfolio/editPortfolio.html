@@ -12,7 +12,6 @@
         	font-family: "Inter", sans-serif; 
         }
         .main-container { 
-        	max-width: 960px; 
         	margin: 40px auto; 
         	padding: 30px; 
         	background: #fff;
@@ -125,21 +124,61 @@
         	font-size: 0.875rem; 
         	margin-top: 5px; 
         }
+        /* START: Category and Select2 specific styles */
         .category-row-new { 
-        	display: flex; 
-        	gap: 10px; 
+        	display: flex; /* Apply flexbox for horizontal alignment */
+        	gap: 10px; /* Space between elements in the row */
         	margin-bottom: 10px; 
-        	align-items: center; 
+        	align-items: center; /* Vertically align items in the center */
+            /* Add padding and border if desired for block appearance, similar to outsourced add */
+            /* background: #f9f9f9; */
+            /* padding: 15px; */
+            /* border: 1px solid #ddd; */
+            border-radius: 8px;
+        }
+        /* This rule was missing in your Portfolio Edit styles, added for width control */
+        .category-select {
+            flex-grow: 1; /* Allow select boxes to grow and fill available space */
+            min-width: 150px; /* Minimum width for each select box */
         }
         .remove-category-row-btn { 
-        	background-color: #dc3545; 
+        	background-color: #dc3545; /* Red background for delete button */
         	color: white; 
         	padding: 5px 10px; 
         	line-height: 1; 
         	border: none; 
         	border-radius: 5px; 
         	cursor: pointer; 
+            /* Added hover effect for consistency */
+            transition: transform 0.2s ease;
         }
+        .remove-category-row-btn:hover {
+            transform: scale(1.1); /* Slightly enlarge on hover */
+        }
+        /* Select2 specific overrides for consistent look and feel */
+        .select2-container {
+            width: 100% !important; /* Force full width for Select2 */
+            z-index: 9999; /* Ensure dropdown appears on top */
+        }
+        .select2-selection__clear { /* Hide the default 'X' clear icon */
+            display: none !important; 
+        }
+        .select2-container .select2-selection--single {
+            height: calc(2.25rem + 14px); /* Match form-control height for single select */
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            display: flex;
+            align-items: center;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: normal;
+            padding-left: 15px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(2.25rem + 12px);
+        }
+        /* END: Category and Select2 specific styles */
+
         .body-image-preview-item { 
         	position: relative; 
         }
@@ -158,6 +197,36 @@
             line-height: 20px; 
             text-align: center; 
         }
+        /* Style for the add category button to make it look consistent */
+        #add-category-row-btn {
+            background-color: #264796; /* Consistent blue background */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px; /* Space above the button */
+        }
+        #add-category-row-btn:hover {
+            background-color: #1a3674; /* Darker blue on hover */
+        }
+        .remove-image-btn { 
+    position: absolute; 
+    top: 8px;      /* 수정: 안쪽으로 이동 */
+    right: 8px;     /* 수정: 안쪽으로 이동 */
+    background: rgba(0, 0, 0, 0.5); 
+    color: white; 
+    border: none; 
+    border-radius: 50%; 
+    width: 25px; 
+    height: 25px; 
+    cursor: pointer; 
+    font-size: 0.8em;
+    line-height: 25px;
+    text-align: center;
+    z-index: 10;   /* ✨ z-index 추가 */
+}
     </style>
 </head>
 
@@ -165,7 +234,7 @@
 <th:block layout:fragment="contents">
     <div class="main-container">
         <h1 class="section-title">포트폴리오 수정</h1>
-        <div class="card">
+        <div>
             <div class="progress-indicator">
                 <div class="progress-step active" data-step="1">1</div>
                 <div class="progress-step" data-step="2">2</div>
@@ -204,8 +273,7 @@
                     <div class="form-group">
                         <label>카테고리 <span style="color:red;">*</span></label>
                         <div id="category-rows-container"></div>
-                        <button type="button" id="add-category-row-btn" class="btn btn-secondary mt-2" style="background-color: #6c757d;
-border-color: #6c757d;">+ 카테고리 추가</button>
+                        <button type="button" id="add-category-row-btn" class="btn btn-secondary mt-2" style="height:40px; width:200px; margin-left:20px;">+ 카테고리 추가</button>
                         <div class="error-message" id="categoryError"></div>
                     </div>
                     <div class="form-group">
@@ -219,7 +287,7 @@ border-color: #6c757d;">+ 카테고리 추가</button>
                     <h4>4단계: 대표 이미지 수정</h4>
                     <div class="form-group">
                         <label for="portfolioImage">새 대표 이미지 선택 (변경 시에만)</label>
-                        <input type="file" id="portfolioImage" class="form-control" accept="image/*">
+                        <input type="file" id="portfolioImage" class="form-control" accept="image/*" style="width:450px;">
                         <div id="image-preview" style="margin-top:15px;
 width: 150px; height: 150px; border: 1px solid #ddd; background-color: #f8f8f8; display: flex; align-items: center; justify-content: center; color: #aaa; overflow: hidden;
 position: relative;"></div>
@@ -239,7 +307,7 @@ border-radius: 8px;">
                                 <div class="body-image-preview-item" th:data-file-cd="${img.fileIdx}" style="position:
  relative;">
                                     <img th:src="@{${img.filePath}}" style="width: 100px;
-height: 100px; object-fit: cover; border-radius: 5px;">
+									height: 100px; object-fit: cover; border-radius: 5px;">
                                     <button type="button" class="remove-existing-body-image-btn">X</button>
                                 </div>
                             </th:block>
@@ -344,7 +412,7 @@ padding: 15px; border-radius: 8px;"></div>
                 $select.html(`<option value="">${level}차 선택</option>`).show();
                 if (categories && categories.length > 0) {
                     categories.forEach(cat => $select.append(`<option value="${cat.ctgryId}" ${cat.ctgryId === selectedId ? 'selected' : ''}>${cat.ctgryNm}</option>`));
-                    $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: 'style', allowClear: true });
+                    $select.show().select2({ placeholder: `${level}차 분류 선택...`, width: '100%', allowClear: true }); 
                     if (selectedId) $select.val(selectedId).trigger('change.select2');
                 } else {
                     $select.hide();
@@ -370,7 +438,7 @@ padding: 15px; border-radius: 8px;"></div>
                         <select class="form-control category-select" data-level="2" style="display:none;"></select>
                         <select class="form-control category-select" data-level="3" style="display:none;"></select>
                         <input type="hidden" class="final-category-id">
-                        <button type="button" class="remove-category-row-btn">삭제</button>
+                        <button type="button" class="remove-category-row-btn" style="width:80px; height:43px;">삭제</button>
                     </div>`;
                 $('#category-rows-container').append(newRowHtml);
                 const $newRow = $(`div.category-row-new[data-row-id="${uniqueId}"]`);

@@ -39,9 +39,9 @@ public class OutsourcingRequestServiceImpl implements outpolic.enter.outsourcing
         requestMapper.insertRequest(request); 
         
         // 채팅방 ID 업데이트 로직은 그대로 유지 (기존에는 주석처리되었으나, 필요하다면 활성화)
-        String newChrCd = "CHR_" + newOcdCd;
-        requestMapper.updateChatRoomId(newOcdCd, newChrCd);
-        request.setChr_cd(newChrCd);
+//        String newChrCd = "CHR_" + newOcdCd;
+//        requestMapper.updateChatRoomId(newOcdCd, newChrCd);
+//        request.setChr_cd(newChrCd);
         
         return request;
     }

@@ -20,19 +20,41 @@
 	    SELECT m.mbr_id, m.mbr_pw, m.grd_cd, m.mbr_cd, m.stc_cd, ad.adm_cd, m.mbr_nm, m.mbr_last_lgn_ymdt
 	    FROM member m inner join admin ad
 	    on m.mbr_cd = ad.mbr_cd
-	    WHERE mbr_id = #{memberInfo.memberId};
+	    WHERE mbr_id = #{memberId};
 	</select>
 	
 	<update id="updateAdminMemberLoginDate" parameterType="AdminLoginDTO">
 		UPDATE member
 		set mbr_last_lgn_ymdt = NOW()
-		where mbr_cd = #{memberInfo.memberCode};
+		where mbr_cd = #{memberCode};
 	</update>
 	
-<!-- 	<insert id="insertFailHistory" parameterType="LoginFailHistoryDTO">
-		INSERT INTO 
-			login_fail_history
-			(lfh_cd, lfh_ip, lfh_attemp_ymdt, lfh_cnt, lfh_in_ymdt, lfh_out_ymdt, lfr_cd)
-		VALUES('', '', '', , '', '', '');
-	</insert> -->
+	<select id="getNextAdminLoginHistoryCode" resultType="String">
+		/* 로그인 기록 기본키 만드는 쿼리문*/
+		SELECT CONCAT('LH_', LPAD(SUBSTRING(MAX(lh_cd), 4) + 1, 7, '0')) AS nextCode
+	       FROM login_history
+	       WHERE lh_cd LIKE 'LH_%';
+	</select>
+	<insert id="insertAdminLoginHistory" parameterType="LoginHistoryDTO">
+		insert into login_history
+		(lh_cd, mbr_cd, lh_in_ymdt, lh_ip)
+		VALUES(#{loginHistoryCode}, #{memberCode}, now(), #{loginIp});	
+	</insert>
+	
+	<select id="getAdminLastLoginCode" resultType="String">
+		select lh_cd
+		from login_history
+		where mbr_cd = #{memberCode}
+		and lh_out_ymdt is null
+		order by lh_in_ymdt desc
+		limit 1;
+	</select>
+	
+	<update id="updateAdminLogoutHistory" parameterType="LoginHistoryDTO">
+		update login_history
+		set lh_out_ymdt = now()
+		where lh_cd = #{loginHistoryCode};
+	</update>
+	
+
 </mapper>

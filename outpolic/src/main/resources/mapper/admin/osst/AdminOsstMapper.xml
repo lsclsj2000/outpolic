@@ -20,6 +20,55 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="osp_sply_ymdt" 		property="ospSplyYmdt"/>
 		<result column="osp_cust_ymdt" 		property="ospCustYmdt"/>
 	</resultMap>
+
+    <select id="getAdminOsstListFiltered" resultMap="AdminOsstResultMap">
+	    SELECT
+	        ocd.ocd_cd as ocd_cd,
+	        ocd.ocd_ttl as ocd_ttl,
+	        ocd.mbr_cd as mbr_cd,
+	        m.mbr_nm as mbr_nm,
+	        ocd.ent_cd as ent_cd,
+	        e.ent_nm as ent_nm,
+	        m2.mbr_nm as mbr_ent_nm,
+	        op.stc_cd as stc_cd,
+	        sc.stc_nm as stc_nm,
+	        op.osp_cust_yn as osp_cust_yn,
+	        op.osp_sply_ymdt as osp_sply_ymdt,
+	        op.osp_cust_ymdt as osp_cust_ymdt
+	    FROM
+	        outsourcing_contract_details ocd
+	        LEFT JOIN member m ON ocd.mbr_cd = m.mbr_cd
+	        LEFT JOIN enterprise e ON ocd.ent_cd = e.ent_cd
+	        LEFT JOIN member m2 ON e.mbr_cd = m2.mbr_cd
+	        LEFT JOIN outsourcing_prograss op ON ocd.ocd_cd = op.ocd_cd
+	        LEFT JOIN status_code sc ON op.stc_cd = sc.stc_cd
+	    WHERE
+	        ocd.stc_cd = 'SD_APPROVED'
+	        AND op.osp_sply_ymdt = (
+	            SELECT MAX(osp_sply_ymdt)
+	            FROM outsourcing_prograss
+	            WHERE ocd_cd = ocd.ocd_cd
+	        )
+	        <if test="field != null and keyword != null and field != '' and keyword != ''">
+	            <choose>
+	                <when test="field == 'ocd_ttl'">
+	                    AND ocd.ocd_ttl LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	                <when test="field == 'ent_nm'">
+	                    AND e.ent_nm LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	                <when test="field == 'mbr_nm'">
+	                    AND m.mbr_nm LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	            </choose>
+	        </if>
+	        <if test="stepStatus != null and stepStatus != ''">
+	            AND op.stc_cd = #{stepStatus}
+	        </if>
+	    ORDER BY ocd.ocd_cd DESC
+	</select>
+
+
 	
 	
 	<update id="updateStepStatus">

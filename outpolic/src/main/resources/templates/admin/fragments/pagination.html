@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<div class="pagination-area mt-15 mb-50 d-flex justify-content-end" th:fragment="paginationFragment">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+                <li class="page-item">
+                    <a class="page-link" th:href="@{|${path}|}">
+                    	<i class="material-icons md-first_page" style="vertical-align: middle;"></i>
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage < 2} ? 'disabled'">
+                    <a class="page-link" th:href="@{|${path}|(currentPage=${currentPage-1})}">
+                    	<i class="material-icons md-chevron_left" style="vertical-align: middle;"></i>
+                    </a>
+                </li>
+                <th:block th:each="num : ${#numbers.sequence(startPageNum, endPageNum)}">
+                	<li class="page-item" th:classappend="${num eq currentPage} ? 'active disabled'">
+                		<a class="page-link" th:href="@{|${path}|(currentPage=${num})}"
+                		   th:text="${num < 10 ? '0' + num : num}">01</a>
+                	</li>
+                </th:block>                    
+                <li class="page-item" th:classappend="${currentPage eq lastPage} ? 'disabled'">
+                    <a class="page-link" th:href="@{|${path}|(currentPage=${currentPage+1})}">
+                    	<i class="material-icons md-chevron_right" style="vertical-align: middle;"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" th:href="@{|${path}|(currentPage=${lastPage})}">
+                    	<i class="material-icons md-last_page" style="vertical-align: middle;"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</html>
