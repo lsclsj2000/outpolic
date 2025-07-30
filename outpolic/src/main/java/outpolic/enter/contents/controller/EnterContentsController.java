@@ -38,7 +38,6 @@ public class EnterContentsController {
     private final EnterSearchService searchService;
     private final EnterCategoryService categoryService;
     private final EnterOutsourcingService enterOutsourcingService;
-    
     private final EnterContentViewService contentViewService;
 
     
@@ -104,6 +103,8 @@ public class EnterContentsController {
     /**
      * '/enter/contents/{osCd}' 주소를 처리하는 메서드
      */
+    
+    
     @GetMapping("/outsourcing/{osCd}")
     public String showContentsParticularView(@PathVariable String osCd, Model model) {
         log.info("상세 페이지 요청 (outsourcing path): ID = {}", osCd);
@@ -128,5 +129,5 @@ public class EnterContentsController {
         model.addAttribute("detail", detailMap);
 
         return "enter/contentsParticular/enterContentsParticularView";
-    }
+    } 
 }
