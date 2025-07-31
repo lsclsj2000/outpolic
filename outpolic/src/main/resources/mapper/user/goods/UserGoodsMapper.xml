@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.user.goods.mapper.UserGoodsMapper">
+
+    <select id="selectActiveProductsByTarget" parameterType="string" resultType="outpolic.user.goods.dto.UserGoodsDTO">
+        SELECT
+			gds_cd                  AS gdsCd,
+            gds_nm                  AS gdsNm,
+            gds_amt                 AS gdsAmt,
+            gds_type                AS gdsType,
+            gds_period_quantity     AS gdsPeriodQuantity,
+            gds_unit                AS gdsUnit
+        FROM
+            goods
+        WHERE
+            (gds_target_member_type = #{targetMemberType} OR gds_target_member_type = 'ALL')
+            AND gds_status = 1
+        ORDER BY
+            CASE
+                WHEN gds_type = '구독권' THEN 1
+                WHEN gds_type = '이용권' THEN 2
+                ELSE 99
+            END,
+            gds_amt ASC
+    </select>
+</mapper>

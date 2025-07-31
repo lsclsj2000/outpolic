@@ -22,4 +22,5 @@ public class AdminGoodsDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp gdsMdfcnYmdt;
     private int gdsStatus;
+    private String gdsTargetMemberType;
 }
