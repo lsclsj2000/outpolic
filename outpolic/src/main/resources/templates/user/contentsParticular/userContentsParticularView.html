@@ -25,6 +25,30 @@
 			.bookmark-btn .fi-rs-heart.active {
 			    color: #F15B5B !important; /* 다른 스타일에 의해 덮어쓰이지 않도록 우선순위 부여 */
 			}
+			#description-section div {
+			    color: #000000; /* 또는 간단하게 black; */
+			    font-size: 1rem;
+			    font-weight: 400;
+			    line-height: 24px;
+			    margin-bottom: 5px;
+			   
+			}
+			.btn,.button{
+				font-size: 14px;
+				font-weight:700;
+				padding: 12px 30px;
+				border-radius: 4px;
+				color: #fff;
+				border: 1px solid transparent;
+				background-color:#264796;
+				cursor: pointer;
+				transition: all 300ms linear 0s;
+				letter-spacing: 0.5px;
+				flex: 1;
+				margin: 0;
+				justify-content: center;
+			}
+
 	    </style>
 	</head>
 	
@@ -121,14 +145,14 @@
 		                    <div class="d-flex align-items-center mb-4 w-100">
 							    <!-- 찜하기 버튼 -->
 							    <a href="javascript:void(0);" 
-							       class="btn btn-outline-secondary d-flex align-items-center me-5 action-btn bookmark-btn w-60"
+							       class="btn btn-outline-secondary d-flex align-items-center me-1 action-btn bookmark-btn w-40"
 							       th:attr="data-cl-cd=${detail.clCd}" 
 							       aria-label="Add To Wishlist">
 							       <i class="fi-rs-heart me-2" th:classappend="${detail.isBookmarked ? 'active' : ''}"></i> 찜하기
 							    </a>
 							    <!-- 공유하기 버튼 -->
 							    <a href="javascript:void(0);" 
-							       class="btn btn-outline-secondary d-flex align-items-center w-60">
+							       class="btn btn-outline-secondary d-flex align-items-center w-40">
 							       <i class="fi-rs-share me-2"></i> 공유하기
 							    </a>
 							</div>
