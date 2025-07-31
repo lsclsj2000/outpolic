@@ -57,7 +57,54 @@
 
 <br></br>
 ## 4. 기술 스택
-(※ 스택 이미지/설명 삽입 예정)
+### FE (Frontend)
+<p>
+  <img src="https://img.shields.io/badge/HTML5-D4DAEA?style=flat&logo=html5&logoColor=ffffff"/>
+  <img src="https://img.shields.io/badge/CSS3-D4DAEA?style=flat&logo=css3&logoColor=ffffff"/>
+  <img src="https://img.shields.io/badge/JavaScript-D4DAEA?style=flat&logo=javascript&logoColor=ffffff"/>
+  <img src="https://img.shields.io/badge/Thymeleaf-D4DAEA?style=flat&logo=thymeleaf&logoColor=ffffff"/>
+</p>
+
+### BE (Backend)
+<p>
+  <img src="https://img.shields.io/badge/Java-D4DAEA?style=flat&logo=openjdk&logoColor=ffffff"/>
+  <img src="https://img.shields.io/badge/Spring%20Boot-D4DAEA?style=flat&logo=springboot&logoColor=ffffff"/>
+  <img src="https://img.shields.io/badge/MyBatis-D4DAEA?style=flat&logo=mybatis&logoColor=ffffff"/>
+</p>
+
+### WS (Web Server)
+<p>
+  <img src="https://img.shields.io/badge/Apache-D4DAEA?style=flat&logo=apache&logoColor=ffffff"/>
+</p>
+
+### WAS (Web Application Server)
+<p>
+  <img src="https://img.shields.io/badge/Tomcat-D4DAEA?style=flat&logo=apachetomcat&logoColor=ffffff"/>
+</p>
+
+### Framework / Library
+<p>
+  <img src="https://img.shields.io/badge/Spring%20Boot-D4DAEA?style=flat&logo=springboot&logoColor=ffffff"/>
+  <img src="https://img.shields.io/badge/Thymeleaf-D4DAEA?style=flat&logo=thymeleaf&logoColor=ffffff"/>
+</p>
+
+### DBMS
+<p>
+  <img src="https://img.shields.io/badge/MySQL-D4DAEA?style=flat&logo=mysql&logoColor=ffffff"/>
+</p>
+
+### Version Control
+<p>
+  <img src="https://img.shields.io/badge/Git-D4DAEA?style=flat&logo=git&logoColor=ffffff"/>
+  <img src="https://img.shields.io/badge/GitHub-D4DAEA?style=flat&logo=github&logoColor=ffffff"/>
+</p>
+
+### CI/CD
+<p>
+  <img src="https://img.shields.io/badge/GitHub%20Actions-D4DAEA?style=flat&logo=githubactions&logoColor=ffffff"/>
+  <img src="https://img.shields.io/badge/FileZilla-D4DAEA?style=flat&logo=filezilla&logoColor=ffffff"/>
+  <img src="https://img.shields.io/badge/Putty-D4DAEA?style=flat&logo=putty&logoColor=ffffff"/>
+</p>
 
 <br></br>
 ## 5. 개발 환경
@@ -178,11 +225,15 @@
 
 <br></br>
 ## 10. 프로젝트 후기
-| 이름 | 후기 |
-|------|-----------|
-| 이성재 | 이번 팀 프로젝트는 성공적인 개발을 위해 견고한 설계와 유기적인 소통이 얼마나 중요한지 배울 수 있었던 소중한 경험이었습니다.
-프로젝트 초반의 기획과 설계가 전체 개발 과정의 효율성을 좌우한다는 것을 직접 체감할 수 있었습니다. 특히, 외부 결제 API를 연동하면서 명확한 문서와 끊임없는 소통 없이는 기능 통합이 어렵다는 것을 깨달았습니다. 잘 된 설계와 원활한 협업이 뒷받침될 때, 비로소 안정적인 서비스를 만들 수 있다는 것을 배울 수 있었던 값진 프로젝트였습니다. |
-| 김주완 | 추후 추가 |
-| 김한별 | 추후 추가 |
-| 신세영 | 추후 추가 |
-| 유사랑 | 추후 추가 |
+
+### 이성재
+- 이번 팀 프로젝트는 성공적인 개발을 위해 견고한 설계와 유기적인 소통이 얼마나 중요한지 배울 수 있었던 소중한 경험이었습니다.
+- 프로젝트 초반의 기획과 설계가 전체 개발 과정의 효율성을 좌우한다는 것을 직접 체감할 수 있었습니다. 특히, 외부 결제 API를 연동하면서 명확한 문서와 끊임없는 소통 없이는 기능 통합이 어렵다는 것을 깨달았습니다. 잘 된 설계와 원활한 협업이 뒷받침될 때, 비로소 안정적인 서비스를 만들 수 있다는 것을 배울 수 있었던 값진 프로젝트였습니다.
+### 김주완
+- 후기 작성 하세요
+### 김한별
+- 후기 작성 하세요
+### 신세영
+- 후기 작성 하세요
+### 유사랑
+- 후기 작성 하세요
