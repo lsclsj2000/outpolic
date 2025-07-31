@@ -2,8 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper
-	namespace="outpolic.systems.payment.mapper.PaymentMapper">
+<mapper	namespace="outpolic.systems.payment.mapper.PaymentMapper">
 
 	<insert id="insertSettlement" parameterType="outpolic.systems.payment.dto.SettlementDTO">
 		<selectKey keyProperty="stlmCd" resultType="String" order="BEFORE">
@@ -51,5 +50,29 @@
 			#{stlmCardType}
 		)
 	</insert>
+	
+	<select id="selectActiveProductsByTarget" parameterType="string" resultType="outpolic.user.goods.dto.UserGoodsDTO">
+	    SELECT
+	        gds_cd,
+	        gds_nm,
+	        gds_amt,
+	        gds_type,
+	        gds_period_quantity,
+	        gds_unit
+	    FROM
+	        goods
+	    WHERE
+	        (gds_target_member_type = #{targetMemberType} OR gds_target_member_type = 'ALL')
+	        AND gds_status = 1
+	    ORDER BY
+	        -- 1순위: '구독권'이 먼저, 그 다음 '이용권' 순으로 정렬
+	        CASE
+	            WHEN gds_type = '구독권' THEN 1
+	            WHEN gds_type = '이용권' THEN 2
+	            ELSE 99
+	        END,
+	        -- 2순위: 같은 종류 내에서는 가격이 낮은 순으로 정렬
+	        gds_amt ASC
+	</select>
 
 </mapper>
