@@ -6,193 +6,140 @@
     <title>내 포트폴리오</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- 기본 스타일 --- */
-        .flex { 
-        	display: flex; 
+        /* --- 외주 디자인에 맞춘 포트폴리오 카드 스타일 --- */
+        .outsourcing-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
         }
-        .justify-between { 
-        	justify-content: space-between; 
+        .outsourcing-item-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            height: 100%; /* 카드 높이 동일하게 유지 */
         }
-        .items-center { 
-        	align-items: center;
+        .outsourcing-item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
         }
-        .mb-10 { 
-        	margin-bottom: 40px; 
+        .outsourcing-thumbnail-wrapper {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            background-color: #f3f4f6;
         }
-        .section-title { 
-        	font-size: 2em; 
-        	font-weight: 700; 
-        	margin-bottom: 20px !important; 
-        	color: #1f2937; 
-        	display: inline-block;
+        .outsourcing-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+        .outsourcing-thumbnail-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 1rem;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .card-status {
+            font-size: 0.8em;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .status-badge.primary {
+            color: #264796;
+            background-color: #e0e9fa;
+        }
+        .card-applicant-price {
+            text-align: right;
+            font-weight: 600;
+        }
+        .applicant-count {
+            font-size: 0.8em;
+            color: #6b7280;
+        }
+        .outsource-price {
+            font-size: 1.1em;
+            color: #1f2937;
+        }
+        .card-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .card-title {
+            font-size: 1.25em;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+        .card-category {
+            font-size: 0.9em;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        .card-summary {
+            font-size: 0.9em;
+            color: #4b5563;
+            line-height: 1.6;
+            max-height: 3.2em; /* 2줄까지만 보이도록 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            margin-bottom: 15px;
+        }
+        .card-footer {
+            border-top: 1px solid #f3f4f6;
+            padding: 15px;
+            font-size: 0.85em;
+            color: #9ca3af;
+        }
+        /* --- 기존 포트폴리오 버튼 및 UI 스타일 유지 --- */
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .mb-10 { margin-bottom: 40px; }
+        .section-title { font-size: 2em; font-weight: 700; margin-bottom: 20px !important; color: #1f2937; display: inline-block; }
+        .btn-action { background-color: #264796; border: none; color: white; padding: 10px 20px; text-align: center; display: inline-flex; align-items: center; gap: 8px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background-color 0.2s ease; margin-bottom: 30px; }
+        .btn-action:hover { background-color: #29A56C; }
+        .hidden { display: none !important; }
+        .no-portfolio-container { text-align: center; padding: 50px 20px; border: 2px dashed #e0e0e0; border-radius: 8px; background-color: #fafafa; }
         
-        .btn-action { 
-        	background-color: #264796; 
-        	border: none; 
-        	color: white; 
-        	padding: 10px 20px; 
-        	text-align: center; 
-        	display: inline-flex; 
-        	align-items: center; 
-        	gap: 8px; 
-        	font-size: 16px; 
-        	cursor: pointer;
-        	border-radius: 5px; 
-        	transition: background-color 0.2s ease; 
-        	margin-bottom: 30px;
-        }
-        .btn-action:hover { 
-        	background-color: #29A56C;
-		}
-        
-        .hidden { 
-        	display: none !important; 
-        }
-        .portfolio-items-grid { 
-        	display: grid; 
-        	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-			gap: 24px; 
-			margin-top: 20px; 
-		}
-        .portfolio-item-card { 
-        	border: 1px solid #e5e7eb; 
-        	border-radius: 8px; 
-        	overflow: hidden; 
-        	background-color: #fff;
-        	box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); 
-        	display: flex; 
-        	flex-direction: column; 
-        	height: 100%;
-        	transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .portfolio-item-card:hover { 
-        	transform: translateY(-5px);
-       	    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
-        }
-        .portfolio-thumbnail-wrapper { 
-        	 width: 100%;
-        	 height: 180px; 
-        	 overflow: hidden; 
-        	 background-color: #f3f4f6;
-        }
-        .portfolio-thumbnail { 
-        	width: 100%; 
-        	height: 100%; 
-        	object-fit: cover;
-        }
-        .portfolio-thumbnail-placeholder { 
-        	width: 100%; 
-        	height: 100%; 
-        	display: flex; 
-        	align-items: center; 
-        	justify-content: center;
-        	color: #9ca3af; 
-        	font-size: 1rem; 
-        }
-        .portfolio-content { 
-        	padding: 15px; 
-        	display: flex; 
-        	flex-direction: column;
-        	flex-grow: 1; 
-        }
-        .portfolio-title { 
-        	font-size: 1.15em; 
-        	font-weight: 600; 
-        	margin-top: 0; 
-        	margin-bottom: 10px;
-        	color: #111827; 
-        }
-        .portfolio-category { 
-        	font-size: 0.85em;
-      	    color: #6b7280; 
-      	    margin-bottom: 15px; 
-      	}
-	
-        .portfolio-actions { 
-        	display: flex; 
-        	gap: 10px; 
-        	margin-top: auto;
-       	    border-top: 1px solid #f3f4f6; 
-       	    padding-top: 15px; 
-       	}
-        .btn-edit, .btn-delete, .btn-share { 
-        	border: none;
-        	padding: 8px 15px; 
-        	border-radius: 5px; 
-        	cursor: pointer; 
-        	font-weight: 500; 
-        	transition: background-color 0.2s;
-        }
-        .btn-edit { 
-        	background-color: #3b82f6; 
-        	color: white;
-        }
-        .btn-edit:hover { 
-        	background-color: #2563eb;
-        }
-        .btn-delete { 
-        	background-color: #ef4444; 
-        	color: white;
-        }
-        .btn-delete:hover { 
-        	background-color: #dc2626;
-        }
-        .btn-share { 
-        	background-color: #14b8a6; 
-        	color: white;
-        }
-        .btn-share:hover { 
-        	background-color: #0d9488;
-        }
-        .no-portfolio-container { 
-        	text-align: center; 
-        	padding: 50px 20px; 
-        	border: 2px dashed #e0e0e0;
-        	border-radius: 8px; 
-        	background-color: #fafafa; 
-        }
-        
+        .portfolio-actions { display: flex; gap: 10px; margin-top: auto; padding-top: 15px; }
+        .btn-edit, .btn-delete, .btn-share { border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 500; transition: background-color 0.2s; }
+        .btn-edit { background-color: #3b82f6; color: white; }
+        .btn-edit:hover { background-color: #2563eb; }
+        .btn-delete { background-color: #ef4444; color: white; }
+        .btn-delete:hover { background-color: #dc2626; }
+        .btn-share { background-color: #14b8a6; color: white; }
+        .btn-share:hover { background-color: #0d9488; }
         /* --- 모달 관련 CSS --- */
-        @media (min-width: 1400px) {
-            .modal-dialog.modal-xxl { 
-            max-width: 1320px; }
-        }
-        .modal-body.custom-modal-body { 
-        	max-height: 85vh; 
-        	overflow-y: auto;
-       }
-		.fi-rs-heart.active { 
-			color: #F15B5B; 
-			font-weight: 900; 
-		}
-		.bookmark-btn .fi-rs-heart.active { 
-			color: #F15B5B !important;
-		}
-        .modal-portfolio-content img { 
-        	max-width: 100%; 
-        	height: auto; 
-        	display: block; 
-        	margin-bottom: 15px;
-        }
-        .modal-portfolio-content .no-image-placeholder { 
-        	height: 200px; 
-        	display: flex; 
-        	align-items: center; 
-        	justify-content: center; 
-        	background-color: #f0f0f0; 
-        	color: #aaa; 
-        	font-size: 1.2em; 
-        	text-align: center; 
-        	margin-bottom: 15px; 
-        	border-radius: 8px; 
-        }
-        .modal-portfolio-content p {
-        	 line-height: 1.6; 
-        	 color: #333; 
-        	 margin-bottom: 15px; 
-        	 white-space: pre-wrap; 
-       }
+        @media (min-width: 1400px) { .modal-dialog.modal-xxl { max-width: 1320px; } }
+        .modal-body.custom-modal-body { max-height: 85vh; overflow-y: auto; }
+        .fi-rs-heart.active { color: #F15B5B; font-weight: 900; }
+        .bookmark-btn .fi-rs-heart.active { color: #F15B5B !important; }
+        .modal-portfolio-content img { max-width: 100%; height: auto; display: block; margin-bottom: 15px; }
+        .modal-portfolio-content .no-image-placeholder { height: 200px; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0; color: #aaa; font-size: 1.2em; text-align: center; margin-bottom: 15px; border-radius: 8px; }
+        .modal-portfolio-content p { line-height: 1.6; color: #333; margin-bottom: 15px; white-space: pre-wrap; }
     </style>
 </head>
 <body>
@@ -200,11 +147,11 @@
     <div class="page-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
         <h1 class="section-title">내 포트폴리오</h1>
         
-        <button id="addPortfolioBtn" class="btn-action">
+        <button id="addPortfolioBtn" class="btn-action" style="margin-left:920px;">
             <i class="fas fa-plus"></i> 새 포트폴리오 등록하기
         </button>
 
-        <div id="portfolioItemsGrid" class="portfolio-items-grid"></div>
+        <div id="portfolioItemsGrid" class="outsourcing-items-grid"></div>
         
         <div id="noPortfolioMessage" class="no-portfolio-container hidden">
             <p>등록된 포트폴리오가 없습니다. 새로운 포트폴리오를 등록해보세요!</p>
@@ -235,76 +182,62 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        let lastFocusedElement = null; // 모달이 닫힌 후 포커스를 돌려주기 위한 변수
+        let lastFocusedElement = null;
 
-        /**
-         * 찜 버튼 클릭을 처리하는 함수
-         */
-         function handleBookmarkClick(clickedButtonElement) {
-             const clCd = clickedButtonElement.dataset.clCd;
-             if (!clCd) return;
-             const heartIcons = document.querySelectorAll(`.bookmark-btn[data-cl-cd="${clCd}"] i.fi-rs-heart`);
-             if (heartIcons.length === 0) return;
-             const isCurrentlyBookmarked = heartIcons[0].classList.contains('active');
-             const apiUrl = '/api/enter/bookmarks';
-             heartIcons.forEach(icon => icon.classList.toggle('active'));
-             let options;
-             if (isCurrentlyBookmarked) {
-                 options = { method: 'DELETE' };
-                 fetch(`${apiUrl}/${clCd}`, options).then(response => {
-                     if (!response.ok) {
-                         alert('찜 해제에 실패했습니다.');
-                         heartIcons.forEach(icon => icon.classList.add('active'));
-                     }
-                 });
-             } else {
-                 options = {
-                     method: 'POST',
-                     headers: { 'Content-Type': 'application/json' },
-                     body: JSON.stringify({ clCd: clCd })
-                 };
-                 fetch(apiUrl, options).then(response => {
-                     if (!response.ok) {
-                         if (response.status === 401 || response.status === 403) alert('로그인이 필요한 기능입니다.');
-                         else alert('찜하기에 실패했습니다.');
-                         heartIcons.forEach(icon => icon.classList.remove('active'));
-                     }
-                 });
-             }
-         }
+        function handleBookmarkClick(clickedButtonElement) {
+            const clCd = clickedButtonElement.dataset.clCd;
+            if (!clCd) return;
+            const heartIcons = document.querySelectorAll(`.bookmark-btn[data-cl-cd="${clCd}"] i.fi-rs-heart`);
+            if (heartIcons.length === 0) return;
+            const isCurrentlyBookmarked = heartIcons[0].classList.contains('active');
+            const apiUrl = '/api/enter/bookmarks';
+            heartIcons.forEach(icon => icon.classList.toggle('active'));
+            let options;
+            if (isCurrentlyBookmarked) {
+                options = { method: 'DELETE' };
+                fetch(`${apiUrl}/${clCd}`, options).then(response => {
+                    if (!response.ok) {
+                        alert('찜 해제에 실패했습니다.');
+                        heartIcons.forEach(icon => icon.classList.add('active'));
+                    }
+                });
+            } else {
+                options = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ clCd: clCd })
+                };
+                fetch(apiUrl, options).then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) alert('로그인이 필요한 기능입니다.');
+                        else alert('찜하기에 실패했습니다.');
+                        heartIcons.forEach(icon => icon.classList.remove('active'));
+                    }
+                });
+            }
+        }
 
-        /**
-         * 포트폴리오 ID를 받아 상세 정보를 모달에 표시하는 함수
-         * @param {string} contentsId - 포트폴리오의 고유 ID (예: PO_C00001)
-         */
-         function openDetailModal(contentsId) {
-             const modalElement = document.getElementById('portfolioDetailModal');
-             if (!modalElement) return;
-             lastFocusedElement = document.activeElement;
-             const infoSection = modalElement.querySelector('#modalInfoSection');
-             const contentSection = modalElement.querySelector('#modalContentSection');
-             const detailModal = new bootstrap.Modal(modalElement);
-             infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
-             contentSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
-             detailModal.show();
+        function openDetailModal(contentsId) {
+            const modalElement = document.getElementById('portfolioDetailModal');
+            if (!modalElement) return;
+            lastFocusedElement = document.activeElement;
+            const infoSection = modalElement.querySelector('#modalInfoSection');
+            const contentSection = modalElement.querySelector('#modalContentSection');
+            const detailModal = new bootstrap.Modal(modalElement);
+            infoSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
+            contentSection.innerHTML = `<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>`;
+            detailModal.show();
             
-            /**
-             * [프론트엔드 임시 해결책]
-             * 백엔드에서 보낸 중복된 파일 경로를 복구하는 함수
-             * @param {string} buggyPath - 백엔드에서 받은 깨진 경로 (예: 'path/to/file.pngfile.png')
-             * @param {string} correctFileName - DTO에 포함된 정상적인 서버 파일명 (예: 'file.png')
-             * @returns {string} - 복구된 경로 (예: 'path/to/file.png')
-             */
-             function fixDuplicatedPath(buggyPath, correctFileName) {
-                 if (!buggyPath || !correctFileName) {
-                     return buggyPath;
-                 }
-                 if (buggyPath.endsWith(correctFileName)) {
-                     const pathWithoutLastPart = buggyPath.substring(0, buggyPath.length - correctFileName.length);
-                     if(pathWithoutLastPart) return pathWithoutLastPart;
-                 }
-                 return buggyPath;
-             }
+            function fixDuplicatedPath(buggyPath, correctFileName) {
+                if (!buggyPath || !correctFileName) {
+                    return buggyPath;
+                }
+                if (buggyPath.endsWith(correctFileName)) {
+                    const pathWithoutLastPart = buggyPath.substring(0, buggyPath.length - correctFileName.length);
+                    if(pathWithoutLastPart) return pathWithoutLastPart;
+                }
+                return buggyPath;
+            }
 
             $.ajax({
                 url: `/user/api/contents/${contentsId}`,
@@ -323,10 +256,7 @@
                         <hr class="my-3">
                         <h3 class="fw-bold mb-3">${title}</h3>
                         <div class="d-flex align-items-center mb-4">
-                          
-                            <a href="javascript:void(0);" class="btn btn-outline-secondary d-flex align-items-center">
-                                <i class="fi-rs-share me-2"></i> 공유하기
-                            </a>
+                        
                         </div>
                         <div class="mb-4">
                             <h6 class="fw-bold">프로젝트 설명</h6>
@@ -374,6 +304,14 @@
                 }
             });
         }
+        
+        function getDaysDifference(startDate, endDate) {
+            if (!startDate || !endDate) return null;
+            const start = new Date(startDate.split('T')[0]);
+            const end = new Date(endDate.split('T')[0]);
+            const diffTime = Math.abs(end - start);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
 
         $(document).ready(function() {
             const grid = $('#portfolioItemsGrid');
@@ -390,25 +328,37 @@
                             grid.removeClass('hidden');
 
                             portfolios.forEach(p => {
-                                let thumbnailUrl = p.prtfThumbnailUrl ? p.prtfThumbnailUrl : null;
+                                const thumbnailUrl = p.prtfThumbnailUrl ? p.prtfThumbnailUrl : null;
                                 const thumbnailImageHtml = thumbnailUrl ? 
-                                    `<img src="${thumbnailUrl}" alt="${p.prtfTtl} 썸네일" class="portfolio-thumbnail">` : 
-                                    `<div class="portfolio-thumbnail-placeholder">이미지 없음</div>`;
+                                    `<img src="${thumbnailUrl}" alt="${p.prtfTtl} 썸네일" class="outsourcing-thumbnail">` : 
+                                    `<div class="outsourcing-thumbnail-placeholder">이미지 없음</div>`;
                                     
-                                const categoryHtml = p.ctgryNm ? `<p class="portfolio-category">${p.ctgryNm}</p>` : '';
-
+                                const categoryHtml = p.ctgryNm ? `<p class="card-category">${p.ctgryNm}</p>` : '';
+                                
+                                const statusHtml = `<span class="status-badge">포트폴리오</span>`;
+                                const applicantAndPriceHtml = `<div class="card-applicant-price"><div class="applicant-count">다운로드수 ${p.prtfDwnldCnt || 0}회</div></div>`;
+                                
+                                const durationDays = getDaysDifference(p.prtfPeriodStart, p.prtfPeriodEnd);
+                                const durationHtml = durationDays !== null ? `<i class="far fa-calendar-alt"></i> 진행 기간 ${durationDays}일` : '';
+                                
                                 const cardContent = `
-                                    <div class="portfolio-thumbnail-wrapper">${thumbnailImageHtml}</div>
-                                    <div class="portfolio-content">
-                                        <h3 class="portfolio-title">${p.prtfTtl}</h3>
+                                    <div class="outsourcing-thumbnail-wrapper">${thumbnailImageHtml}</div>
+                                    <div class="card-header">
+                                        <div class="card-status">${statusHtml}</div>
+                                        ${applicantAndPriceHtml}
+                                    </div>
+                                    <div class="card-content">
+                                        <h3 class="card-title">${p.prtfTtl}</h3>
                                         ${categoryHtml}
+                                        <p class="card-summary">${p.prtfCn}</p>
                                         <div class="portfolio-actions">
                                             <button class="btn-edit" data-prtf-cd="${p.prtfCd}">수정</button>
                                             <button class="btn-delete" data-prtf-cd="${p.prtfCd}">삭제</button>
-                                            <button class="btn-share" data-prtf-cd="${p.prtfCd}" data-prtf-ttl="${p.prtfTtl}">공유</button>
                                         </div>
-                                    </div>`;
-                                const card = $(`<div class="portfolio-item-card portfolio-modal-trigger" role="button" style="cursor: pointer;" data-contents-id="${p.prtfCd}">${cardContent}</div>`);
+                                    </div>
+                                    <div class="card-footer">${durationHtml}</div>`;
+                                    
+                                const card = $(`<div class="outsourcing-item-card portfolio-modal-trigger" role="button" data-contents-id="${p.prtfCd}">${cardContent}</div>`);
                                 grid.append(card);
                             });
                         } else {
@@ -429,19 +379,16 @@
             
             // 이벤트 위임을 사용하여 동적으로 생성된 카드에 이벤트 리스너 추가
             grid.on('click', '.portfolio-modal-trigger', function(e) {
-                // 액션 버튼(.portfolio-actions 내부의 요소)을 클릭한 경우는 모달을 띄우지 않음
                 if ($(e.target).closest('.portfolio-actions').length === 0) {
                     const contentsId = $(this).data('contents-id');
                     if (contentsId) {
-                        // ✨ openPortfolioModal -> openDetailModal로 함수 이름 변경
                         openDetailModal(contentsId);
                     }
                 }
             });
 
             grid.on('click', '.portfolio-actions button', function(e) {
-                // 이 이벤트 핸들러는 수정/삭제 버튼만 처리하므로 이벤트 전파를 막을 필요가 없습니다.
-                // 상위 .portfolio-modal-trigger의 이벤트 핸들러에서 이미 방지 로직이 있습니다.
+                e.stopPropagation(); // 버튼 클릭 시 모달이 열리는 것을 방지
                 const $button = $(this);
                 const prtfCd = $button.data('prtf-cd');
 
