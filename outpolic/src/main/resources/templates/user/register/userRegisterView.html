@@ -1,167 +1,285 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{user/layout/userRegisterLayout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{user/layout/userRegisterLayout}">
 
-	<head>
-		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
-		<title>회원가입</title>
-	</head>
+<head>
+<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+<title>회원가입</title>
+<style>
+	.modal-body ul {
+	  padding-left: 20px;
+	  margin-bottom: 15px;
+	}
+	
+	.modal-body ul li {
+	  line-height: 1.6;
+	  margin-bottom: 5px;
+	  font-size: 14px;
+	}
+	
+	.modal-body p {
+	  font-size: 15px;
+	  line-height: 1.6;
+	  margin-bottom: 15px;
+	}
+</style>
+</head>
 	<th:block layout:fragment="contents">
-        <div class="page-content pt-50 pb-150">
-            <div class="container">
-                <div class="row-userReg">
-                    <div class="col-xl-10 col-lg-10 col-md-12 m-auto">
-                        <div class="row-userReg">
-                                <div class="login_wrap widget-taber-content background-white">
-                                    <div class="padding_eight_all bg-white">
-                                        <div class="heading_s1">
-                                            <h2 class="mb-20 reg-ttl-ssy d-flex justify-content-center">회원 가입</h2>
-                                        </div>
-                                        <form class="register row g-3" method="post" th:action="@{/user/register}">
-										    <!-- 아이디 -->
-										    <div class="col-md-6">
-										        <label for="memberId" class="form-label">아이디</label>
-										        <input type="text" class="form-control" id="memberId" name="memberId" placeholder="아이디 (6~12자 영문/숫자)" required />
-										        <small id="memberIdMsg" class="form-text text-danger"></small>
-										    </div>
-										
-										    <!-- 비밀번호 -->
-										    <div class="col-md-6">
-										        <label for="memberPw" class="form-label">비밀번호</label>
-										        <input type="password" class="form-control" id="memberPw" name="memberPw" placeholder="비밀번호 (문자, 숫자 포함 8자 이상)" required />
-										        <small id="memberPwMsg" class="form-text text-danger"></small>
-										    </div>
-										
-										    <!-- 비밀번호 확인 -->
-										    <div class="col-md-6">
-										        <label for="userpwcheck" class="form-label">비밀번호 확인</label>
-										        <input type="password" class="form-control" id="userpwcheck" name="userpwcheck" placeholder="비밀번호 재입력" />
-										        <small id="pwCheckMsg" class="form-text text-danger"></small>
-										    </div>
-										
-										    <!-- 이름 -->
-										    <div class="col-md-6">
-										        <label for="memberName" class="form-label">이름</label>
-										        <input type="text" class="form-control" id="memberName" name="memberName" placeholder="이름" required />
-										        <small id="memberNameMsg" class="form-text text-danger"></small>
-										    </div>
-										
-										    <!-- 닉네임 -->
-										    <div class="col-md-6">
-										        <label for="memberNickname" class="form-label">닉네임</label>
-										        <input type="text" class="form-control" id="memberNickname" name="memberNickname" placeholder="닉네임" />
-										        <small id="memberNickNmMsg" class="form-text text-danger"></small>
-										    </div>
-										
-										    <!-- 전화번호 -->
-										    <div class="col-md-6">
-										        <label for="memberTelNo" class="form-label">전화번호</label>
-										        <input type="text" class="form-control" id="memberTelNo" name="memberTelNo" placeholder="010-1234-5678" required />
-										        <small id="memberTelNoMsg" class="form-text text-danger"></small>
-										    </div>
-										
-										    <!-- 이메일 -->
-										    <div class="col-md-6">
-										        <label for="memberEmail" class="form-label">이메일</label>
-										        <input type="email" class="form-control" id="memberEmail" name="memberEmail" placeholder="example@email.com" required />
-										        <small id="memberEmailMsg" class="form-text text-danger"></small>
-										    </div>
-										
-										    <!-- 생일 -->
-										    <div class="col-md-6">
-										        <label for="memberBirth" class="form-label">생일</label>
-										        <input type="date" class="form-control" id="memberBirth" name="memberBirth" required />
-										        <small id="memberBirthMsg" class="form-text text-danger"></small>
-										    </div>
-										
-										    <!-- 주소 영역 전체 col-12 -->
-										    <div class="col-12">
-										        <h5 class="text-secondary">주소</h5>
-										        <small id="memberAddressMsg" class="form-text text-danger mb-2 d-block"></small>
-										    </div>
-										
-										    <!-- 우편번호 + 버튼 -->
-										    <div class="col-md-6">
-										        <label for="sample4_postcode" class="form-label">우편번호</label>
-										        <input type="text" class="form-control" id="sample4_postcode" name="memberZip" placeholder="우편번호" readonly />
-										    </div>
-										    <div class="col-md-6 d-flex align-items-end">
-										        <button type="button" class="btn btn-outline-secondary" onclick="sample4_execDaumPostcode()">우편번호 찾기</button>
-										    </div>
-										
-										    <!-- 나머지 주소 -->
-										    <div class="col-12">
-										        <label for="sample4_roadAddress" class="form-label">도로명 주소</label>
-										        <input type="text" class="form-control" id="sample4_roadAddress" name="memberAddress" placeholder="도로명 주소" readonly />
-										    </div>
-										
-										    <div class="col-12">
-										        <label for="sample4_detailAddress" class="form-label">상세 주소</label>
-										        <input type="text" class="form-control" id="sample4_detailAddress" name="memberDAddress" placeholder="상세 주소" />
-										    </div>
-										
-										    <!-- 성별 -->
-										    <div class="col-12">
-										        <label class="form-label">성별</label>
-										        <div class="d-flex gap-3">
-										            <div class="form-check">
-										                <input class="form-check-input" type="radio" name="memberGender" id="male" value="남">
-										                <label class="form-check-label" for="male">남</label>
-										            </div>
-										            <div class="form-check">
-										                <input class="form-check-input" type="radio" name="memberGender" id="female" value="여">
-										                <label class="form-check-label" for="female">여</label>
-										            </div>
-										        </div>
-										    </div>
-										
-										    <!-- 약관 동의 -->
-										    <div class="col-12">
-										        <div class="form-check mb-2">
-										            <input class="form-check-input" type="checkbox" id="agree" required />
-										            <label class="form-check-label" for="agree">
-										                이용약관 및 개인정보처리방침에 동의합니다. (필수)
-										                <a href="/privacy-policy" class="ms-2 text-muted small">자세히 보기</a>
-										            </label>
-										        </div>
-										        <div class="form-check">
-										            <input type="hidden" id="hiddenMemberAgreeYN" name="memberAgreeYN" value="0" />
-										            <input class="form-check-input" type="checkbox" id="memberAgreeYN" />
-										            <label class="form-check-label" for="memberAgreeYN">
-										                정보성 SMS 수신에 동의합니다. (선택)
-										                <a href="/privacy-policy" class="ms-2 text-muted small">자세히 보기</a>
-										            </label>
-										        </div>
-										    </div>
-										
-										    <!-- 제출 버튼 -->
-										    <div class="col-12">
-										        <button type="button" id="btnSave" class="btn btn-primary w-100 fw-bold">가입 완료</button>
-										    </div>
-										
-										    <div class="col-12">
-										        <p class="text-muted small mt-2">
-										            <strong>Note:</strong> 입력하신 정보는 서비스 제공 및 계정 관리 외의 용도로 사용되지 않습니다.
-										        </p>
-										    </div>
-										
-										</form>	
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-	</th:block>        
+		<div class="page-content pt-50 pb-150">
+			<div class="container">
+				<div class="row-userReg">
+					<div class="col-xl-10 col-lg-10 col-md-12 m-auto">
+						<div class="row-userReg">
+							<div class="login_wrap widget-taber-content background-white">
+								<div class="padding_eight_all bg-white">
+									<div class="heading_s1">
+										<h2 class="mb-20 reg-ttl-ssy d-flex justify-content-center">회원
+											가입</h2>
+									</div>
+									<form class="register row g-3" method="post"
+										th:action="@{/user/register}">
+										<!-- 아이디 -->
+										<div class="col-md-6">
+											<label for="memberId" class="form-label">아이디</label> <input
+												type="text" class="form-control" id="memberId"
+												name="memberId" placeholder="아이디 (6~12자 영문/숫자)" required />
+											<small id="memberIdMsg" class="form-text text-danger"></small>
+										</div>
+	
+										<!-- 비밀번호 -->
+										<div class="col-md-6">
+											<label for="memberPw" class="form-label">비밀번호</label> <input
+												type="password" class="form-control" id="memberPw"
+												name="memberPw" placeholder="비밀번호 (문자, 숫자 포함 8자 이상)" required />
+											<small id="memberPwMsg" class="form-text text-danger"></small>
+										</div>
+	
+										<!-- 비밀번호 확인 -->
+										<div class="col-md-6">
+											<label for="userpwcheck" class="form-label">비밀번호 확인</label> <input
+												type="password" class="form-control" id="userpwcheck"
+												name="userpwcheck" placeholder="비밀번호 재입력" /> <small
+												id="pwCheckMsg" class="form-text text-danger"></small>
+										</div>
+	
+										<!-- 이름 -->
+										<div class="col-md-6">
+											<label for="memberName" class="form-label">이름</label> <input
+												type="text" class="form-control" id="memberName"
+												name="memberName" placeholder="이름" required /> <small
+												id="memberNameMsg" class="form-text text-danger"></small>
+										</div>
+	
+										<!-- 닉네임 -->
+										<div class="col-md-6">
+											<label for="memberNickname" class="form-label">닉네임</label> <input
+												type="text" class="form-control" id="memberNickname"
+												name="memberNickname" placeholder="닉네임" /> <small
+												id="memberNickNmMsg" class="form-text text-danger"></small>
+										</div>
+	
+										<!-- 전화번호 -->
+										<div class="col-md-6">
+											<label for="memberTelNo" class="form-label">전화번호</label> <input
+												type="text" class="form-control" id="memberTelNo"
+												name="memberTelNo" placeholder="010-1234-5678" required /> <small
+												id="memberTelNoMsg" class="form-text text-danger"></small>
+										</div>
+	
+										<!-- 이메일 -->
+										<div class="col-md-6">
+											<label for="memberEmail" class="form-label">이메일</label> <input
+												type="email" class="form-control" id="memberEmail"
+												name="memberEmail" placeholder="example@email.com" required />
+											<small id="memberEmailMsg" class="form-text text-danger"></small>
+										</div>
+	
+										<!-- 생일 -->
+										<div class="col-md-6">
+											<label for="memberBirth" class="form-label">생일</label> <input
+												type="date" class="form-control" id="memberBirth"
+												name="memberBirth" required /> <small id="memberBirthMsg"
+												class="form-text text-danger"></small>
+										</div>
+	
+										<!-- 주소 영역 전체 col-12 -->
+										<div class="col-12">
+											<h5 class="text-secondary">주소</h5>
+											<small id="memberAddressMsg"
+												class="form-text text-danger mb-2 d-block"></small>
+										</div>
+	
+										<!-- 우편번호 + 버튼 -->
+										<div class="col-md-6">
+											<label for="sample4_postcode" class="form-label">우편번호</label>
+											<input type="text" class="form-control" id="sample4_postcode"
+												name="memberZip" placeholder="우편번호" readonly />
+										</div>
+										<div class="col-md-6 d-flex align-items-end">
+											<button type="button" class="btn btn-outline-secondary"
+												onclick="sample4_execDaumPostcode()">우편번호 찾기</button>
+										</div>
+	
+										<!-- 나머지 주소 -->
+										<div class="col-12">
+											<label for="sample4_roadAddress" class="form-label">도로명
+												주소</label> <input type="text" class="form-control"
+												id="sample4_roadAddress" name="memberAddress"
+												placeholder="도로명 주소" readonly />
+										</div>
+	
+										<div class="col-12">
+											<label for="sample4_detailAddress" class="form-label">상세
+												주소</label> <input type="text" class="form-control"
+												id="sample4_detailAddress" name="memberDAddress"
+												placeholder="상세 주소" />
+										</div>
+	
+										<!-- 성별 -->
+										<div class="col-12">
+											<label class="form-label">성별</label>
+											<div class="d-flex gap-3">
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="memberGender" id="male" value="남"> <label
+														class="form-check-label" for="male">남</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="memberGender" id="female" value="여"> <label
+														class="form-check-label" for="female">여</label>
+												</div>
+											</div>
+										</div>
+	
+										<!-- 약관 동의 -->
+										<div class="col-12">
+											<div class="form-check mb-2">
+												<input class="form-check-input" type="checkbox" id="agree"
+													required /> <label class="form-check-label" for="agree">
+													이용약관 및 개인정보처리방침에 동의합니다. (필수) <a href="#"
+													class="ms-2 text-muted small" data-bs-toggle="modal"
+													data-bs-target="#termsModalRequired">자세히 보기</a>
+												</label>
+											</div>
+											<div class="form-check">
+												<input type="hidden" id="hiddenMemberAgreeYN"
+													name="memberAgreeYN" value="0" /> <input
+													class="form-check-input" type="checkbox" id="memberAgreeYN" />
+												<label class="form-check-label" for="memberAgreeYN">
+													정보성 SMS 수신에 동의합니다. (선택) <a href="#"
+													class="ms-2 text-muted small" data-bs-toggle="modal"
+													data-bs-target="#termsModalOptional">자세히 보기</a>
+												</label>
+											</div>
+										</div>
+	
+										<!-- 제출 버튼 -->
+										<div class="col-12">
+											<button type="button" id="btnSave"
+												class="btn btn-primary w-100 fw-bold">가입 완료</button>
+										</div>
+	
+										<div class="col-12">
+											<p class="text-muted small mt-2">
+												입력하신 정보는 서비스 제공 및 계정 관리 외의 용도로 사용되지
+												않습니다.
+											</p>
+										</div>
+	
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="termsModalRequired" tabindex="-1">
+			<div class="modal-dialog modal-lg modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">개인정보 수집 및 이용 동의 (필수)</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<div class="modal-body">
+					  <p><strong>1. 수집하는 개인정보 항목</strong></p>
+					  <ul>
+					    <li>회원 가입 시: 이름, 아이디, 비밀번호, 이메일, 휴대전화번호, 생년월일, 주소</li>
+					    <li>서비스 이용 과정에서 자동 수집: 접속 로그, 쿠키, IP 주소, 이용 기록 등</li>
+					  </ul>
+					
+					  <p><strong>2. 개인정보 수집 및 이용 목적</strong></p>
+					  <ul>
+					    <li>회원가입 의사 확인 및 본인 식별</li>
+					    <li>서비스 제공 및 이용자 맞춤형 콘텐츠 제공</li>
+					    <li>고객 문의 처리 및 공지사항 전달</li>
+					    <li>부정 이용 방지 및 분쟁 해결</li>
+					  </ul>
+					
+					  <p><strong>3. 개인정보 보유 및 이용 기간</strong></p>
+					  <ul>
+					    <li>회원 탈퇴 후 5일까지 보관 후 삭제</li>
+					    <li>관련 법령에 따라 일정 기간 보관할 수 있음 (예: 통신비밀보호법, 전자상거래법)</li>
+					  </ul>
+					
+					  <p><strong>4. 동의를 거부할 권리</strong></p>
+					  <p>귀하는 개인정보 수집 및 이용에 대한 동의를 거부할 권리가 있으며, 다만 이에 동의하지 않을 경우 회원가입이 제한될 수 있습니다.</p>
+					
+					  <p class="mt-3">※ 위 내용을 모두 읽고 이해하였으며, 이에 동의합니다.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<!-- 선택 약관 모달 -->
+		<div class="modal fade" id="termsModalOptional" tabindex="-1">
+			<div class="modal-dialog modal-lg modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">광고성 정보 수신 동의 (선택)</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<div class="modal-body">
+					  <p><strong>1. 수집 및 이용 항목</strong></p>
+					  <ul>
+					    <li>이름, 이메일 주소, 휴대전화번호</li>
+					  </ul>
+					
+					  <p><strong>2. 이용 목적</strong></p>
+					  <ul>
+					    <li>신규 서비스 및 이벤트 정보 안내</li>
+					    <li>할인 혜택 및 맞춤형 마케팅 정보 제공</li>
+					  </ul>
+					
+					  <p><strong>3. 보유 및 이용 기간</strong></p>
+					  <ul>
+					    <li>동의 철회 시 또는 회원 탈퇴 시까지</li>
+					  </ul>
+					
+					  <p><strong>4. 수신 방법</strong></p>
+					  <ul>
+					    <li>SMS, 이메일, 앱 푸시 알림 등</li>
+					  </ul>
+					
+					  <p><strong>5. 동의 거부 시 불이익</strong></p>
+					  <p>광고성 정보 수신 동의는 선택사항이며, 동의하지 않아도 서비스 이용에는 제한이 없습니다.</p>
+					
+					  <p class="mt-3">※ 위 내용에 동의하시면 체크박스를 선택해주세요.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</th:block>
 	<!-- 추가할 js file -->
 	<th:block layout:fragment="jsScript">
-	    <!-- JS 라이브러리 -->
-	    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+		<!-- JS 라이브러리 -->
+		<script
+			src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
 		<script src="/user/assets/js/userRegister.js"></script>
 		<script src="/common/assets/js/validate.js"></script>
 	</th:block>
-	
+
 </html>

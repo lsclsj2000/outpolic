@@ -79,7 +79,8 @@
 									           data-content-admin=${admin.contentAdmin},
 									           data-cs-admin=${admin.csAdmin},
 									           data-member-admin=${admin.memberAdmin},
-									           data-user-payment-admin=${admin.paymentAdmin}">
+									           data-user-payment-admin=${admin.paymentAdmin}"
+									           th:classappend="${admin.systemAdmin == 1} ? ' disabled' : ''">
 										수정
 									</a>
 								</td>
@@ -110,7 +111,7 @@
 						<tr>
 							<td class="px-4 text-center">시스템관리</td>
 							<td class="px-4 text-center">
-								<input type="checkbox" name="permissions" value="SYSTEM_ADMIN" />
+								<input type="checkbox" name="permissions" value="SYSTEM_ADMIN" disabled/>
 							</td>
 						</tr>
 						<tr>

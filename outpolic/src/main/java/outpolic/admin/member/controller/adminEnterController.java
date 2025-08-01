@@ -32,6 +32,12 @@ public class adminEnterController {
 	public String adminEnterList(Model model, HttpSession session) {
 		String adminCode = (String)session.getAttribute("SCD");
 		model.addAttribute("adminCode",adminCode);
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("MEMBER_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		var enterList = adminEnterService.getEnterList();
 		model.addAttribute("title", "기업목록");
 		model.addAttribute("enterList", enterList);

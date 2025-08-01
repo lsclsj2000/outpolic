@@ -1,5 +1,6 @@
 package outpolic.admin.login.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
@@ -79,9 +80,16 @@ public class adminLoginController {
 				session.setAttribute("SGrd", memberInfo.getGradeCode());
 				session.setAttribute("SCD", memberInfo.getMemberCode());
 				session.setAttribute("SACD", adminLoginDTO.getAdminCode());
+				
+				List<String> permissions = adminLoginService.getAdminPermissions(adminLoginDTO.getAdminCode());
+			    session.setAttribute("SPermissions", permissions);
+				
 				System.out.println("세션 저장 전 이름: " + memberInfo.getMemberName());
 				redirectAttributes.addFlashAttribute("success", "로그인에 성공하였습니다");
-				
+				System.out.println("[DEBUG] 로그인한 관리자 권한: " + permissions);
+				System.out.println("[DEBUG] adminLoginDTO: " + adminLoginDTO);
+				System.out.println("[DEBUG] adminLoginDTO.getAdminCode(): " + adminLoginDTO.getAdminCode());
+
 				adminLoginService.updateAdminMemberLoginDate(memberInfo);
 
 				return "redirect:/admin";
