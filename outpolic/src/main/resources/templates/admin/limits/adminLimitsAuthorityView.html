@@ -1,194 +1,300 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{admin/layout/adminLayoutMain}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/layout/adminLayoutMain}">
 
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
-	</head>
-	
-	
-	<th:block layout:fragment="contents">
-		<section class="content-main">
-	        <div class="content-header">
-	            <div>
-	                <h2 class="content-title card-title">회원 권한 설정</h2>
-	                <p>사용자 권한 설정</p>
-	            </div>
-	        </div>
-	        <!-- 검색 필터 -->
-	        <div class="card mb-4 search-filter-card">
-	            <div class="card-body search-filter-body">
-	                <div class="table-responsive">
-	                    <table class="search-filter-table">
-							<tbody>
-								<tr>
-									<th>기간검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>수정일자</option>
-										</select>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<span> ~ </span>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<button type="button" class="btn btn-sm btn-light">오늘</button>
-										<button type="button" class="btn btn-sm btn-light">어제</button>
-										<button type="button" class="btn btn-sm btn-light">일주일</button>
-										<button type="button" class="btn btn-sm btn-light">지난달</button>
-										<button type="button" class="btn btn-sm btn-light">1개월</button>
-										<button type="button" class="btn btn-sm btn-light">3개월</button>
-										<button type="button" class="btn btn-sm btn-light">전체</button>
-									</td>
-								</tr>
-								<tr>
-									<th>처리상태</th>
-									<td>
-										<div class="radio-group">
-											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
-											<label><input type="radio" name="levelSearch" value="general" /> USER</label>
-											<label><input type="radio" name="levelSearch" value="excellent" /> ENTER</label>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<div class="search-filter-buttons">
-							<button type="button" class="btn btn-primary">검색</button>
-							<button type="button" class="btn btn-secondary">초기화</button>
-						</div>
-	                </div>
-	            </div>
-	        </div>
-	        <div class="card mb-4">
-	            <div class="card-body">
-	                <div class="table-responsive">
-	                    <table class="table table-hover">
-	                        <thead>
-	                            <tr>
-	                                <th scope="col" class="start text-center col-1">No.</th>
-	                                <th scope="col" class="text-center col-1">회원코드</th>
-	                                <th scope="col" class="text-center col-1">회원등급</th>
-	                                <th scope="col" class="text-center col-1">회원상태</th>
-	                                <th scope="col" class="text-center col-1">포트폴리오</th>
-	                                <th scope="col" class="text-center col-1">외주 게시</th>
-	                                <th scope="col" class="text-center col-1">외주 신청</th>
-	                                <th scope="col" class="text-center col-1">외주</th>
-	                                <th scope="col" class="text-center col-1">채팅</th>
-	                                <th scope="col" class="text-center col-1">리뷰</th>
-	                                <th scope="col" class="end text-center col-1">Action</th>
-	                            </tr>
-	                        </thead>
-	                        <tbody>
-								<tr class="start pt-30"
-								    style="border:0px; border-bottom: solid 1px #ececec;"
-								    th:each="l, stat : ${adminLimitsAuthorityList}">
-								    
-								    <td class="start text-center" th:text="${stat.index + 1}">No.</td>
-								    <!-- <td scope="col" class="text-center" th:text="${l.limitsCode}">No.</td> -->
-								    <td scope="col" class="text-center" th:text="${l.authorityMemberCode}">회원코드</td>
-								    <td scope="col" class="text-center" th:text="${l.authorityGrdCode}">회원코드</td>
-								    <td scope="col" class="text-center" th:text="${l.authorityStcName}">회원상태</td>
-								    <td scope="col" class="text-center" th:switch="${l.authorityPortfolio}">
-								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
-	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
-								    </td>
-								    <td scope="col" class="text-center" th:switch="${l.authorityOsWrite}">
-								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
-	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
-								    </td>
-								    <td scope="col" class="text-center" th:switch="${l.authorityOsContract}">
-								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
-	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
-								    </td>
-								    <td scope="col" class="text-center" th:switch="${l.authorityOs}">
-								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
-	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
-								    </td>
-								    <td scope="col" class="text-center" th:switch="${l.authorityChat}">
-								    	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
-	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
-								    </td>
-								    <td scope="col" class="text-center" th:switch="${l.authorityReview}">
-	                                	<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
-	                                	<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
-	                                </td>
-								    <td scope="col" class="text-center">
-										<a class="btn btn-md rounded font-sm SR_open-popup-btn" th:data-declaration-code="${l.authorityMemberCode}">수정</a>
-									</td>
-								</tr>
-							</tbody>
-	                    </table>
-	                </div>
-	            </div>
-	        </div>
-	    </section>
-		
-		<div id="authorityModal" class="SR_modal">
-			<div class="SR_modal-content-wrapper">
-				<div class="SR_popup-header">
-					<h2>권한 관리</h2>
-					<button class="SR_close-button">&times;</button>
-				</div>
-				<form id="empowermentForm" method="post" th:action="@{/admin/empowerment/save}">
-					<input type="hidden" name="admCd" id="adminCodeInput" />
-					<table class="table table-hover mb-0">
-						<thead>
-							<tr>
-								<th class="px-4 text-center col-3">권한명</th>
-								<th class="px-4 text-center col-3">부여상태</th>
-							</tr>
-						</thead>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+</head>
+
+
+<th:block layout:fragment="contents">
+	<section class="content-main">
+		<div class="content-header">
+			<div>
+				<h2 class="content-title card-title">회원 권한 설정</h2>
+				<p>사용자 권한 설정</p>
+			</div>
+		</div>
+		<!-- 검색 필터 -->
+		<div class="card mb-4 search-filter-card">
+			<div class="card-body search-filter-body">
+				<div class="table-responsive">
+					<table class="search-filter-table">
 						<tbody>
 							<tr>
-								<td class="px-4 text-center">포트폴리오</td>
-								<td class="px-4 text-center">
-									<input type="checkbox" name="permissions" value="SYSTEM_ADMIN" />
+								<th>검색</th>
+								<td>
+									<div class="d-flex align-items-center gap-2">
+										<input type="text" id="searchInput" class="form-control"
+											placeholder="회원코드 검색" style="width: 300px;" />
+
+									</div>
 								</td>
 							</tr>
 							<tr>
-								<td class="px-4 text-center">외주 게시</td>
-								<td class="px-4 text-center">
-									<input type="checkbox" name="permissions" value="ADMIN_EMPOWERMENT" />
-								</td>
-							</tr>
-							<tr>
-								<td class="px-4 text-center">외주 신청</td>
-								<td class="px-4 text-center">
-									<input type="checkbox" name="permissions" value="CONTENT_ADMIN" />
-								</td>
-							</tr>
-							<tr>
-								<td class="px-4 text-center">외주</td>
-								<td class="px-4 text-center">
-									<input type="checkbox" name="permissions" value="CS_ADMIN" />
-								</td>
-							</tr>
-							<tr>
-								<td class="px-4 text-center">채팅</td>
-								<td class="px-4 text-center">
-									<input type="checkbox" name="permissions" value="MEMBER_ADMIN" />
-								</td>
-							</tr>
-							<tr>
-								<td class="px-4 text-center">리뷰</td>
-								<td class="px-4 text-center">
-									<input type="checkbox" name="permissions" value="USER_PAYMENT_ADMIN" />
+								<th>등급</th>
+								<td>
+									<div class="radio-group">
+										<label> <input type="radio" name="levelValue" 
+											value="all" checked /> 전체
+										</label> <label> <input type="radio" name="levelValue"
+											value="USER" /> USER
+										</label> <label> <input type="radio" name="levelValue"
+											value="ENTER" /> ENTER
+										</label>
+									</div>
 								</td>
 							</tr>
 						</tbody>
 					</table>
-					<div class="text-end mt-3">
-						<button type="submit" class="btn btn-primary">저장</button>
+					<div class="search-filter-buttons">
+						<button type="button" id="searchBtn" class="btn btn-primary">검색</button>
+						<button type="button" id="resetBtn" class="btn btn-secondary">초기화</button>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
-	</th:block>
+		<div class="card mb-4">
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th scope="col" class="start text-center col-1">No.</th>
+								<th scope="col" class="text-center col-1">회원코드</th>
+								<th scope="col" class="text-center col-1">회원등급</th>
+								<th scope="col" class="text-center col-1">회원상태</th>
+								<th scope="col" class="text-center col-1">포트폴리오</th>
+								<th scope="col" class="text-center col-1">외주 게시</th>
+								<th scope="col" class="text-center col-1">외주 신청</th>
+								<th scope="col" class="text-center col-1">외주</th>
+								<th scope="col" class="text-center col-1">채팅</th>
+								<th scope="col" class="text-center col-1">리뷰</th>
+								<th scope="col" class="end text-center col-1">Action</th>
+							</tr>
+						</thead>
+						<tbody id="adminAuthorityTableBody">
+							<tr class="start pt-30"
+								style="border: 0px; border-bottom: solid 1px #ececec;"
+								th:each="l, stat : ${adminLimitsAuthorityList}">
 
-    <th:block layout:fragment="jsScript">
-		<script>
+								<td class="start text-center" th:text="${stat.index + 1}">No.</td>
+								<!-- <td scope="col" class="text-center" th:text="${l.limitsCode}">No.</td> -->
+								<td scope="col" class="text-center"
+									th:text="${l.authorityMemberCode}">회원코드</td>
+								<td scope="col" class="text-center"
+									th:text="${l.authorityGrdCode}">회원코드</td>
+								<td scope="col" class="text-center"
+									th:text="${l.authorityStcName}">회원상태</td>
+								<td scope="col" class="text-center"
+									th:switch="${l.authorityPortfolio}"><span th:case="${'0'}"
+									class="badge rounded-pill alert-warning">0</span> <span
+									th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								</td>
+								<td scope="col" class="text-center"
+									th:switch="${l.authorityOsWrite}"><span th:case="${'0'}"
+									class="badge rounded-pill alert-warning">0</span> <span
+									th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								</td>
+								<td scope="col" class="text-center"
+									th:switch="${l.authorityOsContract}"><span
+									th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+									<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								</td>
+								<td scope="col" class="text-center" th:switch="${l.authorityOs}">
+									<span th:case="${'0'}" class="badge rounded-pill alert-warning">0</span>
+									<span th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								</td>
+								<td scope="col" class="text-center"
+									th:switch="${l.authorityChat}"><span th:case="${'0'}"
+									class="badge rounded-pill alert-warning">0</span> <span
+									th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								</td>
+								<td scope="col" class="text-center"
+									th:switch="${l.authorityReview}"><span th:case="${'0'}"
+									class="badge rounded-pill alert-warning">0</span> <span
+									th:case="${'1'}" class="badge rounded-pill alert-success">1</span>
+								</td>
+								<td scope="col" class="text-center"><a
+									class="btn btn-md rounded font-sm SR_open-popup-btn"
+									th:data-declaration-code="${l.authorityMemberCode}">수정</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div id="authorityModal" class="SR_modal">
+		<div class="SR_modal-content-wrapper">
+			<div class="SR_popup-header">
+				<h2>권한 관리</h2>
+				<button class="SR_close-button">&times;</button>
+			</div>
+			<form id="empowermentForm" method="post"
+				th:action="@{/admin/empowerment/save}">
+				<input type="hidden" name="admCd" id="adminCodeInput" />
+				<table class="table table-hover mb-0">
+					<thead>
+						<tr>
+							<th class="px-4 text-center col-3">권한명</th>
+							<th class="px-4 text-center col-3">부여상태</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="px-4 text-center">포트폴리오</td>
+							<td class="px-4 text-center"><input type="checkbox"
+								name="permissions" value="SYSTEM_ADMIN" /></td>
+						</tr>
+						<tr>
+							<td class="px-4 text-center">외주 게시</td>
+							<td class="px-4 text-center"><input type="checkbox"
+								name="permissions" value="ADMIN_EMPOWERMENT" /></td>
+						</tr>
+						<tr>
+							<td class="px-4 text-center">외주 신청</td>
+							<td class="px-4 text-center"><input type="checkbox"
+								name="permissions" value="CONTENT_ADMIN" /></td>
+						</tr>
+						<tr>
+							<td class="px-4 text-center">외주</td>
+							<td class="px-4 text-center"><input type="checkbox"
+								name="permissions" value="CS_ADMIN" /></td>
+						</tr>
+						<tr>
+							<td class="px-4 text-center">채팅</td>
+							<td class="px-4 text-center"><input type="checkbox"
+								name="permissions" value="MEMBER_ADMIN" /></td>
+						</tr>
+						<tr>
+							<td class="px-4 text-center">리뷰</td>
+							<td class="px-4 text-center"><input type="checkbox"
+								name="permissions" value="USER_PAYMENT_ADMIN" /></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="text-end mt-3">
+					<button type="submit" class="btn btn-primary">저장</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</th:block>
+
+<th:block layout:fragment="jsScript">
+	<script>
+		$(document).ready(function(){
+			// 검색기능
+			$('#searchBtn').click(function(){
+			//키워드랑 라디오버튼값 부여
+				const keyword = $('#searchInput').val().trim();
+				const levelValue = document.querySelector('input[name="levelValue"]:checked').value;
+				console.log("등급:", levelValue);
+				
+				//AJAX 조회
+				
+				$.ajax({
+					type : 'GET',
+					url : '/admin/getAuthority/search',
+					data : {keyword, levelValue},
+					success : function(data){
+						const $tbody = $('#adminAuthorityTableBody');
+						$tbody.empty();
+						const list = data;
+						const count = list.length;
+						const badgeClass = (value) => value == '1' ? 'badge rounded-pill alert-success' : 'badge rounded-pill alert-warning';
+						
+						if(data.length === 0 ){
+							$tbody.html('<tr><td colspan="11">검색 기록이 없습니다.</td></tr>');
+						}else{
+							data.forEach((log, index) => {
+								$tbody.append(`
+									<tr>
+										<td class="text-center">${index + 1}</td>
+								        <td class="text-center">${log.authorityMemberCode}</td>
+								        <td class="text-center">${log.authorityGrdCode}</td>
+								        <td class="text-center">${log.authorityStcName}</td>
+								        <td class="text-center"><span class="${badgeClass(log.authorityPortfolio)}">${log.authorityPortfolio}</span></td>
+								        <td class="text-center"><span class="${badgeClass(log.authorityOsWrite)}">${log.authorityOsWrite}</span></td>
+								        <td class="text-center"><span class="${badgeClass(log.authorityOsContract)}">${log.authorityOsContract}</span></td>
+								        <td class="text-center"><span class="${badgeClass(log.authorityOs)}">${log.authorityOs}</span></td>
+								        <td class="text-center"><span class="${badgeClass(log.authorityChat)}">${log.authorityChat}</span></td>
+								        <td class="text-center"><span class="${badgeClass(log.authorityReview)}">${log.authorityReview}</span></td>
+								        <td class="text-center">
+								          <a class="btn btn-md rounded font-sm SR_open-popup-btn" data-declaration-code="${log.authorityMemberCode}">
+								            수정
+								          </a>
+								        </td>
+									</tr>
+								`);
+							});
+							
+						}
+					},
+					error : function(){
+						alert('검색 중 오류가 발생했습니다.');
+					}
+					
+				});
+				
+			});
+			
+			$('#resetBtn').on('click', function() {
+			    // 1. 검색창 초기화
+			    $('#searchInput').val('');
+			
+			    // 2. 라디오 버튼 "전체"로 체크
+			    $('input[name="levelValue"][value="all"]').prop('checked', true);
+			
+			    // 3. Ajax로 전체 목록 다시 조회
+			    $.ajax({
+			        type: 'GET',
+			        url: '/admin/getAuthority/search',
+			        data: { keyword: '', levelValue: 'all' },  // 초기값
+			        success: function(data) {
+			            const $tbody = $('#adminAuthorityTableBody');
+			            $tbody.empty();
+			
+			            const badgeClass = (value) => value == '1' ? 'badge rounded-pill alert-success' : 'badge rounded-pill alert-warning';
+			
+			            if (data.length === 0) {
+			                $tbody.html('<tr><td colspan="11">검색 기록이 없습니다.</td></tr>');
+			            } else {
+			                data.forEach((log, index) => {
+			                    $tbody.append(`
+			                        <tr>
+			                            <td class="text-center">${index + 1}</td>
+			                            <td class="text-center">${log.authorityMemberCode}</td>
+			                            <td class="text-center">${log.authorityGrdCode}</td>
+			                            <td class="text-center">${log.authorityStcName}</td>
+			                            <td class="text-center"><span class="${badgeClass(log.authorityPortfolio)}">${log.authorityPortfolio}</span></td>
+			                            <td class="text-center"><span class="${badgeClass(log.authorityOsWrite)}">${log.authorityOsWrite}</span></td>
+			                            <td class="text-center"><span class="${badgeClass(log.authorityOsContract)}">${log.authorityOsContract}</span></td>
+			                            <td class="text-center"><span class="${badgeClass(log.authorityOs)}">${log.authorityOs}</span></td>
+			                            <td class="text-center"><span class="${badgeClass(log.authorityChat)}">${log.authorityChat}</span></td>
+			                            <td class="text-center"><span class="${badgeClass(log.authorityReview)}">${log.authorityReview}</span></td>
+			                            <td class="text-center">
+			                                <a class="btn btn-md rounded font-sm SR_open-popup-btn" data-declaration-code="${log.authorityMemberCode}">수정</a>
+			                            </td>
+			                        </tr>
+			                    `);
+			                });
+			            }
+			        },
+			        error: function() {
+			            alert('초기화 중 오류가 발생했습니다.');
+			        }
+			    });
+			});
+		});	
+		
+	</script>
+	<script>
 		document.addEventListener('DOMContentLoaded', function () {
 		    const modal = document.getElementById('authorityModal');
 		    const closeButton = document.querySelector('#authorityModal .SR_close-button');
@@ -292,5 +398,5 @@
 		    });
 		});
 		</script>
-	</th:block>
+</th:block>
 </html>

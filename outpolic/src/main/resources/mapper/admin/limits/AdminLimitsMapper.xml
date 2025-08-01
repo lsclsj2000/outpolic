@@ -84,6 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<update id="updateMemberAuthority" parameterType="outpolic.admin.limits.domain.AdminLimits">
+	/*회원 권한 업데이트*/
     UPDATE member_authority
     SET
         ma_portfolio = #{authorityPortfolio},
@@ -177,6 +178,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		order by
 			m.mbr_join_ymdt;
 	</select>
+	
+	<select id="selectAdminLimitAuthority" resultMap="AdminLimitsAuthorityMap">
+		/*회원 권한 검색 and 등급별 필터링*/
+		select * from member_authority ma inner join member m
+		on ma.mbr_cd = m.mbr_cd
+		inner join status_code sc on m.stc_cd = sc.stc_cd
+		<where>
+			<if test="keyword != null and keyword != ''">
+				ma.mbr_cd LIKE CONCAT('%', #{keyword},'%')
+			</if>
+			<if test="levelValue != null and levelValue != '' and levelValue != 'all'">
+				and m.grd_cd = #{levelValue}
+			</if>
+		</where>
+	</select>
+	
 	
 	<select id="getAdminLimitsList" resultMap="AdminLimitsTypeMap">
 		/* 제재 내역 조회 */
@@ -273,6 +290,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		order by
 			lt.lt_reg_ymdt;
 	</select>
+	
 	
 	<insert id="insertLimitsPeriod" parameterType="outpolic.admin.limits.domain.AdminLimits">
 		/* 제재 기간 등록 */
