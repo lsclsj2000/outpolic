@@ -82,6 +82,8 @@
 		        function updateAllUI() {
 		            let totalAmount = 0;
 		            let selectedProductRow = null;
+		            
+		            const mileageRow = document.getElementById('mileage-row');
 		
 		            allProductRows.forEach(row => {
 		                const quantityInput = row.querySelector('.qty-val');
@@ -106,6 +108,15 @@
 		            });
 		
 		            totalPriceEl.textContent = formatCurrency(totalAmount);
+		            
+		            if (selectedProductRow) {
+		                mileageRow.style.display = 'table-row'; // 상품 선택 시 보이기
+		                mileageInput.disabled = false;
+		            } else {
+		                mileageRow.style.display = 'none'; // 상품 미선택 시 숨기기
+		                mileageInput.disabled = true;
+		                mileageInput.value = '';
+		            }
 		            
 		            // 마일리지 적용 로직은 별도로 분리하여 UI 업데이트만 담당
 		            applyMileage(totalAmount);
@@ -216,7 +227,7 @@
 								        th:classappend="${product.gdsType == '구독권'} ? 'subs-product' : 'ticket-product'"
 								        th:data-price="${product.gdsAmt}"
 								        th:data-unit-value="${product.gdsPeriodQuantity}"
-								        th:data-unit-name="${product.gdsUnit}">
+								        th:data-unit-name="${product.gdsUnit}" style="border:none">
 								
 								        <td class="product-des product-name">
 								            <h6 class="mb-5" style="text-align: center;" th:text="${product.gdsNm}"></h6>
@@ -264,11 +275,11 @@
 											<td class="cart_total_label"><h6 class="text-muted">보유 마일리지</h6></td>
 											<td class="cart_total_amount"><h5 class="text-heading text-end" id="availableMileage" th:text="${#numbers.formatDecimal(availableMileage, 0, 'COMMA', 0, 'POINT')}"></h5></td>
 										</tr>
-										<tr style="border: 0px;">
+										<tr id="mileage-row" style="border: 0px;">
 											<td class="cart_total_label" colspan="2">
 												<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
 													<span><h6>사용</h6></span> 
-													<input type="text" style="padding-bottom: 3px; width: 87%; height: 40px; border: none; outline: none; text-align: right;"
+													<input type="number" style="padding-bottom: 3px; width: 87%; height: 40px; border: none; outline: none; text-align: right;"
 														   id="usedMileage" name="usedMileage" inputmode="numeric" placeholder="0"> 
 													<span><h6>원</h6></span>
 												</div>

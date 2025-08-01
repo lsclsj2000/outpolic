@@ -11,179 +11,154 @@
 <body>
 	<th:block layout:fragment="contents">
 		<script th:inline="javascript">
-	        // --- 1. 결제 요청 로직 (Toss Payments) ---
-	        document.addEventListener("DOMContentLoaded", function () {
-	            const tossPayments = TossPayments("test_ck_ORzdMaqN3wPvMzNqXLNqV5AkYXQG");
-	            const paymentButton = document.getElementById("payment-button");
-	            
-	            paymentButton.addEventListener("click", function (e) {
-	                e.preventDefault();
-	                const memberCode = /*[[${session.SCD}]]*/ null;
-	
-	                if (!memberCode) {
-	                    alert("로그인 후 이용해주세요.");
-	                    window.location.href = '/login';
-	                    return;
+	    // --- 1. 결제 요청 로직 (Toss Payments) ---
+	    document.addEventListener("DOMContentLoaded", function () {
+	        const tossPayments = TossPayments("test_ck_ORzdMaqN3wPvMzNqXLNqV5AkYXQG");
+	        const paymentButton = document.getElementById("payment-button");
+	        
+	        paymentButton.addEventListener("click", function (e) {
+	            e.preventDefault();
+	            const memberCode = /*[[${session.SCD}]]*/ null;
+	            if (!memberCode) {
+	                alert("로그인 후 이용해주세요.");
+	                window.location.href = '/login';
+	                return;
+	            }
+	            let selectedProductRow, orderCount = 0;
+	            document.querySelectorAll('.product-row').forEach(row => {
+	                const quantity = parseInt(row.querySelector('.qty-val').value, 10);
+	                if (quantity > 0) {
+	                    selectedProductRow = row;
+	                    orderCount = quantity;
 	                }
-	                
-	                let selectedProductRow;
-	                let orderCount = 0;
-	                document.querySelectorAll('.product-row').forEach(row => {
-	                    const quantity = parseInt(row.querySelector('.qty-val').value, 10);
-	                    if (quantity > 0) {
-	                        selectedProductRow = row;
-	                        orderCount = quantity;
-	                    }
-	                });
-	                
-	                if (!selectedProductRow) {
-	                    alert("상품 수량을 1개 이상 선택해주세요.");
-	                    return;
-	                }
-	
-	                const grdCd = selectedProductRow.querySelector('input[name="gdsCd"]').value;
-	                const usedMileage = document.getElementById('usedMileage').value || 0;
-	                const originAmount = parseInt(selectedProductRow.getAttribute('data-price')) * orderCount;
-	                const finalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[1];
-	                const finalAmount = parseInt(finalPriceEl.textContent.replace(/[^\d]/g, "")) || 0;
-	
-	                tossPayments.requestPayment("카드", {
-	                    amount: finalAmount,
-	                    orderId: "ORDER_" + Date.now(),
-	                    orderName: "기업용 상품",
-	                    customerName: "기업고객",
-	                    successUrl: `http://localhost/enter/paymentSuccess?usedMileage=${usedMileage}&grdCd=${grdCd}&orderCount=${orderCount}&originAmount=${originAmount}&mbrCd=${memberCode}`,
-	                    failUrl: "http://localhost/enter/paymentFail"
-	                });
+	            });
+	            if (!selectedProductRow) {
+	                alert("상품 수량을 1개 이상 선택해주세요.");
+	                return;
+	            }
+	            const grdCd = selectedProductRow.querySelector('input[name="gdsCd"]').value;
+	            const usedMileage = document.getElementById('usedMileage').value || 0;
+	            const originAmount = parseInt(selectedProductRow.getAttribute('data-price')) * orderCount;
+	            const finalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[1];
+	            const finalAmount = parseInt(finalPriceEl.textContent.replace(/[^\d]/g, "")) || 0;
+
+	            tossPayments.requestPayment("카드", {
+	                amount: finalAmount,
+	                orderId: "ORDER_" + Date.now(),
+	                orderName: "기업용 상품",
+	                customerName: "기업고객",
+	                successUrl: `http://localhost/enter/paymentSuccess?usedMileage=${usedMileage}&grdCd=${grdCd}&orderCount=${orderCount}&originAmount=${originAmount}&mbrCd=${memberCode}`,
+	                failUrl: "http://localhost/enter/paymentFail"
 	            });
 	        });
+	    });
 	    </script>
 	    <script>
-		    // --- 2. 화면 UI 및 금액 계산 로직 (최종 수정본) ---
-		    document.addEventListener("DOMContentLoaded", function () {
-		        const allProductRows = document.querySelectorAll(".product-row");
-		        const totalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[0];
-		        const finalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[1];
-		        const mileageInput = document.getElementById('usedMileage');
-		        const resetBtn = document.getElementById("reset-selection");
-		        const availableMileageEl = document.getElementById('availableMileage');
-		
-		        function getVal(input) {
-		            if (!input) return 0;
-		            const val = parseInt(input.value);
-		            return isNaN(val) ? 0 : val;
-		        }
-		        
-		        function formatCurrency(num) {
-		            return "₩" + num.toLocaleString("ko-KR");
-		        }
-		
-		        function updateAllUI() {
-		            let totalAmount = 0;
-		            let selectedProductRow = null;
-		
-		            allProductRows.forEach(row => {
-		                const quantityInput = row.querySelector('.qty-val');
-		                const quantity = getVal(quantityInput);
-		                
-		                if (quantity > 0) {
-		                    selectedProductRow = row;
-		                }
-		                
-		                const unitPrice = parseInt(row.getAttribute('data-price'), 10);
-		                const unitValue = parseInt(row.getAttribute('data-unit-value'), 10);
-		                const unitName = row.getAttribute('data-unit-name');
-		                
-		                const subtotal = quantity * unitPrice;
-		                const displayUnitEl = row.querySelector(".days-display, .times-display");
-		                const subtotalEl = row.querySelectorAll(".text-body")[1];
-		
-		                if (subtotalEl) subtotalEl.textContent = formatCurrency(subtotal);
-		                if (displayUnitEl) displayUnitEl.innerHTML = (quantity > 0 ? (quantity * unitValue) : '0') + ` <span>${unitName}</span>`;
-		
-		                totalAmount += subtotal;
-		            });
-		
-		            totalPriceEl.textContent = formatCurrency(totalAmount);
-		            applyMileage(totalAmount);
-		
-		            allProductRows.forEach(row => {
-		                const quantityInput = row.querySelector('.qty-val');
-		                if (selectedProductRow) {
-		                    if (row === selectedProductRow) {
-		                        row.classList.remove('blur-block');
-		                        quantityInput.disabled = false;
-		                    } else {
-		                        row.classList.add('blur-block');
-		                        quantityInput.disabled = true;
-		                    }
-		                } else {
-		                    row.classList.remove('blur-block');
-		                    quantityInput.disabled = false;
-		                }
-		            });
-		        }
-		        
-		        function applyMileage(totalAmount) {
-		            const usedMileage = getVal(mileageInput);
-		            const finalAmount = Math.max(0, totalAmount - usedMileage);
-		            finalPriceEl.textContent = formatCurrency(finalAmount);
-		        }
-		
-		        document.querySelectorAll(".qty-up, .qty-down").forEach((btn) => {
-		            btn.addEventListener("click", (e) => {
-		                e.preventDefault();
-		                const input = btn.closest(".detail-qty")?.querySelector(".qty-val");
-		                if (!input) return;
-		            
-		                let current = getVal(input);
-		                if (btn.classList.contains("qty-up")) {
-		                    current++;
-		                } else {
-		                    current = Math.max(0, current - 1);
-		                }
-		                input.value = current;
-		            
-		                input.dispatchEvent(new Event("input"));
-		            });
-		        });
-		        
-		        document.querySelectorAll('.qty-val').forEach(input => {
-		            input.addEventListener('input', updateAllUI);
-		        });
-		
-		        // [핵심] 마일리지 입력 시 유효성 검증 로직 추가
-		        mileageInput?.addEventListener("input", () => {
-		            const availableMileage = parseInt(availableMileageEl.textContent.replace(/[^\d]/g, '')) || 0;
-		            const maxMileageLimit = 5000;
-		            let usedMileage = getVal(mileageInput);
-		            const totalAmount = parseInt(totalPriceEl.textContent.replace(/[^\d]/g, '')) || 0;
-		
-		            const maxAllowedMileage = Math.min(availableMileage, maxMileageLimit);
-		
-		            if (usedMileage > maxAllowedMileage) {
-		                alert(`마일리지는 최대 ${maxAllowedMileage.toLocaleString()}원까지 사용 가능합니다.`);
-		                mileageInput.value = maxAllowedMileage;
-		            }
-		            
-		            if(usedMileage > totalAmount) {
-		                alert('결제 상품 금액보다 많은 마일리지를 사용할 수 없습니다.');
-		                mileageInput.value = totalAmount;
-		            }
-		            
-		            applyMileage(totalAmount);
-		        });
-		        
-		        resetBtn?.addEventListener("click", (e) => {
-		              e.preventDefault();
-		              const ok = confirm("선택한 상품을 모두 초기화할까요?\n확인을 누르면 페이지가 새로고침됩니다.");
-		              if (ok) {
-		                location.reload();
-		              }
-		        });
-		
-		        updateAllUI();
-		    });
+	    // --- 2. 화면 UI 및 금액 계산 로직 (수정된 최종본) ---
+	    document.addEventListener("DOMContentLoaded", function () {
+	        const allProductRows = document.querySelectorAll(".product-row");
+	        if (allProductRows.length === 0) return;
+
+	        const totalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[0];
+	        const finalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[1];
+	        const mileageInput = document.getElementById('usedMileage');
+	        const resetBtn = document.getElementById("reset-selection");
+	        const availableMileageEl = document.getElementById('availableMileage');
+	        const mileageRow = document.getElementById('mileage-row');
+
+	        function getVal(input) {
+	            if (!input) return 0;
+	            const val = parseInt(input.value);
+	            return isNaN(val) ? 0 : val;
+	        }
+	        function formatCurrency(num) { return "₩" + num.toLocaleString("ko-KR"); }
+	        function applyMileage(totalAmount) {
+	            const usedMileage = getVal(mileageInput);
+	            const finalAmount = Math.max(0, totalAmount - usedMileage);
+	            finalPriceEl.textContent = formatCurrency(finalAmount);
+	        }
+
+	        function updateAllUI() {
+	            let totalAmount = 0;
+	            let selectedProductRow = null;
+	            allProductRows.forEach(row => {
+	                const quantityInput = row.querySelector('.qty-val');
+	                const quantity = getVal(quantityInput);
+	                if (quantity > 0) { selectedProductRow = row; }
+	                const unitPrice = parseInt(row.getAttribute('data-price'), 10) || 0;
+	                const unitValue = parseInt(row.getAttribute('data-unit-value'), 10) || 0;
+	                const unitName = row.getAttribute('data-unit-name') || '';
+	                const subtotal = quantity * unitPrice;
+	                const displayUnitEl = row.querySelector(".days-display, .times-display");
+	                const subtotalEl = row.querySelectorAll(".text-body")[1];
+	                if (subtotalEl) subtotalEl.textContent = formatCurrency(subtotal);
+	                if (displayUnitEl) displayUnitEl.innerHTML = (quantity > 0 ? (quantity * unitValue) : '0') + ` <span>${unitName}</span>`;
+	                totalAmount += subtotal;
+	            });
+	            totalPriceEl.textContent = formatCurrency(totalAmount);
+	            if (selectedProductRow) {
+	                mileageRow.style.display = 'table-row';
+	                mileageInput.disabled = false;
+	            } else {
+	                mileageRow.style.display = 'none';
+	                mileageInput.disabled = true;
+	                mileageInput.value = '';
+	            }
+	            applyMileage(totalAmount);
+	            allProductRows.forEach(row => {
+	                const quantityInput = row.querySelector('.qty-val');
+	                if (selectedProductRow) {
+	                    if (row === selectedProductRow) {
+	                        row.classList.remove('blur-block');
+	                        quantityInput.disabled = false;
+	                    } else {
+	                        row.classList.add('blur-block');
+	                        quantityInput.disabled = true;
+	                    }
+	                } else {
+	                    row.classList.remove('blur-block');
+	                    quantityInput.disabled = false;
+	                }
+	            });
+	        }
+	        
+	        mileageInput?.addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); });
+	        document.querySelectorAll('.qty-val').forEach(input => { input.addEventListener('input', updateAllUI); });
+	        document.querySelectorAll(".qty-up, .qty-down").forEach((btn) => {
+	            btn.addEventListener("click", (e) => {
+	                e.preventDefault();
+	                const input = btn.closest(".detail-qty")?.querySelector(".qty-val");
+	                if (!input) return;
+	                let current = getVal(input);
+	                if (btn.classList.contains("qty-up")) { current++; } 
+	                else { current = Math.max(0, current - 1); }
+	                input.value = current;
+	                input.dispatchEvent(new Event("input"));
+	            });
+	        });
+	        mileageInput?.addEventListener("input", () => {
+	            const availableMileage = parseInt(availableMileageEl.textContent.replace(/[^\d]/g, '')) || 0;
+	            const maxMileageLimit = 5000;
+	            let usedMileage = getVal(mileageInput);
+	            const totalAmount = parseInt(totalPriceEl.textContent.replace(/[^\d]/g, '')) || 0;
+	            const maxAllowedMileage = Math.min(availableMileage, maxMileageLimit);
+	            if (usedMileage > maxAllowedMileage) {
+	                alert(`마일리지는 최대 ${maxAllowedMileage.toLocaleString()}점까지 사용 가능합니다.`);
+	                mileageInput.value = maxAllowedMileage;
+	            }
+	            if(usedMileage > totalAmount) {
+	                alert('결제 상품 금액보다 많은 마일리지를 사용할 수 없습니다.');
+	                mileageInput.value = totalAmount;
+	            }
+	            applyMileage(totalAmount);
+	        });
+	        resetBtn?.addEventListener("click", (e) => {
+	              e.preventDefault();
+	              const ok = confirm("선택한 상품을 모두 초기화할까요?\n확인을 누르면 페이지가 새로고침됩니다.");
+	              if (ok) { location.reload(); }
+	        });
+	        updateAllUI();
+	    });
 	    </script>
 		<form id="paymentForm" method="get">
 			<div class="d-flex justify-content-center col-lg-10 m-auto">
@@ -206,7 +181,7 @@
 								        th:classappend="${product.gdsType == '구독권'} ? 'subs-product' : 'ticket-product'"
 								        th:data-price="${product.gdsAmt}"
 								        th:data-unit-value="${product.gdsPeriodQuantity}"
-								        th:data-unit-name="${product.gdsUnit}">
+								        th:data-unit-name="${product.gdsUnit}" style="border:0px;">
 								
 								        <td class="product-des product-name">
 								            <h6 class="mb-5" style="text-align: center;" th:text="${product.gdsNm}"></h6>
@@ -219,9 +194,9 @@
 								            <div class="detail-extralink mr-15">
 								                <div class="detail-qty border radius">
 								                    <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-								                    <input type="text"
+								                    <input type="number"
 								                           th:id="${product.gdsType == '구독권'} ? 'subsQuantity' : 'ticketQuantity'"
-								                           name="quantity" class="qty-val" value="0" min="1">
+								                           name="quantity" class="qty-val" value="0" min="0">
 								                    <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
 								                </div>
 								            </div>
@@ -254,12 +229,12 @@
 											<td class="cart_total_label"><h6 class="text-muted">보유 마일리지</h6></td>
 											<td class="cart_total_amount"><h5 class="text-heading text-end" id="availableMileage" th:text="${#numbers.formatDecimal(availableMileage, 0, 'COMMA', 0, 'POINT')}"></h5></td>
 										</tr>
-										<tr style="border: 0px;">
+										<tr style="border: 0px;" id="mileage-row">
 											<td class="cart_total_label" colspan="2">
 												<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
 													<span><h6>사용</h6></span> 
-													<input type="text" style="padding-bottom: 3px; width: 87%; height: 40px; border: none; outline: none; text-align: right;"
-														   id="usedMileage" name="usedMileage" inputmode="numeric" placeholder="0"> 
+													<input type="number" style="padding-bottom: 3px; width: 87%; height: 40px; border: none; outline: none; text-align: right;"
+														   id="usedMileage" name="usedMileage" placeholder="0"> 
 													<span><h6>원</h6></span>
 												</div>
 											</td>
