@@ -219,7 +219,7 @@ public class AdminDeclarationController {
 	}
 	
 	@GetMapping("/adminDeclaration")
-	public String adminDeclarationView(
+	public String adminDeclarationView(	
 	    @RequestParam(required = false) String keywordField,
 	    @RequestParam(required = false) String keyword,
 	    @RequestParam(required = false) String dateField,
@@ -229,7 +229,7 @@ public class AdminDeclarationController {
 	    Model model
 	) {
 		// 신고 내역 조회 - 필터
-	    Map<String, Object> searchParams = new HashMap<>();
+		Map<String, Object> searchParams = new HashMap<>();
 	    searchParams.put("keywordField", keywordField);
 	    searchParams.put("keyword", keyword);
 	    searchParams.put("dateField", dateField);
@@ -240,7 +240,59 @@ public class AdminDeclarationController {
 	    List<AdminDeclaration> adminDeclarationList = adminDeclarationService.getAdminDeclarationListFiltered(searchParams);
 	    model.addAttribute("adminDeclarationList", adminDeclarationList);
 
+	    // ✅ 검색 조건 유지용 값 전달
+	    model.addAttribute("keywordField", keywordField);
+	    model.addAttribute("keyword", keyword);
+	    model.addAttribute("dateField", dateField);
+	    model.addAttribute("startDate", startDate);
+	    model.addAttribute("endDate", endDate);
+	    model.addAttribute("status", status);
+
 	    return "admin/declaration/adminDeclarationView";
+	}
+	
+	@GetMapping("/adminDeclarationResourcesFilter")
+	public String adminDeclarationResourcesView(
+	    @RequestParam(required = false) String resourceType,
+	    @RequestParam(required = false) String searchField,
+	    @RequestParam(required = false) String searchKeyword,
+	    @RequestParam(required = false) String status,
+	    @RequestParam(required = false) String dateField,
+	    @RequestParam(required = false) String startDate,
+	    @RequestParam(required = false) String endDate,
+	    Model model
+	) {
+		// 신고 자원 조회 - 필터
+	    Map<String, Object> paramMap = new HashMap<>();
+	    paramMap.put("searchField", searchField);
+	    paramMap.put("searchKeyword", searchKeyword);
+	    paramMap.put("status", status);
+	    paramMap.put("dateField", dateField);
+	    paramMap.put("startDate", startDate);
+	    paramMap.put("endDate", endDate);
+
+	    // 자원 종류에 따라 분기
+	    if ("type".equals(resourceType)) {
+	        List<AdminDeclaration> list = adminDeclarationService.getFilteredDeclarationTypeList(paramMap);
+	        model.addAttribute("adminDeclarationTypeList", list);
+	    } else if ("reason".equals(resourceType)) {
+	        List<AdminDeclaration> list = adminDeclarationService.getFilteredDeclarationReasonList(paramMap);
+	        model.addAttribute("adminDeclarationReasonList", list);
+	    } else if ("result".equals(resourceType)) {
+	        List<AdminDeclaration> list = adminDeclarationService.getFilteredDeclarationResultList(paramMap);
+	        model.addAttribute("adminDeclarationResultList", list);
+	    }
+
+	    // 검색 조건 다시 넘겨줌 (상태 유지)
+	    model.addAttribute("resourceType", resourceType);
+	    model.addAttribute("searchField", searchField);
+	    model.addAttribute("searchKeyword", searchKeyword);
+	    model.addAttribute("status", status);
+	    model.addAttribute("dateField", dateField);
+	    model.addAttribute("startDate", startDate);
+	    model.addAttribute("endDate", endDate);
+
+	    return "admin/declaration/adminDeclarationResourcesView";
 	}
 
 }

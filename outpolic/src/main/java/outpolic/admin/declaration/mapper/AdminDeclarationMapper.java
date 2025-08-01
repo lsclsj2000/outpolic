@@ -12,6 +12,8 @@ import outpolic.admin.declaration.domain.SubmissionAttachment;
 @Mapper
 public interface AdminDeclarationMapper {
 	
+	
+	
 	// 신고 처리 내역 첨부파일 목록 조회
 	List<SubmissionAttachment> getSubmissionAttachmentsByDeclarationCode(@Param("declarationCode") String declarationCode);
 	
@@ -80,4 +82,9 @@ public interface AdminDeclarationMapper {
 	
 	// 신고 내역 조회 - 필터
     List<AdminDeclaration> getAdminDeclarationListFiltered(Map<String, Object> searchParams);
+    
+    // 신고 자원 조회 - 필터
+    List<AdminDeclaration> getFilteredDeclarationTypeList(Map<String, Object> paramMap);
+    List<AdminDeclaration> getFilteredDeclarationReasonList(Map<String, Object> paramMap);
+    List<AdminDeclaration> getFilteredDeclarationResultList(Map<String, Object> paramMap);
 }

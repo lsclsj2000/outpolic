@@ -82,8 +82,158 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result column="sa_reg_ymdt"   property="saRegYmdt"/>
     </resultMap>
     
+    <select id="getFilteredDeclarationResultList" resultMap="AdminDeclarationResultCodeMap" parameterType="map">
+		/* 신고 처리 결과 코드 조회 - 필터 */
+		select
+			drc.drc_cd as drc_cd,
+			drc.drc_nm as drc_nm,
+			drc.drc_expln as drc_expln,
+			drc.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			drc.drc_reg_adm_cd as drc_reg_adm_cd,
+			drc.drc_reg_ymdt as drc_reg_ymdt,
+			drc.drc_mdfcn_adm_cd as drc_mdfcn_adm_cd,
+			drc.drc_mdfcn_ymdt as drc_mdfcn_ymdt
+		from
+			declaration_result_code drc 
+			left join status_code sc on drc.stc_cd = sc.stc_cd
+		<where>
+		  <if test="searchField != null and searchKeyword != null and searchKeyword != ''">
+		    <choose>
+		      <when test="searchField == 'name'">
+		        drc.drc_nm LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		      <when test="searchField == 'code'">
+		        drc.drc_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		      <when test="searchField == 'expln'">
+		        drc.drc_expln LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		      <when test="searchField == 'writer'">
+		        drc.drc_reg_adm_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		    </choose>
+		  </if>
+		  <if test="status != null and status != ''">
+		    AND drc.stc_cd = #{status}
+		  </if>
+		  <if test="dateField != null and startDate != null and endDate != null and startDate != '' and endDate != ''">
+		    <choose>
+		      <when test="dateField == 'reg'">
+		        AND DATE(drc.drc_reg_ymdt) BETWEEN #{startDate} AND #{endDate}
+		      </when>
+		      <when test="dateField == 'mod'">
+		        AND DATE(drc.drc_mdfcn_ymdt) BETWEEN #{startDate} AND #{endDate}
+		      </when>
+		    </choose>
+		  </if>
+		</where>
+		ORDER BY drc.drc_reg_ymdt DESC
+	</select>
+    
+    <select id="getFilteredDeclarationReasonList" resultMap="AdminDeclarationReasonMap" parameterType="map">
+    	/* 신고 사유 조회 - 필터 */
+		select
+			dr.dr_cd as dr_cd,
+			dr.dt_cd as dt_cd,
+			dt.dt_nm as dt_nm,
+			dr.dr_nm as dr_nm,
+			dr.dr_expln as dr_expln,
+			dr.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			dr.dr_reg_adm_cd as dr_reg_adm_cd,
+			dr.dr_reg_ymdt as dr_reg_ymdt,
+			dr.dr_mdfcn_adm_cd as dr_mdfcn_adm_cd,
+			dr.dr_mdfcn_ymdt as dr_mdfcn_ymdt
+		from
+			declaration_reason dr 
+			left join declaration_type dt on dr.dt_cd = dt.dt_cd
+			left join status_code sc on dr.stc_cd = sc.stc_cd
+		<where>
+		  <if test="searchField != null and searchKeyword != null and searchKeyword != ''">
+		    <choose>
+		      <when test="searchField == 'name'">
+		        dr.dr_nm LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		      <when test="searchField == 'code'">
+		        dr.dr_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		      <when test="searchField == 'expln'">
+		        dr.dr_expln LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		      <when test="searchField == 'writer'">
+		        dr.dr_reg_adm_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		    </choose>
+		  </if>
+		  <if test="status != null and status != ''">
+		    AND dr.stc_cd = #{status}
+		  </if>
+		  <if test="dateField != null and startDate != null and endDate != null and startDate != '' and endDate != ''">
+		    <choose>
+		      <when test="dateField == 'reg'">
+		        AND DATE(dr.dr_reg_ymdt) BETWEEN #{startDate} AND #{endDate}
+		      </when>
+		      <when test="dateField == 'mod'">
+		        AND DATE(dr.dr_mdfcn_ymdt) BETWEEN #{startDate} AND #{endDate}
+		      </when>
+		    </choose>
+		  </if>
+		</where>
+		ORDER BY dr.dr_reg_ymdt DESC
+	</select>
+    
+    <select id="getFilteredDeclarationTypeList" resultMap="AdminDeclarationTypeMap" parameterType="map">
+		/* 신고 타입 조회 - 필터 */
+		select
+			dt.dt_cd as dt_cd,
+			dt.dt_nm as dt_nm,
+			dt.dt_expln as dt_expln,
+			dt.stc_cd as stc_cd,
+			sc.stc_nm as stc_nm,
+			dt.dt_reg_adm_cd as dt_reg_adm_cd,
+			dt.dt_reg_ymdt as dt_reg_ymdt,
+			dt.dt_mdfcn_adm_cd as dt_mdfcn_adm_cd,
+			dt.dt_mdfcn_ymdt as dt_mdfcn_ymdt
+		from
+			declaration_type dt 
+			left join status_code sc on dt.stc_cd = sc.stc_cd
+		<where>
+		  <if test="searchField != null and searchKeyword != null and searchKeyword != ''">
+		    <choose>
+		      <when test="searchField == 'name'">
+		        dt.dt_nm LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		      <when test="searchField == 'code'">
+		        dt.dt_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		      <when test="searchField == 'expln'">
+		        dt.dt_expln LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		      <when test="searchField == 'writer'">
+		        dt.dt_reg_adm_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+		      </when>
+		    </choose>
+		  </if>
+		  <if test="status != null and status != ''">
+		    AND dt.stc_cd = #{status}
+		  </if>
+		  <if test="dateField != null and startDate != null and endDate != null and startDate != '' and endDate != ''">
+		    <choose>
+		      <when test="dateField == 'reg'">
+		        AND DATE(dt.dt_reg_ymdt) BETWEEN #{startDate} AND #{endDate}
+		      </when>
+		      <when test="dateField == 'mod'">
+		        AND DATE(dt.dt_mdfcn_ymdt) BETWEEN #{startDate} AND #{endDate}
+		      </when>
+		    </choose>
+		  </if>
+		</where>
+		ORDER BY dt.dt_reg_ymdt DESC
+	</select>
+    
     <select id="getAdminDeclarationListFiltered" resultMap="AdminDeclarationResultMap">
-    	/* 신고 내역 조회 - 필터 */
+	    /* 신고 내역 조회 - 필터 */
 	    SELECT
 	        d.decl_cd as decl_cd,
 	        d.dt_cd as dt_cd,
@@ -92,6 +242,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        dr.dr_nm as dr_nm,
 	        d.mbr_cd as mbr_cd,
 	        d.decl_target_cd as decl_target_cd,
+	        d.decl_cn as decl_cn,
 	        d.decl_reg_ymdt as decl_reg_ymdt,
 	        d.stc_cd as stc_cd,
 	        sc.stc_nm as stc_nm,
@@ -104,36 +255,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        LEFT JOIN declaration_process dp ON d.decl_cd = dp.decl_cd
 	        LEFT JOIN declaration_result_code drc ON dp.drc_cd = drc.drc_cd
 	    WHERE 1 = 1
-	    <if test="params.keyword != null and params.keyword != ''">
+	
+	    <if test="keyword != null and keyword != ''">
 	        <choose>
-	            <when test="params.keywordField == 'title'">
-	                AND d.decl_cn LIKE CONCAT('%', #{params.keyword}, '%')
+	            <when test="keywordField == 'title'">
+	                AND d.decl_cn LIKE CONCAT('%', #{keyword}, '%')
 	            </when>
-	            <when test="params.keywordField == 'type'">
-	                AND dt.dt_nm LIKE CONCAT('%', #{params.keyword}, '%')
+	            <when test="keywordField == 'type'">
+	                AND dt.dt_nm LIKE CONCAT('%', #{keyword}, '%')
 	            </when>
-	            <when test="params.keywordField == 'reason'">
-	                AND dr.dr_nm LIKE CONCAT('%', #{params.keyword}, '%')
+	            <when test="keywordField == 'reason'">
+	                AND dr.dr_nm LIKE CONCAT('%', #{keyword}, '%')
 	            </when>
-	            <when test="params.keywordField == 'result'">
-	                AND drc.drc_nm LIKE CONCAT('%', #{params.keyword}, '%')
+	            <when test="keywordField == 'result'">
+	                AND drc.drc_nm LIKE CONCAT('%', #{keyword}, '%')
 	            </when>
 	        </choose>
 	    </if>
 	
-	    <if test="params.dateField != null and params.startDate != null and params.endDate != null">
+	    <if test="dateField != null and dateField != '' 
+	               and startDate != null and startDate != '' 
+	               and endDate != null and endDate != ''">
 	        <choose>
-	            <when test="params.dateField == 'reg'">
-	                AND DATE(d.decl_reg_ymdt) BETWEEN #{params.startDate} AND #{params.endDate}
+	            <when test="dateField == 'reg'">
+	                AND DATE(d.decl_reg_ymdt) BETWEEN #{startDate} AND #{endDate}
 	            </when>
-	            <when test="params.dateField == 'mod'">
-	                AND DATE(d.decl_mdfcn_ymdt) BETWEEN #{params.startDate} AND #{params.endDate}
+	            <when test="dateField == 'mod'">
+	                AND DATE(d.decl_mdfcn_ymdt) BETWEEN #{startDate} AND #{endDate}
 	            </when>
 	        </choose>
 	    </if>
 	
-	    <if test="params.status != null and params.status != ''">
-	        AND d.stc_cd = #{params.status}
+	    <if test="status != null and status != ''">
+	        AND d.stc_cd = #{status}
 	    </if>
 	
 	    ORDER BY d.decl_reg_ymdt DESC
