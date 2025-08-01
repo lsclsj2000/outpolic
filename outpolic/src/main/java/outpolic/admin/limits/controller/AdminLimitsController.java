@@ -2,6 +2,7 @@ package outpolic.admin.limits.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +52,7 @@ public class AdminLimitsController {
 	        if (adminCode == null) {
 	            return "FAIL: Unauthorized";
 	        }
-
+	        
 	        adminLimits.setAuthorityMdfcnYmdt(new java.sql.Timestamp(System.currentTimeMillis()));
 
 	        int result = adminLimitsService.updateMemberAuthority(adminLimits);

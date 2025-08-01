@@ -5,6 +5,7 @@
 <mapper namespace="outpolic.admin.login.mapper.AdminLoginMapper">
 	<resultMap type="outpolic.admin.login.dto.AdminLoginDTO" id="AdminLoginResultMap">
 		<result property="adminCode" column="adm_cd" />
+		<result property="arCd" column="ar_cd" />
 		<association property="memberInfo" javaType="outpolic.common.domain.Member">
 			<id column="mbr_id" property="memberId"/>
 	 		<result column="mbr_pw" property="memberPw"/>
@@ -21,6 +22,12 @@
 	    FROM member m inner join admin ad
 	    on m.mbr_cd = ad.mbr_cd
 	    WHERE mbr_id = #{memberId};
+	</select>
+	
+	<select id="getAdminPermissions" resultType="string">
+	    SELECT ar_cd
+	    FROM admin_roles_mapping
+	    WHERE adm_cd = #{adminCode}
 	</select>
 	
 	<update id="updateAdminMemberLoginDate" parameterType="AdminLoginDTO">

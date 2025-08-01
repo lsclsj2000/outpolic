@@ -1,6 +1,5 @@
 package outpolic.admin.loginHistory.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.loginHistory.dto.AdminLoginHistoryDTO;
 import outpolic.admin.loginHistory.service.AdminLoginHistoryService;
@@ -23,7 +23,15 @@ public class adminLoginHistoryController {
 	private final AdminLoginHistoryService adminLoginHistoryService;
 	
 	@GetMapping("/loginHistory")
-	public String loginHistoryView(@RequestParam(defaultValue = "1") int currentPage, Model model) {
+	public String loginHistoryView(@RequestParam(defaultValue = "1") int currentPage, Model model, HttpSession httpSession) {
+		
+		List<String> permissions = (List<String>) httpSession.getAttribute("SPermissions");
+		if (!permissions.contains("MEMBER_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
+		
 	    if (currentPage < 1) currentPage = 1;
 	    
 	    int rowPerPage = 30;

@@ -1,6 +1,7 @@
 package outpolic.admin.login.service.Impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,6 +60,12 @@ public class AdminLoginServiceImpl implements AdminLoginService {
 	public void updateAdminLogoutHistory(String loginHistoryCode) {
 		adminLoginMapper.updateAdminLogoutHistory(loginHistoryCode);
 		
+	}
+	// 관리자 로그인시 권한 가져오기
+	@Override
+	public List<String> getAdminPermissions(String adminCode) {
+
+		return adminLoginMapper.getAdminPermissions(adminCode);
 	}
 
 

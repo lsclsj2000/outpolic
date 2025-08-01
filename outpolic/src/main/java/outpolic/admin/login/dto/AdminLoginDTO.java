@@ -7,5 +7,9 @@ import outpolic.common.domain.Member;
 public class AdminLoginDTO {
 	private String adminCode;
 	
+	private String arCd;
+	
 	private Member memberInfo;
+	
+	
 }
