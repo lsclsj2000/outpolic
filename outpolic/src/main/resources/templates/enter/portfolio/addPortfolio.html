@@ -357,26 +357,9 @@
     <script>
         $(document).ready(function() {
 
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // 시간대 오차 보정
-            const minDate = now.toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 자르기
-            $('#prtfPeriodStart').attr('min', minDate);
+           
             
-            $('#prtfPeriodStart').on('change', function() {
-                const startDateValue = $(this).val(); // YYYY-MM-DD 형식
-                if (startDateValue) {
-                    // 1. 종료일의 최소 선택 가능일을 시작일로 설정
-                    $('#prtfPeriodEnd').attr('min', startDateValue);
-                    // 2. 시작일 값으로 Date 객체 생성 (시간은 00:00:00으로)
-                    const startDate = new Date(startDateValue + 'T00:00:00');
-                    // 3. 시작일에 하루를 더함
-                    startDate.setDate(startDate.getDate() + 1);
-                    // 4. YYYY-MM-DD 형식으로 변환
-                    const newEndDateValue = startDate.toISOString().slice(0, 10);
-                    // 5. 종료일 입력 필드에 새로운 값 설정
-                    $('#prtfPeriodEnd').val(newEndDateValue);
-                }
-            });
+           
 
             let currentStep = 1;
             let bodyImageFiles = []; // 본문 이미지 파일 목록

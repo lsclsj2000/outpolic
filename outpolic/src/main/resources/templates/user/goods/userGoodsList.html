@@ -11,230 +11,200 @@
 <body>
 	<th:block layout:fragment="contents">
 		<script th:inline="javascript">
-			document.addEventListener("DOMContentLoaded", function () {
-				const tossPayments = TossPayments("test_ck_ORzdMaqN3wPvMzNqXLNqV5AkYXQG");
-				
-				
-				const finalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[1];
-				function extractNumber(text) {
-				  return parseInt(text.replace(/[^\d]/g, "")) || 0;
-				}
-				
-				document.getElementById("payment-button").addEventListener("click", function (e) {
-					e.preventDefault();
-					
-					// 세션에서 회원 코드 가져오기 (Thymeleaf 인라인 JS를 통해 서버에서 전달된 값)
-				    // JSON.parse와 #strings.escapeJavaScript를 사용하여 안전하게 인라인합니다.
-				    const memberCode = /*[[${session.SCD}]]*/ null;
-					
-					
-
-				    // 로그인 여부 확인
-				    if (!memberCode) { // memberCode가 null이거나 빈 문자열인 경우
-				        alert("로그인 후 이용해주세요.");
-				        window.location.href = '/login'; // 로그인 페이지로 이동
-				        return;
-				    }
-				    
-				    
-				    
-					// 상품 개수(구독권)
-				    const subsQty = parseInt(document.getElementById('subsQuantity')?.value || 0);
-				    // 상품 개수(이용권)
-				    const ticketQty = parseInt(document.getElementById('ticketQuantity')?.value || 0);
-				    const orderCount = subsQty + ticketQty;
-				    // 사용한 마일리지
-					const usedMileage = document.getElementById('usedMileage').value || 0;
-				    // 마일리지 적용 전 가격
-					const originAmount = extractNumber(
-						    document.querySelectorAll(".cart_total_amount h4.text-brand")[0].textContent
-					);
-				    
-					console.log("memberCode => "+ memberCode);
-					console.log("subsQty => "+ subsQty);
-					console.log("ticketQty => "+ ticketQty);
-					console.log("orderCount => "+ orderCount);
-					console.log("usedMileage => "+ usedMileage);
-					console.log("originAmount => "+ originAmount);
-				    
-					// 상품코드 추출 1
-					const $productRow = document.querySelectorAll('.product-row');
-					
-					
-					
-					// 상품코드 추출 2
-					let grdCd;
-					// 상품코드 추출 3
-					$productRow.forEach(element => {
-						if(element.classList.contains('blur-block')) return;
-						grdCd = element.querySelector('input[type="hidden"]').value;
-					});
-					
-					if(!grdCd) {
-						console.log("상품코드 누락 결제취소");
-						return ;
-					}
-					
-					const amount = extractNumber(finalPriceEl.textContent);
-					console.log("amount:", extractNumber(finalPriceEl.textContent));
-				
-					tossPayments.requestPayment("카드", {
-						amount: amount,
-						orderId: "ORDER_" + Date.now(),
-						orderName: "개인용 상품",
-						customerName: "홍길동",
-						successUrl: `http://localhost/user/paymentSuccess?usedMileage=${usedMileage}&grdCd=${grdCd}&orderCount=${orderCount}&originAmount=${originAmount}&mbrCd=${memberCode}`,
-						failUrl: "http://localhost/user/paymentFail"
-					});
-				});
-			});
-		 
-			document.addEventListener("DOMContentLoaded", function () {
-				const qtyInputs = document.querySelectorAll(".qty-val");
-				const subsInput = qtyInputs[0];
-				const ticketInput = qtyInputs[1];
-				
-				const daysEl = document.querySelector(".days-display");
-				const timesEl = document.querySelector(".times-display");
-				
-				const subsBox = document.querySelector(".subs-product");
-				const ticketBox = document.querySelector(".ticket-product");
-				
-				const subsPriceEl = subsBox.querySelectorAll(".text-body")[1];
-				const ticketPriceEl = ticketBox.querySelectorAll(".text-body")[1];
-				
-				const resetBtn = document.getElementById("reset-selection");
-				
-				const unitSubsPrice = 39900;
-				const unitTicketPrice = 22900; // 테스트를 위해서 임시로 가격을 100원으로 변경. 추후 원래 가격인 22900으로 수정 예정.
-				
-				const totalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[0]; // 결제상품 금액
-				const finalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[1]; // 최종 결제 금액
-				const mileageInput = document.querySelector("input[placeholder='0']");
+	        // --- 1. 결제 요청 로직 (Toss Payments) ---
+	        document.addEventListener("DOMContentLoaded", function () {
+	            const tossPayments = TossPayments("test_ck_ORzdMaqN3wPvMzNqXLNqV5AkYXQG");
+	            const paymentButton = document.getElementById("payment-button");
+	            
+	            paymentButton.addEventListener("click", function (e) {
+	                e.preventDefault();
+	                const memberCode = /*[[${session.SCD}]]*/ null;
 	
-				function getVal(input) {
-					const val = parseInt(input.value);
-					return isNaN(val) ? 0 : val;
-				}
-				
-				function formatCurrency(num) {
-					return "₩" + num.toLocaleString("ko-KR");
-				}
-
-				function updateText() {
-					const subsQty = getVal(subsInput);
-					const ticketQty = getVal(ticketInput);
-					
-					const subsTotal = subsQty * unitSubsPrice;
-					const ticketTotal = ticketQty * unitTicketPrice;
-					const total = subsTotal + ticketTotal;
-					
-					// 텍스트 출력
-					daysEl.textContent = subsQty > 0 ? (subsQty * 30) + " 일" : "0 일";
-					timesEl.textContent = ticketQty > 0 ? (ticketQty * 3) + " 회" : "0 회";
-					
-					subsPriceEl.textContent = formatCurrency(subsTotal);
-					ticketPriceEl.textContent = formatCurrency(ticketTotal);
-					
-					// 합계 출력
-					totalPriceEl.textContent = formatCurrency(total);
-					
-					// 마일리지 차감
-					applyMileage(total);
-				}
-
-				function applyMileage(totalAmount) {
-					const usedMileage = getVal(mileageInput);
-					const final = Math.max(0, totalAmount - usedMileage);
-					finalPriceEl.textContent = formatCurrency(final);
-				}
-
-				function applyBlur() {
-					const subsVal = getVal(subsInput);
-					const ticketVal = getVal(ticketInput);
-					
-					if (subsVal > 0 && ticketVal === 0) {
-						subsInput.disabled = false;
-						ticketInput.disabled = true;
-						subsBox.classList.remove("blur-block");
-						ticketBox.classList.add("blur-block");
-					} else if (ticketVal > 0 && subsVal === 0) {
-						subsInput.disabled = true;
-						ticketInput.disabled = false;
-						subsBox.classList.add("blur-block");
-						ticketBox.classList.remove("blur-block");
-					} else {
-						subsInput.disabled = false;
-						ticketInput.disabled = false;
-						subsBox.classList.remove("blur-block");
-						ticketBox.classList.remove("blur-block");
-					}
-				}
-
-				subsInput.addEventListener("input", () => {
-					updateText();
-					applyBlur();
-				});
-				
-				ticketInput.addEventListener("input", () => {
-					updateText();
-					applyBlur();
-				});
-
-				document.querySelectorAll(".qty-up, .qty-down").forEach((btn) => {
-					btn.addEventListener("click", (e) => {
-						e.preventDefault();
-						const input = btn.closest(".detail-qty")?.querySelector(".qty-val");
-						if (!input) return;
-					
-						const current = getVal(input);
-						if (btn.classList.contains("qty-up")) {
-							input.value = current + 1;
-						} else {
-							if (current <= 1) return;
-							input.value = current - 1;
-						}
-					
-						input.dispatchEvent(new Event("input"));
-						applyBlur();
-					});
-				});
-
-				mileageInput?.addEventListener("input", () => {
-				  const currentTotal = getVal(subsInput) * unitSubsPrice + getVal(ticketInput) * unitTicketPrice;
-				  applyMileage(currentTotal);
-				});
-				
-				resetBtn?.addEventListener("click", (e) => {
-					  e.preventDefault(); // 초기화
-
-					  const ok = confirm("선택한 상품을 모두 초기화할까요?\n확인을 누르면 페이지가 새로고침됩니다.");
-					  if (ok) {
-						console.log("resetBtn:", resetBtn);
-					    location.reload();
-					  } else {
-					    console.log("취소됨: 새로고침 없이 유지");
-					  }
-				});
-
-				updateText();
-				applyBlur();
-			});
+	                if (!memberCode) {
+	                    alert("로그인 후 이용해주세요.");
+	                    window.location.href = '/login';
+	                    return;
+	                }
+	                
+	                let selectedProductRow;
+	                let orderCount = 0;
+	                document.querySelectorAll('.product-row').forEach(row => {
+	                    const quantity = parseInt(row.querySelector('.qty-val').value, 10);
+	                    if (quantity > 0) {
+	                        selectedProductRow = row;
+	                        orderCount = quantity;
+	                    }
+	                });
+	                
+	                if (!selectedProductRow) {
+	                    alert("상품 수량을 1개 이상 선택해주세요.");
+	                    return;
+	                }
+	
+	                const grdCd = selectedProductRow.querySelector('input[name="gdsCd"]').value;
+	                const usedMileage = document.getElementById('usedMileage').value || 0;
+	                const originAmount = parseInt(selectedProductRow.getAttribute('data-price')) * orderCount;
+	                const finalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[1];
+	                const finalAmount = parseInt(finalPriceEl.textContent.replace(/[^\d]/g, "")) || 0;
+	
+	                tossPayments.requestPayment("카드", {
+	                    amount: finalAmount,
+	                    orderId: "ORDER_" + Date.now(),
+	                    orderName: selectedProductRow.querySelector('h6').textContent.trim(),
+	                    customerName: "고객",
+	                    successUrl: `http://localhost/user/paymentSuccess?usedMileage=${usedMileage}&grdCd=${grdCd}&orderCount=${orderCount}&originAmount=${originAmount}&mbrCd=${memberCode}`,
+	                    failUrl: "http://localhost/user/paymentFail"
+	                });
+	            });
+	        });
+	    </script>
+	    <script>
+		    // --- 2. 화면 UI 및 금액 계산 로직 (최종 수정본) ---
+		    document.addEventListener("DOMContentLoaded", function () {
+		        const allProductRows = document.querySelectorAll(".product-row");
+		        const totalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[0];
+		        const finalPriceEl = document.querySelectorAll(".cart_total_amount h4.text-brand")[1];
+		        const mileageInput = document.getElementById('usedMileage');
+		        const resetBtn = document.getElementById("reset-selection");
+		        const availableMileageEl = document.getElementById('availableMileage');
 		
-			
-		</script>
+		        function getVal(input) {
+		            if (!input) return 0;
+		            const val = parseInt(input.value);
+		            return isNaN(val) ? 0 : val;
+		        }
+		        
+		        function formatCurrency(num) {
+		            return "₩" + num.toLocaleString("ko-KR");
+		        }
+		
+		        // [핵심] 모든 UI 업데이트를 책임지는 단일 함수
+		        function updateAllUI() {
+		            let totalAmount = 0;
+		            let selectedProductRow = null;
+		
+		            allProductRows.forEach(row => {
+		                const quantityInput = row.querySelector('.qty-val');
+		                const quantity = getVal(quantityInput);
+		                
+		                if (quantity > 0) {
+		                    selectedProductRow = row;
+		                }
+		                
+		                const unitPrice = parseInt(row.getAttribute('data-price'), 10);
+		                const unitValue = parseInt(row.getAttribute('data-unit-value'), 10);
+		                const unitName = row.getAttribute('data-unit-name');
+		                
+		                const subtotal = quantity * unitPrice;
+		                const displayUnitEl = row.querySelector(".days-display, .times-display");
+		                const subtotalEl = row.querySelectorAll(".text-body")[1];
+		
+		                if (subtotalEl) subtotalEl.textContent = formatCurrency(subtotal);
+		                if (displayUnitEl) displayUnitEl.innerHTML = (quantity > 0 ? (quantity * unitValue) : '0') + ` <span>${unitName}</span>`;
+		
+		                totalAmount += subtotal;
+		            });
+		
+		            totalPriceEl.textContent = formatCurrency(totalAmount);
+		            
+		            // 마일리지 적용 로직은 별도로 분리하여 UI 업데이트만 담당
+		            applyMileage(totalAmount);
+		
+		            // 블러 처리 로직
+		            allProductRows.forEach(row => {
+		                const quantityInput = row.querySelector('.qty-val');
+		                if (selectedProductRow) {
+		                    if (row === selectedProductRow) {
+		                        row.classList.remove('blur-block');
+		                        quantityInput.disabled = false;
+		                    } else {
+		                        row.classList.add('blur-block');
+		                        quantityInput.disabled = true;
+		                    }
+		                } else {
+		                    row.classList.remove('blur-block');
+		                    quantityInput.disabled = false;
+		                }
+		            });
+		        }
+		        
+		        // 마일리지 적용 및 최종 금액 계산 함수
+		        function applyMileage(totalAmount) {
+		            const usedMileage = getVal(mileageInput);
+		            const finalAmount = Math.max(0, totalAmount - usedMileage);
+		            finalPriceEl.textContent = formatCurrency(finalAmount);
+		        }
+		
+		        // [핵심 수정] +/- 버튼 이벤트 리스너
+		        document.querySelectorAll(".qty-up, .qty-down").forEach((btn) => {
+		            btn.addEventListener("click", (e) => {
+		                e.preventDefault();
+		                const input = btn.closest(".detail-qty")?.querySelector(".qty-val");
+		                if (!input) return;
+		            
+		                let current = getVal(input);
+		                if (btn.classList.contains("qty-up")) {
+		                    current++;
+		                } else {
+		                    current = Math.max(0, current - 1);
+		                }
+		                input.value = current;
+		            
+		                // 값 변경 후, 전체 UI 업데이트 함수 호출
+		                updateAllUI();
+		            });
+		        });
+		
+		        // [핵심 수정] 수량 직접 입력 이벤트 리스너
+		        document.querySelectorAll('.qty-val').forEach(input => {
+		            input.addEventListener('input', updateAllUI);
+		        });
+		
+		        // [핵심 수정] 마일리지 입력 이벤트 리스너 (유효성 검증 추가)
+		        mileageInput?.addEventListener("input", () => {
+		            const availableMileage = parseInt(availableMileageEl.textContent.replace(/[^\d]/g, '')) || 0;
+		            const maxMileageLimit = 5000;
+		            let usedMileage = getVal(mileageInput);
+		
+		            const maxAllowedMileage = Math.min(availableMileage, maxMileageLimit);
+		            const totalAmount = parseInt(totalPriceEl.textContent.replace(/[^\d]/g, '')) || 0;
+		
+		            if (usedMileage > maxAllowedMileage) {
+		                alert(`마일리지는 최대 ${maxAllowedMileage.toLocaleString()}원까지 사용 가능합니다.`);
+		                mileageInput.value = maxAllowedMileage;
+		            }
+		            
+		            if(usedMileage > totalAmount) {
+		                alert('결제 상품 금액보다 많은 마일리지를 사용할 수 없습니다.');
+		                mileageInput.value = totalAmount;
+		            }
+		
+		            // 유효성 검증 후, 총 금액을 기준으로 최종 금액만 다시 계산
+		            applyMileage(totalAmount);
+		        });
+		        
+		        resetBtn?.addEventListener("click", (e) => {
+		              e.preventDefault();
+		              const ok = confirm("선택한 상품을 모두 초기화할까요?\n확인을 누르면 페이지가 새로고침됩니다.");
+		              if (ok) {
+		                location.reload();
+		              }
+		        });
+		
+		        // 페이지 첫 로드 시 UI 상태 초기화
+		        updateAllUI();
+		    });
+	    </script>
 		<form id="paymentForm" method="get">
 			<div class="d-flex justify-content-center col-lg-10 m-auto">
 				<div class="row w-100">
 					<div class="col-lg-7">
 						<div class="table-responsive shopping-summery">
-							<button id="reset-selection" class="btn btn-secondary mt-3 mb-4" type="button">선택
-								초기화</button>
+							<button id="reset-selection" class="btn btn-secondary mt-3 mb-4" type="button">선택 초기화</button>
 							<table class="table table-wishlist">
 								<thead>
 									<tr style="border: 0px;" class="main-heading">
-										<th class="custome-checkbox start pl-30"
-											style="text-align: center;" scope="col">상품</th>
+										<th class="custome-checkbox start pl-30" style="text-align: center;" scope="col">상품</th>
 										<th style="text-align: center;">가격</th>
 										<th scope="col" style="text-align: center;">개수</th>
 										<th style="text-align: center;" scope="col" class="col-2">일 / 회</th>
@@ -242,64 +212,43 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr class="product-row subs-product" style="border: 0px;">
-										<td class="product-des product-name">
-											<h6 class="mb-5" style="text-align: center;">개인용 구독권 (30일)</h6>
-											<input type="hidden" id="subsCode" name="gdsCd" value="PD_C2">
-										</td>
-										<td class="price" data-title="Price">
-											<h5 class="text-body" style="text-align: center;">₩39,900
-											</h5>
-										</td>
-										<td class="text-center detail-info" data-title="Stock">
-											<div class="detail-extralink mr-15">
-												<div class="detail-qty border radius">
-													<a href="#" class="qty-down"><i
-														class="fi-rs-angle-small-down"></i></a> <input type="text"
-														id="subsQuantity" name="subsQuantity" class="qty-val" value="0" min="0">
-													<a href="#" class="qty-up"><i
-														class="fi-rs-angle-small-up"></i></a>
-												</div>
-											</div>
-										</td>
-										<td class="price" data-title="Price">
-											<h5 class="days-display" style="text-align: center;">0 일</h5>
-										</td>
-										<td class="price" data-title="Price">
-											<h5 class="text-body" style="text-align: center;">₩0</h5>
-										</td>
-									</tr>
-									<tr class="product-row ticket-product" style="border: 0px;">
-										<td class="product-des product-name">
-											<h6 class="mb-5" style="text-align: center;">이용권 (3회)</h6>
-											<input type="hidden" id="ticketCode" name="gdsCd" value="PD_C3">
-										</td>
-										<td class="price" data-title="Price">
-											<h4 class="text-body" style="text-align: center;">₩22,900
-											</h4>
-										</td>
-										<td class="text-center detail-info" data-title="Stock">
-											<div class="detail-extralink mr-15">
-												<div class="detail-qty border radius">
-													<a href="#" class="qty-down"><i
-														class="fi-rs-angle-small-down"></i></a> <input type="text"
-														id="ticketQuantity" name="ticketQuantity" class="qty-val" value="0" min="1">
-													<a href="#" class="qty-up"><i
-														class="fi-rs-angle-small-up"></i></a>
-												</div>
-											</div>
-										</td>
-										<td class="price" data-title="Price">
-											<h5 class="times-display" style="text-align: center;">0 회</h5>
-										</td>
-										<td class="price" data-title="Price">
-											<h5 class="text-body" style="text-align: center;">₩0</h5>
-										</td>
-									</tr>
+								    <tr th:each="product : ${productList}" class="product-row"
+								        th:classappend="${product.gdsType == '구독권'} ? 'subs-product' : 'ticket-product'"
+								        th:data-price="${product.gdsAmt}"
+								        th:data-unit-value="${product.gdsPeriodQuantity}"
+								        th:data-unit-name="${product.gdsUnit}">
+								
+								        <td class="product-des product-name">
+								            <h6 class="mb-5" style="text-align: center;" th:text="${product.gdsNm}"></h6>
+								            <input type="hidden" name="gdsCd" th:value="${product.gdsCd}">
+								        </td>
+								        <td class="price" data-title="Price">
+								            <h5 class="text-body" style="text-align: center;" th:text="'₩' + ${#numbers.formatDecimal(product.gdsAmt, 0, 'COMMA', 0, 'POINT')}"></h5>
+								        </td>
+								        <td class="text-center detail-info" data-title="Stock">
+								            <div class="detail-extralink mr-15">
+								                <div class="detail-qty border radius">
+								                    <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+								                    <input type="text"
+								                           th:id="${product.gdsType == '구독권'} ? 'subsQuantity' : 'ticketQuantity'"
+								                           name="quantity" class="qty-val" value="0" min="1">
+								                    <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+								                </div>
+								            </div>
+								        </td>
+								        <td class="price" data-title="Price">
+								            <h5 style="text-align: center;"
+								                th:classappend="${product.gdsType == '구독권'} ? 'days-display' : 'times-display'">
+								                0 <span th:text="${product.gdsUnit}"></span>
+								            </h5>
+								        </td>
+								        <td class="price" data-title="Price">
+								            <h5 class="text-body" style="text-align: center;">₩0</h5>
+								        </td>
+								    </tr>
 								</tbody>
 							</table>
 						</div>
-						<!-- <div class="divider-2 mb-30"></div> -->
 					</div>
 					<div class="col-lg-5">
 						<div class="border p-md-4 cart-totals ml-30">
@@ -307,48 +256,28 @@
 								<table class="table no-border">
 									<tbody>
 										<tr style="border: 0px;">
-											<td class="cart_total_label">
-												<h6 class="text-muted">결제상품 금액</h6>
-											</td>
-											<td class="cart_total_amount">
-												<h4 class="text-brand text-end">₩0</h4>
-											</td>
+											<td class="cart_total_label"><h6 class="text-muted">결제상품 금액</h6></td>
+											<td class="cart_total_amount"><h4 class="text-brand text-end">₩0</h4></td>
 										</tr>
+										<tr style="border: 0px;"><td scope="col" colspan="2"><div class="divider-2 mt-10 mb-10"></div></td></tr>
 										<tr style="border: 0px;">
-											<td scope="col" colspan="2">
-												<div class="divider-2 mt-10 mb-10"></div>
-											</td>
-										</tr>
-										<tr style="border: 0px;">
-											<td class="cart_total_label">
-												<h6 class="text-muted">보유 마일리지</h6>
-											</td>
-											<td class="cart_total_amount">
-												<h5 class="text-heading text-end" id="availableMileage" th:text="${#numbers.formatDecimal(availableMileage, 0, 'COMMA', 0, 'POINT')}">0</h5>
-											</td>
+											<td class="cart_total_label"><h6 class="text-muted">보유 마일리지</h6></td>
+											<td class="cart_total_amount"><h5 class="text-heading text-end" id="availableMileage" th:text="${#numbers.formatDecimal(availableMileage, 0, 'COMMA', 0, 'POINT')}"></h5></td>
 										</tr>
 										<tr style="border: 0px;">
 											<td class="cart_total_label" colspan="2">
-												<div
-													style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-													<span><h6>사용</h6></span> <input type="text"
-														style="padding-bottom: 3px; width: 87%; height: 40px; border: none; outline: none; text-align: right;"
-														id="usedMileage" name="usedMileage" inputmode="numeric" placeholder="0"> <span><h6>원</h6></span>
+												<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+													<span><h6>사용</h6></span> 
+													<input type="text" style="padding-bottom: 3px; width: 87%; height: 40px; border: none; outline: none; text-align: right;"
+														   id="usedMileage" name="usedMileage" inputmode="numeric" placeholder="0"> 
+													<span><h6>원</h6></span>
 												</div>
 											</td>
 										</tr>
+										<tr style="border: 0px;"><td scope="col" colspan="2"><div class="divider-2 mt-10 mb-10"></div></td></tr>
 										<tr style="border: 0px;">
-											<td scope="col" colspan="2">
-												<div class="divider-2 mt-10 mb-10"></div>
-											</td>
-										</tr>
-										<tr style="border: 0px;">
-											<td class="cart_total_label">
-												<h6 class="text-muted">최종 결제 금액</h6>
-											</td>
-											<td class="cart_total_amount">
-												<h4 class="text-brand text-end">₩0</h4>
-											</td>
+											<td class="cart_total_label"><h6 class="text-muted">최종 결제 금액</h6></td>
+											<td class="cart_total_amount"><h4 class="text-brand text-end">₩0</h4></td>
 										</tr>
 									</tbody>
 								</table>

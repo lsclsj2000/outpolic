@@ -16,6 +16,9 @@
 		// 회원 권한 조회
 		List<AdminLimits> getAdminLimitsAuthorityList();
 		
+		// 회원 권한 검색
+		List<AdminLimits> selectAdminLimitAuthority(String keyword, String levelValue);
+		
 		// 제재 내역 조회
 		List<AdminLimits> getAdminLimitsList();
 		

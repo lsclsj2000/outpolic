@@ -75,6 +75,15 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
 	}
 	
 	@Override
+	public List<AdminLimits> selectAdminLimitAuthority(String keyword, String levelValue) {
+		// 회원 권한 검색
+		return adminLimitsMapper.selectAdminLimitAuthority(keyword, levelValue);
+	}
+
+	
+	
+	
+	@Override
 	public int registerLimitsType(AdminLimits adminLimits) {
 		// 제재 타입 등록
 		return adminLimitsMapper.insertLimitsType(adminLimits);
@@ -229,6 +238,7 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
 
 	    log.info("🎉[제재로직] 제재 처리 완료 → 대상 회원: {}, 제재 사유: {}, 기간 코드: {}", mbrCd, lrCd, lpCd);
 	}
+
 
 
 

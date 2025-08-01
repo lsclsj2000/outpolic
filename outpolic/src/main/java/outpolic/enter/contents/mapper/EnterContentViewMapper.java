@@ -12,7 +12,7 @@ import outpolic.enter.contents.domain.EnterPerusalContent;
 @Mapper
 public interface EnterContentViewMapper {
 
-int existsInTotalView(@Param("clCd") String clCd);
+	int existsInTotalView(@Param("clCd") String clCd);
     
 	//[추가]
 	Integer selectMaxTvCdNum();

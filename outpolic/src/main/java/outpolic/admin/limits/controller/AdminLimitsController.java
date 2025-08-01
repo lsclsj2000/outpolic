@@ -33,6 +33,16 @@ public class AdminLimitsController {
 	    return adminLimitsService.getMemberAuthorityByMemberCode(memberCode);
 	}
 	
+	// 회원 권한 정보 검색 
+	@GetMapping("/getAuthority/search")
+	@ResponseBody
+	public List<AdminLimits> searchAuthority(@RequestParam(required = false) String keyword,
+											 @RequestParam(required = false) String levelValue){
+		
+		return adminLimitsService.selectAdminLimitAuthority(keyword, levelValue);
+	}
+	
+	
 	@PostMapping("/updateMemberAuthority")
 	@ResponseBody
 	public String updateMemberAuthority(@RequestBody AdminLimits adminLimits, HttpSession session) {

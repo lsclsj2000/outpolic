@@ -88,12 +88,12 @@
 	
 	<select id="getRandomNickname" resultType="String">
     SELECT 
-	        CONCAT(a.na_adjtv, ' ', b.nc_colrs, ' ', c.nka_animals) AS random_nickname
+	        CONCAT(a.na_adjtv, b.nc_colrs, c.nka_animals) AS random_nickname
 	    FROM 
 	        (SELECT na_adjtv FROM nickname_adjectives ORDER BY RAND() LIMIT 1) a,
 	        (SELECT nc_colrs FROM nickname_colors ORDER BY RAND() LIMIT 1) b,
 	        (SELECT nka_animals FROM nickname_animals ORDER BY RAND() LIMIT 1) c
-	    WHERE CONCAT(a.na_adjtv, ' ', b.nc_colrs, ' ', c.nka_animals)
+	    WHERE CONCAT(a.na_adjtv, b.nc_colrs,c.nka_animals)
 	        NOT IN (SELECT mbr_nicknm FROM member)
 	</select>
 
