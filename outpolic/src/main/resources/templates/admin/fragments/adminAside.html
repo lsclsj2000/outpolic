@@ -58,7 +58,6 @@
 						<a th:href="@{/admin/adminDeclaration}">신고 내역 처리</a>
 						<a th:href="@{/admin/adminDeclarationResources}">신고 자원 등록</a>
 					    <a th:href="@{/admin/adminLimits}">제재 내역</a>
-					    <a th:href="@{/admin/adminLimitsAuthority}">권한 설정</a>
 					    <a th:href="@{/admin/adminLimitsResources}">제재 자원 등록</a>
 					</div>
 				</li>
@@ -108,11 +107,15 @@
 						<a th:href="@{/admin/refundList}">환불 내역</a>
 				    </div>
 				</li>
-				<li class="menu-item">
-					<a class="menu-link" th:href="@{/admin/empowerment}">
+				<li class="menu-item has-submenu">
+				    <a class="menu-link" href="#">
 					    <i class="icon material-icons md-pie_chart"></i>
-					    <span class="text">관리자 권한 설정</span>
+					    <span class="text">권한설정</span>
 					</a>
+					<div class="submenu">
+						<a th:href="@{/admin/empowerment}">관리자 권한 설정</a>
+						<a th:href="@{/admin/adminLimitsAuthority}">회원 권한 설정</a>
+				    </div>
 				</li>
 			</ul>
 			<br />
