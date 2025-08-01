@@ -17,7 +17,7 @@
         	margin-bottom: 40px; 
         	color: #1f2937; 
         	text-align: center; 
-        	border-left: 5px solid #264796; 
+        	
         	padding-left: 1rem; 
         	display: inline-block;
          }
@@ -35,6 +35,7 @@
         	display: inline-flex; 
         	align-items: center; 
         	gap: 8px; 
+        	margin-left:820px;
         }
         .btn-action:hover { 
         	background-color: #5d8bf4; 
@@ -239,6 +240,20 @@
         	margin-bottom: 15px; 
         	white-space: pre-wrap;
         }
+        
+        .card-summary {
+	font-size: 0.95em;
+	color: #4b5563;
+	line-height: 1.6;
+	max-height: 90px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 1; /* 이 부분을 2로 변경 */
+	-webkit-box-orient: vertical;
+	margin-bottom: 15px;
+}
+        
     </style>
 </head>
 <body>
@@ -500,7 +515,6 @@
                                         <div class="outsourcing-actions">
                                             <button class="btn-edit" data-os-cd="${osCd}">수정</button>
                                             <button class="btn-delete" data-os-cd="${osCd}">삭제</button>
-                                            <button class="btn-share" data-os-cd="${osCd}" data-os-ttl="${o.osTtl}">공유</button>
                                         </div>
                                     </div>
                                     <div class="card-footer">${durationHtml}</div>
