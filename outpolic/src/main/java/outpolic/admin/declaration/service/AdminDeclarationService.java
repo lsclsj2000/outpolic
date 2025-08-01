@@ -69,4 +69,10 @@ public interface AdminDeclarationService {
     // 신고 내역 조회 - 필터
     List<AdminDeclaration> getAdminDeclarationListFiltered(Map<String, Object> searchParams);
     
+    // 신고 자원 조회 - 필터
+    List<AdminDeclaration> getFilteredDeclarationTypeList(Map<String, Object> paramMap);
+    List<AdminDeclaration> getFilteredDeclarationReasonList(Map<String, Object> paramMap);
+    List<AdminDeclaration> getFilteredDeclarationResultList(Map<String, Object> paramMap);
+ 
+    
 }

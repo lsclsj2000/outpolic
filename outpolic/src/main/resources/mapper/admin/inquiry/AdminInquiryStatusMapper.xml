@@ -25,15 +25,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<select id="getInquiryStatus" resultMap="AdminInquiryStatusResultMap">
 		/* 관리자 문의 상세-처리 상태 */
-		select DISTINCT
-			CASE WHEN ip.stc_cd IS NULL THEN 'SD_BEFORE' ELSE ip.stc_cd END AS stc_cd,
-		  	CASE WHEN sc.stc_nm IS NULL THEN '확인전' ELSE sc.stc_nm END AS stc_nm
+		select
+			stc_cd,
+			stc_nm
 		from
-			inquiry i
-			left join inquiry_process ip on i.iq_cd = ip.iq_cd 
-			left join status_code sc on ip.stc_cd = sc.stc_cd
-		order BY
-			stc_nm desc;
+			status_code
+		where
+			stc_cd in ('SD_BEFORE', 'SD_PROCESS_ING')
+		order by
+			field(stc_cd, 'SD_BEFORE', 'SD_PROCESS_ING');
 	</select>
 	
 </mapper>

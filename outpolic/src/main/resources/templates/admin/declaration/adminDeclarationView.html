@@ -22,57 +22,68 @@
 	            <div class="card-body search-filter-body">
 	                <div class="table-responsive">
 	                    <form id="searchForm" method="get" action="/admin/adminDeclaration">
-							<table class="search-filter-table">
-								<tbody>
-								 	<tr>
-								  		<th>기본검색</th>
-								  	<td>
-									    <select class="form-select" name="keywordField" style="width: 120px;">
-										    <option value="type" th:selected="${searchField} == 'type'">신고타입</option>
-										    <option value="reason" th:selected="${searchField} == 'reason'">신고사유</option>
-										    <option value="result" th:selected="${searchField} == 'result'">처리결과</option>
-										</select>
-										<input type="text" name="keyword" placeholder="검색어를 입력하세요"
-										       class="form-control" style="width: 250px;" th:value="${searchKeyword}" />
-								  	</td>
-								</tr>
-								<tr>
-									    <th>기간검색</th>
-									    <td>
-									        <select name="dateField" class="form-select" style="width: 120px;">
-											    <option value="reg" th:selected="${dateField} == 'reg'">작성일자</option>
-											    <option value="mod" th:selected="${dateField} == 'mod'">수정일자</option>
-											</select>
-									        <input type="date" id="startDate" name="startDate" class="form-control" style="width: 150px;" th:value="${startDate}" />
-									        <span> ~ </span>
-									        <input type="date" id="endDate" name="endDate" class="form-control" style="width: 150px;" th:value="${endDate}" />
-									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="today">오늘</button>
-									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="yesterday">어제</button>
-									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="7days">일주일</button>
-									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="lastmonth">지난달</button>
-									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="1month">1개월</button>
-									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="3months">3개월</button>
-									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="all">전체</button>
-									    </td>
-									</tr>
-								<tr>
-									<th>처리상태</th>
-								    <td>
-										<div class="radio-group">
-											<label><input type="radio" name="status" value="" th:checked="${status == null or status == ''}" /> 전체</label>
-											<label><input type="radio" name="status" value="SD_INQUIRY_ING" th:checked="${status == 'SD_INQUIRY_ING'}" /> 요청중</label>
-											<label><input type="radio" name="status" value="SD_PROCESS_ING" th:checked="${status == 'SD_PROCESS_ING'}" /> 처리중</label>
-											<label><input type="radio" name="status" value="SD_PROCESS_END" th:checked="${status == 'SD_PROCESS_END'}" /> 처리완료</label>
-										</div>
-								    </td>
-								</tr>
-							</tbody>
-						</table>
-						<div class="search-filter-buttons">
-							<button type="submit" class="btn btn-primary">검색</button>
-							<button type="button" id="resetButton" class="btn btn-secondary">초기화</button>
-						</div>
-					</form>
+						    <table class="search-filter-table">
+						        <tbody>
+						            <tr>
+						                <th>기본검색</th>
+						                <td>
+						                    <select class="form-select" name="keywordField" style="width: 120px;">
+						                        <option value="type" th:selected="${keywordField} == 'type'">신고타입</option>
+						                        <option value="reason" th:selected="${keywordField} == 'reason'">신고사유</option>
+						                        <option value="result" th:selected="${keywordField} == 'result'">처리결과</option>
+						                    </select>
+						                    <input type="text" name="keyword" th:value="${keyword}" placeholder="검색어를 입력하세요" class="form-control" />
+						                </td>
+						            </tr>
+						            <tr>
+						                <th>기간검색</th>
+						                <td>
+						                    <select name="dateField" class="form-select" style="width: 120px;">
+						                        <option value="reg" th:selected="${dateField} == 'reg'">작성일자</option>
+						                        <option value="mod" th:selected="${dateField} == 'mod'">수정일자</option>
+						                    </select>
+						                    <input type="date" id="startDate" name="startDate" class="form-control" style="width: 150px;" th:value="${startDate}" />
+						                    <span> ~ </span>
+						                    <input type="date" id="endDate" name="endDate" class="form-control" style="width: 150px;" th:value="${endDate}" />
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="today">오늘</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="yesterday">어제</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="7days">일주일</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="lastmonth">지난달</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="1month">1개월</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="3months">3개월</button>
+						                    <button type="button" class="btn btn-sm btn-light date-btn" data-range="all">전체</button>
+						                </td>
+						            </tr>
+						            <tr>
+						                <th>처리상태</th>
+						                <td>
+						                    <div class="radio-group">
+						                        <label>
+						                            <input type="radio" name="status" value=""
+						                                   th:checked="${status == null or status == ''}" /> 전체
+						                        </label>
+						                        <label>
+						                            <input type="radio" name="status" value="SD_INQUIRY_ING"
+						                                   th:checked="${status == 'SD_INQUIRY_ING'}" /> 요청중
+						                        </label>
+						                        <label>
+						                            <input type="radio" name="status" value="SD_PROCESS_ING"
+						                                   th:checked="${status == 'SD_PROCESS_ING'}" /> 처리중
+						                        </label>
+						                        <label>
+						                            <input type="radio" name="status" value="SD_PROCESS_END"
+						                                   th:checked="${status == 'SD_PROCESS_END'}" /> 처리완료
+						                        </label>
+						                    </div>
+						                </td>
+						            </tr>
+						        </tbody>
+						    </table>
+						    <div class="search-filter-buttons">
+						        <button type="submit" class="btn btn-primary">검색</button>
+						        <button type="button" id="resetButton" class="btn btn-secondary">초기화</button>
+						    </div>
+						</form>
                 </div>
             </div>
         </div>

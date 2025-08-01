@@ -169,4 +169,21 @@ public class AdminDeclarationServiceImpl implements AdminDeclarationService {
     }
     
     
+    // 신고 자원 조회 - 필터
+    @Override
+    public List<AdminDeclaration> getFilteredDeclarationTypeList(Map<String, Object> paramMap) {
+        return adminDeclarationMapper.getFilteredDeclarationTypeList(paramMap);
+    }
+
+    @Override
+    public List<AdminDeclaration> getFilteredDeclarationReasonList(Map<String, Object> paramMap) {
+        return adminDeclarationMapper.getFilteredDeclarationReasonList(paramMap);
+    }
+
+    @Override
+    public List<AdminDeclaration> getFilteredDeclarationResultList(Map<String, Object> paramMap) {
+        return adminDeclarationMapper.getFilteredDeclarationResultList(paramMap);
+    }
+    
+    
 }
