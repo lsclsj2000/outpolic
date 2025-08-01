@@ -28,6 +28,14 @@ public interface AdminLimitsMapper {
 	// 제재 내역 조회
 	List<AdminLimits> getAdminLimitsList();
 	
+	// 제재 회원 검색
+	List<AdminLimits> selectAdminLimitsList(@Param("keyword") String keyword,
+											@Param("searchType") String searchType,
+											@Param("selectDateType") String selectDateType,
+											@Param("levelSearch") String levelSearch,
+											@Param("startDate") String startDate,
+										    @Param("endDate") String endDate);
+	
 	// 제재 타입 자원 조회
 	List<AdminLimits> getAdminLimitsTypeList();
 	

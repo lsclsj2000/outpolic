@@ -220,6 +220,71 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		    l.lmt_start_ymdt;
 	</select>
 	
+	<select id="selectAdminLimitsList" resultMap="AdminLimitsTypeMap">
+		/*제재 회원 검색*/
+		select
+		    l.lmt_cd as lmt_cd,
+		    l.mbr_cd as mbr_cd,
+		    dr.dt_cd as dt_cd,
+		    dt.dt_nm as dt_nm,
+		    l.dr_cd as dr_cd,
+		    dr.dr_nm as dr_nm,
+		    l.lmt_start_ymdt as lmt_start_ymdt,
+		    l.lmt_end_ymdt as lmt_end_ymdt,
+		    l.lmt_clear_ymdt as lmt_clear_ymdt,
+		    l.lmt_rmd_days as lmt_rmd_days,
+		    case 
+		        when l.lmt_rmd_days = 0 then '제재종료'
+		        else '제재중'
+		    end as lmt_status
+		from
+		    limits l
+		    left join declaration_reason dr on l.dr_cd = dr.dr_cd
+		    left join declaration_type dt on dt.dt_cd = dr.dt_cd
+		<where>
+			<if test="searchType != null and keyword != null and keyword != ''">
+			<choose>
+				<when test="searchType == 'limitsMemberCode'">
+					l.mbr_cd LIKE CONCAT('%', #{keyword}, '%')
+				</when>			
+				<when test="searchType == 'DeclarationTypeName'">
+					dt.dt_nm LIKE CONCAT('%', #{keyword}, '%')
+				</when>			
+				<when test="searchType == 'DeclarationReasonName'">
+					dr.dr_nm LIKE CONCAT('%', #{keyword}, '%')
+				</when>			
+			</choose>
+			</if>
+			<if test="selectDateType != null and selectDateType == 'start'">
+				<if test="startDate != null and startDate != ''">
+					AND l.lmt_start_ymdt &gt;= #{startDate}
+				</if>
+				<if test="endDate != null and endDate != ''">
+					AND l.lmt_start_ymdt &lt;= #{endDate}
+				</if>
+			</if>
+			<if test="selectDateType != null and selectDateType == 'end'">
+				<if test="startDate != null and startDate != ''">
+					AND l.lmt_end_ymdt &gt;= #{startDate}
+				</if>
+				<if test="endDate != null and endDate != ''">
+					AND l.lmt_end_ymdt &lt;= #{endDate}
+				</if>
+			</if>
+				<choose>
+					<when test="levelSearch == '제재중'">
+						AND l.lmt_rmd_days != 0
+					</when>
+					<when test="levelSearch == '제재종료'">
+						AND l.lmt_rmd_days = 0
+					</when>
+				</choose>
+		</where>    
+		order by
+		    l.lmt_start_ymdt;
+	</select>
+	
+	
 	<select id="getAdminLimitsReasonList" resultMap="AdminLimitsTypeMap">
 		/* 제재 사유 내역 조회 */
 		select

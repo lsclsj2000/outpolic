@@ -27,32 +27,30 @@
 								<tr>
 									<th>기본검색</th>
 									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>제목</option>
-											<option>내용</option>
-											<option>문의코드</option>
-											<option>작성자</option>
+										<select id="searchType" class="form-select" style="width: 120px;">
+											<option value="limitsMemberCode">제재 회원 코드</option>
+											<option value="DeclarationTypeName">신고 타입</option>
+											<option value="DeclarationReasonName">신고 사유</option>
 										</select>
-										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
+										<input id="searchInput" type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
 									</td>
 								</tr>
 								<tr>
 									<th>기간검색</th>
 									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>작성일자</option>
-											<option>수정일자</option>
+										<select id="selectDateType" class="form-select" style="width: 120px;">
+											<option value="start">제재 시작일</option>
+											<option value="end">제재 종료일</option>
 										</select>
-										<input type="date" class="form-control" style="width: 150px;" />
+										<input type="date" id="startDate" class="form-control" style="width: 150px;" />
 										<span> ~ </span>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<button type="button" class="btn btn-sm btn-light">오늘</button>
-										<button type="button" class="btn btn-sm btn-light">어제</button>
-										<button type="button" class="btn btn-sm btn-light">일주일</button>
-										<button type="button" class="btn btn-sm btn-light">지난달</button>
-										<button type="button" class="btn btn-sm btn-light">1개월</button>
-										<button type="button" class="btn btn-sm btn-light">3개월</button>
-										<button type="button" class="btn btn-sm btn-light">전체</button>
+										<input type="date" id="endDate" class="form-control" style="width: 150px;" />
+										<button type="button" class="btn btn-sm btn-light" id="btnToday">오늘</button>
+										<button type="button" class="btn btn-sm btn-light" id="btnYesterday">어제</button>
+										<button type="button" class="btn btn-sm btn-light" id="btnWeek">일주일</button>
+										<button type="button" class="btn btn-sm btn-light" id="btnMonth">1개월</button>
+										<button type="button" class="btn btn-sm btn-light" id="btn3Months">3개월</button>
+										<button type="button" class="btn btn-sm btn-light" id="btnAll">전체</button>
 									</td>
 								</tr>
 								<tr>
@@ -60,17 +58,16 @@
 									<td>
 										<div class="radio-group">
 											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
-											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
-											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
-											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
+											<label><input type="radio" name="levelSearch" value="제재중" /> 제재중</label>
+											<label><input type="radio" name="levelSearch" value="제재종료" /> 제재종료</label>
 										</div>
 									</td>
 								</tr>
 							</tbody>
 						</table>
 						<div class="search-filter-buttons">
-							<button type="button" class="btn btn-primary">검색</button>
-							<button type="button" class="btn btn-secondary">초기화</button>
+							<button type="button" id="searchBtn" class="btn btn-primary">검색</button>
+							<button type="button" id="resetBtn" class="btn btn-secondary">초기화</button>
 						</div>
 	                </div>
 	            </div>
@@ -92,7 +89,7 @@
 	                                <th scope="col" class="end text-center col-1">Action</th>
 	                            </tr>
 	                        </thead>
-	                        <tbody>
+	                        <tbody id="adminLimitsListTbody">
 								<tr class="start pt-30"
 								    style="border:0px; border-bottom: solid 1px #ececec;"
 								    th:each="l, stat : ${adminLimitsList}">
@@ -191,6 +188,169 @@
 		</th:block>
 
     <th:block layout:fragment="jsScript">
+    	<script>
+			document.addEventListener('DOMContentLoaded', function () {
+				const $start = document.getElementById('startDate');
+				const $end = document.getElementById('endDate');
+			
+				const formatDate = (date) => {
+				    return date.toISOString().split('T')[0];  // yyyy-MM-dd
+				};
+			
+				document.getElementById('btnToday').addEventListener('click', () => {
+				    const today = new Date();
+				    $start.value = formatDate(today);
+				    $end.value = formatDate(today);
+				});
+			
+				document.getElementById('btnYesterday').addEventListener('click', () => {
+				    const yesterday = new Date();
+				    yesterday.setDate(yesterday.getDate() - 1);
+				    $start.value = formatDate(yesterday);
+				    $end.value = formatDate(yesterday);
+				});
+			
+				document.getElementById('btnWeek').addEventListener('click', () => {
+				    const end = new Date();
+				    const start = new Date();
+				    start.setDate(end.getDate() - 7);
+				    $start.value = formatDate(start);
+				    $end.value = formatDate(end);
+				});
+			
+				document.getElementById('btnMonth').addEventListener('click', () => {
+				    const end = new Date();
+				    const start = new Date();
+				    start.setMonth(end.getMonth() - 1);
+				    $start.value = formatDate(start);
+				    $end.value = formatDate(end);
+				});
+			
+				document.getElementById('btn3Months').addEventListener('click', () => {
+				    const end = new Date();
+				    const start = new Date();
+				    start.setMonth(end.getMonth() - 3);
+				    $start.value = formatDate(start);
+				    $end.value = formatDate(end);
+				});
+			
+				document.getElementById('btnAll').addEventListener('click', () => {
+				    $start.value = '';
+				    $end.value = '';
+				});
+			});
+		</script>
+    	
+    	<script>
+    		$('#searchBtn').on('click', function () {
+				const keyword = $('#searchInput').val();
+				const startDate = $('#startDate').val();
+				const endDate = $('#endDate').val();
+				const searchType = $('#searchType').val();
+				const levelSearch = $("input[name='levelSearch']:checked").val();
+				const selectDateType = $('#selectDateType').val();
+				
+				$.ajax({
+					type: 'GET',
+					url: '/admin/adminLimits/search',
+					data: { keyword, startDate, endDate, searchType, levelSearch, selectDateType },
+					success: function (data) {
+						const $tbody = $('#adminLimitsListTbody');
+						$tbody.empty();
+			
+						if (data.length === 0) {
+							$tbody.append('<tr><td colspan="9" class="text-center">기록이 없습니다.</td></tr>');
+						} else {
+							data.forEach((log, index) => {
+								const statusBadge = log.limitsStatus === '제재종료'
+									? '<span class="badge rounded-pill alert-success">처리완료</span>'
+									: '<span class="badge rounded-pill alert-warning">제재중</span>';
+			
+								const rowHtml = `
+									<tr>
+										<td scope="col" class="text-center">${index + 1}</td>
+										<td scope="col" class="text-center">${log.limitsMemberCode}</td>
+										<td scope="col" class="text-center">${log.declarationTypeName}</td>
+										<td scope="col" class="text-center">${log.declarationReasonName}</td>
+										<td scope="col" class="text-center">${log.limitsStartYmdt || ''}</td>
+										<td scope="col" class="text-center">${log.limitsEndYmdt || ''}</td>
+										<td scope="col" class="text-center">${log.limitsRmdDays}</td>
+										<td scope="col" class="text-center">${statusBadge}</td>
+										<td scope="col" class="text-center">
+											<a class="btn btn-md rounded font-sm SR_open-popup-btn" data-declaration-code="${log.limitsMemberCode}">상세</a>
+										</td>
+									</tr>
+								`;
+								$tbody.append(rowHtml);
+							});
+						}
+					},
+					error: function (err) {
+						console.error("AJAX 요청 실패", err);
+						alert('검색 중 오류가 발생했습니다.');
+					}
+				});
+			});
+			
+			$('#resetBtn').on('click', function () {
+				const $searchInput = $('#searchInput');
+				const $tbody = $('#adminLimitsListTbody');
+			
+				// 입력값 초기화
+				$searchInput.val('');
+				$('input[name="levelSearch"][value="all"]').prop('checked', true);
+				$('#startDate').val('');
+				$('#endDate').val('');
+				$('#selectDateType').val('start');
+				$('#searchType').val('limitsMemberCode');
+			
+				$.ajax({
+					type: 'GET',
+					url: '/admin/adminLimits/search',
+					data: {
+						keyword: '',
+						levelSearch: 'all',
+						startDate: '',
+						endDate: '',
+						selectDateType: 'start',
+						searchType: 'limitsMemberCode'
+					},
+					success: function (data) {
+						$tbody.empty();
+			
+						if (data.length === 0) {
+							$tbody.append('<tr><td colspan="9" class="text-center">기록이 없습니다.</td></tr>');
+						} else {
+							data.forEach((log, index) => {
+								const statusBadge = log.limitsStatus === '제재종료'
+									? '<span class="badge rounded-pill alert-success">처리완료</span>'
+									: '<span class="badge rounded-pill alert-warning">제재중</span>';
+			
+								const rowHtml = `
+									<tr>
+										<td scope="col" class="text-center">${index + 1}</td>
+										<td scope="col" class="text-center">${log.limitsMemberCode}</td>
+										<td scope="col" class="text-center">${log.declarationTypeName}</td>
+										<td scope="col" class="text-center">${log.declarationReasonName}</td>
+										<td scope="col" class="text-center">${log.limitsStartYmdt || ''}</td>
+										<td scope="col" class="text-center">${log.limitsEndYmdt || ''}</td>
+										<td scope="col" class="text-center">${log.limitsRmdDays}</td>
+										<td scope="col" class="text-center">${statusBadge}</td>
+										<td scope="col" class="text-center">
+											<a class="btn btn-md rounded font-sm SR_open-popup-btn" data-declaration-code="${log.limitsMemberCode}">상세</a>
+										</td>
+									</tr>
+								`;
+								$tbody.append(rowHtml);
+							});
+						}
+					},
+					error: function () {
+						alert('초기화 중 오류가 발생했습니다.');
+					}
+				});
+			});
+    	</script>
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 			    const modal = document.getElementById('limitsModal');
