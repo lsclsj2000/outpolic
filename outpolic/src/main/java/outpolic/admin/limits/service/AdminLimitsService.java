@@ -1,8 +1,10 @@
 	package outpolic.admin.limits.service;
 	
 	import java.util.List;
-	
-	import outpolic.admin.limits.domain.AdminLimits;
+
+import org.springframework.data.repository.query.Param;
+
+import outpolic.admin.limits.domain.AdminLimits;
 	
 	
 	public interface AdminLimitsService {
@@ -21,6 +23,14 @@
 		
 		// 제재 내역 조회
 		List<AdminLimits> getAdminLimitsList();
+		
+		// 제재 회원 검색
+		List<AdminLimits> selectAdminLimitsList(@Param("keyword") String keyword,
+												@Param("searchType") String searchType,
+												@Param("selectDateType") String selectDateType,
+												@Param("levelSearch") String levelSearch,
+												@Param("startDate") String startDate,
+											    @Param("endDate") String endDate);
 		
 		// 제재 사유 자원 조회
 		List<AdminLimits> getAdminLimitsReasonList();

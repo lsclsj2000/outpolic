@@ -305,4 +305,17 @@ public class AdminLimitsController {
 		
 		return "admin/limits/adminLimitsView";
 	}
+	
+	@GetMapping("/adminLimits/search")
+	@ResponseBody
+	public List<AdminLimits> adminLimitsSearch(@RequestParam(required = false) String keyword,
+											   @RequestParam(required = false) String levelSearch,
+											   @RequestParam(required = false) String startDate,
+											   @RequestParam(required = false) String endDate,
+											   @RequestParam(required = false) String searchType,
+											   @RequestParam(required = false) String selectDateType
+											   ){
+		return adminLimitsService.selectAdminLimitsList(keyword, searchType, selectDateType, levelSearch, startDate, endDate);
+	}
+	
 }
