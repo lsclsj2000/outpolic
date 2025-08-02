@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutMain}">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<title>공지사항 내역 조회</title>
+		
+		<style>
+			.ellipsis-single-line {
+			    white-space: nowrap;
+			    overflow: hidden;
+			    text-overflow: ellipsis;
+			    max-width: 100%;
+			    display: inline-block;
+			}
+		</style>
+	</head>
+	
+	<th:block layout:fragment="contents">
+		<section class="content-main">
+	        <div class="content-header">
+	            <div>
+	                <h2 class="content-title card-title">공지사항 내역 조회</h2>
+	            </div>
+	        </div>
+	        <!-- 검색 필터 -->
+	        <div class="card mb-4 search-filter-card">
+	            <div class="card-body search-filter-body">
+	                <div class="table-responsive">
+	                    <form id="searchForm" method="get" action="/admin/adminInquiryList">
+							<table class="search-filter-table">
+								<tbody>
+									<tr>
+										<th>기본검색</th>
+										<td>
+											<select class="form-select" name="searchField" style="width: 120px;" 
+											        th:value="${searchField}">
+											    <option value="title" th:selected="${searchField} == 'title'">제목</option>
+											    <option value="writer" th:selected="${searchField} == 'writer'">작성자</option>
+											    <option value="code" th:selected="${searchField} == 'code'">문의코드</option>
+											    <option value="type" th:selected="${searchField} == 'type'">문의타입</option>
+											</select>
+											<input type="text" name="searchKeyword" class="form-control" style="width: 250px;"
+											       placeholder="검색어를 입력하세요" th:value="${searchKeyword}" />
+										</td>
+									</tr>
+									<tr>
+									    <th>기간검색</th>
+									    <td>
+									        <select name="dateField" class="form-select" style="width: 120px;">
+									            <option value="reg" th:selected="${dateField} == 'reg'">작성일자</option>
+									        </select>
+									        <input type="date" id="startDate" name="startDate" class="form-control" style="width: 150px;" th:value="${startDate}" />
+									        <span> ~ </span>
+									        <input type="date" id="endDate" name="endDate" class="form-control" style="width: 150px;" th:value="${endDate}" />
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="today">오늘</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="yesterday">어제</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="7days">일주일</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="lastmonth">지난달</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="1month">1개월</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="3months">3개월</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="all">전체</button>
+									    </td>
+									</tr>
+									<tr>
+										<th>처리상태</th>
+										<td>
+											<div class="radio-group">
+												<label><input type="radio" name="status" value="" th:checked="${status == null or status == ''}" /> 전체</label>
+												<label><input type="radio" name="status" value="SD_BEFORE" th:checked="${status == 'SD_BEFORE'}" /> 확인전</label>
+												<label><input type="radio" name="status" value="SD_PROCESS_ING" th:checked="${status == 'SD_PROCESS_ING'}" /> 처리중</label>
+												<label><input type="radio" name="status" value="SD_PROCESS_END" th:checked="${status == 'SD_PROCESS_END'}" /> 처리완료</label>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						
+							<div class="search-filter-buttons">
+								<button type="submit" class="btn btn-primary">검색</button>
+								<button type="button" id="resetButton" class="btn btn-secondary">초기화</button>
+							</div>
+						</form>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="card mb-4">
+	            <div class="card-body">
+	                <div class="table-responsive">
+	                    <table class="table table-hover">
+	                        <thead>
+	                            <tr>
+	                                <th scope="col" class="start text-center col-1">No.</th>
+	                                <th scope="col" class="text-center col-3">제목</th>
+	                                <th scope="col" class="text-center col-4">내용</th>
+	                                <th scope="col" class="text-center col-1">상태</th>
+	                                <th scope="col" class="text-center col-1">작성자</th>
+	                                <th scope="col" class="text-center col-1">작성일자</th>
+	                                <th scope="col" class="end text-center col-2">Action</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+								<tr class="start pt-30"
+								    style="border:0px; border-bottom: solid 1px #ececec;"
+								    th:each="l : ${adminAnnList}">
+								    
+								    <td class="start text-center">
+								        <span th:text="${l.annCode}">No.</span>
+								    </td>
+								    <td scope="col">
+								        <span th:text="${l.annTitle}"
+											   style="color: black; text-decoration: none;"
+											   onmouseout="this.style.color='black'">
+											   제목
+								        </span>
+								    </td>
+								    <td scope="col" class="text-truncate" style="max-width: 300px;">
+									    <span style="display: inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${l.annCn}">내용</span>
+									</td>
+								    <td scope="col" class="text-center" th:switch="${l.annStcCode}">
+	                                	<span th:case="${'SD_ACTIVE'}" class="badge rounded-pill alert-info">활성</span>
+	                                	<span th:case="${'SD_INACTIVE'}" class="badge rounded-pill alert-warning">비활성</span>
+	                                </td>
+	                                <td scope="col" class="text-center" th:text="${l.annAdmCode}">작성자</td>
+								    <td scope="col" class="text-center" th:text="${l.annRegYmdt}">작성일자</td>
+								    <td scope="col" class="text-center">
+										<a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${l.annCode}">수정</a>
+									</td>
+								</tr>
+							</tbody>
+	                    </table>
+	                </div>
+	            </div>
+	        </div>
+	    </section>
+
+		
+	
+    <th:block layout:fragment="jsScript">
+		<script>
+			
+		</script>
+	</th:block>
+</html>

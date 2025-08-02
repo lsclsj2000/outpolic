@@ -29,16 +29,6 @@
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
-					<a class="menu-link" th:href="@{/admin/adminInquiryList}">
-					    <i class="icon material-icons md-shopping_cart"></i>
-					    <span class="text">문의 관리</span>
-					</a>
-					<div class="submenu">
-					    <a th:href="@{/admin/adminInquiryList}">문의 내역 처리</a>
-					    <a th:href="@{/admin/adminInquiryResources}">문의 자원 등록</a>
-					</div>
-				</li>
-				<li class="menu-item has-submenu">
 					<a class="menu-link" th:href="@{/admin/adminOsst}">
 					    <i class="icon material-icons md-store"></i>
 					    <span class="text">외주 관리</span>
@@ -47,6 +37,18 @@
 						<a th:href="@{/admin/outsourcingList}">외주</a>
 						<a th:href="@{/admin/portfolioList}">포폴</a>
 					    <a th:href="@{/admin/adminOsst}">외주 진행 현황</a>
+					</div>
+				</li>
+				<li class="menu-item has-submenu">
+					<a class="menu-link" th:href="@{/admin/adminInquiryList}">
+					    <i class="icon material-icons md-shopping_cart"></i>
+					    <span class="text">고객센터 관리</span>
+					</a>
+					<div class="submenu">
+						<a th:href="@{/admin/adminAnnWrite}">공지사항 등록</a>
+						<a th:href="@{/admin/adminAnn}">공지사항 내역 조회</a>
+					    <a th:href="@{/admin/adminInquiryList}">문의 내역 처리</a>
+					    <a th:href="@{/admin/adminInquiryResources}">문의 자원 등록</a>
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
