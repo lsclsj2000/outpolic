@@ -21,71 +21,84 @@
            	<div class="card mb-4 search-filter-card">
 	            <div class="card-body search-filter-body">
 	                <div class="table-responsive">
-	                    <table class="search-filter-table">
-							<tbody>
-								<tr>
-									<th>기본검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>제재타입명</option>
-											<option>제재타입설명</option>
-											<option>문의코드</option>
-											<option>작성자</option>
-										</select>
-										<input type="text" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
-									</td>
-								</tr>
-								<tr>
-									<th>기간검색</th>
-									<td>
-										<select class="form-select" style="width: 120px;">
-											<option>작성일자</option>
-											<option>수정일자</option>
-										</select>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<span> ~ </span>
-										<input type="date" class="form-control" style="width: 150px;" />
-										<button type="button" class="btn btn-sm btn-light">오늘</button>
-										<button type="button" class="btn btn-sm btn-light">어제</button>
-										<button type="button" class="btn btn-sm btn-light">일주일</button>
-										<button type="button" class="btn btn-sm btn-light">지난달</button>
-										<button type="button" class="btn btn-sm btn-light">1개월</button>
-										<button type="button" class="btn btn-sm btn-light">3개월</button>
-										<button type="button" class="btn btn-sm btn-light">전체</button>
-									</td>
-								</tr>
-								<tr>
-									<th>처리상태</th>
-									<td>
-										<div class="radio-group">
-											<label><input type="radio" name="levelSearch" value="all" checked /> 전체</label>
-											<label><input type="radio" name="levelSearch" value="general" /> 확인전</label>
-											<label><input type="radio" name="levelSearch" value="excellent" /> 처리중</label>
-											<label><input type="radio" name="levelSearch" value="special" /> 처리완료</label>
+	                    <form id="searchForm" method="get" action="/admin/adminLimitsResourcesFilter">
+							<div class="card mb-4 search-filter-card">
+							    <div class="card-body search-filter-body">
+							        <div class="table-responsive">
+							            <table class="search-filter-table">
+											<tbody>
+												<tr>
+													<th>자원 종류</th>
+													<td>
+														<select name="resourceType" class="form-select" style="width: 120px;">
+															<option value="type" th:selected="${resourceType} == 'type'">제재 타입</option>
+															<option value="period" th:selected="${resourceType} == 'period'">제재 기간</option>
+															<option value="reason" th:selected="${resourceType} == 'reason'">제재 사유</option>
+														</select>
+													</td>
+												</tr>
+												<tr>
+													<th>기본검색</th>
+													<td>
+														<select name="searchField" class="form-select" style="width: 120px;">
+														    <option value="name" th:selected="${searchField} == 'name'">타입명</option>
+														    <option value="code" th:selected="${searchField} == 'code'">타입코드</option>
+														    <option value="expln" th:selected="${searchField} == 'expln'">설명</option>
+														</select>
+														<input type="text" name="searchKeyword"
+													       placeholder="검색어를 입력하세요"
+													       class="form-control" style="width: 250px;"
+													       th:value="${searchKeyword}" />
+      													</td>
+												</tr>
+												<tr>
+													<th>기간검색</th>
+													<td>
+														<select name="dateField" class="form-select" style="width: 120px;">
+														    <option value="reg" th:selected="${dateField} == 'reg'">등록일자</option>
+														    <option value="mdfcn" th:selected="${dateField} == 'mdfcn'">수정일자</option>
+														</select>
+														<input type="date" name="startDate" id="startDate" class="form-control" style="width: 150px;"
+														       th:value="${startDate}" />
+														<span> ~ </span>
+														<input type="date" name="endDate" id="endDate" class="form-control" style="width: 150px;"
+														       th:value="${endDate}" />
+      
+														<!-- 날짜 버튼 -->
+														<button type="button" class="btn btn-sm btn-light date-btn" data-range="today">오늘</button>
+														<button type="button" class="btn btn-sm btn-light date-btn" data-range="yesterday">어제</button>
+														<button type="button" class="btn btn-sm btn-light date-btn" data-range="7days">일주일</button>
+														<button type="button" class="btn btn-sm btn-light date-btn" data-range="lastmonth">지난달</button>
+														<button type="button" class="btn btn-sm btn-light date-btn" data-range="1month">1개월</button>
+														<button type="button" class="btn btn-sm btn-light date-btn" data-range="3months">3개월</button>
+														<button type="button" class="btn btn-sm btn-light date-btn" data-range="all">전체</button>
+													</td>
+												</tr>
+												<tr>
+													<th>타입상태</th>
+													<td>
+														<div class="radio-group">
+															<label><input type="radio" name="status" value="" th:checked="${status} == null or status == ''" /> 전체</label>
+															<label> <input type="radio" name="status" value="SD_ACTIVE" th:checked="${status} == 'SD_ACTIVE'" /> 활성</label>
+															<label><input type="radio" name="status" value="SD_INACTIVE" th:checked="${status} == 'SD_INACTIVE'" /> 비활성</label>
+														</div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+						
+										<!-- 버튼 -->
+										<div class="search-filter-buttons">
+											<button type="submit" class="btn btn-primary">검색</button>
+											<button type="button" class="btn btn-secondary" id="resetButton">초기화</button>
 										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<div class="search-filter-buttons">
-							<button type="button" class="btn btn-primary">검색</button>
-							<button type="button" class="btn btn-secondary">초기화</button>
-						</div>
+							        </div>
+							    </div>
+							</div>
+						</form>
 	                </div>
 	            </div>
 	        </div>
-	          
-            <div class="col-12">
-            	<div class="content-header mb-0">
-					<aside>
-					    <nav class="nav nav-pills mb-4" id="limits-tab">
-					        <a class="nav-link active" data-tab="type" href="#">제재 타입</a>
-					        <a class="nav-link" data-tab="period" href="#">제재 기간</a>
-					        <a class="nav-link" data-tab="reason" href="#">제재 사유</a>
-					    </nav>
-					</aside>
-				</div>
-			</div>
 			
             <div class="col-12">
             	<div class="card" id="type">
@@ -105,6 +118,11 @@
 		                                <th scope="col" class="end text-center col-1">Action</th>
 		                            </tr>
 		                        </thead>
+		                        <tbody th:if="${adminLimitsTypeList != null and #lists.isEmpty(adminLimitsTypeList)}">
+								    <tr>
+								        <td colspan="9" class="text-center">조건과 일치하는 데이터가 없습니다.</td>
+								    </tr>
+								</tbody>
 		                        <tbody  th:if="${adminLimitsTypeList != null}">
 									<tr class="start pt-30"
 									    style="border:0px; border-bottom: solid 1px #ececec;"
@@ -151,6 +169,11 @@
 		                                <th scope="col" class="end text-center col-1">Action</th>
 		                            </tr>
 		                        </thead>
+		                        <tbody th:if="${adminLimitsPeriodList != null and #lists.isEmpty(adminLimitsPeriodList)}">
+								    <tr>
+								        <td colspan="9" class="text-center">조건과 일치하는 데이터가 없습니다.</td>
+								    </tr>
+								</tbody>
 		                        <tbody th:if="${adminLimitsPeriodList != null}">
 									<tr class="start pt-30"
 									    style="border:0px; border-bottom: solid 1px #ececec;"
@@ -197,6 +220,11 @@
 		                                <th scope="col" class="end text-center col-1">Action</th>
 		                            </tr>
 		                        </thead>
+		                        <tbody th:if="${adminLimitsReasonList != null and #lists.isEmpty(adminLimitsReasonList)}">
+								    <tr>
+								        <td colspan="9" class="text-center">조건과 일치하는 데이터가 없습니다.</td>
+								    </tr>
+								</tbody>
 		                        <tbody th:if="${adminLimitsReasonList != null}">
 									<tr class="start pt-30"
 									    style="border:0px; border-bottom: solid 1px #ececec;"
@@ -638,6 +666,30 @@
             };
 
             let activeTabId = 'type'; // Default active tab
+            
+         	// ------------------ 추가될 부분 시작 ------------------
+	        const resourceTypeSelect = document.querySelector('select[name="resourceType"]');
+	        const panels = {
+	            type: document.getElementById('type'),
+	            reason: document.getElementById('period'),
+	            result: document.getElementById('reason')
+	        };
+	        
+	        // 페이지 로드 시 또는 resourceType 변경 시 호출되는 함수
+	        function updatePanelVisibility() {
+				const selectedType = resourceTypeSelect.value || 'type';
+				activeTabId = selectedType;
+				Object.keys(panels).forEach(key => {
+					const panel = panels[key];
+					if (panel) {
+						panel.classList.toggle('d-none', key !== selectedType);
+					}
+				});
+			}
+	        
+	        // 페이지 로드 시 한 번 실행
+	        updatePanelVisibility();
+	        // ------------------ 추가될 부분 끝 ------------------
 
             function showTab(tabId) {
                 tabContents.forEach(content => {
@@ -1230,6 +1282,68 @@
                     }
                 });
             });
+            
+         // 🔄 초기화 버튼
+	        const resetBtn = document.getElementById('resetButton');
+	        resetBtn?.addEventListener('click', function () {
+	            const defaultUrl = '/admin/adminDeclarationResourcesFilter?resourceType=type';
+	            window.location.href = defaultUrl;
+	        });
+	
+	        // 📅 날짜 버튼 클릭 시 자동 입력
+	        document.querySelectorAll('.date-btn').forEach(btn => {
+	            btn.addEventListener('click', function () {
+	                const today = new Date();
+	                const startDateInput = document.getElementById('startDate');
+	                const endDateInput = document.getElementById('endDate');
+	                let start, end;
+	
+	                switch (this.dataset.range) {
+	                    case 'today':
+	                        start = end = new Date();
+	                        break;
+	                    case 'yesterday':
+	                        start = end = new Date();
+	                        start.setDate(start.getDate() - 1);
+	                        break;
+	                    case '7days':
+	                        end = new Date();
+	                        start = new Date();
+	                        start.setDate(start.getDate() - 6);
+	                        break;
+	                    case 'lastmonth':
+	                        start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+	                        end = new Date(today.getFullYear(), today.getMonth(), 0);
+	                        break;
+	                    case '1month':
+	                        end = new Date();
+	                        start = new Date();
+	                        start.setMonth(start.getMonth() - 1);
+	                        break;
+	                    case '3months':
+	                        end = new Date();
+	                        start = new Date();
+	                        start.setMonth(start.getMonth() - 3);
+	                        break;
+	                    case 'all':
+	                        startDateInput.value = '';
+	                        endDateInput.value = '';
+	                        return;
+	                }
+	
+	                startDateInput.value = start.toISOString().slice(0, 10);
+	                endDateInput.value = end.toISOString().slice(0, 10);
+	            });
+	        });
+	
+	        // ⏎ Enter 키로 검색 제출
+	        const searchForm = document.getElementById('searchForm');
+	        searchForm?.addEventListener('keydown', function (event) {
+	            if (event.key === 'Enter') {
+	                event.preventDefault();
+	                searchForm.submit();
+	            }
+	        });
         });
 		</script>
 	</th:block>

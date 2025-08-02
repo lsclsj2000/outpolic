@@ -253,16 +253,15 @@ public class AdminDeclarationController {
 	
 	@GetMapping("/adminDeclarationResourcesFilter")
 	public String adminDeclarationResourcesView(
-	    @RequestParam(required = false) String resourceType,
-	    @RequestParam(required = false) String searchField,
-	    @RequestParam(required = false) String searchKeyword,
-	    @RequestParam(required = false) String status,
-	    @RequestParam(required = false) String dateField,
-	    @RequestParam(required = false) String startDate,
-	    @RequestParam(required = false) String endDate,
-	    Model model
+		    @RequestParam(required = false, defaultValue = "type") String resourceType,
+		    @RequestParam(required = false) String searchField,
+		    @RequestParam(required = false) String searchKeyword,
+		    @RequestParam(required = false) String status,
+		    @RequestParam(required = false) String dateField,
+		    @RequestParam(required = false) String startDate,
+		    @RequestParam(required = false) String endDate,
+		    Model model
 	) {
-		// 신고 자원 조회 - 필터
 	    Map<String, Object> paramMap = new HashMap<>();
 	    paramMap.put("searchField", searchField);
 	    paramMap.put("searchKeyword", searchKeyword);
@@ -271,20 +270,21 @@ public class AdminDeclarationController {
 	    paramMap.put("startDate", startDate);
 	    paramMap.put("endDate", endDate);
 
-	    // 자원 종류에 따라 분기
-	    if ("type".equals(resourceType)) {
-	        List<AdminDeclaration> list = adminDeclarationService.getFilteredDeclarationTypeList(paramMap);
-	        model.addAttribute("adminDeclarationTypeList", list);
-	    } else if ("reason".equals(resourceType)) {
-	        List<AdminDeclaration> list = adminDeclarationService.getFilteredDeclarationReasonList(paramMap);
-	        model.addAttribute("adminDeclarationReasonList", list);
-	    } else if ("result".equals(resourceType)) {
-	        List<AdminDeclaration> list = adminDeclarationService.getFilteredDeclarationResultList(paramMap);
-	        model.addAttribute("adminDeclarationResultList", list);
+	    // 자원 종류 분기 처리
+	    switch (resourceType) {
+	        case "type":
+	            model.addAttribute("adminDeclarationTypeList", adminDeclarationService.getFilteredDeclarationTypeList(paramMap));
+	            break;
+	        case "reason":
+	            model.addAttribute("adminDeclarationReasonList", adminDeclarationService.getFilteredDeclarationReasonList(paramMap));
+	            break;
+	        case "result":
+	            model.addAttribute("adminDeclarationResultList", adminDeclarationService.getFilteredDeclarationResultList(paramMap));
+	            break;
 	    }
 
-	    // 검색 조건 다시 넘겨줌 (상태 유지)
-	    model.addAttribute("resourceType", resourceType);
+	    // 검색 조건 다시 넘겨줌
+	    model.addAttribute("resourceType", resourceType); // 중요!!
 	    model.addAttribute("searchField", searchField);
 	    model.addAttribute("searchKeyword", searchKeyword);
 	    model.addAttribute("status", status);
@@ -294,5 +294,6 @@ public class AdminDeclarationController {
 
 	    return "admin/declaration/adminDeclarationResourcesView";
 	}
+
 
 }

@@ -83,19 +83,169 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="decl_target_cd"     property="declarationTargetCode"/>
 	</resultMap>
 	
+	<select id="getFilteredLimitsReasonList" resultMap="AdminLimitsTypeMap">
+		/*제재 사유 - 필터*/
+	    SELECT
+	        lr.lr_cd as lr_cd,
+	        lr.dt_cd as dt_cd,
+	        dt.dt_nm as dt_nm,
+	        lr.dr_cd as dr_cd,
+	        dr.dr_nm as dr_nm,
+	        lr.lt_cd as lt_cd,
+	        lt.lt_nm as lt_nm,
+	        lr.lp_cd as lp_cd,
+	        lp.lp_nm as lp_nm,
+	        lr.lr_cnd as lr_cnd,
+	        lr.lr_cnd_min as lr_cnd_min,
+	        lr.lr_cnd_max as lr_cnd_max,
+	        lr.lr_expln as lr_expln,
+	        lr.stc_cd as stc_cd,
+	        sc.stc_nm as stc_nm,
+	        lr.lr_reg_adm_cd as lr_reg_adm_cd,
+	        lr.lr_reg_ymdt as lr_reg_ymdt,
+	        lr.lr_mdfcn_adm_cd as lr_mdfcn_adm_cd,
+	        lr.lr_mdfcn_ymdt as lr_mdfcn_ymdt
+	    FROM
+	        limits_reason lr
+	        LEFT JOIN declaration_type dt ON lr.dt_cd = dt.dt_cd
+	        LEFT JOIN declaration_reason dr ON lr.dr_cd = dr.dr_cd
+	        LEFT JOIN limits_type lt ON lr.lt_cd = lt.lt_cd
+	        LEFT JOIN limits_period lp ON lr.lp_cd = lp.lp_cd
+	        LEFT JOIN status_code sc ON lr.stc_cd = sc.stc_cd
+	    <where>
+	        <if test="searchField != null and searchKeyword != null and searchKeyword != ''">
+	            <choose>
+	                <when test="searchField == 'name'">
+	                    AND lr.lr_expln LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	                <when test="searchField == 'code'">
+	                    AND lr.lr_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	                <when test="searchField == 'expln'">
+	                    AND lr.lr_expln LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	            </choose>
+	        </if>
+	        <if test="status != null and status != ''">
+	            AND lr.stc_cd = #{status}
+	        </if>
+	        <if test="dateField != null and startDate != null and endDate != null and startDate != '' and endDate != ''">
+	            <choose>
+	                <when test="dateField == 'reg'">
+	                    AND lr.lr_reg_ymdt BETWEEN #{startDate} AND #{endDate}
+	                </when>
+	                <when test="dateField == 'mdfcn'">
+	                    AND lr.lr_mdfcn_ymdt BETWEEN #{startDate} AND #{endDate}
+	                </when>
+	            </choose>
+	        </if>
+	    </where>
+	    ORDER BY lr.lr_reg_ymdt DESC
+	</select>
+	
+	<select id="getFilteredLimitsPeriodList" resultMap="AdminLimitsTypeMap">
+		/*제재 기간 - 필터*/
+	    SELECT
+	        lp.lp_cd as lp_cd,
+	        lp.lp_nm as lp_nm,
+	        lp.lp_days as lp_days,
+	        lp.stc_cd as stc_cd,
+	        sc.stc_nm as stc_nm,
+	        lp.lp_mdfcn_adm_cd as lp_mdfcn_adm_cd,
+	        lp.lp_mdfcn_ymdt as lp_mdfcn_ymdt,
+	        lp.lp_reg_adm_cd as lp_reg_adm_cd,
+	        lp.lp_reg_ymdt as lp_reg_ymdt
+	    FROM
+	        limits_period lp
+	        LEFT JOIN status_code sc ON lp.stc_cd = sc.stc_cd
+	    <where>
+	        <if test="searchField != null and searchKeyword != null and searchKeyword != ''">
+	            <choose>
+	                <when test="searchField == 'name'">
+	                    AND lp.lp_nm LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	                <when test="searchField == 'code'">
+	                    AND lp.lp_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+	                </when>
+	            </choose>
+	        </if>
+	        <if test="status != null and status != ''">
+	            AND lp.stc_cd = #{status}
+	        </if>
+	        <if test="dateField != null and startDate != null and endDate != null and startDate != '' and endDate != ''">
+	            <choose>
+	                <when test="dateField == 'reg'">
+	                    AND lp.lp_reg_ymdt BETWEEN #{startDate} AND #{endDate}
+	                </when>
+	                <when test="dateField == 'mdfcn'">
+	                    AND lp.lp_mdfcn_ymdt BETWEEN #{startDate} AND #{endDate}
+	                </when>
+	            </choose>
+	        </if>
+	    </where>
+	    ORDER BY lp.lp_reg_ymdt DESC
+	</select>
+	
+	<select id="getFilteredLimitsTypeList" resultMap="AdminLimitsTypeMap">
+		/*제재 타입 - 필터*/
+	    SELECT
+	        lt.lt_cd as lt_cd, 
+	        lt.lt_nm as lt_nm,
+	        lt.lt_expln as lt_expln,
+	        lt.stc_cd as stc_cd,
+	        sc.stc_nm as stc_nm,
+	        lt.lt_reg_adm_cd as lt_reg_adm_cd,
+	        lt.lt_reg_ymdt as lt_reg_ymdt,
+	        lt.lt_mdfcn_adm_cd as lt_mdfcn_adm_cd,
+	        lt.lt_mdfcn_ymdt as lt_lt_mdfcn_ymdt
+	    FROM
+	        limits_type lt
+	        LEFT JOIN status_code sc ON lt.stc_cd = sc.stc_cd
+	    <where>
+		    1 = 1
+		    <if test="searchField != null and searchKeyword != null and searchKeyword != ''">
+		        <choose>
+		            <when test="searchField == 'name'">
+		                AND lt.lt_nm LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </when>
+		            <when test="searchField == 'code'">
+		                AND lt.lt_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </when>
+		            <when test="searchField == 'expln'">
+		                AND lt.lt_expln LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </when>
+		        </choose>
+		    </if>
+		    <if test="status != null and status != ''">
+		        AND lt.stc_cd = #{status}
+		    </if>
+		    <if test="dateField != null and startDate != null and endDate != null and startDate != '' and endDate != ''">
+		        <choose>
+		            <when test="dateField == 'reg'">
+		                AND lt.lt_reg_ymdt BETWEEN #{startDate} AND #{endDate}
+		            </when>
+		            <when test="dateField == 'mdfcn'">
+		                AND lt.lt_mdfcn_ymdt BETWEEN #{startDate} AND #{endDate}
+		            </when>
+		        </choose>
+		    </if>
+		</where>
+	    ORDER BY lt.lt_reg_ymdt DESC
+	</select>
+	
 	<update id="updateMemberAuthority" parameterType="outpolic.admin.limits.domain.AdminLimits">
-	/*회원 권한 업데이트*/
-    UPDATE member_authority
-    SET
-        ma_portfolio = #{authorityPortfolio},
-        ma_outsourcing_write = #{authorityOsWrite},
-        ma_outsourcing_contract = #{authorityOsContract},
-        ma_outsourcing = #{authorityOs},
-        ma_chat = #{authorityChat},
-        ma_review = #{authorityReview},
-        ma_mdfcn_ymdt = #{authorityMdfcnYmdt}
-    WHERE
-        mbr_cd = #{authorityMemberCode}
+		/*회원 권한 업데이트*/
+	    UPDATE member_authority
+	    SET
+	        ma_portfolio = #{authorityPortfolio},
+	        ma_outsourcing_write = #{authorityOsWrite},
+	        ma_outsourcing_contract = #{authorityOsContract},
+	        ma_outsourcing = #{authorityOs},
+	        ma_chat = #{authorityChat},
+	        ma_review = #{authorityReview},
+	        ma_mdfcn_ymdt = #{authorityMdfcnYmdt}
+	    WHERE
+	        mbr_cd = #{authorityMemberCode}
 	</update>
 
 	<select id="selectMemberAuthorityByMemberCode" parameterType="string" resultMap="AdminLimitsAuthorityMap">
