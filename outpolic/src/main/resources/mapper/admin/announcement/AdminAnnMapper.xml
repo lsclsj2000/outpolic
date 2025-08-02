@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="outpolic.admin.announcement.mapper.AdminAnnMapper">
+	<!-- AdminInquiry.DTO -->
+	<resultMap id="AdminAnnResultMap" type="outpolic.admin.announcement.domain.AdminAnn">
+		<id 	column="ann_cd" 			property="annCode"/>
+		<result column="ann_ttl" 			property="annTitle"/>
+		<result column="ann_cn" 			property="annCn"/>
+		<result column="stc_cd" 			property="annStcCode"/>
+		<result column="adm_cd" 			property="annAdmCode"/>
+		<result column="ann_reg_ymdt" 		property="annRegYmdt"/>
+	</resultMap>
+	
+	
+	<select id="getAdminAnnList" resultMap="AdminAnnResultMap">
+		/* 공지사항 내역 조회 */
+		select
+			a.ann_cd as ann_cd,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		from
+			announcement a 
+		where
+			a.ann_type = 'notice'
+		order by
+			a.ann_reg_ymdt desc;
+	</select>
+	
+</mapper>
