@@ -32,9 +32,9 @@
 														<th>자원 종류</th>
 														<td>
 															<select name="resourceType" class="form-select" style="width: 120px;">
-																<option value="type">신고 타입</option>
-																<option value="reason">신고 사유</option>
-																<option value="result">신고 처리 결과</option>
+																<option value="type" th:selected="${resourceType} == 'type'">신고 타입</option>
+																<option value="reason" th:selected="${resourceType} == 'reason'">신고 사유</option>
+																<option value="result" th:selected="${resourceType} == 'result'">신고 처리 결과</option>
 															</select>
 														</td>
 													</tr>
@@ -42,24 +42,29 @@
 														<th>기본검색</th>
 														<td>
 															<select name="searchField" class="form-select" style="width: 120px;">
-																<option value="name">타입명</option>
-																<option value="code">타입코드</option>
-																<option value="expln">설명</option>
+															    <option value="name" th:selected="${searchField} == 'name'">타입명</option>
+															    <option value="code" th:selected="${searchField} == 'code'">타입코드</option>
+															    <option value="expln" th:selected="${searchField} == 'expln'">설명</option>
 															</select>
-															<input type="text" name="searchKeyword" placeholder="검색어를 입력하세요" class="form-control" style="width: 250px;" />
-														</td>
+															<input type="text" name="searchKeyword"
+														       placeholder="검색어를 입력하세요"
+														       class="form-control" style="width: 250px;"
+														       th:value="${searchKeyword}" />
+       													</td>
 													</tr>
 													<tr>
 														<th>기간검색</th>
 														<td>
 															<select name="dateField" class="form-select" style="width: 120px;">
-																<option value="reg">등록일자</option>
-																<option value="mdfcn">수정일자</option>
+															    <option value="reg" th:selected="${dateField} == 'reg'">등록일자</option>
+															    <option value="mdfcn" th:selected="${dateField} == 'mdfcn'">수정일자</option>
 															</select>
-															<input type="date" name="startDate" id="startDate" class="form-control" style="width: 150px;" />
+															<input type="date" name="startDate" id="startDate" class="form-control" style="width: 150px;"
+															       th:value="${startDate}" />
 															<span> ~ </span>
-															<input type="date" name="endDate" id="endDate" class="form-control" style="width: 150px;" />
-															
+															<input type="date" name="endDate" id="endDate" class="form-control" style="width: 150px;"
+															       th:value="${endDate}" />
+       
 															<!-- 날짜 버튼 -->
 															<button type="button" class="btn btn-sm btn-light date-btn" data-range="today">오늘</button>
 															<button type="button" class="btn btn-sm btn-light date-btn" data-range="yesterday">어제</button>
@@ -74,9 +79,9 @@
 														<th>타입상태</th>
 														<td>
 															<div class="radio-group">
-																<label><input type="radio" name="status" value="" checked /> 전체</label>
-																<label><input type="radio" name="status" value="SD_ACTIVE" /> 활성</label>
-																<label><input type="radio" name="status" value="SD_INACTIVE" /> 비활성</label>
+																<label><input type="radio" name="status" value="" th:checked="${status} == null or status == ''" /> 전체</label>
+																<label> <input type="radio" name="status" value="SD_ACTIVE" th:checked="${status} == 'SD_ACTIVE'" /> 활성</label>
+																<label><input type="radio" name="status" value="SD_INACTIVE" th:checked="${status} == 'SD_INACTIVE'" /> 비활성</label>
 															</div>
 														</td>
 													</tr>
@@ -562,7 +567,7 @@
 			                edit: document.getElementById('reasonMdfcnModal'),
 			            },
 			            result: {
-			                register: document.getElementById('resultModal'),
+			                register: document.getElementById('resultModal'),	
 			                edit: document.getElementById('resultMdfcnModal'),
 			            }
 			        };
@@ -579,15 +584,12 @@
 			        
 			        // 페이지 로드 시 또는 resourceType 변경 시 호출되는 함수
 			        function updatePanelVisibility() {
-			            const selectedType = resourceTypeSelect.value;
-			            currentTab = selectedType; // currentTab 변수도 업데이트
-			            Object.keys(panels).forEach(key => {
-			                panels[key].classList.toggle('d-none', key !== selectedType);
-			            });
-			        }
-			        
-			        // resourceType select 변경 이벤트 리스너 추가
-			        resourceTypeSelect.addEventListener('change', updatePanelVisibility);
+						const selectedType = resourceTypeSelect.value || 'type';
+						currentTab = selectedType;
+						Object.keys(panels).forEach(key => {
+							panels[key].classList.toggle('d-none', key !== selectedType);
+						});
+					}
 			        
 			        // 페이지 로드 시 한 번 실행
 			        updatePanelVisibility();

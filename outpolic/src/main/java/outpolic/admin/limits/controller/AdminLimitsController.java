@@ -1,8 +1,9 @@
 package outpolic.admin.limits.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -317,6 +318,57 @@ public class AdminLimitsController {
 											   @RequestParam(required = false) String selectDateType
 											   ){
 		return adminLimitsService.selectAdminLimitsList(keyword, searchType, selectDateType, levelSearch, startDate, endDate);
+	}
+	
+	@GetMapping("/adminLimitsResourcesFilter")
+	public String adminLimitsResourcesFilter(
+	    @RequestParam(required = false, defaultValue = "type") String resourceType,
+	    @RequestParam(required = false) String searchField,
+	    @RequestParam(required = false) String searchKeyword,
+	    @RequestParam(required = false) String status,
+	    @RequestParam(required = false) String dateField,
+	    @RequestParam(required = false) String startDate,
+	    @RequestParam(required = false) String endDate,
+	    Model model
+	) {
+		// 제재 자원 조회 - 필터
+	    Map<String, Object> paramMap = new HashMap<>();
+	    paramMap.put("resourceType", resourceType);
+	    paramMap.put("searchField", searchField);
+	    paramMap.put("searchKeyword", searchKeyword);
+	    paramMap.put("status", status);
+	    paramMap.put("dateField", dateField);
+	    paramMap.put("startDate", startDate);
+	    paramMap.put("endDate", endDate);
+	    
+	    log.info("필터 파라미터: {}", paramMap);
+
+	    switch (resourceType) {
+	        case "type":
+	            model.addAttribute("adminLimitsTypeList", adminLimitsService.getFilteredLimitsTypeList(paramMap));
+	            break;
+	        case "period":
+	            model.addAttribute("adminLimitsPeriodList", adminLimitsService.getFilteredLimitsPeriodList(paramMap));
+	            break;
+	        case "reason":
+	            model.addAttribute("adminLimitsReasonList", adminLimitsService.getFilteredLimitsReasonList(paramMap));
+	            break;
+	    }
+	    
+	    log.info("필터 파라미터: {}", paramMap);
+
+	    // 검색 필터 상태 유지
+	    model.addAttribute("resourceType", resourceType);
+	    model.addAttribute("searchField", searchField);
+	    model.addAttribute("searchKeyword", searchKeyword);
+	    model.addAttribute("status", status);
+	    model.addAttribute("dateField", dateField);
+	    model.addAttribute("startDate", startDate);
+	    model.addAttribute("endDate", endDate);
+	    
+	    log.info("필터 파라미터: {}", paramMap);
+
+	    return "admin/limits/adminLimitsResourcesView";
 	}
 	
 }

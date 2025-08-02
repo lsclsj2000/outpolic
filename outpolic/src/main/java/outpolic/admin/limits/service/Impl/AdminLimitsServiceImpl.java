@@ -2,6 +2,7 @@ package outpolic.admin.limits.service.Impl;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -246,7 +247,21 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
 		return adminLimitsMapper.selectAdminLimitsList(keyword, searchType, selectDateType, levelSearch, startDate, endDate);
 	}
 
+	// 제재 자원 조회 - 필터
+	@Override
+    public List<AdminLimits> getFilteredLimitsTypeList(Map<String, Object> paramMap) {
+        return adminLimitsMapper.getFilteredLimitsTypeList(paramMap);
+    }
 
+    @Override
+    public List<AdminLimits> getFilteredLimitsPeriodList(Map<String, Object> paramMap) {
+        return adminLimitsMapper.getFilteredLimitsPeriodList(paramMap);
+    }
+
+    @Override
+    public List<AdminLimits> getFilteredLimitsReasonList(Map<String, Object> paramMap) {
+        return adminLimitsMapper.getFilteredLimitsReasonList(paramMap);
+    }
 
 
 
