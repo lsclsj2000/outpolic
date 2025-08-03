@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.portfolio.dto.AdminPortfolioDTO;
 import outpolic.admin.portfolio.dto.AdminPortfolioSearchDTO; // 검색 DTO 임포트
@@ -28,7 +29,14 @@ public class AdminPortfolioController {
 	@GetMapping("/portfolioList")
 	public String adminPortfolioListView(
 	    @ModelAttribute AdminPortfolioSearchDTO searchDTO, // 검색 DTO 파라미터 추가
-	    Model model) {
+	    Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CONTENT_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 	    
 		List<AdminPortfolioDTO> portfolioList = adminPortfolioService.getAllPortfolios(searchDTO); // 검색 DTO 전달
 		model.addAttribute("title", "포트폴리오 관리");

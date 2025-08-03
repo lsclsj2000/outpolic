@@ -70,8 +70,15 @@ public class AdminInquiryController {
 	    @RequestParam(required = false) String dateField,
 	    @RequestParam(required = false) String startDate,
 	    @RequestParam(required = false) String endDate,
-	    Model model) {
-
+	    Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
+		
 	    Map<String, Object> paramMap = new HashMap<>();
 	    paramMap.put("searchField", searchField);
 	    paramMap.put("searchKeyword", searchKeyword);
@@ -113,7 +120,14 @@ public class AdminInquiryController {
 	        @RequestParam(required = false) String dateField,
 	        @RequestParam(required = false) String startDate,
 	        @RequestParam(required = false) String endDate,
-	        Model model) {
+	        Model model, HttpSession httpSession) {
+		
+		List<String> permissions = (List<String>) httpSession.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 
 	    Map<String, Object> paramMap = new HashMap<>();
 	    paramMap.put("searchField", searchField);

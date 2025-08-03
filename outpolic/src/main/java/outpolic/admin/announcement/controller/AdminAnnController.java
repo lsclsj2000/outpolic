@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.announcement.domain.AdminAnn;
@@ -30,7 +31,14 @@ public class AdminAnnController {
 	}
 	
 	@GetMapping("/adminAnnWrite")
-	public String adminAnnWriteView() {
+	public String adminAnnWriteView(Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("SYSTEM_ADMIN") && !permissions.contains("CS_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 공지사항 작성
 		
 		return "admin/announcement/adminAnnWriteView";
