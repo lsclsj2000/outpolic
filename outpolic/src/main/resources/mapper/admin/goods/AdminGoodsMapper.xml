@@ -79,7 +79,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        gds_reg_ymdt AS gdsRegYmdt,
 	        gds_mdfcn_adm_cd AS gdsMdfcnAdmCd,
 	        gds_mdfcn_ymdt AS gdsMdfcnYmdt,
-	        gds_status AS gdsStatus
+	        gds_status AS gdsStatus,
+	        gds_target_member_type  AS gdsTargetMemberType
 	    FROM goods
 	    <where>
 	        <if test="searchKeyword != null and searchKeyword != ''">

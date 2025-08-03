@@ -135,51 +135,45 @@
 			<div class="tab-pane fade" id="mySettList">
 			<div class="row d-flex flex-column align-items-center">
 				<h3>결제내역</h3>
-					<table class="table mt-30 table-bordered table-striped">
-						<thead>
-							<tr>
-								<th style="text-align: center;">결제번호</th>
-								<th style="text-align: center;">결제일시</th>
-								<th style="text-align: center;">결제 상품명</th>
-								<th style="text-align: center;">결제한 상품의 개수</th>
-								<th style="text-align: center;">사용된 마일리지</th>
-								<th style="text-align: center;">결제 금액</th>
-								<th style="text-align: center;">환불</th>
-							</tr>
-						</thead>
-						<tbody>
-							<!-- 'settlementList'가 비어있지 않을 경우 각 항목을 반복하여 출력 -->
-							<tr th:each="s : ${settlementList}">
-								<td style="text-align: center;" th:text="${s.stlmCd}">결제 번호</td>
-								<!-- Timestamp 타입을 yyyy년 MM월 dd일 HH:mm:ss 형식으로 포맷팅 -->
-								<td style="text-align: center;" th:text="${#dates.format(s.stlmYmdt, 'yyyy년 MM월 dd일 HH:mm:ss')}">결제 일시</td>
-								<!-- gdsCd 값에 따라 결제 상품명을 다르게 표시 -->
-								<td style="text-align: center;">
-									<span th:switch="${s.gdsCd}">
-										<span th:case="'PD_C003'">이용권</span>
-										<span th:case="'PD_C002'">개인용 구독권</span>
-										<span th:case="'PD_C001'">기업용 구독권</span>
-										<span th:case="*">[[${s.gdsCd}]]</span> <!-- 그 외의 코드일 경우 원본 gdsCd 표시 -->
-									</span>
-								</td>
-								<td style="text-align: center;" th:text="${s.stlmCnt}">상품 개수</td>
-								<td style="text-align: right; padding-right: 50px;" th:text="${s.stlmUsedPoints}">사용된 마일리지</td>
-								<!-- BigDecimal 타입을 콤마 형식으로 포맷팅하고 '원' 추가 -->
-								<td style="text-align: center;" th:text="${#numbers.formatDecimal(s.stlmFinalAmt, 0, 'COMMA', 0, 'POINT')} + '원'">결제 금액</td>
-								<td style="text-align: center;">
-									<button
-										style="background-color: #ffffff; border: 1px solid #cccccc; border-radius: 5px; 
-										padding: 2px 10px; font-size: 14px; cursor: pointer;">
-										환불요청
-									</button>
-								</td>
-							</tr>
-							<!-- 'settlementList'가 비어있을 경우 메시지 출력 -->
-							<tr th:if="${settlementList.isEmpty()}">
-								<td colspan="7" style="text-align: center; padding: 20px;">결제 내역이 없습니다.</td> <!-- colspan 7로 변경 -->
-							</tr>
-						</tbody>
-					</table>
+					<div class="card-body">
+			            <div class="table-responsive">
+			                <table class="table">
+			                    <thead>
+			                        <tr>
+			                            <th>상품 정보</th>
+			                            <th>결제일시</th>
+			                            <th>사용 마일리지</th>
+			                            <th>결제 금액</th>
+			                            <th>환불</th>
+			                        </tr>
+			                    </thead>
+			                    <tbody>
+			                        <tr th:if="${settlementList.isEmpty()}">
+			                            <td colspan="5" class="text-center">결제 내역이 없습니다.</td>
+			                        </tr>
+			                        <tr th:each="s : ${settlementList}">
+			                            <td>
+			                                <h6 class="mb-5" th:text="${s.gdsNm}"></h6>
+			                                <p class="font-sm text-muted">
+			                                    결제코드: <span th:text="${s.stlmCd}"></span><br>
+			                                    수량: <span th:text="${s.stlmCnt}"></span>
+			                                </p>
+			                            </td>
+			                            <td th:text="${#dates.format(s.stlmYmdt, 'yyyy-MM-dd HH:mm')}"></td>
+			                            <td th:text="${#numbers.formatDecimal(s.stlmUsedPoints, 0, 'COMMA', 0, 'POINT')}"></td>
+			                            <td th:text="${#numbers.formatDecimal(s.stlmFinalAmt, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+			                            <td>
+			                                <button class="btn btn-sm btn-secondary refund-request-btn"
+			                                        th:data-stlm-cd="${s.stlmCd}"
+			                                        th:disabled="${s.stcNm == '환불'}">
+			                                    환불요청
+			                                </button>
+			                            </td>
+			                        </tr>
+			                    </tbody>
+			                </table>
+			            </div>
+			        </div>
 					<h3>마일리지 적립 내역</h3>
 					<table class="table mt-30">
 						<thead>

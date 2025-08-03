@@ -64,7 +64,7 @@
 											                <label><input type="radio" name="filterTarget" value="" checked /> 전체</label>
 											                <label><input type="radio" name="filterTarget" value="GENERAL" /> 일반</label>
 											                <label><input type="radio" name="filterTarget" value="CORPORATE" /> 기업</label>
-											                <label><input type="radio" name="filterTarget" value="ALL" /> 모두</label>
+											                <label><input type="radio" name="filterTarget" value="ALL" /> 공통</label>
 											            </div>
 											        </div>
 						                            <div class="filter-group">
@@ -123,7 +123,12 @@
 				                                </td>
 											    <td scope="col" class="text-center" th:text="${g.gdsPeriodQuantity}">상품 기간 / 수량</td>
 											    <td scope="col" class="text-center" th:text="${g.gdsUnit}">단위</td>
-											    <td class="text-center" th:text="${g.gdsTargetMemberType}"></td>
+											    <td class="text-center" th:switch="${g.gdsTargetMemberType}">
+										            <span th:case="'GENERAL'">일반</span>
+										            <span th:case="'CORPORATE'">기업</span>
+										            <span th:case="'ALL'">공통</span>
+										            <span th:case="*" th:text="${g.gdsTargetMemberType}"></span>
+										        </td>
                                                 <td scope="col" class="text-center" th:switch="${g.gdsStatus}">
                                                     <span th:case="1" class="badge rounded-pill alert-success">활성</span>
                                                     <span th:case="0" class="badge rounded-pill alert-danger">비활성</span>
@@ -393,6 +398,21 @@
                     const row = document.createElement('tr');
                     row.classList.add('start', 'pt-30');
                     row.style.cssText = 'border:0px; border-bottom: solid 1px #ececec;';
+                    
+                    let targetText = '';
+                    switch (g.gdsTargetMemberType) {
+                        case 'GENERAL':
+                            targetText = '일반';
+                            break;
+                        case 'CORPORATE':
+                            targetText = '기업';
+                            break;
+                        case 'ALL':
+                            targetText = '공통';
+                            break;
+                        default:
+                            targetText = g.gdsTargetMemberType || '';
+                    }
 
                     row.innerHTML = `
                         <td class="start text-center"><span>${g.gdsCd || ''}</span></td>
@@ -404,8 +424,7 @@
                         </td>
                         <td class="text-center">${g.gdsPeriodQuantity || ''}</td>
                         <td class="text-center">${g.gdsUnit || ''}</td>
-                        <td class="text-center">${g.gdsTargetMemberType || ''}</td>
-                        <td class="text-center">
+                        <td class="text-center">${targetText}</td> <td class="text-center">
                             ${g.gdsStatus === 1 ? '<span class="badge rounded-pill alert-success">활성</span>' : 
                             g.gdsStatus === 0 ? '<span class="badge rounded-pill alert-danger">비활성</span>' : ''}
                         </td>
@@ -443,12 +462,9 @@
                 document.getElementById('registerGdsCd').value = '';
                 registerGoodsModal.querySelector('h2').textContent = '상품 등록';
                 
-                /**
-                 * [변경점 2] 하드코딩된 값 대신, 세션에서 가져온 관리자 코드로 설정합니다.
-                 */
                 document.getElementById('registerAdmCd').value = sessionAdminCode; 
                 
-                document.getElementById('registerStatusActive').checked = true; // '활성'을 기본으로 체크
+                document.getElementById('registerStatusActive').checked = true;
                 console.log('Register goods form reset.');
             }
             
@@ -483,9 +499,6 @@
                 });
             }
             
-            /**
-             * [추가] 초기화 버튼 이벤트 리스너
-             */
             resetBtn?.addEventListener('click', () => {
                 document.getElementById('searchType').value = 'gdsNm';
                 document.getElementById('searchKeyword').value = '';
@@ -498,9 +511,6 @@
                 fetchAndReRenderGoods(); // 파라미터 없이 호출하여 전체 목록 조회
             });
 
-            /**
-             * [추가] 기간 버튼 이벤트 리스너
-             */
             quickDateBtns.forEach(button => {
                 button.addEventListener('click', function() {
                     const period = parseInt(this.getAttribute('data-period'), 10);
