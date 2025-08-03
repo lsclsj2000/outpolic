@@ -11,4 +11,6 @@ public class AdminAnn {
 	private String annStcCode;
 	private String annAdmCode;
 	private String annRegYmdt;
+	private String annMdfcnAdmCode;
+	private String annMdfcnYmdt;
 }

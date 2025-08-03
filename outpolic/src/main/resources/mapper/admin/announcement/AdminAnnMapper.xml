@@ -7,13 +7,90 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="outpolic.admin.announcement.mapper.AdminAnnMapper">
 	<!-- AdminInquiry.DTO -->
 	<resultMap id="AdminAnnResultMap" type="outpolic.admin.announcement.domain.AdminAnn">
-		<id 	column="ann_cd" 			property="annCode"/>
-		<result column="ann_ttl" 			property="annTitle"/>
-		<result column="ann_cn" 			property="annCn"/>
-		<result column="stc_cd" 			property="annStcCode"/>
-		<result column="adm_cd" 			property="annAdmCode"/>
-		<result column="ann_reg_ymdt" 		property="annRegYmdt"/>
+		<id 	column="ann_cd" 				property="annCode"/>
+		<result column="ann_ttl" 				property="annTitle"/>
+		<result column="ann_cn" 				property="annCn"/>
+		<result column="stc_cd" 				property="annStcCode"/>
+		<result column="adm_cd" 				property="annAdmCode"/>
+		<result column="ann_reg_ymdt" 			property="annRegYmdt"/>
+		<result column="ann_mdfcn_adm_cd" 		property="annMdfcnAdmCode"/>
+		<result column="ann_mdfcn_ymdt" 		property="annMdfcnYmdt"/>
 	</resultMap>
+	
+	<select id="getAdminAnnListFiltered" parameterType="map" resultMap="AdminAnnResultMap">
+	    select
+			a.ann_cd as ann_cd,
+			a.ann_ttl as ann_ttl,
+			a.ann_cn as ann_cn,
+			a.stc_cd as stc_cd,
+			a.adm_cd as adm_cd,
+			a.ann_reg_ymdt as ann_reg_ymdt
+		from
+			announcement a 
+	    WHERE 1=1
+	      AND ann_type = 'notice'
+	
+	    <!-- 검색 필드 -->
+	    <if test="searchField != null and searchKeyword != null and searchKeyword != ''">
+	        <choose>
+	            <when test="searchField == 'title'">
+	                AND ann_ttl LIKE CONCAT('%', #{searchKeyword}, '%')
+	            </when>
+	            <when test="searchField == 'type'">
+	                AND ann_cn LIKE CONCAT('%', #{searchKeyword}, '%')
+	            </when>
+	            <when test="searchField == 'writer'">
+	                AND adm_cd LIKE CONCAT('%', #{searchKeyword}, '%')
+	            </when>
+	        </choose>
+	    </if>
+	
+	    <!-- 상태 -->
+	    <if test="status != null and status != ''">
+	        AND stc_cd = #{status}
+	    </if>
+	
+	    <!-- 날짜 조건 -->
+	    <if test="dateField != null and startDate != null and endDate != null and startDate != '' and endDate != ''">
+	        <choose>
+	            <when test="dateField == 'reg'">
+	                AND DATE(ann_reg_ymdt) BETWEEN #{startDate} AND #{endDate}
+	            </when>
+	            <when test="dateField == 'mod'">
+	                AND DATE(ann_mdfcn_ymdt) BETWEEN #{startDate} AND #{endDate}
+	            </when>
+	        </choose>
+	    </if>
+	
+	    ORDER BY ann_reg_ymdt DESC
+	</select>
+	
+	<update id="updateAdminAnn" parameterType="outpolic.admin.announcement.domain.AdminAnn">
+		/*공지사항 수정 저장*/
+	    UPDATE announcement
+	    SET
+	        ann_ttl = #{annTitle},
+	        ann_cn = #{annCn},
+	        stc_cd = #{annStcCode},
+	        ann_mdfcn_adm_cd = #{annMdfcnAdmCode},
+	        ann_mdfcn_ymdt = NOW()
+	    WHERE ann_cd = #{annCode}
+	</update>
+	
+	<select id="getAdminAnnDetail" parameterType="String" resultMap="AdminAnnResultMap">
+		/* 공지사항 수정 모달창 조회 */
+	    SELECT
+	        ann_cd,
+	        ann_ttl,
+	        ann_cn,
+	        stc_cd,
+	        adm_cd,
+	        ann_reg_ymdt,
+	        ann_mdfcn_adm_cd,
+	        ann_mdfcn_ymdt
+	    FROM announcement
+	    WHERE ann_cd = #{annCode}
+	</select>
 	
 	
 	<select id="getAdminAnnList" resultMap="AdminAnnResultMap">
