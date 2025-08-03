@@ -155,7 +155,14 @@ public class AdminLimitsController {
     }
 
     @GetMapping("/adminLimitsResources")
-    public String adminLimitsResourcesView(Model model) {
+    public String adminLimitsResourcesView(Model model, HttpSession session) {
+    	
+    	List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
         // 제재 자원 등록 페이지
         List<AdminLimits> adminLimitsTypeList = adminLimitsService.getAdminLimitsTypeList();
         List<AdminLimits> adminLimitsPeriodList = adminLimitsService.getAdminLimitsPeriodList();
@@ -282,7 +289,14 @@ public class AdminLimitsController {
 	}
 	
 	@GetMapping("/adminLimitsAuthority")
-	public String adminLimitsAuthorityView(Model model) {
+	public String adminLimitsAuthorityView(Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 권한 설정
 		List<AdminLimits> adminLimitsAuthorityList = adminLimitsService.getAdminLimitsAuthorityList();
 		model.addAttribute("title", "회원 권한 조회");
@@ -292,14 +306,28 @@ public class AdminLimitsController {
 	}
 	
 	@GetMapping("/adminLimitsProcess")
-	public String adminLimitsProcessView(Model model) {
+	public String adminLimitsProcessView(Model model, HttpSession session) {
 		// 제재 처리 페이지
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("MEMBER_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		model.addAttribute("title", "제재 처리");
 		return "admin/limits/adminLimitsProcessView";
 	}
 	
 	@GetMapping("/adminLimits")
-	public String adminLimitsView(Model model) {
+	public String adminLimitsView(Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 제재 내역 조회 페이지
 		List<AdminLimits> adminLimitsList = adminLimitsService.getAdminLimitsList();
 		model.addAttribute("title", "제재 내역 목록");

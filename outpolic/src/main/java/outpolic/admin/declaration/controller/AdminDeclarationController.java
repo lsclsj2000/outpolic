@@ -204,7 +204,14 @@ public class AdminDeclarationController {
 	}
 	
 	@GetMapping("/adminDeclarationResources")
-	public String adminDeclarationManageView(Model model) {
+	public String adminDeclarationManageView(Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 신고 자원 등록 페이지
 		List<AdminDeclaration> adminDeclarationTypeList = adminDeclarationService.getAdminDeclarationTypeList();
 		List<AdminDeclaration> adminDeclarationReasonList  = adminDeclarationService.getAdminDeclarationReasonList();
@@ -226,8 +233,15 @@ public class AdminDeclarationController {
 	    @RequestParam(required = false) String startDate,
 	    @RequestParam(required = false) String endDate,
 	    @RequestParam(required = false) String status,
-	    Model model
+	    Model model, HttpSession session
 	) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 신고 내역 조회 - 필터
 		Map<String, Object> searchParams = new HashMap<>();
 	    searchParams.put("keywordField", keywordField);
@@ -260,8 +274,14 @@ public class AdminDeclarationController {
 		    @RequestParam(required = false) String dateField,
 		    @RequestParam(required = false) String startDate,
 		    @RequestParam(required = false) String endDate,
-		    Model model
+		    Model model, HttpSession session
 	) {
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 	    Map<String, Object> paramMap = new HashMap<>();
 	    paramMap.put("searchField", searchField);
 	    paramMap.put("searchKeyword", searchKeyword);
