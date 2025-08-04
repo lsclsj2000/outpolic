@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="outpolic.systems.refund.mapper.RefundMapper">
+
+    <select id="findSettlementForRefund" resultType="outpolic.systems.refund.dto.RefundDTO">
+        SELECT
+            stlm_cd,
+            mbr_cd,
+            stc_cd,
+            stlm_ymdt,
+            stlm_final_amt
+        FROM settlement
+        WHERE stlm_cd = #{stlmCd}
+    </select>
+
+    <insert id="insertRefund" parameterType="outpolic.systems.refund.dto.RefundDTO">
+        <selectKey keyProperty="rfndCd" resultType="String" order="BEFORE">
+			SELECT
+				CASE
+					WHEN COUNT(*) = 0 THEN 'RFND_C1'
+				ELSE CONCAT( 'RFND_C', MAX(CAST(SUBSTRING_INDEX(rfnd_cd, 'RFND_C', -1) AS UNSIGNED)) + 1 )
+			END AS newCode
+			FROM refundment
+			WHERE rfnd_cd LIKE 'RFND_C%';
+        </selectKey>
+        INSERT INTO refundment ( rfnd_cd, stlm_cd, mbr_cd, rfnd_amt, rfnd_proc_ymdt ) 
+        VALUES ( #{rfndCd}, #{stlmCd}, #{mbrCd}, #{stlmFinalAmt}, NOW() )
+    </insert>
+
+    <update id="updateSettlementStatusToRefund">
+        UPDATE settlement SET stc_cd = 'SD_REFUNDMENT' WHERE stlm_cd = #{stlmCd}
+    </update>
+
+</mapper>
