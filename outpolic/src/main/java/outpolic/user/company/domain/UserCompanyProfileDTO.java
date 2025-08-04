@@ -11,6 +11,7 @@ public class UserCompanyProfileDTO {
     private String entNm;
     private String entExpln;
     private int entScl;
+    private String entImg;
     
     // 계산 또는 다른 테이블에서 가져올 정보
     private double avgReviewScore;
