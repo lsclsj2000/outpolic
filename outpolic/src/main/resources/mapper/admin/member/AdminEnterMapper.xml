@@ -49,27 +49,60 @@
 		ORDER BY CAST(SUBSTRING_INDEX(e.ent_cd, 'EI_C', -1) AS UNSIGNED)
 	</select>
 	
+	<select id="getEnterCount" resultType="int">
+		select count(*) from enterprise
+	</select>
+	
+	<select id="getEnterListForPg" resultMap = "adminCorpInfoResultMap">
+		 SELECT
+		    e.ent_cd,
+		    e.ent_brno,
+		    e.mbr_cd,
+		    e.ent_nm,
+		    e.ent_rprsv,
+		    e.ent_telno,
+		    e.ent_fndn_ymdt,
+		    e.ent_addr,
+		    e.ent_daddr,
+		    e.ent_zip,
+		    e.ent_scl,
+		    e.ent_expln,
+		    e.ent_url,
+		    e.ent_join_ymdt,
+		    e.ent_mdfcn_ymdt,
+		    e.mbr2_cd,
+		    e.ent_scr,
+		    m.stc_cd as statusCode,
+		    e.ent_img
+		FROM enterprise e
+		JOIN member m ON e.mbr_cd = m.mbr_cd
+		ORDER BY CAST(SUBSTRING_INDEX(e.ent_cd, 'EI_C', -1) AS UNSIGNED)
+		 <if test="startRow != null and rowPerPage != null">
+        	LIMIT #{rowPerPage} OFFSET #{startRow};
+        </if>
+	</select>
+	
 	<select id="getEnterListByStatus" resultMap="adminCorpInfoResultMap">
   		SELECT 
- e.ent_cd,
-    e.ent_brno,
-    e.mbr_cd,
-    e.ent_nm,
-    e.ent_rprsv,
-    e.ent_telno,
-    e.ent_fndn_ymdt,
-    e.ent_addr,
-    e.ent_daddr,
-    e.ent_zip,
-    e.ent_scl,
-    e.ent_expln,
-    e.ent_url,
-    e.ent_mdfcn_ymdt,
-    m.stc_cd as statusCode,  <!-- 요거!! -->
-    e.mbr2_cd,
-    e.ent_scr,
-    e.ent_join_ymdt,
-    e.ent_img
+		 e.ent_cd,
+		    e.ent_brno,
+		    e.mbr_cd,
+		    e.ent_nm,
+		    e.ent_rprsv,
+		    e.ent_telno,
+		    e.ent_fndn_ymdt,
+		    e.ent_addr,
+		    e.ent_daddr,
+		    e.ent_zip,
+		    e.ent_scl,
+		    e.ent_expln,
+		    e.ent_url,
+		    e.ent_mdfcn_ymdt,
+		    m.stc_cd as statusCode,  
+		    e.mbr2_cd,
+		    e.ent_scr,
+		    e.ent_join_ymdt,
+		    e.ent_img
 		FROM enterprise e
 		JOIN member m ON e.mbr_cd = m.mbr_cd
 		where m.stc_cd=#{statusCode}

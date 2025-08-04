@@ -5,6 +5,19 @@
 
 <head>
 <meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+<style>
+	.pagination .page-item .page-link {
+	min-width: 40px; /* 너비 확보 */
+	height: 40px;
+	padding: 6px 10px; /* 내부 여백 */
+	text-align: center; /* 텍스트 가운데 정렬 */
+	line-height: 1.5; /* 줄간격 조정 */
+	display: inline-flex; /* 정렬 개선 */
+	justify-content: center;
+	align-items: center;
+	font-size: 14px; /* 필요 시 폰트 사이즈 조정 */
+}
+</style>
 </head>
 
 <body>
@@ -74,7 +87,7 @@
 							<p class="fs-6 mb-0">
 								<span class="badge bg-light text-dark px-3 py-2"> 전체 회원 수
 									: <span id="totalCount" class="fw-bold text-primary"
-									th:text="${memberList.size()}">0</span> 명
+									th:text="${totalCount}">0</span> 명
 								</span>
 							</p>
 	
@@ -125,7 +138,7 @@
 							<tbody id="memberTableBody" class="text-center">
 								<tr th:if="${not #lists.isEmpty(memberList)}"
 									th:each="l, stat : ${memberList}">
-									<td class="start text-center" th:text="${stat.index + 1}"></td>
+									<td class="start text-center" th:text="${startRow + stat.index + 1}"></td>
 									<td th:text="${l.memberCode}">회원 코드</td>
 									<td th:text="${l.memberName}">이름</td>
 									<td th:text="${l.memberId}">아이디</td>
@@ -141,8 +154,8 @@
 										연락처</td>
 									<td th:switch="${l.statusCode}"><span th:case="SD_ACTIVE"
 										class="badge rounded-pill alert-success">활성</span> <span
-										th:case="SD_WITHDRAWN" class="badge rounded-pill alert-info">휴면</span>
-										<span th:case="SD_DORMANT"
+										th:case="SD_DORMANT" class="badge rounded-pill alert-info">휴면</span>
+										<span th:case="SD_WITHDRAWN"
 										class="badge rounded-pill alert-info">탈퇴</span> <span
 										th:case="SD_LIMIT" class="badge rounded-pill alert-warning">제재</span>
 									</td>
@@ -157,6 +170,10 @@
 								</tr>
 							</tbody>
 						</table>
+						<div id="paginationArea">
+							<div
+								th:insert="~{admin/fragments/pagination :: paginationFragment}"></div>
+						</div>
 					</div>
 					<!-- table-responsive //end -->
 				</div>
@@ -319,6 +336,8 @@
 				
 				    // 회원 목록 렌더링 함수 (공통)
 				    function renderMemberList(data) {
+				    $('#paginationArea').hide();
+				    
 					  const tbody = $('#memberTableBody');
 					  tbody.empty();
 					  
@@ -425,9 +444,14 @@
 			
 			    // 수정모드 활성화
 			    $('.btnEditMember').click(function () {
-			        $('.readonly-field').prop('readonly', false);
-			        $('#modalMemberStatusCode').prop('disabled', false);
-			        $('#modalMemberGradeCode').prop('disabled', false);
+			    	const gradeCode = $('#modalMemberGradeCode').val();
+			    	if(gradeCode !== 'ADMIN'){
+				        $('.readonly-field').prop('readonly', false);
+				        $('#modalMemberStatusCode').prop('disabled', false);
+				        $('#modalMemberGradeCode').prop('disabled', false);
+			    	}else {
+				        alert('관리자 등급은 수정할 수 없습니다.');
+				    }
 			    });
 			
 			    // 저장 버튼 클릭 시

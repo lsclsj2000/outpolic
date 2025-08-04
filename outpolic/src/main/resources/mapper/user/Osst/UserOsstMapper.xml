@@ -35,6 +35,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="stc_cd" 			property="stcCode"/>
 		<result column="stc_nm" 			property="stcName"/>
 		<result column="member_role"        property="memberRole"/>
+		<result column="reviewWrittenYn"    property="reviewWrittenYn"/>
+		<result column="rvwCd"    			property="rvwCd"/>
 	</resultMap>
 	
 	<resultMap id="userOsstRecordResultMap" type="outpolic.user.osst.domain.UserOsstRecord">
@@ -214,8 +216,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			    r.rvw_cd AS rvwCd,
 			    CASE WHEN r.rvw_cd IS NOT NULL THEN 'Y' ELSE 'N' END AS reviewWrittenYn
 			FROM FilteredStep fs
-			-- [수정된 부분] LEFT JOIN의 ON 조건절에서, 리뷰 작성자를 로그인한 사용자로 직접 지정합니다.
-			LEFT JOIN review r ON fs.ocd_cd = r.osc_id AND r.mbr_cd = #{memberCode}
+			LEFT JOIN outsourcing_contract oc ON fs.osp_cd = oc.osp_cd
+			LEFT JOIN review r ON oc.osc_id = r.osc_id AND r.mbr_cd = #{memberCode}
 			WHERE fs.mbr_cd = #{memberCode} OR fs.ent_mbr_cd = #{memberCode}
 	</select>
 	

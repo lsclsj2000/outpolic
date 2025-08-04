@@ -263,6 +263,16 @@ public class AdminLimitsServiceImpl implements AdminLimitsService {
         return adminLimitsMapper.getFilteredLimitsReasonList(paramMap);
     }
 
+	@Override
+	public int getAdminLimitListCount() {
+		return adminLimitsMapper.getAdminLimitListCount();
+	}
+
+	@Override
+	public List<AdminLimits> getAdminLimitsListForPg(int startRow, int rowPerPage) {
+		return adminLimitsMapper.getAdminLimitsListForPg(startRow, rowPerPage);
+	}
+
 
 
 }

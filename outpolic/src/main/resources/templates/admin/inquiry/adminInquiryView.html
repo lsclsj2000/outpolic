@@ -8,6 +8,20 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
 		<title>문의 내역 조회</title>
+		
+		<style>
+			.pagination .page-item .page-link {
+				min-width: 40px; /* 너비 확보 */
+				height: 40px;
+				padding: 6px 10px; /* 내부 여백 */
+				text-align: center; /* 텍스트 가운데 정렬 */
+				line-height: 1.5; /* 줄간격 조정 */
+				display: inline-flex; /* 정렬 개선 */
+				justify-content: center;
+				align-items: center;
+				font-size: 14px; /* 필요 시 폰트 사이즈 조정 */
+			}
+		</style>
 	</head>
 	
 	<th:block layout:fragment="contents">
@@ -126,6 +140,10 @@
 								</tr>
 							</tbody>
 	                    </table>
+	                    <div id="paginationArea">
+							<div
+								th:insert="~{admin/fragments/pagination :: paginationFragment}"></div>
+						</div>
 	                </div>
 	            </div>
 	        </div>
@@ -567,6 +585,7 @@
 			    const resetBtn = document.getElementById('resetButton');
 			    resetBtn.addEventListener('click', function () {
 			        window.location.href = '/admin/adminInquiryList';
+			        
 			    });
 	
 			    // 4. 날짜 버튼 기능

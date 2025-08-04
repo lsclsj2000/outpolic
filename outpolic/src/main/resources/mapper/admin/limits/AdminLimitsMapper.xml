@@ -370,6 +370,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		    l.lmt_start_ymdt;
 	</select>
 	
+	<select id="getAdminLimitsListForPg" resultMap="AdminLimitsTypeMap">
+		/* 페이지네이션을 위한 제재 내역 조회 */
+		select
+		    l.lmt_cd as lmt_cd,
+		    l.mbr_cd as mbr_cd,
+		    dr.dt_cd as dt_cd,
+		    dt.dt_nm as dt_nm,
+		    l.dr_cd as dr_cd,
+		    dr.dr_nm as dr_nm,
+		    l.lmt_start_ymdt as lmt_start_ymdt,
+		    l.lmt_end_ymdt as lmt_end_ymdt,
+		    l.lmt_clear_ymdt as lmt_clear_ymdt,
+		    l.lmt_rmd_days as lmt_rmd_days,
+		    case 
+		        when l.lmt_rmd_days = 0 then '제재종료'
+		        else '제재중'
+		    end as lmt_status
+		from
+		    limits l
+		    left join declaration_reason dr on l.dr_cd = dr.dr_cd
+		    left join declaration_type dt on dt.dt_cd = dr.dt_cd
+		order by
+		    l.lmt_start_ymdt
+	    <if test="startRow != null and rowPerPage != null">
+			LIMIT #{startRow}, #{rowPerPage}
+		</if>
+	</select>
+	
+	<select id="getAdminLimitListCount" resultType="int">
+		/* 제재 내역 수 조회 */
+		select count(*) from limits
+	</select>
+	
 	<select id="selectAdminLimitsList" resultMap="AdminLimitsTypeMap">
 		/*제재 회원 검색*/
 		select

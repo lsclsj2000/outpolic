@@ -7,6 +7,19 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<style>
+		.pagination .page-item .page-link {
+			min-width: 40px; /* 너비 확보 */
+			height: 40px;
+			padding: 6px 10px; /* 내부 여백 */
+			text-align: center; /* 텍스트 가운데 정렬 */
+			line-height: 1.5; /* 줄간격 조정 */
+			display: inline-flex; /* 정렬 개선 */
+			justify-content: center;
+			align-items: center;
+			font-size: 14px; /* 필요 시 폰트 사이즈 조정 */
+		}
+		</style>
 	</head>
 	
 	
@@ -112,6 +125,10 @@
 								</tr>
 							</tbody>
 	                    </table>
+	                    <div id="paginationArea">
+							<div
+								th:insert="~{admin/fragments/pagination :: paginationFragment}"></div>
+						</div>
 	                </div>
 	            </div>
 	        </div>
@@ -257,7 +274,7 @@
 					success: function (data) {
 						const $tbody = $('#adminLimitsListTbody');
 						$tbody.empty();
-			
+						$('#paginationArea').hide();
 						if (data.length === 0) {
 							$tbody.append('<tr><td colspan="9" class="text-center">기록이 없습니다.</td></tr>');
 						} else {
@@ -293,62 +310,7 @@
 			});
 			
 			$('#resetBtn').on('click', function () {
-				const $searchInput = $('#searchInput');
-				const $tbody = $('#adminLimitsListTbody');
-			
-				// 입력값 초기화
-				$searchInput.val('');
-				$('input[name="levelSearch"][value="all"]').prop('checked', true);
-				$('#startDate').val('');
-				$('#endDate').val('');
-				$('#selectDateType').val('start');
-				$('#searchType').val('limitsMemberCode');
-			
-				$.ajax({
-					type: 'GET',
-					url: '/admin/adminLimits/search',
-					data: {
-						keyword: '',
-						levelSearch: 'all',
-						startDate: '',
-						endDate: '',
-						selectDateType: 'start',
-						searchType: 'limitsMemberCode'
-					},
-					success: function (data) {
-						$tbody.empty();
-			
-						if (data.length === 0) {
-							$tbody.append('<tr><td colspan="9" class="text-center">기록이 없습니다.</td></tr>');
-						} else {
-							data.forEach((log, index) => {
-								const statusBadge = log.limitsStatus === '제재종료'
-									? '<span class="badge rounded-pill alert-success">처리완료</span>'
-									: '<span class="badge rounded-pill alert-warning">제재중</span>';
-			
-								const rowHtml = `
-									<tr>
-										<td scope="col" class="text-center">${index + 1}</td>
-										<td scope="col" class="text-center">${log.limitsMemberCode}</td>
-										<td scope="col" class="text-center">${log.declarationTypeName}</td>
-										<td scope="col" class="text-center">${log.declarationReasonName}</td>
-										<td scope="col" class="text-center">${log.limitsStartYmdt || ''}</td>
-										<td scope="col" class="text-center">${log.limitsEndYmdt || ''}</td>
-										<td scope="col" class="text-center">${log.limitsRmdDays}</td>
-										<td scope="col" class="text-center">${statusBadge}</td>
-										<td scope="col" class="text-center">
-											<a class="btn btn-md rounded font-sm SR_open-popup-btn" data-declaration-code="${log.limitsMemberCode}">상세</a>
-										</td>
-									</tr>
-								`;
-								$tbody.append(rowHtml);
-							});
-						}
-					},
-					error: function () {
-						alert('초기화 중 오류가 발생했습니다.');
-					}
-				});
+ 				window.location.href = '/admin/adminLimits';
 			});
     	</script>
 		<script>
