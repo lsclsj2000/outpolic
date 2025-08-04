@@ -6,7 +6,7 @@ public interface UserOutsourcingReviewService {
 
 	boolean createReview(UserOutsourcingReviewDTO reviewDTO);
 	
-	UserOutsourcingReviewDTO getReviewForEdit(String oscId, String mbrCd);
+	UserOutsourcingReviewDTO getReviewForEdit(String ocdCd, String mbrCd);
 
     boolean updateReview(UserOutsourcingReviewDTO reviewDTO);
     

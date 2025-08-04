@@ -16,6 +16,8 @@ import outpolic.user.review.service.UserOutsourcingReviewService;
 public class UserOutsourcingReviewServiceImpl implements UserOutsourcingReviewService{
 
 	private final UserOsstMapper userOsstMapper;
+	
+	
 
 	@Override
 	@Transactional
@@ -50,9 +52,16 @@ public class UserOutsourcingReviewServiceImpl implements UserOutsourcingReviewSe
 	}
 	
 	@Override
-    public UserOutsourcingReviewDTO getReviewForEdit(String oscId, String mbrCd) {
+    public UserOutsourcingReviewDTO getReviewForEdit(String ocdCd, String mbrCd) {
+		
+		String realOscId = userOsstMapper.findOscIdByOcdId(ocdCd);
+		
+		if (realOscId == null) {
+            // 변환할 ID가 없으면, 리뷰도 존재할 수 없으므로 null 반환
+            return null;
+        }
         Map<String, Object> params = new HashMap<>();
-        params.put("oscId", oscId);
+        params.put("oscId", realOscId);
         params.put("mbrCd", mbrCd);
         return userOsstMapper.findReviewByOscIdAndMbrCd(params);
     }
