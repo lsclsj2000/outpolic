@@ -331,4 +331,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			i.iq_reg_ymdt DESC;
 	</select>
 	
+	<select id="getAdminInquiryListCount" resultType = "int">
+		/* 총 문의 갯수 세기 */
+		select count(*) from inquiry
+	</select>
+	
+	<select id="getAdminInquiryListForPg" resultMap="AdminInquiryResultMap">
+		/*페이지네이션 위한 리스트 호출*/
+		SELECT
+			i.iq_cd AS iq_cd,
+			m.mbr_nm AS mbr_nm,
+			i.iqt_cd AS iqt_cd,
+			iqt.iqt_nm AS iqt_nm,
+			i.iq_ttl AS iq_ttl,
+			i.iq_reg_ymdt AS iq_reg_ymdt,
+			ip.iqp_cd AS iqp_cd,
+			COALESCE(ip.stc_cd, 'SD_BEFORE') AS stc_cd,
+			COALESCE(sc.stc_nm, '확인전') AS stc_nm
+		FROM
+			inquiry i
+			LEFT JOIN member m ON i.mbr_cd = m.mbr_cd
+			LEFT JOIN inquiry_type iqt ON i.iqt_cd = iqt.iqt_cd
+			LEFT JOIN inquiry_process ip ON i.iq_cd = ip.iq_cd
+			LEFT JOIN status_code sc ON ip.stc_cd = sc.stc_cd
+		ORDER BY
+			i.iq_reg_ymdt DESC
+		<if test="startRow != null and rowPerPage != null">
+			LIMIT #{startRow}, #{rowPerPage}
+		</if>	
+	</select>
+	
 </mapper>

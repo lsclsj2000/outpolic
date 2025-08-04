@@ -29,4 +29,8 @@ public interface AdminEnterMapper {
             
 	// 검색
 	List<AdminMemberDTO> searchEnterpriseMembers(String keyword);
+	
+	int getEnterCount();
+	
+	List<AdminMemberDTO> getEnterListForPg(@Param("startRow") int startRow, @Param("rowPerPage") int rowPerPage);
 }

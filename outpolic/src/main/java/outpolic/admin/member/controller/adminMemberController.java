@@ -38,7 +38,7 @@ public class adminMemberController {
 		 int rowPerPage = 30;
 		    int startRow = (currentPage - 1) * rowPerPage;
 
-		    List<AdminMemberDTO> memberList = adminMemberService.getMemberListForPg(startRow, rowPerPage);
+		    List<Member> memberList = adminMemberService.getMemberListForPg(startRow, rowPerPage);
 		    int totalCount = adminMemberService.getMemberCount();
 		    int lastPage = (int) Math.ceil((double) totalCount / rowPerPage);
 

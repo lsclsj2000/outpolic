@@ -28,6 +28,6 @@ public interface AdminMemberService {
 	List<Member> searchMembers(String keyword);
 	
 	int getMemberCount();
-    List<AdminMemberDTO> getMemberListForPg(int startRow, int rowPerPage);
+    List<Member> getMemberListForPg(int startRow, int rowPerPage);
 
 }
