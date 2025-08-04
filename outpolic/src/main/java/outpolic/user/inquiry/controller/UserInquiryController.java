@@ -148,20 +148,18 @@ public class UserInquiryController {
 	    inquiry.setMemberCode(memberCode);
 	    System.out.println("문의에 설정될 회원 코드 (mbr_cd): " + inquiry.getMemberCode());
 	    
-	    userInquiryService.adduserInquiryWrite(inquiry, attachmentFile); // 이 부분에서 DB 저장
+	    userInquiryService.adduserInquiryWrite(inquiry, attachmentFile);
 	    
-	    // 이 시점에 inquiry.getInquiryCode()가 유효한지 확인해야 함
 	    return ResponseEntity.ok().body(Map.of("iq_cd", inquiry.getInquiryCode()));
 	}
 
 	@GetMapping("/userInquiryWrite")
-    public String userInquiryWriteView(Model model, HttpSession session) { // HttpSession 주입
-        // 작성자 이름만 뷰로 전달 (선택 사항: 보이지 않게 할 경우 불필요)
+    public String userInquiryWriteView(Model model, HttpSession session) {
         String reporter = (String) session.getAttribute("SNAME"); 
         if (reporter == null || reporter.isBlank()) {
             reporter = "익명"; 
         }
-        model.addAttribute("reporter", reporter); // 뷰에 작성자 이름을 표시하고 싶을 경우 유지
+        model.addAttribute("reporter", reporter);
 
         // 문의 유형 목록
         List<UserInquiryType> inquiryTypeList = userInquiryService.getAllInquiryTypes();
@@ -171,16 +169,6 @@ public class UserInquiryController {
 
         return "user/inquiry/userInquiryWriteView";
     }
-
-//	// 문의 삭제
-//	@PostMapping("/userInquiryDelete")
-//	@ResponseBody
-//	public boolean userInquiryDelete(Map<String, String> requestMap) {
-//
-//
-//
-//		return ;
-//	}
 
 	@GetMapping("/userInquiryDetail")
 	public String userInquiryDetailView(@RequestParam("iq_cd") String inquiryCode, Model model) {
@@ -245,20 +233,19 @@ public class UserInquiryController {
 	                                    @RequestParam(defaultValue = "0") int page,
 	                                    @RequestParam(defaultValue = "10") int size,
 	                                    @RequestParam(defaultValue = "recent") String sort) {
-	    // 🔽 정렬 조건 적용
+	    // 정렬 조건
 	    Sort sorting = switch (sort) {
 	        case "old" -> Sort.by("annRegYmdt").ascending();
 	        default -> Sort.by("annRegYmdt").descending();
 	    };
 	    Pageable pageable = PageRequest.of(page, size, sorting);
 
-	    // 🔽 페이징된 공지사항 조회
 	    Page<UserAnn> noticeList = userInquiryService.getUserNoticeList(pageable, sort);
 
 	    model.addAttribute("noticeList", noticeList.getContent());
 	    model.addAttribute("pageInfo", noticeList);
-	    model.addAttribute("size", size); // ✅ 필터 유지용
-	    model.addAttribute("sort", sort); // ✅ 필터 유지용
+	    model.addAttribute("size", size);
+	    model.addAttribute("sort", sort);
 	    model.addAttribute("title", "공지사항");
 
 	    return "user/inquiry/userNoticeListView";

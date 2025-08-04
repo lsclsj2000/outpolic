@@ -113,14 +113,17 @@
 							        </td>
 							        <td scope="col">
 							            <span th:text="${l.annTitle}"
-							                   style="color: black; text-decoration: none;"
+							                   style="text-decoration: none;"
 							                   onmouseout="this.style.color='black'">
 							                   제목
 							            </span>
 							        </td>
 							        <td scope="col" class="text-truncate" style="max-width: 300px;">
-							            <span style="display: inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${l.annCn}">내용</span>
-							        </td>
+									    <span style="display: inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+									          th:text="${l.annCn}">
+									        내용
+									    </span>
+									</td>
 							        <td scope="col" class="text-center" th:switch="${l.annStcCode}">
 							            <span th:case="${'SD_ACTIVE'}" class="badge rounded-pill alert-info">활성</span>
 							            <span th:case="${'SD_INACTIVE'}" class="badge rounded-pill alert-warning">비활성</span>
@@ -193,6 +196,13 @@
 							</label>
 						</div>
 	               	</div>
+	               	<div class="SR_form-group SR_full-width">
+                        <label>첨부파일 목록</label>
+                        <div id="SR_fileList" class="SR_form-control SR_file-list">
+                            파일1.jpg (1.2MB) <br>
+                            파일2.pdf (3.5MB)
+                        </div>
+                    </div>
 					<div class="SR_popup-footer">
                         <div class="SR_update-info">
                         	<span>수정정보 : </span>
@@ -223,6 +233,8 @@
                     fetch(`/admin/getAdminAnnDetail?code=${annCode}`)
                         .then(res => res.json())
                         .then(data => {
+                        	console.log('📦 공지사항 단건 데이터:', data);
+                            console.log('📎 첨부파일 목록:', data.adminAnnFiles);
                             document.getElementById('editCode').value = data.annCode || '';
                             document.getElementById('editName').value = data.annTitle || '';
                             document.getElementById('editExpln').value = data.annCn || '';
@@ -236,6 +248,27 @@
                                 r.checked = (r.value === data.annStcCode);
                             });
 
+                         // 첨부파일 목록 출력
+                            const fileListDiv = document.getElementById('SR_fileList');
+                            fileListDiv.innerHTML = '';
+
+                            if (data.adminAnnFiles && data.adminAnnFiles.length > 0) {
+                                data.adminAnnFiles.forEach(file => {
+                                    if (!file) return; // ✅ null 요소 건너뜀
+
+                                    const fileSizeMB = (file.saSize / (1024 * 1024)).toFixed(1);
+                                    const fileName = file.saOrgnlName;
+                                    const saCode = file.saCode;
+
+                                    const fileItem = document.createElement('div');
+                                    fileItem.innerHTML = `<a href="/admin/adminAnn/file/download?saCode=${saCode}" target="_blank">${fileName}</a> (${fileSizeMB}MB)`;
+                                    fileListDiv.appendChild(fileItem);
+                                });
+                            } else {
+                                fileListDiv.textContent = '첨부파일 없음';
+                            }
+
+                            // 모달 열기
                             modal.style.display = 'flex';
                             document.body.style.overflow = 'hidden';
                         })
