@@ -29,7 +29,7 @@ public class adminEnterController {
 	
 	//전체 회원목록
 	@GetMapping("/enterList")
-	public String adminEnterList(Model model, HttpSession session) {
+	public String adminEnterList(Model model, HttpSession session, @RequestParam(defaultValue = "1") Integer currentPage) {
 		String adminCode = (String)session.getAttribute("SCD");
 		model.addAttribute("adminCode",adminCode);
 		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
@@ -38,9 +38,41 @@ public class adminEnterController {
 			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
 			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
 		}
-		var enterList = adminEnterService.getEnterList();
-		model.addAttribute("title", "기업목록");
-		model.addAttribute("enterList", enterList);
+		
+		if (currentPage < 1) currentPage = 1;
+		 int rowPerPage = 30;
+		    int startRow = (currentPage - 1) * rowPerPage;
+
+		    List<AdminMemberDTO> enterList = adminEnterService.getEnterListForPg(startRow, rowPerPage);
+		    int totalCount = adminEnterService.getEnterCount();
+		    int lastPage = (int) Math.ceil((double) totalCount / rowPerPage);
+
+		    int startPageNum, endPageNum;
+		    if (lastPage <= 5) {
+		        startPageNum = 1;
+		        endPageNum = lastPage;
+		    } else if (currentPage <= 3) {
+		        startPageNum = 1;
+		        endPageNum = 5;
+		    } else if (currentPage + 2 >= lastPage) {
+		        startPageNum = lastPage - 4;
+		        endPageNum = lastPage;
+		    } else {
+		        startPageNum = currentPage - 2;
+		        endPageNum = currentPage + 2;
+		    }
+
+		    model.addAttribute("enterList", enterList);
+		    model.addAttribute("totalCount", totalCount);
+		    model.addAttribute("currentPage", currentPage);
+		    model.addAttribute("lastPage", lastPage);
+		    model.addAttribute("startPageNum", startPageNum);
+		    model.addAttribute("startRow", startRow);
+		    model.addAttribute("endPageNum", endPageNum);
+		    model.addAttribute("pageSize", rowPerPage);
+		    model.addAttribute("path", "/admin/enterList");
+		
+		
 		return "admin/member/adminEnterListView";
 	}
 	

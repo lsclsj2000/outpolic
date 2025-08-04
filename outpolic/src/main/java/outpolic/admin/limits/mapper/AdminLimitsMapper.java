@@ -92,4 +92,8 @@ public interface AdminLimitsMapper {
     List<AdminLimits> getFilteredLimitsTypeList(Map<String, Object> paramMap);
     List<AdminLimits> getFilteredLimitsPeriodList(Map<String, Object> paramMap);
     List<AdminLimits> getFilteredLimitsReasonList(Map<String, Object> paramMap);
+    
+    int getAdminLimitListCount();
+    
+    List<AdminLimits> getAdminLimitsListForPg(@Param("startRow") int startRow, @Param("rowPerPage") int rowPerPage);
 }
