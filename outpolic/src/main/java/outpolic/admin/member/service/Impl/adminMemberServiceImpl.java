@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import outpolic.admin.member.dto.AdminMemberDTO;
 import outpolic.admin.member.mapper.AdminMemberMapper;
 import outpolic.admin.member.service.AdminMemberService;
 import outpolic.common.domain.Member;
@@ -81,6 +82,17 @@ public class adminMemberServiceImpl implements AdminMemberService {
 	@Override
 	public List<Member> searchMembers(String keyword) {
 		return adminMemberMapper.searchMembers(keyword);
+	}
+
+	@Override
+	public int getMemberCount() {
+		return adminMemberMapper.getMemberCount();
+	}
+
+	@Override
+	public List<AdminMemberDTO> getMemberListForPg(int startRow, int rowPerPage) {
+		// TODO Auto-generated method stub
+		return adminMemberMapper.getMemberListForPg(startRow, rowPerPage);
 	}
 	
 

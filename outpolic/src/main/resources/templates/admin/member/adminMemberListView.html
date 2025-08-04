@@ -74,7 +74,7 @@
 							<p class="fs-6 mb-0">
 								<span class="badge bg-light text-dark px-3 py-2"> 전체 회원 수
 									: <span id="totalCount" class="fw-bold text-primary"
-									th:text="${memberList.size()}">0</span> 명
+									th:text="${totalCount}">0</span> 명
 								</span>
 							</p>
 	
@@ -125,7 +125,7 @@
 							<tbody id="memberTableBody" class="text-center">
 								<tr th:if="${not #lists.isEmpty(memberList)}"
 									th:each="l, stat : ${memberList}">
-									<td class="start text-center" th:text="${stat.index + 1}"></td>
+									<td class="start text-center" th:text="${startRow + stat.index + 1}"></td>
 									<td th:text="${l.memberCode}">회원 코드</td>
 									<td th:text="${l.memberName}">이름</td>
 									<td th:text="${l.memberId}">아이디</td>
@@ -157,6 +157,10 @@
 								</tr>
 							</tbody>
 						</table>
+						<div id="paginationArea" class="w-100">
+							<div
+								th:insert="~{admin/fragments/pagination :: paginationFragment}"></div>
+						</div>
 					</div>
 					<!-- table-responsive //end -->
 				</div>
@@ -319,6 +323,8 @@
 				
 				    // 회원 목록 렌더링 함수 (공통)
 				    function renderMemberList(data) {
+				    $('#paginationArea').hide();
+				    
 					  const tbody = $('#memberTableBody');
 					  tbody.empty();
 					  
