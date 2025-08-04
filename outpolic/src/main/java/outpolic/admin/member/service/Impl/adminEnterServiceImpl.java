@@ -54,5 +54,19 @@ public class adminEnterServiceImpl implements AdminEnterService {
 	}
 
 
+	@Override
+	public int getEnterCount() {
+		// TODO Auto-generated method stub
+		return adminEnterMapper.getEnterCount();
+	}
+
+
+	@Override
+	public List<AdminMemberDTO> getEnterListForPg(int startRow, int rowPerPage) {
+		// TODO Auto-generated method stub
+		return adminEnterMapper.getEnterListForPg(startRow, rowPerPage);
+	}
+
+
 
 }

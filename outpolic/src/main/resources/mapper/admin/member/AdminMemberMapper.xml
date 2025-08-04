@@ -63,7 +63,9 @@
 			mbr_agre_yn
 		FROM member
         order by CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED)
-        LIMIT #{rowPerPage} OFFSET #{startRow};
+        <if test="startRow != null and rowPerPage != null">
+        	LIMIT #{rowPerPage} OFFSET #{startRow};
+        </if>
     </select>
   	
 	<select id="getMemberListByStatus" resultMap="memberInfo">

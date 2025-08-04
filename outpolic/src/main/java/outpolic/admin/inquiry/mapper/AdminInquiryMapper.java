@@ -48,5 +48,11 @@ public interface AdminInquiryMapper {
     
     // 문의 자원 필터
  	List<AdminInquiryType> getFilteredInquiryTypeList(Map<String, Object> paramMap);
+ 	
+ 	// 문의 수 카운트
+ 	int getAdminInquiryListCount();
+ 	
+ 	// 문의 리스트 페이지네이션 위한 리스트 호출
+ 	List<AdminInquiry> getAdminInquiryListForPg(@Param("startRow") int startRow, @Param("rowPerPage") int rowPerPage);
     
 }

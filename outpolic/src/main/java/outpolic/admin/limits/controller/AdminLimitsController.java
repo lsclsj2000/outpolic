@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import outpolic.admin.inquiry.domain.AdminInquiry;
 import outpolic.admin.limits.domain.AdminLimits;
 import outpolic.admin.limits.service.AdminLimitsService;
 
@@ -320,7 +321,7 @@ public class AdminLimitsController {
 	}
 	
 	@GetMapping("/adminLimits")
-	public String adminLimitsView(Model model, HttpSession session) {
+	public String adminLimitsView(Model model, @RequestParam(defaultValue = "1") Integer currentPage,HttpSession session) {
 		
 		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
 		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
@@ -329,9 +330,44 @@ public class AdminLimitsController {
 			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
 		}
 		// 제재 내역 조회 페이지
-		List<AdminLimits> adminLimitsList = adminLimitsService.getAdminLimitsList();
-		model.addAttribute("title", "제재 내역 목록");
-		model.addAttribute("adminLimitsList", adminLimitsList);
+		/*
+		 * List<AdminLimits> adminLimitsList = adminLimitsService.getAdminLimitsList();
+		 * model.addAttribute("title", "제재 내역 목록");
+		 */
+		/* model.addAttribute("adminLimitsList", adminLimitsList); */
+		
+		if (currentPage < 1) currentPage = 1;
+		 int rowPerPage = 10;
+		    int startRow = (currentPage - 1) * rowPerPage;
+
+		    List<AdminLimits> adminLimitsList = adminLimitsService.getAdminLimitsListForPg(startRow, rowPerPage);
+		    int totalCount = adminLimitsService.getAdminLimitListCount();
+		    int lastPage = (int) Math.ceil((double) totalCount / rowPerPage);
+
+		    int startPageNum, endPageNum;
+		    if (lastPage <= 5) {
+		        startPageNum = 1;
+		        endPageNum = lastPage;
+		    } else if (currentPage <= 3) {
+		        startPageNum = 1;
+		        endPageNum = 5;
+		    } else if (currentPage + 2 >= lastPage) {
+		        startPageNum = lastPage - 4;
+		        endPageNum = lastPage;
+		    } else {
+		        startPageNum = currentPage - 2;
+		        endPageNum = currentPage + 2;
+		    }
+
+		    model.addAttribute("adminLimitsList", adminLimitsList);
+		    model.addAttribute("totalCount", totalCount);
+		    model.addAttribute("currentPage", currentPage);
+		    model.addAttribute("lastPage", lastPage);
+		    model.addAttribute("startPageNum", startPageNum);
+		    model.addAttribute("startRow", startRow);
+		    model.addAttribute("endPageNum", endPageNum);
+		    model.addAttribute("pageSize", rowPerPage);
+		    model.addAttribute("path", "/admin/adminLimits");
 		
 		return "admin/limits/adminLimitsView";
 	}

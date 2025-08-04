@@ -5,6 +5,19 @@
 
 <head>
 <meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+<style>
+	.pagination .page-item .page-link {
+	min-width: 40px; /* 너비 확보 */
+	height: 40px;
+	padding: 6px 10px; /* 내부 여백 */
+	text-align: center; /* 텍스트 가운데 정렬 */
+	line-height: 1.5; /* 줄간격 조정 */
+	display: inline-flex; /* 정렬 개선 */
+	justify-content: center;
+	align-items: center;
+	font-size: 14px; /* 필요 시 폰트 사이즈 조정 */
+}
+</style>
 </head>
 
 <body>
@@ -141,8 +154,8 @@
 										연락처</td>
 									<td th:switch="${l.statusCode}"><span th:case="SD_ACTIVE"
 										class="badge rounded-pill alert-success">활성</span> <span
-										th:case="SD_WITHDRAWN" class="badge rounded-pill alert-info">휴면</span>
-										<span th:case="SD_DORMANT"
+										th:case="SD_DORMANT" class="badge rounded-pill alert-info">휴면</span>
+										<span th:case="SD_WITHDRAWN"
 										class="badge rounded-pill alert-info">탈퇴</span> <span
 										th:case="SD_LIMIT" class="badge rounded-pill alert-warning">제재</span>
 									</td>
@@ -157,7 +170,7 @@
 								</tr>
 							</tbody>
 						</table>
-						<div id="paginationArea" class="w-100">
+						<div id="paginationArea">
 							<div
 								th:insert="~{admin/fragments/pagination :: paginationFragment}"></div>
 						</div>
@@ -431,9 +444,14 @@
 			
 			    // 수정모드 활성화
 			    $('.btnEditMember').click(function () {
-			        $('.readonly-field').prop('readonly', false);
-			        $('#modalMemberStatusCode').prop('disabled', false);
-			        $('#modalMemberGradeCode').prop('disabled', false);
+			    	const gradeCode = $('#modalMemberGradeCode').val();
+			    	if(gradeCode !== 'ADMIN'){
+				        $('.readonly-field').prop('readonly', false);
+				        $('#modalMemberStatusCode').prop('disabled', false);
+				        $('#modalMemberGradeCode').prop('disabled', false);
+			    	}else {
+				        alert('관리자 등급은 수정할 수 없습니다.');
+				    }
 			    });
 			
 			    // 저장 버튼 클릭 시

@@ -36,5 +36,5 @@ public interface AdminMemberMapper {
 	List<Member> searchMembers(String keyword);
 	
 	 int getMemberCount();
-	    List<AdminMemberDTO> getMemberListForPg(@Param("startRow") int startRow, @Param("rowPerPage") int rowPerPage);
+	    List<Member> getMemberListForPg(@Param("startRow") int startRow, @Param("rowPerPage") int rowPerPage);
 }

@@ -90,7 +90,7 @@ public class adminMemberServiceImpl implements AdminMemberService {
 	}
 
 	@Override
-	public List<AdminMemberDTO> getMemberListForPg(int startRow, int rowPerPage) {
+	public List<Member> getMemberListForPg(int startRow, int rowPerPage) {
 		// TODO Auto-generated method stub
 		return adminMemberMapper.getMemberListForPg(startRow, rowPerPage);
 	}

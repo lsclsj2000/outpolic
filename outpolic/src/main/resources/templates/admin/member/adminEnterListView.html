@@ -4,6 +4,19 @@
 
 <head>
 	<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+	<style>
+		.pagination .page-item .page-link {
+			min-width: 40px; /* 너비 확보 */
+			height: 40px;
+			padding: 6px 10px; /* 내부 여백 */
+			text-align: center; /* 텍스트 가운데 정렬 */
+			line-height: 1.5; /* 줄간격 조정 */
+			display: inline-flex; /* 정렬 개선 */
+			justify-content: center;
+			align-items: center;
+			font-size: 14px; /* 필요 시 폰트 사이즈 조정 */
+		}
+	</style>
 </head>
 
 <body>
@@ -65,7 +78,7 @@
 							<p class="fs-6 mb-0">
 								<span class="badge bg-light text-dark px-3 py-2"> 전체 기업 수
 									: <span id="totalCount" class="fw-bold text-primary"
-										th:text="${enterList.size()}">0</span> 
+										th:text="${totalCount}">0</span> 
 								</span>
 							</p>
 
@@ -111,7 +124,7 @@
 							</thead>
 							<tbody id="enterTableBody" class="text-center">
 								<tr th:if="${not #lists.isEmpty(enterList)}" th:each="corp, stat : ${enterList}">
-									<td class="start text-center" th:text="${stat.index + 1}"></td>
+									<td class="start text-center" th:text="${startRow + stat.index + 1}"></td>
 									<td th:text="${corp.corpCode}">기업 코드</td>
 									<td th:text="${corp.corpName}">기업명</td>
 									<td th:text="${corp.corpRprsv}">대표자명</td>
@@ -132,6 +145,10 @@
 								</tr>
 							</tbody>
 						</table>
+							<div id="paginationArea">
+								<div
+									th:insert="~{admin/fragments/pagination :: paginationFragment}"></div>
+							</div>
 					</div>
 					<!-- table-responsive //end -->
 				</div>
