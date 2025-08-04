@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutMain}">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<title>공지사항 내역 조회</title>
+		
+		<style>
+			.ellipsis-single-line {
+			    white-space: nowrap;
+			    overflow: hidden;
+			    text-overflow: ellipsis;
+			    max-width: 100%;
+			    display: inline-block;
+			}
+		</style>
+	</head>
+	
+	<th:block layout:fragment="contents">
+		<section class="content-main">
+	        <div class="content-header">
+	            <div>
+	                <h2 class="content-title card-title">공지사항 내역 조회</h2>
+	            </div>
+	        </div>
+	        <!-- 검색 필터 -->
+	        <div class="card mb-4 search-filter-card">
+	            <div class="card-body search-filter-body">
+	                <div class="table-responsive">
+	                    <form id="searchForm" method="get" action="/admin/adminAnn">
+							<table class="search-filter-table">
+								<tbody>
+									<tr>
+										<th>기본검색</th>
+										<td>
+											<select class="form-select" name="searchField" style="width: 120px;" 
+											        th:value="${searchField}">
+											    <option value="title" th:selected="${searchField} == 'title'">제목</option>
+												<option value="type" th:selected="${searchField} == 'type'">내용</option>
+												<option value="writer" th:selected="${searchField} == 'writer'">작성자</option>
+											</select>
+											<input type="text" name="searchKeyword" class="form-control" style="width: 250px;"
+											       placeholder="검색어를 입력하세요" th:value="${searchKeyword}" />
+										</td>
+									</tr>
+									<tr>
+									    <th>기간검색</th>
+									    <td>
+									        <select name="dateField" class="form-select" style="width: 120px;">
+											    <option value="reg" th:selected="${dateField} == 'reg'">작성일자</option>
+											    <option value="mod" th:selected="${dateField} == 'mod'">수정일자</option>
+											</select>
+									        <input type="date" id="startDate" name="startDate" class="form-control" style="width: 150px;" th:value="${startDate}" />
+									        <span> ~ </span>
+									        <input type="date" id="endDate" name="endDate" class="form-control" style="width: 150px;" th:value="${endDate}" />
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="today">오늘</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="yesterday">어제</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="7days">일주일</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="lastmonth">지난달</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="1month">1개월</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="3months">3개월</button>
+									        <button type="button" class="btn btn-sm btn-light date-btn" data-range="all">전체</button>
+									    </td>
+									</tr>
+									<tr>
+										<th>상태</th>
+										<td>
+											<div class="radio-group">
+												<label><input type="radio" name="status" value="" th:checked="${status == null or status == ''}" /> 전체</label>
+												<label><input type="radio" name="status" value="SD_ACTIVE" th:checked="${status == 'SD_ACTIVE'}" /> 활성</label>
+												<label><input type="radio" name="status" value="SD_INACTIVE" th:checked="${status == 'SD_INACTIVE'}" /> 비활성</label>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						
+							<div class="search-filter-buttons">
+								<button type="submit" class="btn btn-primary">검색</button>
+								<button type="button" id="resetButton" class="btn btn-secondary">초기화</button>
+							</div>
+						</form>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="card mb-4">
+	            <div class="card-body">
+	                <div class="table-responsive">
+	                    <table class="table table-hover">
+	                        <thead>
+	                            <tr>
+	                                <th scope="col" class="start text-center col-1">No.</th>
+	                                <th scope="col" class="text-center col-3">제목</th>
+	                                <th scope="col" class="text-center col-4">내용</th>
+	                                <th scope="col" class="text-center col-1">상태</th>
+	                                <th scope="col" class="text-center col-1">작성자</th>
+	                                <th scope="col" class="text-center col-1">작성일자</th>
+	                                <th scope="col" class="end text-center col-2">Action</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+							    <tr th:if="${not #lists.isEmpty(adminAnnList)}"
+							        th:each="l : ${adminAnnList}"
+							        class="start pt-30"
+							        style="border:0px; border-bottom: solid 1px #ececec;">
+							        
+							        <td class="start text-center">
+							            <span th:text="${l.annCode}">No.</span>
+							        </td>
+							        <td scope="col">
+							            <span th:text="${l.annTitle}"
+							                   style="text-decoration: none;"
+							                   onmouseout="this.style.color='black'">
+							                   제목
+							            </span>
+							        </td>
+							        <td scope="col" class="text-truncate" style="max-width: 300px;">
+									    <span style="display: inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+									          th:text="${l.annCn}">
+									        내용
+									    </span>
+									</td>
+							        <td scope="col" class="text-center" th:switch="${l.annStcCode}">
+							            <span th:case="${'SD_ACTIVE'}" class="badge rounded-pill alert-info">활성</span>
+							            <span th:case="${'SD_INACTIVE'}" class="badge rounded-pill alert-warning">비활성</span>
+							        </td>
+							        <td scope="col" class="text-center" th:text="${l.annAdmCode}">작성자</td>
+							        <td scope="col" class="text-center" th:text="${l.annRegYmdt}">작성일자</td>
+							        <td scope="col" class="text-center">
+							            <a href="#" class="btn btn-light rounded font-sm SR_open-popup-btn" th:data-inquiry-code="${l.annCode}">수정</a>
+							        </td>
+							    </tr>
+							    <tr th:if="${#lists.isEmpty(adminAnnList)}">
+							        <td colspan="7" class="text-center">조회된 공지사항이 없습니다.</td>
+							    </tr>
+							</tbody>
+	                    </table>
+	                </div>
+	            </div>
+	        </div>
+	    </section>
+	    
+	    <!-- 공지사항 수정 모달 -->
+	    <div id="annMdfcnModal" class="SR_modal">
+			<div class="SR_modal-content-wrapper">
+				<div class="SR_popup-header">
+					<h2>공지사항 수정</h2>
+					<button class="SR_close-button">&times;</button>
+				</div>
+				<form id="inquiryEditForm">
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label">등록자</label>
+                            <input type="text" id="editRegAdm" name="editRegAdm" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTitleEdit">등록일시</label>
+                            <input type="text" id="editRegDate" name="editRegDate" class="SR_form-control" readonly>
+                        </div>
+					</div>
+
+                    <div class="SR_form-group">
+                        <div class="SR_input-half">
+                            <label class="col-lg-3 col-form-label" for="inquiryTypeCodeDisplay">공지사항 코드</label>
+                            <input type="text" id="editCode" name="editCode" class="SR_form-control" readonly>
+                        </div>
+                        <div class="SR_input-half">
+                        </div>
+					</div>
+					
+					<div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="inquiryTypeEdit">제목</label>
+                        <input type="text" id="editName" name="editName" class="SR_form-control">
+					</div>
+
+                    <div class="SR_form-group SR_full-width">
+						<label class="col-lg-3 col-form-label" for="inquiryContentEdit">내용</label>
+						<textarea id="editExpln" name="editExpln" class="SR_form-control" rows="5"></textarea>
+					</div>
+					<div class="row mb-4">
+						<div class="SR_form-group mb-0">
+		                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status</label>
+						</div>
+	                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+							<label class="form-check my-2">
+								<input type="radio" class="form-check-input" name="editStatus" value="SD_ACTIVE" />
+								<span class="form-check-label">활성</span>
+							</label>
+							<label class="form-check my-2 ml-20">
+								<input type="radio" class="form-check-input" name="editStatus" value="SD_INACTIVE" />
+								<span class="form-check-label">비활성</span>
+							</label>
+						</div>
+	               	</div>
+	               	<div class="SR_form-group SR_full-width">
+                        <label>첨부파일 목록</label>
+                        <div id="SR_fileList" class="SR_form-control SR_file-list">
+                            파일1.jpg (1.2MB) <br>
+                            파일2.pdf (3.5MB)
+                        </div>
+                    </div>
+					<div class="SR_popup-footer">
+                        <div class="SR_update-info">
+                        	<span>수정정보 : </span>
+                            <span id="SR_updaterName">수정자</span> | <span id="SR_updateDate">수정일시</span>
+                        </div>
+						<button type="submit" id="saveButton" class="btn btn-md rounded font-sm">저장</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</th:block>
+
+    <th:block layout:fragment="jsScript">
+		<script>
+		document.addEventListener('DOMContentLoaded', function () {
+            // **1. 모달 관련 코드 시작**
+            const modal = document.getElementById('annMdfcnModal');
+            const openBtns = document.querySelectorAll('.SR_open-popup-btn');
+            const closeBtn = modal.querySelector('.SR_close-button');
+            const saveBtn = document.getElementById('saveButton');
+
+            // 수정 버튼 클릭 시 모달 열기 (기존 코드 유지)
+            openBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const annCode = btn.getAttribute('data-inquiry-code');
+
+                    fetch(`/admin/getAdminAnnDetail?code=${annCode}`)
+                        .then(res => res.json())
+                        .then(data => {
+                        	console.log('📦 공지사항 단건 데이터:', data);
+                            console.log('📎 첨부파일 목록:', data.adminAnnFiles);
+                            document.getElementById('editCode').value = data.annCode || '';
+                            document.getElementById('editName').value = data.annTitle || '';
+                            document.getElementById('editExpln').value = data.annCn || '';
+                            document.getElementById('editRegAdm').value = data.annAdmCode || '';
+                            document.getElementById('editRegDate').value = data.annRegYmdt || '';
+                            document.getElementById('SR_updaterName').innerText = data.annMdfcnAdmCode || '-';
+                            document.getElementById('SR_updateDate').innerText = data.annMdfcnYmdt || '-';
+
+                            const radios = document.querySelectorAll('input[name="editStatus"]');
+                            radios.forEach(r => {
+                                r.checked = (r.value === data.annStcCode);
+                            });
+
+                         // 첨부파일 목록 출력
+                            const fileListDiv = document.getElementById('SR_fileList');
+                            fileListDiv.innerHTML = '';
+
+                            if (data.adminAnnFiles && data.adminAnnFiles.length > 0) {
+                                data.adminAnnFiles.forEach(file => {
+                                    if (!file) return; // ✅ null 요소 건너뜀
+
+                                    const fileSizeMB = (file.saSize / (1024 * 1024)).toFixed(1);
+                                    const fileName = file.saOrgnlName;
+                                    const saCode = file.saCode;
+
+                                    const fileItem = document.createElement('div');
+                                    fileItem.innerHTML = `<a href="/admin/adminAnn/file/download?saCode=${saCode}" target="_blank">${fileName}</a> (${fileSizeMB}MB)`;
+                                    fileListDiv.appendChild(fileItem);
+                                });
+                            } else {
+                                fileListDiv.textContent = '첨부파일 없음';
+                            }
+
+                            // 모달 열기
+                            modal.style.display = 'flex';
+                            document.body.style.overflow = 'hidden';
+                        })
+                        .catch(err => {
+                            console.error('단건 조회 실패:', err);
+                            alert('공지사항 정보를 불러오지 못했습니다.');
+                        });
+                });
+            });
+
+            closeBtn.addEventListener('click', function () {
+                closeModal();
+            });
+
+            saveBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const payload = {
+                    annCode: document.getElementById('editCode').value,
+                    annTitle: document.getElementById('editName').value,
+                    annCn: document.getElementById('editExpln').value,
+                    annStcCode: document.querySelector('input[name="editStatus"]:checked')?.value || '',
+                };
+
+                fetch('/admin/updateAdminAnn', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error('Update failed');
+                    return res.text();
+                })
+                .then(result => {
+                    alert("공지사항이 수정되었습니다.");
+                    closeModal();
+                    location.reload();
+                })
+                .catch(err => {
+                    console.error("수정 실패:", err);
+                    alert("공지사항 수정에 실패했습니다.");
+                });
+            });
+
+            window.addEventListener('click', function (e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            function closeModal() {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            // **모달 관련 코드 끝**
+
+            // ------------------
+
+            // **2. 날짜/초기화 버튼 관련 코드 시작**
+            // ✅ 날짜 버튼 클릭 시 startDate, endDate 자동 설정
+            document.querySelectorAll('.date-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const range = button.getAttribute('data-range');
+                    const today = new Date();
+                    let startDate = new Date();
+                    let endDate = new Date();
+
+                    switch (range) {
+                        case 'today':
+                            break;
+                        case 'yesterday':
+                            startDate.setDate(today.getDate() - 1);
+                            endDate.setDate(today.getDate() - 1);
+                            break;
+                        case '7days':
+                            startDate.setDate(today.getDate() - 7);
+                            break;
+                        case 'lastmonth':
+                            startDate.setMonth(today.getMonth() - 1);
+                            startDate.setDate(1);
+                            endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+                            break;
+                        case '1month':
+                            startDate.setMonth(today.getMonth() - 1);
+                            break;
+                        case '3months':
+                            startDate.setMonth(today.getMonth() - 3);
+                            break;
+                        case 'all':
+                            document.getElementById('startDate').value = '';
+                            document.getElementById('endDate').value = '';
+                            return;
+                    }
+
+                    const formatDate = (date) => {
+                        const year = date.getFullYear();
+                        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        const day = date.getDate().toString().padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    };
+
+                    document.getElementById('startDate').value = formatDate(startDate);
+                    document.getElementById('endDate').value = formatDate(endDate);
+                });
+            });
+
+            // ✅ 초기화 버튼 클릭 시 필터 리셋
+            document.getElementById('resetButton').addEventListener('click', function () {
+                window.location.href = '/admin/adminAnn';
+            });
+            // **날짜/초기화 버튼 관련 코드 끝**
+        });
+		</script>
+	</th:block>
+</html>

@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.inquiry.domain.AdminInquiry;
 import outpolic.admin.inquiry.domain.AdminInquiryType;
 import outpolic.admin.inquiry.service.AdminInquiryService;
+import outpolic.common.domain.Member;
 
 @Slf4j
 @Controller
@@ -70,8 +71,17 @@ public class AdminInquiryController {
 	    @RequestParam(required = false) String dateField,
 	    @RequestParam(required = false) String startDate,
 	    @RequestParam(required = false) String endDate,
-	    Model model) {
-
+	    Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
+		
+		
+		
 	    Map<String, Object> paramMap = new HashMap<>();
 	    paramMap.put("searchField", searchField);
 	    paramMap.put("searchKeyword", searchKeyword);
@@ -92,6 +102,7 @@ public class AdminInquiryController {
 	    model.addAttribute("startDate", startDate);
 	    model.addAttribute("endDate", endDate);
 
+	    
 	    return "admin/inquiry/adminInquiryResourcesView"; 
 	}
 
@@ -113,7 +124,15 @@ public class AdminInquiryController {
 	        @RequestParam(required = false) String dateField,
 	        @RequestParam(required = false) String startDate,
 	        @RequestParam(required = false) String endDate,
-	        Model model) {
+	        @RequestParam(defaultValue = "1") Integer currentPage,
+	        Model model, HttpSession httpSession) {
+		
+		List<String> permissions = (List<String>) httpSession.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 
 	    Map<String, Object> paramMap = new HashMap<>();
 	    paramMap.put("searchField", searchField);
@@ -123,9 +142,9 @@ public class AdminInquiryController {
 	    paramMap.put("startDate", startDate);
 	    paramMap.put("endDate", endDate);
 
-	    List<AdminInquiry> inquiryList = adminInquiryService.getFilteredInquiryList(paramMap);
-
-	    model.addAttribute("inquiryList", inquiryList);
+//	    List<AdminInquiry> inquiryList = adminInquiryService.getFilteredInquiryList(paramMap);
+//
+//	    model.addAttribute("inquiryList", inquiryList);
 
 	    // 검색 조건도 모델에 추가하여 HTML에서 유지되도록 한다
 	    model.addAttribute("searchField", searchField);
@@ -134,6 +153,40 @@ public class AdminInquiryController {
 	    model.addAttribute("dateField", dateField);
 	    model.addAttribute("startDate", startDate);
 	    model.addAttribute("endDate", endDate);
+	    
+	    if (currentPage < 1) currentPage = 1;
+		 int rowPerPage = 10;
+		    int startRow = (currentPage - 1) * rowPerPage;
+
+		    List<AdminInquiry> inquiryList = adminInquiryService.getAdminInquiryListForPg(startRow, rowPerPage);
+		    int totalCount = adminInquiryService.getAdminInquiryListCount();
+		    int lastPage = (int) Math.ceil((double) totalCount / rowPerPage);
+
+		    int startPageNum, endPageNum;
+		    if (lastPage <= 5) {
+		        startPageNum = 1;
+		        endPageNum = lastPage;
+		    } else if (currentPage <= 3) {
+		        startPageNum = 1;
+		        endPageNum = 5;
+		    } else if (currentPage + 2 >= lastPage) {
+		        startPageNum = lastPage - 4;
+		        endPageNum = lastPage;
+		    } else {
+		        startPageNum = currentPage - 2;
+		        endPageNum = currentPage + 2;
+		    }
+
+		    model.addAttribute("inquiryList", inquiryList);
+		    model.addAttribute("totalCount", totalCount);
+		    model.addAttribute("currentPage", currentPage);
+		    model.addAttribute("lastPage", lastPage);
+		    model.addAttribute("startPageNum", startPageNum);
+		    model.addAttribute("startRow", startRow);
+		    model.addAttribute("endPageNum", endPageNum);
+		    model.addAttribute("pageSize", rowPerPage);
+		    model.addAttribute("path", "/admin/adminInquiryList");
+	    
 
 	    return "admin/inquiry/adminInquiryView";  // 또는 해당 Thymeleaf 경로
 	}

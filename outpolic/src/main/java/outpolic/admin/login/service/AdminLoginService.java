@@ -1,5 +1,6 @@
 package outpolic.admin.login.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,6 @@ public interface AdminLoginService {
 	
 	//로그아웃 시간 업데이트
 	public void updateAdminLogoutHistory(String loginHistoryCode);
+	
+	List<String> getAdminPermissions(String adminCode);
 }

@@ -163,12 +163,12 @@ public class UserOsstController {
      * @return 리뷰 정보 DTO
      */
     @GetMapping("/api/reviews")
-    public ResponseEntity<UserOutsourcingReviewDTO> getReviewForEdit(@RequestParam("oscId") String oscId, HttpSession session) {
+    public ResponseEntity<UserOutsourcingReviewDTO> getReviewForEdit(@RequestParam("oscId") String ocdCd, HttpSession session) {
         String mbrCd = (String) session.getAttribute("SCD");
         if (mbrCd == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        UserOutsourcingReviewDTO review = userOutsourcingReviewService.getReviewForEdit(oscId, mbrCd);
+        UserOutsourcingReviewDTO review = userOutsourcingReviewService.getReviewForEdit(ocdCd, mbrCd);
         if (review == null) {
             return ResponseEntity.notFound().build();
         }

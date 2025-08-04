@@ -1,6 +1,7 @@
 	package outpolic.admin.limits.service;
 	
 	import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.repository.query.Param;
 
@@ -76,4 +77,14 @@ import outpolic.admin.limits.domain.AdminLimits;
 		
 		// 제재 처리 자동 로직
 	    void applySanctionAutomatically(String drcCd, String dtCd, String declCd, String admCd);
+	    
+	    
+	    // 제재 자원 조회 - 필터
+	    List<AdminLimits> getFilteredLimitsTypeList(Map<String, Object> paramMap);
+	    List<AdminLimits> getFilteredLimitsPeriodList(Map<String, Object> paramMap);
+	    List<AdminLimits> getFilteredLimitsReasonList(Map<String, Object> paramMap);
+	    
+	    int getAdminLimitListCount();
+	    
+	    List<AdminLimits> getAdminLimitsListForPg(@Param("startRow") int startRow, @Param("rowPerPage") int rowPerPage);
 	}

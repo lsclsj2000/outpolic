@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import outpolic.admin.osst.domain.AdminOsst;
@@ -39,7 +40,14 @@ public class AdminOsstController {
 	public String adminOutsourcingStatusView(@RequestParam(required = false) String searchField,
 	                                         @RequestParam(required = false) String searchKeyword,
 	                                         @RequestParam(required = false) String stepStatus,
-	                                         Model model) {
+	                                         Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CONTENT_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 외주 진행 목록
 	    List<AdminOsst> adminOsst = adminOsstService.getAdminOsstListFiltered(searchField, searchKeyword, stepStatus);
 

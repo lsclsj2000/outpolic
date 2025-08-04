@@ -32,7 +32,14 @@ public class AdminPointsController {
 	
 	// 마일리지 적립 내역 페이지
 	@GetMapping("/earnPointsList")
-	public String earnPointsView(Model model) {
+	public String earnPointsView(Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("SYSTEM_ADMIN") && !permissions.contains("USER_PAYMENT_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 페이지 첫 로드 시 전체 '적립' 목록 조회
 		List<AdminPointsHistoryDTO> earnList = adminPointsService.getEarnHistory(new HashMap<>());
 		model.addAttribute("earnList", earnList);
@@ -51,6 +58,13 @@ public class AdminPointsController {
 	 */
 	@GetMapping("/standardPointsAddList")
 	public String standardPointsAddView(Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("SYSTEM_ADMIN") && !permissions.contains("USER_PAYMENT_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 	    // 페이지 첫 로드 시 전체 기준 목록 조회
 	    List<AdminPointsStandardDTO> standardList = adminPointsService.getStandardList(new HashMap<>());
 	    model.addAttribute("standardList", standardList);

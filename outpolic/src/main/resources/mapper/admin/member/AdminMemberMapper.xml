@@ -41,6 +41,33 @@
 		order by CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED);
   	</select>
   	
+  	<select id="getMemberCount" resultType="int">
+        SELECT COUNT(*) FROM member
+    </select>
+
+    <select id="getMemberListForPg" resultMap="memberInfo">
+       SELECT 
+			mbr_cd, 
+			grd_cd, 
+			mbr_id, 
+			mbr_nm, 
+			mbr_nicknm, 
+			mbr_telno, 
+			mbr_addr, 
+			mbr_daddr, 
+			mbr_zip, 
+			mbr_eml, 
+			mbr_birth,  
+			mbr_join_ymdt, 
+			stc_cd, 
+			mbr_agre_yn
+		FROM member
+        order by CAST(SUBSTRING_INDEX(mbr_cd, 'MB_C', -1) AS UNSIGNED)
+        <if test="startRow != null and rowPerPage != null">
+        	LIMIT #{rowPerPage} OFFSET #{startRow};
+        </if>
+    </select>
+  	
 	<select id="getMemberListByStatus" resultMap="memberInfo">
   		SELECT 
 			*

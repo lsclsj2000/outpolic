@@ -95,5 +95,17 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 	    return adminInquiryMapper.getFilteredInquiryTypeList(paramMap);
 	}
 
+	@Override
+	public int getAdminInquiryListCount() {
+		// 문의 리스트 수 카운트
+		return adminInquiryMapper.getAdminInquiryListCount();
+	}
+
+	@Override
+	public List<AdminInquiry> getAdminInquiryListForPg(int startRow, int rowPerPage) {
+		// 페이지네이션 위한 문의 리스트 호출
+		return adminInquiryMapper.getAdminInquiryListForPg(startRow, rowPerPage);
+	}
+
 
 }

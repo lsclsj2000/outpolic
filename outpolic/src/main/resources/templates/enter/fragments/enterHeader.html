@@ -44,7 +44,7 @@
 							</div>
 
 							<div class="header-action-icon-2" th:if="${session.SCD != null}">
-								<a href="#">
+								<a th:href="${session.SCD != null} ? @{/bookmark} : @{/login}">
 									<img class="svgInject" alt="Nest"
 										src="/user/assets/imgs/theme/icons/icon-bookmark.svg"
 										style="width:20px; margin-right:3px;" />
@@ -87,7 +87,7 @@
 
 											<!-- 기본 고양이 이미지 -->
 											<img th:if="${session.SProfilePath == null}"
-												th:src="@{/enter/assets/imgs/outpolic/cutecat.jpg}"
+												th:src="@{/enter/assets/imgs/outpolic/profile.png}"
 												alt="Default Profile"
 												style="width:100%; height:100%; object-fit:cover; object-position:center; display:block;" />
 										</div>

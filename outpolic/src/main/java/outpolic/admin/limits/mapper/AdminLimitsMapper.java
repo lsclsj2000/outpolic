@@ -2,6 +2,7 @@ package outpolic.admin.limits.mapper;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
@@ -86,4 +87,13 @@ public interface AdminLimitsMapper {
     void insertLimits(AdminLimits limits);
     void insertCumulative(@Param("mbrCd") String mbrCd, @Param("drCd") String drCd, @Param("cnt") int cnt);
     void updateCumulative(@Param("mbrCd") String mbrCd, @Param("drCd") String drCd, @Param("cnt") int cnt);
+    
+    // 제재 자원 조회 - 필터
+    List<AdminLimits> getFilteredLimitsTypeList(Map<String, Object> paramMap);
+    List<AdminLimits> getFilteredLimitsPeriodList(Map<String, Object> paramMap);
+    List<AdminLimits> getFilteredLimitsReasonList(Map<String, Object> paramMap);
+    
+    int getAdminLimitListCount();
+    
+    List<AdminLimits> getAdminLimitsListForPg(@Param("startRow") int startRow, @Param("rowPerPage") int rowPerPage);
 }

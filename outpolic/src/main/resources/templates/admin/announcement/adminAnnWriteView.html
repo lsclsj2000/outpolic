@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/layout/adminLayoutMain}">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="한국스마트정보교육원 팀프로젝트" />
+		<title>공지사항</title>
+		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	
+	    <style type="text/css">
+	        .ck-editor__editable[role="textbox"] {
+	            min-height: 300px;
+	        }
+	        .ck-content .image {
+	            max-width: 80%;
+	            margin: 20px auto;
+	        }
+	    </style>
+	
+	    <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/super-build/ckeditor.js"></script>
+	    <link rel="stylesheet" th:href="@{/admin/assets/css/adminInquiry.css}">
+	</head>
+	
+	<th:block layout:fragment="contents">
+		<section class="content-main">
+			<div class="row">
+				<div class="content-header">
+				    <h2 class="content-title">공지사항 등록</h2>
+				    <div>
+				        <button id="submitButton" class="btn btn-md rounded font-sm hover-up">등록</button>
+				    </div>
+				</div>
+				<div class="col-lg-8">
+				    <div class="card mb-4">
+				        <div class="card-header">
+				            <h4>제목 및 내용</h4>
+				        </div>
+				        <div class="card-body">
+				            <form>
+				                <div class="mb-4">
+				                    <div class="SR_form-group mb-0">
+					                   <label class="col-lg-1 col-form-label pb-0 mb-10">제목</label>
+									</div>
+				                    <input type="text" placeholder="제목을 입력해주세요" class="form-control" id="product_name" />
+				                </div>
+				                <div class="mb-4">
+								    <div class="SR_form-group mb-0">
+								        <label class="col-lg-1 col-form-label pb-0 mb-10">내용</label>
+								    </div>
+								    <textarea placeholder="Type here" class="form-control" rows="4" id="inquiryCn"></textarea>
+								</div>
+				                <div class="row mb-4">
+									<div class="SR_form-group mb-0">
+					                   <label class="col-lg-1 col-form-label pb-0 mb-0">Status</label>
+									</div>
+				                   <div class="col-lg-8 ml-20" style="display: flex; flex-direction: row;">
+										<label class="form-check my-2">
+											<input type="radio" class="form-check-input" name="annStcCode" value="SD_ACTIVE" />
+											<span class="form-check-label">활성</span>
+										</label>
+										<label class="form-check my-2 ml-20">
+											<input type="radio" class="form-check-input" name="annStcCode" value="SD_INACTIVE" />
+											<span class="form-check-label">비활성</span>
+										</label>
+									</div>
+				               	</div>
+				        	</form>
+				        </div>
+				    </div>
+				</div>
+				<div class="col-lg-4">
+				    <div class="card mb-4">
+				        <div class="card-header">
+				            <h4>첨부파일</h4>
+				        </div>
+				        <div class="card-body">
+				            <div class="SR_file-upload-container" style="margin-top: 0px;">
+				                <div class="SR_checkbox-container">
+				                    <input type="checkbox" id="SR_attachFileCheckbox">
+				                    <label for="SR_attachFileCheckbox">첨부파일을 추가하시겠습니까?</label>
+				                </div>
+				                <div class="SR_file-input-area mt-15" id="SR_fileInputArea">
+				                    <div class="SR_file-drop-zone" id="SR_fileDropZone">
+				                        <p>여기에 파일을 드롭하거나</p>
+				                        <label for="SR_fileInput" class="SR_custom-file-button">파일 선택</label>
+				                        <input type="file" id="SR_fileInput" name="attachment" style="display: none;" multiple />
+				                        <div id="SR_selectedFiles" class="SR_selected-files"></div>
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+			</div>
+		</section>
+	</th:block>
+
+    <th:block layout:fragment="jsScript">
+	    <script>
+	    $(function() {
+		    let previousImageSrcs = [];
+		    let editorInstance; // CKEditor 인스턴스를 저장할 변수 추가
+		
+		    // CKEditor를 초기화하는 코드
+		    CKEDITOR.ClassicEditor.create(document.getElementById("inquiryCn"), {
+		        toolbar: {
+		            items: [
+		                'exportPDF', 'exportWord', '|',
+		                'findAndReplace', 'selectAll', '|',
+		                'heading', '|',
+		                'bold', 'italic', 'strikethrough', 'underline', 'code', 'subscript', 'superscript', 'removeFormat', '|',
+		                'bulletedList', 'numberedList', 'todoList', '|',
+		                'outdent', 'indent', '|',
+		                'undo', 'redo', '|',
+		                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+		                'alignment', '|',
+		                'link', 'insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
+		                'specialCharacters', 'horizontalLine', 'pageBreak', '|',
+		                'textPartLanguage', '|',
+		                'sourceEditing'
+		            ],
+		            shouldNotGroupWhenFull: true
+		        },
+		        list: {
+		            properties: {
+		                styles: true,
+		                startIndex: true,
+		                reversed: true
+		            }
+		        },
+		        heading: {
+		            options: [
+		                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+		                { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+		                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+		                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+		                { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
+		                { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
+		                { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
+		            ]
+		        },
+		        placeholder: 'Welcome to CKEditor 5!',
+		        fontFamily: {
+		            options: [
+		                'default',
+		                'Arial, Helvetica, sans-serif',
+		                'Courier New, Courier, monospace',
+		                'Georgia, serif',
+		                'Lucida Sans Unicode, Lucida Grande, sans-serif',
+		                'Tahoma, Geneva, sans-serif',
+		                'Times New Roman, Times, serif',
+		                'Trebuchet MS, Helvetica, sans-serif',
+		                'Verdana, Geneva, sans-serif'
+		            ],
+		            supportAllValues: true
+		        },
+		        fontSize: {
+		            options: [10, 12, 14, 'default', 18, 20, 22],
+		            supportAllValues: true
+		        },
+		        htmlSupport: {
+		            allow: [
+		                {
+		                    name: /.*/,
+		                    attributes: true,
+		                    classes: true,
+		                    styles: true
+		                }
+		            ]
+		        },
+		        htmlEmbed: {
+		            showPreviews: true
+		        },
+		        link: {
+		            decorators: {
+		                addTargetToExternalLinks: true,
+		                defaultProtocol: 'https://',
+		                toggleDownloadable: {
+		                    mode: 'manual',
+		                    label: 'Downloadable',
+		                    attributes: {
+		                        download: 'file'
+		                    }
+		                }
+		            }
+		        },
+		        mention: {
+		            feeds: [
+		                {
+		                    marker: '@',
+		                    feed: [
+		                        '@apple', '@bears', '@brownie', '@cake', '@cake', '@candy', '@canes', '@chocolate', '@cookie', '@cotton', '@cream',
+		                        '@cupcake', '@danish', '@donut', '@dragée', '@fruitcake', '@gingerbread', '@gummi', '@ice', '@jelly-o',
+		                        '@liquorice', '@macaroon', '@marzipan', '@oat', '@pie', '@plum', '@pudding', '@sesame', '@snaps', '@soufflé',
+		                        '@sugar', '@sweet', '@topping', '@wafer'
+		                    ],
+		                    minimumCharacters: 1
+		                }
+		            ]
+		        },
+		        removePlugins: [
+		            'ExportPdf',
+		            'ExportWord',
+		            'CKBox',
+		            'CKFinder',
+		            'EasyImage',
+		            'RealTimeCollaborativeComments',
+		            'RealTimeCollaborativeTrackChanges',
+		            'RealTimeCollaborativeRevisionHistory',
+		            'PresenceList',
+		            'Comments',
+		            'TrackChanges',
+		            'TrackChangesData',
+		            'RevisionHistory',
+		            'Pagination',
+		            'WProofreader',
+		            'MathType'
+		        ],
+		        ckfinder : {
+		            uploadUrl: '/user/uploadImage'
+		        }
+		    })
+		    .then(editor => {
+		        editorInstance = editor;
+		        const editorElement = editor.ui.view.editable.element;
+		
+		        const extractImagSrcs = html => {
+		            const parser = new DOMParser();
+		            const doc = parser.parseFromString(html, 'text/html');
+		            return Array.from(doc.querySelectorAll('img'))
+		                        .map(img => $(img).attr('src'))
+		                        .filter(src => Boolean(src));
+		        }
+		
+		        previousImageSrcs = extractImagSrcs(editor.getData());
+		
+		        const observer = new MutationObserver(()=>{
+		            const currentImageSrcs = extractImagSrcs(editor.getData());
+		            const deletedImages = previousImageSrcs.filter(src => !currentImageSrcs.includes(src));
+		
+		            deletedImages.forEach( src => {
+		                console.log(src , '<-- 삭제 이미지');
+		                if(src){
+		                    const request = $.ajax({
+		                        method : 'POST',
+		                        url : '/user/deleteImage',
+		                        data : { 'imageUrl' : src }
+		                    });
+		                    request.done( res => {
+		                        console.log(`이미지 삭제 : ${res}`);
+		                    });
+		                    request.fail( (jqXHR, textStatus, error) => {
+		                        console.log(jqXHR, textStatus, error)
+		                    });
+		                }
+		            });
+		            previousImageSrcs = currentImageSrcs;
+		        });
+		        observer.observe(editorElement, {
+		            childList : true,
+		            subtree : true,
+		            characterData : true
+		        });
+		    });
+		
+		    // --- [첨부파일 기능 JS 코드 시작] ---
+		    let attachedFiles = [];
+		
+		    const SR_attachFileCheckbox = document.getElementById('SR_attachFileCheckbox');
+		    const SR_fileInputArea = document.getElementById('SR_fileInputArea');
+		    const SR_fileInput = document.getElementById('SR_fileInput');
+		    const SR_fileDropZone = document.getElementById('SR_fileDropZone');
+		    const SR_selectedFilesContainer = document.getElementById('SR_selectedFiles');
+		
+		    // 체크박스 상태에 따라 파일 첨부 영역 표시/숨김
+		    if (SR_attachFileCheckbox && SR_fileInputArea) {
+		        // 초기에 체크박스가 체크되어 있지 않다면 파일 입력 영역을 숨김
+		        if (!SR_attachFileCheckbox.checked) {
+		             SR_fileInputArea.style.display = 'none';
+		        }
+		
+		        SR_attachFileCheckbox.addEventListener('change', () => {
+		            if (SR_attachFileCheckbox.checked) {
+		                SR_fileInputArea.style.display = 'block';
+		            } else {
+		                SR_fileInputArea.style.display = 'none';
+		                // 파일 첨부 해제 시 파일 목록 초기화
+		                attachedFiles.forEach(fileData => {
+		                    if (fileData.previewURL) {
+		                        URL.revokeObjectURL(fileData.previewURL);
+		                    }
+		                });
+		                attachedFiles = [];
+		                renderSelectedFiles();
+		            }
+		        });
+		    }
+		
+		    // 파일 선택 버튼 클릭 시 파일 인풋 활성화
+		    const customFileButton = document.querySelector('.SR_custom-file-button');
+		    if (customFileButton && SR_fileInput) {
+		        customFileButton.addEventListener('click', (event) => {
+		            event.preventDefault();
+		            SR_fileInput.click();
+		        });
+		    }
+		
+		    // 파일 인풋 변경 시 (파일 선택)
+		    if (SR_fileInput) {
+		        SR_fileInput.addEventListener('change', (event) => {
+		            handleFiles(event.target.files);
+		            event.target.value = ''; // 같은 파일을 다시 선택할 수 있도록 초기화
+		        });
+		    }
+		
+		    // 드래그 앤 드롭 이벤트 리스너
+		    if (SR_fileDropZone) {
+		        SR_fileDropZone.addEventListener('dragover', (event) => {
+		            event.preventDefault();
+		            SR_fileDropZone.classList.add('SR_hover');
+		        });
+		
+		        SR_fileDropZone.addEventListener('dragleave', () => {
+		            SR_fileDropZone.classList.remove('SR_hover');
+		        });
+		
+		        SR_fileDropZone.addEventListener('drop', (event) => {
+		            event.preventDefault();
+		            SR_fileDropZone.classList.remove('SR_hover');
+		            handleFiles(event.dataTransfer.files);
+		        });
+		    }
+		
+		    // 파일 처리 함수
+		    function handleFiles(files) {
+		        if (files.length === 0) return;
+		        
+		        // 기존 파일 목록 초기화 (여러 파일이 아닌 단일 파일만 허용하는 경우)
+		        attachedFiles = []; 
+		        
+		        [...files].forEach((attachement) => {
+		            const file = attachement;
+		            
+		            const maxSize = 10 * 1024 * 1024; // 10MB
+		            const allowedTypes = [ 
+		                'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', // 이미지
+		                'application/pdf', 
+		                'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+		                'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+		                'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 
+		                'text/plain', 'text/csv',
+		                'application/zip', 'application/x-rar-compressed', 'application/x-7z-compressed' 
+		            ];
+		            
+		            if (file.size > maxSize) {
+		                alert(`${file.name}은(는) 10MB를 초과합니다.`);
+		                return;
+		            }
+		            
+		            if (!allowedTypes.includes(file.type)) {
+		                alert(`${file.name}은(는) 허용되지 않은 파일 형식입니다.`);
+		                return;
+		            }
+		            
+		            const fileData = {
+		                file: file,
+		                previewURL: null
+		            };
+		            
+		            if (file.type.startsWith('image/')) {
+		                fileData.previewURL = URL.createObjectURL(file);
+		            }
+		            
+		            attachedFiles.push(fileData);
+		        });
+		        renderSelectedFiles();
+		    }
+		
+		    // 선택된 파일 목록 렌더링
+		    function renderSelectedFiles() {
+		        if (!SR_selectedFilesContainer) return;
+		        SR_selectedFilesContainer.innerHTML = '';
+		
+		        if (attachedFiles.length === 0) {
+		            SR_selectedFilesContainer.innerHTML = '<p class="text-gray-400 italic text-center p-5">선택된 파일 없음</p>';
+		            return;
+		        }
+		
+		        attachedFiles.forEach((fileData, index) => {
+		            const file = fileData.file;
+		            const previewURL = fileData.previewURL;
+		
+		            const fileDiv = document.createElement('div');
+		            fileDiv.className = 'SR_selected-file-item';
+		
+		            let previewHtml = '';
+		            if (previewURL) {
+		                previewHtml = `<img src="${previewURL}" alt="File preview" class="SR_file-preview-img">`;
+		            } else {
+		                previewHtml = `
+		                    <div class="SR_file-placeholder">
+		                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+		                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+		                        </svg>
+		                    </div>
+		                `;
+		            }
+		
+		            fileDiv.innerHTML = `
+		                <div class="SR_file-info">
+		                    ${previewHtml}
+		                    <span>${file.name} (${formatBytes(file.size)})</span>
+		                </div>
+		                <button type="button" class="SR_remove-file" data-index="${index}">&times;</button>
+		            `;
+		            SR_selectedFilesContainer.appendChild(fileDiv);
+		        });
+		
+		        SR_selectedFilesContainer.querySelectorAll('.SR_remove-file').forEach(button => {
+		            button.addEventListener('click', (event) => {
+		                const indexToRemove = parseInt(event.target.dataset.index);
+		                const fileRemoved = attachedFiles[indexToRemove];
+		
+		                if (fileRemoved.previewURL) {
+		                    URL.revokeObjectURL(fileRemoved.previewURL);
+		                }
+		
+		                attachedFiles.splice(indexToRemove, 1);
+		                renderSelectedFiles();
+		            });
+		        });
+		    }
+		
+		    // 파일 크기 포맷 함수
+		    function formatBytes(bytes, decimals = 2) {
+		        if (bytes === 0) return '0 Bytes';
+		        const k = 1024;
+		        const dm = decimals < 0 ? 0 : decimals;
+		        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+		        const i = Math.floor(Math.log(bytes) / Math.log(k));
+		        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+		    }
+		
+		    renderSelectedFiles();
+		
+            // --- [공지사항 등록 로직 수정] ---
+            // "등록" 버튼 클릭 이벤트 핸들러
+            $('#submitButton').on('click', function(e) {
+                e.preventDefault(); // 기본 폼 제출 동작 방지
+
+                // 입력 필드의 값 가져오기
+                const annTitle = $('#product_name').val();
+                const annCn = editorInstance.getData(); // CKEditor의 내용 가져오기
+                const annStcCode = $('input[name="annStcCode"]:checked').val();
+            
+                // 입력값 유효성 검사
+                if (!annTitle || annTitle.trim() === '') {
+                    alert('제목을 입력해주세요.');
+                    return;
+                }
+                if (!annCn || annCn.trim() === '') {
+                    alert('내용을 입력해주세요.');
+                    return;
+                }
+
+                // FormData 객체 생성
+                const formData = new FormData();
+                formData.append('annTitle', annTitle);
+                formData.append('annCn', annCn);
+                formData.append('annStcCode', annStcCode);
+
+                // 첨부 파일이 있을 경우 FormData에 추가
+                if (SR_attachFileCheckbox.checked && attachedFiles.length > 0) {
+                    attachedFiles.forEach((fileData, index) => {
+                        // 서버의 @RequestPart(value="attachment")와 이름이 일치해야 함
+                        formData.append('attachment', fileData.file);
+                    });
+                }
+
+                // AJAX 요청
+                $.ajax({
+                    url: '/admin/addAdminAnnWrite',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false, // multipart/form-data를 위해 false로 설정
+                    processData: false, // FormData 객체를 그대로 사용하기 위해 false로 설정
+                    success: function(response) {
+                        // 성공적으로 등록되면 알림을 띄우고 페이지 이동
+                        alert('공지사항이 성공적으로 등록되었습니다.');
+                        window.location.href = '/admin/adminAnn'; // 등록 후 목록 페이지로 이동
+                    },
+                    error: function(xhr, status, error) {
+                        // 등록 실패 시 알림
+                        alert('공지사항 등록에 실패했습니다.');
+                        console.error('Error:', error);
+                    }
+                });
+            });
+	    });
+	    </script>
+	</th:block>
+</html>

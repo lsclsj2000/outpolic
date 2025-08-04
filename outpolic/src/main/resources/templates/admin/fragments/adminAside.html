@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<aside class="navbar-aside" id="offcanvas_aside" th:fragment="adminAsideFragment">
 		<div class="aside-top" style="height : 72px;">
-		    <a href="#" class="brand-wrap">
+		    <a th:href="@{/admin}" class="brand-wrap">
 		        <img src="/user/assets/imgs/outpolic/logo.png" class="logo" alt="Nest Dashboard" />
 		    </a>
 		    <div>
@@ -29,16 +29,6 @@
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
-					<a class="menu-link" th:href="@{/admin/adminInquiryList}">
-					    <i class="icon material-icons md-shopping_cart"></i>
-					    <span class="text">문의 관리</span>
-					</a>
-					<div class="submenu">
-					    <a th:href="@{/admin/adminInquiryList}">문의 내역 처리</a>
-					    <a th:href="@{/admin/adminInquiryResources}">문의 자원 등록</a>
-					</div>
-				</li>
-				<li class="menu-item has-submenu">
 					<a class="menu-link" th:href="@{/admin/adminOsst}">
 					    <i class="icon material-icons md-store"></i>
 					    <span class="text">외주 관리</span>
@@ -50,6 +40,18 @@
 					</div>
 				</li>
 				<li class="menu-item has-submenu">
+					<a class="menu-link" th:href="@{/admin/adminInquiryList}">
+					    <i class="icon material-icons md-shopping_cart"></i>
+					    <span class="text">고객센터 관리</span>
+					</a>
+					<div class="submenu">
+						<a th:href="@{/admin/adminAnnWrite}">공지사항 등록</a>
+						<a th:href="@{/admin/adminAnn}">공지사항 내역 조회</a>
+					    <a th:href="@{/admin/adminInquiryList}">문의 내역 처리</a>
+					    <a th:href="@{/admin/adminInquiryResources}">문의 자원 등록</a>
+					</div>
+				</li>
+				<li class="menu-item has-submenu">
 					<a class="menu-link" th:href="@{/admin/adminDeclaration}">
 					    <i class="icon material-icons md-add_box"></i>
 					    <span class="text">신고&제재 관리</span>
@@ -58,7 +60,6 @@
 						<a th:href="@{/admin/adminDeclaration}">신고 내역 처리</a>
 						<a th:href="@{/admin/adminDeclarationResources}">신고 자원 등록</a>
 					    <a th:href="@{/admin/adminLimits}">제재 내역</a>
-					    <a th:href="@{/admin/adminLimitsAuthority}">권한 설정</a>
 					    <a th:href="@{/admin/adminLimitsResources}">제재 자원 등록</a>
 					</div>
 				</li>
@@ -108,11 +109,15 @@
 						<a th:href="@{/admin/refundList}">환불 내역</a>
 				    </div>
 				</li>
-				<li class="menu-item">
-					<a class="menu-link" th:href="@{/admin/empowerment}">
+				<li class="menu-item has-submenu">
+				    <a class="menu-link" href="#">
 					    <i class="icon material-icons md-pie_chart"></i>
-					    <span class="text">관리자 권한 설정</span>
+					    <span class="text">권한설정</span>
 					</a>
+					<div class="submenu">
+						<a th:href="@{/admin/empowerment}">관리자 권한 설정</a>
+						<a th:href="@{/admin/adminLimitsAuthority}">회원 권한 설정</a>
+				    </div>
 				</li>
 			</ul>
 			<br />

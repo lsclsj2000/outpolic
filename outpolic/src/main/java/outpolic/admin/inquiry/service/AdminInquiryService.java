@@ -3,6 +3,8 @@ package outpolic.admin.inquiry.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.repository.query.Param;
+
 import outpolic.admin.inquiry.domain.AdminInquiry;
 import outpolic.admin.inquiry.domain.AdminInquiryType;
 
@@ -38,5 +40,12 @@ public interface AdminInquiryService {
 	
 	// 문의 자원 필터
 	List<AdminInquiryType> getFilteredInquiryTypeList(Map<String, Object> paramMap);
+	
+	// 문의 수 카운트
+ 	int getAdminInquiryListCount();
+	 	
+ 	// 문의 리스트 페이지네이션 위한 리스트 호출
+ 	List<AdminInquiry> getAdminInquiryListForPg(@Param("startRow") int startRow, @Param("rowPerPage") int rowPerPage);
+	    
 	
 }

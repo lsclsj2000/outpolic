@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import outpolic.admin.outsourcing.dto.AdminOutsourcingDTO;
 import outpolic.admin.outsourcing.dto.AdminOutsourcingSearchDTO;
@@ -28,8 +29,14 @@ public class AdminOutsourcingController {
 	@GetMapping("/outsourcingList")
 	public String getOutsourcingList(
 	    @ModelAttribute AdminOutsourcingSearchDTO searchDTO,
-	    Model model) {
-	    
+	    Model model, HttpSession session) {
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CONTENT_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
+		
 	    List<AdminOutsourcingDTO> outsourcingList = adminOutsourcingService.getAllOutsourcings(searchDTO);
 	    model.addAttribute("title", "외주 관리");
 	    model.addAttribute("outsourcingList", outsourcingList);

@@ -1,6 +1,8 @@
 package outpolic.admin.limits.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import outpolic.admin.inquiry.domain.AdminInquiry;
 import outpolic.admin.limits.domain.AdminLimits;
 import outpolic.admin.limits.service.AdminLimitsService;
 
@@ -51,7 +54,7 @@ public class AdminLimitsController {
 	        if (adminCode == null) {
 	            return "FAIL: Unauthorized";
 	        }
-
+	        
 	        adminLimits.setAuthorityMdfcnYmdt(new java.sql.Timestamp(System.currentTimeMillis()));
 
 	        int result = adminLimitsService.updateMemberAuthority(adminLimits);
@@ -153,7 +156,14 @@ public class AdminLimitsController {
     }
 
     @GetMapping("/adminLimitsResources")
-    public String adminLimitsResourcesView(Model model) {
+    public String adminLimitsResourcesView(Model model, HttpSession session) {
+    	
+    	List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
         // 제재 자원 등록 페이지
         List<AdminLimits> adminLimitsTypeList = adminLimitsService.getAdminLimitsTypeList();
         List<AdminLimits> adminLimitsPeriodList = adminLimitsService.getAdminLimitsPeriodList();
@@ -280,7 +290,14 @@ public class AdminLimitsController {
 	}
 	
 	@GetMapping("/adminLimitsAuthority")
-	public String adminLimitsAuthorityView(Model model) {
+	public String adminLimitsAuthorityView(Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("MEMBER_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 권한 설정
 		List<AdminLimits> adminLimitsAuthorityList = adminLimitsService.getAdminLimitsAuthorityList();
 		model.addAttribute("title", "회원 권한 조회");
@@ -290,18 +307,67 @@ public class AdminLimitsController {
 	}
 	
 	@GetMapping("/adminLimitsProcess")
-	public String adminLimitsProcessView(Model model) {
+	public String adminLimitsProcessView(Model model, HttpSession session) {
 		// 제재 처리 페이지
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("MEMBER_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		model.addAttribute("title", "제재 처리");
 		return "admin/limits/adminLimitsProcessView";
 	}
 	
 	@GetMapping("/adminLimits")
-	public String adminLimitsView(Model model) {
+	public String adminLimitsView(Model model, @RequestParam(defaultValue = "1") Integer currentPage,HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 제재 내역 조회 페이지
-		List<AdminLimits> adminLimitsList = adminLimitsService.getAdminLimitsList();
-		model.addAttribute("title", "제재 내역 목록");
-		model.addAttribute("adminLimitsList", adminLimitsList);
+		/*
+		 * List<AdminLimits> adminLimitsList = adminLimitsService.getAdminLimitsList();
+		 * model.addAttribute("title", "제재 내역 목록");
+		 */
+		/* model.addAttribute("adminLimitsList", adminLimitsList); */
+		
+		if (currentPage < 1) currentPage = 1;
+		 int rowPerPage = 10;
+		    int startRow = (currentPage - 1) * rowPerPage;
+
+		    List<AdminLimits> adminLimitsList = adminLimitsService.getAdminLimitsListForPg(startRow, rowPerPage);
+		    int totalCount = adminLimitsService.getAdminLimitListCount();
+		    int lastPage = (int) Math.ceil((double) totalCount / rowPerPage);
+
+		    int startPageNum, endPageNum;
+		    if (lastPage <= 5) {
+		        startPageNum = 1;
+		        endPageNum = lastPage;
+		    } else if (currentPage <= 3) {
+		        startPageNum = 1;
+		        endPageNum = 5;
+		    } else if (currentPage + 2 >= lastPage) {
+		        startPageNum = lastPage - 4;
+		        endPageNum = lastPage;
+		    } else {
+		        startPageNum = currentPage - 2;
+		        endPageNum = currentPage + 2;
+		    }
+
+		    model.addAttribute("adminLimitsList", adminLimitsList);
+		    model.addAttribute("totalCount", totalCount);
+		    model.addAttribute("currentPage", currentPage);
+		    model.addAttribute("lastPage", lastPage);
+		    model.addAttribute("startPageNum", startPageNum);
+		    model.addAttribute("startRow", startRow);
+		    model.addAttribute("endPageNum", endPageNum);
+		    model.addAttribute("pageSize", rowPerPage);
+		    model.addAttribute("path", "/admin/adminLimits");
 		
 		return "admin/limits/adminLimitsView";
 	}
@@ -316,6 +382,57 @@ public class AdminLimitsController {
 											   @RequestParam(required = false) String selectDateType
 											   ){
 		return adminLimitsService.selectAdminLimitsList(keyword, searchType, selectDateType, levelSearch, startDate, endDate);
+	}
+	
+	@GetMapping("/adminLimitsResourcesFilter")
+	public String adminLimitsResourcesFilter(
+	    @RequestParam(required = false, defaultValue = "type") String resourceType,
+	    @RequestParam(required = false) String searchField,
+	    @RequestParam(required = false) String searchKeyword,
+	    @RequestParam(required = false) String status,
+	    @RequestParam(required = false) String dateField,
+	    @RequestParam(required = false) String startDate,
+	    @RequestParam(required = false) String endDate,
+	    Model model
+	) {
+		// 제재 자원 조회 - 필터
+	    Map<String, Object> paramMap = new HashMap<>();
+	    paramMap.put("resourceType", resourceType);
+	    paramMap.put("searchField", searchField);
+	    paramMap.put("searchKeyword", searchKeyword);
+	    paramMap.put("status", status);
+	    paramMap.put("dateField", dateField);
+	    paramMap.put("startDate", startDate);
+	    paramMap.put("endDate", endDate);
+	    
+	    log.info("필터 파라미터: {}", paramMap);
+
+	    switch (resourceType) {
+	        case "type":
+	            model.addAttribute("adminLimitsTypeList", adminLimitsService.getFilteredLimitsTypeList(paramMap));
+	            break;
+	        case "period":
+	            model.addAttribute("adminLimitsPeriodList", adminLimitsService.getFilteredLimitsPeriodList(paramMap));
+	            break;
+	        case "reason":
+	            model.addAttribute("adminLimitsReasonList", adminLimitsService.getFilteredLimitsReasonList(paramMap));
+	            break;
+	    }
+	    
+	    log.info("필터 파라미터: {}", paramMap);
+
+	    // 검색 필터 상태 유지
+	    model.addAttribute("resourceType", resourceType);
+	    model.addAttribute("searchField", searchField);
+	    model.addAttribute("searchKeyword", searchKeyword);
+	    model.addAttribute("status", status);
+	    model.addAttribute("dateField", dateField);
+	    model.addAttribute("startDate", startDate);
+	    model.addAttribute("endDate", endDate);
+	    
+	    log.info("필터 파라미터: {}", paramMap);
+
+	    return "admin/limits/adminLimitsResourcesView";
 	}
 	
 }

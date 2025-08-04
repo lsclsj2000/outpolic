@@ -204,7 +204,14 @@ public class AdminDeclarationController {
 	}
 	
 	@GetMapping("/adminDeclarationResources")
-	public String adminDeclarationManageView(Model model) {
+	public String adminDeclarationManageView(Model model, HttpSession session) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 신고 자원 등록 페이지
 		List<AdminDeclaration> adminDeclarationTypeList = adminDeclarationService.getAdminDeclarationTypeList();
 		List<AdminDeclaration> adminDeclarationReasonList  = adminDeclarationService.getAdminDeclarationReasonList();
@@ -219,17 +226,24 @@ public class AdminDeclarationController {
 	}
 	
 	@GetMapping("/adminDeclaration")
-	public String adminDeclarationView(
+	public String adminDeclarationView(	
 	    @RequestParam(required = false) String keywordField,
 	    @RequestParam(required = false) String keyword,
 	    @RequestParam(required = false) String dateField,
 	    @RequestParam(required = false) String startDate,
 	    @RequestParam(required = false) String endDate,
 	    @RequestParam(required = false) String status,
-	    Model model
+	    Model model, HttpSession session
 	) {
+		
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
 		// 신고 내역 조회 - 필터
-	    Map<String, Object> searchParams = new HashMap<>();
+		Map<String, Object> searchParams = new HashMap<>();
 	    searchParams.put("keywordField", keywordField);
 	    searchParams.put("keyword", keyword);
 	    searchParams.put("dateField", dateField);
@@ -240,7 +254,66 @@ public class AdminDeclarationController {
 	    List<AdminDeclaration> adminDeclarationList = adminDeclarationService.getAdminDeclarationListFiltered(searchParams);
 	    model.addAttribute("adminDeclarationList", adminDeclarationList);
 
+	    // ✅ 검색 조건 유지용 값 전달
+	    model.addAttribute("keywordField", keywordField);
+	    model.addAttribute("keyword", keyword);
+	    model.addAttribute("dateField", dateField);
+	    model.addAttribute("startDate", startDate);
+	    model.addAttribute("endDate", endDate);
+	    model.addAttribute("status", status);
+
 	    return "admin/declaration/adminDeclarationView";
 	}
+	
+	@GetMapping("/adminDeclarationResourcesFilter")
+	public String adminDeclarationResourcesView(
+		    @RequestParam(required = false, defaultValue = "type") String resourceType,
+		    @RequestParam(required = false) String searchField,
+		    @RequestParam(required = false) String searchKeyword,
+		    @RequestParam(required = false) String status,
+		    @RequestParam(required = false) String dateField,
+		    @RequestParam(required = false) String startDate,
+		    @RequestParam(required = false) String endDate,
+		    Model model, HttpSession session
+	) {
+		List<String> permissions = (List<String>) session.getAttribute("SPermissions");
+		if (!permissions.contains("CS_ADMIN") && !permissions.contains("SYSTEM_ADMIN")) {
+			model.addAttribute("msg", "접근 권한이 없습니다.");
+			model.addAttribute("url", "/admin"); // 또는 돌아갈 페이지
+			return "admin/login/alert"; // alert.html이라는 공용 alert 페이지
+		}
+	    Map<String, Object> paramMap = new HashMap<>();
+	    paramMap.put("searchField", searchField);
+	    paramMap.put("searchKeyword", searchKeyword);
+	    paramMap.put("status", status);
+	    paramMap.put("dateField", dateField);
+	    paramMap.put("startDate", startDate);
+	    paramMap.put("endDate", endDate);
+
+	    // 자원 종류 분기 처리
+	    switch (resourceType) {
+	        case "type":
+	            model.addAttribute("adminDeclarationTypeList", adminDeclarationService.getFilteredDeclarationTypeList(paramMap));
+	            break;
+	        case "reason":
+	            model.addAttribute("adminDeclarationReasonList", adminDeclarationService.getFilteredDeclarationReasonList(paramMap));
+	            break;
+	        case "result":
+	            model.addAttribute("adminDeclarationResultList", adminDeclarationService.getFilteredDeclarationResultList(paramMap));
+	            break;
+	    }
+
+	    // 검색 조건 다시 넘겨줌
+	    model.addAttribute("resourceType", resourceType); // 중요!!
+	    model.addAttribute("searchField", searchField);
+	    model.addAttribute("searchKeyword", searchKeyword);
+	    model.addAttribute("status", status);
+	    model.addAttribute("dateField", dateField);
+	    model.addAttribute("startDate", startDate);
+	    model.addAttribute("endDate", endDate);
+
+	    return "admin/declaration/adminDeclarationResourcesView";
+	}
+
 
 }
