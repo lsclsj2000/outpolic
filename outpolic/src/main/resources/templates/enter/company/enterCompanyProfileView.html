@@ -62,9 +62,23 @@
 		<div class="container my-5" th:attr="data-company-id=${entCd}">
 
 	        <!-- 1. 회사 기본 프로필 (서버에서 Thymeleaf로 렌더링) -->
-	        <div class="profile-header" th:if="${profile != null}">
+	        <div class="profile-header" th:if="${profile.entImg != null }" >
 	            <!-- 로고 이미지가 없다면 기본 이미지 표시 -->
-	            <img alt="회사 로고">
+	            <img alt="회사 로고" th:src="@{${profile.entImg}}">
+	            <h1 th:text="${profile.entNm}">회사 이름</h1>
+	            <div class="rating-summary">
+	                <span class="star">⭐</span>
+	                <!-- #numbers.formatDecimal은 숫자의 소수점 자릿수를 포맷팅합니다. -->
+	                <strong th:text="${#numbers.formatDecimal(profile.avgReviewScore, 1, 1)}">4.9</strong>
+	                (<span th:text="${profile.reviewCount}">123</span>)
+	            </div>
+	            <div class="category-tags mt-3">
+	                <span th:each="category : ${profile.categories}" th:text="${category}" class="tag"></span>
+	            </div>
+	        </div>
+	        <div class="profile-header" th:if="${profile.entImg == null }" >
+	            <!-- 로고 이미지가 없다면 기본 이미지 표시 -->
+	            <img alt="회사 로고" th:src="@{/user/assets/imgs/outpolic/profile.png}">
 	            <h1 th:text="${profile.entNm}">회사 이름</h1>
 	            
 	            <div class="rating-summary">
@@ -76,7 +90,7 @@
 	            <div class="category-tags mt-3">
 	                <span th:each="category : ${profile.categories}" th:text="${category}" class="tag"></span>
 	            </div>
-	        </div>
+            </div>
 	
 			<h2 class="section-title">회사 정보</h2>
 	        <p th:text="${profile.entExpln}" class="company-description" style="margin-top: 1rem; font-size: 1.1rem; color: #333;">회사 설명이 여기에 표시됩니다.</p>

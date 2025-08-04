@@ -11,7 +11,8 @@
             e.ent_expln      AS entExpln,
             e.ent_scl        AS entScl,
             IFNULL(AVG(r2.rvw_evl), 0) AS avgReviewScore,
-            COUNT(DISTINCT r2.rvw_cd) AS reviewCount
+            COUNT(DISTINCT r2.rvw_cd) AS reviewCount,
+            e.ent_img 		AS entImg
         FROM
             enterprise e 
         LEFT JOIN
