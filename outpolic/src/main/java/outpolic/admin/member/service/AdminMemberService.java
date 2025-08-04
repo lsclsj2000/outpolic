@@ -26,5 +26,8 @@ public interface AdminMemberService {
 	public List<Member> filterMembers(String statusCode, String gradeCode, String orderBy);
 
 	List<Member> searchMembers(String keyword);
+	
+	int getMemberCount();
+    List<AdminMemberDTO> getMemberListForPg(int startRow, int rowPerPage);
 
 }

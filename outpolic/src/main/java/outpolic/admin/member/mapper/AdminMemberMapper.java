@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import outpolic.admin.member.dto.AdminMemberDTO;
 import outpolic.common.domain.Member;
 
 @Mapper
@@ -33,4 +34,7 @@ public interface AdminMemberMapper {
             @Param("gradeCode") String gradeCode, @Param("orderBy") String orderBy);
 	// 검색
 	List<Member> searchMembers(String keyword);
+	
+	 int getMemberCount();
+	    List<AdminMemberDTO> getMemberListForPg(@Param("startRow") int startRow, @Param("rowPerPage") int rowPerPage);
 }
