@@ -37,7 +37,7 @@
                         <h3 class="SR_text-xl SR_font-semibold SR_text-gray-700 SR_mb-4">외주 신청/문의 내용</h3>
                         <div class="SR_p-3 SR_bg-gray-50 SR_rounded-md SR_border SR_border-gray-200">
                             <p class="SR_text-base SR_font-semibold SR_text-blue-700 SR_mb-2">
-                                <a th:href="@{/enter/outsourcing-requests/{ocdCd}(ocdCd=${EnterOsstDetail.ocdCd})}" class="SR_underline"
+                                <a th:href="@{/enter/outsourcing-requests/detail/{ocdCd}(ocdCd=${EnterOsstDetail.ocdCd})}" class="SR_underline"
                                    th:text="${EnterOsstDetail.ocdTitle}">신청제목</a>
                             </p>
                             <p class="SR_text-sm SR_text-gray-600">• 작성자:
