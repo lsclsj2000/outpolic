@@ -290,6 +290,7 @@
 				// 📋 회원 목록 렌더링 함수
 				function renderEnterList(data) {
 					const tbody = $('#enterTableBody');
+					 $('#paginationArea').hide();
 					tbody.empty();
 					// 결과 개수 출력
 					$('#filteredCount').text(data.length);
