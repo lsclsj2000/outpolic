@@ -50,6 +50,7 @@ public class enterRegisterController {
             int result = enterRegisterService.enterRegister(corpInfo);
 
             if (result == 2) {
+            	session.invalidate();
                 model.addAttribute("msg", "기업회원으로 전환되었습니다. 다시 로그인 해주세요.");
                 model.addAttribute("url", "/login");
             } else {
