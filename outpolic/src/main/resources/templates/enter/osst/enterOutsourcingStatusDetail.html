@@ -337,11 +337,11 @@
 
                 // ✅ 단계 승인 버튼 표시 여부
                 const approveButtonContainer = document.getElementById('step-approval-button-container');
-                if (step && isInProgress(step)) {
-                    approveButtonContainer.classList.remove('SR_hidden');
-                } else {
-                    approveButtonContainer.classList.add('SR_hidden');
-                }
+					if (step && isInProgress(step) && memberRole === 'DEMANDER') {
+					    approveButtonContainer.classList.remove('SR_hidden');
+					} else {
+					    approveButtonContainer.classList.add('SR_hidden');
+					}
 
                 // ✅ 공급자 보고서 제출 버튼 표시 여부
                 const reportBtnContainer = document.getElementById(`submitReportBtnContainer-${activeContentStepIndex}`);
