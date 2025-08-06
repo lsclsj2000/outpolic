@@ -102,7 +102,10 @@
 		                const subtotalEl = row.querySelectorAll(".text-body")[1];
 		
 		                if (subtotalEl) subtotalEl.textContent = formatCurrency(subtotal);
-		                if (displayUnitEl) displayUnitEl.innerHTML = (quantity > 0 ? (quantity * unitValue) : '0') + ` <span>${unitName}</span>`;
+		                if (displayUnitEl) {
+		                    let displayUnit = (unitName === '일') ? '일' : '회';
+		                    displayUnitEl.innerHTML = (quantity > 0 ? (quantity * unitValue) : '0') + ` <span>${displayUnit}</span>`;
+		                }
 		
 		                totalAmount += subtotal;
 		            });

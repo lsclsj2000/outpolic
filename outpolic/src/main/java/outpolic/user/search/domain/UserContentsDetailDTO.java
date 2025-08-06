@@ -13,6 +13,7 @@ public class UserContentsDetailDTO {
     private String contentsTitle;
     private String enterName;
     private String enterCode;
+    private String mbrCd;
     private LocalDateTime registrationDate;
     private String thumbnailUrl;
     

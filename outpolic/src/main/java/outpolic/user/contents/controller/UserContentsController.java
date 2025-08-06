@@ -84,6 +84,7 @@ public class UserContentsController {
         
         // 4. 모델에 데이터를 담고 뷰를 리턴합니다.
         model.addAttribute("detail", detailData);
+        
         return "user/contentsParticular/userContentsParticularView";
     }
 }
