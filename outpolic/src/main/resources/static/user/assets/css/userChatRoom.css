@@ -498,3 +498,26 @@ body {
 .SR_d-none {
     display: none !important;
 }
+
+.SR_h-100{
+	margin-top: 10px;
+}
+
+
+.my {
+    text-align: right;
+}
+
+.my::after {
+}
+
+.you {
+    text-align: left;
+}
+
+.you::after {
+}
+
+div#chat-messages {
+    height: 300px;
+}
