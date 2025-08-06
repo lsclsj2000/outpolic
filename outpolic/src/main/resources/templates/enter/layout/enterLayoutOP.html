@@ -6,6 +6,7 @@
     <title>마이페이지</title>
     <link rel="stylesheet" th:href="@{/enter/assets/css/main.css?v=5.6}" />
     <link rel="stylesheet" href="/enter/assets/css/enterChatRoom.css" />
+    <meta name="userScd" th:content="${session.SCD}">
 </head>
 <body>
     <header th:replace="~{enter/fragments/enterHeader :: enterHeaderFragment}"></header>

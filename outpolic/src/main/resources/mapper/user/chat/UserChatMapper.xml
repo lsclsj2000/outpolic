@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="outpolic.user.chat.mapper.UserChatMapper">
+
+	<select id="getNextChrCd" resultType="string">
+	    SELECT CONCAT('CR_C', LPAD(
+	        IFNULL(SUBSTRING(MAX(chr_cd), 6), 0) + 1, 5, '0')) AS next_chr_cd
+	    FROM chat_room
+	    WHERE chr_cd LIKE 'CR_C%'
+	</select>
+	
+	<select id="getNextChmCd" resultType="string">
+	    SELECT CONCAT('CHM_C', LPAD(
+	        IFNULL(SUBSTRING(MAX(chm_cd), 6), 0) + 1, 5, '0')) AS next_chm_cd
+	    FROM chat_message
+	    WHERE chm_cd LIKE 'CHM_C%'
+	</select>
+
+     <insert id="insertChatRoom" parameterType="UserChatDTO" useGeneratedKeys="true" keyProperty="chrCd">
+        INSERT INTO chat_room (
+            chr_cd, mbr1_cd, mbr2_cd, chr_nm, chr_reg_ymdt,
+            chr_last_ymdt, chr_mdfcn_mbr_cd, chr_mdfcn_ymdt
+            <if test="stc1Cd != null">, stc1_cd</if>
+        	<if test="stc2Cd != null">, stc2_cd</if>
+        ) VALUES (
+            #{chrCd}, #{mbr1Cd}, #{mbr2Cd}, #{chrNm}, NOW(),
+            #{chrLastYmdt}, #{chrMdfcnMbrCd}, #{chrMdfcnYmdt}
+            <if test="stc1Cd != null">, #{stc1Cd}</if>
+        	<if test="stc2Cd != null">, #{stc2Cd}</if>
+        )
+    </insert>
+
+
+	<select id="selectChatRoomsByMember" parameterType="UserChatDTO" resultType="UserChatDTO">
+       SELECT 
+		  cr.chr_cd            AS chrCd,
+		  cr.mbr1_cd           AS mbr1Cd,
+		  cr.mbr2_cd           AS mbr2Cd,
+		  cr.chr_nm            AS chrNm,
+		  cr.chr_reg_ymdt      AS chrRegYmdt,
+		  cr.chr_last_ymdt     AS chrLastYmdt,
+		  cr.chr_mdfcn_mbr_cd  AS chrMdfcnMbrCd,
+		  cr.chr_mdfcn_ymdt    AS chrMdfcnYmdt,
+		  cr.stc1_cd           AS stc1Cd,
+		  cr.stc2_cd           AS stc2Cd
+		FROM chat_room AS cr
+		WHERE (cr.mbr1_cd = #{mbr1Cd} AND cr.stc1_cd = 'SD_NO') 
+		OR (cr.mbr2_cd = #{mbr2Cd} AND cr.stc2_cd = 'SD_NO')
+		ORDER BY cr.chr_last_ymdt DESC;
+    </select>
+    
+    <select id="selectChatRoomsInfo" parameterType="String" resultType="UserChatDTO">
+        SELECT 
+			chr_cd AS chrCd
+			, mbr1_cd AS mbr1Cd
+			, mbr2_cd AS mbr2Cd
+			, chr_nm AS chrNm
+			, chr_reg_ymdt AS chrRegYmdt
+			, chr_last_ymdt AS chrLastYmdt
+			, chr_mdfcn_mbr_cd AS chrMdfcnMbrCd
+			, chr_mdfcn_ymdt AS chrMdfcnYmdt
+			, stc1_cd AS stc1Cd
+			, stc2_cd AS stc2Cd
+        FROM chat_room
+        WHERE chr_cd = #{chrCd};
+    </select>
+
+    <select id="selectMessagesByRoom" resultType="UserChatMessageDTO">
+         SELECT 
+		  chm_cd AS chmCd
+		  , chr_cd AS chrCd
+		  , mbr_cd AS mbrCd
+		  , chm_type AS chmType
+		  , chm_cn AS chmCn
+		  , chm_sent_ymdt AS chmSentYmdt
+        FROM chat_message
+        WHERE chr_cd = #{chrCd}
+        ORDER BY chm_sent_ymdt ASC;
+    </select>
+
+    <insert id="insertChatMessage" parameterType="UserChatMessageDTO">
+        INSERT INTO chat_message (
+            chm_cd, chr_cd, mbr_cd, chm_type, chm_cn, chm_sent_ymdt
+        ) VALUES (
+            #{chmCd}, #{chrCd}, #{mbrCd}, #{chmType}, #{chmCn}, #{chmSentYmdt}
+        )
+    </insert>
+	
+ </mapper>

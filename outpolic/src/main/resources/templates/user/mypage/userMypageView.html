@@ -133,82 +133,88 @@
 				</div>
 			</div>
 			<div class="tab-pane fade" id="mySettList">
-			<div class="row d-flex flex-column align-items-center">
-				<h3>결제내역</h3>
-					<div class="card-body">
-			            <div class="table-responsive">
-			                <table class="table">
-			                    <thead>
-			                        <tr>
-			                            <th>상품 정보</th>
-			                            <th>결제일시</th>
-			                            <th>사용 마일리지</th>
-			                            <th>결제 금액</th>
-			                            <th>환불</th>
-			                        </tr>
-			                    </thead>
-			                    <tbody>
-			                        <tr th:if="${settlementList.isEmpty()}">
-			                            <td colspan="5" class="text-center">결제 내역이 없습니다.</td>
-			                        </tr>
-			                        <tr th:each="s : ${settlementList}">
-			                            <td>
-			                                <h6 class="mb-5" th:text="${s.gdsNm}"></h6>
-			                                <p class="font-sm text-muted">
-			                                    결제코드: <span th:text="${s.stlmCd}"></span><br>
-			                                    수량: <span th:text="${s.stlmCnt}"></span>
-			                                </p>
-			                            </td>
-			                            <td th:text="${#dates.format(s.stlmYmdt, 'yyyy-MM-dd HH:mm')}"></td>
-			                            <td th:text="${#numbers.formatDecimal(s.stlmUsedPoints, 0, 'COMMA', 0, 'POINT')}"></td>
-			                            <td th:text="${#numbers.formatDecimal(s.stlmFinalAmt, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-			                            <td>
-			                                <button class="btn btn-sm btn-secondary refund-request-btn"
-			                                        th:data-stlm-cd="${s.stlmCd}"
-			                                        th:disabled="${s.stcNm == '환불'}">
-			                                    환불요청
-			                                </button>
-			                            </td>
-			                        </tr>
-			                    </tbody>
-			                </table>
-			            </div>
-			        </div>
-					<h3>마일리지 적립 내역</h3>
-					<table class="table mt-30">
-						<thead>
-							<tr>
-								<th style="text-align: center;">결제번호</th>
-								<th style="text-align: center;">결제일시</th>
-								<th style="text-align: center;">결제 상품</th>
-								<th style="text-align: center;">사용된 마일리지</th>
-								<th style="text-align: center;">결제 금액</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td style="text-align: center;">123156</td>
-								<td style="text-align: center;">March 45, 2020</td>
-								<td style="text-align: center;">구독권</td>
-								<td style="text-align: right; padding-right: 50px;">0</td>
-								<td style="text-align: center;">39,900<span>원</span></td>
-							</tr>
-							<tr>
-								<td style="text-align: center;">1454125</td>
-								<td style="text-align: center;">June 29, 2020</td>
-								<td style="text-align: center;">구독권</td>
-								<td style="text-align: right; padding-right: 50px;">0</td>
-								<td style="text-align: center;">39,900<span>원</span></td>
-							</tr>
-							<tr>
-								<td style="text-align: center;">4891562</td>
-								<td style="text-align: center;">August 02, 2020</td>
-								<td style="text-align: center;">이용권</td>
-								<td style="text-align: right; padding-right: 50px;">2000</td>
-								<td style="text-align: center;">20,900<span>원</span></td>
-							</tr>
-						</tbody>
-					</table>
+				<div class="row d-flex flex-column align-items-center">
+					<div class="row">
+					    <div class="col-lg-12">
+					        <div class="card-header mb-20">
+					            <h3 class="mb-0">결제내역</h3>
+					        </div>
+					        <div class="card-body">
+					            <div class="table-responsive">
+					                <table class="table">
+					                    <thead>
+					                        <tr>
+					                            <th>상품 정보</th>
+					                            <th>결제일시</th>
+					                            <th>사용 마일리지</th>
+					                            <th>결제 금액</th>
+					                            <th>환불</th>
+					                        </tr>
+					                    </thead>
+					                    <tbody>
+					                        <tr th:if="${settlementList.isEmpty()}">
+					                            <td colspan="5" class="text-center" style="padding: 20px;">결제 내역이 없습니다.</td>
+					                        </tr>
+					                        <tr th:each="s : ${settlementList}">
+					                            <td>
+					                                <h6 class="mb-5" th:text="${s.gdsNm}"></h6>
+					                                <p class="font-sm text-muted" style="line-height: 1.4;">
+					                                    결제코드: <span th:text="${s.stlmCd}"></span><br>
+					                                    수량: <span th:text="${s.stlmCnt}"></span>
+					                                </p>
+					                            </td>
+					                            <td th:text="${#dates.format(s.stlmYmdt, 'yyyy-MM-dd HH:mm')}"></td>
+					                            <td th:text="${#numbers.formatDecimal(s.stlmUsedPoints, 0, 'COMMA', 0, 'POINT')}"></td>
+					                            <td th:text="${#numbers.formatDecimal(s.stlmFinalAmt, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+					                            <td>
+					                                <button class="btn btn-sm btn-secondary refund-request-btn"
+					                                        th:data-stlm-cd="${s.stlmCd}"
+					                                        th:disabled="${s.stcNm == '환불'}">
+					                                    환불요청
+					                                </button>
+					                            </td>
+					                        </tr>
+					                    </tbody>
+					                </table>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+					<div class="row mt-50">
+					    <div class="col-lg-12">
+					        <div class="card-header mb-20">
+					            <h3 class="mb-0">마일리지 내역</h3>
+					        </div>
+					        <div class="card-body">
+					            <div class="table-responsive">
+					                <table class="table">
+					                    <thead>
+					                        <tr>
+					                            <th>적용일시</th>
+					                            <th>내용</th>
+					                            <th>변동</th>
+					                            <th>잔액</th>
+					                        </tr>
+					                    </thead>
+					                    <tbody>
+					                        <tr th:if="${mileageHistoryList == null or mileageHistoryList.isEmpty()}">
+					                            <td colspan="4" class="text-center" style="padding: 20px;">마일리지 내역이 없습니다.</td>
+					                        </tr>
+					                        <tr th:each="m : ${mileageHistoryList}">
+					                            <td th:text="${#dates.format(m.ptsYmdt, 'yyyy-MM-dd HH:mm')}"></td>
+					                            <td th:text="${m.ptsStatus == '적립' ? '활동 적립' : '상품 구매 사용'}"></td>
+					                            <td>
+					                                <span th:if="${m.ptsStatus == '적립'}" class="text-success" th:text="'+' + ${#numbers.formatDecimal(m.ptsPointsDelta, 0, 'COMMA', 0, 'POINT')}"></span>
+					                                <span th:if="${m.ptsStatus == '사용'}" class="text-danger" th:text="'-' + ${#numbers.formatDecimal(m.ptsPointsDelta, 0, 'COMMA', 0, 'POINT')}"></span>
+					                            </td>
+					                            <td th:text="${#numbers.formatDecimal(m.ptsCumPoints, 0, 'COMMA', 0, 'POINT')}"></td>
+					                        </tr>
+					                    </tbody>
+					                </table>
+					            </div>
+					        </div>
+					    </div>
+					</div>
 				</div>
 			</div>
 
@@ -281,6 +287,37 @@
 			  originalProfileImg = previewImg.src; 
 			});
 
+		  const refundButtons = document.querySelectorAll('.refund-request-btn');
+		    refundButtons.forEach(button => {
+		        button.addEventListener('click', function(e) {
+		            e.preventDefault();
+		            const stlmCd = this.getAttribute('data-stlm-cd');
+
+		            if (confirm(`[${stlmCd}] 결제 건에 대해 환불을 요청하시겠습니까?`)) {
+		                requestRefund(stlmCd);
+		            }
+		        });
+		    });
+
+		    async function requestRefund(stlmCd) {
+		        try {
+		            const response = await fetch('/api/requestRefund', {
+		                method: 'POST',
+		                headers: { 'Content-Type': 'application/json' },
+		                body: JSON.stringify({ stlmCd: stlmCd })
+		            });
+
+		            const resultText = await response.text();
+		            alert(resultText); // 서버로부터 받은 결과 메시지 출력
+
+		            if (response.ok) {
+		                location.reload(); // 성공 시 페이지 새로고침
+		            }
+		        } catch (error) {
+		            console.error('환불 요청 오류:', error);
+		            alert('환불 요청 중 오류가 발생했습니다.');
+		        }
+		    }
 
 		  function previewProfileImage(event) {
 		    const input = event.target;
