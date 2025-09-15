@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import outpolic.systems.refund.dto.RefundDTO;
 import outpolic.systems.refund.mapper.RefundMapper;
 import outpolic.systems.refund.service.RefundService;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RefundServiceImpl implements RefundService {
@@ -20,8 +22,13 @@ public class RefundServiceImpl implements RefundService {
     @Override
     @Transactional
     public String processRefundRequest(String stlmCd, String mbrCd) {
+    	log.info("조회에 사용될 stlmCd 값: '{}', 길이: {}", stlmCd, stlmCd.length());
+    	
         RefundDTO settlement = refundMapper.findSettlementForRefund(stlmCd);
 
+        log.info("결제 정보의 mbr_cd: '{}', 길이: {}", settlement.getMbrCd(), settlement.getMbrCd().length());
+        log.info("세션의 mbr_cd: '{}', 길이: {}", mbrCd, mbrCd.length());
+        
         if (settlement == null || !settlement.getMbrCd().equals(mbrCd)) {
             throw new IllegalArgumentException("유효하지 않은 결제 정보입니다.");
         }

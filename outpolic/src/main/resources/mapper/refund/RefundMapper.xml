@@ -6,13 +6,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="findSettlementForRefund" resultType="outpolic.systems.refund.dto.RefundDTO">
         SELECT
-            stlm_cd,
-            mbr_cd,
-            stc_cd,
-            stlm_ymdt,
-            stlm_final_amt
-        FROM settlement
-        WHERE stlm_cd = #{stlmCd}
+	        stlm_cd AS stlmCd,
+	        mbr_cd AS mbrCd,
+	        stc_cd AS stcCd,
+	        stlm_ymdt AS stlmYmdt,
+	        stlm_final_amt AS stlmFinalAmt
+	    FROM settlement
+	    WHERE stlm_cd = #{stlmCd}
     </select>
 
     <insert id="insertRefund" parameterType="outpolic.systems.refund.dto.RefundDTO">
